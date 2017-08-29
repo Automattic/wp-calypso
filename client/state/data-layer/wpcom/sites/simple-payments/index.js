@@ -26,6 +26,7 @@ import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
 import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Convert custom post metadata array to product attributes
@@ -64,8 +65,8 @@ export function customPostToProduct( customPost ) {
 
 	return {
 		ID: customPost.ID,
-		description: customPost.content,
-		title: customPost.title,
+		description: decodeEntities( customPost.content ),
+		title: decodeEntities( customPost.title ),
 		featuredImageId: getFeaturedImageId( customPost ),
 		...metadataAttributes,
 	};
@@ -216,13 +217,13 @@ export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
 	);
 }
 
-export const addProduct = ( { dispatch }, { siteId }, next, newProduct ) =>
+export const addProduct = ( { dispatch }, { siteId }, newProduct ) =>
 	dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
 
-export const deleteProduct = ( { dispatch }, { siteId }, next, deletedProduct ) =>
+export const deleteProduct = ( { dispatch }, { siteId }, deletedProduct ) =>
 	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
 
-export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
+export const listProduct = ( { dispatch }, { siteId }, product ) => {
 	if ( ! isValidSimplePaymentsProduct( product ) ) {
 		return;
 	}
@@ -230,7 +231,7 @@ export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
 	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
 };
 
-export const listProducts = ( { dispatch }, { siteId }, next, { posts: products } ) => {
+export const listProducts = ( { dispatch }, { siteId }, { posts: products } ) => {
 	const validProducts = filter( products, isValidSimplePaymentsProduct );
 
 	dispatch( receiveProductsList( siteId, validProducts.map( customPostToProduct ) ) );

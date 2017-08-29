@@ -78,6 +78,7 @@ $z-layers: (
 		'.thank-you-card__header': 1,
 		'.comment-detail.card.is-collapsed:hover': 1,
 		'.comment-detail.card.accessible-focus:focus': 1,
+		'.web-preview__loading-message-wrapper': 1,
 		'.web-preview__inner .spinner-line': 1,
 		'.editor-sidebar': 2,
 		'.editor-action-bar .editor-status-label': 2,
@@ -165,6 +166,7 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
+		'.webpack-build-monitor': 99999999,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),
 	'.ribbon': (

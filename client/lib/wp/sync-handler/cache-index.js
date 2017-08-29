@@ -3,10 +3,7 @@
  */
 import debugFactory from 'debug';
 import ms from 'ms';
-import negate from 'lodash/negate';
-import matchesProperty from 'lodash/matchesProperty';
-import filter from 'lodash/filter';
-import difference from 'lodash/difference';
+import { difference, filter, matchesProperty, negate } from 'lodash';
 
 /**
  * Internal dependencies

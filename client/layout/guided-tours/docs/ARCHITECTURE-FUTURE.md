@@ -2,6 +2,39 @@
 
 As Guided Tours as a framework is made available to parties interested in [writing their own tours](TUTORIAL.md), it seemed pertinent to gather some thoughts and make them available in this document in the hope of reducing any sort of [bus factor](https://en.wikipedia.org/wiki/Bus_factor).
 
+
+## Lazy loading
+
+In the interest of keeping Calypso's main bundles small and free of pieces that users aren't likely to need, it becomes important that Guided Tours be lazily loaded. Right now, the obvious offenses are:
+
+- All tour configs — comprised of their views and their logic — are systematically loaded, even though in most cases a user will only see 0 or 1 tour in one session.
+- Even if no tour is ever triggered, all of the Guided Tours apparatus is loaded, notably a set of components that will never be rendered.
+- Even if a tour is indeed to be triggered, it isn't critical that it be showed the very moment Calypso is loaded, and thus the loading of Guided Tours can be deferred.
+
+As of August 2017, Guided Tours impacts Calypso's main bundle `build` as follows:
+
+- `layout/guided-tours`, which includes the view layer and its helpers, as well as individual tour configs: 76 KB stat size, 43 KB parsed, 9 KB gzipped
+- `state/ui/action-log`, for which `npm run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 2.5 KB or 1 KB gzipped
+- `state/ui/guided-tours`, for which `npm run analyze-bundles` doesn't provided fine-grained data, but whose raw source, excluding `test`, clocks at 15 KB or 4 KB gzipped
+
+We don't yet support lazy loading of branches of state, and ultimately `state/ui/action-log` has to be gathering information and `state/ui/guided-tours` has to be running selectors to determine if there is a tour to trigger — luckily, it is also the smaller piece.
+
+However, the rest can be lazy-loaded.
+
+### The easy chunk
+
+The first step would be to simply lazily load all of `<GuidedTours />`, the root element rendered in `layout`. Only proper testing of this will reveal what practical gains can be had.
+
+### Finer-grained chunks
+
+`layout/guided-tours` is expected to grow as more tours are added. Ideally, we'd be able to determine whether to trigger a tour and only then load the steps for that tour. The prerequisite for making this happen is that a tour's _triggering conditions_ be available in one chunk — the base chunk of Guided Tours — while the rest of the tour (the steps, which contain their logic for skipping and continuing along with the actual UI fragments) would be available in a smaller separate chunk.
+
+In my mind, there are two ways to achieve this:
+
+- Simply decouple the logic manually by going through every tour config and porting that tour's top-level attributes (`name, version, path, when`) into a common place. Pro: easy enough. Con: requires a change of GT's developer interface.
+- Have a Webpack loader programatically group the tours' triggering conditions in a module. Prior art can be found in `server/bundler`, notably [`loader`][bundlerloader], which rewrites `sections.js`. Pro: "magic", doesn't require tour authors to think about chunking and write their configs in separate places. Con: "magic", harder to implement, has the potential to generate confusion.
+
+
 ## State-aware steps
 
 When the day comes that we decide we need proper dynamic, state-aware steps for Guided Tours, [PR #10436][editortourpr] will contain useful material to inform that enhancement; notably, the diff at hand and the last couple of comments before the closing of the pull request. In a nutshell:
@@ -161,6 +194,7 @@ With this distinction, assuming we could keep `relevantTourEntryTypes` small, ma
 
 <a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
 
+[bundlerloader]: https://github.com/Automattic/wp-calypso/blob/8d81eb6e9e58e2de221fb9582d6fec81241d2e4c/server/bundler/loader.js
 [editortourpr]: https://github.com/Automattic/wp-calypso/pull/10436#issuecomment-273854187
 [architecture]: ./ARCHITECTURE.md
 [relevanttypes]: https://github.com/Automattic/wp-calypso/blob/25cdc9141129757530c66b3b2525c9fd3a0aebb8/client/state/ui/action-log/reducer.js#L19-L27

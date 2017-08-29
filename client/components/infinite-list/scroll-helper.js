@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
 const debug = debugFactory( 'calypso:infinite-list:helper' );
 
 // Scrolling algorithm extracted as separate object

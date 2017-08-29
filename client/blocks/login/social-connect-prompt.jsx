@@ -13,8 +13,8 @@ import SocialLogo from 'social-logos';
 import Button from 'components/button';
 import Card from 'components/card';
 import {
-	getLinkingSocialToken,
-	getLinkingSocialService,
+	getSocialAccountLinkAuthInfo,
+	getSocialAccountLinkService,
 	getRedirectTo,
 } from 'state/login/selectors';
 import { connectSocialUser } from 'state/login/actions';
@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {
-		linkingSocialToken: PropTypes.string,
+		linkingSocialAuthInfo: PropTypes.object,
 		linkingSocialService: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -31,7 +31,7 @@ class SocialConnectPrompt extends Component {
 
 	handleClick = ( event ) => {
 		const {
-			linkingSocialToken,
+			linkingSocialAuthInfo,
 			linkingSocialService,
 			onSuccess,
 			redirectTo,
@@ -39,7 +39,7 @@ class SocialConnectPrompt extends Component {
 
 		event.preventDefault();
 
-		this.props.connectSocialUser( linkingSocialService, linkingSocialToken, redirectTo )
+		this.props.connectSocialUser( linkingSocialAuthInfo, redirectTo )
 			.then(
 				() => {
 					this.props.recordTracksEvent( 'calypso_login_social_connect_success', {
@@ -105,8 +105,8 @@ class SocialConnectPrompt extends Component {
 
 export default connect(
 	( state ) => ( {
-		linkingSocialService: getLinkingSocialService( state ),
-		linkingSocialToken: getLinkingSocialToken( state ),
+		linkingSocialAuthInfo: getSocialAccountLinkAuthInfo( state ),
+		linkingSocialService: getSocialAccountLinkService( state ),
 		redirectTo: getRedirectTo( state ),
 	} ),
 	{

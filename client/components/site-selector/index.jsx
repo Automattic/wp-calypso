@@ -1,21 +1,15 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import {
-	filter,
-	flow,
-	get,
-	includes,
-	keyBy,
-	noop,
-	size,
-} from 'lodash';
+import { filter, flow, get, includes, keyBy, noop, size } from 'lodash';
 import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
@@ -76,13 +70,13 @@ class SiteSelector extends Component {
 		selected: null,
 		onClose: noop,
 		onSiteSelect: noop,
-		groups: false
+		groups: false,
 	};
 
 	state = {
 		highlightedIndex: -1,
 		showSearch: false,
-		isKeyboardEngaged: false
+		isKeyboardEngaged: false,
 	};
 
 	reset() {
@@ -93,18 +87,21 @@ class SiteSelector extends Component {
 		}
 	}
 
-	onSearch = ( terms ) => {
+	onSearch = terms => {
 		this.props.searchSites( terms );
 
 		this.setState( {
-			highlightedIndex: ( terms ? 0 : -1 ),
-			showSearch: ( terms ? true : this.state.showSearch ),
-			isKeyboardEngaged: true
+			highlightedIndex: terms ? 0 : -1,
+			showSearch: terms ? true : this.state.showSearch,
+			isKeyboardEngaged: true,
 		} );
 	};
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.isKeyboardEngaged && prevState.highlightedIndex !== this.state.highlightedIndex ) {
+		if (
+			this.state.isKeyboardEngaged &&
+			prevState.highlightedIndex !== this.state.highlightedIndex
+		) {
 			this.scrollToHighlightedSite();
 		}
 	}
@@ -115,7 +112,7 @@ class SiteSelector extends Component {
 			const highlightedSiteElement = ReactDom.findDOMNode( this.refs.highlightedSite );
 			if ( highlightedSiteElement ) {
 				scrollIntoView( highlightedSiteElement, selectorElement, {
-					onlyScrollIfNeeded: true
+					onlyScrollIfNeeded: true,
 				} );
 			} else {
 				selectorElement.scrollTop = 0;
@@ -144,7 +141,7 @@ class SiteSelector extends Component {
 		return { highlightedSiteId, highlightedIndex };
 	}
 
-	onKeyDown = ( event ) => {
+	onKeyDown = event => {
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -206,7 +203,7 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = ( event ) => {
+	onAllSitesSelect = event => {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -229,12 +226,11 @@ class SiteSelector extends Component {
 		this.lastMouseHover = null;
 	};
 
-	onMouseMove = ( event ) => {
+	onMouseMove = event => {
 		// we need to test here if cursor position was actually moved, because
 		// mouseMove event can also be triggered by scrolling the parent element
 		// and we scroll that element via keyboard access
-		if ( event.pageX !== this.lastMouseMoveX ||
-					event.pageY !== this.lastMouseMoveY ) {
+		if ( event.pageX !== this.lastMouseMoveX || event.pageY !== this.lastMouseMoveY ) {
 			this.lastMouseMoveY = event.pageY;
 			this.lastMouseMoveX = event.pageX;
 
@@ -248,14 +244,17 @@ class SiteSelector extends Component {
 		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
 			( site === ALL_SITES && selectedSite === null ) ||
-			( selectedSite === site.ID ) ||
-			( selectedSite === site.domain ) ||
-			( selectedSite === site.slug )
+			selectedSite === site.ID ||
+			selectedSite === site.domain ||
+			selectedSite === site.slug
 		);
 	}
 
 	isHighlighted( siteId ) {
-		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex;
+		return (
+			this.state.isKeyboardEngaged &&
+			this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex
+		);
 	}
 
 	shouldShowGroups() {
@@ -293,7 +292,11 @@ class SiteSelector extends Component {
 		const siteElements = sites.map( this.renderSite, this );
 
 		if ( ! siteElements.length ) {
-			return <div className="site-selector__no-results">{ this.props.translate( 'No sites found' ) }</div>;
+			return (
+				<div className="site-selector__no-results">
+					{ this.props.translate( 'No sites found' ) }
+				</div>
+			);
 		}
 
 		return siteElements;
@@ -344,7 +347,12 @@ class SiteSelector extends Component {
 		const sitesById = keyBy( this.props.sites, 'ID' );
 		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
 
-		if ( ! sites || this.props.sitesFound || ! this.shouldShowGroups() || this.props.visibleSiteCount <= 11 ) {
+		if (
+			! sites ||
+			this.props.sitesFound ||
+			! this.shouldShowGroups() ||
+			this.props.visibleSiteCount <= 11
+		) {
 			return null;
 		}
 
@@ -354,12 +362,16 @@ class SiteSelector extends Component {
 			return null;
 		}
 
-		return <div className="site-selector__recent">{ recentSites }</div>;
+		return (
+			<div className="site-selector__recent">
+				{ recentSites }
+			</div>
+		);
 	}
 
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
-		const selectorClass = classNames( 'site-selector', 'sites-list', {
+		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
@@ -368,7 +380,11 @@ class SiteSelector extends Component {
 		this.visibleSites = [];
 
 		return (
-			<div className={ selectorClass } onMouseMove={ this.onMouseMove } onMouseLeave={ this.onMouseLeave }>
+			<div
+				className={ selectorClass }
+				onMouseMove={ this.onMouseMove }
+				onMouseLeave={ this.onMouseLeave }
+			>
 				<Search
 					ref="siteSearch"
 					onSearch={ this.onSearch }
@@ -383,7 +399,8 @@ class SiteSelector extends Component {
 					{ this.renderAllSites() }
 					{ this.renderRecentSites() }
 					{ this.renderSites() }
-					{ hiddenSitesCount > 0 && ! this.props.sitesFound &&
+					{ hiddenSitesCount > 0 &&
+						! this.props.sitesFound &&
 						<span className="site-selector__hidden-sites-message">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
@@ -391,21 +408,22 @@ class SiteSelector extends Component {
 								{
 									count: hiddenSitesCount,
 									args: {
-										hiddenSitesCount: hiddenSitesCount
+										hiddenSitesCount: hiddenSitesCount,
 									},
 									components: {
 										br: <br />,
-										a: <a
-											href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-											className="site-selector__manage-hidden-sites"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									}
+										a: (
+											<a
+												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+												className="site-selector__manage-hidden-sites"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
 								}
 							) }
-						</span>
-					}
+						</span> }
 				</div>
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
@@ -413,11 +431,10 @@ class SiteSelector extends Component {
 	}
 }
 
-const navigateToSite = ( siteId, {
-	allSitesPath,
-	allSitesSingleUser,
-	siteBasePath,
-} ) => ( dispatch, getState ) => {
+const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) => (
+	dispatch,
+	getState
+) => {
 	const state = getState();
 	const pathname = getPathnameForSite();
 	if ( pathname ) {
@@ -442,7 +459,7 @@ const navigateToSite = ( siteId, {
 
 	function getSiteBasePath( site ) {
 		let path = siteBasePath;
-		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+		const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
 
 		// Default posts to /posts/my when possible and /posts when not
 		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
@@ -467,7 +484,7 @@ const navigateToSite = ( siteId, {
 	}
 };
 
-const mapState = ( state ) => {
+const mapState = state => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
@@ -484,8 +501,6 @@ const mapState = ( state ) => {
 	};
 };
 
-export default flow(
-	localize,
-	searchSites,
-	connect( mapState, { navigateToSite } )
-)( SiteSelector );
+export default flow( localize, searchSites, connect( mapState, { navigateToSite } ) )(
+	SiteSelector
+);

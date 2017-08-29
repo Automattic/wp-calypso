@@ -102,6 +102,8 @@ a.web-preview__external.button {
 
 	cursor: pointer;
 
+	border-radius: 0;
+
 	&:hover {
 		color: $gray-dark;
 	}
@@ -242,9 +244,11 @@ a.web-preview__external.button {
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
 	margin: 0 auto;
+	pointer-events: none;
 
 	.is-loaded & {
 		opacity: 1;
+		pointer-events: all;
 	}
 }
 
@@ -285,27 +289,28 @@ a.web-preview__external.button {
 	position: relative;
 }
 
-.web-preview .spinner {
-	margin-left: -10px;
+.web-preview__loading-message-wrapper {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 	position: absolute;
-		top: 45%;
-		left: 50%;
-}
-
-.web-preview .pulsing-dot {
-	right: 24px;
-	top: 22px;
-	left: initial;
+	height: 100%;
+	width: 100%;
+	z-index: z-index( 'root', '.web-preview__loading-message-wrapper' );
+	text-align: center;
 }
 
 .web-preview__loading-message {
-	color: $gray;
-	font-size: 18px;
+	color: $gray-text-min;
 	font-weight: 300;
-	text-align: center;
+	font-size: 16px;
+}
+
+.web-preview__loading-message strong {
+	color: $gray-text-min;
 	display: block;
-	margin: 48px 0;
-	height: 100%;
+	font-size: 24px;
+	margin-bottom: 5px;
 }
 
 .web-preview__inner .spinner-line {

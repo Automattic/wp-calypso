@@ -4,7 +4,7 @@
 import url from 'url';
 import path from 'path';
 import photon from 'photon';
-import { includes, omitBy, startsWith, uniqueId } from 'lodash';
+import { includes, omitBy, startsWith } from 'lodash';
 import { isUri } from 'valid-url';
 
 /**
@@ -20,6 +20,7 @@ import {
 	GalleryDefaultAttrs
 } from './constants';
 import Shortcode from 'lib/shortcode';
+import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Module variables
@@ -543,6 +544,7 @@ const MediaUtils = {
 				mime_type: file.mime_type,
 				guid: file.URL,
 				URL: file.URL,
+				external: true,
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

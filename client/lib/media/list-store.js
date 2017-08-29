@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	map = require( 'lodash/map' ),
-	isEqual = require( 'lodash/isEqual' );
+import { assign, isEqual, map, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -144,6 +141,22 @@ MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 		//
 		// See: https://core.trac.wordpress.org/browser/tags/4.2.2/src/wp-includes/query.php#L2091
 		matches = item.title && -1 !== item.title.toLowerCase().indexOf( query.search.toLowerCase() );
+	}
+
+	if ( query.source === 'google_photos' && matches ) {
+		// On uploading external images, the stores will receive the CREATE_MEDIA_ITEM  event
+		// and will update the list of media including the new one, but we don't want this new media
+		// to be shown in the google photos list - hence the filtering.
+		//
+		// One use case where this happened was:
+		//
+		// - go to site icon settings and open google modal
+		// - select and image and tap continue
+		// - cancel the editing process and you'll be send back to the google modal
+		//
+		// without this change, the new upload would be shown there.
+
+		matches = ! item.external;
 	}
 
 	if ( query.mime_type && matches ) {

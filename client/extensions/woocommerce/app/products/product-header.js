@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { isObject } from 'lodash';
@@ -87,8 +88,8 @@ ProductHeader.propTypes = {
 	viewEnabled: PropTypes.bool,
 	onTrash: PropTypes.func,
 	onSave: PropTypes.oneOfType( [
-		React.PropTypes.func,
-		React.PropTypes.bool,
+		PropTypes.func,
+		PropTypes.bool,
 	] ),
 };
 

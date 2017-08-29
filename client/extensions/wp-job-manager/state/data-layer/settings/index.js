@@ -26,7 +26,7 @@ export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) =>
+export const updateExtensionSettings = ( { dispatch }, { siteId }, { data } ) =>
 	dispatch( updateSettings( siteId, fromApi( data ) ) );
 
 export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
@@ -48,7 +48,7 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 	}, action ) );
 };
 
-export const announceSuccess = ( { dispatch }, { form, siteId }, next, { data } ) => {
+export const announceSuccess = ( { dispatch }, { form, siteId }, { data } ) => {
 	const updatedData = fromApi( data );
 
 	dispatch( stopSave( form ) );

@@ -12,7 +12,7 @@ import EmptyContent from 'components/empty-content';
 function PostTypeForbidden( { translate } ) {
 	return (
 		<EmptyContent
-			illustration="/calypso/images/drake/drake-whoops.svg"
+			illustration="/calypso/images/illustrations/whoops.svg"
 			title={ translate( 'You need permission to manage this post type' ) }
 			line={ translate( 'Ask your site administrator to grant you access' ) } />
 	);

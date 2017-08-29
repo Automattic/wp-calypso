@@ -27,7 +27,7 @@ export function requestPostEmailUnsubscription( { dispatch }, action ) {
 	);
 }
 
-export function receivePostEmailUnsubscription( store, action, next, response ) {
+export function receivePostEmailUnsubscription( store, action, response ) {
 	// validate that it worked
 	// if it did, just swallow this response, as we don't need to pass it along.
 	const subscribed = !! ( response && response.subscribed );

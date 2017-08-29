@@ -4,11 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import isEqual from 'lodash/isEqual';
-import includes from 'lodash/includes';
-import difference from 'lodash/difference';
-import range from 'lodash/range';
-import size from 'lodash/size';
+import { difference, get, includes, isEqual, range, size } from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
@@ -23,13 +19,15 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
+import { getOpenSharePanels } from 'state/ui/post-type-list/selectors';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 
 /**
  * Constants
  */
-const POST_ROW_HEIGHT = 86;
+const DEFAULT_POST_ROW_HEIGHT = 86;
+const DEFAULT_SHARE_POST_ROW_HEIGHT = 300;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 
@@ -49,6 +47,11 @@ class PostTypeList extends Component {
 		this.cellRendererWrapper = this.cellRendererWrapper.bind( this );
 		this.renderPlaceholder = this.renderPlaceholder.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
+		this.setListRef = this.setListRef.bind( this );
+		this.handleHeightChange = this.handleHeightChange.bind( this );
+		this.getPostRowHeight = this.getPostRowHeight.bind( this );
+
+		this.rowHeights = {};
 
 		this.state = {
 			requestedPages: this.getInitialRequestedPages( this.props )
@@ -115,7 +118,7 @@ class PostTypeList extends Component {
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostItem key={ globalId } globalId={ globalId } />;
+		return <PostItem key={ globalId } globalId={ globalId } onHeightChange={ this.handleHeightChange } />;
 	}
 
 	cellRendererWrapper( { key, style, ...rest } ) {
@@ -124,6 +127,34 @@ class PostTypeList extends Component {
 				{ this.renderPostRow( rest ) }
 			</div>
 		);
+	}
+
+	setListRef( list ) {
+		this.listRef = list;
+	}
+
+	handleHeightChange( { globalId, nodeHeight } ) {
+		this.rowHeights[ globalId ] = nodeHeight;
+
+		setTimeout( () => {
+			this.listRef.recomputeRowHeights( 0 );
+		}, 1 );
+	}
+
+	getPostRowHeight( { index } ) {
+		const { posts, openShares } = this.props;
+
+		if ( ! posts || ! posts[ index ] || ! posts[ index ].global_ID ) {
+			return DEFAULT_POST_ROW_HEIGHT;
+		}
+
+		const globalId = posts[ index ].global_ID;
+
+		if ( openShares && openShares.indexOf( globalId ) > -1 ) {
+			return get( this.rowHeights, globalId ) || DEFAULT_SHARE_POST_ROW_HEIGHT;
+		}
+
+		return DEFAULT_POST_ROW_HEIGHT;
 	}
 
 	render() {
@@ -157,8 +188,9 @@ class PostTypeList extends Component {
 										height={ height }
 										width={ width }
 										onRowsRendered={ this.setRequestedPages }
+										ref={ this.setListRef }
 										rowRenderer={ this.cellRendererWrapper }
-										rowHeight={ POST_ROW_HEIGHT }
+										rowHeight={ this.getPostRowHeight }
 										rowCount={ size( this.props.posts ) } />
 								) }
 							</AutoSizer>
@@ -174,10 +206,12 @@ class PostTypeList extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const lastPage = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+	const openShares = getOpenSharePanels( state );
 
 	return {
 		siteId,
 		lastPage,
+		openShares,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		requestingLastPage: isRequestingSitePostsForQuery( state, siteId, { ...ownProps.query, page: lastPage } )
 	};

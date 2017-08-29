@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import qs from 'qs';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies

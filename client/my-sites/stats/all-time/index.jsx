@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
 
 /**

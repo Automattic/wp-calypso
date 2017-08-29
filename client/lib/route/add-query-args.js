@@ -2,7 +2,7 @@
  * External dependencies
  */
 import urlModule from 'url';
-import pickBy from 'lodash/pickBy';
+import { pickBy } from 'lodash';
 
 export default function( args, url ) {
 	if ( 'object' !== typeof args ) {

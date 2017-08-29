@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
@@ -43,7 +44,7 @@ class AccountSettingsRootView extends Component {
 	render() {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
-		if ( ! formMeta ) {
+		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
 			return null;
 		}
 		const setValue = ( key, value ) => ( this.props.setFormDataValue( siteId, key, value ) );

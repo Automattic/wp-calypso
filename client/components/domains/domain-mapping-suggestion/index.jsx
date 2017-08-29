@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -12,12 +13,12 @@ import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'lib/cart-values/
 
 class DomainMappingSuggestion extends React.Component {
 	static propTypes = {
-		isSignupStep: React.PropTypes.bool,
-		cart: React.PropTypes.object,
-		products: React.PropTypes.object.isRequired,
-		onButtonClick: React.PropTypes.func.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+		isSignupStep: PropTypes.bool,
+		cart: PropTypes.object,
+		products: PropTypes.object.isRequired,
+		onButtonClick: PropTypes.func.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] )
 	};
 
 	render() {

@@ -1,15 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import classnames from 'classnames';
 
-const FormTextarea = ( { className, children, ...otherProps } ) => (
-	<textarea { ...otherProps }
-		className={ classnames( className, 'form-textarea' ) }
+const FormTextarea = ( { className, isError, isValid, children, ...otherProps } ) =>
+	<textarea
+		{ ...otherProps }
+		className={ classnames( className, 'form-textarea', {
+			'is-error': isError,
+			'is-valid': isValid,
+		} ) }
 	>
 		{ children }
-	</textarea>
-);
+	</textarea>;
 
 export default FormTextarea;

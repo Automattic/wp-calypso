@@ -407,7 +407,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderExtraDetailsForm( tld ) {
 		return (
-			<ExtraInfoForm tld={ tld } countriesList={ countriesList } >
+			<ExtraInfoForm tld={ tld } >
 				{ this.renderSubmitButton() }
 			</ExtraInfoForm>
 		);

@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import sectionsModule from 'sections';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { settingsPath } from '../../../app/util';
 
 const ZoneItem = ( { siteSlug, zone } ) => {
-	const sections = sectionsModule.get();
-	const section = find( sections, ( value => value.name === 'zoninator' ) );
-	const settingsPath = get( section, 'settings_path' );
-
 	const { slug, name, description } = zone;
 
 	return (
 		<CompactCard href={ `${ settingsPath }/${ siteSlug }/${ slug }` }>
 			<div className="zones-dashboard__zone-label">{ name }</div>
-			<div className="zones-dashboard__zone-description"><small>{ description }</small></div>
+			<div className="zones-dashboard__zone-description">
+				<small className="zones-dashboard__zone-description-text">
+					{ description }
+				</small>
+			</div>
 		</CompactCard>
 	);
 };

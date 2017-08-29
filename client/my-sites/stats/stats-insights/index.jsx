@@ -49,7 +49,7 @@ const StatsInsights = ( props ) => {
 			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation
-				isJetpack={ isJetpack }
+				siteId={ siteId }
 				section="insights"
 				slug={ siteSlug }
 			/>

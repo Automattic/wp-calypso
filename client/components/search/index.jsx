@@ -4,8 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import debounce from 'lodash/debounce';
-import noop from 'lodash/noop';
+import { debounce, noop } from 'lodash';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 

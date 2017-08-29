@@ -22,9 +22,11 @@ import {
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
 	isFormDisabled,
-	getLinkingSocialUser,
-	getLinkingSocialService,
-	getLinkingSocialToken,
+	getSocialAccountLinkAuthInfo,
+	getCreateSocialAccountError,
+	getSocialAccountIsLinking,
+	getSocialAccountLinkEmail,
+	getSocialAccountLinkService,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -295,42 +297,87 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getLinkingSocialUser()', () => {
+	describe( 'getSocialAccountLinkAuthInfo()', () => {
 		it( 'should return null if there is no information yet', () => {
-			expect( getLinkingSocialUser( undefined ) ).to.be.null;
+			expect( getSocialAccountLinkAuthInfo( undefined ) ).to.be.null;
 		} );
 
-		it( 'should return the social user account when available', () => {
-			const account = 'foo@bar.baz';
-			expect( getLinkingSocialUser( {
+		it( 'should return the social account authentication information when available', () => {
+			const socialAccountInfo = {
+				service: 'google',
+				access_token: 'a_token',
+				id_token: 'another_token',
+			};
+			expect( getSocialAccountLinkAuthInfo( {
 				login: {
-					socialAccount: {
-						email: account,
+					socialAccountLink: {
+						authInfo: socialAccountInfo,
 					}
 				}
-			} ) ).to.eql( account );
+			} ) ).to.deep.eql( socialAccountInfo );
+		} );
+	} );
+
+	describe( 'getCreateSocialAccountError()', () => {
+		it( 'return null if create error not set', () => {
+			expect(
+				getCreateSocialAccountError( {
+					login: {
+						socialAccount: {
+						}
+					}
+				} )
+			).to.be.null;
 		} );
 
-		it( 'should return the social service when available', () => {
-			const service = 'google';
-			expect( getLinkingSocialService( {
-				login: {
-					socialAccount: {
-						service: service,
-					}
-				}
-			} ) ).to.eql( service );
-		} );
+		it( 'return error object if create error is set', () => {
+			const createError = { message: 'hello' };
 
-		it( 'should return the social account token when available', () => {
-			const token = 'this-is-probably-not-a-real-token';
-			expect( getLinkingSocialToken( {
-				login: {
-					socialAccount: {
-						token: token,
+			expect(
+				getCreateSocialAccountError( {
+					login: {
+						socialAccount: {
+							createError
+						}
 					}
+				} )
+			).to.eql( createError );
+		} );
+	} );
+
+	describe( 'getSocialAccountIsLinking()', () => {
+		it( 'return social account linking status', () => {
+			const socialAccountLink = { isLinking: true };
+
+			expect( getSocialAccountIsLinking( {
+				login: {
+					socialAccountLink
 				}
-			} ) ).to.eql( token );
+			} ) ).to.eql( true );
+		} );
+	} );
+
+	describe( 'getSocialAccountLinkEmail()', () => {
+		it( 'return social account linking email', () => {
+			const socialAccountLink = { email: 'test@hello.world' };
+
+			expect( getSocialAccountLinkEmail( {
+				login: {
+					socialAccountLink
+				}
+			} ) ).to.eql( 'test@hello.world' );
+		} );
+	} );
+
+	describe( 'getSocialAccountLinkService()', () => {
+		it( 'return social account linking service', () => {
+			const socialAccountLink = { authInfo: { service: 'google' } };
+
+			expect( getSocialAccountLinkService( {
+				login: {
+					socialAccountLink
+				}
+			} ) ).to.eql( 'google' );
 		} );
 	} );
 } );

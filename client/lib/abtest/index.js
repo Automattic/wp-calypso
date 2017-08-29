@@ -2,10 +2,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes, keys, reduce, some, map, every, isArray } from 'lodash';
+import { every, get, includes, isArray, keys, map, reduce, some } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies

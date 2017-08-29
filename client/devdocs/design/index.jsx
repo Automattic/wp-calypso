@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,6 +76,8 @@ import EmptyContent from 'components/empty-content/docs/example';
 import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import ListEnd from 'components/list-end/docs/example';
+import Wizard from 'components/wizard/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -168,10 +170,12 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<Suggestions />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
+					<Wizard />
 				</Collection>
 			</Main>
 		);

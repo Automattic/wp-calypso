@@ -29,7 +29,7 @@ export const activateSucceeded = ( { dispatch }, { siteId } ) => {
 	dispatch( rewindActivateSuccess( siteId ) );
 };
 
-export const activateFailed = ( { dispatch }, { siteId }, next, { message } ) => {
+export const activateFailed = ( { dispatch }, { siteId }, { message } ) => {
 	dispatch( errorNotice( translate(
 		'Problem activating rewind: %(message)s',
 		{ args: { message } }

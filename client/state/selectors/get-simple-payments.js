@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,32 +9,37 @@ import { get, find } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
- * Get all Simple Payment or the one specified by `simplePaymentId`
+ * Get all Simple Payment or the one specified by `simplePaymentId`. They will be returned ordered by
+ * ID from the largest to the lowest number (the same as ordering by creation date DESC).
  *
  * @param {Object} state           Global state tree
  * @param {int}    siteId          Site which the Simple Payment belongs to.
  * @param {int}    simplePaymentId The ID of the Simple Payment to get. Optional.
  * @return {Array|Object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
  */
-export default createSelector(
-	( state, siteId, simplePaymentId = null ) => {
-		if ( ! siteId ) {
-			return null;
-		}
+export default createSelector( ( state, siteId, simplePaymentId = null ) => {
+	if ( ! siteId ) {
+		return null;
+	}
 
-		const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
+	const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
 
-		if ( ! simplePaymentId ) {
-			return simplePaymentProducts;
-		}
+	if ( ! simplePaymentProducts ) {
+		return null;
+	}
 
-		const simplePaymentProduct = find( simplePaymentProducts, ( product ) => product.ID === simplePaymentId );
+	if ( ! simplePaymentId ) {
+		return orderBy( simplePaymentProducts, 'ID', 'desc' );
+	}
 
-		if ( ! simplePaymentProduct ) {
-			return null;
-		}
+	const simplePaymentProduct = find(
+		simplePaymentProducts,
+		product => product.ID === simplePaymentId,
+	);
 
-		return simplePaymentProduct;
-	},
-	( state ) => state.simplePayments.productList.items
-);
+	if ( ! simplePaymentProduct ) {
+		return null;
+	}
+
+	return simplePaymentProduct;
+}, state => state.simplePayments.productList.items );

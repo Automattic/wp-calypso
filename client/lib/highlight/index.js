@@ -1,8 +1,8 @@
+/**
+ * External dependencies
+ */
+import { compact, toArray } from 'lodash';
 var debug = require( 'debug' )( 'calypso:highlight' );
-
-/** External Dependencies **/
-var compact = require( 'lodash/compact' ),
-	toArray = require( 'lodash/toArray' );
 
 /**
  * @private

@@ -4,9 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import identity from 'lodash/identity';
-import memoize from 'lodash/memoize';
-import transform from 'lodash/transform';
+import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +16,8 @@ import Card from 'components/card';
 import BlogImage from '../design-type-with-store/blog-image';
 import PageImage from '../design-type-with-store/page-image';
 import GridImage from '../design-type-with-store/grid-image';
+
+import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -120,6 +120,8 @@ export class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
+		this.props.setDesignType( designType );
+
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
@@ -130,6 +132,7 @@ export class DesignTypeStep extends Component {
 export default connect(
 	null,
 	{
-		recordTracksEvent
+		recordTracksEvent,
+		setDesignType,
 	}
 )( localize( DesignTypeStep ) );

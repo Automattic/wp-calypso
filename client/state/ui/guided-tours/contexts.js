@@ -10,6 +10,7 @@ import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
 import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { getAll as getAllMedia } from 'lib/media/store';
 import {
 	getSectionName,
 	getSelectedSite,
@@ -77,6 +78,16 @@ export const isNewUser = state => {
 };
 
 /**
+ * Returns true if the user is NOT considered "new" (less than a week since registration)
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if user is NOT new, false otherwise
+ */
+export const isNotNewUser = state => {
+	return ! isNewUser( state );
+};
+
+/**
  * Returns a selector that tests if the user is older than a given time
  *
  * @param {Number} age Number of milliseconds
@@ -138,6 +149,21 @@ export const isSelectedSitePreviewable = state =>
  */
 export const isSelectedSiteCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+
+/**
+ * Returns true if the selected site has any media files.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if site has any media files, false otherwise.
+*/
+export const doesSelectedSiteHaveMediaFiles = state => {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		return false;
+	}
+	const media = getAllMedia( siteId );
+	return media && media.length && media.length > 0;
+};
 
 /**
  * Returns a selector that tests whether an A/B test is in a given variant.

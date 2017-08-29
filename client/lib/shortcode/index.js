@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var memoize = require( 'lodash/memoize' ),
-	isEqual = require( 'lodash/isEqual' );
+import { isEqual, memoize } from 'lodash';
 
 /**
  * Module variables

@@ -1,11 +1,7 @@
 /**
  * Exernal dependencies
  */
-import isEmpty from 'lodash/isEmpty';
-import find from 'lodash/find';
-import indexOf from 'lodash/indexOf';
-import pick from 'lodash/pick';
-import merge from 'lodash/merge';
+import { find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies

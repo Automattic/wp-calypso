@@ -162,7 +162,8 @@ export class Notifications extends Component {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
 					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
-						siteId, postId
+						site_id: siteId,
+						post_id: postId,
 					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }` );
 				} else {
@@ -173,7 +174,9 @@ export class Notifications extends Component {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
 					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
-						siteId, postId, commentId
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId
 					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 				} else {
@@ -183,7 +186,9 @@ export class Notifications extends Component {
 			OPEN_SITE: [ ( store, { siteId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_open_site', { siteId } );
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+						site_id: siteId,
+					} );
 					page( `/read/blogs/${ siteId }` );
 				} else {
 					window.open( href, '_blank' );

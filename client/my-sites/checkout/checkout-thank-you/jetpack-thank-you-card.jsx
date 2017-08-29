@@ -5,17 +5,9 @@ import React, { Component } from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import filter from 'lodash/filter';
-import range from 'lodash/range';
+import { difference, filter, get, map, range, reduce, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import {
-	map,
-	reduce,
-	get,
-	difference,
-	some
-} from 'lodash';
 
 /**
  * Internal dependencies

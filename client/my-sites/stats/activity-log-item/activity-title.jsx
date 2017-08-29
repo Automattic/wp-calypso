@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,18 +18,6 @@ class ActivityTitle extends Component {
 			login: PropTypes.string,
 		} ),
 
-		group: PropTypes.oneOf( [
-			'attachment',
-			'comment',
-			'core',
-			'menu',
-			'plugin',
-			'post',
-			'term',
-			'theme',
-			'user',
-			'widget',
-		] ).isRequired,
 		name: PropTypes.string.isRequired,
 
 		object: PropTypes.shape( {
@@ -66,7 +55,7 @@ class ActivityTitle extends Component {
 						previous_version: PropTypes.string,
 						slug: PropTypes.string,
 						version: PropTypes.string,
-					} ),
+					} )
 				),
 			] ),
 
@@ -105,6 +94,7 @@ class ActivityTitle extends Component {
 				external_user_id: PropTypes.string,
 				login: PropTypes.string,
 				wpcom_user_id: PropTypes.number,
+				user_login_attempt: PropTypes.string,
 			} ),
 
 			widget: PropTypes.shape( {
@@ -363,6 +353,15 @@ class ActivityTitle extends Component {
 			}
 
 			/**
+			 * Rewind
+			 * @FIXME: Need data from API and activity to produce relevant titles
+			 */
+			case 'rewind__complete':
+				return 'A rewind was completed.';
+			case 'rewind__error':
+				return 'There was an error during rewind.';
+
+			/**
 			 * Term
 			 */
 			case 'term__created': {
@@ -431,12 +430,16 @@ class ActivityTitle extends Component {
 				return `${ actorName } deleted user ${ userName }.`;
 			}
 			case 'user__failed_login_attempt': {
-				const actorName = this.getActorName();
-				return `${ actorName } attempted and failed to login.`;
+				const userLogin = get(
+					this.props.object,
+					[ 'user', 'user_login_attempt' ],
+					'An unknown user'
+				);
+				return `${ userLogin } attempted and failed to login.`;
 			}
 			case 'user__login': {
-				const actorName = this.getActorName();
-				return `${ actorName } logged in successfully.`;
+				const userName = this.getUserName();
+				return `${ userName } logged in successfully.`;
 			}
 			case 'user__registered': {
 				const actorName = this.getActorName();
@@ -497,7 +500,10 @@ class ActivityTitle extends Component {
 				<div className="activity-log-item__title-title">
 					{ this.renderTitle() }
 				</div>
-				{ subTitle && <div className="activity-log-item__title-subtitle">{ subTitle }</div> }
+				{ subTitle &&
+					<div className="activity-log-item__title-subtitle">
+						{ subTitle }
+					</div> }
 			</div>
 		);
 	}

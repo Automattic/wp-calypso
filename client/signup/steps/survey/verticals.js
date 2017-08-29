@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import shuffle from 'lodash/shuffle';
+import { shuffle } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 const verticals = [

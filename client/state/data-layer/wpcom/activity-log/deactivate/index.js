@@ -29,7 +29,7 @@ export const deactivateSucceeded = ( { dispatch }, { siteId } ) => {
 	dispatch( rewindDeactivateSuccess( siteId ) );
 };
 
-export const deactivateFailed = ( { dispatch }, { siteId }, next, { message } ) => {
+export const deactivateFailed = ( { dispatch }, { siteId }, { message } ) => {
 	dispatch( errorNotice( translate(
 		'Problem deactivating rewind: %(message)s',
 		{ args: { message } }

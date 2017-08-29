@@ -3,9 +3,8 @@
  */
 import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
-import debounce from 'lodash/debounce';
+import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies

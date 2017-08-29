@@ -39,17 +39,24 @@ export const CommentDetailHeader = ( {
 	toggleTrash,
 	translate,
 } ) => {
-	if ( isExpanded ) {
-		return (
-			<div className="comment-detail__header">
-				<Button
-					borderless
-					className="comment-detail__action-collapse"
-					onClick={ toggleExpanded }
-				>
-					<Gridicon icon="cross" />
-				</Button>
+	const author = {
+		avatar_URL: authorAvatarUrl,
+		display_name: authorDisplayName,
+	};
 
+	const classes = classNames( 'comment-detail__header', {
+		'is-preview': ! isExpanded,
+		'is-bulk-edit': isBulkEdit,
+	} );
+
+	const handleFullHeaderClick = isBulkEdit ? toggleSelected : toggleExpanded;
+
+	return (
+		<div
+			className={ classes }
+			onClick={ isExpanded ? noop : handleFullHeaderClick }
+		>
+			{ isExpanded &&
 				<CommentDetailActions
 					edit={ edit }
 					commentIsLiked={ commentIsLiked }
@@ -60,48 +67,50 @@ export const CommentDetailHeader = ( {
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
-			</div>
-		);
-	}
-
-	const author = {
-		avatar_URL: authorAvatarUrl,
-		display_name: authorDisplayName,
-	};
-
-	return (
-		<div
-			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
-			onClick={ isBulkEdit ? toggleSelected : toggleExpanded }
-		>
-			{ isBulkEdit &&
-				<label className="comment-detail__checkbox">
-					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
-				</label>
 			}
-			<div className="comment-detail__author-preview">
-				<Gravatar user={ author } />
-				<div className="comment-detail__author-info">
-					<div className="comment-detail__author-info-element">
-						<strong>
-							{ authorDisplayName }
-						</strong>
-						<span>
-							{ urlToDomainAndPath( authorUrl ) }
-						</span>
+
+			{ ! isExpanded &&
+				<div className="comment-detail__header-content">
+					<div className="comment-detail__author-preview">
+						{ isBulkEdit &&
+							<label className="comment-detail__checkbox">
+								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
+							</label>
+						}
+						<Gravatar user={ author } />
+						<div className="comment-detail__author-info">
+							<div className="comment-detail__author-info-element">
+								<strong>
+									{ authorDisplayName }
+								</strong>
+								<span>
+									{ urlToDomainAndPath( authorUrl ) }
+								</span>
+							</div>
+							<div className="comment-detail__author-info-element">
+								{ translate( 'on %(postTitle)s', { args: {
+									postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+								} } ) }
+							</div>
+						</div>
 					</div>
-					<div className="comment-detail__author-info-element">
-						{ translate( 'on %(postTitle)s', { args: {
-							postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-						} } ) }
-					</div>
+					<AutoDirection>
+						<div className="comment-detail__comment-preview">
+							{ decodeEntities( stripHTML( commentContent ) ) }
+						</div>
+					</AutoDirection>
 				</div>
-			</div>
-			<AutoDirection>
-				<div className="comment-detail__comment-preview">
-					{ decodeEntities( stripHTML( commentContent ) ) }
-				</div>
-			</AutoDirection>
+			}
+
+			{ ! isBulkEdit &&
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					onClick={ isExpanded ? toggleExpanded : noop }
+				>
+					<Gridicon icon="chevron-down" />
+				</Button>
+			}
 		</div>
 	);
 };

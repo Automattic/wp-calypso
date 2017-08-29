@@ -8,7 +8,7 @@ import React, { PropTypes } from 'react';
 // Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 
-const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, name, icon, action } ) => {
+const ThankYouCard = ( { heading, description, descriptionWithHTML, buttonUrl, buttonText, price, name, icon, action } ) => {
 	const renderAction = () => {
 		if ( action ) {
 			return action;
@@ -62,6 +62,7 @@ const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, nam
 				</div>
 				<div className="thank-you-card__description">
 					{ description }
+					{ descriptionWithHTML }
 				</div>
 
 				<div className="thank-you-card__action">
@@ -77,6 +78,7 @@ ThankYouCard.propTypes = {
 	buttonText: PropTypes.string,
 	buttonUrl: PropTypes.string,
 	description: PropTypes.string,
+	descriptionWithHTML: PropTypes.object,
 	heading: PropTypes.string,
 	name: PropTypes.string,
 	price: PropTypes.string,

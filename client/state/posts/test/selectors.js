@@ -32,6 +32,7 @@ import {
 	getSitePostsByTerm
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
@@ -1484,6 +1485,7 @@ describe( 'selectors', () => {
 	describe( 'getPostPreviewUrl()', () => {
 		it( 'should return null if the post is not known', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {}
 				},
@@ -1497,6 +1499,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the post has no URL', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
@@ -1520,6 +1523,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the post is trashed', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
@@ -1545,6 +1549,7 @@ describe( 'selectors', () => {
 
 		it( 'should prefer the post preview URL if available', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
@@ -1571,6 +1576,7 @@ describe( 'selectors', () => {
 
 		it( 'should use post URL if preview URL not available', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
@@ -1596,6 +1602,7 @@ describe( 'selectors', () => {
 
 		it( 'should change http to https if mapped domain', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {
@@ -1633,6 +1640,7 @@ describe( 'selectors', () => {
 
 		it( 'should append preview query argument to non-published posts', () => {
 			const previewUrl = getPostPreviewUrl( {
+				...userState,
 				posts: {
 					queries: {
 						2916284: new PostQueryManager( {

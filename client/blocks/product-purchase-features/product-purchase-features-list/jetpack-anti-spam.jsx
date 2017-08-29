@@ -14,9 +14,9 @@ export default localize( ( { translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="comment"
-				title={ translate( 'Anti-Spam' ) }
+				title={ translate( 'Spam Filtering' ) }
 				description={ translate(
-					'Akismet filters out comment and other forms of spam, so you can focus on more important things.'
+					'Spam is being automatically filtered.'
 				) }
 			/>
 		</div>

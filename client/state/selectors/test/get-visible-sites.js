@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getVisibleSites } from '../';
+import { userState } from './fixtures/user-state';
 
 describe( 'getVisibleSites()', () => {
 	it( 'should return an empty array if no sites in state', () => {
@@ -21,6 +22,7 @@ describe( 'getVisibleSites()', () => {
 
 	it( 'should return the visibles sites in state', () => {
 		const state = {
+			...userState,
 			sites: {
 				items: {
 					2916284: {

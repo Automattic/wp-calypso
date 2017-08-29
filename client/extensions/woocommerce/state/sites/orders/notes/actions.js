@@ -13,12 +13,16 @@ import {
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchNotes = ( siteId, orderId ) => ( dispatch, getState ) => {
+export const fetchNotes = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	if ( areOrderNotesLoaded( state, orderId, siteId ) || areOrderNotesLoading( state, orderId, siteId ) ) {
+	if ( areOrderNotesLoading( state, orderId, siteId ) ) {
+		return;
+	}
+	// Bail if the order notes are loaded, and we don't want to force a refresh
+	if ( ! refresh && areOrderNotesLoaded( state, orderId, siteId ) ) {
 		return;
 	}
 

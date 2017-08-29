@@ -4,10 +4,7 @@
 import React, { Component } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
-import omit from 'lodash/omit';
-import assign from 'lodash/assign';
-import filter from 'lodash/filter';
-import pick from 'lodash/pick';
+import { assign, filter, omit, pick } from 'lodash';
 import page from 'page';
 import { connect } from 'react-redux';
 

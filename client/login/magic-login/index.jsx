@@ -67,9 +67,7 @@ class MagicLogin extends React.Component {
 			</div>
 		);
 
-		const classes = classNames( 'magic-login', {
-			'magic-login__request-link': ! showCheckYourEmail,
-		} );
+		const classes = classNames( 'magic-login', 'magic-login__request-link' );
 
 		return (
 			<Main className={ classes }>

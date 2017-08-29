@@ -73,7 +73,10 @@ class SiteVerification extends Component {
 			this.props.markSaved();
 			this.props.requestSiteSettings( nextProps.siteId );
 			this.refreshSite();
-			this.setState( { isSubmittingForm: false } );
+			this.setState( {
+				isSubmittingForm: false,
+				dirtyFields: Set(),
+			} );
 		}
 
 		// save error
@@ -205,7 +208,9 @@ class SiteVerification extends Component {
 		const {
 			siteId,
 			translate,
+			trackSiteVerificationUpdated
 		} = this.props;
+		const { dirtyFields } = this.state;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
@@ -244,6 +249,22 @@ class SiteVerification extends Component {
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
 		this.props.trackFormSubmitted();
+
+		if ( dirtyFields.has( 'googleCode' ) ) {
+			trackSiteVerificationUpdated( 'google' );
+		}
+
+		if ( dirtyFields.has( 'bingCode' ) ) {
+			trackSiteVerificationUpdated( 'bing' );
+		}
+
+		if ( dirtyFields.has( 'pinterestCode' ) ) {
+			trackSiteVerificationUpdated( 'pinterest' );
+		}
+
+		if ( dirtyFields.has( 'yandexCode' ) ) {
+			trackSiteVerificationUpdated( 'yandex' );
+		}
 	}
 
 	render() {
@@ -437,6 +458,11 @@ export default connect(
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,
+		trackSiteVerificationUpdated: ( service ) => recordTracksEvent(
+			'calypso_seo_tools_site_verification_updated', {
+				service
+			}
+		),
 		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 		activateModule,
 	},

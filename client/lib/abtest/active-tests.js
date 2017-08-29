@@ -68,11 +68,11 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	signupPlansCopyChanges: {
-		datestamp: '20170623',
+	jetpackConnectPlansCopyChanges: {
+		datestamp: '20170728',
 		variations: {
-			original: 0,
-			modified: 100, //Set to 100% while copy is translated
+			original: 50,
+			modified: 50,
 		},
 		defaultVariation: 'original',
 	},
@@ -104,5 +104,14 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	postSignupUpgradeScreen: {
+		datestamp: '20170810',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
 	},
 };

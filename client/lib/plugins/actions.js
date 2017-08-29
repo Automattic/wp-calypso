@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies

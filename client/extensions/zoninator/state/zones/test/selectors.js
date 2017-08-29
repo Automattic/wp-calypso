@@ -82,11 +82,14 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSettings()', () => {
-		const primaryZones = [ {
-			name: 'Foo',
-			description: 'A test zone.',
-		} ];
+	describe( 'getZones()', () => {
+		const primaryZones = {
+			1: {
+				id: 1,
+				name: 'Foo',
+				description: 'A test zone.',
+			},
+		};
 
 		it( 'should return an empty array if no state exists', () => {
 			const state = {
@@ -135,7 +138,7 @@ describe( 'selectors', () => {
 
 			const zones = getZones( state, primarySiteId );
 
-			expect( zones ).to.deep.equal( primaryZones );
+			expect( zones ).to.deep.equal( [ primaryZones[ 1 ] ] );
 		} );
 	} );
 } );

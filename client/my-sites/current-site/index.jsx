@@ -30,6 +30,7 @@ import { getSelectedOrAllSites } from 'state/selectors';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -96,9 +97,14 @@ class CurrentSite extends Component {
 					duration: 10000,
 					button: this.props.translate( 'Complete your purchase' ),
 					href: '/checkout/' + selectedSite.slug,
+					onClick: this.clickStaleCartItemsNotice
 				}
 			);
 		}
+	}
+
+	clickStaleCartItemsNotice = () => {
+		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
 	}
 
 	switchSites = ( event ) => {
@@ -238,5 +244,5 @@ export default connect(
 			sectionName: getSectionName( state ),
 		};
 	},
-	{ setLayoutFocus, infoNotice, removeNotice },
+	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent },
 )( localize( CurrentSite ) );

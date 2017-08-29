@@ -3,13 +3,15 @@ export const itemsSchema = {
 	additionalProperties: false,
 	patternProperties: {
 		'^\\d+$': {
-			type: 'array',
-			items: {
-				type: 'object',
-				term_id: { type: 'integer' },
-				name: { type: 'string' },
-				slug: { type: 'string' },
-				description: { type: 'string' },
+			type: 'object',
+			patternProperties: {
+				'^\\d+$': {
+					type: 'object',
+					id: { type: 'integer' },
+					name: { type: 'string' },
+					slug: { type: 'string' },
+					description: { type: 'string' },
+				}
 			}
 		}
 	}

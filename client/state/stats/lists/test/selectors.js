@@ -17,6 +17,7 @@ import {
 	getSiteStatsCSVData,
 	hasSiteStatsQueryFailed,
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
@@ -443,6 +444,7 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsNormalizedData()', () => {
 		it( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsNormalizedData( {
+				...userState,
 				stats: {
 					lists: {
 						items: {}
@@ -458,6 +460,7 @@ describe( 'selectors', () => {
 
 		it( 'should return API payload data, if no normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData( {
+				...userState,
 				stats: {
 					lists: {
 						items: {
@@ -483,6 +486,7 @@ describe( 'selectors', () => {
 
 		it( 'should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData( {
+				...userState,
 				stats: {
 					lists: {
 						items: {
@@ -520,6 +524,7 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsCSVData()', () => {
 		it( 'should return an empty array if no matching query results exist', () => {
 			const stats = getSiteStatsCSVData( {
+				...userState,
 				stats: {
 					lists: {
 						items: {}
@@ -535,6 +540,7 @@ describe( 'selectors', () => {
 
 		it( 'should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsCSVData( {
+				...userState,
 				stats: {
 					lists: {
 						items: {

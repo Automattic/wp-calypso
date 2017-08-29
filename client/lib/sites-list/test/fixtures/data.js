@@ -1,4 +1,7 @@
-import cloneDeep from 'lodash/cloneDeep';
+/**
+ * External dependencies
+ */
+import { cloneDeep } from 'lodash';
 
 export const original = [
 	{

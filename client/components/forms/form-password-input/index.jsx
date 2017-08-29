@@ -15,8 +15,11 @@ import viewport from 'lib/viewport';
 export default class extends React.Component {
 	static displayName = 'FormPasswordInput';
 
-	constructor( props ) {
-		super( props );
+	state = {
+		hidePassword: true,
+	};
+
+	componentDidMount() {
 		var isMobile = viewport.isMobile();
 
 		if ( isMobile ) {

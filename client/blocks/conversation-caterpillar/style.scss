@@ -1,5 +1,41 @@
-.conversation-caterpillar {
+.conversation-caterpillar.card {
 	cursor: pointer;
+	display: flex;
+}
+
+.conversation-caterpillar__gravatars,
+.conversation-caterpillar__count {
+	display: flex;
+	height: 38px;
+	flex-shrink: 0;
+}
+
+.conversation-caterpillar__count {
+	color: #87a6bc;
+	cursor: pointer;
+	display: flex;
+	flex-shrink: 1;
+	flex: 1 1 auto;
+	font-size: 13px;
+	font-weight: 400;
+	margin-left: 8px;
+	overflow: hidden;
+	padding-top: 5px;
+	position: relative;
+	white-space: nowrap;
+
+	@include breakpoint( "<660px" ) {
+		padding: 0;
+		text-align: left;
+		white-space: normal;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 10% );
+		height: 16px * 2;
+		width: 16px * 2;
+		z-index: 1;
+	}
 }
 
 .conversation-caterpillar__gravatar {
@@ -10,12 +46,20 @@
 	&:first-child {
 		margin-left: 0;
 	}
+
+	&.is-hidden-on-small-screens {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+   			display: inline;
+   		}
+	}
 }
 
 .conversation-caterpillar__count {
 	color: $gray;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 400;
 	margin-left: 8px;
 	cursor: pointer;
 }

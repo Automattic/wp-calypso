@@ -39,6 +39,25 @@ describe( '#simplePayments', () => {
 		expect( convertedProduct ).to.deep.equal( product );
 	} );
 
+	it( 'should decode special characters when converting to product', () => {
+		const customPost = {
+			ID: 2,
+			title: '\u201d\u221e\u201d and &#8216;so much more&#8217;\u2122 \u2026',
+			content: 'Accepting $, \u20bf, &amp; \u2603',
+			featured_image: 2,
+			metadata: [
+				{ key: 'spay_price', value: 100 },
+				{ key: 'spay_currency', value: 'EUR' },
+				{ key: 'spay_multiple', value: '0' },
+				{ key: 'spay_bogus', value: 'ignore' },
+			],
+		};
+		const convertedProduct = customPostToProduct( customPost );
+
+		expect( convertedProduct.title ).to.equal( '”∞” and ‘so much more’™ …' );
+		expect( convertedProduct.description ).to.equal( 'Accepting $, ₿, & ☃' );
+	} );
+
 	it( 'should convert product to customPost', () => {
 		const product = {
 			ID: 1,

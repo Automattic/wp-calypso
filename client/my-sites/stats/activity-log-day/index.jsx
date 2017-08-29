@@ -14,6 +14,11 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
+/**
+ * Module constants
+ */
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+
 class ActivityLogDay extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
@@ -24,6 +29,10 @@ class ActivityLogDay extends Component {
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
+
+		// Connected props
+		isToday: PropTypes.bool.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -65,9 +74,10 @@ class ActivityLogDay extends Component {
 		const {
 			disableRestore,
 			hideRestore,
+			isToday,
 		} = this.props;
 
-		if ( hideRestore ) {
+		if ( hideRestore || isToday ) {
 			return null;
 		}
 
@@ -94,15 +104,26 @@ class ActivityLogDay extends Component {
 	getEventsHeading() {
 		const {
 			applySiteOffset,
+			isToday,
 			logs,
 			moment,
 			translate,
 			tsEndOfSiteDay,
 		} = this.props;
 
+		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
+
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">
+					{ isToday
+						? translate( '%s — Today', {
+							args: formattedDate,
+							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+						} )
+						: formattedDate
+					}
+				</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -118,6 +139,7 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			hideRestore,
+			isToday,
 			logs,
 			requestRestore,
 			siteId,
@@ -127,6 +149,7 @@ class ActivityLogDay extends Component {
 			<div className="activity-log-day">
 				<FoldableCard
 					clickableHeader
+					expanded={ isToday }
 					expandedSummary={ this.getRewindButton() }
 					header={ this.getEventsHeading() }
 					onOpen={ this.trackOpenDay }
@@ -149,6 +172,14 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( ActivityLogDay ) );
+export default connect(
+	( state, { tsEndOfSiteDay } ) => {
+		const now = Date.now();
+		return {
+			isToday: now <= tsEndOfSiteDay && tsEndOfSiteDay - DAY_IN_MILLISECONDS <= now,
+		};
+	},
+	{
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( ActivityLogDay ) );

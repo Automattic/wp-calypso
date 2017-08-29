@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import deterministicStringify from 'json-stable-stringify';
+import { omit } from 'lodash';
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' ),
-	omit = require( 'lodash/omit' );
+	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' );
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ var Card = require( 'components/card' ),
 	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
 	UsersActions = require( 'lib/users/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	NoResults = require( 'my-sites/no-results' ),
 	analytics = require( 'lib/analytics' ),
 	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );

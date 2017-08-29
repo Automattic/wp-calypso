@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

@@ -16,6 +16,14 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+	statusWaitingPayment,
+	statusWaitingFulfillment,
+	statusFinished,
+} from 'woocommerce/lib/order-status';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import {
@@ -48,6 +56,15 @@ export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getSta
 		query: normalizedQuery,
 	};
 	dispatch( fetchAction );
+
+	// Convert URL status to status group
+	if ( ORDER_UNPAID === query.status ) {
+		query.status = statusWaitingPayment.join( ',' );
+	} else if ( ORDER_UNFULFILLED === query.status ) {
+		query.status = statusWaitingFulfillment.join( ',' );
+	} else if ( ORDER_COMPLETED === query.status ) {
+		query.status = statusFinished.join( ',' );
+	}
 
 	const queryString = qs.stringify( omitBy( query, val => '' === val ) );
 	return request( siteId ).getWithHeaders( 'orders?' + queryString ).then( ( response ) => {

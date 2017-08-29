@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  */
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
-import Suggestions from 'components/suggestions';
+import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
@@ -263,7 +263,7 @@ class ThemesMagicSearchCard extends React.Component {
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
-			'has-suggestions': this.state.searchIsOpen
+			'has-keyed-suggestions': this.state.searchIsOpen
 		} );
 
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
@@ -305,7 +305,7 @@ class ThemesMagicSearchCard extends React.Component {
 				</StickyPanel>
 				<div onClick={ this.handleClickInside }>
 					{ renderSuggestions &&
-						<Suggestions
+						<KeyedSuggestions
 							ref="suggestions"
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }

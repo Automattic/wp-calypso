@@ -23,6 +23,7 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 import PostScheduler from './post-scheduler';
+import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -33,6 +34,7 @@ export class EditorGroundControl extends PureComponent {
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -248,7 +250,8 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__toggle-sidebar"
 					onClick={ this.props.toggleSidebar }
 				>
-					<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+					<Gridicon icon={ this.props.nestedSidebar === NESTED_SIDEBAR_REVISIONS ? 'history' : 'cog' } />
+					<span className="editor-ground-control__button-label"> <EditorPostType isSettings /></span>
 				</Button>
 				<div className={ publishComboClasses }>
 					<EditorPublishButton

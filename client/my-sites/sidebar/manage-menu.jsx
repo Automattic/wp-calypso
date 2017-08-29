@@ -64,6 +64,17 @@ class ManageMenu extends PureComponent {
 
 		const items = [
 			{
+				name: 'page',
+				label: this.props.translate( 'Site Pages' ),
+				capability: 'edit_pages',
+				queryable: true,
+				config: 'manage/pages',
+				link: '/pages',
+				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
+				wpAdminLink: 'edit.php?post_type=page',
+				showOnAllMySites: true,
+			},
+			{
 				name: 'post',
 				label: this.props.translate( 'Blog Posts' ),
 				capability: 'edit_posts',
@@ -73,17 +84,6 @@ class ManageMenu extends PureComponent {
 				paths: [ '/posts', '/posts/my' ],
 				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
 				wpAdminLink: 'edit.php',
-				showOnAllMySites: true,
-			},
-			{
-				name: 'page',
-				label: this.props.translate( 'Pages' ),
-				capability: 'edit_pages',
-				queryable: true,
-				config: 'manage/pages',
-				link: '/pages',
-				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
-				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
 		];
@@ -106,7 +106,7 @@ class ManageMenu extends PureComponent {
 			items.push( {
 				name: 'comments',
 				label: this.props.translate( 'Comments' ),
-				capability: 'edit_posts',
+				capability: 'moderate_comments',
 				queryable: true,
 				config: 'comments/management',
 				link: '/comments',

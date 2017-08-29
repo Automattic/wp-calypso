@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import generateUniqueSiteUrl from './generate-unique-site-url';
+import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = ( event ) => {
@@ -22,15 +22,13 @@ class RebrandCitiesWelcomeStep extends Component {
 			translate,
 		} = this.props;
 
-		const siteUrl = generateUniqueSiteUrl( 'site' );
-
 		SignupActions.submitSignupStep(
 			{
 				isPurchasingItem: false,
 				processingMessage: translate( 'Setting up your site' ),
+				siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 				stepName,
 				stepSectionName,
-				siteUrl,
 			}
 		);
 
@@ -41,11 +39,9 @@ class RebrandCitiesWelcomeStep extends Component {
 		const { translate } = this.props;
 		const buttonClass = 'button is-primary';
 		return (
-			<div className="rebrand-cities-welcome__content">
-				<button className={ buttonClass } onClick={ this.handleSubmit }>
-					{ translate( 'Create your account' ) }
-				</button>
-			</div>
+			<button className={ buttonClass } onClick={ this.handleSubmit }>
+				{ translate( 'Create your account' ) }
+			</button>
 		);
 	}
 
@@ -59,14 +55,21 @@ class RebrandCitiesWelcomeStep extends Component {
 		} = this.props;
 
 		return (
-			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Welcome to WordPress.com' ) }
-				subHeaderText={ translate( 'We\'ve partnered with Rebrand Cities to get businesses online. Get started today.' ) }
-				signupProgress={ signupProgress }
-				stepContent={ this.renderContent() } />
+			<div className="rebrand-cities-welcome">
+				<div className="rebrand-cities-welcome__illustration-wrapper">
+					<div className="rebrand-cities-welcome__illustration"></div>
+				</div>
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ translate( 'Connect your business to the online world' ) }
+					subHeaderText={ translate( 'Rebrand Cities and WordPress.com have partnered ' +
+						'to get your business online. We’ll need you to create a WordPress.com ' +
+						'account to get you started.' ) }
+					signupProgress={ signupProgress }
+					stepContent={ this.renderContent() } />
+			</div>
 		);
 	}
 }

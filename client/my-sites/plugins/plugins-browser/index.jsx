@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import pluginsAccessControl from 'my-sites/plugins/access-control';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
@@ -20,15 +20,20 @@ import NoResults from 'my-sites/no-results';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
-import EmptyContent from 'components/empty-content';
 import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	canJetpackSiteManage,
+	isJetpackSite,
+	isRequestingSites
+} from 'state/sites/selectors';
+import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
+import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -92,7 +97,6 @@ const PluginsBrowser = React.createClass( {
 		} );
 		fullLists.search = PluginsListStore.getSearchList( search );
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			shortLists: shortLists,
 			fullLists: fullLists
 		};
@@ -277,21 +281,8 @@ const PluginsBrowser = React.createClass( {
 		return <DocumentHead title={ this.translate( 'Plugin Browser', { textOnly: true } ) } />;
 	},
 
-	renderAccessError() {
-		if ( this.state.accessError ) {
-			return (
-				<MainComponent>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample
-						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
-						: null
-					}
-				</MainComponent>
-			);
-		}
-		const { selectedSite } = this.props;
+	renderJetpackManageError() {
+		const { selectedSiteId } = this.props;
 
 		return (
 			<MainComponent>
@@ -300,7 +291,7 @@ const PluginsBrowser = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-					siteId={ selectedSite.ID }
+					siteId={ selectedSiteId }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
 					featureExample={ this.getMockPluginItems() } />
@@ -309,20 +300,17 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
+		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
+			return <NoPermissionsError title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
+		}
 
-		const cantManage = (
-			selectedSite &&
-			this.props.isJetpackSite( selectedSite.ID ) &&
-			! this.props.canJetpackSiteManage( selectedSite.ID )
-		);
-
-		if ( ( this.state.accessError || cantManage ) && selectedSite ) {
-			return this.renderAccessError( selectedSite );
+		if ( this.props.jetpackManageError ) {
+			return this.renderJetpackManageError();
 		}
 
 		return (
 			<MainComponent className="is-wide-layout">
+				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
@@ -334,14 +322,15 @@ const PluginsBrowser = React.createClass( {
 
 export default connect(
 	state => {
-		const selectedSite = getSelectedSite( state );
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
-			selectedSite,
-			isJetpackSite: siteId => isJetpackSite( state, siteId ),
-			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			jetpackManageError: !! isJetpackSite( state, selectedSiteId ) && ! canJetpackSiteManage( state, selectedSiteId ),
+			isRequestingSites: isRequestingSites( state ),
+			noPermissionsError: !! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
+			selectedSiteId,
 		};
 	},
 	{
 		recordTracksEvent
 	}
-)( PluginsBrowser );
+)( localize( PluginsBrowser ) );

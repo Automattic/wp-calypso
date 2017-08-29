@@ -1,4 +1,3 @@
-
 .orders__container {
 	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
@@ -23,6 +22,11 @@
 		width: 75%;
 		@include placeholder();
 	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
+	}
 }
 
 .orders__item-link,
@@ -34,58 +38,6 @@
 
 .orders__item-link {
 	margin-right: 5px;
-}
-
-.orders__item-status {
-	display: inline-flex;
-	padding: 0px 12px;
-	line-height: 32px;
-	background: lighten( $gray, 20% );
-	border-radius: 4px;
-
-	&.is-failed {
-		background: lighten( $alert-red, 20% );
-		color: darken( $alert-red, 30% );
-
-		span + span {
-			border-color: $alert-red;
-		}
-	}
-	
-	&.is-pending {
-		background: lighten( $alert-green, 20% );
-		color: darken( $alert-green, 30% );
-
-		span + span {
-			border-color: $alert-green;
-		}
-	}
-
-	&.is-cancelled,
-	&.is-refunded,
-	&.is-completed {
-		background: $gray-light;
-		color: $gray-dark;
-
-		span + span {
-			border-color: lighten( $gray, 20% );
-		}
-	}
-
-	&.is-on-hold {
-		background: lighten( $alert-yellow, 20% );
-		color: darken( $alert-yellow, 30% );
-
-		span + span {
-			border-color: $alert-yellow;
-		}
-	}
-
-	span + span {
-		margin-left: 12px;
-		padding-left: 12px;
-		border-left: 1px solid $gray;
-	}
 }
 
 .orders__table-total {

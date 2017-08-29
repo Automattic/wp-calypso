@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 import { get, includes, uniq, upperFirst } from 'lodash';
 
 /**
@@ -23,15 +22,23 @@ import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginSections from 'my-sites/plugins/plugin-sections';
-import pluginsAccessControl from 'my-sites/plugins/access-control';
-import EmptyContent from 'components/empty-content';
-import FeatureExample from 'components/feature-example';
+import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
+import {
+	canJetpackSiteManage,
+	getRawSite,
+	isJetpackSite,
+	isRequestingSites
+} from 'state/sites/selectors';
+import {
+	canCurrentUser,
+	canCurrentUserManagePlugins,
+	isSiteAutomatedTransfer } from 'state/selectors';
+import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
+import NoPermissionsError from './no-permissions-error';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -82,7 +89,6 @@ const SinglePlugin = React.createClass( {
 			}, sitePlugin );
 
 		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
 			plugin: plugin,
@@ -138,11 +144,11 @@ const SinglePlugin = React.createClass( {
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' );
 	},
 
-	goBack() {
+	backHref() {
 		if ( this.props.prevPath ) {
-			return page( this.getPreviousListUrl() );
+			return this.getPreviousListUrl();
 		}
-		return page( '/plugins/' + ( this.props.siteUrl || '' ) );
+		return '/plugins/' + ( this.props.siteUrl || '' );
 	},
 
 	displayHeader() {
@@ -150,7 +156,7 @@ const SinglePlugin = React.createClass( {
 		return (
 			<HeaderCake
 				isCompact={ true }
-				onClick={ this.goBack }
+				backHref={ this.backHref() }
 				onBackArrowClick={ recordEvent } />
 		);
 	},
@@ -318,18 +324,8 @@ const SinglePlugin = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( this.state.accessError ) {
-			return (
-				<MainComponent>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample
-						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
-						: null
-					}
-				</MainComponent>
-			);
+		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
+			return <NoPermissionsError title={ this.state.pageTitle } />;
 		}
 
 		const plugin = this.getPlugin();
@@ -372,6 +368,7 @@ const SinglePlugin = React.createClass( {
 
 		return (
 			<MainComponent>
+				<NonSupportedJetpackVersionNotice />
 				<QuerySites allSites />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
@@ -390,7 +387,11 @@ const SinglePlugin = React.createClass( {
 						}
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions } />
-					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
+					{
+						plugin.wporg
+							? <PluginSections plugin={ plugin } isWpcom={ isWpcom } />
+							: <PluginSectionsCustom plugin={ plugin } />
+					}
 					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
@@ -415,6 +416,10 @@ export default connect(
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+			isRequestingSites: isRequestingSites( state ),
+			userCanManagePlugins: ( selectedSiteId
+				? canCurrentUser( state, selectedSiteId, 'manage_options' )
+				: canCurrentUserManagePlugins( state ) ),
 		};
 	},
 	{

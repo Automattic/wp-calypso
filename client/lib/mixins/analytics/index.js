@@ -3,7 +3,7 @@
  */
 import analytics from 'lib/analytics';
 import { type as domainTypes } from 'lib/domains/constants';
-import { snakeCase, endsWith } from 'lodash';
+import { snakeCase } from 'lodash';
 
 const getDomainTypeText = function( domain ) {
 	switch ( domain.type ) {
@@ -21,16 +21,6 @@ const getDomainTypeText = function( domain ) {
 	}
 };
 
-const getDomainTypeTextFromSearch = function( suggestion ) {
-	if ( suggestion.is_free ) {
-		if ( endsWith( suggestion.domain_name, '.blog' ) ) {
-			return 'dotblog_subdomain';
-		}
-		return 'wpcom_subdomain';
-	}
-	return 'domain_reg';
-};
-
 const EVENTS = {
 	popupCart: {
 		checkoutButtonClick() {
@@ -46,109 +36,6 @@ const EVENTS = {
 			);
 		}
 	},
-	registerDomain: {
-		mapDomainButtonClick( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Map it" Button'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_results_mapping_button_click', { section } );
-		},
-
-		searchFormSubmit( searchBoxValue, section, timeDiffFromLastSearch, searchCount, searchVendor ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Submitted Search Form',
-				'Search Box Value',
-				searchBoxValue
-			);
-
-			analytics.tracks.recordEvent(
-				'calypso_domain_search',
-				{
-					search_box_value: searchBoxValue,
-					seconds_from_last_search: timeDiffFromLastSearch,
-					search_count: searchCount,
-					search_vendor: searchVendor,
-					section
-				}
-			);
-		},
-
-		searchFormView( section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Landed on Search'
-			);
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_pageview', { section } );
-		},
-
-		searchResultsReceive( searchQuery, searchResults, responseTimeInMs, resultCount, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Receive Results',
-				'Response Time',
-				responseTimeInMs
-			);
-
-			analytics.tracks.recordEvent(
-				'calypso_domain_search_results_suggestions_receive',
-				{
-					search_query: searchQuery,
-					results: searchResults.join( ';' ),
-					response_time_ms: responseTimeInMs,
-					result_count: resultCount,
-					section
-				}
-			);
-		},
-
-		domainAvailabilityReceive( searchQuery, availableStatus, responseTimeInMs, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Domain Availability Result',
-				'Domain Available Status',
-				availableStatus
-			);
-
-			analytics.tracks.recordEvent(
-				'calypso_domain_search_results_availability_receive',
-				{
-					search_query: searchQuery,
-					available_status: availableStatus,
-					response_time: responseTimeInMs,
-					section
-				}
-			);
-		},
-
-		submitDomainStepSelection( suggestion, section ) {
-			const domainType = getDomainTypeTextFromSearch( suggestion );
-			analytics.ga.recordEvent(
-				'Domain Search',
-				`Submitted Domain Selection for a ${ domainType } on a Domain Registration`,
-				'Domain Name',
-				suggestion.domain_name
-			);
-
-			const tracksObjects = {
-				domain_name: suggestion.domain_name,
-				section,
-				type: domainType
-			};
-			if ( suggestion.isRecommended ) {
-				tracksObjects.label = 'recommended';
-			}
-			if ( suggestion.isBestAlternative ) {
-				tracksObjects.label = 'best-alternative';
-			}
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', tracksObjects );
-		}
-	},
-
 	domainManagement: {
 		addGoogleApps: {
 			addAnotherEmailAddressClick( domainName ) {

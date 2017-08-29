@@ -2,8 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import pick from 'lodash/pick';
-import throttle from 'lodash/throttle';
+import { pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,7 +62,7 @@ function addSympathy( initialStateLoader ) {
 	const shouldAdd = (
 		'development' === process.env.NODE_ENV && // only work in local dev mode
 		(
-			Math.random() < 0.25 || // clear 25% of the time
+      Math.random() < 0.25 || // clear 25% of the time
 			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
 		) &&
 		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled

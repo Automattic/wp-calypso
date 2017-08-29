@@ -22,10 +22,9 @@ import titlecase from 'to-title-case';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
-import { isPluginActive } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -61,7 +60,7 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, isJetpack, hasPodcasts, slug, translate } = this.props;
+		const { date, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
 		const charts = [
 			{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible',
 				label: translate( 'Views', { context: 'noun' } ) },
@@ -111,8 +110,9 @@ class StatsSite extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					{ ...this.props }
 					section={ period }
+					siteId={ siteId }
+					slug={ slug }
 				/>
 				<div id="my-stats-content">
 					<ChartTabs
@@ -131,7 +131,7 @@ class StatsSite extends Component {
 							<DatePicker
 								period={ period }
 								date={ date }
-								query={ query }
+								query={ query }
 								statsType="statsTopPosts"
 								showQueryDate
 							/>
@@ -201,10 +201,9 @@ export default connect(
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
-			isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
 			siteId,
 			slug: getSelectedSiteSlug( state )
 		};
 	},
-	{  recordGoogleEvent }
+	{ recordGoogleEvent }
 )( localize( StatsSite ) );

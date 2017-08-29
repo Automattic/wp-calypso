@@ -20,7 +20,7 @@ function getLoginUrl( redirectUri ) {
 		params.redirectTo = window.location.href;
 	}
 
-	return login( params );
+	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
 }
 
 const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) => (

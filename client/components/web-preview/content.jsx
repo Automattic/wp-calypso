@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
-import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -18,14 +18,13 @@ import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
-import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreviewContent extends Component {
+export class WebPreviewContent extends PureComponent {
 	previewId = uuid();
 	_hasTouch = false;
 
@@ -59,10 +58,6 @@ export class WebPreviewContent extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return shallowCompare( this, nextProps, nextState );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -114,6 +109,8 @@ export class WebPreviewContent extends Component {
 				return;
 			case 'focus':
 				this.removeSelection();
+				// we will fake a click here to close the dropdown
+				this.wrapperElementRef && this.wrapperElementRef.click();
 				return;
 			case 'loading':
 				this.setState( { isLoadingSubpage: true } );
@@ -124,6 +121,10 @@ export class WebPreviewContent extends Component {
 	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
+	}
+
+	setWrapperElement = ( el ) => {
+		this.wrapperElementRef = el;
 	}
 
 	removeSelection = () => {
@@ -233,8 +234,15 @@ export class WebPreviewContent extends Component {
 			'is-loaded': this.state.loaded,
 		} );
 
+		const showLoadingMessage = (
+			! this.state.loaded &&
+			this.props.loadingMessage &&
+			( this.props.showPreview || ! this.props.isModalWindow ) &&
+			this.state.device !== 'seo'
+		);
+
 		return (
-			<div className={ className }>
+			<div className={ className } ref={ this.setWrapperElement }>
 				<Toolbar setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
@@ -247,14 +255,11 @@ export class WebPreviewContent extends Component {
 					<SpinnerLine />
 				}
 				<div className="web-preview__placeholder">
-					{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
+					{ showLoadingMessage &&
 						<div className="web-preview__loading-message-wrapper">
-							<Spinner />
-							{ this.props.loadingMessage &&
-								<span className="web-preview__loading-message">
-									{ this.props.loadingMessage }
-								</span>
-							}
+							<span className="web-preview__loading-message">
+								{ this.props.loadingMessage }
+							</span>
 						</div>
 					}
 					<div

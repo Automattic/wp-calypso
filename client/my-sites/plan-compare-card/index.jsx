@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

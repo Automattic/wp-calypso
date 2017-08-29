@@ -51,6 +51,8 @@ class PostCommentList extends React.Component {
 		showCommentCount: React.PropTypes.bool,
 		startingCommentId: React.PropTypes.number,
 		commentCount: React.PropTypes.number,
+		maxDepth: React.PropTypes.number,
+		showNestingReplyArrow: React.PropTypes.bool,
 
 		// connect()ed props:
 		commentsTree: React.PropTypes.object,
@@ -62,6 +64,8 @@ class PostCommentList extends React.Component {
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
+		maxDepth: Infinity,
+		showNestingReplyArrow: false,
 	};
 
 	state = {
@@ -204,6 +208,8 @@ class PostCommentList extends React.Component {
 				onUpdateCommentText={ this.onUpdateCommentText }
 				onCommentSubmit={ this.resetActiveReplyComment }
 				depth={ 0 }
+				maxDepth={ this.props.maxDepth }
+				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 			/>
 		);
 	};

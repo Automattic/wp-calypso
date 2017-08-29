@@ -30,11 +30,10 @@ export const requestNotificationSettings = ( { dispatch }, action ) => dispatch(
  *
  * @param   {Function} dispatch  Redux dispatcher
  * @param   {Object}   action    Redux action
- * @param   {Function} next      data-layer-bypassing dispatcher
  * @param   {Object}   settings  raw notification settings object returned by the endpoint
  * @returns {Object}             disparched user devices add action
  */
-export const updateSettings = ( { dispatch }, action, next, settings ) => dispatch( updateNotificationSettings( {
+export const updateSettings = ( { dispatch }, action, settings ) => dispatch( updateNotificationSettings( {
 	settings
 } ) );
 

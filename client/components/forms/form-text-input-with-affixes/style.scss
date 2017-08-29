@@ -41,6 +41,7 @@
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
+	position: relative;
 	background: $gray-light;
 	border: 1px solid lighten( $gray, 20% );
 	color: darken( $gray, 20% );

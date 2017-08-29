@@ -1,0 +1,36 @@
+/* Progress Indicator */
+.wizard__progress-indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	color: darken( $gray, 20 );
+	font-size: 14px;
+	font-weight: 300;
+	margin-bottom: 10px;
+	text-align: center;
+
+	@include breakpoint( '<660px' ) {
+		padding-top: 10px;
+	}
+}
+
+/* Navigation */
+.wizard__navigation-links {
+	text-align: center;
+}
+
+.wizard__navigation-links .button.is-borderless {
+	color: darken( $gray, 20 );
+
+	&:hover {
+		color: $gray-dark;
+	}
+}
+
+.wizard__navigation-link {
+	cursor: pointer;
+	display: inline-block;
+	margin: 24px 12px;
+	text-align: center;
+}

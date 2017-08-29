@@ -38,6 +38,14 @@
 	}
 }
 
+.comment-navigation__bulk-count {
+	display: inline-flex;
+}
+
+.comment-navigation__bulk-count .count {
+	margin-left: 8px;
+}
+
 .comment-navigation__tab {
 	padding: 16px;
 }

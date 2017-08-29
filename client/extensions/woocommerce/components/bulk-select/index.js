@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -11,12 +12,12 @@ const BulkSelect = ( { totalElements, selectedElements, className, disabled, rea
 	const inputClasses = classNames( 'bulk-select__box', { 'is-checked': hasAllElementsSelected } );
 	const iconClasses = classNames( 'bulk-select__some-checked-icon', { 'is-disabled': disabled } );
 	const containerClasses = classNames( 'bulk-select', className );
-	const handleToggle = () => {
+	const handleToggle = ( event ) => {
 		if ( readOnly ) {
 			return;
 		}
 		const newCheckedState = ! ( hasSomeElementsSelected || hasAllElementsSelected );
-		onToggle( newCheckedState );
+		onToggle( newCheckedState, event );
 	};
 
 	return (

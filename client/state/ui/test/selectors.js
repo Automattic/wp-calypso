@@ -17,6 +17,7 @@ import {
 	isSectionIsomorphic,
 	hasSidebar
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -32,6 +33,7 @@ describe( 'selectors', () => {
 
 		it( 'should return the object for the selected site', () => {
 			const selected = getSelectedSite( {
+				...userState,
 				sites: {
 					items: {
 						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
@@ -65,6 +67,7 @@ describe( 'selectors', () => {
 	describe( '#getSelectedSiteId()', () => {
 		it( 'should return null if no site is selected', () => {
 			const selected = getSelectedSiteId( {
+				...userState,
 				ui: {
 					selectedSiteId: null
 				}

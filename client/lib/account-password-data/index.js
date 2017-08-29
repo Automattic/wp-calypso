@@ -1,12 +1,8 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:password-generator' ),
-	merge = require( 'lodash/merge' ),
-	pick = require( 'lodash/pick' ),
-	random = require( 'lodash/random' ),
-	map = require( 'lodash/map' ),
-	sample = require( 'lodash/sample' );
+import { map, merge, pick, random, sample } from 'lodash';
+const debug = require( 'debug' )( 'calypso:password-generator' );
 
 /**
  * Internal dependencies

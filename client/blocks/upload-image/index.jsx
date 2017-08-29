@@ -63,7 +63,8 @@ class UploadImage extends Component {
 		defaultImage: PropTypes.any,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
-		onUploadImageDone: PropTypes.func,
+		onImageUploadDone: PropTypes.func,
+		onImageRemove: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -72,6 +73,8 @@ class UploadImage extends Component {
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
+		onImageUploadDone: noop,
+		onImageRemove: noop,
 		onError: noop,
 		isUploading: false,
 	};
@@ -122,7 +125,7 @@ class UploadImage extends Component {
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
 		if ( error ) {
-			this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
+			return this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
 		}
 
 		this.setState( {
@@ -168,7 +171,7 @@ class UploadImage extends Component {
 
 	// Handle the uploading process.
 	handleMediaStoreChange = () => {
-		const { siteId, onUploadImageDone } = this.props;
+		const { siteId, onImageUploadDone } = this.props;
 
 		const { errors } = this.state;
 
@@ -191,7 +194,7 @@ class UploadImage extends Component {
 
 			MediaStore.off( 'change', this.handleMediaStoreChange );
 
-			onUploadImageDone( uploadedImage );
+			onImageUploadDone( uploadedImage );
 
 			return;
 		}
@@ -231,10 +234,12 @@ class UploadImage extends Component {
 
 		const isEditingDefaultImage = defaultImage && selectedImage === defaultImage.URL;
 
-		const media = isEditingDefaultImage ? defaultImage : {
-			src: selectedImage,
-			file: selectedImageName
-		};
+		const media = isEditingDefaultImage
+			? defaultImage
+			: {
+				src: selectedImage,
+				file: selectedImageName,
+			};
 
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
@@ -250,7 +255,19 @@ class UploadImage extends Component {
 	}
 
 	removeUploadedImage = () => {
-		this.setState( { uploadedImage: null } );
+		const { onImageRemove } = this.props;
+		const { uploadedImage } = this.state;
+
+		this.revokeImageObjects();
+
+		this.setState( {
+			selectedImage: null,
+			selectedImageName: '',
+			editedImage: null,
+			uploadedImage: null,
+		} );
+
+		onImageRemove( uploadedImage );
 	};
 
 	componentWillMount() {
@@ -266,11 +283,20 @@ class UploadImage extends Component {
 		}
 	}
 
-	componentWillUnmount() {
+	revokeImageObjects = () => {
 		const { selectedImage, editedImage } = this.state;
 
-		URL.revokeObjectURL( selectedImage );
-		URL.revokeObjectURL( editedImage );
+		if ( selectedImage ) {
+			URL.revokeObjectURL( selectedImage );
+		}
+
+		if ( editedImage ) {
+			URL.revokeObjectURL( editedImage );
+		}
+	};
+
+	componentWillUnmount() {
+		this.revokeImageObjects();
 
 		MediaStore.off( 'change', this.handleMediaStoreChange );
 		MediaValidationStore.off( 'change', this.storeValidationErrors );
@@ -403,7 +429,7 @@ export default connect(
 			siteId = getSelectedSiteId( state );
 		}
 
-		if ( ! defaultImage || typeof( defaultImage ) !== 'object' ) {
+		if ( ! defaultImage || typeof defaultImage !== 'object' ) {
 			defaultImage = getMediaItem( state, siteId, defaultImage );
 		}
 

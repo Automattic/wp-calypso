@@ -27,7 +27,7 @@ export function requestBlogStickerAdd( { dispatch }, action ) {
 	);
 }
 
-export function receiveBlogStickerAdd( store, action, next, response ) {
+export function receiveBlogStickerAdd( store, action, response ) {
 	// validate that it worked
 	const isAdded = !! ( response && response.success );
 	if ( ! isAdded ) {

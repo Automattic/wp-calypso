@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Immutable from 'immutable';
-import partial from 'lodash/partial';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies

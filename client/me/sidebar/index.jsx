@@ -18,7 +18,8 @@ const Sidebar = require( 'layout/sidebar' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	userUtilities = require( 'lib/user/utils' );
 
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
@@ -49,9 +50,17 @@ const MeSidebar = React.createClass( {
 			redirect = '/?apppromo';
 		}
 
-		this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
-			user.clear( () => location.href = redirect_to || '/' );
-		} );
+		if ( config.isEnabled( 'login/wp-login' ) ) {
+			this.props.logoutUser( redirect )
+				.then(
+					( { redirect_to } ) => user.clear( () => location.href = redirect_to || '/' ),
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					() => userUtilities.logout( redirect )
+				);
+		} else {
+			userUtilities.logout( redirect );
+		}
 
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
@@ -60,9 +69,10 @@ const MeSidebar = React.createClass( {
 		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
-			'/me/security/two-step': 'security',
-			'/me/security/connected-applications': 'security',
 			'/me/security/account-recovery': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/social-login': 'security',
+			'/me/security/two-step': 'security',
 			'/me/notifications/comments': 'notifications',
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',

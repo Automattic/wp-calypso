@@ -120,6 +120,7 @@ class PreviewMain extends React.Component {
 			const action = (
 				<Button primary icon href={ site.URL } target="_blank">
 					{ translate( 'Open' ) }
+					{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);
@@ -145,6 +146,11 @@ class PreviewMain extends React.Component {
 					onClose={ this.focusSidebar }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ this.state.externalUrl }
+					loadingMessage={
+						this.props.translate( '{{strong}}One moment, please…{{/strong}} loading your site.',
+							{ components: { strong: <strong /> } }
+						)
+					}
 				/>
 			</Main>
 		);

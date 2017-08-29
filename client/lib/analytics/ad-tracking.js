@@ -2,12 +2,9 @@
  * External dependencies
  */
 import async from 'async';
-import noop from 'lodash/noop';
-import some from 'lodash/some';
-import assign from 'lodash/assign';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
 
@@ -26,6 +23,15 @@ import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
+
+// Retargeting events are fired once every `retargetingPeriod` seconds.
+const retargetingPeriod = 60 * 60 * 24;
+
+// Last time the retarget() function effectively fired (Unix time in seconds).
+let lastRetargetTime = 0;
+
+// Last time the recordPageViewInFloodlight() function effectively fired (Unix time in seconds).
+let lastFloodlightPageViewTime = 0;
 
 /**
  * Constants
@@ -293,6 +299,12 @@ function retarget() {
 	if ( ! hasFinishedFetchingScripts ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
+		return;
+	}
+	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting' );
 
@@ -704,6 +716,12 @@ function recordPageViewInFloodlight( urlPath ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastFloodlightPageViewTime + retargetingPeriod ) {
+		return;
+	}
+	lastFloodlightPageViewTime = nowTimestamp;
 
 	const sessionId = floodlightSessionId();
 

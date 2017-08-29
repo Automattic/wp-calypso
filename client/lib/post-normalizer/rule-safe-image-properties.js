@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-import forOwn from 'lodash/forOwn';
-import startsWith from 'lodash/startsWith';
+import { forOwn, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies

@@ -31,7 +31,7 @@ describe( 'dectivateSucceeded', () => {
 describe( 'deactivateFailed', () => {
 	it( 'should dispatch rewind deactivate failed action', () => {
 		const dispatch = sinon.spy();
-		deactivateFailed( { dispatch }, { siteId }, null, { message: 'some problem' } );
+		deactivateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
 		expect( dispatch ).to.have.been.calledWith(
 			rewindDeactivateFailure( siteId )
 		);
@@ -39,7 +39,7 @@ describe( 'deactivateFailed', () => {
 
 	it( 'should dispatch an error notice', () => {
 		const dispatch = sinon.spy();
-		deactivateFailed( { dispatch }, { siteId }, null, { message: 'some problem' } );
+		deactivateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
 		expect( dispatch ).to.have.been.calledWith( sinon.match( {
 			notice: {
 				status: 'is-error',

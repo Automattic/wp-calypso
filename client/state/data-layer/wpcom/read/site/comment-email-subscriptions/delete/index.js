@@ -27,7 +27,7 @@ export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	);
 }
 
-export function receiveCommentEmailUnsubscription( store, action, next, response ) {
+export function receiveCommentEmailUnsubscription( store, action, response ) {
 	// validate that it worked
 	// if it did, just swallow this response, as we don't need to pass it along.
 	const subscribed = !! ( response && response.subscribed );

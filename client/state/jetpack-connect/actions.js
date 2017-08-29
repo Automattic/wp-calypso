@@ -2,9 +2,8 @@
  * External dependencies
  */
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
-import pick from 'lodash/pick';
+import { omit, pick } from 'lodash';
 import page from 'page';
-import omit from 'lodash/omit';
 
 /**
  * Internal dependencies

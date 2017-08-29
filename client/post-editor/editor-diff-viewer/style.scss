@@ -1,0 +1,31 @@
+.editor-diff-viewer__title {
+	padding-left: 10px; /* Intentionally non-standard to align editor body margin (10px) */
+	padding-right: 10px;
+	font-family: $serif;
+	font-size: 28px;
+	color: $gray-dark;
+	font-weight: 600;
+
+	@include breakpoint( '>480px' ) {
+		font-size: 32px;
+	}
+}
+
+.editor-diff-viewer {
+	margin: 0 auto;
+	max-width: 700px;
+	width: 100%;
+}
+
+.editor-diff-viewer__content {
+	padding: 11px;
+}
+
+.editor-diff-viewer__additions {
+	background: #e9f9fe;
+}
+
+.editor-diff-viewer__deletions {
+	color: #c83240;
+	text-decoration: line-through;
+}

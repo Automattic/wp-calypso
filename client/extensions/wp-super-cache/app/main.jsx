@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ExtensionRedirect from 'blocks/extension-redirect';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
@@ -25,7 +27,6 @@ import { getStatus } from '../state/status/selectors';
 class WPSuperCache extends Component {
 	static propTypes = {
 		status: PropTypes.object.isRequired,
-		site: PropTypes.object,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
 	};
@@ -38,15 +39,15 @@ class WPSuperCache extends Component {
 		const { tab } = this.props;
 
 		switch ( tab ) {
-			case Tabs.ADVANCED:
+			case Tabs.ADVANCED.slug:
 				return <AdvancedTab isReadOnly={ isReadOnly } />;
-			case Tabs.CDN:
+			case Tabs.CDN.slug:
 				return <CdnTab />;
-			case Tabs.CONTENTS:
+			case Tabs.CONTENTS.slug:
 				return <ContentsTab isReadOnly={ isReadOnly } />;
-			case Tabs.PRELOAD:
+			case Tabs.PRELOAD.slug:
 				return <PreloadTab />;
-			case Tabs.DEBUG:
+			case Tabs.DEBUG.slug:
 				return <DebugTab />;
 			default:
 				return <EasyTab isReadOnly={ isReadOnly } />;
@@ -55,7 +56,6 @@ class WPSuperCache extends Component {
 
 	render() {
 		const {
-			site,
 			siteId,
 			status: { cache_disabled: cacheDisabled },
 			tab,
@@ -65,6 +65,9 @@ class WPSuperCache extends Component {
 
 		return (
 			<Main className={ mainClassName }>
+				<ExtensionRedirect pluginId="wp-super-cache"
+					minimumVersion="1.5.4"
+					siteId={ siteId } />
 				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
@@ -74,7 +77,7 @@ class WPSuperCache extends Component {
 					text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) } />
 				}
 
-				<Navigation activeTab={ tab } site={ site } />
+				<Navigation activeTab={ tab } siteId={ siteId } />
 				{ this.renderTab( !! cacheDisabled ) }
 			</Main>
 		);
@@ -87,7 +90,7 @@ const connectComponent = connect(
 
 		return {
 			status: getStatus( state, siteId ),
-			siteId,
+			siteId
 		};
 	}
 );

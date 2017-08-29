@@ -18,5 +18,6 @@ module.exports = {
 		};
 	},
 	me: returnSelf,
-	dismissSite: returnSelf
+	dismissSite: returnSelf,
+	readConversations: returnSelf,
 };

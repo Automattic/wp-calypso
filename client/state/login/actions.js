@@ -2,7 +2,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -26,6 +26,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -44,37 +47,6 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
-
-// TODO: Remove when we're done with the fallback.
-function getErrorMessageFromErrorCode( code ) {
-	const errorMessages = {
-		account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
-			"WordPress.com and click the activation link. You'll be able to log in after that." ),
-		empty_password: translate( "Don't forget to enter your password." ),
-		empty_two_step_code: translate( 'Please enter a verification code.' ),
-		empty_username: translate( 'Please enter a username or email address.' ),
-		forbidden_for_automattician: 'Cannot use social login with an Automattician account',
-		incorrect_password: translate( "Oops, that's not the right password. Please try again!" ),
-		invalid_email: translate( "Oops, looks like that's not the right address. Please try again!" ),
-		invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
-		invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
-		invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
-		login_limit_exceeded: translate( "Slow down, you're trying to log in too fast." ),
-		push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
-			'two minutes. Please wait and try again.' ),
-		sms_code_throttled: translate( 'You can only request a code via text message once per minute. Please wait and try again.' ),
-		sms_recovery_code_throttled: translate( 'You can only request a recovery code via text message once per minute. ' +
-			'Please wait and try again.' ),
-		unknown: translate( "Hmm, we can't find a WordPress.com account with this username and password combo. " +
-			'Please double check your information and try again.' ),
-	};
-
-	if ( code in errorMessages ) {
-		return errorMessages[ code ];
-	}
-
-	return code;
-}
 
 function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -102,7 +74,6 @@ const errorFields = {
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 function getErrorFromHTTPError( httpError ) {
-	let message;
 	let field = 'global';
 
 	if ( ! httpError.status ) {
@@ -113,34 +84,22 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	// TODO: Simplify this block when we're done with the fallback.
-	let code = get( httpError, 'response.body.data.errors[0]' );
-	if ( typeof code === 'object' ) {
-		message = code.message;
-		code = code.code;
-	} else {
-		message = getErrorMessageFromErrorCode( code );
-	}
+	const code = get( httpError, 'response.body.data.errors[0].code' );
 
 	if ( code ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		}
+	}
 
-		if ( ! message ) {
-			message = get( httpError, 'response.body.data', httpError.message );
-		}
+	let message = get( httpError, 'response.body.data.errors[0].message' );
+
+	if ( ! message ) {
+		message = get( httpError, 'response.body.data', httpError.message );
 	}
 
 	return { code, message, field };
 }
-
-// TODO: Remove when we're done with the fallback.
-const wpcomErrorMessages = {
-	user_exists: translate( 'Your Google email address is already in use WordPress.com. ' +
-		'Log in to your account using your email address or username, and your password. ' +
-		'To create a new WordPress.com account, use a different Google account.' )
-};
 
 /**
  * Transforms WPCOM error to the error object we use for login purposes
@@ -149,10 +108,10 @@ const wpcomErrorMessages = {
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 const getErrorFromWPCOMError = ( wpcomError ) => ( {
-	// TODO: Remove wpcomErrorMessages[] reference when we're done with the fallback.
-	message: wpcomError.message || wpcomErrorMessages[ wpcomError.error ],
+	message: wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
+	...omit( wpcomError, [ 'error', 'message', 'field' ] )
 } );
 
 /**
@@ -261,12 +220,14 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 /**
  * Attempt to login a user with an external social account.
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
- * @param  {String}    redirectTo Url to redirect the user to upon successful login
- * @return {Function}             Action thunk to trigger the login process.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
+ * @param  {String}    redirectTo   Url to redirect the user to upon successful login
+ * @return {Function}               Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
+export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint', getLocaleSlug() ) )
@@ -274,8 +235,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			service,
-			token,
+			...socialInfo,
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
@@ -283,8 +243,19 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		.then( ( response ) => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-				redirectTo: get( response, 'body.data.redirect_to' ),
+				data: get( response, 'body.data' )
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
@@ -293,8 +264,8 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
-				service: service,
-				token: token,
+				authInfo: socialInfo,
+				data: get( httpError, 'response.body.data' ),
 			} );
 
 			return Promise.reject( error );
@@ -304,12 +275,14 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 /**
  * Attempt to create an account with a social service
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
  * @param  {String}    flowName   the name of the signup flow
  * @return {Function}             Action thunk to trigger the login process.
  */
-export const createSocialUser = ( service, token, flowName ) => dispatch => {
+export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 	dispatch( {
 		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
 		notice: {
@@ -317,7 +290,7 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().usersSocialNew( service, token, flowName ).then( wpcomResponse => {
+	return wpcom.undocumented().usersSocialNew( { ...socialInfo, signup_flow_name: flowName } ).then( wpcomResponse => {
 		const data = {
 			username: wpcomResponse.username,
 			bearerToken: wpcomResponse.bearer_token
@@ -339,12 +312,14 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 /**
  * Attempt to connect the current account with a social service
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
- * @param  {String}    redirectTo Url to redirect the user to upon successful login
- * @return {Function}             Action thunk to trigger the login process.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token, redirectTo }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
+ * @param  {String}    redirectTo   Url to redirect the user to upon successful login
+ * @return {Function}               Action thunk to trigger the login process.
  */
-export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
+export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( {
 		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -352,10 +327,10 @@ export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( service, token, redirectTo ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirect_to: redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-			redirectTo: wpcomResponse.redirect_to,
+			redirect_to: wpcomResponse.redirect_to,
 		} );
 	}, wpcomError => {
 		const error = getErrorFromWPCOMError( wpcomError );
@@ -368,6 +343,42 @@ export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
 		return Promise.reject( error );
 	} );
 };
+
+/**
+ * Attempt to disconnect the current account with a social service
+ *
+ * @param  {String}    socialService    The external social service name.
+ * @return {Function}               Action thunk to trigger the login process.
+ */
+export const disconnectSocialUser = ( socialService ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().me().socialDisconnect( socialService ).then( () => {
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	} );
+};
+
+export const createSocialUserFailed = ( socialInfo, error ) => ( {
+	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	authInfo: socialInfo,
+	error: error.field ? error : getErrorFromWPCOMError( error )
+} );
 
 /**
  * Sends a two factor authentication recovery code to the 2FA user

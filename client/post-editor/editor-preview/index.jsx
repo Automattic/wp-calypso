@@ -112,7 +112,7 @@ const EditorPreview = React.createClass( {
 							editUrl={ this.props.editUrl }
 							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
 							loadingMessage={
-								this.props.translate( '{{strong}}One moment please…{{/strong}} loading your new post.',
+								this.props.translate( '{{strong}}One moment, please…{{/strong}} loading your new post.',
 									{ components: { strong: <strong /> } }
 								)
 							}

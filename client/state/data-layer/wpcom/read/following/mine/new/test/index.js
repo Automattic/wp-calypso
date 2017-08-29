@@ -67,7 +67,7 @@ describe( 'receiveFollow', () => {
 				is_owner: false,
 			},
 		};
-		receiveFollow( { dispatch }, action, null, response );
+		receiveFollow( { dispatch }, action, response );
 		expect( dispatch ).to.be.calledWith(
 			local(
 				follow( 'http://example.com', {
@@ -91,7 +91,7 @@ describe( 'receiveFollow', () => {
 			subscribed: false,
 		};
 
-		receiveFollow( { dispatch }, action, null, response );
+		receiveFollow( { dispatch }, action, response );
 		expect( dispatch ).to.be.calledWithMatch( {
 			type: NOTICE_CREATE,
 			notice: { status: 'is-error' },

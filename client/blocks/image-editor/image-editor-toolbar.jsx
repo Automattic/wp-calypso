@@ -199,8 +199,8 @@ export class ImageEditorToolbar extends Component {
 				: {
 					tool: 'aspect',
 					ref: this.setAspectMenuContext,
-					icon: 'layout',
-					text: translate( 'Aspect' ),
+					icon: 'crop',
+					text: translate( 'Crop' ),
 					onClick: this.onAspectOpen,
 					disabled: isAspectRatioDisabled
 				},
