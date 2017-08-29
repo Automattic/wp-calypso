@@ -30,7 +30,7 @@ import {
 	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
@@ -58,6 +58,7 @@ class JetpackConnectAuthorizeForm extends Component {
 			} ).isRequired,
 		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
+		setTracksAnonymousUserId: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
 		requestSites: PropTypes.func,
@@ -67,6 +68,12 @@ class JetpackConnectAuthorizeForm extends Component {
 	};
 
 	componentWillMount() {
+		// set anonymous ID for cross-system analytics
+		const userId = this.props.jetpackConnectAuthorize.queryObject._ui;
+		const userIdType = this.props.jetpackConnectAuthorize.queryObject._ut;
+		if ( userId && 'anon' === userIdType ) {
+			this.props.setTracksAnonymousUserId( userId );
+		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
@@ -173,6 +180,7 @@ export default connect(
 		goBackToWpAdmin,
 		goToXmlrpcErrorFallbackUrl,
 		recordTracksEvent,
+		setTracksAnonymousUserId,
 		requestSites,
 		retryAuth,
 	}
