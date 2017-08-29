@@ -37,7 +37,6 @@ export default class extends React.Component {
 					<PhoneInput
 						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
 						ref="input"
-						// eslint-disable-next-line react/jsx-no-bind
 						setComponentReference={ this.setPhoneInput }
 						countryCode={ this.props.countryCode.toUpperCase() }
 						className={ classes }
