@@ -1,4 +1,5 @@
 {
+	"branches": {},
     "rulesNotToDowngrade": ["no-unused-vars"],
     "remote": "origin/master",
     "processors": {
