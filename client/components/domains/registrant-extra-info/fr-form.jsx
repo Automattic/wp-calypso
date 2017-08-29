@@ -33,6 +33,10 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
+function renderValidationError( message ) {
+	return <FormInputValidation	isError	text={ message } />;
+}
+
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		children: PropTypes.node,
@@ -122,18 +126,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		} = defaults( {}, contactDetails.extra, emptyValues );
 
 		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
-		const registrantVatIdValidationMessage = validationErrors.registrantVatId && (
-			<FormInputValidation
-				isError
-				text={ translate( 'The VAT Number field is a pattern ' +
+		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
+			renderValidationError(
+				translate( 'The VAT Number field is a pattern ' +
 					'of letters and numbers that depends on the country, ' +
-					'but it always includes a 2 letter country code' )	} />
-		);
+					'but it always includes a 2 letter country code' ) );
+
 		const sirenSiretValidationMessage = validationErrors.sirenSiret &&
-			<FormInputValidation
-				isError
-				text={ translate( 'The SIREN/SIRET field must be either a ' +
-					'9 digit SIREN number, or a 14 digit SIRET number' ) } />;
+			renderValidationError(
+				translate( 'The SIREN/SIRET field must be either a ' +
+					'9 digit SIREN number, or a 14 digit SIRET number' ) );
+
+		const trademarkNumberValidationMessage = validationErrors.trademarkNumber &&
+			renderValidationError( translate( 'An EU Trademark number is a 9 digit number, like 012345678' ) );
 
 		return (
 			<div>
@@ -197,6 +202,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							)
 						}
 						onChange={ this.handleChangeEvent } />
+					{ trademarkNumberValidationMessage }
 				</FormFieldset>
 			</div>
 		);
