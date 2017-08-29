@@ -79,7 +79,6 @@ export class DomainDetailsForm extends PureComponent {
 		this.state = {
 			form: null,
 			isDialogVisible: false,
-			privacyRadio: this.allDomainRegistrationsHavePrivacy() ? 'private' : 'public',
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			steps,
@@ -116,7 +115,7 @@ export class DomainDetailsForm extends PureComponent {
 	loadFormStateFromRedux = ( fn ) => {
 		// only load the properties relevant to the main form fields
 		fn( null, pick( this.props.contactDetails, this.fieldNames ) );
-	}
+	};
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
@@ -131,7 +130,7 @@ export class DomainDetailsForm extends PureComponent {
 		} );
 
 		onComplete( sanitizedFieldValues );
-	}
+	};
 
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
@@ -152,7 +151,7 @@ export class DomainDetailsForm extends PureComponent {
 		const allFieldValues = this.getMainFieldValues();
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
-	}
+	};
 
 	generateValidationHandler( onComplete ) {
 		return ( error, data ) => {
@@ -167,7 +166,7 @@ export class DomainDetailsForm extends PureComponent {
 		}
 
 		this.setState( { form } );
-	}
+	};
 
 	needsOnlyGoogleAppsDetails() {
 		return cartItems.hasGoogleApps( this.props.cart ) && ! cartItems.hasDomainRegistration( this.props.cart );
@@ -175,7 +174,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	handleFormControllerError = ( error ) => {
 		throw error;
-	}
+	};
 
 	handleChangeEvent = ( event ) => {
 		// Resets the state field every time the user selects a different country
@@ -197,7 +196,7 @@ export class DomainDetailsForm extends PureComponent {
 			name: event.target.name,
 			value: event.target.value
 		} );
-	}
+	};
 
 	handlePhoneChange = ( { value, countryCode } ) => {
 		this.formStateController.handleFieldChange( {
@@ -208,7 +207,7 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( {
 			phoneCountryCode: countryCode
 		} );
-	}
+	};
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
@@ -277,13 +276,13 @@ export class DomainDetailsForm extends PureComponent {
 	renderPrivacySection() {
 		return (
 			<PrivacyProtection
+				allDomainsHavePrivacy={ this.allDomainRegistrationsHavePrivacy() }
 				cart={ this.props.cart }
 				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
 				isChecked={ this.allDomainRegistrationsHavePrivacy() }
 				onCheckboxChange={ this.handleCheckboxChange }
-				radioSelect={ this.state.privacyRadio }
 				onRadioSelect={ this.handleRadioChange }
 				onDialogClose={ this.closeDialog }
 				onDialogOpen={ this.openDialog }
@@ -420,20 +419,19 @@ export class DomainDetailsForm extends PureComponent {
 
 	handleCheckboxChange = () => {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
-	}
+	};
 
 	handleRadioChange = ( enable ) => {
-		this.setState( { privacyRadio: enable ? 'private' : 'public' } );
 		this.setPrivacyProtectionSubscriptions( enable );
 	};
 
 	closeDialog = () => {
 		this.setState( { isDialogVisible: false } );
-	}
+	};
 
 	openDialog = () => {
 		this.setState( { isDialogVisible: true } );
-	}
+	};
 
 	focusFirstError() {
 		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
@@ -498,7 +496,7 @@ export class DomainDetailsForm extends PureComponent {
 
 			this.finish();
 		} );
-	}
+	};
 
 	finish() {
 		const allFieldValues = this.props.contactDetails;
