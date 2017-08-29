@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
-import { getOAuth2ClientData, showOAuth2Layout } from 'state/login/oauth2/selectors';
+import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 
 const LayoutLoggedOut = ( {
-	oauth2ClientData,
+	oauth2Client,
 	primary,
 	section,
 	redirectUri,
@@ -32,13 +32,13 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	if ( useOAuth2Layout ) {
-		const hasValidOAuth2ClientData = !! oauth2ClientData;
-		const oauthClientName = hasValidOAuth2ClientData && oauth2ClientData.name;
+		const hasValidOAuth2ClientData = !! oauth2Client;
+		const oauthClientName = hasValidOAuth2ClientData && oauth2Client.name;
 		classNameObject.dops = hasValidOAuth2ClientData;
 		classNameObject[ oauthClientName ] = hasValidOAuth2ClientData;
 
 		if ( oauthClientName ) {
-			masterbar = <OauthClientMasterbar oauth2ClientData={ oauth2ClientData } />;
+			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
 	}
 
@@ -79,7 +79,7 @@ LayoutLoggedOut.propTypes = {
 export default connect(
 	state => ( {
 		section: getSection( state ),
-		oauth2ClientData: getOAuth2ClientData( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 		useOAuth2Layout: showOAuth2Layout( state ),
 	} )
 )( LayoutLoggedOut );

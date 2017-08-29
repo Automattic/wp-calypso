@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-import { startsWith } from 'lodash';
 import qs from 'qs';
 import url from 'url';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { createReducer } from 'state/utils';
 import {
-	ROUTE_SET,
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -96,7 +94,7 @@ const getClientIdFromSignupUrl = signupUrl => {
 	return oauth2RedirectParams.client_id;
 };
 
-export const clients = createReducer( initialClientsData, {
+export default createReducer( initialClientsData, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		const newData = Object.assign( {}, state[ data.id ], data );
 		return Object.assign( {}, state, { [ data.id ]: newData } );
@@ -111,13 +109,4 @@ export const clients = createReducer( initialClientsData, {
 		const newData = Object.assign( {}, state[ clientId ], { signupUrl } );
 		return Object.assign( {}, state, { [ clientId ]: newData } );
 	},
-} );
-
-export const currentClientId = createReducer( null, {
-	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && query.client_id || null,
-} );
-
-export default combineReducers( {
-	clients,
-	currentClientId,
 } );

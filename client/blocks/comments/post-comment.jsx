@@ -155,7 +155,7 @@ class PostComment extends Component {
 	}
 
 	renderCommentForm() {
-		if ( this.props.activeReplyCommentID !== this.props.commentId ) {
+		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
 			return null;
 		}
 
@@ -163,7 +163,7 @@ class PostComment extends Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ this.props.post }
-				parentCommentID={ this.props.commentId }
+				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
@@ -303,7 +303,7 @@ class PostComment extends Component {
 					comment={ comment }
 					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
-					activeReplyCommentID={ this.props.activeReplyCommentID }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					editComment={ this.props.onEditCommentClick }
 					editCommentCancel={ this.props.onEditCommentCancel }
