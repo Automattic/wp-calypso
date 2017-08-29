@@ -14,7 +14,7 @@ class SuggestionsExample extends Component {
 
 	static displayName = 'Suggestions';
 
-	static hints = [ "Foo", "Bar", "Baz" ];
+	static hints = [ 'Foo', 'Bar', 'Baz' ];
 
 	state = {
 		query: '',
