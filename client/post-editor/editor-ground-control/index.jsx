@@ -187,6 +187,18 @@ export class EditorGroundControl extends PureComponent {
 		return this.props.translate( 'Saved' );
 	}
 
+	getE2ESaveStatus() {
+		if ( this.props.isSaving ) {
+			return 'Saving';
+		}
+
+		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
+			return null;
+		}
+
+		return 'Saved';
+	}
+
 	isSaveEnabled() {
 		return ! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
@@ -346,7 +358,10 @@ export class EditorGroundControl extends PureComponent {
 						</button>
 					}
 					{ ! this.isSaveEnabled() &&
-						<span className="editor-ground-control__save-status">
+						<span
+							className="editor-ground-control__save-status"
+							data-e2e-status={ this.getE2ESaveStatus() }
+						>
 							{ this.getSaveStatusLabel() }
 						</span>
 					}
