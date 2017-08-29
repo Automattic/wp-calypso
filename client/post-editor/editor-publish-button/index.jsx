@@ -136,8 +136,7 @@ export class EditorPublishButton extends Component {
 	}
 
 	isEnabled() {
-		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isInPostPublishConfirmationFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return ! this.props.isPublishing &&
 			! this.props.isSaveBlocked &&

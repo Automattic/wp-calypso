@@ -188,8 +188,7 @@ export class EditPostStatus extends Component {
 	}
 
 	renderPostScheduling() {
-		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isPostPublishFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		const fullDate = postScheduleUtils.convertDateToUserLocation(
 			( this.props.postDate || new Date() ),
