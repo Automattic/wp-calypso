@@ -17,12 +17,7 @@ export default class extends React.Component {
 		isError: false,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.focus = this.focus.bind( this );
-	}
-
-	focus() {
+	focus = () => {
 		this.phoneInput.numberInput.focus();
 	}
 
@@ -39,6 +34,7 @@ export default class extends React.Component {
 					<PhoneInput
 						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
 						ref="input"
+						// eslint-disable-next-line react/jsx-no-bind
 						onRef={ ref => this.phoneInput = ref }
 						countryCode={ this.props.countryCode.toUpperCase() }
 						className={ classes }
