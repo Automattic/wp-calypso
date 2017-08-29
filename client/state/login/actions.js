@@ -347,10 +347,10 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 /**
  * Attempt to disconnect the current account with a social service
  *
- * @param  {String}    socialServce    The external social service name.
+ * @param  {String}    socialService    The external social service name.
  * @return {Function}               Action thunk to trigger the login process.
  */
-export const disconnectSocialUser = ( socialServce ) => dispatch => {
+export const disconnectSocialUser = ( socialService ) => dispatch => {
 	dispatch( {
 		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -358,10 +358,9 @@ export const disconnectSocialUser = ( socialServce ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialDisconnect( socialServce ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialDisconnect( socialService ).then( () => {
 		dispatch( {
 			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
-			redirect_to: wpcomResponse.redirect_to,
 		} );
 	}, wpcomError => {
 		const error = getErrorFromWPCOMError( wpcomError );
