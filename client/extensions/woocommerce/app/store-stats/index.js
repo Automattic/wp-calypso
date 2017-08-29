@@ -10,7 +10,7 @@ import { moment, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import Navigation from './store-stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
@@ -29,13 +29,10 @@ import {
 	UNITS
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
-import { getJetpackSites } from 'state/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteStats from 'components/data/query-site-stats';
 
 class StoreStats extends Component {
 	static propTypes = {
-		jetPackSites: PropTypes.array,
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
 		querystring: PropTypes.string,
@@ -45,7 +42,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { jetPackSites, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
@@ -64,10 +61,14 @@ class StoreStats extends Component {
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
-				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
 				{ siteId && <QuerySiteStats statType="statsOrders" siteId={ siteId } query={ ordersQuery } /> }
 				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
-				<Navigation unit={ unit } type="orders" slug={ slug } />
+				<StatsNavigation
+					selectedItem={ 'store' }
+					siteId={ siteId }
+					slug={ slug }
+					interval={ unit }
+				/>
 				<Chart
 					path={ path }
 					query={ ordersQuery }
@@ -151,6 +152,5 @@ export default connect(
 	state => ( {
 		slug: getSelectedSiteSlug( state ),
 		siteId: getSelectedSiteId( state ),
-		jetPackSites: getJetpackSites( state ),
 	} )
 )( StoreStats );
