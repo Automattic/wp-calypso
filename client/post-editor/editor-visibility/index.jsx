@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -69,8 +68,7 @@ const EditorVisibility = React.createClass( {
 			return;
 		}
 
-		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isInPostPublishConfirmationFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		if ( ! isInPostPublishConfirmationFlow ) {
 			return;
@@ -306,8 +304,7 @@ const EditorVisibility = React.createClass( {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
-		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isInPostPublishConfirmationFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div>
@@ -498,8 +495,7 @@ const EditorVisibility = React.createClass( {
 
 	render() {
 		const visibility = this.getVisibility();
-		const isDropdown = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isDropdown = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 		const classes = classNames( 'editor-visibility', {
 			'is-dialog-open': this.state.showPopover,
 			'is-touch': touchDetect.hasTouch(),
