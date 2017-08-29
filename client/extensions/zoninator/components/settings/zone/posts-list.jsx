@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -59,7 +60,7 @@ class PostsList extends Component {
 							'Add content to the zone by using search or by selecting it from the recent posts list below.'
 						) }
 					</p>
-					<SearchAutocomplete onSelect={ this.addPost( fields ) } ignored={ posts }>
+					<SearchAutocomplete onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.ID ) }>
 						<RecentPostsDropdown onSelect={ this.addPost( fields ) } ignored={ posts } />
 					</SearchAutocomplete>
 				</FormFieldset>

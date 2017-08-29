@@ -11,16 +11,16 @@ import classNames from 'classnames';
  */
 import Card from 'components/card';
 import Search from 'components/search';
-import Suggestions from './suggestions';
+import PostSuggestions from './post-suggestions';
 
 class SearchAutocomplete extends Component {
 	static propTypes = {
 		onSelect: PropTypes.func.isRequired,
-		ignored: PropTypes.array,
+		exclude: PropTypes.array,
 	}
 
 	static defaultProps = {
-		ignored: [],
+		exclude: [],
 	}
 
 	state = {
@@ -38,23 +38,23 @@ class SearchAutocomplete extends Component {
 		} );
 	}
 
-	registerSuggestions = ( suggestions ) => {
-		this.suggestions = suggestions ? suggestions.getWrappedInstance() : null;
-	}
+	setSearch = ref => this.searchRef = ref;
+
+	setSuggestions = ref => this.suggestionsRef = ref && ref.getWrappedInstance();
 
 	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
 
 	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
 
-	handleKeyDown = event => this.suggestions.handleKeyEvent( event );
+	handleKeyDown = event => this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
 
 	handleSelect = ( item ) => {
-		this.refs.search.clear();
+		this.searchRef.clear();
 		this.props.onSelect( item );
 	}
 
 	render() {
-		const { ignored, translate } = this.props;
+		const { exclude, translate } = this.props;
 
 		const searchAutocompleteClass = classNames( 'zoninator__search-autocomplete', {
 			'has-highlight': this.state.searchIsOpen,
@@ -71,17 +71,20 @@ class SearchAutocomplete extends Component {
 						fitsContainer
 						delaySearch
 						disableAutocorrect
-						ref="search"
+						ref={ this.setSearch }
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
 						onKeyDown={ this.handleKeyDown }
 						placeholder={ translate( 'Search for content' ) } />
-					<Suggestions
-						ref={ this.registerSuggestions }
-						searchTerm={ this.state.search }
-						ignored={ ignored }
-						suggest={ this.handleSelect } />
+					{
+						this.state.search &&
+						<PostSuggestions
+							ref={ this.setSuggestions }
+							search={ this.state.search }
+							exclude={ exclude }
+							suggest={ this.handleSelect } />
+					}
 				</Card>
 			</div>
 		);
