@@ -64,7 +64,14 @@ import {
 	getPlanClass
 } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
-import { PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY } from 'lib/plans/constants';
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -307,7 +314,9 @@ class JetpackThankYouCard extends Component {
 
 	isEligibleForLiveChat() {
 		const { planSlug } = this.props;
-		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY ||
+			planSlug === PLAN_JETPACK_PERSONAL || planSlug === PLAN_JETPACK_PERSONAL_MONTHLY ||
+			planSlug === PLAN_JETPACK_PREMIUM || planSlug === PLAN_JETPACK_PREMIUM_MONTHLY;
 	}
 
 	renderLiveChatButton() {
