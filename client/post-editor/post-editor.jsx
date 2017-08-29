@@ -1054,7 +1054,7 @@ export const PostEditor = React.createClass( {
 		return editorMode;
 	},
 
-	isCursorInATag: function( content, cursorPosition ) {
+	getContainingTagInfo: function( content, cursorPosition ) {
 		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
 		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
 
@@ -1089,12 +1089,12 @@ export const PostEditor = React.createClass( {
 		let htmlModeCursorEndPosition = textArea.selectionEnd;
 
 		// check if the cursor is in a tag and if so, adjust it
-		const isCursorStartInTag = this.isCursorInATag( textArea.value, htmlModeCursorStartPosition );
+		const isCursorStartInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorStartPosition );
 		if ( isCursorStartInTag ) {
 			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
 		}
 
-		const isCursorEndInTag = this.isCursorInATag( textArea.value, htmlModeCursorEndPosition );
+		const isCursorEndInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorEndPosition );
 		if ( isCursorEndInTag ) {
 			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
 		}
