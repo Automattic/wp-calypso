@@ -7,17 +7,14 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
 import extend from 'lodash/extend';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
-import { isUpdatingJetpackSettings } from 'state/selectors';
 
 class JPOSummaryStep extends React.Component {
 
@@ -51,11 +48,7 @@ class JPOSummaryStep extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = {
-			written: false
-		};
 		this.getOnboardingChoices = this.getOnboardingChoices.bind( this );
-		this.completeOnboarding = this.completeOnboarding.bind( this );
 		this.renderStepContent = this.renderStepContent.bind( this );
 	}
 
@@ -106,18 +99,6 @@ class JPOSummaryStep extends React.Component {
 		}
 
 		return sendToJetpack;
-	}
-
-	completeOnboarding() {
-		this.setState( {
-			written: true
-		} );
-
-		this.props.updateSettings(
-			get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
-			this.getOnboardingChoices(),
-			false // don't sanitize settings
-		);
 	}
 
 	renderStepContent() {
@@ -225,33 +206,29 @@ class JPOSummaryStep extends React.Component {
 					</tbody>
 				</table>
 				<div>
-					<Button primary onClick={ this.completeOnboarding }>
+					<a
+						className="jpo-summary__visit-site button is-primary"
+						href={ get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'home_url' ] ) }>
 						{
-							this.props.isSavingSettings
-								? translate( 'Saving…' )
-								: translate( 'Save and finish' )
+							translate( 'Visit site' )
 						}
-					</Button>
+					</a>
 				</div>
 			</div>
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.state.written && ! nextProps.isSavingSettings ) {
-			page.redirect( '/jetpack/connect/plans/' + get( this.props.signupDependencies, [ 'jpoConnect', 'siteSlug' ] ) );
-			return false;
-		}
-		return true;
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return nextProps.isSavingSettings && nextState.written;
+	componentWillMount() {
+		this.props.updateSettings(
+			get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
+			this.getOnboardingChoices(),
+			false // don't sanitize settings
+		);
 	}
 
 	render() {
-		const headerText = translate( 'Congratulations! %s is on its way.', {
-			args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
+		const headerText = translate( 'Congratulations! %s is ready.', {
+			args: get( this.props.signupDependencies, [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
 		} );
 		const subHeaderText = translate(
 			'You have unlocked dozens of website-bolstering features with Jetpack. Continue preparing your site below.'
@@ -277,12 +254,7 @@ class JPOSummaryStep extends React.Component {
 }
 
 export default connect(
-	state => {
-		const siteId = parseInt( get( state.signup.dependencyStore, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ) );
-		return {
-			isSavingSettings: isUpdatingJetpackSettings( state, siteId )
-		};
-	},
+	null,
 	{
 		setJPOSummary,
 		updateSettings
