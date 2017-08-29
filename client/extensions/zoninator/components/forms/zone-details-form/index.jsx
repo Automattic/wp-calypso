@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,46 +19,54 @@ import SectionHeader from 'components/section-header';
 
 const form = 'extensions.zoninator.zoneDetails';
 
-const ZoneDetailsForm = ( {
-	handleSubmit,
-	label,
-	onSubmit,
-	submitting,
-} ) => {
-	const save = data => onSubmit( form, data );
+class ZoneDetailsForm extends PureComponent {
+	static propTypes = {
+		handleSubmit: PropTypes.func.isRequired,
+		label: PropTypes.string.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+		submitting: PropTypes.bool.isRequired,
+		translate: PropTypes.func.isRequired,
+	}
 
-	return (
-		<form onSubmit={ handleSubmit( save ) }>
-			<SectionHeader label={ label }>
-				<FormButton
-					compact
-					disabled={ submitting }
-					isSubmitting={ submitting }>
-					{ translate( 'Save' ) }
-				</FormButton>
-			</SectionHeader>
-			<CompactCard>
-				<ReduxFormFieldset
-					name="name"
-					label={ translate( 'Zone name' ) }
-					component={ FormTextInput } />
-				<ReduxFormFieldset
-					name="description"
-					label={ translate( 'Zone description' ) }
-					component={ FormTextarea } />
-			</CompactCard>
-		</form>
-	);
-};
+	save = data => this.props.onSubmit( this.props.siteId, form, data );
 
-ZoneDetailsForm.propTypes = {
-	label: PropTypes.string.isRequired,
-	onSubmit: PropTypes.func.isRequired,
-};
+	render() {
+		const {
+			handleSubmit,
+			label,
+			submitting,
+			translate,
+		} = this.props;
+
+		return (
+			<form onSubmit={ handleSubmit( this.save ) }>
+				<SectionHeader label={ label }>
+					<FormButton
+						compact
+						disabled={ submitting }
+						isSubmitting={ submitting }>
+						{ translate( 'Save' ) }
+					</FormButton>
+				</SectionHeader>
+				<CompactCard>
+					<ReduxFormFieldset
+						name="name"
+						label={ translate( 'Zone name' ) }
+						component={ FormTextInput } />
+					<ReduxFormFieldset
+						name="description"
+						label={ translate( 'Zone description' ) }
+						component={ FormTextarea } />
+				</CompactCard>
+			</form>
+		);
+	}
+}
 
 const createReduxForm = reduxForm( {
 	form,
-	validate: ( data ) => {
+	validate: ( data, { translate } ) => {
 		const errors = {};
 
 		if ( ! data.name ) {
@@ -68,4 +77,7 @@ const createReduxForm = reduxForm( {
 	},
 } );
 
-export default createReduxForm( ZoneDetailsForm );
+export default flowRight(
+	localize,
+	createReduxForm,
+)( ZoneDetailsForm );

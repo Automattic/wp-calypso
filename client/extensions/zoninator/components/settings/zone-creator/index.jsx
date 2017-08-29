@@ -20,23 +20,21 @@ const ZoneCreator = ( {
 	siteId,
 	siteSlug,
 	translate,
-} ) => {
-	const save = ( form, data ) => saveZone( siteId, form, data );
+} ) => (
+	<div>
+		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` }>
+			{ translate( 'Add a zone' ) }
+		</HeaderCake>
 
-	return (
-		<div>
-			<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` }>
-				{ translate( 'Add a zone' ) }
-			</HeaderCake>
-
-			<ZoneDetailsForm label={ translate( 'New zone' ) } onSubmit={ save } />
-		</div>
-	);
-};
+		<ZoneDetailsForm label={ translate( 'New zone' ) } siteId={ siteId } onSubmit={ saveZone } />
+	</div>
+);
 
 ZoneCreator.propTypes = {
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
+	saveZone: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 const connectComponent = connect(
