@@ -1,27 +1,28 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import classNames from 'classnames';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import JetpackLogo from 'components/jetpack-logo';
 
-const JetpackColophon = ( { className } ) => {
+const JetpackColophon = ( { className, translate } ) => {
 	return (
 		<div className={ classNames( 'jetpack-colophon', className ) }>
 			<span className="jetpack-colophon__power">
-				{ __( 'Powered by {{jetpackLogo/}}', {
+				{ translate( 'Powered by {{jetpackLogo /}}', {
 					components: {
 						jetpackLogo: <JetpackLogo size={ 24 } full />,
-				}
-			} ) }
+					},
+				} ) }
 			</span>
 		</div>
 	);
 };
 
-export default JetpackColophon;
+export default localize( JetpackColophon );
