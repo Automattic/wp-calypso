@@ -67,12 +67,12 @@ class Suggestions extends Component {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 && this.props.suggest( this.state.suggestionPosition );
+				this.state.suggestionPosition >= 0 && this.suggest( this.state.suggestionPosition );
 				break;
 		}
 	}
 
-	handleMouseDown = label => this.props.suggest( this.getPositionForSuggestion( label ) );
+	handleMouseDown = label => this.suggest( this.getPositionForSuggestion( label ) );
 
 	handleMouseOver = label => this.setState( {
 		suggestionPosition: this.getPositionForSuggestion( label ),
