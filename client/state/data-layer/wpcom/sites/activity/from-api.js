@@ -16,6 +16,11 @@ import {
 } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import warn from 'lib/warn';
+
+/**
  * Module constants
  */
 export const ACTIVITY_REQUIRED_PROPS = [ 'activity_id', 'name', 'published', 'summary' ];
@@ -54,6 +59,7 @@ export const validateItem = overEvery(
  */
 export function itemsReducer( validProcessedItems, item ) {
 	if ( ! validateItem( item ) ) {
+		warn( 'Activity item fails validation and has been omitted: %o', item );
 		return validProcessedItems;
 	}
 
