@@ -46,21 +46,20 @@ import reducer, {
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'isFormDisabled',
 			'isRequesting',
+			'isRequestingTwoFactorAuth',
 			'magicLogin',
 			'redirectTo',
 			'rememberMe',
-			'isFormDisabled',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
 			'socialAccount',
 			'socialAccountLink',
 			'twoFactorAuth',
-			'isRequestingTwoFactorAuth',
-			'twoFactorAuthRequestError',
 			'twoFactorAuthPushPoll',
-			'oauth2',
+			'twoFactorAuthRequestError',
 		] );
 	} );
 

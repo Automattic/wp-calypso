@@ -7,30 +7,30 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getOAuth2ClientData,
+	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'getOAuth2ClientData()', () => {
+	describe( 'getCurrentOAuth2Client()', () => {
 		it( 'should return null if there is no information yet', () => {
-			const clientData = getOAuth2ClientData( undefined );
+			const clientData = getCurrentOAuth2Client( undefined );
 
 			expect( clientData ).to.be.null;
 		} );
 
 		it( 'should return the oauth2 client information if there is one', () => {
-			const clientData = getOAuth2ClientData( {
-				login: {
-					oauth2: {
-						clients: {
-							1: {
-								id: 1,
-								name: 'test',
-								title: 'WordPress.com Test Client',
-								url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-							}
-						},
+			const clientData = getCurrentOAuth2Client( {
+				oauth2Clients: {
+					1: {
+						id: 1,
+						name: 'test',
+						title: 'WordPress.com Test Client',
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
+					}
+				},
+				ui: {
+					oauth2Clients: {
 						currentClientId: 1,
 					}
 				}
@@ -54,16 +54,16 @@ describe( 'selectors', () => {
 
 		it( 'should return false if there is no current oauth2 client set', () => {
 			const showOAuth2 = showOAuth2Layout( {
-				login: {
-					oauth2: {
-						clients: {
-							1: {
-								id: 1,
-								name: 'test',
-								title: 'WordPress.com Test Client',
-								url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-							}
-						},
+				oauth2Clients: {
+					1: {
+						id: 1,
+						name: 'test',
+						title: 'WordPress.com Test Client',
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
+					}
+				},
+				ui: {
+					oauth2Clients: {
 						currentClientId: undefined,
 					}
 				}
@@ -74,16 +74,16 @@ describe( 'selectors', () => {
 
 		it( 'should return true if there is a current client id set', () => {
 			const showOAuth2 = showOAuth2Layout( {
-				login: {
-					oauth2: {
-						clients: {
-							1: {
-								id: 1,
-								name: 'test',
-								title: 'WordPress.com Test Client',
-								url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-							}
-						},
+				oauth2Clients: {
+					1: {
+						id: 1,
+						name: 'test',
+						title: 'WordPress.com Test Client',
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
+					}
+				},
+				ui: {
+					oauth2Clients: {
 						currentClientId: 42,
 					}
 				}
