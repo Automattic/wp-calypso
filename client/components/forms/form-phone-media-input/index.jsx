@@ -17,6 +17,15 @@ export default class extends React.Component {
 		isError: false,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.focus = this.focus.bind( this );
+	}
+
+	focus() {
+		this.phoneInput.numberInput.focus();
+	}
+
 	render() {
 		const classes = classnames( this.props.className, {
 			'is-error': this.props.isError,
@@ -30,6 +39,7 @@ export default class extends React.Component {
 					<PhoneInput
 						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
 						ref="input"
+						onRef={ ref => this.phoneInput = ref }
 						countryCode={ this.props.countryCode.toUpperCase() }
 						className={ classes }
 					/>
