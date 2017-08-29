@@ -22,7 +22,7 @@ class StripeConnectPrompt extends Component {
 		const { isCreateSelected, onSelectCreate, onSelectConnect, translate } = this.props;
 
 		return (
-			<div className="payments__stripe-connect-prompt">
+			<div className="stripe__connect-prompt">
 				<SegmentedControl primary>
 					<ControlItem
 						selected={ isCreateSelected }

@@ -10,31 +10,12 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import APIKeysView from 'woocommerce/components/api-keys-view';
-import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import StripeConnectAccount from './payment-method-stripe-connect-account';
-import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
-import TestLiveToggle from 'woocommerce/components/test-live-toggle';
-
-export function hasStripeValidCredentials( method ) {
-	const { settings } = method;
-	const isLiveMode = method.settings.testmode.value !== 'yes';
-	if ( isLiveMode ) {
-		return settings.secret_key.value.trim() && settings.publishable_key.value.trim();
-	}
-	return settings.test_secret_key.value.trim() && settings.test_publishable_key.value.trim();
-}
+import { hasStripeValidCredentials } from './stripe/payment-method-stripe-utils.js';
+import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
+import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
+import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
 
 class PaymentMethodStripe extends Component {
-
 	static propTypes = {
 		stripeConnectAccount: PropTypes.shape( {
 			connectedUserID: PropTypes.string,
@@ -80,15 +61,10 @@ class PaymentMethodStripe extends Component {
 
 	////////////////////////////////////////////////////////////////////////////
 	// Lifecycle sorcery
-
 	constructor( props ) {
 		super( props );
 		this.state = {
-			createSelected: true,
-			hadKeysAtStart: this.hasKeys( props ),
-			missingFieldsNotice: false,
-			userRequestedKeyFlow: false,
-			userRequestedConnectFlow: false,
+			highlightEmptyRequiredFields: false,
 		};
 	}
 
@@ -131,274 +107,6 @@ class PaymentMethodStripe extends Component {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	// Heading
-
-	renderHeading = () => {
-		const { stripeConnectAccount, translate } = this.props;
-		const { connectedUserID } = stripeConnectAccount;
-
-		// If we are not connected AND had no keys at mount display
-		// Take credit card payments with Stripe
-		if ( ! connectedUserID && ! this.state.hadKeysAtStart ) {
-			return (
-				<div className="payments__method-edit-header">
-					{ translate( 'Take credit card payments with Stripe' ) }
-				</div>
-			);
-		}
-
-		// Otherwise, display Manage Stripe
-		return (
-			<div className="payments__method-edit-header">
-				{ translate( 'Manage Stripe' ) }
-			</div>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// Setup prompting
-
-	onSelectCreate = () => {
-		this.setState( { createSelected: true } );
-	}
-
-	onSelectConnect = () => {
-		this.setState( { createSelected: false } );
-	}
-
-	possiblyRenderSetupPrompt = () => {
-		const { stripeConnectAccount, translate } = this.props;
-		const { connectedUserID } = stripeConnectAccount;
-
-		// If we don't have the new connect UX enabled yet, keep the legacy prompt instead
-		if ( ! config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' ) ) {
-			return (
-				<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
-					<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
-				</Notice>
-			);
-		}
-
-		// Do we have any API keys? If so, do not display connect prompt
-		// unless the user specifically asked for it
-		if ( this.hasKeys() && ! this.state.userRequestedConnectFlow ) {
-			return null;
-		}
-
-		// Do we have a Stripe Connect User ID already? If so, do not display connect prompt
-		if ( connectedUserID ) {
-			return null;
-		}
-
-		// Did the user ask for the key based flow? If so, do not display connect prompt
-		if ( this.state.userRequestedKeyFlow ) {
-			return null;
-		}
-
-		// Did we have keys when we started? If so, do not display the connect prompt
-		// unless the user explicitly requested the connect flow
-		if ( this.state.hadKeysAtStart && ! this.state.userRequestedConnectFlow ) {
-			return null;
-		}
-
-		return (
-			<StripeConnectPrompt
-				isCreateSelected={ this.state.createSelected }
-				onSelectCreate={ this.onSelectCreate }
-				onSelectConnect={ this.onSelectConnect }
-			/>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// Stripe Connect Account details (if any)
-
-	possiblyRenderConnectAccount = () => {
-		const { stripeConnectAccount } = this.props;
-
-		// No account ID? Bail
-		if ( ! stripeConnectAccount.connectedUserID ) {
-			return null;
-		}
-
-		return (
-			<StripeConnectAccount
-				stripeConnectAccount={ stripeConnectAccount }
-			/>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// Live vs Test Mode and API Key Fields
-
-	onSelectLive = () => {
-		this.props.onEditField( 'testmode', 'no' );
-	}
-
-	onSelectTest = () => {
-		this.props.onEditField( 'testmode', 'yes' );
-	}
-
-	possiblyRenderModePromptAndKeyFields = () => {
-		const { method, stripeConnectAccount, translate } = this.props;
-		const { connectedUserID } = stripeConnectAccount;
-
-		// Do we have a connected account? Don't bother showing this control
-		if ( connectedUserID ) {
-			return null;
-		}
-
-		// Did the user request connect flow? Don't bother showing this control
-		if ( this.state.userRequestedConnectFlow ) {
-			return null;
-		}
-
-		// Didn't have keys at start, don't have keys now AND
-		// the user didn't request key flow? Don't show these fields
-		if ( ! this.state.hadKeysAtStart && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
-			return null;
-		}
-
-		let keys = [];
-
-		if ( method.settings.testmode.value === 'no' ) {
-			keys = [
-				{
-					id: 'secret_key',
-					label: translate( 'Live Secret Key' ),
-					placeholder: translate( 'Enter your secret key from your Stripe.com account' ),
-					value: method.settings.secret_key.value,
-				},
-				{
-					id: 'publishable_key',
-					label: translate( 'Live Publishable Key' ),
-					placeholder: translate( 'Enter your publishable key from your Stripe.com account' ),
-					value: method.settings.publishable_key.value,
-				}
-			];
-		} else {
-			keys = [
-				{
-					id: 'test_secret_key',
-					label: translate( 'Test Secret Key' ),
-					placeholder: translate( 'Enter your secret key from your Stripe.com account' ),
-					value: method.settings.test_secret_key.value,
-				},
-				{
-					id: 'test_publishable_key',
-					label: translate( 'Test Publishable Key' ),
-					placeholder: translate( 'Enter your publishable key from your Stripe.com account' ),
-					value: method.settings.test_publishable_key.value,
-				}
-			];
-		}
-
-		return (
-			<div>
-				<FormFieldset className="payments__method-edit-field-container">
-					<TestLiveToggle
-						isTestMode={ 'yes' === method.settings.testmode.value }
-						onSelectLive={ this.onSelectLive }
-						onSelectTest={ this.onSelectTest }
-					/>
-				</FormFieldset>
-				<APIKeysView
-					highlightEmptyFields={ this.state.missingFieldsNotice }
-					keys={ keys }
-					onEdit={ this.onEditFieldHandler }
-				/>
-			</div>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// All the rest of the settings - auth/capture, descriptor, apple pay
-
-	onSelectAuthOnly = () => {
-		this.props.onEditField( 'capture', 'no' );
-	}
-
-	onSelectCapture = () => {
-		this.props.onEditField( 'capture', 'yes' );
-	}
-
-	getStatementDescriptorPlaceholder = () => {
-		const { site, translate } = this.props;
-		const domain = site.domain.substr( 0, 22 ).trim().toUpperCase();
-		return translate( 'e.g. %(domain)s', { args: { domain } } );
-	}
-
-	possiblyRenderMoreSettings = () => {
-		const { method, stripeConnectAccount, translate } = this.props;
-		const { isActivated, connectedUserID } = stripeConnectAccount;
-
-		// Show these controls if
-		// 1) we have a connected AND activated account
-		// OR 2) if we don't have an account but we do have (or had) at least some keys
-		// OR 3) if the user has requested key entry mode explicitly
-		let okToShow = false;
-
-		if ( isActivated && connectedUserID ) {
-			okToShow = true;
-		}
-
-		if ( ! connectedUserID && ( this.hasKeys() || this.state.hadKeysAtStart ) ) {
-			okToShow = true;
-		}
-
-		if ( this.state.userRequestedKeyFlow ) {
-			okToShow = true;
-		}
-
-		// But, if the user has requested connect flow - don't show these fields
-		if ( this.state.userRequestedConnectFlow ) {
-			okToShow = false;
-		}
-
-		if ( ! okToShow ) {
-			return null;
-		}
-
-		return (
-			<div>
-				<AuthCaptureToggle
-					isAuthOnlyMode={ 'yes' === method.settings.capture.value }
-					onSelectAuthOnly={ this.onSelectAuthOnly }
-					onSelectCapture={ this.onSelectCapture }
-				/>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Descriptor' ) }
-					</FormLabel>
-					<FormTextInput
-						name="statement_descriptor"
-						onChange={ this.onEditFieldHandler }
-						value={ method.settings.statement_descriptor.value }
-						placeholder={ this.getStatementDescriptorPlaceholder() } />
-					<FormSettingExplanation>
-						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>
-						{ translate( 'Use Apple Pay' ) }
-					</FormLabel>
-					<PaymentMethodEditFormToggle
-						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
-						name="apple_pay"
-						onChange={ this.onEditFieldHandler } />
-					<span>
-						{ translate(
-							'By using Apple Pay you agree to Stripe and ' +
-							'Apple\'s terms of service'
-						) }
-					</span>
-				</FormFieldset>
-			</div>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
 	// Dialog action button methods, including the links that let the user force a flow
 
 	onUserRequestsKeyFlow = () => {
@@ -413,10 +121,6 @@ class PaymentMethodStripe extends Component {
 		);
 	}
 
-	onConnect = () => {
-		// Not yet implemented
-	}
-
 	onDone = ( e ) => {
 		if ( hasStripeValidCredentials( this.props.method ) ) {
 			this.props.onDone( e );
@@ -425,117 +129,62 @@ class PaymentMethodStripe extends Component {
 		}
 	}
 
-	getButtons = () => {
-		const { method, onCancel, stripeConnectAccount, translate } = this.props;
-		const { connectedUserID } = stripeConnectAccount;
-
-		const buttons = [];
-
-		let showKeyFlowLink = false;
-		let showConnectFlowLink = false;
-
-		// If we don't have an account, we didn't have keys when we started, and
-		// we don't have keys now, give the user a means to request key flow
-		if ( ! connectedUserID && ! this.hasKeys() && ! this.state.hadKeysAtStart ) {
-			showKeyFlowLink = true;
-		}
-
-		// If we have keys, OR are in key flow, give the user a means to request connect flow
-		if ( this.hasKeys() || this.state.userRequestedKeyFlow ) {
-			showConnectFlowLink = true;
-		}
-
-		// If we don't have keys now, but we did when we started, the user might be
-		// interested in trying connect flow, so give the user a means to
-		// switch to connect flow
-		if ( ! this.hasKeys() && this.state.hadKeysAtStart ) {
-			showConnectFlowLink = true;
-		}
-
-		// Sanity check - if we are already in key flow, don't show the key flow link
-		if ( this.state.userRequestedKeyFlow ) {
-			showKeyFlowLink = false;
-		}
-
-		// Sanity check - if we are already in connect flow, don't show the connect flow link
-		if ( this.state.userRequestedConnectFlow ) {
-			showConnectFlowLink = false;
-		}
-
-		// Sanity check - if we already are connected, don't show the connect flow link
-		if ( connectedUserID ) {
-			showConnectFlowLink = false;
-		}
-
-		// OK, make it so
-		if ( showKeyFlowLink ) {
-			buttons.push( {
-				action: 'switch',
-				label: <span>{ translate( 'I want to enter my own keys' ) }</span>,
-				onClick: this.onUserRequestsKeyFlow,
-				additionalClassNames: 'payments__method-stripe-force-flow is-borderless'
-			} );
-		} else if ( showConnectFlowLink ) {
-			buttons.push( {
-				action: 'switch',
-				label: <span>{ translate( 'I want to use Stripe Connect instead' ) }</span>,
-				onClick: this.onUserRequestsConnectFlow,
-				additionalClassNames: 'payments__method-stripe-force-flow is-borderless'
-			} );
-		}
-
-		// We always give the user a Cancel button
-		buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
-
-		// Figure out if we should show a Connect button or a Done button
-		let isConnectButton = false;
-		let isDisabled = false;
-
-		// No account?
-		if ( ! connectedUserID ) {
-			// No keys at start, no keys now and user didn't force key flow?
-			if ( ! this.state.hadKeysAtStart && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
-				// Give them a Connect button
-				isConnectButton = true;
-				isDisabled = true; // TODO - enable this in a subsequent PR to allow connection
-			} else {
-				// Give them a Done button, but enabled based on validity of key fields
-				isDisabled = ! hasStripeValidCredentials( method );
-			}
-		}
-
-		// Did the user request connect flow explicitly? Give them a Connect button
-		if ( this.state.userRequestedConnectFlow ) {
-			isConnectButton = true;
-			isDisabled = true; // TODO - enable this in a subsequent PR to allow connection
-		}
-
-		buttons.push( {
-			action: isConnectButton ? 'connect' : 'save',
-			disabled: isDisabled,
-			label: isConnectButton ? translate( 'Connect' ) : translate( 'Done' ),
-			onClick: isConnectButton ? this.onConnect : this.onDone,
-			isPrimary: true
-		} );
-
-		return buttons;
-	}
-
 	////////////////////////////////////////////////////////////////////////////
 	// And render brings it all together
 
 	render() {
+		const { method, onCancel, onDone, site, stripeConnectAccount } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
+
+		const connectFlowsEnabled = config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' );
+
+		let dialog = 'key-based';
+
+		if ( connectFlowsEnabled ) {
+			// If the user has requested connect flow, show that setup dialog
+			// (and allow them to request key flow instead)
+			if ( this.state.userRequestedConnectFlow ) {
+				dialog = 'setup';
+			}
+
+			// If we have a Stripe Connect connected user, let them manage their connected account
+			if ( connectedUserID ) {
+				dialog = 'connected';
+			}
+		}
+
+		// Now, render the appropriate dialog
+		if ( 'setup' === dialog ) {
+			return (
+				<PaymentMethodStripeSetupDialog
+					onCancel={ onCancel }
+					onUserRequestsKeyFlow={ this.onUserRequestsKeyFlow }
+				/>
+			);
+		} else if ( 'connected' === dialog ) {
+			return (
+				<PaymentMethodStripeConnectedDialog
+					method={ method }
+					onCancel={ onCancel }
+					onDone={ onDone }
+					onEditField={ this.onEditFieldHandler }
+					site={ site }
+					stripeConnectAccount={ stripeConnectAccount }
+				/>
+			);
+		}
+
+		// Key-based dialog by default
 		return (
-			<Dialog
-				additionalClassNames="payments__dialog woocommerce"
-				buttons={ this.getButtons() }
-				isVisible>
-				{ this.renderHeading() }
-				{ this.possiblyRenderSetupPrompt() }
-				{ this.possiblyRenderConnectAccount() }
-				{ this.possiblyRenderModePromptAndKeyFields() }
-				{ this.possiblyRenderMoreSettings() }
-			</Dialog>
+			<PaymentMethodStripeKeyBasedDialog
+				highlightEmptyRequiredFields={ this.state.highlightEmptyRequiredFields }
+				method={ method }
+				onCancel={ onCancel }
+				onDone={ onDone }
+				onEditField={ this.onEditFieldHandler }
+				onUserRequestsConnectFlow={ connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined }
+				site={ site }
+			/>
 		);
 	}
 }

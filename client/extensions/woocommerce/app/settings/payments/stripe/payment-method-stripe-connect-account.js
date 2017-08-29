@@ -31,11 +31,11 @@ class StripeConnectAccount extends Component {
 		let image = null;
 
 		if ( ! isEmpty( logo ) ) {
-			image = <Image src={ resizeImageUrl( logo, { w: 40, h: 40 } ) } className="payments__stripe-connect-account-logo" />;
+			image = <Image src={ resizeImageUrl( logo, { w: 40, h: 40 } ) } className="stripe__stripe-connect-account-logo" />;
 		}
 
 		return (
-			<div className="payments__stripe-connect-account-logo-container">
+			<div className="stripe__stripe-connect-account-logo-container">
 				{ image }
 			</div>
 		);
@@ -46,10 +46,10 @@ class StripeConnectAccount extends Component {
 		const name = ! isEmpty( displayName ) ? displayName : `${ firstName } ${ lastName }`;
 
 		return (
-			<div className="payments__stripe-connect-account-details">
-				<span className="payments__stripe-connect-account-name">
-					<span className="payments__stripe-connect-account-name">{ name }</span>
-					<span className="payments__stripe-connect-account-email">{ email }</span>
+			<div className="stripe__connect-account-details">
+				<span className="stripe__connect-account-name">
+					<span className="stripe__connect-account-name">{ name }</span>
+					<span className="stripe__connect-account-email">{ email }</span>
 				</span>
 			</div>
 		);
@@ -67,12 +67,12 @@ class StripeConnectAccount extends Component {
 		const { stripeConnectAccount, translate } = this.props;
 		const { isActivated } = stripeConnectAccount;
 
-		let status = <span className="payments__stripe-connect-account-status account-activated">
+		let status = <span className="stripe__connect-account-status account-activated">
 			{ translate( 'Activated' ) }
 		</span>;
 
 		if ( ! isActivated ) {
-			status = <span className="payments__stripe-connect-account-status account-not-activated">
+			status = <span className="stripe__connect-account-status account-not-activated">
 					{ translate( 'Check email to activate account' ) }
 				</span>;
 		}
@@ -80,7 +80,7 @@ class StripeConnectAccount extends Component {
 		return (
 			<div>
 				{ status }
-				<a href="#" className="payments__stripe-connect-account-disconnect" onClick={ this.onDisconnect }>
+				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDisconnect }>
 					{ translate( 'Disconnect' ) }
 				</a>
 			</div>
@@ -91,13 +91,13 @@ class StripeConnectAccount extends Component {
 		const { stripeConnectAccount, translate } = this.props;
 
 		return (
-			<div className="payments__stripe-connect-account">
-				<h3 className="payments__stripe-connect-account-heading">
+			<div className="stripe__connect-account">
+				<h3 className="stripe__connect-account-heading">
 					{ translate( 'Stripe account' ) }
 				</h3>
-				<div className="payments__stripe-connect-account-body">
+				<div className="stripe__connect-account-body">
 					{ this.renderLogo( stripeConnectAccount ) }
-					<div className="payments__stripe-connect-account-details">
+					<div className="stripe__connect-account-details">
 						{ this.renderNameAndEmail( stripeConnectAccount ) }
 						{ this.renderStatus( stripeConnectAccount ) }
 					</div>
