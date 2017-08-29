@@ -21,7 +21,23 @@ export const logItemsSchema = {
 				],
 				properties: {
 					activityDate: { type: 'string' },
-					activityGroup: { type: 'string' },
+					activityGroup: {
+						type: 'string',
+						// eslint-disable-next-line quote-props
+						enum: [
+							'attachment',
+							'comment',
+							'core',
+							'menu',
+							'plugin',
+							'post',
+							'rewind',
+							'term',
+							'theme',
+							'user',
+							'widget',
+						],
+					},
 					activityIcon: { type: 'string' },
 					activityId: { type: 'string' },
 					activityName: {
