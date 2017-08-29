@@ -181,11 +181,26 @@ export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
 } );
 
 /**
+ * @typedef {Object} Comment
+ * @property {Number} ID specific API version for request
+ * @property {Author} author comment author
+ * @property {String} content comment content
+ * @property {Date} date date the comment was created
+ * @property {String} status status of the comment
+ */
+
+/**
+ * @typedef {Object} Author
+ * @property {String} name Full name of the comment author
+ * @property {String} url Address of the commenter site or blog
+ */
+
+/**
  * Creates an action that edits a comment.
  * @param {Number} siteId Site identifier
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
- * @param {Object} comment New comment data
+ * @param {Comment} comment New comment data
  * @returns {Object} Action that edits a comment
  */
 export const editComment = ( siteId, postId, commentId, comment ) => ( {

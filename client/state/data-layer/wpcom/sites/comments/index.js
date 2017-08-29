@@ -50,7 +50,7 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
+export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
 
 const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
@@ -203,7 +203,8 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
-const editComment = ( { dispatch, getState }, action ) => {
+// @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
+export const editComment = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, comment } = action;
 	const originalComment = pick(
 		getSiteComment( getState(), action.siteId, action.commentId ),
@@ -226,7 +227,7 @@ const editComment = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const announceEditFailure = ( { dispatch, getState }, action ) => {
+export const announceEditFailure = ( { dispatch }, action ) => {
 	dispatch(
 		local( {
 			...omit( action, [ 'originalComment' ] ),
