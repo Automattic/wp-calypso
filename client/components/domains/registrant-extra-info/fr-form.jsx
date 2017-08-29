@@ -154,7 +154,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex. XX123456789' ) }
+						placeholder={ translate( 'ex. FRXX123456789' ) }
 						onChange={ this.handleChangeEvent }
 						isError={ Boolean( validationErrors.registrantVatId ) } />
 						{ registrantVatIdValidationMessage }
@@ -197,7 +197,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={
-							translate( 'ex. 123456789',
+							translate( 'ex. 012345678',
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
