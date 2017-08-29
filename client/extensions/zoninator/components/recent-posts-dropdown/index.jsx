@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, flowRight, toArray } from 'lodash';
+import { find, flowRight, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,38 +22,34 @@ const recentPostsQuery = {
 
 class RecentPostsDropdown extends PureComponent {
 	static propTypes = {
-		ignored: PropTypes.array,
+		exclude: PropTypes.array,
 		onSelect: PropTypes.func.isRequired,
-		recentPosts: PropTypes.array,
+		posts: PropTypes.array,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	}
 
 	static defaultProps = {
-		recentPosts: [],
-		ignored: [],
+		posts: [],
+		exclude: [],
 	}
 
 	handleSelect = option => {
-		const { onSelect, recentPosts } = this.props;
+		const { onSelect, posts } = this.props;
 		const slug = option.value;
 
-		onSelect( find( recentPosts, { slug } ) );
+		onSelect( find( posts, { slug } ) );
 	}
 
 	render() {
-		const { ignored, recentPosts, siteId, translate } = this.props;
+		const { exclude, posts, siteId, translate } = this.props;
+		const options = map( posts, ( { slug, title } ) => ( { label: title, value: slug } ) );
 
 		const className = 'zoninator__recent-posts-dropdown';
 
-		// getSitePostsForQuery can return null, hence the need to ensure recentPosts is an array.
-		const options = toArray( recentPosts )
-			.filter( ( { slug } ) => ! find( ignored, { slug } ) )
-			.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
-
 		return (
 			<div className={ className }>
-				<QueryPosts siteId={ siteId } query={ recentPostsQuery } />
+				<QueryPosts siteId={ siteId } query={ { ...recentPostsQuery, exclude } } />
 
 				<SelectDropdown
 					compact
@@ -65,12 +61,12 @@ class RecentPostsDropdown extends PureComponent {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state, { exclude } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		posts: getSitePostsForQuery( state, siteId, { ...recentPostsQuery, exclude } ) || [],
 		siteId,
-		recentPosts: getSitePostsForQuery( state, siteId, recentPostsQuery ),
 	};
 } );
 

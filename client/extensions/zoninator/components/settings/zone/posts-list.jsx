@@ -61,7 +61,7 @@ class PostsList extends Component {
 						) }
 					</p>
 					<SearchAutocomplete onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.ID ) }>
-						<RecentPostsDropdown onSelect={ this.addPost( fields ) } ignored={ posts } />
+						<RecentPostsDropdown onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.ID ) } />
 					</SearchAutocomplete>
 				</FormFieldset>
 
