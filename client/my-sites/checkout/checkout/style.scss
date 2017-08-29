@@ -974,6 +974,12 @@
 .checkout__privacy-protection-radio-text {
 	font-weight: normal;
 	margin: 0 0 0 10px;
+
+	span {
+		&.free-with-plan {
+			text-decoration: line-through;
+		}
+	}
 }
 
 .checkout__privacy-protection-radio-text-description {
