@@ -15,6 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
+import { installPlugin } from 'state/plugins/installed/actions';
 
 class JPOSummaryStep extends React.Component {
 
@@ -219,9 +220,14 @@ class JPOSummaryStep extends React.Component {
 	}
 
 	componentWillMount() {
+		const siteId = get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
+			choices = this.getOnboardingChoices();
+		if ( 'store' === choices.onboarding.genre ) {
+			this.props.installPlugin( siteId, { slug: 'woocommerce', id: 'woocommerce/woocommerce' } );
+		}
 		this.props.updateSettings(
-			get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
-			this.getOnboardingChoices(),
+			siteId,
+			choices,
 			false // don't sanitize settings
 		);
 	}
@@ -257,6 +263,7 @@ export default connect(
 	null,
 	{
 		setJPOSummary,
-		updateSettings
+		updateSettings,
+		installPlugin
 	}
 )( JPOSummaryStep );
