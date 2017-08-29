@@ -124,13 +124,15 @@ class GoogleLoginButton extends Component {
 		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
 		window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } )
-			.then( responseHandler )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
-					social_account_type: 'google',
-					error_code: error.error
-				} );
-			} );
+			.then(
+				responseHandler,
+				error => {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: error.error
+					} );
+				}
+			);
 	}
 
 	showError( event ) {
@@ -150,6 +152,17 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled || this.state.error );
+
+		const { children } = this.props;
+		if ( children ) {
+			const childProps = {
+				onMouseOver: this.showError,
+				onMouseOut: this.hideError,
+				onClick: this.handleClick,
+			};
+
+			return React.cloneElement( children, childProps );
+		}
 
 		return (
 			<div className="social-buttons__button-container">
