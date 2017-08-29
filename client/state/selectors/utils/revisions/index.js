@@ -7,7 +7,14 @@ import { cloneDeep, get, identity } from 'lodash';
  * Internal dependencies
  */
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
-import { normalizePostForDisplay } from 'state/posts/utils';
+
+function normalizeForDisplay( revision ) {
+	if ( ! revision ) {
+		return null;
+	}
+
+	return decodeEntities( cloneDeep( revision ), [ 'content', 'excerpt', 'title', 'site_name' ] );
+}
 
 function normalizeForEditing( revision ) {
 	if ( ! revision ) {
@@ -18,7 +25,7 @@ function normalizeForEditing( revision ) {
 }
 
 const NORMALIZER_MAPPING = {
-	display: normalizePostForDisplay,
+	display: normalizeForDisplay,
 	editing: normalizeForEditing,
 };
 
