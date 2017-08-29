@@ -295,7 +295,7 @@
 	margin-right: 9px;
 	position: absolute;
 		left: 1px;
-		top: -1px;
+		top: -5px;
 	width: 32px;
 
 	.gridicon {
@@ -477,6 +477,12 @@ a.comments__comment-username {
 			margin-top: 4px;
 			margin-right: 0;
 		}
+	}
+
+	// Aligns Like icon to comment text when it's by itself
+	:only-child {
+		left: -3px;
+		top: 3px;
 	}
 
 	.comments__comment-actions-approve,
