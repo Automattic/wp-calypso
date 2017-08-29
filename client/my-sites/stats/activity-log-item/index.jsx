@@ -161,16 +161,16 @@ class ActivityLogItem extends Component {
 			recordTracksEvent,
 		} = this.props;
 		const {
-			group,
-			name,
+			activityGroup,
+			activityName,
 			activityTs,
 		} = log;
 
 		debug( 'opened log', log );
 
 		recordTracksEvent( 'calypso_activitylog_item_expand', {
-			group,
-			name,
+			group: activityGroup,
+			name: activityName,
 			timestamp: activityTs,
 		} );
 	};
@@ -184,7 +184,7 @@ class ActivityLogItem extends Component {
 			applySiteOffset,
 		} = this.props;
 		const {
-			name,
+			activityName,
 			activityTs,
 		} = log;
 
@@ -194,7 +194,7 @@ class ActivityLogItem extends Component {
 					{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
 						args: {
 							date: applySiteOffset( moment.utc( activityTs ) ).format( 'LLL' ),
-							eventName: name,
+							eventName: activityName,
 						}
 					} ) }
 				</div>
