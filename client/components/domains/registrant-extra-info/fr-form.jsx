@@ -185,7 +185,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						{ this.renderOptional() }
 					</FormLabel>
 					<FormTextInput
-						name="trademarkNumber"
+						id="trademarkNumber"
 						value={ trademarkNumber }
 						type="number"
 						autoCapitalize="off"
