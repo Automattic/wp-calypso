@@ -60,11 +60,11 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
-		this.props.onRef( this );
+		this.props.setComponentReference( this );
 	}
 
 	componentWillUnmount() {
-		this.props.onRef( undefined );
+		this.props.setComponentReference( undefined );
 	}
 
 	componentWillReceiveProps( nextProps ) {
