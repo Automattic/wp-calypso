@@ -16,7 +16,8 @@ import {
 	recordGoogleEvent,
 	recordGooglePageView,
 	recordTracksEvent,
-	recordPageView
+	recordPageView,
+	setTracksAnonymousUserId
 } from '../actions';
 import {
 	adTrackingMock,
@@ -93,6 +94,12 @@ describe( 'middleware', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
 			expect( mockAnalytics ).to.have.been.calledWith( 'mc.bumpStat' );
+		} );
+
+		it( 'should call setTracksAnonymousUserId', () => {
+			dispatch( setTracksAnonymousUserId( 'abcd1234' ) );
+
+			expect( mockAnalytics ).to.have.been.calledWith( 'tracks.setAnonymousUserId' );
 		} );
 	} );
 } );
