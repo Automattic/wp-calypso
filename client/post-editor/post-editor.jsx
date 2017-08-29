@@ -1272,26 +1272,20 @@ export const PostEditor = React.createClass( {
 			'<span[^>]*\\s*class="mce_SELRES_end"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
 		);
 
-		// Find the `_start` node
 		const startMatch = content.match( startRegex );
+		const endMatch = content.match( endRegex );
 		if ( ! startMatch ) {
 			return null;
 		}
 
-		const selectionRange = {
+		return {
 			start: startMatch.index,
+
+			// We need to adjust the end position to discard the length of the range start marker
+			end: endMatch
+				? endMatch.index - startMatch[ 0 ].length
+				: null
 		};
-
-		// Find the `_end` node
-		const endMatch = content.match( endRegex );
-		if ( ! endMatch ) {
-			return selection;
-		}
-
-		// We need to adjust the end position to discard the length of the range start marker
-		selectionRange.end = endMatch.index - startMatch[ 0 ].length;
-
-		return selectionRange;
 	},
 
 	switchEditorMode: function( mode ) {
