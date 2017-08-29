@@ -1071,7 +1071,7 @@ export const PostEditor = React.createClass( {
 
 			const tagType = tagMatch[ 2 ];
 			const closingGt = tagContent.indexOf( '>' );
-			const isClosingTag = ! ! tagMatch[ 1 ];
+			const isClosingTag = !! tagMatch[ 1 ];
 
 			return {
 				ltPos: lastLtPos,
