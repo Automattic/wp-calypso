@@ -17,7 +17,7 @@ import {
 	composeAnalytics,
 	withAnalytics,
 	bumpStat,
-	setTracksAnonymousUserId
+	setTracksAnonymousUserId,
 } from '../actions.js';
 
 describe( 'middleware', () => {
@@ -90,9 +90,9 @@ describe( 'middleware', () => {
 					type: ANALYTICS_TRACKS_ANONID_SET,
 					payload: 'abcd1234'
 				}
-			]
+			];
 			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
 			expect( tracksAction.meta.analytics ).to.deep.equal( expected );
-		} )
+		} );
 	} );
 } );
