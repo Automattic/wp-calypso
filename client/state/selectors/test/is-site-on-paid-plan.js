@@ -10,7 +10,9 @@ import { stub } from 'sinon';
  */
 import {
 	PLAN_BUSINESS,
-	PLAN_FREE
+	PLAN_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_FREE,
 } from 'lib/plans/constants';
 import useMockery from 'test/helpers/use-mockery';
 
@@ -38,8 +40,18 @@ describe( 'isSiteOnPaidPlan', () => {
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
 	} );
 
+	it( 'should return false when on free Jetpack plan', () => {
+		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
+		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
+	} );
+
 	it( 'should return true when on paid plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
+		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.true;
+	} );
+
+	it( 'should return true when on paid Jetpack plan', () => {
+		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_BUSINESS } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.true;
 	} );
 } );
