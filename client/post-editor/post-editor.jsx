@@ -1100,10 +1100,10 @@ export const PostEditor = React.createClass( {
 			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
 		}
 
-		let mode = 'single';
-		if ( htmlModeCursorStartPosition !== htmlModeCursorEndPosition ) {
-			mode = 'range';
-		}
+		const mode =
+			htmlModeCursorStartPosition !== htmlModeCursorEndPosition
+			? 'range'
+			: 'single';
 
 		const bookMarkStart = '<span ' +
 			'data-mce-type="bookmark"	' +
