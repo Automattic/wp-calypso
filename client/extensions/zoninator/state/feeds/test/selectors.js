@@ -72,7 +72,7 @@ describe( 'selectors', () => {
 			expect( feed ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an the feed for the given site and zone ID', () => {
+		it( 'should return a feed for the given site and zone ID', () => {
 			const state = {
 				extensions: {
 					zoninator: {

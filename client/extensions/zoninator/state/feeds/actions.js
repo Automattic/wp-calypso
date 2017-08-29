@@ -9,7 +9,7 @@ import {
 /**
  * Returns an action object to indicate that a request has been made to fetch the feed.
  *
- * @param  {Number} siteId Side ID
+ * @param  {Number} siteId Site ID
  * @param  {Number} zoneId Zone ID
  * @return {Action}        Action object
  */
