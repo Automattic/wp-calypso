@@ -2,19 +2,28 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
+import { getEditorPath } from 'state/ui/editor/selectors';
 
 class PostCard extends Component {
 
-	handleRemove = () => {
-		this.props.remove( this.props.cardIdx );
-	}
+	static propTypes = {
+		editorPath: PropTypes.string.isRequired,
+		post: PropTypes.shape( {
+			title: PropTypes.string.isRequired,
+			URL: PropTypes.string.isRequired,
+		} ).isRequired,
+		remove: PropTypes.func.isRequired,
+	};
 
 	handleMouseDown = ( event ) => {
 		event.stopPropagation();
@@ -23,20 +32,16 @@ class PostCard extends Component {
 
 	render() {
 		const {
+			editorPath,
+			post: { URL, title },
+			remove,
 			translate,
-			post: {
-				ID,
-				URL,
-				site_ID,
-				title,
-				slug,
-			}
 		} = this.props;
 
 		const postCardClass = 'zoninator__zone__list-item';
 
 		return (
-			<SectionHeader key={ slug } label={ title } className={ postCardClass }>
+			<SectionHeader label={ title } className={ postCardClass }>
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }
@@ -48,16 +53,14 @@ class PostCard extends Component {
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }
-					href={ `/post/${ site_ID }/${ ID }` }
-					target="_blank"
-					rel="noopener noreferrer">
+					href={ editorPath }>
 					{ translate( 'Edit' ) }
 				</Button>
 				<Button
 					compact
 					scary
 					onMouseDown={ this.handleMouseDown }
-					onClick={ this.handleRemove }>
+					onClick={ remove }>
 					{ translate( 'Remove' ) }
 				</Button>
 			</SectionHeader>
@@ -65,4 +68,11 @@ class PostCard extends Component {
 	}
 }
 
-export default localize( PostCard );
+const connectComponent = connect( ( state, { post } ) => ( {
+	editorPath: getEditorPath( state, post.site_ID, post.ID ),
+} ) );
+
+export default flowRight(
+	connectComponent,
+	localize,
+)( PostCard );

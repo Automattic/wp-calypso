@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
+import { findIndex, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +20,8 @@ class PostsList extends Component {
 		return ( post ) => push( post );
 	}
 
-	removePost = ( { remove } ) => {
-		return ( idx ) => remove( idx );
+	removePost = ( { remove }, index ) => {
+		return () => remove( index );
 	}
 
 	changePostOrder = ( { move } ) => {
@@ -32,14 +32,10 @@ class PostsList extends Component {
 
 			// This loop attempts to find to which index in the array has been moved
 			// by making the following assumptions:
-			// Moved forward: newOrder[ from ] < from.
+			// Moved forward: newIndex < index.
 			// Moved backward by less than one position: same as moving the next item forward.
-			// Moved backward by more than one position: newOrder[ from ] > from + 1.
-			let from = 0;
-
-			while ( ! ( newOrder[ from ] < from || newOrder[ from ] > from + 1 ) ) {
-				from += 1;
-			}
+			// Moved backward by more than one position: newIndex > index + 1.
+			const from = findIndex( newOrder, ( newIndex, index ) => newIndex < index || newIndex > index + 1 );
 
 			move( from, newOrder[ from ] );
 		};
@@ -73,12 +69,11 @@ class PostsList extends Component {
 							) }
 						</p>
 						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-							{ posts.map( ( post, idx ) => (
+							{ posts.map( ( post, index ) => (
 								<PostCard
-									key={ idx }
+									key={ index }
 									post={ post }
-									cardIdx={ idx }
-									remove={ this.removePost( fields ) } />
+									remove={ this.removePost( fields, index ) } />
 							)	) }
 						</SortableList>
 					</FormFieldset>
