@@ -89,7 +89,10 @@ class ActivityLogItem extends Component {
 		} );
 	};
 
-	// FIXME: Just for demonstration purposes
+	//
+	// TODO: Descriptions are temporarily disabled and this method is not called.
+	// Rich descriptions will be added after designs have been prepared for all types of activity.
+	//
 	renderDescription() {
 		const {
 			log,
@@ -192,11 +195,9 @@ class ActivityLogItem extends Component {
 					clickableHeader
 					expandedSummary={ this.renderSummary() }
 					header={ this.renderHeader() }
-					onOpen={ this.handleOpen }
+					onClick={ this.handleOpen }
 					summary={ this.renderSummary() }
-				>
-					{ this.renderDescription() }
-				</FoldableCard>
+				/>
 			</div>
 		);
 	}
