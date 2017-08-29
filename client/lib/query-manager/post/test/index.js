@@ -93,7 +93,7 @@ describe( 'PostQueryManager', () => {
 	describe( '#matches()', () => {
 		context( 'query.search', () => {
 			it( 'should return false for a non-matching search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: 'disgusting'
 				}, DEFAULT_POST );
 
@@ -101,7 +101,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true for a matching title search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: 'Ribs'
 				}, DEFAULT_POST );
 
@@ -109,7 +109,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true for a falsey title search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: null
 				}, DEFAULT_POST );
 
@@ -117,7 +117,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true for a matching content search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: 'delicious'
 				}, DEFAULT_POST );
 
@@ -125,7 +125,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should search case-insensitive', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: 'ribs'
 				}, DEFAULT_POST );
 
@@ -133,7 +133,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should separately test title and content fields', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					search: 'ChickenAre'
 				}, DEFAULT_POST );
 
@@ -143,7 +143,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.after', () => {
 			it( 'should return false if query is not ISO 8601', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					after: '2014'
 				}, DEFAULT_POST );
 
@@ -151,7 +151,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if post is not after date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					after: '2018-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -159,7 +159,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post is after date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					after: '2014-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -169,7 +169,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.before', () => {
 			it( 'should return false if query is not ISO 8601', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					before: '2018'
 				}, DEFAULT_POST );
 
@@ -177,7 +177,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if post is not before date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					before: '2014-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -185,7 +185,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post is before date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					before: '2018-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -195,7 +195,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.modified_after', () => {
 			it( 'should return false if query is not ISO 8601', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_after: '2014'
 				}, DEFAULT_POST );
 
@@ -203,7 +203,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if post is not modified after date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_after: '2018-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -211,7 +211,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post is modified after date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_after: '2014-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -221,7 +221,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.modified_before', () => {
 			it( 'should return false if query is not ISO 8601', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_before: '2018'
 				}, DEFAULT_POST );
 
@@ -229,7 +229,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if post is not modified before date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_before: '2014-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -237,7 +237,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post is modified before date', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					modified_before: '2018-04-25T15:47:33-04:00'
 				}, DEFAULT_POST );
 
@@ -247,7 +247,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.tag', () => {
 			it( 'should return false if post does not include tag', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					tag: 'Nottag'
 				}, DEFAULT_POST );
 
@@ -255,7 +255,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false on a partial match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					tag: 'agg'
 				}, DEFAULT_POST );
 
@@ -263,7 +263,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes tag by name', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					tag: 'Tagged!'
 				}, DEFAULT_POST );
 
@@ -271,7 +271,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes tag by slug', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					tag: 'tagged'
 				}, DEFAULT_POST );
 
@@ -279,7 +279,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should search case-insensitive', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					tag: 'taGgEd'
 				}, DEFAULT_POST );
 
@@ -289,7 +289,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.category', () => {
 			it( 'should return false if post does not include category', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					category: 'Notcategory'
 				}, DEFAULT_POST );
 
@@ -297,7 +297,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false on a partial match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					category: 'egori'
 				}, DEFAULT_POST );
 
@@ -305,7 +305,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes category by name', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					category: 'Categorized!'
 				}, DEFAULT_POST );
 
@@ -313,7 +313,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes category by slug', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					category: 'categorized'
 				}, DEFAULT_POST );
 
@@ -321,7 +321,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should search case-insensitive', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					category: 'caTegoriZed'
 				}, DEFAULT_POST );
 
@@ -331,7 +331,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.term', () => {
 			it( 'should return false if post does not include term', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					term: {
 						genre: 'non-fiction'
 					}
@@ -341,7 +341,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if one but not both term slug queries match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					term: {
 						genre: 'fiction',
 						category: 'notcategory'
@@ -352,7 +352,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes term by slug', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					term: {
 						genre: 'fiction'
 					}
@@ -362,7 +362,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes one of comma-separated term slugs', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					term: {
 						genre: 'fiction,non-fiction'
 					}
@@ -372,7 +372,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if post includes both of comma-separated term slugs', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					term: {
 						genre: 'fiction,sci-fi'
 					}
@@ -387,7 +387,7 @@ describe( 'PostQueryManager', () => {
 				const post = Object.assign( {}, DEFAULT_POST, {
 					type: 'cpt-book'
 				} );
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					type: 'any'
 				}, post );
 
@@ -395,7 +395,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if type does not match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					type: 'page'
 				}, DEFAULT_POST );
 
@@ -403,7 +403,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if type matches', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					type: 'post'
 				}, DEFAULT_POST );
 
@@ -413,7 +413,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.parent_id', () => {
 			it( 'should return false if parent does not match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					parent_id: 10
 				}, DEFAULT_POST );
 
@@ -424,7 +424,7 @@ describe( 'PostQueryManager', () => {
 				const post = Object.assign( {}, DEFAULT_POST, {
 					parent: 10
 				} );
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					parent_id: 10
 				}, post );
 
@@ -437,7 +437,7 @@ describe( 'PostQueryManager', () => {
 						ID: 10
 					}
 				} );
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					parent_id: 10
 				}, post );
 
@@ -447,7 +447,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.exclude', () => {
 			it( 'should return false if ID matches single exclude', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					exclude: 144
 				}, DEFAULT_POST );
 
@@ -455,7 +455,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if ID matches array of excludes', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					exclude: [ 144, 152 ]
 				}, DEFAULT_POST );
 
@@ -463,7 +463,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if ID does not match single exclude', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					exclude: 152
 				}, DEFAULT_POST );
 
@@ -471,7 +471,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if ID does not match array of excludes', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					exclude: [ 152, 160 ]
 				}, DEFAULT_POST );
 
@@ -485,7 +485,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if "include" and sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'include'
 				}, stickyPost );
 
@@ -493,7 +493,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if "include" and not sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'include'
 				}, DEFAULT_POST );
 
@@ -501,7 +501,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if "require" and sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'require'
 				}, stickyPost );
 
@@ -509,7 +509,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if "require" and not sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'require'
 				}, DEFAULT_POST );
 
@@ -517,7 +517,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if "exclude" and sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'exclude'
 				}, stickyPost );
 
@@ -525,7 +525,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if "exclude" and not sticky', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					sticky: 'exclude'
 				}, DEFAULT_POST );
 
@@ -539,7 +539,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if author does not match by nested object', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					author: 73705672
 				}, DEFAULT_POST );
 
@@ -547,7 +547,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if author matches by nested object', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					author: 73705554
 				}, DEFAULT_POST );
 
@@ -555,7 +555,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if author does not match by scalar value', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					author: 73705672
 				}, postWithScalarAuthor );
 
@@ -563,7 +563,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if author matches by scalar value', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					author: 73705554
 				}, postWithScalarAuthor );
 
@@ -573,7 +573,7 @@ describe( 'PostQueryManager', () => {
 
 		context( 'query.status', () => {
 			it( 'should return false if status is "any"', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: 'any'
 				}, DEFAULT_POST );
 
@@ -581,7 +581,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if status does not match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: 'draft'
 				}, DEFAULT_POST );
 
@@ -589,7 +589,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if status matches', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: 'publish'
 				}, DEFAULT_POST );
 
@@ -597,7 +597,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return false if none of comma-separated values match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: 'draft,trash'
 				}, DEFAULT_POST );
 
@@ -605,7 +605,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should return true if one of comma-separated values match', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: 'draft,publish'
 				}, DEFAULT_POST );
 
@@ -613,7 +613,7 @@ describe( 'PostQueryManager', () => {
 			} );
 
 			it( 'should gracefully handle non-string search values', () => {
-				const isMatch = manager.matches( {
+				const isMatch = PostQueryManager.matches( {
 					status: undefined
 				}, DEFAULT_POST );
 

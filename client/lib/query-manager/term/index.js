@@ -21,7 +21,7 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * @param  {Object}  term  Item to consider
 	 * @return {Boolean}       Whether term matches query
 	 */
-	matches( query, term ) {
+	static matches( query, term ) {
 		if ( ! query.search ) {
 			return true;
 		}
