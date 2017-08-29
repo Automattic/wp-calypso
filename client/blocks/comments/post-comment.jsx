@@ -28,13 +28,7 @@ import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
-
-// values conveniently also correspond to css classNames to apply
-export const POST_COMMENT_DISPLAY_TYPES = {
-	singleLine: 'is-single-line',
-	excerpt: 'is-excerpt',
-	full: 'is-full',
-};
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 
 class PostComment extends Component {
 	static propTypes = {

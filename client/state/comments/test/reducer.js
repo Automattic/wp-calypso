@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	items,
+	expansions,
 	totalCommentsCount,
 	fetchStatus,
 	fetchStatusInitialState,
@@ -27,6 +28,7 @@ import {
 	COMMENTS_TREE_SITE_ADD,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
+import { expandComments } from '../actions';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, text: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -237,6 +239,70 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				77203074: { unapproved: true },
 				2916284: { unapproved: true },
+			} );
+		} );
+	} );
+
+	describe( '#expansions', () => {
+		it( 'should default to an empty object', () => {
+			const nextState = expansions( undefined, { type: '@@test/INIT' } );
+			expect( nextState ).to.eql( {} );
+		} );
+
+		it( 'should ignore invalid display type', () => {
+			const invalidDisplayType = expandComments( {
+				siteId: 1,
+				postId: 2,
+				commentIds: [ 3 ],
+				displayType: 'invalidDisplayType',
+			} );
+
+			const nextState = expansions( undefined, invalidDisplayType );
+			expect( nextState ).to.eql( {} );
+		} );
+
+		it( 'should set commentIds to specified displayType', () => {
+			const action = expandComments( {
+				siteId: 1,
+				postId: 2,
+				commentIds: [ 3, 4, 5 ],
+				displayType: 'is-full',
+			} );
+
+			const nextState = expansions( undefined, action );
+			expect( nextState ).to.eql( {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-full',
+					5: 'is-full',
+				}
+			} );
+		} );
+
+		it( 'setting new commentIds for a post should merge with what was already there', () => {
+			const prevState = {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-full',
+					5: 'is-full',
+				}
+			};
+
+			const action = expandComments( {
+				siteId: 1,
+				postId: 2,
+				commentIds: [ 5, 6 ],
+				displayType: 'is-single-line',
+			} );
+
+			const nextState = expansions( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-full',
+					5: 'is-single-line',
+					6: 'is-single-line',
+				}
 			} );
 		} );
 	} );

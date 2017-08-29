@@ -8,7 +8,8 @@ import { repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostComment, { POST_COMMENT_DISPLAY_TYPES } from 'blocks/comments/post-comment';
+import PostComment from 'blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
 
 const mockComment = {

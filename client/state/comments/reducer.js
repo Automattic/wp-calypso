@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, fill, zipObject, includes, isArray, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +18,10 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH, POST_COMMENT_DISPLAY_TYPES } from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
@@ -128,6 +129,39 @@ export const fetchStatusInitialState = {
 	hasReceivedAfter: false,
 };
 
+const isValidExpansionsAction = action => {
+	const { siteId, postId, commentIds, displayType } = action.payload;
+	return (
+		siteId &&
+		postId &&
+		isArray( commentIds ) &&
+		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+	);
+};
+
+export const expansions = createReducer(
+	{},
+	{
+		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId, commentIds, displayType } = action.payload;
+
+			if ( ! isValidExpansionsAction( action ) ) {
+				return state;
+			}
+
+			const stateKey = getStateKey( siteId, postId );
+
+			// generate object of { [ commentId ]: displayType }
+			const newVal = zipObject( commentIds, fill( Array( commentIds.length ), displayType ) );
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
+			};
+		},
+	}
+);
+
 /***
  * Stores whether or not there are more comments, and in which directions, for a particular post.
  * Also includes whether or not a before/after has ever been queried
@@ -230,6 +264,7 @@ export default combineReducers( {
 	items,
 	fetchStatus,
 	errors,
+	expansions,
 	totalCommentsCount,
 	trees,
 	treesInitialized,
