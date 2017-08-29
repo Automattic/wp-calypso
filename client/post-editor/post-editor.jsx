@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -1194,7 +1195,7 @@ export const PostEditor = React.createClass( {
 		 * format specified below.
 		 * @type {string}
 		 */
-		const selectionID = 'SELRES_' + Math.random();
+		const selectionID = 'SELRES_' + uuid();
 
 		/**
 		 * Create two marker elements that will be used to mark the start and the end of the range.
