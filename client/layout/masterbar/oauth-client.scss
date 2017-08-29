@@ -129,11 +129,10 @@
 	}
 
 	.button.is-primary {
-		background: #a46497;
+		background-color: #a46497;
 		border-radius: 100px;
 		border: none;
 		color: #fff;
-		cursor: pointer;
 		font-size: 1.1em;
 		padding: 15px 50px;
 		text-decoration: none;
@@ -143,12 +142,24 @@
 		&:focus {
 			background: #696969;
 		}
+
+		&:disabled {
+			background-color: #DDDDDD;
+		}
 	}
 
-	button {
-		float: none;
-		margin-left: 0;
-		max-width: 300px;
+	.login__form,
+	.login__form-social,
+	.logged-out-form {
+		.button {
+			max-width: 300px;
+		}
+	}
+
+	.login__form {
+		.button {
+			float: none;
+		}
 	}
 
 	input[type='text'],
@@ -266,14 +277,28 @@
 		text-align: center;
 	}
 
-	/* Signup styles */
-	.signup__step {
-		background: #e6e6e6;
-	}
-
 	.logged-out-form__footer {
 		background: none;
 		border: none;
 		text-align: center;
+	}
+
+	.logged-out-form__links {
+		text-align: center;
+	}
+
+	// Signup styles
+	.signup__step {
+		background: linear-gradient( to bottom, #e6e6e6, transparent );
+	}
+
+	.signup-processing__content:after {
+		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
+		content: '';
+		height: 100px;
+		left: 50%;
+		position: absolute;
+		top: 33px;
+		width: 69px;
 	}
 }
