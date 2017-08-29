@@ -1152,11 +1152,11 @@ export const PostEditor = React.createClass( {
 		if ( ! endNode ) {
 			ed.target.selection.select( startNode );
 		} else {
-			const sel = document.createRange();
-			sel.setStart( startNode, 0 );
-			sel.setEnd( endNode, 0 );
+			const selection = document.createRange();
+			selection.setStart( startNode, 0 );
+			selection.setEnd( endNode, 0 );
 
-			ed.target.selection.setRng( sel );
+			ed.target.selection.setRng( selection );
 			endNode.parentNode.removeChild( endNode );
 		}
 
