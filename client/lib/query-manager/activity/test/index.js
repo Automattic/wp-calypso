@@ -30,7 +30,7 @@ describe( 'ActivityQueryManager', () => {
 	describe( '#matches()', () => {
 		context( 'query.dateStart', () => {
 			it( 'should return true if activity is at the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS,
 					},
@@ -41,7 +41,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return true if activity is after the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS - 1,
 					},
@@ -52,7 +52,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return false if activity is before the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS + 1,
 					},
@@ -65,7 +65,7 @@ describe( 'ActivityQueryManager', () => {
 
 		context( 'query.dateEnd', () => {
 			it( 'should return true if activity is at the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS,
 					},
@@ -76,7 +76,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return false if activity is after the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
 					},
@@ -87,7 +87,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return true if activity is before the specified time', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
 					},
@@ -100,7 +100,7 @@ describe( 'ActivityQueryManager', () => {
 
 		context( 'date range query', () => {
 			it( 'should return true if activity is within a range of dates', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
 						dateStart: DEFAULT_ACTIVITY_TS - 1,
@@ -112,7 +112,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return false if activity is before a range of dates', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 2,
 						dateStart: DEFAULT_ACTIVITY_TS + 1,
@@ -124,7 +124,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should return false if activity is after a range of dates', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
 						dateStart: DEFAULT_ACTIVITY_TS - 2,
@@ -136,7 +136,7 @@ describe( 'ActivityQueryManager', () => {
 			} );
 
 			it( 'should be impossible to match if dateStart is after dateEnd', () => {
-				const isMatch = manager.matches(
+				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
 						dateStart: DEFAULT_ACTIVITY_TS + 1,

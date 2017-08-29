@@ -40,15 +40,6 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query
 	 */
-	matches = ActivityQueryManager.matches;
-
-	/**
-	 * Returns true if the item matches the given query, or false otherwise.
-	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query
-	 */
 	static matches = overEvery( [
 		ActivityQueryManager.matchDateStart,
 		ActivityQueryManager.matchDateEnd,
