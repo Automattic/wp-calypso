@@ -20,11 +20,13 @@ class SuggestionsExample extends Component {
 		query: '',
 	}
 
+	setSuggestionsRef = ref => this.suggestionsRef = ref;
+
 	hideSuggestions = () => this.setState( { query: '' } );
 
 	handleSearch = query => this.setState( { query: query } );
 
-	handleKeyDown = event => this.refs.suggestions.handleKeyEvent( event );
+	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
 
 	getSuggestions() {
 		return SuggestionsExample.hints
@@ -37,13 +39,12 @@ class SuggestionsExample extends Component {
 			<div className="docs__suggestions-container">
 				<SearchCard
 					disableAutocorrect
-					ref="search"
 					onSearch={ this.handleSearch }
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleKeyDown }
 					placeholder="Type something..." />
 				<Suggestions
-					ref="suggestions"
+					ref={ this.setSuggestionsRef }
 					query={ this.state.query }
 					suggestions={ this.getSuggestions() }
 					suggest={ noop } />
