@@ -353,9 +353,13 @@ To test the existence of an object (including arrays):
 if ( object ) { ... }
 ```
 
-To test if a property exists on an object, regardless of value, including `undefined`:
+To test if a property exists on an object, regardless of value, including `undefined` or other falsey values:
 ```js
 if ( 'desired' in object ) { ... }
+
+// or, using Lodash's `has` function:
+
+if ( has( object, 'desired' ) ) { ... }
 ```
 
 To test if a property is present and has a truthy value:
@@ -367,7 +371,14 @@ To test if an object exists and has a property:
 ```js
 if ( object && 'desired' in object ) { ... }
 if ( object && object.desired ) { ... }
+
+// or, using Lodash's `has` function:
+
+if ( has( object, 'desired' ) ) { ... }
+if ( has( object, 'desired.nestedProperty' ) ) { ... }
 ```
+
+Note that [Lodash](https://lodash.com/)'s `has` function will safely return `false` if any value is missing from the given chain, rather than throwing an error or requiring further checking.
 
 Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios:
 
