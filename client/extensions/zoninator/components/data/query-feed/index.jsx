@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -10,17 +10,12 @@ import { connect } from 'react-redux';
  */
 import { requestFeed } from '../../../state/feeds/actions';
 
-class QueryFeed extends Component {
+class QueryFeed extends PureComponent {
 
 	static propTypes = {
 		siteId: PropTypes.number,
 		zoneId: PropTypes.number,
 	};
-
-	state = {
-		siteId: -1,
-		zoneId: -1,
-	}
 
 	componentWillMount() {
 		this.requestFeed( this.props );
@@ -37,16 +32,16 @@ class QueryFeed extends Component {
 	requestFeed( props ) {
 		const { siteId, zoneId } = props;
 
-		if ( siteId === this.state.siteId || zoneId === this.state.zoneId ) {
+		if (
+			! siteId ||
+			! zoneId ||
+			siteId === this.state.siteId ||
+			zoneId === this.state.zoneId
+		) {
 			return;
 		}
 
 		props.requestFeed( siteId, zoneId );
-
-		this.setState( () => ( {
-			siteId,
-			zoneId,
-		} ) );
 	}
 
 	render() {
@@ -55,8 +50,8 @@ class QueryFeed extends Component {
 }
 
 const connectComponent = connect(
-	() => ( {} ),
-	{ requestFeed }
+	null,
+	{ requestFeed },
 );
 
 export default connectComponent( QueryFeed );
