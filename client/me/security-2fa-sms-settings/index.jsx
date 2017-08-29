@@ -182,7 +182,7 @@ module.exports = protectForm( React.createClass( {
 					<p>
 						{ this.translate( 'First, we need your Mobile Phone number to ' +
 							'send you verification codes when you choose the SMS method or ' +
-							'in cases where the Authenticator App on your phone is ' +
+							'in cases where the authenticator app on your phone is ' +
 							'unavailable.' ) }
 					</p>
 					<div className="security-2fa-sms-settings__fieldset-container">
