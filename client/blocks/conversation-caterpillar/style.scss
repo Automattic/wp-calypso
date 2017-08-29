@@ -1,6 +1,9 @@
 .conversation-caterpillar.card {
 	cursor: pointer;
 	display: flex;
+	padding: 0px;
+	padding-top: 10px;
+	box-shadow: none;
 }
 
 .conversation-caterpillar__gravatars,

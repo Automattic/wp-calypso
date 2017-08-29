@@ -13,10 +13,10 @@ import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
-const CompactPost = ( { post, postByline, children, isDiscover } ) => {
+const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="reader-post-card__post">
+		<div className="reader-post-card__post" onClick={ onClick }>
 			<FeaturedAsset
 				canonicalMedia={ post.canonical_media }
 				postUrl={ post.URL }

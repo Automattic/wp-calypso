@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -17,13 +18,16 @@ import {
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
+	READER_VIEW_COMMENT,
+	READER_EXPAND_COMMENTS,
+	READER_EXPAND_CATERPILLAR,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 export const requestComment = ( { siteId, commentId } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
-	commentId
+	commentId,
 } );
 
 /***
@@ -37,7 +41,7 @@ export function requestPostComments( {
 	siteId,
 	postId,
 	status = 'approved',
-	direction = 'before'
+	direction = 'before',
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -94,7 +98,12 @@ export const requestCommentsTreeForSite = query => ( {
  * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @returns {Object} action that deletes a comment
  */
-export const deleteComment = ( siteId, postId, commentId, options = { showSuccessNotice: true } ) => ( {
+export const deleteComment = (
+	siteId,
+	postId,
+	commentId,
+	options = { showSuccessNotice: true }
+) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
 	postId,
@@ -196,7 +205,7 @@ export function editComment( siteId, postId, commentId, content ) {
 					postId,
 					commentId,
 					content: data.content,
-				} ),
+				} )
 			)
 			.catch( () =>
 				dispatch( {
@@ -204,7 +213,22 @@ export function editComment( siteId, postId, commentId, content ) {
 					siteId,
 					postId,
 					commentId,
-				} ),
+				} )
 			);
 	};
 }
+
+export const viewComment = ( { siteId, postId, commentId, date } ) => ( {
+	type: READER_VIEW_COMMENT,
+	payload: { siteId, postId, commentId, date },
+} );
+
+export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
+	type: READER_EXPAND_COMMENTS,
+	payload: { siteId, commentIds, postId, displayType },
+} );
+
+export const expandCaterpillar = ( { siteId, postId, commentId } ) => ( {
+	type: READER_EXPAND_CATERPILLAR,
+	payload: { siteId, commentId, postId },
+} );

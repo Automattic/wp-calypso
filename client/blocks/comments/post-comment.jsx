@@ -22,18 +22,13 @@ import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE } from 'state/comments/constants';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
-
-// values conveniently also correspond to css classNames to apply
-export const POST_COMMENT_DISPLAY_TYPES = {
-	singleLine: 'is-single-line',
-	excerpt: 'is-excerpt',
-	full: 'is-full',
-};
+import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import { viewComment } from 'state/comments/actions';
 
 class PostComment extends Component {
 	static propTypes = {
@@ -63,13 +58,36 @@ class PostComment extends Component {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
-		displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 	};
 
 	state = {
 		showReplies: false,
 		showFull: false,
 	};
+
+	reportCommentView = ( props = this.props ) => {
+		const { commentId, post, toShow } = props;
+		const { site_ID: siteId, ID: postId } = post;
+		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
+
+		if ( comment && toShow && toShow[ commentId ] ) {
+			props.viewComment( { commentId, siteId, postId, date: comment.date } );
+		}
+	};
+
+	componentDidMount() {
+		this.reportCommentView();
+	}
+	componentWillUpdate( nextProps ) {
+		if (
+			!! this.props.commentsTree[ this.props.commentId ] &&
+			( this.props.commentId !== nextProps.commentId ||
+				! this.props.commentsTree[ this.props.commentId ] )
+		) {
+			this.reportCommentView( nextProps );
+		}
+	}
 
 	handleReadMoreClicked = () => this.setState( { showFull: true } );
 
@@ -94,11 +112,13 @@ class PostComment extends Component {
 	};
 
 	renderRepliesList() {
+		const { toShow, depth, commentId } = this.props;
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
+		const childDepth = ! toShow || ( toShow && toShow[ commentId ] ) ? depth + 1 : depth;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -130,7 +150,7 @@ class PostComment extends Component {
 
 		return (
 			<div>
-				{ !! replyVisibilityText
+				{ !! replyVisibilityText && ! this.props.showCaterpillar
 					? <button
 							className="comments__view-replies-btn"
 							onClick={ this.handleToggleRepliesClick }
@@ -138,12 +158,12 @@ class PostComment extends Component {
 							<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
 						</button>
 					: null }
-				{ showReplies
+				{ showReplies || this.props.showCaterpillar
 					? <ol className="comments__list">
 							{ commentChildrenIds.map( childId =>
 								<PostComment
 									{ ...omit( this.props, 'displayType' ) }
-									depth={ this.props.depth + 1 }
+									depth={ childDepth }
 									key={ childId }
 									commentId={ childId }
 								/>
@@ -155,7 +175,7 @@ class PostComment extends Component {
 	}
 
 	renderCommentForm() {
-		if ( this.props.activeReplyCommentID !== this.props.commentId ) {
+		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
 			return null;
 		}
 
@@ -163,7 +183,7 @@ class PostComment extends Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ this.props.post }
-				parentCommentID={ this.props.commentId }
+				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
@@ -196,12 +216,48 @@ class PostComment extends Component {
 				</strong>;
 	};
 
+	renderCaterpillar = () => {
+		const { showCaterpillar, commentsTree, toShow, post, commentId } = this.props;
+		const childrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
+
+		const actuallyShowCaterpillar = showCaterpillar && some( childrenIds, id => ! toShow[ id ] );
+
+		if ( ! actuallyShowCaterpillar ) {
+			return null;
+		}
+		return (
+			<ConversationCaterpillar
+				blogId={ post.site_ID }
+				postId={ post.ID }
+				parentCommentId={ commentId }
+			/>
+		);
+	};
+
 	render() {
-		const { commentsTree, commentId, depth, maxDepth } = this.props;
+		const { commentsTree, commentId, depth, maxDepth, toShow } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
-		const displayType = this.state.showFull
-			? POST_COMMENT_DISPLAY_TYPES.full
-			: this.props.displayType;
+		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
+
+		if ( this.props.hidePingbacksAndTrackbacks && isPingbackOrTrackback ) {
+			return null;
+		}
+
+		if ( ! comment ) {
+			return null;
+		}
+		if ( toShow && ! toShow[ commentId ] ) {
+			return (
+				<div>
+					{ this.renderRepliesList() }
+				</div>
+			);
+		}
+
+		const displayType =
+			this.state.showFull || ! this.props.showCaterpillar
+				? POST_COMMENT_DISPLAY_TYPES.full
+				: this.props.displayType;
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
@@ -224,7 +280,7 @@ class PostComment extends Component {
 		}
 
 		// Trackback / Pingback
-		if ( comment.type === 'trackback' || comment.type === 'pingback' ) {
+		if ( isPingbackOrTrackback ) {
 			return <PostTrackback { ...this.props } />;
 		}
 
@@ -303,7 +359,7 @@ class PostComment extends Component {
 					comment={ comment }
 					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
-					activeReplyCommentID={ this.props.activeReplyCommentID }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					editComment={ this.props.onEditCommentClick }
 					editCommentCancel={ this.props.onEditCommentCancel }
@@ -312,12 +368,16 @@ class PostComment extends Component {
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
+				{ this.renderCaterpillar() }
 				{ this.renderRepliesList() }
 			</li>
 		);
 	}
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( PostComment );
+export default connect(
+	state => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{ viewComment }
+)( PostComment );

@@ -1,7 +1,8 @@
+/** @format */
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy } from 'lodash';
+import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +48,59 @@ export const getCommentById = createSelector(
 		get( state.comments, 'errors' ),
 	]
 );
+
+/**
+ * Plan of attack:
+ *
+ * assumptions:
+ * - all comments for a post are in state.
+ *
+ * reducers:
+ *  - expandedComments ( full, excerpt, singleline, hidden, null)
+ *  - watermark: latest seen commentId
+ *
+ * selectors:
+ *  - getCommentsSinceComment
+ *  - getCommentNeedsCaterpillar( commentid ) --> bool.  return true if any child is invisible
+ *  - getNextBatchOfAuthors
+ *
+ * how to connect it all together:
+ *  1. when displaying convo stream, dispatch to put all comments since last viewed comment 'excerpt'
+ * 	 1a. this also has the effect of putting all immediate parents to singleLine and all further parents to invisible
+ *  2. clicking ReadMore for any single comment will move it to 'full'
+ *  3. caterpillars are shown when any child has unexpanded children?
+ *
+ */
+
+export const getLatestCommentViewed = ( state, siteId, postId ) => {
+	const key = getStateKey( siteId, postId );
+	return get( state.comments.watermark[ key ], 'commentId' );
+};
+
+export const getAllCommentsSinceComment = createSelector(
+	( state, siteId, postId, commentId ) => {
+		const comment = getCommentById( { state, commentId, siteId } );
+		const allSortedComments = getDateSortedPostComments( state, siteId, postId );
+
+		if ( ! comment ) {
+			return keyBy( allSortedComments, 'ID' );
+		}
+
+		const onlyNewComments = filter(
+			allSortedComments,
+			c => new Date( c.date ) > new Date( comment.date )
+		);
+
+		return keyBy( onlyNewComments, 'ID' );
+	},
+	( state, siteId, postId ) => [ get( state.comments, 'items' )[ getStateKey( siteId, postId ) ] ]
+);
+
+export const getAllCommentSinceLatestViewed = ( state, siteId, postId ) => {
+	const latestViewedCommentId = getLatestCommentViewed( state, siteId, postId );
+	return getAllCommentsSinceComment( state, siteId, postId, latestViewedCommentId );
+};
+
 /***
  * Get total number of comments on the server for a given post
  * @param {Object} state redux state
@@ -68,6 +122,22 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
 	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
 }, getPostCommentItems );
 
+export const getExpansionsForPost = ( state, siteId, postId ) =>
+	state.comments.expansions[ getStateKey( siteId, postId ) ];
+
+export const getHiddenCommentsForPost = createSelector(
+	( state, siteId, postId ) => {
+		const comments = keyBy( getPostCommentItems( state, siteId, postId ), 'ID' );
+		const expanded = getExpansionsForPost( state, siteId, postId );
+		return pickBy( comments, comment => ! get( expanded, comment.ID ) );
+	},
+	state => [ state.comments.items, state.comments.expansions ]
+);
+
+export const getRootNeedsCaterpillar = ( state, siteId, postId ) =>
+	size( getExpansionsForPost( state, siteId, postId ) ) !==
+	size( getPostCommentItems( state, siteId, postId ) );
+
 /***
  * Get oldest comment date for a given post
  * @param {Object} state redux state
@@ -78,7 +148,7 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, getPostCommentItems );
+}, state => [ state.comments.items ] );
 
 /***
  * Get newest comment date for a given post
@@ -119,7 +189,7 @@ export const getPostCommentsTree = createSelector(
 			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
 		};
 	},
-	getPostCommentItems
+	state => [ state.comments.items ]
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
