@@ -24,11 +24,11 @@ describe( 'validateContactDetails', function() {
 		extra: {
 			sirenSiret: '123456789',
 			registrantVatId: 'FRXX12345678901234',
-			trademarkNumber: '12'
+			trademarkNumber: '123456789'
 		}
 	};
 
-	it( 'should accept valid data', function() {
+	it( 'should accept valid example data (sanity check)', function() {
 		expect( validateContactDetails( contactDetails ) ).to.eql( {} );
 	} );
 
