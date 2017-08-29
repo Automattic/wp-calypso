@@ -294,10 +294,7 @@ export const PostEditor = React.createClass( {
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
-		const isConfirmationFeatureEnabled = (
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
+		const isConfirmationFeatureEnabled = this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled;
 
 		let isPage;
 		let isTrashed;
@@ -855,10 +852,7 @@ export const PostEditor = React.createClass( {
 			status: 'publish'
 		};
 
-		const isConfirmationFeatureEnabled = (
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
+		const isConfirmationFeatureEnabled = this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled;
 
 		if (
 			isConfirmationFeatureEnabled &&
