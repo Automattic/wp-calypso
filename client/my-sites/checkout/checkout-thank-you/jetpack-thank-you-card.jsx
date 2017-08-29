@@ -664,6 +664,7 @@ class JetpackThankYouCard extends Component {
 	}
 
 	render() {
+		const translate = this.props.translate;
 		const site = this.props.selectedSite;
 		if ( ! site && this.props.isRequestingSites ) {
 			return (
@@ -686,6 +687,7 @@ class JetpackThankYouCard extends Component {
 				<PlanThankYouCard
 					siteId={ site.ID }
 					action={ this.renderAction( progress ) }
+					heading={ this.isErrored() && site.canUpdateFiles ? translate( "You're almost there!" ) : null }
 					description={ this.renderDescription( progress ) } />
 				{ this.renderFeatures() }
 			</div>
