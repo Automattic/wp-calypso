@@ -98,11 +98,9 @@ class DesignTypeWithStoreStep extends Component {
 			return;
 		}
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		const themeSlugWithRepo = SignupActions.getThemeForDesignType( designType );
 
-		if ( abtest( 'skipThemesSelectionModal' ) === 'skip' && 'store' !== designType ) {
-			SignupActions.setThemeForDesignType( designType );
-		}
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType, themeSlugWithRepo } );
 
 		this.props.goToNextStep();
 	};

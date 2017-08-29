@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { abtest } from 'lib/abtest';
 import { current } from 'page';
 import i18n from 'i18n-calypso';
 
@@ -56,12 +55,12 @@ export default {
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: abtest( 'skipThemesSelectionModal' ) === 'skip' ? [ 'designType', 'themeSlugWithRepo' ] : [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	'design-type-with-store': {
 		stepName: 'design-type-with-store',
-		providesDependencies: abtest( 'skipThemesSelectionModal' ) === 'skip' ? [ 'designType', 'themeSlugWithRepo' ] : [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	site: {

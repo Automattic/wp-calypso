@@ -71,21 +71,13 @@ const SignupActions = {
 		} );
 	},
 
-	setThemeForDesignType( designType ) {
-		let themeSlugWithRepo = 'pub/twentyseventeen';
+	getThemeForDesignType( designType ) {
 		switch ( designType ) {
-			case 'blog':
-				themeSlugWithRepo = 'pub/independent-publisher-2';
-				break;
-			case 'grid':
-				themeSlugWithRepo = 'pub/altofocus';
-				break;
-			case 'page':
-				themeSlugWithRepo = 'pub/dara';
-				break;
+			case 'blog': return 'pub/independent-publisher-2';
+			case 'grid': return 'pub/altofocus';
+			case 'page': return 'pub/dara';
+			default: return 'pub/twentyseventeen';
 		}
-
-		this.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
 	}
 };
 
