@@ -171,16 +171,16 @@
 		border-radius: 3px;
 		box-sizing: border-box;
 		color: #666;
-		font-size: 1.25em !important;
-		line-height: 1.563 !important;
-		padding: 0.7em !important;
+		font-size: 1.25em;
+		line-height: 1.563;
+		padding: 0.7em;
 		transition: all ease-in-out 0.2;
 		width: 100%;
 
-		&:focus {
+		&:focus, &.is-error:hover {
 			border: 1px solid #e6e6e6;
-			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8) !important;
-			outline: 0 !important;
+			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			outline: 0;
 		}
 	}
 
