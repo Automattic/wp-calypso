@@ -14,6 +14,7 @@ import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import { addZone } from '../../../state/zones/actions';
+import { settingsPath } from '../../../app/util';
 
 const ZoneCreator = ( {
 	saveZone,
@@ -22,7 +23,7 @@ const ZoneCreator = ( {
 	translate,
 } ) => (
 	<div>
-		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` }>
+		<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
 			{ translate( 'Add a zone' ) }
 		</HeaderCake>
 
