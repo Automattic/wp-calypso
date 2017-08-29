@@ -20,6 +20,7 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
+import { initiateAutomatedTransfer } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getPluginUploadError,
@@ -74,11 +75,14 @@ class PluginUpload extends React.Component {
 
 	renderUploadCard() {
 		const { inProgress, complete, isEligible, isJetpack } = this.props;
+
+		const uploadAction = isJetpack ? this.props.uploadPlugin : this.props.initiateAutomatedTransfer;
+
 		return (
 			<Card>
 				{ ! inProgress && ! complete && <UploadDropZone
-					doUpload={ this.props.uploadPlugin }
-					disabled={ ! isJetpack && ! isEligible } /> }
+					doUpload={ uploadAction }
+					disabled={ ! isEligible } /> }
 				{ inProgress && this.renderProgressBar() }
 			</Card>
 		);
@@ -141,12 +145,12 @@ class PluginUpload extends React.Component {
 					backUrl={ `/plugins/${ siteSlug }` }
 					onProceed={ this.onProceedClick } /> }
 				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
-			</Main>
+			</export>
 		);
 	}
 }
 
-export default connect(
+Main default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
@@ -180,6 +184,6 @@ export default connect(
 			isEligible,
 		};
 	},
-	{ uploadPlugin, clearPluginUpload }
+	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransfer }
 )( localize( PluginUpload ) );
 
