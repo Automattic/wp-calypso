@@ -248,13 +248,14 @@ class JetpackThankYouCard extends Component {
 					icon = <Gridicon icon="checkmark" size={ 18 } />;
 					break;
 				case 'error':
-					icon = <Gridicon icon="notice-outline" size={ 18 } />;
+					icon = null;
 					break;
 			}
 		}
 
 		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
-			'is-placeholder': ! feature
+			'is-placeholder': ! feature,
+			'with-error': feature && feature.status === 'error'
 		} );
 		return (
 			<li key={ key } className={ classes }>
@@ -320,15 +321,73 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderLiveChatButton() {
+		const { translate } = this.props;
+		const buttonText = this.isErrored() ? translate( 'Get help setting up' ) : translate( 'Ask a question' );
 		return this.isEligibleForLiveChat() && (
 			<HappyChatButton
 				borderless={ false }
 				className="checkout-thank-you__happychat-button thank-you-card__button"
 				onClick={ this.onHappyChatButtonClick }
 			>
-				{ this.props.translate( 'Ask a question' ) }
+				{ buttonText }
 			</HappyChatButton>
 		);
+	}
+
+	guessErrorReason() {
+		const { translate, selectedSite } = this.props;
+		if ( ! this.isErrored() ) {
+			return null;
+		}
+
+		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+		let reason;
+		if ( reasons && reasons.length > 0 ) {
+			reason = translate( 'We can\'t modify files on your site.' );
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
+		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
+			reason = translate(
+				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
+				'Please upgrade Jetpack.'
+			);
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
+				jetpack_version: selectedSite.options.jetpack_version
+			} );
+		} else if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite() ) {
+			reason = translate(
+				'Your site is part of a multi-site network, but is not the main network site.'
+			);
+
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
+		} else if ( selectedSite.options.is_multi_network ) {
+			reason = translate(
+				'Your site is part of a multi-network.'
+			);
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
+		} else {
+			const erroredPlugins = reduce( this.props.plugins, ( erroredList, plugin ) => {
+				if ( 'error' === plugin.status ) {
+					erroredList.push( plugin.slug );
+				}
+				return erroredList;
+			}, [] );
+
+			if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'akismet' ) ) {
+				reason = translate(
+					'We can\'t automatically configure the Akismet plugin.'
+				);
+			} else if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'vaultpress' ) ) {
+				reason = translate(
+					'We can\'t automatically configure the VaultPress plugin.'
+				);
+			} else {
+				reason = translate(
+					'We can\'t automatically configure the Akismet and VaultPress plugins.'
+				);
+			}
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
+		}
+		return reason;
 	}
 
 	renderErrorDetail() {
@@ -556,7 +615,20 @@ class JetpackThankYouCard extends Component {
 		// We return an empty span for the error case becaue the default button will be displayed
 		// further down the tree if the action is falsey.
 		if ( this.isErrored() ) {
-			return <span />;
+			return (
+				<div className="checkout-thank-you__jetpack-description-in-actions">
+					<p>
+						{ translate( 'You will have to {{link}}set up your plan manually{{/link}}.', {
+							components: {
+								link: (
+									<a href={ support.SETTING_UP_PREMIUM_SERVICES } />
+								)
+							}
+						} ) }
+					</p>
+					{ this.renderLiveChatButton() }
+				</div>
+			);
 		}
 
 		if ( 100 === progress ) {
@@ -579,11 +651,16 @@ class JetpackThankYouCard extends Component {
 
 	renderDescription( progress = 0 ) {
 		const { translate } = this.props;
+		const description = translate( "Now that we've taken care of the plan, it's time to power up your site." );
 		if ( 100 === progress ) {
 			return translate( "You are powered up, it's time to see your site." );
 		}
 
-		return translate( "Now that we've taken care of the plan, it's time to power up your site." );
+		if ( this.isErrored() ) {
+			return this.guessErrorReason();
+		}
+
+		return description;
 	}
 
 	render() {
@@ -606,7 +683,6 @@ class JetpackThankYouCard extends Component {
 			<div className={ classes }>
 				{ site.canUpdateFiles && <QueryPluginKeys siteId={ site.ID } /> }
 				{ this.renderManageNotice() }
-				{ this.renderErrorDetail() }
 				<PlanThankYouCard
 					siteId={ site.ID }
 					action={ this.renderAction( progress ) }
