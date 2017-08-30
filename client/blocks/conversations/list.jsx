@@ -77,10 +77,10 @@ export class ConversationCommentList extends React.Component {
 	}
 
 	render() {
-		const { commentIds, commentsTree, post, expansions } = this.props;
+		const { commentIds, commentsTree, post, expansions, enableCaterpillar } = this.props;
 		const startingExpanded = zipObject( commentIds, fill( Array( commentIds.length ), true ) );
 		const toShow = { ...startingExpanded, ...expansions };
-		const showCaterpillar = size( toShow ) < post.discussion.comment_count;
+		const showCaterpillar = enableCaterpillar && size( toShow ) < post.discussion.comment_count;
 
 		return (
 			<div className="conversations__comment-list">
@@ -91,7 +91,7 @@ export class ConversationCommentList extends React.Component {
 						return (
 							<PostComment
 								showNestingReplyArrow
-								enableCaterpillar
+								enableCaterpillar={ enableCaterpillar }
 								post={ post }
 								commentsTree={ commentsTree }
 								key={ commentId }
