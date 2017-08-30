@@ -168,7 +168,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ translate( 'ex. FRXX123456789' ) }
 						onChange={ this.handleChangeEvent }
-						isError={ Boolean( validationErrors.registrantVatId ) } />
+						isError={ Boolean( registrantVatIdValidationMessage ) } />
 						{ registrantVatIdValidationMessage }
 				</FormFieldset>
 
@@ -191,7 +191,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						isError={ Boolean( validationErrors.sirenSiret ) }
+						isError={ Boolean( sirenSiretValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
 						{ sirenSiretValidationMessage }
 				</FormFieldset>
