@@ -131,7 +131,7 @@ class PrivacyProtection extends Component {
 					<div>
 						{ translate(
 							'Domain owners have to share contact information in a public database of all domains. ' +
-							'With {{strong}}Privacy Protection{{/strong}}, we publish our own information instead of yours,' +
+							'With {{strong}}Privacy Protection{{/strong}}, we publish our own information instead of yours, ' +
 							'and privately forward any communication to you.',
 							{
 								components: {
