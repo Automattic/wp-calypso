@@ -599,9 +599,6 @@ class JetpackThankYouCard extends Component {
 	}
 
 	getProgress() {
-		if ( this.isErrored() ) {
-			return 0;
-		}
 
 		const features = this.getFeaturesWithStatus() || [ '' ];
 		const completed = this.shouldRenderPlaceholders()
@@ -620,9 +617,9 @@ class JetpackThankYouCard extends Component {
 	renderAction( progress = 0 ) {
 		const { selectedSite: site, translate } = this.props;
 		const buttonUrl = site && site.URL;
-		// We return an empty span for the error case becaue the default button will be displayed
-		// further down the tree if the action is falsey.
-		if ( this.isErrored() ) {
+		// We return instructions for setting up manually
+		// when we finish if something errored
+		if ( this.isErrored() && ! this.props.isInstalling ) {
 			return (
 				<div className="checkout-thank-you__jetpack-description-in-actions">
 					<p>
