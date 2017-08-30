@@ -163,8 +163,8 @@ class JetpackThankYouCard extends Component {
 	}
 
 	componentDidUpdate() {
-		const site = this.props.selectedSite;
-		const { plugins } = this.props;
+		const { nextPlugin, planFeatures, plugins, selectedSite: site } = this.props;
+		const { completedJetpackFeatures } = this.state;
 
 		if ( ! site ||
 			! site.jetpack ||
@@ -175,19 +175,21 @@ class JetpackThankYouCard extends Component {
 			return;
 		}
 
-		if ( this.props.planFeatures && ! site.canUpdateFiles && ! Object.keys( this.state.completedJetpackFeatures ).length ) {
+		if ( planFeatures && ! site.canUpdateFiles && ! Object.keys( completedJetpackFeatures ).length ) {
 			this.activateJetpackFeatures();
 		}
 
-		if ( site.canUpdateFiles && this.props.nextPlugin ) {
-			this.startNextPlugin( this.props.nextPlugin );
+		if ( site.canUpdateFiles && nextPlugin ) {
+			this.startNextPlugin( nextPlugin );
 		} else if (
 			site.canUpdateFiles &&
 			plugins &&
 			! this.shouldRenderPlaceholders() &&
 			! some( plugins, ( plugin ) => 'done' !== plugin.status ) &&
-			! Object.keys( this.state.completedJetpackFeatures ).length
+			! Object.keys( completedJetpackFeatures ).length
 		) {
+			this.activateJetpackFeatures();
+		} else if ( site.canUpdateFiles && ! nextPlugin && ! Object.keys( completedJetpackFeatures ).length ) {
 			this.activateJetpackFeatures();
 		}
 	}
