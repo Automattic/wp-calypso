@@ -14,10 +14,25 @@ import Gridicon from 'gridicons';
 import { getNormalizedPost } from 'state/posts/selectors';
 
 export function PostTime( { moment, post } ) {
-	let time;
+	let timeDisplay;
+
 	if ( post ) {
 		const { status, modified, date } = post;
-		time = includes( [ 'draft', 'pending' ], status ) ? modified : date;
+		const time = moment(
+			includes( [ 'draft', 'pending' ], status )
+				? modified
+				: date
+		);
+		if ( time.isBefore( moment().subtract( 7, 'days' ) ) ) {
+			// "August 30, 2017 4:46 PM" in English locale
+			timeDisplay = time.format( 'LLL' );
+		} else {
+			// "3 days ago" in English locale
+			timeDisplay = time.fromNow();
+		}
+	} else {
+		// Placeholder text: "a few seconds ago" in English locale
+		timeDisplay = moment().fromNow();
 	}
 
 	const classes = classNames( 'post-time', {
@@ -31,7 +46,7 @@ export function PostTime( { moment, post } ) {
 				size={ 18 }
 				className="post-time__icon" />
 			<span className="post-time__text">
-				{ moment( time ).fromNow() }
+				{ timeDisplay }
 			</span>
 		</span>
 	);

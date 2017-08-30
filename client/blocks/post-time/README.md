@@ -1,7 +1,14 @@
 Post Time
 =========
 
-`<PostTime />` is a React component for rendering the published or modified date of a post in human-readable relative terms.
+`<PostTime />` is a React component for rendering the published or modified date of a post in human-readable terms.
+
+This component may render a relative or absolute date format:
+
+- If the post is less than 1 week old, then a human-readable relative timestamp
+  will be used.
+- If the post is more than 1 week old, then a human-readable absolute date will
+  be used.
 
 ## Usage
 

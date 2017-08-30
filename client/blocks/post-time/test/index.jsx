@@ -53,7 +53,7 @@ describe( 'PostTime', () => {
 		);
 
 		const text = wrapper.find( '.post-time__text' ).text();
-		expect( text ).to.equal( moment( post.modified ).fromNow() );
+		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
 	it( 'should use the modified date if the post status is pending', () => {
@@ -71,7 +71,7 @@ describe( 'PostTime', () => {
 		);
 
 		const text = wrapper.find( '.post-time__text' ).text();
-		expect( text ).to.equal( moment( post.modified ).fromNow() );
+		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
 	it( 'should use the actual date if the post status is not pending/draft', () => {
@@ -89,7 +89,24 @@ describe( 'PostTime', () => {
 		);
 
 		const text = wrapper.find( '.post-time__text' ).text();
-		expect( text ).to.equal( moment( post.date ).fromNow() );
+		expect( text ).to.equal( moment( post.date ).format( 'LLL' ) );
+	} );
+
+	it( 'should use a human-readable approximation for recent dates', () => {
+		const post = {
+			status: 'publish',
+			date: moment().subtract( 2, 'days' ).format()
+		};
+
+		const wrapper = shallow(
+			<PostTime
+				post={ post }
+				moment={ moment }
+			/>
+		);
+
+		const text = wrapper.find( '.post-time__text' ).text();
+		expect( text ).to.equal( '2 days ago' );
 	} );
 
 	it( 'should render placeholder when post is null', () => {
