@@ -323,7 +323,7 @@ When checking the type of a value, use one of the following utilities from [Loda
 - undefined: [`isUndefined( value )`](https://lodash.com/docs#isUndefined)
 - undefined or null (either): [`isNil( value )`](https://lodash.com/docs#isNil)
 
-Note that we don't we [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
+Note that we don't recommend using [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
 
 Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
 
@@ -355,10 +355,10 @@ if ( object ) { ... }
 
 To test if a property exists on an object, regardless of value, including `undefined` or other falsey values:
 ```js
+// Good:
 if ( 'desired' in object ) { ... }
 
-// or, using Lodash's `has` function:
-
+// Better, using Lodash's `has` function:
 if ( has( object, 'desired' ) ) { ... }
 ```
 
@@ -369,18 +369,19 @@ if ( object.desired ) { ... }
 
 To test if an object exists and has a property:
 ```js
+// Good:
 if ( object && 'desired' in object ) { ... }
 if ( object && object.desired ) { ... }
 
-// or, using Lodash's `has` function:
-
+// Better, using Lodash's `has` function:
 if ( has( object, 'desired' ) ) { ... }
-if ( has( object, 'desired.nestedProperty' ) ) { ... }
+
+// Note: 'has' will safely return `false` if a value is missing at any point in the nesting.
+// Even if the chain breaks at 'b' 'has' will return false, rather than throwing an error.
+if ( has( object, 'a.b.c.desired' ) ) { ... }
 ```
 
-Note that [Lodash](https://lodash.com/)'s `has` function will safely return `false` if any value is missing from the given chain, rather than throwing an error or requiring further checking.
-
-Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios:
+Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios, so should be avoided:
 
 ```js
 'valueOf' in {}; // true
