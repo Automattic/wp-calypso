@@ -315,15 +315,15 @@ if ( undefOrNull == null ) {
 
 When checking the type of a value, use one of the following utilities from [Lodash](https://lodash.com/):
 
-- String: [`isString( value )`](https://lodash.com/docs/4.17.4#isString)
-- Number: [`isNumber( value )`](https://lodash.com/docs/4.17.4#isNumber)
-- Boolean: [`isBoolean( value )`](https://lodash.com/docs/4.17.4#isBoolean)
-- Object: [`isPlainObject( value )`](https://lodash.com/docs/4.17.4#isPlainObject)
-- null: [`isNull( value )`](https://lodash.com/docs/4.17.4#isNull)
-- undefined: [`isUndefined( value )`](https://lodash.com/docs/4.17.4#isUndefined)
-- undefined or null (either): [`isNil( value )`](https://lodash.com/docs/4.17.4#isNil)
+- String: [`isString( value )`](https://lodash.com/docs#isString)
+- Number: [`isNumber( value )`](https://lodash.com/docs#isNumber)
+- Boolean: [`isBoolean( value )`](https://lodash.com/docs#isBoolean)
+- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject)
+- null: [`isNull( value )`](https://lodash.com/docs#isNull)
+- undefined: [`isUndefined( value )`](https://lodash.com/docs#isUndefined)
+- undefined or null (either): [`isNil( value )`](https://lodash.com/docs#isNil)
 
-Note that we don't we [`isObject`](https://lodash.com/docs/4.17.4#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
+Note that we don't we [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
 
 Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
 
