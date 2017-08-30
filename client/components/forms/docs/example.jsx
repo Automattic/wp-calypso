@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,6 +22,8 @@ import FormLegend from 'components/forms/form-legend';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import FormRadio from 'components/forms/form-radio';
+import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
+import FormRadiosBarExample from 'components/forms/form-radios-bar/docs/example';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -261,6 +264,33 @@ class FormFields extends React.PureComponent {
 							/>
 							<span>Second radio</span>
 						</FormLabel>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLegend>Form Radio With Thumbnail</FormLegend>
+						<div>
+							<FormRadioWithThumbnail
+								label="First radio"
+								thumbnail={ { cssClass: 'some-class' } }
+								value="first"
+								checked={ 'first' === this.state.checkedRadio }
+								onChange={ this.handleRadioChange }
+							/>
+						</div>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLegend>Form Radios Bar</FormLegend>
+						<FormRadiosBarExample
+							isThumbnail={ false }
+							checked={ this.state.checkedRadio }
+							onChange={ this.handleRadioChange }
+						/>
+						<FormRadiosBarExample
+							isThumbnail={ true }
+							checked={ this.state.checkedRadio }
+							onChange={ this.handleRadioChange }
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
