@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { find, identity } from 'lodash';
+import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -60,6 +60,11 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
+		this.props.setComponentReference( this );
+	}
+
+	componentWillUnmount() {
+		this.props.setComponentReference( undefined );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -219,5 +224,9 @@ class PhoneInput extends React.PureComponent {
 		);
 	}
 }
+
+PhoneInput.defaultProps = {
+	setComponentReference: noop,
+};
 
 export default localize( PhoneInput );
