@@ -148,8 +148,12 @@ class StoreSidebar extends Component {
 	promotions = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/promotions' + siteSuffix;
+		const validLinks = [
+			'/store/promotions',
+			'/store/promotion',
+		];
 
-		const selected = this.isItemLinkSelected( [ link ] );
+		const selected = this.isItemLinkSelected( validLinks );
 		const classes = classNames( {
 			promotions: true,
 			'is-placeholder': ! site,
