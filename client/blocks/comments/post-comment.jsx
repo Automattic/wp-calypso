@@ -152,32 +152,27 @@ class PostComment extends React.PureComponent {
 		);
 
 		let replyVisibilityText = null;
-		if ( ! exceedsMaxChildrenToShow ) {
+		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar ) {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 
 		return (
 			<div>
-				{ !! replyVisibilityText
-					? <button
-							className="comments__view-replies-btn"
-							onClick={ this.handleToggleRepliesClick }
-						>
-							<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
-						</button>
-					: null }
-				{ showReplies
-					? <ol className="comments__list">
-							{ commentChildrenIds.map( childId =>
-								<PostComment
-									{ ...omit( this.props, 'displayType' ) }
-									depth={ childDepth }
-									key={ childId }
-									commentId={ childId }
-								/>
-							) }
-						</ol>
-					: null }
+				{ !! replyVisibilityText &&
+					<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
+						<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
+					</button> }
+				{ showReplies &&
+					<ol className="comments__list">
+						{ commentChildrenIds.map( childId =>
+							<PostComment
+								{ ...omit( this.props, 'displayType' ) }
+								depth={ childDepth }
+								key={ childId }
+								commentId={ childId }
+							/>
+						) }
+					</ol> }
 			</div>
 		);
 	}
