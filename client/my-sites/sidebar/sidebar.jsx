@@ -155,13 +155,14 @@ export class MySitesSidebar extends Component {
 		}
 
 		const { site, isPreviewable } = this.props;
+		const siteUrl = site && site.URL || '';
 
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ isPreviewable ? '/view' + this.props.siteSuffix : site.URL }
+				link={ isPreviewable ? '/view' + this.props.siteSuffix : siteUrl }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
@@ -372,7 +373,9 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
-			/>
+			>
+				<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+			</SidebarItem>
 		);
 	}
 

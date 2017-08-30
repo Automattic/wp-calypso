@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -26,15 +27,15 @@ import Notice from 'components/notice';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
-		products: React.PropTypes.object.isRequired,
-		cart: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
-		initialQuery: React.PropTypes.string,
-		analyticsSection: React.PropTypes.string.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		onRegisterDomain: React.PropTypes.func.isRequired,
-		onMapDomain: React.PropTypes.func.isRequired,
-		onSave: React.PropTypes.func,
+		products: PropTypes.object.isRequired,
+		cart: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		initialQuery: PropTypes.string,
+		analyticsSection: PropTypes.string.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		onRegisterDomain: PropTypes.func.isRequired,
+		onMapDomain: PropTypes.func.isRequired,
+		onSave: PropTypes.func,
 	};
 
 	static defaultProps = {

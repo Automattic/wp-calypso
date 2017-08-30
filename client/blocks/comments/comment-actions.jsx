@@ -23,7 +23,7 @@ const CommentActions = ( {
 	showModerationTools,
 	translate,
 	activeEditCommentId,
-	activeReplyCommentID,
+	activeReplyCommentId,
 	commentId,
 	handleReply,
 	onReplyCancel,
@@ -35,7 +35,7 @@ const CommentActions = ( {
 	editCommentCancel,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-	const showCancelReplyButton = activeReplyCommentID === commentId;
+	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const showCancelEditButton = activeEditCommentId === commentId;
 	const isApproved = status === 'approved';
 

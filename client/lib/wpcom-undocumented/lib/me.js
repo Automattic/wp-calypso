@@ -406,6 +406,31 @@ UndocumentedMe.prototype.socialConnect = function( { service, access_token, id_t
 
 	return this.wpcom.req.post( args, fn );
 };
+
+/**
+ * Disconnect the current account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
+	const body = {
+		service,
+		// This API call is restricted to these OAuth keys
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	};
+
+	const args = {
+		path: '/me/social-login/disconnect',
+		body: body,
+	};
+
+	return this.wpcom.req.post( args, fn );
+};
+
 UndocumentedMe.prototype.preferences = MePreferences;
 
 module.exports = UndocumentedMe;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -198,7 +199,7 @@ describe( 'reducer', () => {
 					type: COMMENTS_COUNT_INCREMENT,
 					siteId: 1,
 					postId: 1,
-				},
+				}
 			);
 
 			expect( response[ '1-1' ] ).to.eql( 2 );
@@ -206,42 +207,36 @@ describe( 'reducer', () => {
 	} );
 	describe( '#treesInitialized()', () => {
 		it( 'should track when a tree is initialized for a given query', () => {
-			const state = treesInitialized(
-				undefined,
-				{
-					type: COMMENTS_TREE_SITE_ADD,
-					siteId: 77203074,
-					status: 'unapproved',
-				} );
+			const state = treesInitialized( undefined, {
+				type: COMMENTS_TREE_SITE_ADD,
+				siteId: 77203074,
+				status: 'unapproved',
+			} );
 			expect( state ).to.eql( {
-				77203074: { unapproved: true }
+				77203074: { unapproved: true },
 			} );
 		} );
 		it( 'can track init status of many states', () => {
 			const initState = deepFreeze( { 77203074: { unapproved: true } } );
-			const state = treesInitialized(
-				initState,
-				{
-					type: COMMENTS_TREE_SITE_ADD,
-					siteId: 77203074,
-					status: 'spam',
-				} );
+			const state = treesInitialized( initState, {
+				type: COMMENTS_TREE_SITE_ADD,
+				siteId: 77203074,
+				status: 'spam',
+			} );
 			expect( state ).to.eql( {
-				77203074: { unapproved: true, spam: true }
+				77203074: { unapproved: true, spam: true },
 			} );
 		} );
 		it( 'can track init status of many sites', () => {
 			const initState = deepFreeze( { 77203074: { unapproved: true } } );
-			const state = treesInitialized(
-				initState,
-				{
-					type: COMMENTS_TREE_SITE_ADD,
-					siteId: 2916284,
-					status: 'unapproved',
-				} );
+			const state = treesInitialized( initState, {
+				type: COMMENTS_TREE_SITE_ADD,
+				siteId: 2916284,
+				status: 'unapproved',
+			} );
 			expect( state ).to.eql( {
 				77203074: { unapproved: true },
-				2916284: { unapproved: true }
+				2916284: { unapproved: true },
 			} );
 		} );
 	} );

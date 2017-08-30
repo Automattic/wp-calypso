@@ -30,7 +30,7 @@ import {
 	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
@@ -55,10 +55,10 @@ class JetpackConnectAuthorizeForm extends Component {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
 				from: PropTypes.string,
-			} ),
-		} ),
-		preSelectedSite: PropTypes.string,
+			} ).isRequired,
+		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
+		setTracksAnonymousUserId: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
 		requestSites: PropTypes.func,
@@ -68,6 +68,11 @@ class JetpackConnectAuthorizeForm extends Component {
 	};
 
 	componentWillMount() {
+		// set anonymous ID for cross-system analytics
+		const queryObject = this.props.jetpackConnectAuthorize.queryObject;
+		if ( queryObject._ui && 'anon' === queryObject._ut ) {
+			this.props.setTracksAnonymousUserId( queryObject._ui );
+		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
@@ -95,7 +100,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		return (
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
-					illustration="/calypso/images/drake/drake-whoops.svg"
+					illustration="/calypso/images/illustrations/whoops.svg"
 					title={ this.props.translate(
 						'Oops, this URL should not be accessed directly'
 					) }
@@ -109,19 +114,18 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
-
 	renderForm() {
 		return (
 			( this.props.user )
 				? <LoggedInForm
 					{ ...this.props }
-					isSSO={ ! this.props.preSelectedSite && this.isSSO() }
-					isWCS={ ! this.props.preSelectedSite && this.isWCS() }
+					isSSO={ this.isSSO() }
+					isWCS={ this.isWCS() }
 				/>
 				: <LoggedOutForm
 					{ ...this.props }
-					isSSO={ ! this.props.preSelectedSite && this.isSSO() }
-					isWCS={ ! this.props.preSelectedSite && this.isWCS() }
+					isSSO={ this.isSSO() }
+					isWCS={ this.isWCS() }
 				/>
 		);
 	}
@@ -129,9 +133,14 @@ class JetpackConnectAuthorizeForm extends Component {
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( ! this.props.preSelectedSite && typeof queryObject === 'undefined' ) {
+		if ( typeof queryObject === 'undefined' ) {
 			return this.renderNoQueryArgsError();
 		}
+
+		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
+			this.renderForm();
+		}
+
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
@@ -170,6 +179,7 @@ export default connect(
 		goBackToWpAdmin,
 		goToXmlrpcErrorFallbackUrl,
 		recordTracksEvent,
+		setTracksAnonymousUserId,
 		requestSites,
 		retryAuth,
 	}

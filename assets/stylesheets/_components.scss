@@ -120,6 +120,8 @@
 @import 'components/forms/form-label/style';
 @import 'components/forms/form-legend/style';
 @import 'components/forms/form-password-input/style';
+@import 'components/forms/form-radio-with-thumbnail/style';
+@import 'components/forms/form-radios-bar/style';
 @import 'components/forms/form-range/style';
 @import 'components/forms/form-section-heading/style';
 @import 'components/forms/form-select/style';
@@ -141,6 +143,8 @@
 @import 'components/infinite-list/style';
 @import 'components/info-popover/style';
 @import 'components/input-chrono/style';
+@import 'components/jetpack-colophon/style';
+@import 'components/keyed-suggestions/style';
 @import 'components/list-end/style';
 @import 'components/logged-out-form/style';
 @import 'components/language-picker/style';
@@ -304,6 +308,7 @@
 @import 'me/security-account-recovery/style';
 @import 'me/sidebar-navigation/style';
 @import 'me/sidebar/style';
+@import 'me/social-login/style';
 @import 'me/two-step/style';
 @import 'my-sites/ads/style';
 @import 'my-sites/all-sites/style';

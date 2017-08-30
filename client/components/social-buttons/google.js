@@ -104,6 +104,10 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
@@ -117,18 +121,18 @@ class GoogleLoginButton extends Component {
 
 		const { responseHandler } = this.props;
 
-		// Handle click async if the library is not loaded yet
-		// the popup might be blocked by the browser in that case
-		// options are documented here:
+		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		this.initialize()
-			.then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
-					social_account_type: 'google',
-					error_code: error.error
-				} );
-			} );
+		window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } )
+			.then(
+				responseHandler,
+				error => {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: error.error
+					} );
+				}
+			);
 	}
 
 	showError( event ) {
@@ -148,6 +152,17 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled || this.state.error );
+
+		const { children } = this.props;
+		if ( children ) {
+			const childProps = {
+				onMouseOver: this.showError,
+				onMouseOut: this.hideError,
+				onClick: this.handleClick,
+			};
+
+			return React.cloneElement( children, childProps );
+		}
 
 		return (
 			<div className="social-buttons__button-container">

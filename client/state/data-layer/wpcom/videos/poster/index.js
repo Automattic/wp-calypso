@@ -54,7 +54,7 @@ export const receiveUploadProgress = ( { dispatch }, action, progress ) => {
 };
 
 export const dispatchPosterRequest =
-	dispatchRequest( updatePoster, receivePosterUrl, receivePosterError, receiveUploadProgress );
+	dispatchRequest( updatePoster, receivePosterUrl, receivePosterError, { onProgress: receiveUploadProgress } );
 
 export default {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],

@@ -101,7 +101,7 @@ export default {
 		uploadPlugin,
 		uploadComplete,
 		receiveError,
-		updateUploadProgress
+		{ onProgress: updateUploadProgress }
 	) ]
 };
 

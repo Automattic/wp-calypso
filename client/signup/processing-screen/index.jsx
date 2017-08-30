@@ -7,6 +7,7 @@ import { find, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,15 +16,17 @@ import Button from 'components/button';
 import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { abtest } from 'lib/abtest';
+import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
 		hasCartItems: PropTypes.bool.isRequired,
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
-		user: PropTypes.object,
+		user: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		signupProgress: PropTypes.array,
 		flow: PropTypes.string,
+		useOAuth2Layout: PropTypes.bool.isRequired,
 	};
 
 	componentWillMount() {
@@ -231,7 +234,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	render() {
-		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription && this.props.flow !== 'rebrand-cities' ) {
+		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription && this.props.flow !== 'rebrand-cities' && ! this.props.useOAuth2Layout ) {
 			return this.renderUpgradeScreen();
 		}
 
@@ -259,4 +262,8 @@ export class SignupProcessingScreen extends Component {
 	}
 }
 
-export default localize( SignupProcessingScreen );
+export default connect(
+	state => ( {
+		useOAuth2Layout: showOAuth2Layout( state ),
+	} )
+)( localize( SignupProcessingScreen ) );

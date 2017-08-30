@@ -11,6 +11,7 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
+import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -83,7 +84,7 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
  */
 export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, comment ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
+	dispatch( local( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } ) );
 	// add new comment to state with updated values from server
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count

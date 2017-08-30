@@ -1,3 +1,4 @@
+/** @format */
 /***
  * External dependencies
  */
@@ -24,7 +25,7 @@ export const getDateSortedPostComments = createSelector(
 		const comments = getPostCommentItems( state, siteId, postId );
 		return sortBy( comments, comment => new Date( comment.date ) );
 	},
-	( state, siteId, postId ) => [ get( state.comments, 'items' )[ getStateKey( siteId, postId ) ] ]
+	state => [ state.comments.items ]
 );
 
 export const getCommentById = createSelector(
@@ -40,9 +41,8 @@ export const getCommentById = createSelector(
 		);
 		return find( commentsForSite, comment => commentId === comment.ID );
 	},
-	( { state, commentId, siteId } ) => [
-		commentId,
-		siteId,
+	( { state } ) => [
+		state.comments.items,
 		get( state.comments, 'items' ),
 		get( state.comments, 'errors' ),
 	]
@@ -66,7 +66,7 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
 export const getPostMostRecentCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
-}, getPostCommentItems );
+}, state => state.comments.items );
 
 /***
  * Get oldest comment date for a given post
@@ -78,7 +78,7 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, getPostCommentItems );
+}, state => state.comments.items );
 
 /***
  * Get newest comment date for a given post
@@ -90,7 +90,7 @@ export const getPostOldestCommentDate = createSelector( ( state, siteId, postId 
 export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
-}, getPostCommentItems );
+}, state => state.comments.items );
 
 /***
  * Gets comment tree for a given post
@@ -119,7 +119,7 @@ export const getPostCommentsTree = createSelector(
 			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
 		};
 	},
-	getPostCommentItems
+	state => state.comments.items
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
@@ -155,4 +155,4 @@ export const getCommentLike = createSelector( ( state, siteId, postId, commentId
 	}
 	const { i_like, like_count } = comment;
 	return { i_like, like_count };
-}, getPostCommentItems );
+}, state => state.comments.items );

@@ -76,6 +76,13 @@
 .login__form-signup-link {
 	font-size: 13px;
 	margin-top: 20px;
+
+	&.disabled {
+		a, a:hover {
+			pointer-events: none;
+			color: $gray;
+		}
+	}
 }
 
 .login__social-text {

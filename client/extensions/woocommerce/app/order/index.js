@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
+import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -33,12 +34,17 @@ class Order extends Component {
 
 		if ( siteId ) {
 			this.props.fetchOrder( siteId, orderId );
+			this.props.fetchNotes( siteId, orderId );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
 			this.props.fetchOrder( newProps.siteId, newProps.orderId );
+			this.props.fetchNotes( newProps.siteId, newProps.orderId );
+		} else if ( newProps.order && this.props.order && newProps.order.status !== this.props.order.status ) {
+			// A status change should force a notes refresh
+			this.props.fetchNotes( newProps.siteId, newProps.orderId, true );
 		}
 	}
 
@@ -96,5 +102,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrder, updateOrder }, dispatch )
+	dispatch => bindActionCreators( { fetchNotes, fetchOrder, updateOrder }, dispatch )
 )( localize( Order ) );

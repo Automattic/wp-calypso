@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -12,13 +13,13 @@ import DomainProductPrice from 'components/domains/domain-product-price';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
-		buttonContent: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ).isRequired,
-		buttonClasses: React.PropTypes.string,
-		extraClasses: React.PropTypes.string,
-		onButtonClick: React.PropTypes.func.isRequired,
-		priceRule: React.PropTypes.string.isRequired,
-		price: React.PropTypes.string,
-		domain: React.PropTypes.string
+		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+		buttonClasses: PropTypes.string,
+		extraClasses: PropTypes.string,
+		onButtonClick: PropTypes.func.isRequired,
+		priceRule: PropTypes.string.isRequired,
+		price: PropTypes.string,
+		domain: PropTypes.string
 	};
 
 	render() {

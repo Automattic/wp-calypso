@@ -517,7 +517,7 @@
 	@include breakpoint( ">1600px" ) {
 		max-width: 600px;
 
-		.post-item.is-mini.card.is-compact {
+		.post-item__card.is-mini.card.is-compact {
 			padding: 16px 24px;
 
 			.post-item__meta {

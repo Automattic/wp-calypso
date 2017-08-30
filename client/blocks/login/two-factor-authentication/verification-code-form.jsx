@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
 import classNames from 'classnames';
@@ -64,10 +65,15 @@ class VerificationCodeForm extends Component {
 	};
 
 	onChangeField = ( event ) => {
+		const {
+			name,
+			value = '',
+		} = event.target;
+
 		this.props.formUpdate();
 
 		this.setState( {
-			[ event.target.name ]: event.target.value,
+			[ name ]: value.trim(),
 		} );
 	};
 

@@ -15,6 +15,7 @@ import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
+import oauth2Clients from './oauth2-clients/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
 import layoutFocus from './layout-focus/reducer';
@@ -23,6 +24,7 @@ import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
 import themeSetup from './theme-setup/reducers';
 import npsSurveyNotice from './nps-survey-notice/reducer';
+import postTypeList from './post-type-list/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -100,6 +102,7 @@ const reducer = combineReducers( {
 	guidedTour,
 	editor,
 	reader,
+	oauth2Clients,
 	olark,
 	preview,
 	actionLog,
@@ -108,6 +111,7 @@ const reducer = combineReducers( {
 	themeSetup,
 	npsSurveyNotice,
 	isNotificationsOpen,
+	postTypeList,
 } );
 
 const ui = function( state, action ) {

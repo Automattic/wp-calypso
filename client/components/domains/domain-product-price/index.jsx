@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -15,11 +16,11 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 class DomainProductPrice extends React.Component {
 	static propTypes = {
-		isLoading: React.PropTypes.bool,
-		price: React.PropTypes.string,
-		freeWithPlan: React.PropTypes.bool,
-		requiresPlan: React.PropTypes.bool,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+		isLoading: PropTypes.bool,
+		price: PropTypes.string,
+		freeWithPlan: PropTypes.bool,
+		requiresPlan: PropTypes.bool,
+		domainsWithPlansOnly: PropTypes.bool.isRequired
 	};
 
 	renderFreeWithPlan() {

@@ -218,6 +218,7 @@
 
 // Individual Comment
 .comments__comment {
+	list-style-type: none;
 	margin-top: 20px;
 	position: relative;
 
@@ -294,7 +295,7 @@
 	margin-right: 9px;
 	position: absolute;
 		left: 1px;
-		top: -1px;
+		top: -5px;
 	width: 32px;
 
 	.gridicon {
@@ -307,6 +308,53 @@
 	@include breakpoint( "<480px" ) {
 		top: -4px;
 	}
+}
+
+// Post comments line-clamping
+.comments__comment-content-wrapper {
+	display: inline-block;
+	position: relative;
+
+	&.is-single-line,
+	&.is-single-line .comments__comment-content {
+		max-height: 15px * 1.6;
+	}
+
+	&.is-excerpt,
+	&.is-excerpt .comments__comment-content {
+		max-height: 15px * 1.6 * 3;
+	}
+
+	&.is-single-line .comments__comment-content,
+	&.is-excerpt .comments__comment-content {
+		overflow: hidden;
+	}
+}
+
+.comments__comment-read-more {
+	background: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, rgba( 255, 255, 255, 1 ) 50%, rgba( 255, 255, 255, 1 ) 96%, rgba( 255, 255, 255, 1) 100% );
+	color: $blue-medium;
+	cursor: pointer;
+	display: inline-block;
+	float: right;
+	font-size: 15px;
+	max-height: 15px * 1.6 * 3;
+	min-width: 160px;
+	position: relative;
+	text-align: right;
+	width: 140px;
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.comments__comment-content-wrapper.is-single-line .comments__comment-content ~ .comments__comment-read-more {
+	top: -24px;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content ~ .comments__comment-read-more {
+	top: -22px;
 }
 
 // Avoids long trackback links from wrapping
@@ -356,7 +404,7 @@ a.comments__comment-username {
 .comments__comment-content {
 	@extend %content-font;
 	font-size: 15px;
-	line-height: 25px;
+	line-height: 1.56;
 	word-break: break-word;
 
 	p {
@@ -376,13 +424,12 @@ a.comments__comment-username {
 	}
 }
 
-
 // Actions for Individual Comments
 .comments__comment-actions {
 	list-style: none;
 	color: $gray;
 	font-size: 14px;
-	margin-top: 2px;
+	margin-top: -5px;
 
 	button {
 		display: inline-block;
@@ -430,6 +477,12 @@ a.comments__comment-username {
 			margin-top: 4px;
 			margin-right: 0;
 		}
+	}
+
+	// Aligns Like icon to comment text when it's by itself
+	:only-child {
+		left: -3px;
+		top: 3px;
 	}
 
 	.comments__comment-actions-approve,

@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
+import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
 import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
@@ -31,9 +32,12 @@ import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
+import JetpackPublicize from './jetpack-publicize';
+import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -102,6 +106,12 @@ class ProductPurchaseFeaturesList extends Component {
 				selectedSite={ selectedSite }
 				key="findNewThemeFeature"
 			/>,
+			isEnabled( 'manage/plugins/upload' )
+				? <UploadPlugins
+					selectedSite={ selectedSite }
+					key="uploadPluginsFeature"
+				/>
+				: null,
 			isWordadsInstantActivationEligible( selectedSite )
 				? <MonetizeSite
 					selectedSite={ selectedSite }
@@ -186,11 +196,21 @@ class ProductPurchaseFeaturesList extends Component {
 		const {	selectedSite } = this.props;
 
 		return [
+			<MonetizeSite
+				selectedSite={ selectedSite }
+				key="monetizeSiteFeature"
+			/>,
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
 			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
+			/>,
+			<JetpackPublicize
+				key="jetpackPublicize"
+			/>,
+			<JetpackVideo
+				key="jetpackVideo"
 			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }
@@ -228,11 +248,33 @@ class ProductPurchaseFeaturesList extends Component {
 		const {	selectedSite } = this.props;
 
 		return [
+			<BusinessOnboarding
+				key="businessOnboarding"
+				onClick={ this.props.recordBusinessOnboardingClick }
+			/>,
+			<FindNewTheme
+				selectedSite={ selectedSite }
+				key="findNewThemeFeature"
+			/>,
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
 			/>,
+			<MonetizeSite
+				selectedSite={ selectedSite }
+				key="monetizeSiteFeature"
+			/>,
+			<GoogleAnalyticsStats
+				selectedSite={ selectedSite }
+				key="googleAnalyticsStatsFeature"
+			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
+			/>,
+			<JetpackPublicize
+				key="jetpackPublicize"
+			/>,
+			<JetpackVideo
+				key="jetpackVideo"
 			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }

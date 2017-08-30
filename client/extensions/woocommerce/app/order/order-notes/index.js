@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
@@ -14,7 +13,6 @@ import { sortBy, keys } from 'lodash';
  */
 import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
 import Card from 'components/card';
-import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import OrderNote from './note';
 import OrderNotesByDay from './day';
 import SectionHeader from 'components/section-header';
@@ -44,20 +42,6 @@ class OrderNotes extends Component {
 		this.state = {
 			openIndex: 0,
 		};
-	}
-
-	componentDidMount() {
-		const { siteId, orderId } = this.props;
-
-		if ( siteId ) {
-			this.props.fetchNotes( siteId, orderId );
-		}
-	}
-
-	componentWillReceiveProps( newProps ) {
-		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
-			this.props.fetchNotes( newProps.siteId, newProps.orderId );
-		}
 	}
 
 	toggleOpenDay = ( index ) => {
@@ -135,6 +119,5 @@ export default connect(
 			orderId,
 			siteId,
 		};
-	},
-	dispatch => bindActionCreators( { fetchNotes }, dispatch )
+	}
 )( localize( OrderNotes ) );

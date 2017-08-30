@@ -127,3 +127,17 @@ export function serverRender( req, res ) {
 		res.render( 'index.jade', context );
 	}
 }
+
+export function serverRenderError( err, req, res, next ) {
+	if ( err ) {
+		if ( config( 'env' ) !== 'production' ) {
+			console.error( err );
+		}
+		req.error = err;
+		res.status( err.status || 500 );
+		res.render( '500.jade', req.context );
+		return;
+	}
+
+	next();
+}

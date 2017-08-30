@@ -143,6 +143,22 @@ MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 		matches = item.title && -1 !== item.title.toLowerCase().indexOf( query.search.toLowerCase() );
 	}
 
+	if ( query.source === 'google_photos' && matches ) {
+		// On uploading external images, the stores will receive the CREATE_MEDIA_ITEM  event
+		// and will update the list of media including the new one, but we don't want this new media
+		// to be shown in the google photos list - hence the filtering.
+		//
+		// One use case where this happened was:
+		//
+		// - go to site icon settings and open google modal
+		// - select and image and tap continue
+		// - cancel the editing process and you'll be send back to the google modal
+		//
+		// without this change, the new upload would be shown there.
+
+		matches = ! item.external;
+	}
+
 	if ( query.mime_type && matches ) {
 		// Mime type query can contain a fragment, e.g. "image/", so match
 		// item mime type at beginning

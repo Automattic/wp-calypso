@@ -21,7 +21,6 @@ import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import ListEnd from 'components/list-end';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
@@ -32,6 +31,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import JetpackColophon from 'components/jetpack-colophon';
 import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -258,30 +258,27 @@ class ActivityLog extends Component {
 
 		const logsGroupedByDay = map(
 			groupBy( logs, log =>
-				this.applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
+				this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
 			),
-			( daily_logs, tsEndOfSiteDay ) =>
+			( dailyLogs, tsEndOfSiteDay ) =>
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ tsEndOfSiteDay }
-					logs={ daily_logs }
+					logs={ dailyLogs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ +tsEndOfSiteDay }
 				/>
 		);
 
-		// FIXME: Prefer not to return an array. Fix when background line issue is fixed:
-		// https://github.com/Automattic/wp-calypso/issues/17065
-		return [
+		return (
 			<section className="activity-log__wrapper" key="logs">
 				{ logsGroupedByDay }
-			</section>,
-			<ListEnd key="end-marker" />,
-		];
+			</section>
+		);
 	}
 
 	renderMonthNavigation( position ) {
@@ -340,6 +337,7 @@ class ActivityLog extends Component {
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
+				<JetpackColophon />
 			</Main>
 		);
 	}

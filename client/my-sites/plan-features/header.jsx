@@ -27,12 +27,8 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	getPlanClass,
-	isMonthly,
 } from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
-import { plansLink } from 'lib/plans';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -40,10 +36,10 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 class PlanFeaturesHeader extends Component {
 
 	render() {
-		const { isInSignupTest } = this.props;
+		const { isInSignup } = this.props;
 		let content = this.renderPlansHeader();
 
-		if ( isInSignupTest ) {
+		if ( isInSignup ) {
 			content = this.renderSignupHeader();
 		}
 
@@ -128,7 +124,7 @@ class PlanFeaturesHeader extends Component {
 			translate,
 			isSiteAT,
 			hideMonthly,
-			isInSignupTest
+			isInSignup
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -137,7 +133,7 @@ class PlanFeaturesHeader extends Component {
 			'is-placeholder': isPlaceholder
 		} );
 
-		if ( isInSignupTest ) {
+		if ( isInSignup ) {
 			return (
 				<span>
 					<span>{ billingTimeFrame }</span>
@@ -165,52 +161,10 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		return this.getIntervalTypeToggle();
-	}
-
-	getIntervalTypeToggle() {
-		const {
-			translate,
-			rawPrice,
-			intervalType,
-			site,
-			basePlansPath,
-			hideMonthly,
-			currentSitePlan,
-		} = this.props;
-
-		if ( hideMonthly ||
-			! rawPrice ||
-			// Only monthly to yearly upgrades for the same plan are supported
-			( this.isPlanCurrent() && currentSitePlan && ! isMonthly( currentSitePlan.productSlug ) )
-		) {
-			return (
-				<div className="plan-features__interval-type is-placeholder">
-				</div>
-			);
-		}
-
-		let plansUrl = '/plans';
-		if ( basePlansPath ) {
-			plansUrl = basePlansPath;
-		}
-
 		return (
-			<SegmentedControl compact className="plan-features__interval-type" primary={ true }>
-				<SegmentedControlItem
-					selected={ intervalType === 'monthly' }
-					path={ plansLink( plansUrl, site, 'monthly' ) }
-				>
-					{ translate( 'Monthly' ) }
-				</SegmentedControlItem>
-
-				<SegmentedControlItem
-					selected={ intervalType === 'yearly' }
-					path={ plansLink( plansUrl, site, 'yearly' ) }
-				>
-					{ translate( 'Yearly' ) }
-				</SegmentedControlItem>
-			</SegmentedControl>
+			<p className={ timeframeClasses }>
+				{ billingTimeFrame }
+			</p>
 		);
 	}
 
@@ -236,10 +190,10 @@ class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			relatedMonthlyPlan,
 			site,
-			isInSignupTest
+			isInSignup
 		} = this.props;
 
-		if ( isPlaceholder && ! isInSignupTest ) {
+		if ( isPlaceholder && ! isInSignup ) {
 			const isJetpackSite = !! site.jetpack;
 			const classes = classNames( 'is-placeholder', {
 				'plan-features__price': ! isJetpackSite,
@@ -257,13 +211,13 @@ class PlanFeaturesHeader extends Component {
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ rawPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ discountPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						discounted
 					/>
 				</span>
@@ -277,13 +231,13 @@ class PlanFeaturesHeader extends Component {
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ rawPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						discounted
 					/>
 				</span>
@@ -294,7 +248,7 @@ class PlanFeaturesHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ rawPrice }
-				isInSignupTest={ isInSignupTest }
+				isInSignup={ isInSignup }
 			/>
 		);
 	}
@@ -325,7 +279,6 @@ PlanFeaturesHeader.propTypes = {
 	title: PropTypes.string.isRequired,
 	isPlaceholder: PropTypes.bool,
 	translate: PropTypes.func,
-	intervalType: PropTypes.string,
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
 	currentSitePlan: PropTypes.object,
@@ -339,7 +292,6 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	newPlan: false,
 	isPlaceholder: false,
-	intervalType: 'yearly',
 	site: {},
 	basePlansPath: null,
 	currentSitePlan: {},

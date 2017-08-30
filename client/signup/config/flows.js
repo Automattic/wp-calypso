@@ -227,6 +227,19 @@ const flows = {
 	},
 };
 
+if ( config.isEnabled( 'signup/wpcc' ) ) {
+	flows.wpcc = {
+		steps: [ 'oauth2-user' ],
+		destination: function( dependencies ) {
+			return dependencies.oauth2_redirect || '/';
+		},
+		description: 'WordPress.com Connect signup flow',
+		lastModified: '2017-08-24',
+		disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+		autoContinue: true,
+	};
+}
+
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	flows[ 'domain-first' ] = {
 		steps: [ 'site-or-domain', 'site-picker', 'themes', 'plans-site-selected', 'user' ],
