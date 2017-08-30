@@ -17,9 +17,7 @@ export default class extends React.Component {
 		isError: false,
 	};
 
-	focus = () => {
-		this.phoneInput.numberInput.focus();
-	}
+	focus = () => this.phoneInput.numberInput.focus();
 
 	setPhoneInput = ( ref ) => this.phoneInput = ref;
 
