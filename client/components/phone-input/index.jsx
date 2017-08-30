@@ -22,6 +22,10 @@ class PhoneInput extends React.PureComponent {
 		countriesList: React.PropTypes.object.isRequired
 	};
 
+	static defaultProps = {
+		setComponentReference: noop,
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -224,9 +228,5 @@ class PhoneInput extends React.PureComponent {
 		);
 	}
 }
-
-PhoneInput.defaultProps = {
-	setComponentReference: noop,
-};
 
 export default localize( PhoneInput );
