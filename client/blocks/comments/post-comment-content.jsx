@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import AutoDirection from 'components/auto-direction';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -12,6 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import withDimensions from 'lib/with-dimensions';
+import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 
 class PostCommentContent extends React.Component {
 	static propTypes = {
@@ -42,11 +43,13 @@ class PostCommentContent extends React.Component {
 		return (
 			<AutoDirection>
 				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
-					<div
-						className="comments__comment-content"
-						ref={ this.props.setWithDimensionsRef }
-						dangerouslySetInnerHTML={ { __html: this.props.content } }
-					/>
+					<Emojify>
+						<div
+							className="comments__comment-content"
+							ref={ this.props.setWithDimensionsRef }
+							dangerouslySetInnerHTML={ { __html: this.props.content } }
+						/>
+					</Emojify>
 					{ this.props.overflowY &&
 						! this.props.hideMore &&
 						<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
