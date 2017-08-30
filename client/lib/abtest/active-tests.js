@@ -76,15 +76,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	postPublishConfirmation: {
-		datestamp: '20170801',
-		allowExistingUsers: true,
-		variations: {
-			showPublishConfirmation: 5,
-			noPublishConfirmation: 95,
-		},
-		defaultVariation: 'noPublishConfirmation',
-	},
 	readerIntroIllustration: {
 		datestamp: '20170718',
 		variations: {
