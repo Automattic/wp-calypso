@@ -47,12 +47,14 @@ class PostItem extends React.Component {
 			// multiple lines, then update height if needed
 			// `requestAnimationFrame` is not enough here...
 			window.setTimeout( this.handleHeightChange );
-			// TODO Attach resize listener (or better in PostTypeList)
 		}
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		this.manageMutationObserver();
+		if ( this.props.windowWidth !== prevProps.windowWidth ) {
+			this.handleHeightChange();
+		}
 	}
 
 	componentWillUnmount() {
@@ -228,6 +230,7 @@ PostItem.propTypes = {
 	hideSharePanel: PropTypes.func,
 	largeTitle: PropTypes.bool,
 	wrapTitle: PropTypes.bool,
+	windowWidth: PropTypes.number,
 };
 
 export default connect( ( state, { globalId } ) => {

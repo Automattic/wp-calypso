@@ -4,7 +4,15 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { difference, get, includes, isEqual, range, size } from 'lodash';
+import {
+	difference,
+	get,
+	includes,
+	isEqual,
+	range,
+	size,
+	throttle,
+} from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
@@ -70,12 +78,33 @@ class PostTypeList extends Component {
 			: DEFAULT_POST_ROW_HEIGHT_NORMAL;
 	}
 
+	componentDidMount() {
+		if ( this.props.wrapTitles ) {
+			// Note: Assumes that this property does not change
+			this.resizeListener = throttle( this.handleWindowResize, 50 );
+			window.addEventListener( 'resize', this.resizeListener );
+		}
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.query, nextProps.query ) ) {
 			this.setState( {
 				requestedPages: this.getInitialRequestedPages( nextProps )
 			} );
 		}
+	}
+
+	componentWillUnmount() {
+		if ( this.resizeListener ) {
+			window.removeEventListener( 'resize', this.resizeListener );
+			delete this.resizeListener;
+		}
+	}
+
+	handleWindowResize = () => {
+		this.setState( {
+			windowWidth: window.innerWidth,
+		} );
 	}
 
 	getInitialRequestedPages( props ) {
@@ -142,6 +171,7 @@ class PostTypeList extends Component {
 				onHeightChange={ this.handleHeightChange }
 				largeTitle={ this.props.largeTitles }
 				wrapTitle={ this.props.wrapTitles }
+				windowWidth={ this.state.windowWidth }
 			/>
 		);
 	}
