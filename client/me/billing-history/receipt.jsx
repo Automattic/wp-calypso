@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -17,10 +18,29 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
-import { getPastBillingTransaction } from 'state/selectors';
+import {
+	getPastBillingTransaction,
+	getPastBillingTransactions,
+} from 'state/selectors';
 
 const BillingReceipt = React.createClass( {
 	mixins: [ eventRecorder ],
+
+	componentDidMount() {
+		this.redirectIfInvalidTransaction();
+	},
+
+	componentDidUpdate() {
+		this.redirectIfInvalidTransaction();
+	},
+
+	redirectIfInvalidTransaction() {
+		const { totalTransactions, transaction } = this.props;
+
+		if ( ! transaction && totalTransactions !== null ) {
+			page.redirect( purchasesPaths.billingHistory() );
+		}
+	},
 
 	printReceipt( event ) {
 		event.preventDefault();
@@ -248,7 +268,12 @@ const BillingReceipt = React.createClass( {
 } );
 
 export default connect(
-	( state, ownProps ) => ( {
-		transaction: getPastBillingTransaction( state, ownProps.transactionId )
-	} ),
+	( state, ownProps ) => {
+		const transactions = getPastBillingTransactions( state );
+
+		return {
+			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
+			totalTransactions: transactions ? transactions.length : null,
+		};
+	},
 )( localize( BillingReceipt ) );
