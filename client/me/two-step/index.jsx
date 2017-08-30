@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:two-step' );
 
 /**
  * Internal dependencies
@@ -21,6 +20,8 @@ import Security2faDisable from 'me/security-2fa-disable';
 import Security2faSetup from 'me/security-2fa-setup';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
+
+const debug = debugFactory( 'calypso:me:two-step' );
 
 class TwoStep extends Component {
 	static displayName = 'TwoStep';

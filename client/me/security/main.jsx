@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:security:password' );
 
 /**
  * Internal dependencies
@@ -18,6 +17,8 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
+
+const debug = debugFactory( 'calypso:me:security:password' );
 
 class Security extends React.Component {
 	static displayName = 'Security';
