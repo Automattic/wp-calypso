@@ -274,6 +274,10 @@ const analytics = {
 			const cookies = cookie.parse( document.cookie );
 
 			return cookies.tk_ai;
+		},
+
+		setAnonymousUserId: function( anonId ) {
+			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		}
 	},
 

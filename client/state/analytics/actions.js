@@ -19,6 +19,7 @@ import {
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
+	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
 
 const mergedMetaData = ( a, b ) => [
@@ -59,6 +60,16 @@ export const recordEvent = ( service, args ) => ( {
 		analytics: [ {
 			type: ANALYTICS_EVENT_RECORD,
 			payload: Object.assign( {}, { service }, args )
+		} ]
+	}
+} );
+
+export const setTracksAnonymousUserId = ( anonId ) => ( {
+	type: ANALYTICS_TRACKS_ANONID_SET,
+	meta: {
+		analytics: [ {
+			type: ANALYTICS_TRACKS_ANONID_SET,
+			payload: anonId
 		} ]
 	}
 } );

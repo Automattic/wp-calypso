@@ -9,7 +9,8 @@ const analyticsMocks = [
 	'mc.bumpStat',
 	'pageView.record',
 	'tracks.recordEvent',
-	'tracks.recordPageView'
+	'tracks.recordPageView',
+	'tracks.setAnonymousUserId',
 ];
 
 const adTrackingMocks = [
