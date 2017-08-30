@@ -80,6 +80,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
  */
 const user = require( 'lib/user' )(),
 	i18n = require( './i18n' ),
+	viewport = require( 'lib/viewport' ),
 	config = require( 'config' );
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
