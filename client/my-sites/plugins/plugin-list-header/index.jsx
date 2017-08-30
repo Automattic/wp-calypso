@@ -18,7 +18,6 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
-import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
 import { isEnabled } from 'config';
 
@@ -30,7 +29,6 @@ export class PluginsListHeader extends PureComponent {
 
 	state = {
 		actionBarVisible: true,
-		addPluginTooltip: false
 	}
 
 	static defaultProps = {
@@ -81,14 +79,6 @@ export class PluginsListHeader extends PureComponent {
 		}, 1 );
 	}
 
-	showPluginTooltip = () => {
-		this.setState( { addPluginTooltip: true } );
-	}
-
-	hidePluginTooltip = () => {
-		this.setState( { addPluginTooltip: false } );
-	}
-
 	toggleBulkManagement = () => {
 		this.props.toggleBulkManagement();
 
@@ -99,10 +89,6 @@ export class PluginsListHeader extends PureComponent {
 		if ( this.props.isBulkManagementActive ) {
 			this.maybeMakeActionBarVisible();
 		}
-	}
-
-	onBrowserLinkClick = () => {
-		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
 	}
 
 	onUploadLinkClick = () => {
@@ -164,30 +150,6 @@ export class PluginsListHeader extends PureComponent {
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
 					<Button compact onClick={ this.toggleBulkManagement }>
 						{ translate( 'Edit All', { context: 'button label' } ) }
-					</Button>
-				</ButtonGroup>
-			);
-
-			const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
-
-			rightSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-browser">
-					<Button
-						compact
-						href={ browserUrl }
-						onClick={ this.onBrowserLinkClick }
-						className="plugin-list-header__browser-button"
-						onMouseEnter={ this.showPluginTooltip }
-						onMouseLeave={ this.hidePluginTooltip }
-						ref="addPluginButton"
-						aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
-						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
-						<Tooltip
-							isVisible={ this.state.addPluginTooltip }
-							context={ this.refs && this.refs.addPluginButton }
-							position="bottom">
-							{ translate( 'Browse all plugins', { context: 'button tooltip' } ) }
-						</Tooltip>
 					</Button>
 				</ButtonGroup>
 			);
