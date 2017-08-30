@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, get, isEmpty, keys, merge } from 'lodash';
+import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 var debug = require( 'debug' )( 'calypso:user:settings' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
