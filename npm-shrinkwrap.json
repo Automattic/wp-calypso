@@ -1142,9 +1142,6 @@
     "component-query": {
       "version": "0.0.3"
     },
-    "component-uid": {
-      "version": "0.0.2"
-    },
     "concat-map": {
       "version": "0.0.1"
     },
