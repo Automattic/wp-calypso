@@ -48,8 +48,7 @@ class JetpackPlansGrid extends Component {
 			<FormattedHeader
 				headerText={ headerText }
 				subHeaderText={ subheaderText }
-				step={ 1 }
-				steps={ 3 } />
+			/>
 		);
 	}
 
