@@ -29,8 +29,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	compare( query, { published: pubA }, { published: pubB } ) {
-		return Date.parse( pubB ) - Date.parse( pubA );
+	compare( query, { activityTs: tsA }, { activityTs: tsB } ) {
+		return Date.parse( tsB ) - Date.parse( tsA );
 	}
 
 	/**
@@ -52,8 +52,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateStart
 	 */
-	static matchDateStart( query, { published } ) {
-		return get( query, 'dateStart', -Infinity ) <= Date.parse( published );
+	static matchDateStart( query, { activityTs } ) {
+		return get( query, 'dateStart', -Infinity ) <= activityTs;
 	}
 
 	/**
@@ -63,7 +63,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateEnd
 	 */
-	static matchDateEnd( query, { published } ) {
-		return Date.parse( published ) <= get( query, 'dateEnd', Infinity );
+	static matchDateEnd( query, { activityTs } ) {
+		return activityTs <= get( query, 'dateEnd', Infinity );
 	}
 }

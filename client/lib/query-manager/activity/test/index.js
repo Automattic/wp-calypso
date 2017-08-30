@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
 /**
@@ -12,14 +13,24 @@ import ActivityQueryManager from '..';
 /**
  * Module constants
  */
-const DEFAULT_ACTIVITY_PUBLISHED = '2014-09-14T00:30:00+02:00';
-const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_PUBLISHED );
+const DEFAULT_ACTIVITY_DATE = '2014-09-14T00:30:00+02:00';
+const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_DATE );
 
 // TODO: Update with wpcom/v2 style activity stream data
-const DEFAULT_ACTIVITY = {
-	activityId: 'foobarbaz',
-	published: DEFAULT_ACTIVITY_PUBLISHED,
-};
+const DEFAULT_ACTIVITY = deepFreeze( {
+	activityDate: DEFAULT_ACTIVITY_DATE,
+	activityGroup: 'plugin',
+	activityIcon: 'plugins',
+	activityId: 'foo_bar_BaZ',
+	activityName: 'plugin__activated',
+	activityTitle: 'User name activated plugin My Test Plugin',
+	activityTs: DEFAULT_ACTIVITY_TS,
+	actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+	actorName: 'User name',
+	actorRemoteId: 345,
+	actorRole: 'administrator',
+	actorWpcomId: 678,
+} );
 
 describe( 'ActivityQueryManager', () => {
 	let manager;
@@ -152,16 +163,16 @@ describe( 'ActivityQueryManager', () => {
 	describe( '#compare()', () => {
 		it( 'should sort by timestamp descending', () => {
 			const sortFunc = manager.compare.bind( manager, {} );
-			const activityA = { activityId: 'a', published: new Date( 100000 ).toISOString() };
-			const activityB = { activityId: 'b', published: new Date( 200000 ).toISOString() };
+			const activityA = { activityId: 'a', activityTs: 100000 };
+			const activityB = { activityId: 'b', activityTs: 200000 };
 
 			expect( [ activityA, activityB ].sort( sortFunc ) ).to.eql( [ activityB, activityA ] );
 		} );
 
 		it( 'should include simultaneous events (in any order, sort is unstable)', () => {
 			const sortFunc = manager.compare.bind( manager, {} );
-			const activityA = { activityId: 'a', published: new Date( 100000 ).toISOString() };
-			const activityB = { activityId: 'b', published: new Date( 100000 ).toISOString() };
+			const activityA = { activityId: 'a', activityTs: 100000 };
+			const activityB = { activityId: 'b', activityTs: 100000 };
 
 			expect( [ activityA, activityB ].sort( sortFunc ) ).to.include.members( [
 				activityA,
