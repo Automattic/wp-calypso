@@ -22,6 +22,8 @@ import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import ProductUpdate from './app/products/product-update';
 import Promotions from './app/promotions';
+import PromotionCreate from './app/promotions/promotion-create';
+import PromotionUpdate from './app/promotions/promotion-update';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
 import SettingsTaxes from './app/settings/taxes';
@@ -82,6 +84,18 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-promotions',
 			documentTitle: translate( 'Promotions' ),
 			path: '/store/promotions/:site',
+		},
+		{
+			container: PromotionCreate,
+			configKey: 'woocommerce/extension-promotions',
+			documentTitle: translate( 'New Promotion' ),
+			path: '/store/promotion/:site',
+		},
+		{
+			container: PromotionUpdate,
+			configKey: 'woocommerce/extension-promotions',
+			documentTitle: translate( 'Edit Promotion' ),
+			path: '/store/promotion/:site/:promotion',
 		},
 		{
 			container: SettingsPayments,
