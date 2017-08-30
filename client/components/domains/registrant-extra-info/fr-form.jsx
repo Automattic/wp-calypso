@@ -170,6 +170,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						id="sirenSiret"
 						value={ sirenSiret }
 						type="number"
+						inputMode="numeric"
 						placeholder={
 							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -193,6 +194,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						id="trademarkNumber"
 						value={ trademarkNumber }
 						type="number"
+						inputMode="numeric"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
