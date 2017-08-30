@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defaults, get, map, noop } from 'lodash';
+import { defaults, get, isEmpty, map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -137,16 +137,18 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				translate( 'The SIREN/SIRET field must be either a ' +
 					'9 digit SIREN number, or a 14 digit SIRET number' ) );
 
-		const trademarkNumberValidationMessages = {
-			'has longer length than allowed': this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
-			'has less length than allowed': this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
-			'pattern mismatch': this.props.translate( 'Digits only. An EU Trademark number is a 9 digit number, like 012345678' ),
+		const trademarkNumberStrings = {
+			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
+			minLength: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
+			pattern: this.props.translate( 'Digits only. An EU Trademark number is a 9 digit number, like 012345678' ),
 		};
 
-		const trademarkNumberValidationMessage = map(
-			validationErrors.trademarkNumber,
-			( error ) => renderValidationError( trademarkNumberValidationMessages[ error ] )
-		);
+		const trademarkNumberValidationMessage = trademarkNumber &&
+			map(
+				validationErrors.trademarkNumber,
+				( error ) =>
+					renderValidationError( trademarkNumberStrings[ error ] )
+			);
 
 		return (
 			<div>
@@ -211,6 +213,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
+						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
 					{ trademarkNumberValidationMessage }
 				</FormFieldset>
