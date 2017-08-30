@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit } from 'lodash';
+import { get, noop, some, values, omit, compact, map } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -91,12 +91,25 @@ class PostComment extends React.PureComponent {
 		} );
 	};
 
+	getAllChildren = id => {
+		const { commentsTree } = this.props;
+
+		if ( ! id ) {
+			return [];
+		}
+
+		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
+		return compact(
+			immediateChildren.concat( map( immediateChildren, child => this.getAllChildren( child.ID ) ) )
+		);
+	};
+
 	shouldRenderCaterpillar = () => {
-		const { enableCaterpillar, commentsTree, toShow } = this.props;
-		const childrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
+		const { enableCaterpillar, toShow, commentId } = this.props;
+		const children = this.getAllChildren( commentId );
 
 		// not this is a bug that it only goes one child deep
-		return enableCaterpillar && toShow && some( childrenIds, id => ! toShow[ id ] );
+		return enableCaterpillar && toShow && some( children, child => toShow[ child.ID ] );
 	};
 
 	renderRepliesList() {

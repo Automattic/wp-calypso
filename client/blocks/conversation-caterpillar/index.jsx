@@ -20,6 +20,7 @@ import {
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
+import { isAncestor } from 'blocks/comments/utils';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
@@ -33,22 +34,6 @@ class ConversationCaterpillarComponent extends React.Component {
 		parentCommentId: PropTypes.number,
 	};
 
-	/**
-	 * @param {Object} ancestor potential ancestor comment
-	 * @param {Object} child potential child comment
-	 *
-	 * @returns {boolean} return true if parent is an ancestor of child
-	 */
-	isAncestor = ( ancestor, child ) => {
-		if ( ! ancestor || ! child || ! child.parent ) {
-			return false;
-		}
-
-		const nextParent = get( this.props.commentsTree, [ child.parent.ID, 'data' ] );
-
-		return child.parent.ID === ancestor.ID || this.isAncestor( ancestor, nextParent );
-	};
-
 	getExpandableComments = () => {
 		const { comments, hiddenComments, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
@@ -56,7 +41,7 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, child => this.isAncestor( parentComment, child ) );
+			: filter( comments, child => isAncestor( parentComment, child, commentsTree ) );
 
 		const commentsToExpand = filter( childComments, comment => hiddenComments[ comment.ID ] );
 
