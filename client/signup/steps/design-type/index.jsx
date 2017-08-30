@@ -21,6 +21,8 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
+import { getThemeForDesignType } from 'signup/utils';
+
 export class DesignTypeStep extends Component {
 	static propTypes = {
 		translate: PropTypes.func
@@ -120,7 +122,7 @@ export class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
-		const themeSlugWithRepo = SignupActions.getThemeForDesignType( designType );
+		const themeSlugWithRepo = getThemeForDesignType( designType );
 
 		this.props.setDesignType( designType );
 

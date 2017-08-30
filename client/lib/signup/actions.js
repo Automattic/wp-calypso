@@ -69,15 +69,6 @@ const SignupActions = {
 			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
 			providedDependencies
 		} );
-	},
-
-	getThemeForDesignType( designType ) {
-		switch ( designType ) {
-			case 'blog': return 'pub/independent-publisher-2';
-			case 'grid': return 'pub/altofocus';
-			case 'page': return 'pub/dara';
-			default: return 'pub/twentyseventeen';
-		}
 	}
 };
 
