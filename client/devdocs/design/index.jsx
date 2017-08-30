@@ -78,6 +78,7 @@ import PaginationExample from 'components/pagination/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import Wizard from 'components/wizard/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import HeaderButton from 'components/header-button/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -146,6 +147,7 @@ let DesignAssets = React.createClass( {
 					<Gravatar />
 					<Gridicons />
 					<Headers />
+					<HeaderButton />
 					<ImagePreloader />
 					<InfoPopover />
 					<Tooltip />
