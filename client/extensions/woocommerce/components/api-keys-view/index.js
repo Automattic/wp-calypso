@@ -56,7 +56,7 @@ class APIKeysView extends Component {
 
 		return (
 			<div className="api-keys-view__container">
-				{ keys.map( ( key ) => this.renderOneKey( key ) ) }
+				{ keys.map( this.renderOneKey ) }
 			</div>
 		);
 	}

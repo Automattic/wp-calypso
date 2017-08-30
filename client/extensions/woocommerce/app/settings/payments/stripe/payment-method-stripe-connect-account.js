@@ -25,7 +25,8 @@ class StripeConnectAccount extends Component {
 		onDisconnect: PropTypes.func, // TODO - require most of these props in subsequent PR
 	}
 
-	renderLogo = ( stripeConnectAccount ) => {
+	renderLogo = () => {
+		const { stripeConnectAccount } = this.props;
 		const { logo } = stripeConnectAccount;
 
 		let image = null;
@@ -41,7 +42,8 @@ class StripeConnectAccount extends Component {
 		);
 	}
 
-	renderNameAndEmail = ( stripeConnectAccount ) => {
+	renderNameAndEmail = () => {
+		const { stripeConnectAccount } = this.props;
 		const { displayName, email, firstName, lastName } = stripeConnectAccount;
 		const name = ! isEmpty( displayName ) ? displayName : `${ firstName } ${ lastName }`;
 
@@ -67,14 +69,16 @@ class StripeConnectAccount extends Component {
 		const { stripeConnectAccount, translate } = this.props;
 		const { isActivated } = stripeConnectAccount;
 
-		let status = <span className="stripe__connect-account-status account-activated">
-			{ translate( 'Activated' ) }
-		</span>;
+		let status = null;
 
-		if ( ! isActivated ) {
+		if ( isActivated ) {
+			status = <span className="stripe__connect-account-status account-activated">
+				{ translate( 'Activated' ) }
+			</span>;
+		} else {
 			status = <span className="stripe__connect-account-status account-not-activated">
-					{ translate( 'Check email to activate account' ) }
-				</span>;
+				{ translate( 'Check email to activate account' ) }
+			</span>;
 		}
 
 		return (
@@ -88,7 +92,7 @@ class StripeConnectAccount extends Component {
 	}
 
 	render = () => {
-		const { stripeConnectAccount, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<div className="stripe__connect-account">
@@ -96,10 +100,10 @@ class StripeConnectAccount extends Component {
 					{ translate( 'Stripe account' ) }
 				</h3>
 				<div className="stripe__connect-account-body">
-					{ this.renderLogo( stripeConnectAccount ) }
+					{ this.renderLogo() }
 					<div className="stripe__connect-account-details">
-						{ this.renderNameAndEmail( stripeConnectAccount ) }
-						{ this.renderStatus( stripeConnectAccount ) }
+						{ this.renderNameAndEmail() }
+						{ this.renderStatus() }
 					</div>
 				</div>
 			</div>
