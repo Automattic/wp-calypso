@@ -30,7 +30,13 @@ import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
+import {
+	getRawSite,
+	isJetpackSite,
+	isJetpackSiteMainNetworkSite,
+	isJetpackSiteMultiSite,
+	isRequestingSites,
+} from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -335,7 +341,7 @@ class JetpackThankYouCard extends Component {
 	}
 
 	guessErrorReason() {
-		const { translate, selectedSite } = this.props;
+		const { isSiteMainNetworkSite, isSiteMultiSite, selectedSite, translate } = this.props;
 		if ( ! this.isErrored() ) {
 			return null;
 		}
@@ -353,7 +359,7 @@ class JetpackThankYouCard extends Component {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
 				jetpack_version: selectedSite.options.jetpack_version
 			} );
-		} else if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite() ) {
+		} else if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
 			reason = translate(
 				'Your site is part of a multi-site network, but is not the main network site.'
 			);
@@ -719,6 +725,8 @@ export default connect(
 			: site;
 		return {
 			wporg: state.plugins.wporg.items,
+			isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
+			isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, whitelist ),
