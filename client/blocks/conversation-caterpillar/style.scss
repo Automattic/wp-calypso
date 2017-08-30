@@ -28,7 +28,6 @@
 	font-weight: 400;
 	margin-left: 8px;
 	overflow: hidden;
-	padding-top: 5px;
 	position: relative;
 	white-space: nowrap;
 
@@ -48,6 +47,7 @@
 
 .conversation-caterpillar__gravatar {
 	border: 2px solid $white;
+	height: 32px;
 	margin-left: -8px;
 	vertical-align: middle;
 
@@ -66,7 +66,7 @@
 
 .conversation-caterpillar__count {
 	color: $gray;
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 400;
 	margin-left: 8px;
 	cursor: pointer;
