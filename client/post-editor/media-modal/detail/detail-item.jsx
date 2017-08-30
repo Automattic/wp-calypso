@@ -90,10 +90,6 @@ class EditorMediaModalDetailItem extends Component {
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
 	enableVideoEditing( item ) {
-		if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
-			return false;
-		}
-
 		const {
 			isJetpack,
 			isVideoPressEnabled,

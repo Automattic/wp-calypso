@@ -3,13 +3,22 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import FacebookIcon from 'components/social-icons/facebook';
+import { isFormDisabled } from 'state/login/selectors';
+
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
 	static propTypes = {
+		isFormDisabled: PropTypes.bool,
 		appId: PropTypes.string.isRequired,
 		version: PropTypes.string,
 		cookie: PropTypes.bool,
@@ -91,14 +100,15 @@ class FacebookLoginButton extends Component {
 	}
 
 	render() {
+		const isDisabled = Boolean( this.props.isFormDisabled );
+
 		return (
 			<div className="social-buttons__button-container">
-				<button className="social-buttons__button button" onClick={ this.handleClick }>
-					<svg className="social-buttons__logo" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						{ /* eslint-disable max-len */ }
-						<path d="M18.86.041H1.14a1.1 1.1 0 0 0-1.099 1.1v17.718a1.1 1.1 0 0 0 1.1 1.1h9.539v-7.713H8.084V9.24h2.596V7.023c0-2.573 1.571-3.973 3.866-3.973 1.1 0 2.044.081 2.32.118v2.688l-1.592.001c-1.248 0-1.49.593-1.49 1.463v1.92h2.977l-.388 3.006h-2.59v7.713h5.076a1.1 1.1 0 0 0 1.1-1.1V1.14a1.1 1.1 0 0 0-1.1-1.099" fill="#3E68B5" fillRule="evenodd" />
-						{ /* eslint-enable max-len */ }
-					</svg>
+				<button
+					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+					onClick={ this.handleClick }
+				>
+					<FacebookIcon />
 
 					<span className="social-buttons__service-name">
 						{ this.props.translate( 'Continue with %(service)s', {
@@ -112,4 +122,8 @@ class FacebookLoginButton extends Component {
 	}
 }
 
-export default localize( FacebookLoginButton );
+export default connect(
+	( state ) => ( {
+		isFormDisabled: isFormDisabled( state ),
+	} ),
+)( localize( FacebookLoginButton ) );

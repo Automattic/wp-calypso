@@ -69,9 +69,10 @@ const MeSidebar = React.createClass( {
 		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
-			'/me/security/two-step': 'security',
-			'/me/security/connected-applications': 'security',
 			'/me/security/account-recovery': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/social-login': 'security',
+			'/me/security/two-step': 'security',
 			'/me/notifications/comments': 'notifications',
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',

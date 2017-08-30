@@ -144,6 +144,8 @@
 @import 'components/infinite-list/style';
 @import 'components/info-popover/style';
 @import 'components/input-chrono/style';
+@import 'components/jetpack-colophon/style';
+@import 'components/keyed-suggestions/style';
 @import 'components/list-end/style';
 @import 'components/logged-out-form/style';
 @import 'components/language-picker/style';
@@ -194,6 +196,7 @@
 @import 'components/sites-dropdown/style';
 @import 'components/sites-popover/style';
 @import 'components/social-buttons/style';
+@import 'components/social-icons/style';
 @import 'components/spinner/style';
 @import 'components/spinner-button/style';
 @import 'components/spinner-line/style';
@@ -223,6 +226,7 @@
 @import 'components/vertical-menu/style';
 @import 'components/web-preview/style';
 @import 'components/webpack-build-monitor/style';
+@import 'components/wizard/style';
 @import 'blocks/credit-card-form/style';
 @import 'devdocs/docs-example/style';
 @import 'devdocs/docs-selectors/style';
@@ -234,6 +238,7 @@
 @import 'components/happychat/agent-w/style';
 @import 'layout/community-translator/style';
 @import 'layout/masterbar/style';
+@import 'layout/masterbar/oauth-client';
 @import 'layout/nps-survey-notice/style';
 @import 'layout/nux-welcome/style';
 @import 'layout/offline-status/style';
@@ -304,6 +309,7 @@
 @import 'me/security-account-recovery/style';
 @import 'me/sidebar-navigation/style';
 @import 'me/sidebar/style';
+@import 'me/social-login/style';
 @import 'me/two-step/style';
 @import 'my-sites/ads/style';
 @import 'my-sites/all-sites/style';
@@ -454,6 +460,7 @@
 @import 'post-editor/editor-categories-tags/style';
 @import 'post-editor/editor-confirmation-sidebar/style';
 @import 'post-editor/editor-delete-post/style';
+@import 'post-editor/editor-diff-viewer/style';
 @import 'post-editor/editor-discussion/style';
 @import 'post-editor/editor-drawer/style';
 @import 'post-editor/editor-drawer-well/style';
@@ -476,6 +483,7 @@
 @import 'post-editor/editor-preview/style';
 @import 'post-editor/editor-publish-date/style';
 @import 'post-editor/editor-revisions/style';
+@import 'post-editor/editor-revisions-list/style';
 @import 'post-editor/editor-seo-accordion/style';
 @import 'post-editor/editor-sharing/style';
 @import 'post-editor/editor-sidebar/style';

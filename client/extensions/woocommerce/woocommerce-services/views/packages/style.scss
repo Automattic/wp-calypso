@@ -11,20 +11,8 @@
 		}
 	}
 
-	#box_weight,
-	#max_weight {
-		width: 82%;
-	}
-
-	#max_weight {
-		@include breakpoint( '>660px' ) {
-			width: 66%;
-		}
-	}
-
-	.packages__add-package-weight-unit {
-		width: 34%;
-		padding-left: 8px;
+	.form-text-input-with-affixes {
+		width: 90%;
 	}
 }
 
@@ -55,7 +43,7 @@
 .packages__packages-row {
 	display: flex;
 	flex-direction: row;
-	padding: 16px 0;
+	padding: 8px 0;
 	align-items: center;
 
 	&:not( :last-child ) {
@@ -66,7 +54,7 @@
 		border-bottom-color: lighten( $gray, 20% );
 	}
 
-	&.selectable {
+	&.prefixed {
 		&:first-child {
 			border-top: 1px solid $gray-light;
 		}
@@ -82,6 +70,7 @@
 		.packages__packages-row-icon {
 			padding-left: 0;
 			text-align: center;
+			color: $gray-text-min;
 		}
 
 		.packages__packages-row-actions {
@@ -162,7 +151,7 @@
 }
 
 .packages__packages-row-actions {
-	width: 20%;
+	width: 25%;
 	text-align: right;
 	padding-right: 16px;
 
@@ -197,27 +186,6 @@
 		padding: 0;
 		border-top: 0;
 	}
-
-	&.placeholder {
-		@include placeholder();
-		pointer-events: none;
-		background: $white;
-
-		p, a, button {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
-			color: transparent;
-			cursor: default;
-		}
-
-		p {
-			display: inline-block;
-			margin-bottom: 0;
-			margin-right: 8px;
-			width: 100px;
-			height: 14px;
-		}
-	}
 }
 
 .packages__packages-row-details {
@@ -225,7 +193,8 @@
 }
 
 .packages__packages-row-dimensions {
-	width: 35%;
+	width: 30%;
+	font-size: 14px;
 }
 
 .packages__setting-explanation {
@@ -238,4 +207,8 @@
 
 .packages__delete {
 	float: left;
+}
+
+.packages__mode-select {
+	margin-bottom: 12px;
 }

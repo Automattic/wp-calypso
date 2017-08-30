@@ -108,9 +108,10 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request success action when request completes', () => {
-			return deleteCache( siteId, false )( spy ).then( () => {
+			return deleteCache( siteId, false, true )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					deleteExpired: true,
 					siteId,
 				} );
 			} );

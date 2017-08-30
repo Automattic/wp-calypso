@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -23,7 +24,7 @@ import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 export const requestComment = ( { siteId, commentId } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
-	commentId
+	commentId,
 } );
 
 /***
@@ -37,7 +38,7 @@ export function requestPostComments( {
 	siteId,
 	postId,
 	status = 'approved',
-	direction = 'before'
+	direction = 'before',
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -90,13 +91,21 @@ export const requestCommentsTreeForSite = query => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number|String} commentId comment or comment placeholder identifier
+ * @param {Object} options Action options
+ * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @returns {Object} action that deletes a comment
  */
-export const deleteComment = ( siteId, postId, commentId ) => ( {
+export const deleteComment = (
+	siteId,
+	postId,
+	commentId,
+	options = { showSuccessNotice: true }
+) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
 	postId,
 	commentId,
+	options,
 } );
 
 /***
@@ -193,7 +202,7 @@ export function editComment( siteId, postId, commentId, content ) {
 					postId,
 					commentId,
 					content: data.content,
-				} ),
+				} )
 			)
 			.catch( () =>
 				dispatch( {
@@ -201,7 +210,7 @@ export function editComment( siteId, postId, commentId, content ) {
 					siteId,
 					postId,
 					commentId,
-				} ),
+				} )
 			);
 	};
 }

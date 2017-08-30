@@ -100,7 +100,7 @@ describe( 'utility functions', () => {
 			updatePlaceholderComment( { dispatch }, action, comment );
 
 			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: COMMENTS_DELETE,
 				siteId: 2916284,
 				postId: 1010,

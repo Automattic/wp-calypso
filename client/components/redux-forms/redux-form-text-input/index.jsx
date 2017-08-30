@@ -1,41 +1,24 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-class ReduxFormTextInput extends Component {
-	static propTypes = {
-		name: PropTypes.string,
-	};
+// eslint-disable-next-line no-unused-vars
+const TextInputRenderer = ( { input, meta, ...props } ) =>
+	<FormTextInput { ...input } { ...props } />;
 
-	renderTextInput = ( { input: { onChange, value } } ) => {
-		const otherProps = omit( this.props, 'name' );
+const ReduxFormTextInput = props => <Field component={ TextInputRenderer } { ...props } />;
 
-		return (
-			<FormTextInput
-				{ ...otherProps }
-				onChange={ this.updateTextInput( onChange ) }
-				value={ value } />
-		);
-	}
-
-	updateTextInput = onChange => event => onChange( event.target.value );
-
-	render() {
-		return (
-			<Field
-				{ ...this.props }
-				component={ this.renderTextInput }
-				name={ this.props.name } />
-		);
-	}
-}
+ReduxFormTextInput.propTypes = {
+	name: PropTypes.string.isRequired,
+};
 
 export default ReduxFormTextInput;

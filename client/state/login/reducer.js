@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, omit, startsWith } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +17,6 @@ import {
 	LOGOUT_REQUEST_FAILURE,
 	LOGOUT_REQUEST_SUCCESS,
 	ROUTE_SET,
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -29,6 +26,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -50,6 +50,9 @@ export const isRequesting = createReducer( false, {
 	[ SOCIAL_LOGIN_REQUEST ]: () => true,
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
 	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => false,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => true,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => false,
 } );
 
 export const redirectTo = createReducer( null, {
@@ -57,11 +60,11 @@ export const redirectTo = createReducer( null, {
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_LOGIN_REQUEST ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirectTo', null ),
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, action ) => get( action, 'redirectTo', null ),
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirect_to', null ),
 	[ LOGOUT_REQUEST ]: () => null,
 	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGOUT_REQUEST_FAILURE ]: () => null,
@@ -95,6 +98,9 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 	[ ROUTE_SET ]: () => null,
 	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
@@ -103,8 +109,12 @@ export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 } );
 
 export const requestNotice = createReducer( null, {
@@ -140,6 +150,20 @@ export const twoFactorAuth = createReducer( null, {
 		return null;
 	},
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		if ( data ) {
+			const rest = omit( data, 'redirect_to' );
+
+			if ( ! isEmpty( rest ) ) {
+				return rest;
+			}
+		}
+
+		return null;
+	},
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
@@ -176,40 +200,31 @@ export const socialAccount = createReducer( { isCreating: false, createError: nu
 		bearerToken,
 		createError: null,
 	} ),
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error, authInfo } ) => ( {
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => ( {
 		...state,
 		requestError: error,
-		email: error.email,
-		authInfo
 	} ),
 	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null, createError: null, } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
 } );
 
-export const oauth2ClientData = createReducer( null, {
-	[ OAUTH2_CLIENT_DATA_REQUEST ]: () => null,
-	[ OAUTH2_CLIENT_DATA_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
-} );
+const userExistsErrorHandler = ( state, { error, authInfo } ) => {
+	if ( error.code === 'user_exists' ) {
+		return {
+			isLinking: true,
+			email: error.email,
+			authInfo,
+		};
+	}
 
-export const showOAuth2Layout = createReducer( false, {
-	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && !! query.client_id,
-} );
+	return state;
+};
 
 export const socialAccountLink = createReducer( { isLinking: false }, {
-	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => {
-		if ( error.code === 'user_exists' ) {
-			return {
-				isLinking: true,
-				email: error.email,
-				token,
-				service,
-			};
-		}
-
-		return state;
-	},
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: userExistsErrorHandler,
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: userExistsErrorHandler,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
 	[ USER_RECEIVE ]: () => ( { isLinking: false } ),
 } );
 
@@ -227,7 +242,5 @@ export default combineReducers( {
 	twoFactorAuthRequestError,
 	twoFactorAuthPushPoll,
 	socialAccount,
-	oauth2ClientData,
-	showOAuth2Layout,
 	socialAccountLink,
 } );

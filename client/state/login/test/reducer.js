@@ -46,22 +46,20 @@ import reducer, {
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'isFormDisabled',
 			'isRequesting',
+			'isRequestingTwoFactorAuth',
 			'magicLogin',
 			'redirectTo',
 			'rememberMe',
-			'isFormDisabled',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
 			'socialAccount',
 			'socialAccountLink',
 			'twoFactorAuth',
-			'isRequestingTwoFactorAuth',
-			'twoFactorAuthRequestError',
 			'twoFactorAuthPushPoll',
-			'oauth2ClientData',
-			'showOAuth2Layout',
+			'twoFactorAuthRequestError',
 		] );
 	} );
 
@@ -491,6 +489,14 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
+		it( 'should set twoFactorAuth to null value if a social request is initiated', () => {
+			const state = twoFactorAuth( undefined, {
+				type: SOCIAL_LOGIN_REQUEST,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should set twoFactorAuth to the response value if a request was successful', () => {
 			const data = {
 				result: true,
@@ -509,6 +515,29 @@ describe( 'reducer', () => {
 		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set twoFactorAuth to the response value if a social request was successful', () => {
+			const data = {
+				result: true,
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			};
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				data,
+				rememberMe: true
+			} );
+
+			expect( state ).to.eql( { ...data } );
+		} );
+
+		it( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.be.null;
@@ -652,20 +681,17 @@ describe( 'reducer', () => {
 	describe( 'socialAccountLink', () => {
 		it( 'should set linking mode on user_exists create error', () => {
 			const error = { message: 'Bad', code: 'user_exists', email: 'hello@test.com' };
-			const service = 'google';
-			const token = '123';
+			const authInfo = { id_token: '123', access_token: '123', service: 'google' };
 
 			const state = socialAccountLink( {}, {
 				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 				error,
-				service,
-				token,
+				authInfo
 			} );
 
 			expect( state ).to.eql( {
 				isLinking: true,
-				service,
-				token,
+				authInfo,
 				email: error.email
 			} );
 		} );

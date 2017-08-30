@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var forEach = require( 'lodash/forEach' );
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies

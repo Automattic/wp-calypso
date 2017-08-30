@@ -1,6 +1,7 @@
-// External Dependencies
-const assign = require( 'lodash/assign' ),
-	defer = require( 'lodash/defer' );
+/**
+ * External dependencies
+ */
+import { assign, defer } from 'lodash';
 
 // Internal dependencies
 const Dispatcher = require( 'dispatcher' ),

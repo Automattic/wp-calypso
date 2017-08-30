@@ -371,7 +371,7 @@ class SiteSelector extends Component {
 
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
-		const selectorClass = classNames( 'site-selector', 'sites-list', {
+		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,

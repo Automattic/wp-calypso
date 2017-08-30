@@ -65,8 +65,7 @@ export class CommentsManagement extends Component {
 
 const mapStateToProps = ( state, { siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
-	//update to moderate_comments when available
-	const canModerateComments = canCurrentUser( state, siteId, 'edit_others_posts' );
+	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
 	return {
 		siteId,
 		showPermissionError: canModerateComments === false,

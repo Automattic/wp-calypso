@@ -1,0 +1,28 @@
+.social-login__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	box-sizing: border-box;
+}
+.social-login__header-info {
+	display: flex;
+	align-items: center;
+	flex: 2 1;
+	margin-right: 5px;
+	h3 {
+		text-transform: capitalize;
+	}
+}
+.social-login__header-icon {
+	height: 30px;
+	width: 30px;
+	margin-left: 0;
+	margin-right: 12px;
+}
+.social-login__header-action {
+	display: flex;
+	align-items: center;
+	flex: 1 1;
+	justify-content: flex-end;
+}

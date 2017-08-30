@@ -188,7 +188,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 dispatchRequest( fetchMenu, addMenuItems, alertFailure );
 
 // create request when no meta present, indicate on success, undo on failure, update on progress
-dispatchRequest( sendRecipe, indicateSuccess, removeRecipe, updateRecipeProgress );
+dispatchRequest( sendRecipe, indicateSuccess, removeRecipe, { onProgress: updateRecipeProgress } );
 ```
 
 ### Helpers
@@ -270,8 +270,8 @@ const updateProgress = ( store, { siteId, postId }, progress ) => {
 }
 
 export default {
-	// watch for this action       -> initiate, onSuccess,  onFailure, onProgress
-	[ LIKE_POST ]: [ dispatchRequest( likePost, verifyLike, undoLike, updateProgress ) ],
+	// watch for this action       -> initiate, onSuccess,  onFailure, options: { onProgress }
+	[ LIKE_POST ]: [ dispatchRequest( likePost, verifyLike, undoLike, { onProgress: updateProgress } ) ],
 };
 ```
 

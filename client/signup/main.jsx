@@ -222,8 +222,12 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, event ) {
 		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
+		}
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
@@ -232,9 +236,10 @@ const Signup = React.createClass( {
 			}.bind( this ) );
 		}
 
-		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
+			return;
 		}
 
 		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
@@ -420,6 +425,8 @@ const Signup = React.createClass( {
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
+						flow = { this.props.flowName }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }

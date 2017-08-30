@@ -15,14 +15,19 @@ import Card from 'components/card';
 import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
+import StickyPanel from 'components/sticky-panel';
 
 const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends React.Component {
 	static propTypes = {
-		onMediaScaleChange: PropTypes.func.isRequired,
+		onMediaScaleChange: PropTypes.func,
 		site: PropTypes.object.isRequired,
 		visible: PropTypes.bool.isRequired,
+		canCopy: PropTypes.bool,
+		selectedItems: PropTypes.array,
+		onSourceChange: PropTypes.func,
+		sticky: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -57,6 +62,8 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	componentWillUnmount() {
+		// Cancel the debounce, just in case it fires after we've unmounted
+		this.handleFetchOff.cancel();
 		MediaListStore.off( 'change', this.handleMedia );
 	}
 
@@ -83,12 +90,26 @@ class MediaLibraryExternalHeader extends React.Component {
 		MediaActions.fetchNextPage( ID );
 	}
 
-	render() {
-		const { onMediaScaleChange, translate, visible } = this.props;
+	onCopy = () => {
+		const { site, selectedItems, source, onSourceChange } = this.props;
 
-		if ( ! visible ) {
-			return null;
-		}
+		onSourceChange( '', () => {
+			MediaActions.addExternal( site.ID, selectedItems, source );
+		} );
+	};
+
+	renderCopyButton() {
+		const { selectedItems, translate } = this.props;
+
+		return (
+			<Button compact disabled={ selectedItems.length === 0 } onClick={ this.onCopy } primary>
+				{ translate( 'Copy to media library' ) }
+			</Button>
+		);
+	}
+
+	renderCard() {
+		const { onMediaScaleChange, translate, canCopy } = this.props;
 
 		return (
 			<Card className="media-library__header">
@@ -97,9 +118,30 @@ class MediaLibraryExternalHeader extends React.Component {
 
 					{ translate( 'Refresh' ) }
 				</Button>
+
+				{ canCopy && this.renderCopyButton() }
+
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
 		);
+	}
+
+	render() {
+		const { visible } = this.props;
+
+		if ( ! visible ) {
+			return null;
+		}
+
+		if ( this.props.sticky ) {
+			return (
+				<StickyPanel minLimit={ 660 }>
+					{ this.renderCard() }
+				</StickyPanel>
+			);
+		}
+
+		return this.renderCard();
 	}
 }
 

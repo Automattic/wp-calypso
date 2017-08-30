@@ -21,7 +21,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
-import trees from './comment-tree';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 import { getSiteComment } from 'state/selectors';
@@ -209,4 +208,4 @@ export const fetchHandler = {
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes, trees );
+export default mergeHandlers( fetchHandler, replies, likes );

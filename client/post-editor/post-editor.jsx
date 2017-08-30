@@ -32,7 +32,6 @@ import utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
@@ -61,7 +60,8 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { NESTED_SIDEBAR_NONE } from 'post-editor/editor-sidebar/constants';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -79,6 +79,7 @@ export const PostEditor = React.createClass( {
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		hasBrokenPublicizeConnection: PropTypes.bool,
+		editPost: PropTypes.func,
 	},
 
 	_previewWindow: null,
@@ -96,12 +97,13 @@ export const PostEditor = React.createClass( {
 			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
-			isLoadingAutosave: false,
+			isLoadingRevision: false,
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
 			nestedSidebar: NESTED_SIDEBAR_NONE,
+			selectedRevisionId: null,
 		};
 	},
 
@@ -136,6 +138,19 @@ export const PostEditor = React.createClass( {
 		this.setState( {
 			isEditorInitialized: false
 		} );
+	},
+
+	componentDidUpdate( prevProps, prevState ) {
+		if (
+			prevState.nestedSidebar !== NESTED_SIDEBAR_NONE &&
+			this.state.nestedSidebar === NESTED_SIDEBAR_NONE
+		) {
+			// NOTE: Make sure we scroll back to the top AND trigger a scroll
+			// event no matter the scroll position we're coming from.
+			// ( used to force-reset TinyMCE toolbar )
+			window.scrollTo( 0, 1 );
+			window.scrollTo( 0, 0 );
+		}
 	},
 
 	componentWillUpdate( nextProps, nextState ) {
@@ -251,16 +266,35 @@ export const PostEditor = React.createClass( {
 		this.setState( { nestedSidebar } );
 	},
 
+	selectRevision: function( selectedRevisionId ) {
+		this.setState( { selectedRevisionId } );
+		if (
+			selectedRevisionId !== null &&
+			isWithinBreakpoint( '<660px' )
+		) {
+			this.props.setLayoutFocus( 'content' );
+		}
+	},
+
+	loadRevision: function( revision ) {
+		this.setNestedSidebar( NESTED_SIDEBAR_NONE );
+		this.setState( { selectedRevisionId: null } );
+		this.restoreRevision( {
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			this.props.setLayoutFocus( 'content' );
+		}
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
+		const isConfirmationFeatureEnabled = this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled;
 
 		let isPage;
 		let isTrashed;
@@ -326,6 +360,7 @@ export const PostEditor = React.createClass( {
 								type={ this.props.type }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
 								postAuthor={ this.state.post ? this.state.post.author : null }
+								hasEditorNestedSidebar={ this.state.nestedSidebar !== NESTED_SIDEBAR_NONE }
 							/>
 							<div className="post-editor__site">
 								<Site
@@ -340,56 +375,68 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
-							<FeaturedImage
-								site={ site }
-								post={ this.state.post }
-								maxWidth={ 1462 } />
-							<div className="post-editor__header">
-								<EditorTitle
-									onChange={ this.onEditorTitleChange }
-									tabIndex={ 1 } />
-								{ this.state.post && isPage && site
-									? <EditorPageSlug
-										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
-											? utils.getPagePath( this.state.post )
-											: siteURL
-										}
-										/>
-									: null
-								}
-								<SegmentedControl className="post-editor__switch-mode" compact={ true }>
-									<SegmentedControlItem
-										selected={ mode === 'tinymce' }
-										onClick={ this.switchEditorVisualMode }
-										title={ this.props.translate( 'Edit with a visual editor' ) }>
-										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-									</SegmentedControlItem>
-									<SegmentedControlItem
-										selected={ mode === 'html' }
-										onClick={ this.switchEditorHtmlMode }
-										title={ this.props.translate( 'Edit the raw HTML code' ) }>
-										HTML
-									</SegmentedControlItem>
-								</SegmentedControl>
+							<div className={ classNames(
+								'post-editor__inner-content',
+								{ 'is-shown': this.state.nestedSidebar === NESTED_SIDEBAR_NONE }
+							) }>
+								<FeaturedImage
+									site={ site }
+									post={ this.state.post }
+									maxWidth={ 1462 } />
+								<div className="post-editor__header">
+									<EditorTitle
+										onChange={ this.onEditorTitleChange }
+										tabIndex={ 1 } />
+									{ this.state.post && isPage && site
+										? <EditorPageSlug
+											path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
+												? utils.getPagePath( this.state.post )
+												: siteURL
+											}
+											/>
+										: null
+									}
+									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
+										<SegmentedControlItem
+											selected={ mode === 'tinymce' }
+											onClick={ this.switchEditorVisualMode }
+											title={ this.props.translate( 'Edit with a visual editor' ) }>
+											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										</SegmentedControlItem>
+										<SegmentedControlItem
+											selected={ mode === 'html' }
+											onClick={ this.switchEditorHtmlMode }
+											title={ this.props.translate( 'Edit the raw HTML code' ) }>
+											HTML
+										</SegmentedControlItem>
+									</SegmentedControl>
+								</div>
+								<hr className="post-editor__header-divider" />
+								<TinyMCE
+									ref={ this.storeEditor }
+									mode={ mode }
+									tabIndex={ 2 }
+									isNew={ this.state.isNew }
+									onSetContent={ this.debouncedSaveRawContent }
+									onInit={ this.onEditorInitialized }
+									onChange={ this.onEditorContentChange }
+									onKeyUp={ this.onEditorKeyUp }
+									onFocus={ this.onEditorFocus }
+									onMouseUp={ this.copySelectedText }
+									onBlur={ this.copySelectedText }
+									onTextEditorChange={ this.onEditorTextContentChange } />
+								<EditorWordCount
+									selectedText={ this.state.selectedText }
+								/>
 							</div>
-							<hr className="post-editor__header-divider" />
-							<TinyMCE
-								ref={ this.storeEditor }
-								mode={ mode }
-								tabIndex={ 2 }
-								isNew={ this.state.isNew }
-								onSetContent={ this.debouncedSaveRawContent }
-								onInit={ this.onEditorInitialized }
-								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.onEditorKeyUp }
-								onFocus={ this.onEditorFocus }
-								onMouseUp={ this.copySelectedText }
-								onBlur={ this.copySelectedText }
-								onTextEditorChange={ this.onEditorTextContentChange } />
+							{ this.state.nestedSidebar === NESTED_SIDEBAR_REVISIONS && (
+								<EditorDiffViewer
+									siteId={ site.ID }
+									postId={ this.state.post.ID }
+									selectedRevisionId={ this.state.selectedRevisionId }
+								/>
+							) }
 						</div>
-						<EditorWordCount
-							selectedText={ this.state.selectedText }
-						/>
 					</div>
 					<EditorSidebar
 						toggleSidebar={ this.toggleSidebar }
@@ -406,6 +453,9 @@ export const PostEditor = React.createClass( {
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						setNestedSidebar={ this.setNestedSidebar }
 						nestedSidebar={ this.state.nestedSidebar }
+						loadRevision={ this.loadRevision }
+						selectedRevisionId={ this.state.selectedRevisionId }
+						selectRevision={ this.selectRevision }
 						/>
 					{ this.props.isSitePreviewable
 						? <EditorPreview
@@ -456,19 +506,21 @@ export const PostEditor = React.createClass( {
 	},
 
 	restoreAutosave: function() {
-		var edits,
-			autosaveData = this.state.post.meta.data.autosave;
+		this.setState( { showAutosaveDialog: false } );
+		this.restoreRevision( get( this.state, 'post.meta.data.autosave' ) );
+	},
 
-		this.setState( { showAutosaveDialog: false, isLoadingAutosave: true } );
-
-		edits = {
-			title: autosaveData.title,
-			excerpt: autosaveData.excerpt,
-			content: autosaveData.content
-		};
-
+	restoreRevision: function( revision ) {
+		this.setState( { isLoadingRevision: true } );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( edits );
+		actions.edit( {
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			title: revision.title,
+		} );
 	},
 
 	closeAutosaveDialog: function() {
@@ -503,12 +555,12 @@ export const PostEditor = React.createClass( {
 				page.redirect( utils.getEditURL( post, site ) );
 			}
 			this.setState( postEditState, function() {
-				if ( this.editor && ( didLoad || this.state.isLoadingAutosave ) ) {
+				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
-				if ( this.state.isLoadingAutosave ) {
-					this.setState( { isLoadingAutosave: false } );
+				if ( this.state.isLoadingRevision ) {
+					this.setState( { isLoadingRevision: false } );
 				}
 			} );
 		}
@@ -669,13 +721,8 @@ export const PostEditor = React.createClass( {
 
 		edits.content = this.editor.getContent();
 
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.props.isConfirmationSidebarEnabled
-		);
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited( edits, { isConfirmationFeatureEnabled: isConfirmationFeatureEnabled }, function( error ) {
+		actions.saveEdited( edits, { isConfirmationFeatureEnabled: this.props.isConfirmationSidebarEnabled }, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
 				this.onSaveDraftFailure( error );
 			} else {
@@ -805,11 +852,7 @@ export const PostEditor = React.createClass( {
 			status: 'publish'
 		};
 
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
+		const isConfirmationFeatureEnabled = this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled;
 
 		if (
 			isConfirmationFeatureEnabled &&
@@ -854,11 +897,7 @@ export const PostEditor = React.createClass( {
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
 	},
@@ -879,11 +918,7 @@ export const PostEditor = React.createClass( {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
@@ -914,10 +949,7 @@ export const PostEditor = React.createClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest
-		) {
+		if ( this.isPostPublishConfirmationABTest ) {
 			analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
 				context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 			} );

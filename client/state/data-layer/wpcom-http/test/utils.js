@@ -72,7 +72,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				onSuccess = spy();
 				onFailure = spy();
 				onProgress = spy();
-				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, onProgress );
+				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, { onProgress } );
 				store = spy();
 			} );
 

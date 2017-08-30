@@ -7,6 +7,7 @@
 
 	.taxes__taxes-calculate {
 		color: $alert-green;
+		margin-bottom: 1.5em;
 	}
 
 	.taxes__taxes-calculate .gridicon {
@@ -29,5 +30,13 @@
 .taxes__taxes-options {
 	.form-fieldset:last-child {
 		margin-bottom: 0;
+	}
+}
+
+.taxes__taxes-rates-table {
+	.table-row {
+		&:hover {
+			background-color: transparent;
+		}
 	}
 }

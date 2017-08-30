@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { includes, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -261,21 +262,21 @@ const newTLDs = [
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
-		isSignupStep: React.PropTypes.bool,
-		cart: React.PropTypes.object,
-		suggestion: React.PropTypes.shape( {
-			domain_name: React.PropTypes.string.isRequired,
-			product_slug: React.PropTypes.string,
-			cost: React.PropTypes.string
+		isSignupStep: PropTypes.bool,
+		cart: PropTypes.object,
+		suggestion: PropTypes.shape( {
+			domain_name: PropTypes.string.isRequired,
+			product_slug: PropTypes.string,
+			cost: PropTypes.string
 		} ).isRequired,
-		onButtonClick: React.PropTypes.func.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.object,
-		railcarId: React.PropTypes.string,
-		recordTracksEvent: React.PropTypes.func,
-		uiPosition: React.PropTypes.number,
-		fetchAlgo: React.PropTypes.string,
-		query: React.PropTypes.string
+		onButtonClick: PropTypes.func.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.object,
+		railcarId: PropTypes.string,
+		recordTracksEvent: PropTypes.func,
+		uiPosition: PropTypes.number,
+		fetchAlgo: PropTypes.string,
+		query: PropTypes.string
 	};
 
 	componentDidMount() {

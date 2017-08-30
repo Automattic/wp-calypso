@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import { isEmpty } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies

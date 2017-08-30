@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
-	if ( ! labelFormMeta || labelFormMeta.pristine ) {
+	if ( ! labelFormMeta || labelFormMeta.pristine || ! labelFormMeta.can_manage_payments ) {
 		return [];
 	}
 

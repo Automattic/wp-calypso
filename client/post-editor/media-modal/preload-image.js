@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var memoize = require( 'lodash/memoize' );
+import { memoize } from 'lodash';
 
 module.exports = memoize( function( src ) {
 	// This is a non-standard use of the Lodash memoize helper, used here to

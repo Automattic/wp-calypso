@@ -31,6 +31,19 @@ export function isEditorNewPost( state ) {
 }
 
 /**
+ * Returns the editor URL for duplicating a given site ID, post ID pair.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number} siteId      Site ID
+ * @param  {Number} postId      Post ID
+ * @param  {String} type        Post type
+ */
+export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
+	const editorNewPostPath = getEditorNewPostPath( state, siteId, type );
+	return `${ editorNewPostPath }?copy=${ postId }`;
+}
+
+/**
  * Returns the editor new post URL path for the given site ID and type.
  *
  * @param  {Object} state       Global state tree

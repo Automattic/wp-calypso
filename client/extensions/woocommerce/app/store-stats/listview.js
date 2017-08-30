@@ -14,6 +14,7 @@ import DatePicker from 'my-sites/stats/stats-date-picker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getUnitPeriod } from './utils';
 import HeaderCake from 'components/header-cake';
+import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
 import Module from './store-stats-module';
@@ -111,6 +112,7 @@ class StoreStatsListView extends Component {
 						statType={ statType }
 					/>
 				</Module>
+				<JetpackColophon />
 			</Main>
 		);
 	}

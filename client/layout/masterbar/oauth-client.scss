@@ -1,0 +1,305 @@
+.masterbar__oauth-client {
+	background-color: $blue-wordpress;
+	height: 50px;
+
+	nav {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: 0;
+
+		li {
+			list-style-type: none;
+		}
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	img {
+		display: block;
+	}
+}
+
+.masterbar__oauth-client-wpcc-sign-in {
+	background-color: rgba(255, 255, 255, 0.15);
+	border-radius: 3px;
+	color: #fff;
+	display: block;
+	line-height: 100%;
+	margin-right: 5px;
+	position: relative;
+	top: 6px;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.2);
+	}
+
+	&:after {
+		clear: both;
+		content: " ";
+		display: block;
+		height: 0;
+		visibility: hidden;
+	}
+}
+.masterbar__oauth-client-wpcom {
+	color: rgba(255, 255, 255, 0.8);
+	cursor: pointer;
+	float: left;
+	line-height: 32px;
+	padding: 3px 10px;
+
+	&:hover {
+		color: #fff;
+	}
+
+	&:visited {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+
+	.gridicon {
+		margin-bottom: 5px;
+		margin-right: 5px;
+		vertical-align: middle;
+	}
+}
+
+.dops {
+	.locale-suggestions {
+		margin-top: 0;
+	}
+}
+
+.woo {
+	background: #e6e6e6;
+
+	.layout__content {
+		padding-top: 150px;
+	}
+
+	.masterbar__oauth-client {
+		background-color: #fff;
+		border: 1px solid #d3d3d3;
+		box-sizing: border-box;
+		height: 83px;
+		line-height: 83px;
+		margin: 0 auto;
+		padding: 0 10px;
+		z-index: 100;
+
+		a {
+			color: #fff;
+			float: left;
+			line-height: 55px;
+			padding: 0 10px;
+			transition: 0.05 all ease-in-out;
+		}
+	}
+
+	.masterbar__oauth-client-logo img {
+		max-width: none;
+		margin-top: 22px;
+		vertical-align: middle;
+	}
+
+	.masterbar__oauth-client-main-nav {
+		margin: 0;
+	}
+
+	.masterbar__oauth-client-close {
+		float: right;
+		padding-top: 13px;
+
+		a {
+			color: #999;
+			cursor: pointer;
+			float: right;
+			font-size: 0.9em;
+			text-decoration: none;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+	}
+
+	.button.is-primary {
+		background-color: #a46497;
+		border-radius: 100px;
+		border: none;
+		color: #fff;
+		font-size: 1.1em;
+		padding: 15px 50px;
+		text-decoration: none;
+		text-transform: capitalize;
+
+		&:hover,
+		&:focus {
+			background: #696969;
+		}
+
+		&:disabled {
+			background-color: #DDDDDD;
+		}
+	}
+
+	.login__form,
+	.login__form-social,
+	.logged-out-form {
+		.button {
+			max-width: 300px;
+		}
+	}
+
+	.login__form {
+		.button {
+			float: none;
+			margin: 0;
+		}
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='password'],
+	textarea {
+		background-color: #fff;
+		border: 1px solid #e6e6e6;
+		border-radius: 3px;
+		box-sizing: border-box;
+		color: #666;
+		font-size: 1.25em;
+		line-height: 1.563;
+		padding: 0.7em;
+		transition: all ease-in-out 0.2s;
+		width: 100%;
+
+		&:focus, &.is-error:hover {
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			outline: 0;
+		}
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 18px;
+	}
+
+	.login__form-header-wrapper {
+		text-align: center;
+	}
+
+	.login__form-action,
+	.login__social-buttons {
+		text-align: center;
+	}
+
+	.wp-login__main.main {
+		max-width: 778px;
+	}
+
+	$woo-form-whitespace: 16px;
+	$woo-form-whitespace-480: 24px;
+	$woo-form-whitespace-660: 100px;
+
+	.card {
+		box-shadow: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.wp-login__container,
+	.step-wrapper {
+		background: #fff;
+		border: 1px solid #d3d3d3;
+		border-radius: 5px;
+		box-sizing: border-box;
+		padding: 20px $woo-form-whitespace;
+		width: 100%;
+
+		@include breakpoint( '>480px' ) {
+			padding: 20px $woo-form-whitespace-480;
+		}
+
+		@include breakpoint( '>660px' ) {
+			padding: 20px $woo-form-whitespace-660;
+		}
+	}
+
+	.step-wrapper {
+		margin-bottom: 50px;
+		width: 778px;
+	}
+
+	.logged-out-form {
+		max-width: 100%;
+	}
+
+	.logged-out-form label,
+	.login__form-userdata label {
+		font-size: 16px;
+		font-weight: normal;
+	}
+
+	.login__form-signup-link {
+		font-size: 15px;
+	}
+
+	.login__form-social {
+		border-top: 1px solid #e6e6e6;
+		margin: 10px -16px 0;
+		padding-top: 30px;
+		width: calc( 100% + ( $woo-form-whitespace * 2 ) );
+
+		@include breakpoint( '>480px' ) {
+			margin: 10px -24px 0;
+			width: calc( 100% + ( $woo-form-whitespace-480 * 2 ) );
+		}
+
+		@include breakpoint( '>660px' ) {
+			margin: 20px -100px 0;
+			width: calc( 100% + ( $woo-form-whitespace-660 * 2 ) );
+		}
+	}
+
+	.wp-login__links {
+		margin-top: 20px;
+	}
+
+	.wp-login__links a {
+		border: none;
+		font-size: 16px;
+		font-weight: normal;
+		line-height: 3em;
+		text-align: center;
+	}
+
+	.logged-out-form__footer {
+		background: none;
+		border: none;
+		text-align: center;
+	}
+
+	.logged-out-form__links {
+		text-align: center;
+	}
+
+	// Signup styles
+	.signup__step {
+		background: linear-gradient( to bottom, #e6e6e6, transparent );
+	}
+
+	.signup-processing__content:after {
+		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
+		content: '';
+		height: 100px;
+		left: 50%;
+		position: absolute;
+		top: 33px;
+		width: 69px;
+	}
+}

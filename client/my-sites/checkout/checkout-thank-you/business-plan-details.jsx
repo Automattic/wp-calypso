@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import { isEnabled } from 'config';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
@@ -40,16 +41,33 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
-					title={ i18n.translate( 'Find a new theme' ) }
-					description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
+					title={ i18n.translate( 'Try a New Theme' ) }
+					description={ i18n.translate(
+						'You\'ve now got access to every premium theme, at no extra cost - that\'s hundreds of new options. ' +
+						'Give one a try!'
+					) }
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
 					href={ '/themes/' + selectedSite.slug } />
 			}
 
+			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) &&
+				<PurchaseDetail
+					icon="plugins"
+					title={ i18n.translate( 'Add a Plugin' ) }
+					description={ i18n.translate(
+						'Search and add plugins right from your dashboard, or upload a plugin ' +
+						'from your computer with a drag-and-drop interface.'
+					) }
+					buttonText={ i18n.translate( 'Upload a plugin now' ) }
+					href={ '/plugins/upload/' + selectedSite.slug } />
+			}
+
 			<PurchaseDetail
 				icon="stats-alt"
-				title={ i18n.translate( 'Stats from Google Analytics' ) }
-				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
+				title={ i18n.translate( 'Connect to Google Analytics' ) }
+				description={ i18n.translate(
+					'Complement WordPress.com\'s stats with Google\'s in-depth look at your visitors and traffic patterns.'
+				) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
 		</div>

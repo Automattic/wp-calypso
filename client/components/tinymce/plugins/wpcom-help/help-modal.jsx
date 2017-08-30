@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	forEach = require( 'lodash/forEach' );
+import { forEach } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies

@@ -1,0 +1,22 @@
+.order-fulfillment {
+	background: lighten( $blue-light, 25% );
+
+	&.is-completed {
+		background: transparent;
+
+		.order-fulfillment__label .gridicon {
+			color: $alert-green;
+		}
+	}
+}
+
+.order-fulfillment__tracking,
+.order-fulfillment__email {
+	margin: 0 0 24px;
+}
+
+&.dialog__content.order-fulfillment {
+	.form-text-input {
+		text-align: left;
+	}
+}

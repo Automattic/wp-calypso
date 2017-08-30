@@ -3,9 +3,11 @@
  */
 import classNames from 'classnames';
 import { defer } from 'lodash';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -19,6 +21,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { fetchOAuth2SignupUrl } from 'state/oauth2-clients/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -34,6 +38,7 @@ import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		fetchOAuth2SignupUrl: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -41,11 +46,12 @@ export class LoginForm extends Component {
 		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
-		socialAccountIsLinking: PropTypes.bool.isRequired,
-		socialAccountLinkEmail: PropTypes.string.isRequired,
-		socialAccountLinkService: PropTypes.string.isRequired,
+		socialAccountIsLinking: PropTypes.bool,
+		socialAccountLinkEmail: PropTypes.string,
+		socialAccountLinkService: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
+		oauth2Client: PropTypes.object,
 	};
 
 	state = {
@@ -56,6 +62,10 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.redirectTo ) {
+			this.props.fetchOAuth2SignupUrl( this.props.redirectTo );
+		}
+
 		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
@@ -150,8 +160,21 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError } = this.props;
+		const { requestError, redirectTo, oauth2Client } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
+		const isOauthLogin = !! oauth2Client;
+		let signupUrl = config( 'signup_url' );
+
+		if ( isOauthLogin ) {
+			if ( config.isEnabled( 'signup/wpcc' ) ) {
+				signupUrl = '/start/wpcc?' + qs.stringify( {
+					oauth2_client_id: oauth2Client.id,
+					oauth2_redirect: redirectTo
+				} );
+			} else {
+				signupUrl = oauth2Client.signupUrl;
+			}
+		}
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
@@ -254,6 +277,20 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
+
+					{ isOauthLogin && (
+						<div className={ classNames( 'login__form-signup-link', {
+							disabled: ! oauth2Client.signupUrl
+						} ) }>
+							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
+								{
+									components: {
+										signupLink: <a href={ signupUrl } />,
+									}
+								}
+							) }
+						</div>
+					) }
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
 					<Card className="login__form-social">
@@ -278,11 +315,13 @@ export default connect(
 		socialAccountIsLinking: getSocialAccountIsLinking( state ),
 		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 		socialAccountLinkService: getSocialAccountLinkService( state ),
-		isLoggedIn: Boolean( getCurrentUserId( state ) )
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
 		formUpdate,
 		loginUser,
 		recordTracksEvent,
+		fetchOAuth2SignupUrl,
 	}
 )( localize( LoginForm ) );

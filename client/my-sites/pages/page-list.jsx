@@ -292,7 +292,7 @@ const Pages = localize( React.createClass( {
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === null } />
 			);
 		}, this );
 

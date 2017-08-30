@@ -72,7 +72,7 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  */
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
-		const { gmtOffset = 0 } = query;
+		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
 		// ensure streakData.data exists and it is not an array

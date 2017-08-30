@@ -43,6 +43,14 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
 /**
+ * @type Object default dispatchRequest options
+ * @property {Function} onProgress called on progress events
+ */
+const defaultOptions = {
+	onProgress: noop,
+};
+
+/**
  * Dispatches to appropriate function based on HTTP request meta
  *
  * @see state/data-layer/wpcom-http/actions#fetch creates HTTP requests
@@ -69,11 +77,14 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
- * @param {Function} [onProgress] called on progress events when uploading. The default
- *                                behavior of this optional handler is to do nothing.
+ * @param {Object} options configures additional dispatching behaviors
+ + @param {Function} [options.middleware] runs before the dispatch itself
+ + @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( store, action ) => {
+	const { onProgress } = Object.assign( defaultOptions, options );
+
 	const error = getError( action );
 	if ( error ) {
 		return onError( store, action, error );

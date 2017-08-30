@@ -1,8 +1,15 @@
 /**
+ * External dependencies
+ */
+import { isEmpty, pick } from 'lodash';
+import qs from 'qs';
+
+/**
  * Internal dependencies
  */
-import { serverRender } from 'render';
+import { serverRender, serverRenderError } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
+import { setRoute as setRouteAction } from 'state/ui/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -16,12 +23,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				( err, req, res, next ) => {
 					route( err, req.context, next );
 				},
-				// We need 4 args so Express knows this is an error-handling middleware
-				// TODO: Ideally, there'd be a dedicated serverRenderError middleware in server/render
-				( err, req, res, next ) => { // eslint-disable-line no-unused-vars
-					req.error = err;
-					serverRender( req, res.status( err.status ) );
-				}
+				serverRenderError
 			);
 		} else {
 			expressApp.get(
@@ -29,12 +31,23 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				setUpRoute,
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
+					setRouteMiddleware,
 					...middlewares
 				),
-				serverRender
+				serverRender,
+				serverRenderError
 			);
 		}
 	};
+}
+
+function setRouteMiddleware( context, next ) {
+	context.store.dispatch( setRouteAction(
+		context.pathname,
+		context.query
+	) );
+
+	next();
 }
 
 function combineMiddlewares( ...middlewares ) {
@@ -72,8 +85,18 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 	} ) );
 	compose( ...liftedMiddlewares )();
 }
+
 function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => (
 		() => f( composed )
 	), () => {} );
+}
+
+export function getCacheKey( context ) {
+	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
+		return context.pathname;
+	}
+
+	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
+	return context.pathname + '?' + qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } );
 }

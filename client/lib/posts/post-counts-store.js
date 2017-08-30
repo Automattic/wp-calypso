@@ -1,10 +1,9 @@
-
 /**
  * External dependencies
  */
 
-var isEqual = require( 'lodash/isEqual' ),
-	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+import { isEqual } from 'lodash';
+const debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
 	return Object.keys( obj )
@@ -19,7 +18,6 @@ const sum = obj => {
 var emitter = require( 'lib/mixins/emitter' ),
 	PostListStore = require( './post-list-store-factory' )(),
 	PostsStore = require( './posts-store' ),
-	sites = require( 'lib/sites-list' )(),
 	postUtils = require( 'lib/posts/utils' ),
 	Dispatcher = require( 'dispatcher' );
 
@@ -27,22 +25,12 @@ var _counts = {},
 	PostCountsStore;
 
 /**
- * Get a normalized numberic siteId
- * @param {String|Integer} id - A site id (numeric site ID, site.slug, or API $site path fragment
- * @return {Integer} - normalized numeric site id
+ * Get siteId to use
+ * @param {Integer} id - A site id (numeric site ID)
+ * @return {Integer} - Same site passed as argument or if site id is null a site id returned from PostListStore
  */
 function getSiteId( id ) {
-	var site, siteId;
-
-	id = id || PostListStore.getSiteId();
-
-	site = sites.getSite( id );
-
-	if ( site ) {
-		siteId = site.ID;
-	}
-
-	return siteId;
+	return id || PostListStore.getSiteId();
 }
 
 /**

@@ -1,0 +1,71 @@
+&.order-refund__dialog {
+	max-width: 720px;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+
+	.order__detail-header,
+	.order__details-total {
+		color: $gray-dark;
+	}
+
+	.form-text-input,
+	.form-text-input-with-affixes input {
+		text-align: right;
+	}
+
+	.form-label {
+		.form-text-input-with-affixes {
+			font-weight: normal;
+		}
+	}
+}
+
+.order-refund__container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 0 -24px -24px;
+	padding: 24px;
+	border-top: 1px solid lighten( $gray, 30% );
+	background: lighten( $gray, 35% );
+
+	.order-refund__note,
+	.order-refund__details {
+		flex: 1;
+	}
+
+	.order-refund__note {
+		margin-bottom: 0;
+
+		.form-textarea {
+			margin-top: 8px;
+		}
+	}
+
+	.order-refund__details {
+		margin-left: 50px;
+		margin-bottom: 0;
+	}
+
+	.order-refund__amount {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		padding-bottom: 16px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid lighten( $gray, 30% );
+
+		.order-refund__amount-label,
+		.order-refund__amount-value {
+			flex: 1;
+		}
+	}
+
+	.order-refund__method h3 {
+		font-size: 11px;
+		text-transform: uppercase;
+		margin-bottom: 8px;
+		color: $gray-text-min;
+	}
+}

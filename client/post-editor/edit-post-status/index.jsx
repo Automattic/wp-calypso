@@ -11,7 +11,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
@@ -48,6 +47,7 @@ export class EditPostStatus extends Component {
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -123,8 +123,7 @@ export class EditPostStatus extends Component {
 			this.props.site.options &&
 			this.props.site.options.admin_url;
 
-		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isPostPublishFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div className="edit-post-status">
@@ -182,14 +181,14 @@ export class EditPostStatus extends Component {
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
 					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</div>
 		);
 	}
 
 	renderPostScheduling() {
-		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isPostPublishFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		const fullDate = postScheduleUtils.convertDateToUserLocation(
 			( this.props.postDate || new Date() ),

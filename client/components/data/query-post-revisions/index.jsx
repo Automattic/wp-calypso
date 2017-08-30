@@ -26,7 +26,7 @@ class QueryPostRevisions extends Component {
 	}
 
 	request() {
-		this.props.requestPostRevisions( this.props.siteId, this.props.postId );
+		this.props.requestPostRevisions( this.props.siteId, this.props.postId, this.props.postType );
 	}
 
 	render() {
@@ -36,6 +36,7 @@ class QueryPostRevisions extends Component {
 
 QueryPostRevisions.propTypes = {
 	postId: PropTypes.number,
+	postType: PropTypes.string,
 	siteId: PropTypes.number,
 	requestPostRevisions: PropTypes.func,
 };

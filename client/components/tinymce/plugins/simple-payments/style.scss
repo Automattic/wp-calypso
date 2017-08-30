@@ -73,7 +73,21 @@
 		flex-shrink: 0;
 		margin: 0;
 		text-align: left;
-		width: 70%;
+
+		@include breakpoint( ">480px" ) {
+			width: 70%;
+		}
+	}
+
+	.upgrade-jetpack {
+		.empty-content__illustration {
+			margin-bottom: -35px;
+			min-height: 0;
+		}
+		.banner {
+			text-align: left;
+			text-decoration: none;
+		}
 	}
 }
 
@@ -164,8 +178,19 @@
 
 .editor-simple-payments-modal__list-label {
 	flex: auto;
+	min-width: 0;
 	font-family: $serif;
 	font-weight: bold;
+}
+
+.editor-simple-payments-modal__list-name {
+	white-space: nowrap;
+	overflow: hidden;
+	position: relative;
+
+	&::after {
+		@include long-content-fade();
+	}
 }
 
 .editor-simple-payments-modal__list-menu {

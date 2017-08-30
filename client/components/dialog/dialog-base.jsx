@@ -24,13 +24,15 @@ class DialogBase extends Component {
 			);
 
 		return (
-			<Modal isOpen={ this.props.isVisible }
+			<Modal
+				isOpen={ this.props.isVisible }
 				onRequestClose={ this._close }
 				closeTimeoutMS= { this.props.leaveTimeout }
 				contentLabel={ this.props.label }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
-				role="dialog">
+				role="dialog"
+			>
 				<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
 					{ this.props.children }
 				</div>

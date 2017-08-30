@@ -17,9 +17,6 @@ import {
 	LOGOUT_REQUEST,
 	LOGOUT_REQUEST_FAILURE,
 	LOGOUT_REQUEST_SUCCESS,
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -29,6 +26,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -243,8 +243,19 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		.then( ( response ) => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-				redirectTo: get( response, 'body.data.redirect_to' ),
+				data: get( response, 'body.data' )
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
@@ -253,7 +264,8 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
-				authInfo: socialInfo
+				authInfo: socialInfo,
+				data: get( httpError, 'response.body.data' ),
 			} );
 
 			return Promise.reject( error );
@@ -315,10 +327,10 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirectTo } ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirect_to: redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-			redirectTo: wpcomResponse.redirect_to,
+			redirect_to: wpcomResponse.redirect_to,
 		} );
 	}, wpcomError => {
 		const error = getErrorFromWPCOMError( wpcomError );
@@ -332,10 +344,39 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	} );
 };
 
-export const createSocialUserFailed = ( service, token, error ) => ( {
+/**
+ * Attempt to disconnect the current account with a social service
+ *
+ * @param  {String}    socialService    The external social service name.
+ * @return {Function}               Action thunk to trigger the login process.
+ */
+export const disconnectSocialUser = ( socialService ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().me().socialDisconnect( socialService ).then( () => {
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	} );
+};
+
+export const createSocialUserFailed = ( socialInfo, error ) => ( {
 	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	service,
-	token,
+	authInfo: socialInfo,
 	error: error.field ? error : getErrorFromWPCOMError( error )
 } );
 
@@ -430,25 +471,4 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 
 			return Promise.reject( error );
 		} );
-};
-
-export const fetchOAuth2ClientData = ( clientId ) => dispatch => {
-	dispatch( {
-		type: OAUTH2_CLIENT_DATA_REQUEST
-	} );
-
-	return wpcom.undocumented().oauth2ClientId( clientId ).then( wpcomResponse => {
-		dispatch( { type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS, data: wpcomResponse } );
-
-		return wpcomResponse;
-	}, wpcomError => {
-		const error = getErrorFromWPCOMError( wpcomError );
-
-		dispatch( {
-			type: OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-			error,
-		} );
-
-		return Promise.reject( error );
-	} );
 };

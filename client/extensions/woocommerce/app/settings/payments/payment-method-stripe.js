@@ -16,10 +16,20 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import SegmentedControl from 'components/segmented-control';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+
+export function hasStripeValidCredentials( method ) {
+	const { settings } = method;
+	const isLiveMode = method.settings.testmode.value !== 'yes';
+	if ( isLiveMode ) {
+		return settings.secret_key.value.trim() && settings.publishable_key.value.trim();
+	}
+	return settings.test_secret_key.value.trim() && settings.test_publishable_key.value.trim();
+}
 
 class PaymentMethodStripe extends Component {
 
@@ -43,6 +53,10 @@ class PaymentMethodStripe extends Component {
 		} ),
 	};
 
+	state = {
+		missingFieldsNotice: false,
+	};
+
 	onEditFieldHandler = ( e ) => {
 		// Limit the statement descriptor field to 22 characters
 		// since that is all Stripe will accept
@@ -63,25 +77,24 @@ class PaymentMethodStripe extends Component {
 		};
 	}
 
-	renderEditTextboxSecretKey = ( setting ) => {
-		const { translate } = this.props;
-		return (
-			<FormTextInput
-				name={ setting.id }
-				onChange={ this.onEditFieldHandler }
-				value={ setting.value }
-				placeholder={ translate( 'Enter your secret key from your Stripe.com account' ) } />
-		);
-	}
+	renderEditKeyTextbox = ( setting, label, placeholder ) => {
+		const isError = this.state.missingFieldsNotice && ! setting.value.trim();
 
-	renderEditTextboxPublishableKey = ( setting ) => {
-		const { translate } = this.props;
 		return (
-			<FormTextInput
-				name={ setting.id }
-				onChange={ this.onEditFieldHandler }
-				value={ setting.value }
-				placeholder={ translate( 'Enter your publishable key from your Stripe.com account' ) } />
+			<div>
+				<FormFieldset className="payments__method-edit-field-container">
+					<FormLabel required={ true }>
+						{ label }
+					</FormLabel>
+					<FormTextInput
+						name={ setting.id }
+						onChange={ this.onEditFieldHandler }
+						isError={ isError }
+						value={ setting.value }
+						placeholder={ placeholder } />
+					{ isError && <FormInputValidation isError text="This field is required." /> }
+				</FormFieldset>
+			</div>
 		);
 	}
 
@@ -92,29 +105,31 @@ class PaymentMethodStripe extends Component {
 
 		return (
 			<div>
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>
-						{ secretLabel }
-					</FormLabel>
-					{ this.renderEditTextboxSecretKey(
-						isLiveMode ? method.settings.secret_key : method.settings.test_secret_key
+					{ this.renderEditKeyTextbox(
+						isLiveMode ? method.settings.secret_key : method.settings.test_secret_key,
+						secretLabel,
+						translate( 'Enter your secret key from your Stripe.com account' )
 					) }
-				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>
-						{ publishableLabel }
-					</FormLabel>
-					{ this.renderEditTextboxPublishableKey(
-						isLiveMode ? method.settings.publishable_key : method.settings.test_publishable_key
+					{ this.renderEditKeyTextbox(
+						isLiveMode ? method.settings.publishable_key : method.settings.test_publishable_key,
+						publishableLabel,
+						translate( 'Enter your publishable key from your Stripe.com account' )
 					) }
-				</FormFieldset>
 			</div>
 		);
 	}
 
+	onDone = ( e ) => {
+		if ( hasStripeValidCredentials( this.props.method ) ) {
+			this.props.onDone( e );
+		} else {
+			this.setState( { missingFieldsNotice: true } );
+		}
+	}
+
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
+		{ action: 'save', label: this.props.translate( 'Enable Stripe' ), onClick: this.onDone, isPrimary: true },
 	];
 
 	getStatementDescriptorPlaceholder = () => {
@@ -189,7 +204,7 @@ class PaymentMethodStripe extends Component {
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
-						{ translate( 'Use ApplePay' ) }
+						{ translate( 'Use Apple Pay' ) }
 					</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
@@ -197,7 +212,7 @@ class PaymentMethodStripe extends Component {
 						onChange={ this.onEditFieldHandler } />
 					<span>
 						{ translate(
-							'By using ApplePay you agree to Stripe and ' +
+							'By using Apple Pay you agree to Stripe and ' +
 							'Apple\'s terms of service'
 						) }
 					</span>

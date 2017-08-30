@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
+import {
+	assign,
+	compact,
+	defer,
+	difference,
+	every,
+	filter,
+	find,
+	flatten,
+	get,
+	isEmpty,
+	keys,
+	map,
+	pick,
+	reject
+} from 'lodash';
+const debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
 	store = require( 'store' ),
-	assign = require( 'lodash/assign' ),
-	defer = require( 'lodash/defer' ),
-	difference = require( 'lodash/difference' ),
-	every = require( 'lodash/every' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	compact = require( 'lodash/compact' ),
-	flatten = require( 'lodash/flatten' ),
-	map = require( 'lodash/map' ),
-	reject = require( 'lodash/reject' ),
-	filter = require( 'lodash/filter' ),
-	find = require( 'lodash/find' ),
-	pick = require( 'lodash/pick' ),
-	keys = require( 'lodash/keys' ),
-	get = require( 'lodash/get' ),
 	page = require( 'page' );
 
 /**

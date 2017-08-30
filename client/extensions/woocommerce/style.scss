@@ -3,6 +3,12 @@
 
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-created/style';
+	@import 'app/order/order-customer/style';
+	@import 'app/order/order-details/style';
+	@import 'app/order/order-fulfillment/style';
+	@import 'app/order/order-notes/style';
+	@import 'app/order/order-refund/style';
 	@import 'app/orders/style';
 	@import 'app/settings/payments/style';
 	@import 'app/products/product-form';
@@ -97,10 +103,6 @@
 .store-sidebar__sidebar {
 	display: block;
 
-	.site {
-		padding: 6px 0;
-	}
-
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
@@ -119,7 +121,7 @@
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
-		min-height: 58px;
+		min-height: 46px;
 	}
 
 	.sidebar__menu {
@@ -181,7 +183,7 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 10px;
+				margin-top: 4px;
 				background: transparent;
 				border: none;
 			}

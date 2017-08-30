@@ -1,18 +1,11 @@
 /**
  * External dependencies
  */
+import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import cookie from 'cookie';
 const debug = require( 'debug' ),
-	assign = require( 'lodash/assign' ),
-	isObjectLike = require( 'lodash/isObjectLike' ),
-	times = require( 'lodash/times' ),
-	omit = require( 'lodash/omit' ),
-	pickBy = require( 'lodash/pickBy' ),
-	startsWith = require( 'lodash/startsWith' ),
-	isUndefined = require( 'lodash/isUndefined' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );
-
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -168,10 +161,14 @@ const analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
-			mostRecentUrlPath = urlPath;
-			analytics.tracks.recordPageView( urlPath );
-			analytics.ga.recordPageView( urlPath, pageTitle );
-			analytics.emit( 'page-view', urlPath, pageTitle );
+			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
+			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
+			setTimeout( () => {
+				mostRecentUrlPath = urlPath;
+				analytics.tracks.recordPageView( urlPath );
+				analytics.ga.recordPageView( urlPath, pageTitle );
+				analytics.emit( 'page-view', urlPath, pageTitle );
+			}, 0 );
 		}
 	},
 
@@ -277,6 +274,10 @@ const analytics = {
 			const cookies = cookie.parse( document.cookie );
 
 			return cookies.tk_ai;
+		},
+
+		setAnonymousUserId: function( anonId ) {
+			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		}
 	},
 

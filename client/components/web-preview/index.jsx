@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop } from 'lodash';
-import shallowCompare from 'react-addons-shallow-compare';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { setPreviewShowing } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreviewContent from './content';
 
-export class WebPreview extends Component {
+export class WebPreview extends PureComponent {
 	constructor( props ) {
 		super( props );
 
@@ -44,10 +44,6 @@ export class WebPreview extends Component {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 		this.props.setPreviewShowing( this.props.showPreview );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return shallowCompare( this, nextProps, nextState );
 	}
 
 	componentDidUpdate( prevProps ) {

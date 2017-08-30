@@ -85,6 +85,7 @@ const EditorDrawer = React.createClass( {
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -335,6 +336,7 @@ const EditorDrawer = React.createClass( {
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
 					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getZones, isRequestingZones } from '../selectors';
+import { getZone, getZones, isRequestingZones } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -85,7 +85,7 @@ describe( 'selectors', () => {
 	describe( 'getZones()', () => {
 		const primaryZones = {
 			1: {
-				term_id: 1,
+				id: 1,
 				name: 'Foo',
 				description: 'A test zone.',
 			},
@@ -139,6 +139,66 @@ describe( 'selectors', () => {
 			const zones = getZones( state, primarySiteId );
 
 			expect( zones ).to.deep.equal( [ primaryZones[ 1 ] ] );
+		} );
+	} );
+
+	describe( 'getZone()', () => {
+		const primaryZones = {
+			1: {
+				id: 1,
+				name: 'Foo',
+				description: 'A test zone.',
+			},
+		};
+
+		it( 'should return null if no state exists', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: undefined,
+					}
+				}
+			};
+
+			const zone = getZone( state, primarySiteId, 1 );
+
+			expect( zone ).to.be.null;
+		} );
+
+		it( 'should return null if no site is attached', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: {
+							items: {
+								[ primarySiteId ]: primaryZones,
+							}
+						}
+					}
+				}
+			};
+
+			const zone = getZone( state, secondarySiteId, 1 );
+
+			expect( zone ).to.be.null;
+		} );
+
+		it( 'should return the zone for a siteId and zoneId combination', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: {
+							items: {
+								[ primarySiteId ]: primaryZones,
+							}
+						}
+					}
+				}
+			};
+
+			const zone = getZone( state, primarySiteId, 1 );
+
+			expect( zone ).to.deep.equal( primaryZones[ 1 ] );
 		} );
 	} );
 } );

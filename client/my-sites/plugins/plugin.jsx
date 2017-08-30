@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 import { get, includes, uniq, upperFirst } from 'lodash';
 
 /**
@@ -23,6 +22,7 @@ import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginSections from 'my-sites/plugins/plugin-sections';
+import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -144,11 +144,11 @@ const SinglePlugin = React.createClass( {
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' );
 	},
 
-	goBack() {
+	backHref() {
 		if ( this.props.prevPath ) {
-			return page( this.getPreviousListUrl() );
+			return this.getPreviousListUrl();
 		}
-		return page( '/plugins/' + ( this.props.siteUrl || '' ) );
+		return '/plugins/' + ( this.props.siteUrl || '' );
 	},
 
 	displayHeader() {
@@ -156,7 +156,7 @@ const SinglePlugin = React.createClass( {
 		return (
 			<HeaderCake
 				isCompact={ true }
-				onClick={ this.goBack }
+				backHref={ this.backHref() }
 				onBackArrowClick={ recordEvent } />
 		);
 	},
@@ -387,7 +387,11 @@ const SinglePlugin = React.createClass( {
 						}
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions } />
-					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
+					{
+						plugin.wporg
+							? <PluginSections plugin={ plugin } isWpcom={ isWpcom } />
+							: <PluginSectionsCustom plugin={ plugin } />
+					}
 					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
