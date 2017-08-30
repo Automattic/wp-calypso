@@ -2,7 +2,7 @@
  * External dependencies
  */
 import deterministicStringify from 'json-stable-stringify';
-import sha1 from 'js-sha1';
+import sha1 from 'hash.js/lib/hash/sha/1';
 import qs from 'querystring';
 
 /**
@@ -26,9 +26,9 @@ export const generateKey = ( params, applyHash = true ) => {
 	}
 
 	if ( applyHash ) {
-		const hash = sha1.create();
+		const hash = sha1();
 		hash.update( key );
-		key = hash.hex();
+		key = hash.digest( 'hex' );
 	}
 
 	key = SYNC_RECORD_NAMESPACE + key;
