@@ -153,7 +153,8 @@ class Login extends Component {
 					<p>
 						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
 							components: {
-								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />,
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+									target="_blank" rel="noopener noreferrer" />,
 								br: <br />,
 							}
 						} ) }
