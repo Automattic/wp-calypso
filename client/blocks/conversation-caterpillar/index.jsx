@@ -12,40 +12,60 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import { getDateSortedPostComments, getHiddenCommentsForPost } from 'state/comments/selectors';
+import {
+	getPostCommentsTree,
+	getDateSortedPostComments,
+	getHiddenCommentsForPost,
+} from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
+const NUMBER_TO_EXPAND = 10;
 
 class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
+		commentsTree: PropTypes.object.isRequired,
 		comments: PropTypes.array.isRequired,
 		parentCommentId: PropTypes.number,
 	};
 
+	/**
+	 * @param {Object} ancestor potential ancestor comment
+	 * @param {Object} child potential child comment
+	 *
+	 * @returns {boolean} return true if parent is an ancestor of child
+	 */
+	isAncestor = ( ancestor, child ) => {
+		if ( ! ancestor || ! child || ! child.parent ) {
+			return false;
+		}
+
+		const nextParent = get( this.props.commentsTree, [ child.parent.ID, 'data' ] );
+
+		return child.parent.ID === ancestor.ID || this.isAncestor( ancestor, nextParent );
+	};
+
 	getExpandableComments = () => {
-		const { comments, hiddenComments, parentCommentId } = this.props;
+		const { comments, hiddenComments, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
+		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
 
-		const filteredComments = isRoot
+		const childComments = isRoot
 			? comments
-			: filter( comments, c => c.parent && c.parent.ID === parentCommentId );
+			: filter( comments, child => this.isAncestor( parentComment, child ) );
 
-		const commentsToExpand = takeRight(
-			filter( filteredComments, comment => hiddenComments[ comment.ID ] ),
-			10
-		);
+		const commentsToExpand = filter( childComments, comment => hiddenComments[ comment.ID ] );
 
 		return commentsToExpand;
 	};
 
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
-		const commentsToExpand = this.getExpandableComments();
+		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
 
 		this.props.expandComments( {
 			siteId: blogId,
@@ -63,8 +83,9 @@ class ConversationCaterpillarComponent extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const expandableComments = this.getExpandableComments();
-		const commentCount = size( expandableComments );
+		const allExpandableComments = this.getExpandableComments();
+		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
+		const commentCount = size( allExpandableComments );
 
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'ID' );
@@ -144,6 +165,7 @@ const ConnectedConversationCaterpillar = connect(
 		return {
 			comments: getDateSortedPostComments( state, blogId, postId ),
 			hiddenComments: getHiddenCommentsForPost( state, blogId, postId ),
+			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},
 	{ expandComments }
