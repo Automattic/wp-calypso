@@ -8,7 +8,7 @@
   }
 }
 
-.zoninator__search-autocomplete__card {
+.zoninator__search-autocomplete-card {
   padding: 11px 24px 10px;
   min-height: 48px;
 }
@@ -18,10 +18,4 @@
   left: 0;
   top: 52px;
   z-index: 10;
-}
-
-.zoninator__search-autocomplete__text {
-  &.is-emphasized {
-    font-weight: bold;
-  }
 }

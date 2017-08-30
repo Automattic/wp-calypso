@@ -38,7 +38,7 @@ class PostCard extends Component {
 			translate,
 		} = this.props;
 
-		const postCardClass = 'zoninator__zone__list-item';
+		const postCardClass = 'zoninator__zone-list-item';
 
 		return (
 			<SectionHeader label={ title } className={ postCardClass }>
@@ -46,8 +46,7 @@ class PostCard extends Component {
 					compact
 					onMouseDown={ this.handleMouseDown }
 					href={ URL }
-					target="_blank"
-					rel="noopener noreferrer">
+					target="_blank">
 					{ translate( 'View' ) }
 				</Button>
 				<Button

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, noop } from 'lodash';
@@ -17,6 +18,13 @@ import ZoneContentForm from '../../forms/zone-content-form';
 import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
+
+	static propTypes = {
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	}
+
 	render() {
 		const { siteId, siteSlug, translate } = this.props;
 

@@ -16,29 +16,23 @@ import SearchAutocomplete from './../../search-autocomplete';
 
 class PostsList extends Component {
 
-	addPost = ( { push } ) => {
-		return ( post ) => push( post );
-	}
+	addPost = ( { push } ) => post => push( post );
 
-	removePost = ( { remove }, index ) => {
-		return () => remove( index );
-	}
+	removePost = ( { remove }, index ) => () => remove( index );
 
-	changePostOrder = ( { move } ) => {
-		return ( newOrder ) => {
-			if ( newOrder.length < 2 ) {
-				return;
-			}
+	changePostOrder = ( { move } ) => newOrder => {
+		if ( newOrder.length < 2 ) {
+			return;
+		}
 
-			// This loop attempts to find to which index in the array has been moved
-			// by making the following assumptions:
-			// Moved forward: newIndex < index.
-			// Moved backward by less than one position: same as moving the next item forward.
-			// Moved backward by more than one position: newIndex > index + 1.
-			const from = findIndex( newOrder, ( newIndex, index ) => newIndex < index || newIndex > index + 1 );
+		// This loop attempts to find to which index in the array has been moved
+		// by making the following assumptions:
+		// Moved forward: newIndex < index.
+		// Moved backward by less than one position: same as moving the next item forward.
+		// Moved backward by more than one position: newIndex > index + 1.
+		const from = findIndex( newOrder, ( newIndex, index ) => newIndex < index || newIndex > index + 1 );
 
-			move( from, newOrder[ from ] );
-		};
+		move( from, newOrder[ from ] );
 	}
 
 	render() {
@@ -46,7 +40,7 @@ class PostsList extends Component {
 		const posts = fields.getAll() || [];
 		const showPosts = posts.length > 0;
 
-		const explanationTextClass = 'zoninator__zone__text';
+		const explanationTextClass = 'zoninator__zone-text';
 
 		return (
 			<div>

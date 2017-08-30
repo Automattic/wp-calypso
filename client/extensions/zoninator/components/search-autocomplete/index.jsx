@@ -59,7 +59,7 @@ class SearchAutocomplete extends Component {
 		const searchAutocompleteClass = classNames( 'zoninator__search-autocomplete', {
 			'has-highlight': this.state.searchIsOpen,
 		} );
-		const cardClass = 'zoninator__search-autocomplete__card';
+		const cardClass = 'zoninator__search-autocomplete-card';
 
 		return (
 			<div className={ searchAutocompleteClass }>

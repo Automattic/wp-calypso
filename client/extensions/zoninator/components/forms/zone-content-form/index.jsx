@@ -32,13 +32,14 @@ class ZoneContentForm extends PureComponent {
 	render() {
 		const {
 			handleSubmit,
+			label,
 			submitting,
 			translate,
 		} = this.props;
 
 		return (
 			<form onSubmit={ handleSubmit( this.save ) }>
-				<SectionHeader label={ translate( 'Zone content' ) }>
+				<SectionHeader label={ label }>
 					<FormButton
 						compact
 						disabled={ submitting }>
