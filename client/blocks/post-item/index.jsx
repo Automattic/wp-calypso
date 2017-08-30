@@ -20,7 +20,7 @@ import { areAllSitesSingleUser } from 'state/selectors';
 import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel } from 'state/ui/post-type-list/actions';
 import Card from 'components/card';
-import PostRelativeTime from 'blocks/post-relative-time';
+import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
@@ -216,7 +216,7 @@ class PostItem extends React.Component {
 								</a>
 							</h1>
 							<div className="post-item__meta">
-								<PostRelativeTime globalId={ globalId } />
+								<PostTime globalId={ globalId } />
 								<PostStatus globalId={ globalId } />
 							</div>
 						</div>

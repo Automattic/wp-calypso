@@ -9,17 +9,17 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { PostRelativeTime } from 'blocks/post-relative-time';
+import { PostTime } from 'blocks/post-time';
 
-describe( 'PostRelativeTime', () => {
+describe( 'PostTime', () => {
 	it( 'should contain a time gridicon', () => {
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				moment={ moment }
 			/>
 		);
 
-		const icon = wrapper.find( '.post-relative-time__icon' );
+		const icon = wrapper.find( '.post-time__icon' );
 		expect( icon.props().icon ).to.be.equal( 'time' );
 		expect( icon.props().size ).to.be.equal( 18 );
 	} );
@@ -28,13 +28,13 @@ describe( 'PostRelativeTime', () => {
 		const post = null;
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
+		const text = wrapper.find( '.post-time__text' ).text();
 		expect( text ).to.equal( 'a few seconds ago' );
 	} );
 
@@ -46,13 +46,13 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
+		const text = wrapper.find( '.post-time__text' ).text();
 		expect( text ).to.equal( moment( post.modified ).fromNow() );
 	} );
 
@@ -64,13 +64,13 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
+		const text = wrapper.find( '.post-time__text' ).text();
 		expect( text ).to.equal( moment( post.modified ).fromNow() );
 	} );
 
@@ -82,13 +82,13 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
+		const text = wrapper.find( '.post-time__text' ).text();
 		expect( text ).to.equal( moment( post.date ).fromNow() );
 	} );
 
@@ -96,7 +96,7 @@ describe( 'PostRelativeTime', () => {
 		const post = null;
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>

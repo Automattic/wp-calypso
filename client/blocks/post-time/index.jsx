@@ -13,14 +13,14 @@ import Gridicon from 'gridicons';
  */
 import { getNormalizedPost } from 'state/posts/selectors';
 
-export function PostRelativeTime( { moment, post } ) {
+export function PostTime( { moment, post } ) {
 	let time;
 	if ( post ) {
 		const { status, modified, date } = post;
 		time = includes( [ 'draft', 'pending' ], status ) ? modified : date;
 	}
 
-	const classes = classNames( 'post-relative-time', {
+	const classes = classNames( 'post-time', {
 		'is-placeholder': ! post
 	} );
 
@@ -29,15 +29,15 @@ export function PostRelativeTime( { moment, post } ) {
 			<Gridicon
 				icon="time"
 				size={ 18 }
-				className="post-relative-time__icon" />
-			<span className="post-relative-time__text">
+				className="post-time__icon" />
+			<span className="post-time__text">
 				{ moment( time ).fromNow() }
 			</span>
 		</span>
 	);
 }
 
-PostRelativeTime.propTypes = {
+PostTime.propTypes = {
 	globalId: PropTypes.string,
 	moment: PropTypes.func,
 	post: PropTypes.object
@@ -47,4 +47,4 @@ export default connect( ( state, { globalId } ) => {
 	return {
 		post: getNormalizedPost( state, globalId )
 	};
-} )( localize( PostRelativeTime ) );
+} )( localize( PostTime ) );

@@ -44,8 +44,8 @@ import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
-import PostRelativeTime from 'blocks/post-relative-time/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
+import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
@@ -144,8 +144,8 @@ export default React.createClass( {
 					<DomainTip />
 					<RelatedPostCardv2 />
 					<PostItem />
-					<PostRelativeTime />
 					<PostStatus />
+					<PostTime />
 					<ReaderAuthorLink />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink />
