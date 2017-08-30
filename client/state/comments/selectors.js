@@ -25,7 +25,7 @@ export const getDateSortedPostComments = createSelector(
 		const comments = getPostCommentItems( state, siteId, postId );
 		return sortBy( comments, comment => new Date( comment.date ) );
 	},
-	state => [ state.comments.items ]
+	( state ) => [ state.comments.items ]
 );
 
 export const getCommentById = createSelector(
