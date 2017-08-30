@@ -129,11 +129,10 @@
 	}
 
 	.button.is-primary {
-		background: #a46497;
+		background-color: #a46497;
 		border-radius: 100px;
 		border: none;
 		color: #fff;
-		cursor: pointer;
 		font-size: 1.1em;
 		padding: 15px 50px;
 		text-decoration: none;
@@ -143,12 +142,25 @@
 		&:focus {
 			background: #696969;
 		}
+
+		&:disabled {
+			background-color: #DDDDDD;
+		}
 	}
 
-	button {
-		float: none;
-		margin-left: 0;
-		max-width: 300px;
+	.login__form,
+	.login__form-social,
+	.logged-out-form {
+		.button {
+			max-width: 300px;
+		}
+	}
+
+	.login__form {
+		.button {
+			float: none;
+			margin: 0;
+		}
 	}
 
 	input[type='text'],
@@ -160,16 +172,16 @@
 		border-radius: 3px;
 		box-sizing: border-box;
 		color: #666;
-		font-size: 1.25em !important;
-		line-height: 1.563 !important;
-		padding: 0.7em !important;
-		transition: all ease-in-out 0.2;
+		font-size: 1.25em;
+		line-height: 1.563;
+		padding: 0.7em;
+		transition: all ease-in-out 0.2s;
 		width: 100%;
 
-		&:focus {
+		&:focus, &.is-error:hover {
 			border: 1px solid #e6e6e6;
-			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8) !important;
-			outline: 0 !important;
+			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			outline: 0;
 		}
 	}
 
@@ -220,6 +232,7 @@
 
 	.step-wrapper {
 		margin-bottom: 50px;
+		width: 778px;
 	}
 
 	.logged-out-form {
@@ -265,14 +278,28 @@
 		text-align: center;
 	}
 
-	/* Signup styles */
-	.signup__step {
-		background: #e6e6e6;
-	}
-
 	.logged-out-form__footer {
 		background: none;
 		border: none;
 		text-align: center;
+	}
+
+	.logged-out-form__links {
+		text-align: center;
+	}
+
+	// Signup styles
+	.signup__step {
+		background: linear-gradient( to bottom, #e6e6e6, transparent );
+	}
+
+	.signup-processing__content:after {
+		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
+		content: '';
+		height: 100px;
+		left: 50%;
+		position: absolute;
+		top: 33px;
+		width: 69px;
 	}
 }
