@@ -18,6 +18,7 @@ import {
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -214,3 +215,8 @@ export function editComment( siteId, postId, commentId, content ) {
 			);
 	};
 }
+
+export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
+	type: READER_EXPAND_COMMENTS,
+	payload: { siteId, commentIds, postId, displayType },
+} );
