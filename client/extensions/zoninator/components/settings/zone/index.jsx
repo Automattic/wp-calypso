@@ -17,11 +17,6 @@ import ZoneContentForm from '../../forms/zone-content-form';
 import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
-
-	onFormSubmit = ( event ) => {
-		event.preventDefault();
-	}
-
 	render() {
 		const { siteId, siteSlug, translate } = this.props;
 
