@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,85 +9,68 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	handleActivityLogRequest,
-	receiveActivityLogError,
-	receiveActivityLog,
-} from '..';
-import {
-	activityLogError,
-	activityLogRequest,
-	activityLogUpdate,
-} from 'state/activity-log/actions';
+import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
+import { activityLogError, activityLogRequest } from 'state/activity-log/actions';
 
 const SITE_ID = 77203074;
 
 const SUCCESS_RESPONSE = deepFreeze( {
-	activities: [
+	'@context': 'https://www.w3.org/ns/activitystreams',
+	orderedItems: [
 		{
-			ts_site: 1496692768557,
-			type: 'jetpack-audit',
-			action_trigger: 'publicize_save_published_action',
-			lag: 0,
-			jetpack_version: '5.0-alpha',
-			ts_utc: 1496692768557,
-			action: 'publicized',
-			es_retention: 'long',
-			group: 'post',
-			blog_id: 77203074,
-			hdfs_retention: 'long',
+			summary: 'Jane Doe updated post I wrote a new post!',
+			name: 'post__updated',
 			actor: {
-				displayname: 'User',
-				external_id: 1,
-				login: 'user'
+				type: 'Person',
+				name: 'Jane Doe',
+				role: 'administrator',
+				external_user_id: 1,
+				wpcom_user_id: 12345,
+				icon: {
+					type: 'Image',
+					url: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+					width: 96,
+					height: 96,
+				},
 			},
-			ts_sent_action: 1496692768557,
-			name: 'post__publicized',
-			site_id: 2,
-			error_code: '',
-			ts_recieved_action: 1496692768557
+			type: 'Updated',
+			object: {
+				type: 'Article',
+				name: 'I wrote a new post!',
+				object_id: 100,
+				object_type: 'post',
+				object_status: 'publish',
+			},
+			published: '2014-09-14T00:30:00+02:00',
+			generator: {
+				jetpack_version: 5.3,
+				blog_id: 123456,
+			},
+			gridicon: 'posts',
+			activity_id: 'foobarbaz',
 		},
 	],
-	found: 1,
+	summary: 'Activity log',
+	totalItems: 1,
+	type: 'OrderedCollection',
 } );
 
 const ERROR_RESPONSE = deepFreeze( {
 	error: 'unknown_blog',
-	message: 'Unknown blog'
+	message: 'Unknown blog',
 } );
 
 describe( 'receiveActivityLog', () => {
 	it( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWithMatch(
-			activityLogUpdate( SITE_ID, [
-				{
-					ts_site: 1496692768557,
-					type: 'jetpack-audit',
-					action_trigger: 'publicize_save_published_action',
-					lag: 0,
-					jetpack_version: '5.0-alpha',
-					ts_utc: 1496692768557,
-					action: 'publicized',
-					es_retention: 'long',
-					group: 'post',
-					blog_id: 77203074,
-					hdfs_retention: 'long',
-					actor: {
-						displayname: 'User',
-						external_id: 1,
-						login: 'user'
-					},
-					ts_sent_action: 1496692768557,
-					name: 'post__publicized',
-					site_id: 2,
-					error_code: '',
-					ts_recieved_action: 1496692768557
-				},
-			] )
-		);
+		expect( dispatch ).to.have.been.called.once;
+		expect( dispatch.args[ 0 ][ 0 ] ).to.be
+			.an( 'object' )
+			.that.has.keys( [ 'type', 'siteId', 'data' ] )
+			.that.has.property( 'type', ACTIVITY_LOG_UPDATE );
 	} );
 } );
 
@@ -97,7 +81,7 @@ describe( 'receiveActivityLogError', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			activityLogError( SITE_ID, {
 				error: 'unknown_blog',
-				message: 'Unknown blog'
+				message: 'Unknown blog',
 			} )
 		);
 	} );
@@ -111,12 +95,17 @@ describe( 'handleActivityLogRequest', () => {
 		handleActivityLogRequest( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1',
-			method: 'GET',
-			path: `/sites/${ SITE_ID }/activity`,
-			query: {},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {},
+				},
+				action
+			)
+		);
 	} );
 
 	it( 'should dispatch HTTP action with provided parameters', () => {
@@ -132,17 +121,48 @@ describe( 'handleActivityLogRequest', () => {
 		handleActivityLogRequest( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1',
-			method: 'GET',
-			path: `/sites/${ SITE_ID }/activity`,
-			query: {
-				date_end: 1500300000000,
-				date_start: 1500000000000,
-				group: 'post',
-				name: 'post__published',
-				number: 10,
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {
+						date_end: 1500300000000,
+						date_start: 1500000000000,
+						group: 'post',
+						name: 'post__published',
+						number: 10,
+					},
+				},
+				action
+			)
+		);
+	} );
+
+	it( 'should handle camelCase parameters', () => {
+		const action = activityLogRequest( SITE_ID, {
+			dateEnd: 1500300000000,
+			dateStart: 1500000000000,
+		} );
+		const dispatch = sinon.spy();
+
+		handleActivityLogRequest( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {
+						date_end: 1500300000000,
+						date_start: 1500000000000,
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
