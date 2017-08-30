@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { reduxForm } from 'redux-form';
+import { FieldArray, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -12,14 +12,12 @@ import { flowRight } from 'lodash';
  */
 import CompactCard from 'components/card';
 import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import ReduxFormFieldset from 'components/redux-forms/redux-form-fieldset';
 import SectionHeader from 'components/section-header';
+import PostsList from './posts-list';
 
-const form = 'extensions.zoninator.zoneDetails';
+const form = 'extensions.zoninator.zoneContent';
 
-class ZoneDetailsForm extends PureComponent {
+class ZoneContentForm extends PureComponent {
 	static propTypes = {
 		handleSubmit: PropTypes.func.isRequired,
 		label: PropTypes.string.isRequired,
@@ -44,40 +42,24 @@ class ZoneDetailsForm extends PureComponent {
 				<SectionHeader label={ label }>
 					<FormButton
 						compact
-						disabled={ submitting }
-						isSubmitting={ submitting }>
+						disabled={ submitting }>
 						{ translate( 'Save' ) }
 					</FormButton>
 				</SectionHeader>
 				<CompactCard>
-					<ReduxFormFieldset
-						name="name"
-						label={ translate( 'Zone name' ) }
-						component={ FormTextInput } />
-					<ReduxFormFieldset
-						name="description"
-						label={ translate( 'Zone description' ) }
-						component={ FormTextarea } />
+					<FieldArray
+						rerenderOnEveryChange
+						name="posts"
+						component={ PostsList } />
 				</CompactCard>
 			</form>
 		);
 	}
 }
 
-const createReduxForm = reduxForm( {
-	form,
-	validate: ( data, { translate } ) => {
-		const errors = {};
-
-		if ( ! data.name ) {
-			errors.name = translate( 'Zone name cannot be empty.' );
-		}
-
-		return errors;
-	},
-} );
+const createReduxForm = reduxForm( { form } );
 
 export default flowRight(
 	localize,
 	createReduxForm,
-)( ZoneDetailsForm );
+)( ZoneContentForm );
