@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 import page from 'page';
 
 /**
@@ -39,7 +41,7 @@ const user = userFactory();
 class HandleEmailedLinkForm extends React.Component {
 	static propTypes = {
 		// Passed props
-		clientId: PropTypes.string.isRequired,
+		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
 		tokenTime: PropTypes.string.isRequired,
@@ -62,9 +64,22 @@ class HandleEmailedLinkForm extends React.Component {
 		showMagicLoginLinkExpiredPage: PropTypes.func.isRequired,
 	};
 
-	state = {
-		hasSubmitted: false,
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			hasSubmitted: false,
+		};
+
+		if (
+			isEmpty( props.emailAddress ) ||
+			isEmpty( props.token ) ||
+			isEmpty( props.tokenTime )
+		) {
+			// Required props are really required :)
+			this.props.showMagicLoginLinkExpiredPage();
+		}
+	}
 
 	handleSubmit = ( event ) => {
 		event.preventDefault();

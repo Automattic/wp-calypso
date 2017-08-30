@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { parse as parseUrl } from 'url';
+import page from 'page';
 import qs from 'qs';
 
 /**
@@ -76,12 +77,23 @@ export default {
 	},
 
 	magicLoginUse( context, next ) {
+		/**
+		 * Pull the query arguments out of the URL & into the state.
+		 * It unclutters the address bar & will keep tokens out of tracking pixels.
+		 */
+		if ( context.querystring ) {
+			page.replace( '/log-in/link/use', context.query );
+			return;
+		}
+
+		const magicLoginData = context.state || {};
+
 		const {
 			client_id,
 			email,
 			token,
 			tt,
-		} = context.query;
+		} = magicLoginData;
 
 		context.primary = (
 			<HandleEmailedLinkForm
