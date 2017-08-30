@@ -21,7 +21,6 @@ import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import ListEnd from 'components/list-end';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
@@ -275,14 +274,11 @@ class ActivityLog extends Component {
 				/>
 		);
 
-		// FIXME: Prefer not to return an array. Fix when background line issue is fixed:
-		// https://github.com/Automattic/wp-calypso/issues/17065
-		return [
+		return (
 			<section className="activity-log__wrapper" key="logs">
 				{ logsGroupedByDay }
-			</section>,
-			<ListEnd key="end-marker" />,
-		];
+			</section>
+		);
 	}
 
 	renderMonthNavigation( position ) {
