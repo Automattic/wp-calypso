@@ -145,6 +145,28 @@ class StoreSidebar extends Component {
 		);
 	}
 
+	promotions = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/promotions' + siteSuffix;
+
+		const selected = this.isItemLinkSelected( [ link ] );
+		const classes = classNames( {
+			promotions: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Promotions' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
 	settings = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/settings' + siteSuffix;
@@ -183,6 +205,7 @@ class StoreSidebar extends Component {
 						{ this.dashboard() }
 						{ showAllSidebarItems && this.products() }
 						{ showAllSidebarItems && this.orders() }
+						{ showAllSidebarItems && this.promotions() }
 						{ showAllSidebarItems && <SidebarSeparator /> }
 						{ showAllSidebarItems && this.settings() }
 					</ul>
