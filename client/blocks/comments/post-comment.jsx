@@ -27,6 +27,7 @@ import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
+import Emojify from 'components/emojify';
 
 // values conveniently also correspond to css classNames to apply
 export const POST_COMMENT_DISPLAY_TYPES = {
@@ -189,10 +190,14 @@ class PostComment extends Component {
 					onClick={ this.handleAuthorClick }
 					id={ `comment-${ commentId }` }
 				>
-					{ authorName }
+					<Emojify>
+						{ authorName }
+					</Emojify>
 				</a>
 			: <strong className={ className } id={ `comment-${ commentId }` }>
-					{ authorName }
+					<Emojify>
+						{ authorName }
+					</Emojify>
 				</strong>;
 	};
 
