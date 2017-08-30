@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defaults, get, noop } from 'lodash';
+import { defaults, get, map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -34,7 +34,7 @@ const emptyValues = {
 };
 
 function renderValidationError( message ) {
-	return <FormInputValidation	isError	text={ message } />;
+	return <FormInputValidation isError key={ message } text={ message } />;
 }
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
@@ -137,8 +137,16 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				translate( 'The SIREN/SIRET field must be either a ' +
 					'9 digit SIREN number, or a 14 digit SIRET number' ) );
 
-		const trademarkNumberValidationMessage = validationErrors.trademarkNumber &&
-			renderValidationError( translate( 'An EU Trademark number is a 9 digit number, like 012345678' ) );
+		const trademarkNumberValidationMessages = {
+			'has longer length than allowed': this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
+			'has less length than allowed': this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
+			'pattern mismatch': this.props.translate( 'Digits only. An EU Trademark number is a 9 digit number, like 012345678' ),
+		};
+
+		const trademarkNumberValidationMessage = map(
+			validationErrors.trademarkNumber,
+			( error ) => renderValidationError( trademarkNumberValidationMessages[ error ] )
+		);
 
 		return (
 			<div>

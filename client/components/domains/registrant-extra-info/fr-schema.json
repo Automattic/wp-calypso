@@ -24,7 +24,8 @@
 				},
 				"trademarkNumber": {
 					"minLength": 9,
-					"maxLength": 9
+					"maxLength": 9,
+					"pattern": "^[0-9]*$"
 				}
 			}
 		}
