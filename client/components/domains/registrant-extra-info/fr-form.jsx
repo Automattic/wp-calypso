@@ -126,13 +126,15 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		} = defaults( {}, contactDetails.extra, emptyValues );
 
 		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
-		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
+		const registrantVatIdValidationMessage = registrantVatId &&
+			validationErrors.registrantVatId &&
 			renderValidationError(
 				translate( 'The VAT Number field is a pattern ' +
 					'of letters and numbers that depends on the country, ' +
 					'but it always includes a 2 letter country code' ) );
 
-		const sirenSiretValidationMessage = validationErrors.sirenSiret &&
+		const sirenSiretValidationMessage = sirenSiret &&
+			validationErrors.sirenSiret &&
 			renderValidationError(
 				translate( 'The SIREN/SIRET field must be either a ' +
 					'9 digit SIREN number, or a 14 digit SIRET number' ) );
