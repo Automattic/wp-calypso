@@ -73,13 +73,13 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		return translate( 'e.g. %(domain)s', { args: { domain } } );
 	}
 
-	possiblyRenderMoreSettings = () => {
-		const { method, translate } = this.props;
+	renderMoreSettings = () => {
+		const { method, onEditField, translate } = this.props;
 
 		return (
 			<div>
 				<AuthCaptureToggle
-					isAuthOnlyMode={ 'yes' === method.settings.capture.value }
+					isAuthOnlyMode={ 'no' === method.settings.capture.value }
 					onSelectAuthOnly={ this.onSelectAuthOnly }
 					onSelectCapture={ this.onSelectCapture }
 				/>
@@ -89,7 +89,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 					</FormLabel>
 					<FormTextInput
 						name="statement_descriptor"
-						onChange={ this.onEditFieldHandler }
+						onChange={ onEditField }
 						value={ method.settings.statement_descriptor.value }
 						placeholder={ this.getStatementDescriptorPlaceholder() } />
 					<FormSettingExplanation>
@@ -103,7 +103,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
 						name="apple_pay"
-						onChange={ this.onEditFieldHandler } />
+						onChange={ onEditField } />
 					<span>
 						{ translate(
 							'By using Apple Pay you agree to Stripe and ' +
@@ -115,24 +115,28 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		);
 	}
 
-	onConnect = () => {
-		// Not yet implemented
-	}
-
 	getButtons = () => {
-		const { onCancel, onDone, translate } = this.props;
+		const { onCancel, onDone, stripeConnectAccount, translate } = this.props;
 
 		const buttons = [];
 
-		// We always give the user a Cancel button
-		buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
+		if ( stripeConnectAccount.isActivated ) {
+			buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
 
-		buttons.push( {
-			action: 'save',
-			label: translate( 'Done' ),
-			onClick: onDone,
-			isPrimary: true
-		} );
+			buttons.push( {
+				action: 'save',
+				label: translate( 'Done' ),
+				onClick: onDone,
+				isPrimary: true
+			} );
+		} else {
+			buttons.push( {
+				action: 'cancel',
+				label: translate( 'Close' ),
+				onClick: onCancel,
+				isPrimary: true
+			} );
+		}
 
 		return buttons;
 	}
@@ -151,7 +155,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 				<StripeConnectAccount
 					stripeConnectAccount={ stripeConnectAccount }
 				/>
-				{ this.renderMoreSettings() }
+			{ stripeConnectAccount.isActivated && this.renderMoreSettings() }
 			</Dialog>
 		);
 	}

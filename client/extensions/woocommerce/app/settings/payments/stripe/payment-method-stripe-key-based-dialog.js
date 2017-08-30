@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { isEmpty, isString, pick, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -16,14 +15,13 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { hasStripeValidCredentials } from './payment-method-stripe-utils.js';
+import { hasStripeKeyPairForMode } from './payment-method-stripe-utils.js';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
 class PaymentMethodStripeKeyBasedDialog extends Component {
 
 	static propTypes = {
-		highlightEmptyRequiredFields: PropTypes.bool,
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
 				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
@@ -47,32 +45,9 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			hadKeysAtStart: this.hasKeys( props ),
-			missingFieldsNotice: false,
+			hadKeysAtStart: hasStripeKeyPairForMode( props.method ),
+			highlightEmptyRequiredFields: false,
 		};
-	}
-
-	hasNonTrivialStringValue = ( prop ) => {
-		if ( ! ( 'value' in prop ) ) {
-			return false;
-		}
-		if ( ! isString( prop.value ) ) {
-			return false;
-		}
-		return ( ! isEmpty( prop.value.trim() ) );
-	}
-
-	hasKeys = ( props ) => {
-		if ( ! props ) {
-			props = this.props;
-		}
-
-		const apiKeyList = [ 'publishable_key', 'secret_key', 'test_publishable_key', 'test_secret_key' ];
-		if ( some( pick( this.props.method.settings, apiKeyList ), prop => this.hasNonTrivialStringValue( prop ) ) ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	renderHeading = () => {
@@ -177,7 +152,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		return (
 			<div>
 				<AuthCaptureToggle
-					isAuthOnlyMode={ 'yes' === method.settings.capture.value }
+					isAuthOnlyMode={ 'no' === method.settings.capture.value }
 					onSelectAuthOnly={ this.onSelectAuthOnly }
 					onSelectCapture={ this.onSelectCapture }
 				/>
@@ -214,7 +189,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 	}
 
 	onDone = ( e ) => {
-		if ( hasStripeValidCredentials( this.props.method ) ) {
+		if ( hasStripeKeyPairForMode( this.props.method ) ) {
 			this.props.onDone( e );
 		} else {
 			this.setState( { highlightEmptyRequiredFields: true } );
@@ -239,7 +214,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 
 		buttons.push( {
 			action: 'save',
-			disabled: ! hasStripeValidCredentials( method ),
+			disabled: ! hasStripeKeyPairForMode( method ),
 			label: translate( 'Done' ),
 			onClick: this.onDone,
 			isPrimary: true

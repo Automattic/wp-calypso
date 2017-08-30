@@ -31,11 +31,11 @@ class StripeConnectAccount extends Component {
 		let image = null;
 
 		if ( ! isEmpty( logo ) ) {
-			image = <Image src={ resizeImageUrl( logo, { w: 40, h: 40 } ) } className="stripe__stripe-connect-account-logo" />;
+			image = <Image src={ resizeImageUrl( logo, { w: 40, h: 40 } ) } className="stripe__connect-account-logo" />;
 		}
 
 		return (
-			<div className="stripe__stripe-connect-account-logo-container">
+			<div className="stripe__connect-account-logo-container">
 				{ image }
 			</div>
 		);

@@ -23,7 +23,7 @@ import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import { hasStripeValidCredentials } from './stripe/payment-method-stripe-utils.js';
+import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
@@ -159,7 +159,7 @@ class PaymentMethodItem extends Component {
 		const { translate } = this.props;
 		let showEnableField = true;
 		if ( method.id === 'stripe' ) {
-			showEnableField = hasStripeValidCredentials( method );
+			showEnableField = hasStripeKeyPairForMode( method );
 		}
 
 		return showEnableField &&
@@ -177,7 +177,7 @@ class PaymentMethodItem extends Component {
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
-		if ( method.id === 'stripe' && hasStripeValidCredentials( method ) ) {
+		if ( method.id === 'stripe' && hasStripeKeyPairForMode( method ) ) {
 			editButtonText = translate( 'Manage' );
 		}
 		if ( currentlyEditingId === method.id ) {

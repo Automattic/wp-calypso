@@ -6,21 +6,24 @@
 	}
 
 	.stripe__connect-account-body {
+		background: $gray-light;
 		display: flex;
 		margin-bottom: 16px;
+		padding: 12px;
 
 		.stripe__connect-account-logo-container {
 			align-items: center;
-			border: 1px solid $gray-light;
+			background: $white;
+			border: 1px solid lighten( $gray, 20% );
 			display: flex;
-			height: 42px;
+			height: 46px;
 			justify-content: center;
 			margin-right: 12px;
-			width: 42px;
+			width: 46px;
 
 			.stripe__connect-account-logo {
-				max-height: 40px;
-				max-width: 40px;
+				max-height: 36px;
+				max-width: 36px;
 			}
 		}
 
@@ -29,7 +32,9 @@
 			flex-direction: column;
 
 			.stripe__connect-account-name {
+				font-size: 14px;
 				font-weight: 400;
+				margin-bottom: 1px;
 				margin-right: 4px;
 			}
 
@@ -40,28 +45,16 @@
 			.stripe__connect-account-status {
 				border-radius: 3px;
 				color: $white;
-				font-size: 11px;
-				font-weight: 200;
-				margin-right: 10px;
-				padding: 4px 10px 4px 6px;
+				font-size: 12px;
+				margin-right: 8px;
+				padding: 3px 8px;
 
 				&.account-activated {
 					background-color: $alert-green;
-					&:before {
-						@include noticon( '\f418', 16px );
-						vertical-align: bottom;
-						padding-bottom: 2px;
-					}
 				}
 
 				&.account-not-activated {
 					background-color: $alert-yellow;
-					&:before {
-						@include noticon( '\f414', 14px );
-						vertical-align: bottom;
-						padding-bottom: 2px;
-						padding-right: 2px;
-					}
 				}
 			}
 

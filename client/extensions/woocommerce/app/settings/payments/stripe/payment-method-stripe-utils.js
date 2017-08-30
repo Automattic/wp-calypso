@@ -1,4 +1,4 @@
-export function hasStripeValidCredentials( method ) {
+export function hasStripeKeyPairForMode( method ) {
 	const { settings } = method;
 	const isLiveMode = method.settings.testmode.value !== 'yes';
 	if ( isLiveMode ) {

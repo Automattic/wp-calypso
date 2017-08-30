@@ -3,14 +3,13 @@
  */
 import config from 'config';
 import React, { Component } from 'react';
-import { isEmpty, isString, pick, some } from 'lodash';
+import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import { hasStripeValidCredentials } from './stripe/payment-method-stripe-utils.js';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
 import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
@@ -46,7 +45,7 @@ class PaymentMethodStripe extends Component {
 	};
 
 	////////////////////////////////////////////////////////////////////////////
-	// Temporary - will be removed in subsequent PR
+	// TODO - temporary to facilitate testing - will be removed in a subsequent PR
 	static defaultProps = {
 		stripeConnectAccount: {
 			connectedUserID: '', // e.g. acct_14qyt6Alijdnw0EA
@@ -59,12 +58,12 @@ class PaymentMethodStripe extends Component {
 		}
 	};
 
-	////////////////////////////////////////////////////////////////////////////
-	// Lifecycle sorcery
 	constructor( props ) {
 		super( props );
 		this.state = {
-			highlightEmptyRequiredFields: false,
+			hadKeysAtStart: hasStripeKeyPairForMode( props.method ),
+			userRequestedConnectFlow: false,
+			userRequestedKeyFlow: false,
 		};
 	}
 
@@ -83,29 +82,6 @@ class PaymentMethodStripe extends Component {
 		this.props.onEditField( e.target.name, e.target.value );
 	}
 
-	hasNonTrivialStringValue = ( prop ) => {
-		if ( ! ( 'value' in prop ) ) {
-			return false;
-		}
-		if ( ! isString( prop.value ) ) {
-			return false;
-		}
-		return ( ! isEmpty( prop.value.trim() ) );
-	}
-
-	hasKeys = ( props ) => {
-		if ( ! props ) {
-			props = this.props;
-		}
-
-		const apiKeyList = [ 'publishable_key', 'secret_key', 'test_publishable_key', 'test_secret_key' ];
-		if ( some( pick( this.props.method.settings, apiKeyList ), prop => this.hasNonTrivialStringValue( prop ) ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
 	////////////////////////////////////////////////////////////////////////////
 	// Dialog action button methods, including the links that let the user force a flow
 
@@ -121,14 +97,6 @@ class PaymentMethodStripe extends Component {
 		);
 	}
 
-	onDone = ( e ) => {
-		if ( hasStripeValidCredentials( this.props.method ) ) {
-			this.props.onDone( e );
-		} else {
-			this.setState( { missingFieldsNotice: true } );
-		}
-	}
-
 	////////////////////////////////////////////////////////////////////////////
 	// And render brings it all together
 
@@ -141,6 +109,12 @@ class PaymentMethodStripe extends Component {
 		let dialog = 'key-based';
 
 		if ( connectFlowsEnabled ) {
+			// No keys at start and user hasn't asked for key flow explicitly?
+			// Give them the stripe connect setup flow
+			if ( ! this.state.hadKeysAtStart && ! this.state.userRequestedKeyFlow ) {
+				dialog = 'setup';
+			}
+
 			// If the user has requested connect flow, show that setup dialog
 			// (and allow them to request key flow instead)
 			if ( this.state.userRequestedConnectFlow ) {
@@ -177,7 +151,6 @@ class PaymentMethodStripe extends Component {
 		// Key-based dialog by default
 		return (
 			<PaymentMethodStripeKeyBasedDialog
-				highlightEmptyRequiredFields={ this.state.highlightEmptyRequiredFields }
 				method={ method }
 				onCancel={ onCancel }
 				onDone={ onDone }
