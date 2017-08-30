@@ -142,7 +142,8 @@ class Login extends Component {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
 					clientTitle: oauth2Client.title
-				}
+				},
+				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
 			} );
 			if ( oauth2Client.name === 'woo' ) {
 				preHeader = (
