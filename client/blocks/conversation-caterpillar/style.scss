@@ -2,7 +2,7 @@
 	cursor: pointer;
 	display: flex;
 	padding: 0px;
-	padding-top: 10px;
+	padding-top: 20px;
 	box-shadow: none;
 }
 
@@ -52,7 +52,7 @@
 	vertical-align: middle;
 
 	&:first-child {
-		margin-left: 0;
+		margin-left: -2px;
 	}
 
 	&.is-hidden-on-small-screens {
