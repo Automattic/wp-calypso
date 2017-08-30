@@ -1,26 +1,12 @@
-.post-time.is-placeholder {
-	@include placeholder;
-}
-
-.post-time,
-.post-time__icon,
-.post-time__text {
+.post-time {
 	display: inline-block;
-}
-
-.post-time__icon {
-	margin-right: 8px;
-}
-
-.post-time__icon,
-.post-time__text {
-	vertical-align: middle;
-}
-
-.post-time__text {
 	line-height: 1;
 
 	&::first-letter {
 		text-transform: capitalize;
+	}
+
+	&.is-placeholder {
+		@include placeholder;
 	}
 }

@@ -41,13 +41,7 @@ export function PostTime( { moment, post } ) {
 
 	return (
 		<span className={ classes }>
-			<Gridicon
-				icon="time"
-				size={ 18 }
-				className="post-time__icon" />
-			<span className="post-time__text">
-				{ timeDisplay }
-			</span>
+			{ timeDisplay }
 		</span>
 	);
 }

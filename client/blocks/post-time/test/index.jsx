@@ -12,18 +12,6 @@ import moment from 'moment';
 import { PostTime } from 'blocks/post-time';
 
 describe( 'PostTime', () => {
-	it( 'should contain a time gridicon', () => {
-		const wrapper = shallow(
-			<PostTime
-				moment={ moment }
-			/>
-		);
-
-		const icon = wrapper.find( '.post-time__icon' );
-		expect( icon.props().icon ).to.be.equal( 'time' );
-		expect( icon.props().size ).to.be.equal( 18 );
-	} );
-
 	it( 'should display a recent time if there is no post', () => {
 		const post = null;
 
@@ -34,7 +22,7 @@ describe( 'PostTime', () => {
 			/>
 		);
 
-		const text = wrapper.find( '.post-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( 'a few seconds ago' );
 	} );
 
@@ -52,7 +40,7 @@ describe( 'PostTime', () => {
 			/>
 		);
 
-		const text = wrapper.find( '.post-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
@@ -70,7 +58,7 @@ describe( 'PostTime', () => {
 			/>
 		);
 
-		const text = wrapper.find( '.post-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
@@ -88,7 +76,7 @@ describe( 'PostTime', () => {
 			/>
 		);
 
-		const text = wrapper.find( '.post-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( moment( post.date ).format( 'LLL' ) );
 	} );
 
@@ -105,7 +93,7 @@ describe( 'PostTime', () => {
 			/>
 		);
 
-		const text = wrapper.find( '.post-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( '2 days ago' );
 	} );
 
