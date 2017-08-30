@@ -89,6 +89,10 @@ button {
 		.gridicons-plus-small + .gridicon {
 			margin-left: -4px;
 		}
+		// Move the upload icon a little lower to appear vertically centered
+		.gridicons-cloud-upload {
+			top: 6px;
+		}
 	}
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
