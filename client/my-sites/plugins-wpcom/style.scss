@@ -152,6 +152,14 @@
 	margin: 0;
 }
 
+.plugins-wpcom__panel .section-header {
+	.button-group {
+		display: inline-block;
+		float: left;
+		margin-left: 8px;
+	}
+}
+
 .plugins-wpcom__header-text {
 	width: 100%;
 	padding: 16px 24px;
