@@ -505,7 +505,6 @@ export const PluginsList = React.createClass( {
 				plugin={ plugin }
 				sites={ plugin.sites }
 				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
-				errors={ this.state.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }

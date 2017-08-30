@@ -11,7 +11,6 @@ import { localize, moment } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsActions from 'lib/plugins/actions';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'components/count';
@@ -50,7 +49,6 @@ class PluginItem extends Component {
 		} ),
 		isAutoManaged: PropTypes.bool,
 		progress: PropTypes.array,
-		errors: PropTypes.array,
 		notices: PropTypes.shape( {
 			completed: PropTypes.array,
 			errors: PropTypes.array,
@@ -288,29 +286,12 @@ class PluginItem extends Component {
 
 	render() {
 		const plugin = this.props.plugin;
-		const errors = this.props.errors ? this.props.errors : [];
 
 		if ( ! plugin ) {
 			return this.renderPlaceholder();
 		}
 
 		let numberOfWarningIcons = 0;
-		const errorNotices = errors.map( ( error, index ) => {
-			const dismissErrorNotice = function() {
-				PluginsActions.removePluginsNotices( [ error ] );
-			};
-			return (
-				<Notice
-					type="message"
-					status="is-error"
-					text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
-					button={ PluginNotices.getErrorButton( error ) }
-					href={ PluginNotices.getErrorHref( error ) }
-					inline={ true }
-					onDismissClick={ dismissErrorNotice }
-					key={ 'notice-' + index } />
-			);
-		} );
 
 		if ( this.props.hasNoManageSite ) {
 			numberOfWarningIcons++;
@@ -370,7 +351,6 @@ class PluginItem extends Component {
 					</a>
 					{ this.props.selectedSite ? this.renderActions() : this.renderSiteCount() }
 				</CompactCard>
-				{ errorNotices }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
