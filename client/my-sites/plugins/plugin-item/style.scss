@@ -33,10 +33,13 @@
 .plugin-item {
 	position: relative;
 	display: flex;
-	flex-direction: column;
 	overflow: hidden; // lazy clearfix
-	width: 100%;
-	height: 100%;
+
+	@include breakpoint( '>1040px' ) {
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+	}
 
 	&.disabled {
 		opacity: 0.5;
@@ -93,7 +96,6 @@
 	cursor: pointer;
 }
 
-
 // Wraps plugin title and secondary info
 .plugin-item__info {
 	flex: auto;
@@ -105,8 +107,8 @@
 	color: $gray-dark;
 	display: block;
 	font-size: 15px;
-	line-height: 21px;
 	font-weight: 600;
+	margin-top: 3px;
 	overflow: hidden;
 	text-align: left;
 	text-overflow: ellipsis;
@@ -138,8 +140,6 @@
 .plugin-item__count,
 .plugin-item__actions {
 	padding: 16px;
-	padding-top: 0;
-	margin-top: -6px;
 	flex: none;
 	display: flex;
 	flex-direction: row;
@@ -151,10 +151,9 @@
 }
 
 .plugin-item__count {
-	font-size: 11px;
+	font-size: 12px;
 	line-height: 18px;
-	color: $gray;
-	text-transform: uppercase;
+	color: $gray-text-min;
 }
 
 .plugin-item__count .count {
@@ -162,56 +161,110 @@
 	float: right;
 }
 
-.plugin-item  .plugin-item__count,
+.plugin-item .plugin-item__count,
 .plugin-item .plugin-item__actions {
 	display: none;
 
 	@include breakpoint( '>480px' ) {
+		align-self: center;
 		display: flex;
+		flex-direction: column;
+		text-align: right;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		align-self: flex-start;
+		flex-direction: row;
+		margin-top: -6px;
+		padding-top: 0;
+		text-align: left;
 	}
 }
 
+.plugin-item .plugin-item__count {
+	flex-direction: row;
+}
+
 .plugin-item__last-updated {
-	color: $gray;
-	font-size: 12px;
-	line-height: 1;
-	padding: 6px 0;
+	color: $gray-text-min;
+	font-size: 13px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.plugin-item {
-	.plugin-icon {
-		flex: none;
-		margin-right: 16px;
+.plugin-item .plugin-icon {
+	flex: none;
+	margin-right: 12px;
+	width: 48px;
+	height: 48px;
+}
+
+.plugin-item .plugin-action {
+	@include breakpoint( '>1040px' ) {
+		margin-top: 6px;
 	}
 
-	.plugin-action {
-		margin-top: 6px;
-
-		& .form-toggle__switch {
-			float: left;
+	&:first-child {
+		@include breakpoint( '<1040px' ) {
+			margin-top: 0;
 		}
+	}
+}
 
-		.form-toggle__label-content {
-			margin-left: 0;
-			margin-right: 12px;
-		}
+.plugin-item .plugin-action__label {
+	@include breakpoint( '>1040px' ) {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}
 
-		.plugin-action__label {
-			margin-right: 0;
-			margin-left: 8px;
-		}
+.plugin-item .has-disabled-info .plugin-action__label {
+	@include breakpoint( '>1040px' ) {
+		margin-right: 8px;
+		margin-left: 0px;
+	}
+}
 
-		.plugin-activate-toggle__link {
-			margin-left: 8px;
-		}
+.plugin-item .plugin-action .form-toggle__label .form-toggle__switch {
+	@include breakpoint( '>1040px' ) {
+		float: left;
+	}
+}
 
-		.plugin-activate-toggle__icon {
-			float: left;
-			margin: 0;
-		}
+.plugin-item .form-toggle__label .form-toggle__label-content {
+	@include breakpoint( '>1040px' ) {
+		margin-right: 12px;
+		margin-left: 0;
+	}
+}
+
+.plugin-item .plugin-action__disabled-info.info-popover .gridicons-info-outline {
+	@include breakpoint( '>1040px' ) {
+		transform: translate(-2px, -2px);
+	}
+}
+
+.plugin-item .plugin-action .plugin-activate-toggle__link {
+	@include breakpoint( '>1040px' ) {
+		margin-right: 12px;
+		margin-left: 8px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__icon {
+	@include breakpoint( '>1040px' ) {
+		float: left;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__icon .gridicons-cog {
+	@include breakpoint( '>480px' ) {
+		transform: translate(-3px, -1px);
+	}
+
+	@include breakpoint( '>1040px' ) {
+		transform: translate(3px, -1px);
 	}
 }
 
