@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { findIndex, map } from 'lodash';
 
@@ -15,6 +16,11 @@ import RecentPostsDropdown from '../../recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
 
 class PostsList extends Component {
+
+	static propTypes = {
+		fields: PropTypes.object.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
 
 	addPost = ( { push } ) => post => push( post );
 
