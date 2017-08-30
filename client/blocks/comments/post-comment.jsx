@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit, compact, map } from 'lodash';
+import { get, noop, some, values, omit, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -91,7 +91,7 @@ class PostComment extends React.PureComponent {
 		} );
 	};
 
-	getAllChildren = id => {
+	getAllChildrenIds = id => {
 		const { commentsTree } = this.props;
 
 		if ( ! id ) {
@@ -99,17 +99,16 @@ class PostComment extends React.PureComponent {
 		}
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
-		return compact(
-			immediateChildren.concat( map( immediateChildren, child => this.getAllChildren( child.ID ) ) )
+		return immediateChildren.concat(
+			flatMap( immediateChildren, child => this.getAllChildrenIds( child.ID ) )
 		);
 	};
 
 	shouldRenderCaterpillar = () => {
 		const { enableCaterpillar, toShow, commentId } = this.props;
-		const children = this.getAllChildren( commentId );
+		const childIds = this.getAllChildrenIds( commentId );
 
-		// not this is a bug that it only goes one child deep
-		return enableCaterpillar && toShow && some( children, child => toShow[ child.ID ] );
+		return enableCaterpillar && toShow && some( childIds, id => ! toShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -257,7 +256,7 @@ class PostComment extends React.PureComponent {
 		const displayType =
 			this.state.showFull || ! enableCaterpillar
 				? POST_COMMENT_DISPLAY_TYPES.full
-				: this.props.displayType;
+				: toShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(

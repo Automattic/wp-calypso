@@ -11,6 +11,7 @@ import { map, zipObject, fill, size } from 'lodash';
  * Internal dependencies
  */
 import PostComment from 'blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getPostCommentsTree,
@@ -78,7 +79,10 @@ export class ConversationCommentList extends React.Component {
 
 	render() {
 		const { commentIds, commentsTree, post, expansions, enableCaterpillar } = this.props;
-		const startingExpanded = zipObject( commentIds, fill( Array( commentIds.length ), true ) );
+		const startingExpanded = zipObject(
+			commentIds,
+			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )
+		);
 		const toShow = { ...startingExpanded, ...expansions };
 		const showCaterpillar = enableCaterpillar && size( toShow ) < post.discussion.comment_count;
 

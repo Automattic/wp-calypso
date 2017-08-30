@@ -275,7 +275,7 @@ describe( 'reducer', () => {
 					3: 'is-full',
 					4: 'is-full',
 					5: 'is-full',
-				}
+				},
 			} );
 		} );
 
@@ -284,8 +284,7 @@ describe( 'reducer', () => {
 				[ '1-2' ]: {
 					3: 'is-full',
 					4: 'is-full',
-					5: 'is-full',
-				}
+				},
 			};
 
 			const action = expandComments( {
@@ -302,7 +301,30 @@ describe( 'reducer', () => {
 					4: 'is-full',
 					5: 'is-single-line',
 					6: 'is-single-line',
-				}
+				},
+			} );
+		} );
+		it( 'expandComments should only expand them, never unexpand', () => {
+			const prevState = {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-single-line',
+				},
+			};
+
+			const action = expandComments( {
+				siteId: 1,
+				postId: 2,
+				commentIds: [ 3, 4 ],
+				displayType: 'is-excerpt',
+			} );
+
+			const nextState = expansions( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-excerpt',
+				},
 			} );
 		} );
 	} );

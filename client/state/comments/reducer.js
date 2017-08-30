@@ -2,7 +2,20 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, fill, zipObject, includes, isArray, values } from 'lodash';
+import {
+	isUndefined,
+	orderBy,
+	has,
+	map,
+	unionBy,
+	reject,
+	isEqual,
+	get,
+	zipObject,
+	includes,
+	isArray,
+	values,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +34,11 @@ import {
 	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH, POST_COMMENT_DISPLAY_TYPES } from './constants';
+import {
+	PLACEHOLDER_STATE,
+	NUMBER_OF_COMMENTS_PER_FETCH,
+	POST_COMMENT_DISPLAY_TYPES,
+} from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
@@ -139,6 +156,18 @@ const isValidExpansionsAction = action => {
 	);
 };
 
+const expansionValue = type => {
+	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
+	switch ( type ) {
+		case full:
+			return 3;
+		case excerpt:
+			return 2;
+		case singleLine:
+			return 1;
+	}
+};
+
 export const expansions = createReducer(
 	{},
 	{
@@ -150,9 +179,19 @@ export const expansions = createReducer(
 			}
 
 			const stateKey = getStateKey( siteId, postId );
+			const currentExpansions = state[ stateKey ] || {};
 
+			const newDisplayTypes = map( commentIds, id => {
+				if (
+					! has( currentExpansions, id ) ||
+					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
+				) {
+					return displayType;
+				}
+				return currentExpansions[ id ];
+			} );
 			// generate object of { [ commentId ]: displayType }
-			const newVal = zipObject( commentIds, fill( Array( commentIds.length ), displayType ) );
+			const newVal = zipObject( commentIds, newDisplayTypes );
 
 			return {
 				...state,
