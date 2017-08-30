@@ -145,5 +145,5 @@ export default {
 	getValueFromProgressStore: getValueFromProgressStore,
 	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue,
-	getThemeForDesignType: getThemeForDesignType,
+	getThemeForDesignType: getThemeForDesignType
 };
