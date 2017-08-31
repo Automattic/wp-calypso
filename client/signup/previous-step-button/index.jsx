@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { find } from 'lodash';
-import i18n from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,16 +12,13 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import signupUtils from 'signup/utils';
 
-export default React.createClass( {
-	displayName: 'PreviousStepButton',
-
-	propTypes: {
-		flowName: React.PropTypes.string.isRequired,
-		stepName: React.PropTypes.string.isRequired,
-		previousPath: React.PropTypes.string,
-		positionInFlow: React.PropTypes.number.isRequired,
-		signupProgress: React.PropTypes.array.isRequired
-	},
+export class PreviousStepButton extends React.Component {
+	static propTypes = {
+		flowName: PropTypes.string.isRequired,
+		stepName: PropTypes.string.isRequired,
+		positionInFlow: PropTypes.number.isRequired,
+		signupProgress: PropTypes.array.isRequired,
+	};
 
 	backUrl() {
 		if ( this.props.backUrl ) {
@@ -30,22 +28,23 @@ export default React.createClass( {
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
 			{ stepSectionName } = find( this.props.signupProgress, { stepName: previousStepName } );
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
-	},
+		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, getLocaleSlug() );
+	}
 
-	recordClick() {
+	recordClick = () => {
 		analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', {
 			flow: this.props.flowName,
-			step: this.props.stepName
+			step: this.props.stepName,
 		} );
-	},
+	}
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		if ( this.props.positionInFlow > 0 ) {
 			return (
 				<a className="previous-step" href={ this.backUrl() } onClick={ this.recordClick }>
 					<span className="previous-step__label">
-						{ this.translate( 'Back' ) }
+						{ this.props.translate( 'Back' ) }
 					</span>
 				</a>
 			);
@@ -53,4 +52,7 @@ export default React.createClass( {
 
 		return null;
 	}
-} );
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+export default localize( PreviousStepButton );
