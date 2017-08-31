@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
+import { get, indexOf, intersection, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
+import { getAcceptedLanguagesFromHeader } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -38,6 +39,12 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' }
+];
+
+// List of browser languages to show pride styling for.
+// Add a '*' element to show the styling for all visitors.
+const prideLanguages = [
+	'en-au',
 ];
 
 const sections = sectionsModule.get();
@@ -130,6 +137,9 @@ function getDefaultContext( request ) {
 		initialServerState = getInitialServerState( serializeCachedServerState );
 	}
 
+	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
+	const pride = indexOf( prideLanguages, '*' ) > -1 || intersection( prideLanguages, acceptedLanguages );
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
@@ -145,7 +155,8 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState )
+		store: createReduxStore( initialServerState ),
+		pride: pride,
 	} );
 
 	context.app = {
