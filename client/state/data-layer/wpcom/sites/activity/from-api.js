@@ -24,18 +24,18 @@ import warn from 'lib/warn';
  * Module constants
  */
 export const ACTIVITY_REQUIRED_PROPS = [ 'activity_id', 'name', 'published', 'summary' ];
-
 export const DEFAULT_GRAVATAR_URL = 'https://www.gravatar.com/avatar/0';
 export const DEFAULT_GRIDICON = 'info-outline';
 
 /**
  * Transforms API response into array of activities
  *
- * @param  {object} _ API   response body
- * @param  {array}  _.items Array of item objects
- * @return {array}          Array of proccessed item objects
+ * @param  {object} apiResponse                      API response body
+ * @param  {array}  apiResponse.current.orderedItems Array of item objects
+ * @return {array}                                   Array of proccessed item objects
  */
-export default function fromApi( { orderedItems = [] } ) {
+export default function fromApi( apiResponse ) {
+	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
 	return reduce( orderedItems, itemsReducer, [] );
 }
 
