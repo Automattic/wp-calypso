@@ -160,10 +160,10 @@ class ActivityLogDay extends Component {
 				<FoldableCard
 					clickableHeader={ hasLogs }
 					expanded={ isToday }
-					expandedSummary={ this.renderRewindButton() }
+					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
-					summary={ this.renderRewindButton( 'primary' ) }
+					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 				>
 					{ hasLogs &&
 						map( logs, log =>
