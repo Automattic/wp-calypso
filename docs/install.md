@@ -5,7 +5,7 @@ You can install Calypso directly on your machine by following the next steps, or
 ## Quick Summary of Steps
 
 1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details.
-2.	Fork this repository and clone it locally.
+2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
 4.	Execute `npm start` or `npm run dashboard` (for a more visually-oriented interface) from the root directory of the repository.
 5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
@@ -19,7 +19,7 @@ To be able to clone the repository and run the application you need:
 
 ## Installing and Running
 
-Fork this git repository and clone the fork to your machine via the terminal using the `git clone` command and then run `npm start` from your forked root Calypso directory:
+Clone this git repository to your machine via the terminal using the `git clone` command and then run `npm start` from the root Calypso directory:
 
 ```bash
 $ git clone https://github.com/Automattic/wp-calypso.git

@@ -20,7 +20,7 @@ Feel free to share your unique context to help us understand your perspective. Y
 If you’d like to contribute code, first, you will need to run Calypso locally. Here is the short version:
 
 1.	Make sure you have `git`, `node`, and `npm` installed.
-2.	Fork this repository and clone it locally.
+2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local hosts file.
 4.	Execute `npm start` from the root directory of the repository.
 5.	Open `http://calypso.localhost:3000` in your browser.
