@@ -51,7 +51,7 @@ const JPOContactFormStep = React.createClass( {
 			<div className="jpo__contact-form-wrapper">
 				<Card className="jpo-contact-form__choice">
 					<a className="jpo-contact-form__select-news jpo-contact-form__choice-link" href="#" onClick={ this.onSelect }>
-						<div clasName="jpo-contact-form__image">
+						<div className="jpo-contact-form__image">
 							<ContactUsGraphic />
 						</div>
 						<div className="jpo-contact-form__choice-copy">
