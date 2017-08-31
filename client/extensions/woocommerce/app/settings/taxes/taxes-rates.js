@@ -255,6 +255,21 @@ class TaxesRates extends Component {
 		);
 	}
 
+	renderPolicyNotice = () => {
+		const { translate } = this.props;
+
+		return (
+			<p>
+				{ translate( 'Sales tax calculations are provided by a third party: TaxJar. By enabling this option, ' +
+					'TaxJar will have access to some of your data. {{a}}Learn more.{{/a}}',
+					{
+						components: { a: <a href="https://en.support.wordpress.com/taxjar/" target="_blank" rel="noopener noreferrer" /> }
+					}
+				) }
+			</p>
+		);
+	}
+
 	render = () => {
 		const { site, loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
 
@@ -285,6 +300,7 @@ class TaxesRates extends Component {
 					{ this.renderInfo() }
 					{ this.renderCalculationStatus() }
 					{ this.possiblyRenderRates() }
+					{ this.renderPolicyNotice() }
 				</Card>
 			</div>
 		);
