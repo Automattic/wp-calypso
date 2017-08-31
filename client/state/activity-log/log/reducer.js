@@ -2,33 +2,43 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActivityQueryManager from 'lib/query-manager/activity';
-import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { createReducer, keyedReducer, isValidStateWithSchema } from 'state/utils';
 
-// FIXME: Restore persistence after implementing queryManager
-//import { logItemsSchema } from './schema';
+import { logItemsSchema } from './schema';
 
-const debug = debugFactory( 'calypso:state:activity-log:reducer' );
-
-// FIXME: No-op reducers
 export const logError = keyedReducer( 'siteId', state => state );
 
-export const logItems = keyedReducer(
-	'siteId',
-	createReducer( undefined, {
-		[ ACTIVITY_LOG_UPDATE ]: ( state, { data, found, query } ) => {
-			debug( 'Action', { data, found, query } );
-
-			return state
-				? state.receive( data, { found, query } )
-				: new ActivityQueryManager().receive( data, { found, query } );
+export const logItems = createReducer(
+	{},
+	{
+		[ ACTIVITY_LOG_UPDATE ]: ( state, { data, found, query, siteId } ) => {
+			return state[ siteId ]
+				? {
+						...state,
+						[ siteId ]: state[ siteId ].receive( data, { found, query } ),
+					}
+				: {
+						...state,
+						[ siteId ]: new ActivityQueryManager().receive( data, { found, query } ),
+					};
 		},
-	} )
+		[ DESERIALIZE ]: state => {
+			if ( ! isValidStateWithSchema( state, logItemsSchema ) ) {
+				return {};
+			}
+			return mapValues( state, ( { data, options } ) => {
+				return new ActivityQueryManager( data, options );
+			} );
+		},
+		[ SERIALIZE ]: state => {
+			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+		},
+	}
 );
-// logItems.schema = logItemsSchema;
