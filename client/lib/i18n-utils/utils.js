@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, map } from 'lodash';
+import { find } from 'lodash';
 import { parse } from 'url';
 
 /**
@@ -51,30 +51,6 @@ const i18nUtils = {
 		const locale = parts.pop();
 
 		return 'undefined' === typeof i18nUtils.getLanguage( locale ) ? undefined : locale;
-	},
-
-	/**
-	 * Given the content of an 'AcceptedLanguages' request header, returns an array of the languages.
-	 *
-	 * This differs slightly from other language functions, as it doesn't try to validate the language codes,
-	 * or merge similar language codes.
-	 *
-	 * @param  {string} header - The content of the AcceptedLanguages header.
-	 * @return {Array} An array of language codes in the header, all in lowercase.
-	 */
-	getAcceptedLanguagesFromHeader: function( header ) {
-		if ( ! header ) {
-			return [];
-		}
-
-		return filter( map( header.split( ',' ), lang => {
-			const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
-			if ( ! match ) {
-				return false;
-			}
-
-			return match[ 0 ].toLowerCase();
-		} ) );
 	},
 
 	/**

@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, indexOf, intersection, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,6 @@ import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
-import { getAcceptedLanguagesFromHeader } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -128,6 +127,30 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
+/**
+ * Given the content of an 'Accept-Language' request header, returns an array of the languages.
+ *
+ * This differs slightly from other language functions, as it doesn't try to validate the language codes,
+ * or merge similar language codes.
+ *
+ * @param  {string} header - The content of the AcceptedLanguages header.
+ * @return {Array} An array of language codes in the header, all in lowercase.
+ */
+function getAcceptedLanguagesFromHeader( header ) {
+	if ( ! header ) {
+		return [];
+	}
+
+	return header.split( ',' ).map( lang => {
+		const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
+		if ( ! match ) {
+			return false;
+		}
+
+		return match[ 0 ].toLowerCase();
+	} ).filter( lang => lang );
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	const cacheKey = getCacheKey( request );
@@ -138,7 +161,7 @@ function getDefaultContext( request ) {
 	}
 
 	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
-	const pride = indexOf( prideLanguages, '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0;
+	const pride = prideLanguages.indexOf( '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0;
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
