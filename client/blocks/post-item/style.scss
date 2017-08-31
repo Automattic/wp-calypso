@@ -20,12 +20,14 @@
 	position: relative;
 	display: flex;
 	width: 100%;
-	overflow: hidden;
 	margin-right: auto;
 
-	&::after {
-		@include long-content-fade( $size: 40px );
-		right: 0;
+	.post-item__card:not( .has-wrapped-title ) & {
+		overflow: hidden;
+		&::after {
+			@include long-content-fade( $size: 40px );
+			right: 0;
+		}
 	}
 }
 
@@ -45,7 +47,14 @@
 	@extend %content-font;
 	margin-bottom: 2px;
 	font-weight: 700;
-	white-space: nowrap;
+
+	.post-item__card.has-large-title & {
+		font-size: 20px;
+	}
+
+	.post-item__card:not( .has-wrapped-title ) & {
+		white-space: nowrap;
+	}
 }
 
 a.post-item__title-link {

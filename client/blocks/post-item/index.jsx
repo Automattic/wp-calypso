@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -37,23 +36,34 @@ class PostItem extends React.Component {
 	constructor() {
 		super( ...arguments );
 
-		this.state = {
-			nodeHeight: 0,
-		};
-
+		this.node = null;
+		this.nodeHeight = 0;
 		this.hasVariableHeightContent = false;
 	}
 
 	componentDidMount() {
 		this.manageMutationObserver();
+		if ( this.props.wrapTitle ) {
+			// Wait for repaint, which may include wrapping the title onto
+			// multiple lines, then update height if needed
+			// `requestAnimationFrame` is not enough here...
+			window.setTimeout( this.handleHeightChange );
+		}
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		this.manageMutationObserver();
+		if ( this.props.windowWidth !== prevProps.windowWidth ) {
+			this.handleHeightChange();
+		}
 	}
 
 	componentWillUnmount() {
 		this.disconnectMutationObserver();
+	}
+
+	setDomNode = node => {
+		this.node = node;
 	}
 
 	manageMutationObserver() {
@@ -72,11 +82,11 @@ class PostItem extends React.Component {
 	}
 
 	connectMutationObserver() {
-		if ( this.observer ) {
+		if ( this.observer || ! this.node ) {
 			return;
 		}
 		this.observer = new window.MutationObserver( this.handleHeightChange );
-		this.observer.observe( findDOMNode( this ), {
+		this.observer.observe( this.node, {
 			childList: true,
 			subtree: true,
 		} );
@@ -91,18 +101,17 @@ class PostItem extends React.Component {
 	}
 
 	handleHeightChange = () => {
-		const domNode = findDOMNode( this );
-		if ( ! domNode ) {
+		if ( ! this.node ) {
 			return;
 		}
 
-		const style = window.getComputedStyle( domNode );
-		const nodeHeight = domNode.clientHeight +
+		const style = window.getComputedStyle( this.node );
+		const nodeHeight = this.node.clientHeight +
 			parseInt( style.marginTop, 10 ) +
 			parseInt( style.marginBottom, 10 );
 
-		if ( nodeHeight && nodeHeight !== this.state.nodeHeight ) {
-			this.setState( { nodeHeight } );
+		if ( nodeHeight && nodeHeight !== this.nodeHeight ) {
+			this.nodeHeight = nodeHeight;
 			this.props.onHeightChange( { nodeHeight, globalId: this.props.globalId } );
 		}
 	}
@@ -156,6 +165,8 @@ class PostItem extends React.Component {
 			compact,
 			editUrl,
 			translate,
+			largeTitle,
+			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -163,7 +174,9 @@ class PostItem extends React.Component {
 		const cardClasses = classnames( 'post-item__card', className, {
 			'is-untitled': ! title,
 			'is-mini': compact,
-			'is-placeholder': ! globalId
+			'is-placeholder': ! globalId,
+			'has-large-title': largeTitle,
+			'has-wrapped-title': wrapTitle,
 		} );
 
 		const isSiteInfoVisible = (
@@ -186,7 +199,10 @@ class PostItem extends React.Component {
 		} );
 
 		return (
-			<div className={ rootClasses }>
+			<div
+				className={ rootClasses }
+				ref={ this.setDomNode }
+			>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>
@@ -228,6 +244,9 @@ PostItem.propTypes = {
 	onHeightChange: PropTypes.func,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
+	largeTitle: PropTypes.bool,
+	wrapTitle: PropTypes.bool,
+	windowWidth: PropTypes.number,
 };
 
 export default connect( ( state, { globalId } ) => {
