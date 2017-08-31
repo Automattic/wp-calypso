@@ -60,9 +60,13 @@ const i18nUtils = {
 	 * or merge similar language codes.
 	 *
 	 * @param  {string} header - The content of the AcceptedLanguages header.
-	 * @return {array} An array of language codes in the header, all in lowercase.
+	 * @return {Array} An array of language codes in the header, all in lowercase.
 	 */
 	getAcceptedLanguagesFromHeader: function( header ) {
+		if ( ! header ) {
+			return [];
+		}
+
 		return filter( map( header.split( ',' ), lang => {
 			const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
 			if ( ! match ) {
