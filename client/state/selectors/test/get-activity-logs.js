@@ -36,7 +36,10 @@ describe( 'getActivityLogs()', () => {
 			{
 				activityLog: {
 					logItems: {
-						[ SITE_ID ]: (new ActivityQueryManager()).receive( items, { query, found: items.length } ),
+						[ SITE_ID ]: new ActivityQueryManager().receive( items, {
+							query,
+							found: items.length,
+						} ),
 					},
 				},
 			},
