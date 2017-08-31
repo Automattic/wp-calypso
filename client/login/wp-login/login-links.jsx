@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -19,7 +20,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
-import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -31,7 +32,7 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		oauth2ClientData: PropTypes.object,
+		oauth2Client: PropTypes.object,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -66,22 +67,22 @@ export class LoginLinks extends React.Component {
 	renderBackLink() {
 		const {
 			locale,
-			oauth2ClientData,
+			oauth2Client,
 			translate,
 		} = this.props;
 
 		let url = addLocaleToWpcomUrl( 'https://wordpress.com', locale );
 		let message = translate( 'Back to WordPress.com' );
 
-		if ( oauth2ClientData ) {
-			url = safeProtocolUrl( oauth2ClientData.url );
+		if ( oauth2Client ) {
+			url = safeProtocolUrl( oauth2Client.url );
 			if ( ! url || url === 'http:' ) {
 				return null;
 			}
 
 			message = translate( 'Back to %(clientTitle)s', {
 				args: {
-					clientTitle: oauth2ClientData.title
+					clientTitle: oauth2Client.title
 				}
 			} );
 		}
@@ -176,7 +177,7 @@ export class LoginLinks extends React.Component {
 
 const mapState = ( state ) => ( {
 	isLoggedIn: Boolean( getCurrentUserId( state ) ),
-	oauth2ClientData: getOAuth2ClientData( state ),
+	oauth2Client: getCurrentOAuth2Client( state ),
 } );
 
 const mapDispatch = {

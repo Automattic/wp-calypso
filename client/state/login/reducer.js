@@ -8,7 +8,6 @@ import { get, isEmpty, omit } from 'lodash';
  */
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
-import oauth2 from './oauth2/reducer';
 import {
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
@@ -27,6 +26,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -48,6 +50,9 @@ export const isRequesting = createReducer( false, {
 	[ SOCIAL_LOGIN_REQUEST ]: () => true,
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
 	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => false,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => true,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => false,
 } );
 
 export const redirectTo = createReducer( null, {
@@ -93,6 +98,9 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 	[ ROUTE_SET ]: () => null,
 	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
@@ -101,8 +109,12 @@ export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 } );
 
 export const requestNotice = createReducer( null, {
@@ -231,5 +243,4 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	socialAccount,
 	socialAccountLink,
-	oauth2,
 } );

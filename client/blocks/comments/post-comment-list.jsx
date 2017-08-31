@@ -69,7 +69,7 @@ class PostCommentList extends React.Component {
 	};
 
 	state = {
-		activeReplyCommentID: null,
+		activeReplyCommentId: null,
 		amountOfCommentsToTake: this.props.initialSize,
 		commentsFilter: 'all',
 		activeEditCommentId: null,
@@ -199,7 +199,7 @@ class PostCommentList extends React.Component {
 				key={ commentId }
 				showModerationTools={ this.props.showModerationTools }
 				activeEditCommentId={ this.state.activeEditCommentId }
-				activeReplyCommentID={ this.state.activeReplyCommentID }
+				activeReplyCommentId={ this.state.activeReplyCommentId }
 				onEditCommentClick={ onEditCommentClick }
 				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
@@ -221,7 +221,7 @@ class PostCommentList extends React.Component {
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick = commentID => {
-		this.setState( { activeReplyCommentID: commentID } );
+		this.setState( { activeReplyCommentId: commentID } );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_click', {
@@ -235,7 +235,7 @@ class PostCommentList extends React.Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentID,
+			comment_id: this.state.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
@@ -245,7 +245,7 @@ class PostCommentList extends React.Component {
 	};
 
 	resetActiveReplyComment = () => {
-		this.setState( { activeReplyCommentID: null } );
+		this.setState( { activeReplyCommentId: null } );
 	};
 
 	renderCommentsList = commentIds => {
@@ -261,7 +261,7 @@ class PostCommentList extends React.Component {
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
-		if ( this.state.activeReplyCommentID && ! this.state.errors ) {
+		if ( this.state.activeReplyCommentId && ! this.state.errors ) {
 			return null;
 		}
 
@@ -269,7 +269,7 @@ class PostCommentList extends React.Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ post }
-				parentCommentID={ null }
+				parentCommentId={ null }
 				commentText={ commentText }
 				onUpdateCommentText={ this.onUpdateCommentText }
 			/>

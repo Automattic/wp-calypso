@@ -60,8 +60,10 @@ export const createZone = ( { dispatch }, action ) => {
 };
 
 export const announceZoneSaved = ( dispatch, { form, siteId }, data ) => {
+	const zone = fromApi( data );
+
 	dispatch( stopSubmit( form ) );
-	dispatch( updateZone( siteId, fromApi( data ) ) );
+	dispatch( updateZone( siteId, zone.id, zone ) );
 	dispatch( successNotice(
 		translate( 'Zone saved!' ),
 		{ id: 'zoninator-zone-create' },

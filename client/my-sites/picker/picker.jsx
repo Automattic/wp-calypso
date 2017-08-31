@@ -4,12 +4,12 @@
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { noop } from 'lodash';
-import closeOnEsc from 'lib/mixins/close-on-esc';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import CloseOnEscape from 'components/close-on-escape';
 import SiteSelector from 'components/site-selector';
 import { hasTouch } from 'lib/touch-detect';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -17,8 +17,6 @@ import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/action
 
 const SitePicker = React.createClass( {
 	displayName: 'SitePicker',
-
-	mixins: [ closeOnEsc( 'closePicker' ) ],
 
 	propTypes: {
 		onClose: React.PropTypes.func,
@@ -81,17 +79,20 @@ const SitePicker = React.createClass( {
 
 	render: function() {
 		return (
-			<SiteSelector
-				ref="siteSelector"
-				indicator={ true }
-				showAddNewSite={ true }
-				showAllSites={ true }
-				allSitesPath={ this.props.allSitesPath }
-				siteBasePath={ this.props.siteBasePath }
-				autoFocus={ this.state.isAutoFocused }
-				onClose={ this.onClose }
-				groups={ true }
-			/>
+			<div>
+				<CloseOnEscape onEscape={ this.closePicker } />
+				<SiteSelector
+					ref="siteSelector"
+					indicator={ true }
+					showAddNewSite={ true }
+					showAllSites={ true }
+					allSitesPath={ this.props.allSitesPath }
+					siteBasePath={ this.props.siteBasePath }
+					autoFocus={ this.state.isAutoFocused }
+					onClose={ this.onClose }
+					groups={ true }
+				/>
+			</div>
 		);
 	}
 } );

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { defaults, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -34,12 +35,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		isVisible: true,
 		onSubmit: noop,
-	}
+	};
 
 	componentWillMount() {
 		// We're pushing props out into the global state here because:

@@ -15,7 +15,7 @@ import Button from 'components/button';
 import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import {
 	isJetpackModuleActive,
@@ -24,6 +24,7 @@ import {
 } from 'state/selectors';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+import { isATEnabled } from 'lib/automated-transfer';
 
 class SiteSettingsFormSecurity extends Component {
 	renderSectionHeader( title, showButton = true, disableButton = false ) {
@@ -50,6 +51,7 @@ class SiteSettingsFormSecurity extends Component {
 			fields,
 			handleAutosavingToggle,
 			handleSubmitForm,
+			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackSettingsUiSupported,
@@ -88,15 +90,19 @@ class SiteSettingsFormSecurity extends Component {
 
 				<QueryJetpackSettings siteId={ siteId } />
 
-				{ this.renderSectionHeader( translate( 'Spam filtering' ), true, disableSpamFiltering ) }
-				<SpamFilteringSettings
-					dirtyFields={ dirtyFields }
-					fields={ fields }
-					currentAkismetKey={ settings.wordpress_api_key }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					onChangeField={ onChangeField }
-				/>
+				{ ! isAtomic &&
+					<div>
+						{ this.renderSectionHeader( translate( 'Spam filtering' ), true, disableSpamFiltering ) }
+						<SpamFilteringSettings
+							dirtyFields={ dirtyFields }
+							fields={ fields }
+							currentAkismetKey={ settings.wordpress_api_key }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							onChangeField={ onChangeField }
+						/>
+					</div>
+				}
 
 				{ this.renderSectionHeader( translate( 'WordPress.com sign in' ), false ) }
 				<Sso
@@ -113,6 +119,7 @@ class SiteSettingsFormSecurity extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const selectedSite = getSelectedSite( state );
 		const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 		const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
@@ -120,6 +127,7 @@ const connectComponent = connect(
 		const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
 		return {
+			isAtomic: isATEnabled( selectedSite ),
 			jetpackSettingsUiSupported,
 			protectModuleActive,
 			protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,

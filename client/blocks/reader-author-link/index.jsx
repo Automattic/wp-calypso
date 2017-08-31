@@ -11,6 +11,7 @@ import classnames from 'classnames';
  */
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
+import Emojify from 'components/emojify';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const recordAuthorClick = ( {} ) => {
@@ -38,14 +39,18 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	if ( ! siteUrl ) {
 		return (
 			<span className={ classes }>
-				{ children }
+				<Emojify>
+					{ children }
+				</Emojify>
 			</span>
 		);
 	}
 
 	return (
 		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
-			{ children }
+			<Emojify>
+				{ children }
+			</Emojify>
 		</a>
 	);
 };

@@ -25,11 +25,13 @@ const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
-
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
+import { abtest } from 'lib/abtest';
+import { cartItems } from 'lib/cart-values';
 
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
@@ -51,7 +53,17 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
+		const domainChoiceCart = [ domainItem ];
+		if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+			domainChoiceCart.push(
+				cartItems.domainPrivacyProtection( {
+					domain: domainItem.meta,
+					source: 'signup'
+				} )
+			);
+		}
+
+		SignupCart.createCart( cartKey, domainChoiceCart, error => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
@@ -86,6 +98,7 @@ function createSiteWithCart( callback, dependencies, {
 	themeSlugWithRepo,
 	themeItem
 }, reduxStore ) {
+	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
@@ -93,6 +106,7 @@ function createSiteWithCart( callback, dependencies, {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
+			designType: designType || undefined,
 			// the theme can be provided in this step's dependencies or the
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
@@ -120,11 +134,20 @@ function createSiteWithCart( callback, dependencies, {
 			themeItem
 		};
 		const addToCartAndProceed = () => {
+			let privacyItem = null;
+			if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+				privacyItem = cartItems.domainPrivacyProtection( {
+					domain: domainItem.meta,
+					source: 'signup'
+				} );
+			}
+
 			const newCartItems = [
 				cartItem,
 				domainItem,
 				googleAppsCartItem,
 				themeItem,
+				privacyItem,
 			].filter( item => item );
 
 			if ( newCartItems.length ) {

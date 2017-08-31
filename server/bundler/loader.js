@@ -111,6 +111,7 @@ function splitTemplate( path, section ) {
 		'		if ( ! LoadingError.isRetry() ) {',
 		'			LoadingError.retry( ' + JSON.stringify( section.name ) + ' );',
 		'		} else {',
+		'			console.error(error);',
 		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 		'			LoadingError.show( ' + JSON.stringify( section.name ) + ' );',
 		'		}',

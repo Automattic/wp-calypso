@@ -27,13 +27,8 @@ import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
-
-// values conveniently also correspond to css classNames to apply
-export const POST_COMMENT_DISPLAY_TYPES = {
-	singleLine: 'is-single-line',
-	excerpt: 'is-excerpt',
-	full: 'is-full',
-};
+import Emojify from 'components/emojify';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 
 class PostComment extends Component {
 	static propTypes = {
@@ -155,7 +150,7 @@ class PostComment extends Component {
 	}
 
 	renderCommentForm() {
-		if ( this.props.activeReplyCommentID !== this.props.commentId ) {
+		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
 			return null;
 		}
 
@@ -163,7 +158,7 @@ class PostComment extends Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ this.props.post }
-				parentCommentID={ this.props.commentId }
+				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
@@ -189,10 +184,14 @@ class PostComment extends Component {
 					onClick={ this.handleAuthorClick }
 					id={ `comment-${ commentId }` }
 				>
-					{ authorName }
+					<Emojify>
+						{ authorName }
+					</Emojify>
 				</a>
 			: <strong className={ className } id={ `comment-${ commentId }` }>
-					{ authorName }
+					<Emojify>
+						{ authorName }
+					</Emojify>
 				</strong>;
 	};
 
@@ -303,7 +302,7 @@ class PostComment extends Component {
 					comment={ comment }
 					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
-					activeReplyCommentID={ this.props.activeReplyCommentID }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					editComment={ this.props.onEditCommentClick }
 					editCommentCancel={ this.props.onEditCommentCancel }

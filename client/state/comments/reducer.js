@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, fill, zipObject, includes, isArray, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +18,10 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH, POST_COMMENT_DISPLAY_TYPES } from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
@@ -92,7 +94,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: true, like_count } ),
+					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
@@ -100,7 +102,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: false, like_count } ),
+					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
 		case COMMENTS_ERROR:
@@ -112,7 +114,7 @@ export function items( state = {}, action ) {
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
-					} ),
+					} )
 				),
 			};
 	}
@@ -126,6 +128,39 @@ export const fetchStatusInitialState = {
 	hasReceivedBefore: false,
 	hasReceivedAfter: false,
 };
+
+const isValidExpansionsAction = action => {
+	const { siteId, postId, commentIds, displayType } = action.payload;
+	return (
+		siteId &&
+		postId &&
+		isArray( commentIds ) &&
+		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+	);
+};
+
+export const expansions = createReducer(
+	{},
+	{
+		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId, commentIds, displayType } = action.payload;
+
+			if ( ! isValidExpansionsAction( action ) ) {
+				return state;
+			}
+
+			const stateKey = getStateKey( siteId, postId );
+
+			// generate object of { [ commentId ]: displayType }
+			const newVal = zipObject( commentIds, fill( Array( commentIds.length ), displayType ) );
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
+			};
+		},
+	}
+);
 
 /***
  * Stores whether or not there are more comments, and in which directions, for a particular post.
@@ -169,7 +204,7 @@ export const fetchStatus = createReducer(
 				? state
 				: { ...state, [ stateKey ]: nextState };
 		},
-	},
+	}
 );
 
 /***
@@ -189,7 +224,7 @@ export const totalCommentsCount = createReducer(
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: state[ key ] + 1 };
 		},
-	},
+	}
 );
 
 /**
@@ -210,7 +245,7 @@ export const errors = createReducer(
 				[ key ]: { error: true },
 			};
 		},
-	},
+	}
 );
 
 export const treesInitializedReducer = ( state = {}, action ) => {
@@ -220,12 +255,16 @@ export const treesInitializedReducer = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
+export const treesInitialized = keyedReducer(
+	'siteId',
+	keyedReducer( 'status', treesInitializedReducer )
+);
 
 export default combineReducers( {
 	items,
 	fetchStatus,
 	errors,
+	expansions,
 	totalCommentsCount,
 	trees,
 	treesInitialized,
