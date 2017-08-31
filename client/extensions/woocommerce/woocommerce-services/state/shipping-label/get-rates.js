@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import * as api from 'api';
+import * as api from 'woocommerce/woocommerce-services/api';
 import {
 	RATES_RETRIEVAL_IN_PROGRESS,
 	SET_RATES,
