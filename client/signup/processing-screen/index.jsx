@@ -177,7 +177,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	handleClickUpgradeButton = () => {
-		this.handleClick( 'upgrade_plan', this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : '' );
+		this.handleClick( 'upgrade`_plan', this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : '' );
 	}
 
 	handleClickOldContinueButton = () => {
@@ -238,7 +238,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	render() {
-		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription && this.currentFlowIncludesDomainStep() && ! this.props.useOAuth2Layout  ) {
+		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription && this.currentFlowIncludesDomainStep() && ! this.props.useOAuth2Layout ) {
 			return this.renderUpgradeScreen();
 		}
 
