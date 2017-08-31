@@ -58,15 +58,14 @@ function getHoldMessages( siteSlug, translate ) {
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Domain not pointing to WordPress.com servers' ),
-			description: translate( 'We cannot manage your site because your domain is not pointing to WordPress.com servers. ' +
-			'Follow the instructions to reset your domain A records to resolve this.' ),
+			description: translate( 'We cannot manage your site because your domain does not point to WordPress.com servers. ' +
+			'Follow the instructions to reset your domain\'s A records to resolve this.' ),
 			supportUrl: 'https://support.wordpress.com/move-domain/setting-custom-a-records/',
 		},
 		NO_SSL_CERTIFICATE: {
-			title: translate( 'We are setting up a security certificate for your domain' ),
+			title: translate( 'Security certificate required' ),
 			description: translate(
-				'Your domain must have a security certificate to allow custom code. We are processing your security certificate now. ' +
-				'Please come back in a few minutes to try again.'
+				'We are setting up a security certificate for you domain now. Please try again in a few minutes.'
 			),
 		},
 		EMAIL_UNVERIFIED: {
