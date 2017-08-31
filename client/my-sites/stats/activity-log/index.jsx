@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -256,27 +256,35 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const logsGroupedByDay = map(
-			groupBy( logs, log =>
-				this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
-			),
-			( dailyLogs, tsEndOfSiteDay ) =>
+		const logsGroupedByDay = groupBy( logs, log =>
+			this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
+		);
+		const activityDays = [];
+		for (
+			const m = this.applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).startOf( 'day' ),
+				startOfMonth = this.applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
+			startOfMonth <= m.valueOf();
+			m.subtract( 1, 'day' )
+		) {
+			const dayEnd = m.endOf( 'day' ).valueOf();
+			activityDays.push(
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
-					key={ tsEndOfSiteDay }
-					logs={ dailyLogs }
+					key={ dayEnd }
+					logs={ get( logsGroupedByDay, dayEnd, [] ) }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
-					tsEndOfSiteDay={ +tsEndOfSiteDay }
+					tsEndOfSiteDay={ dayEnd }
 				/>
-		);
+			);
+		}
 
 		return (
-			<section className="activity-log__wrapper" key="logs">
-				{ logsGroupedByDay }
+			<section className="activity-log__wrapper">
+				{ activityDays }
 			</section>
 		);
 	}
