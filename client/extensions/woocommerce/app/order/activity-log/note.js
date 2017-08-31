@@ -38,14 +38,14 @@ class OrderNote extends Component {
 		}
 
 		return (
-			<div className="order-notes__note">
-				<div className="order-notes__note-meta">
-					<span className="order-notes__note-time">{ createdMoment.format( 'LT' ) }</span>
+			<div className="activity-log__note">
+				<div className="activity-log__note-meta">
+					<span className="activity-log__note-time">{ createdMoment.format( 'LT' ) }</span>
 					<Gridicon icon={ icon } size={ 24 } />
 				</div>
-				<div className="order-notes__note-body">
-					<div className="order-notes__note-type">{ note_type }</div>
-					<div className="order-notes__note-content">
+				<div className="activity-log__note-body">
+					<div className="activity-log__note-type">{ note_type }</div>
+					<div className="activity-log__note-content">
 						{ decodeEntities( stripHTML( note ) ) }
 					</div>
 				</div>

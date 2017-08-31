@@ -14,24 +14,24 @@ import { sortBy, keys } from 'lodash';
 import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
 import Card from 'components/card';
 import OrderNote from './note';
-import OrderNotesByDay from './day';
+import EventsByDay from './day';
 import SectionHeader from 'components/section-header';
 
-function getSortedNotes( notes ) {
-	const notesByDay = {};
-	notes.forEach( note => {
-		const day = moment( note.date_created_gmt ).format( 'YYYYMMDD' );
-		if ( notesByDay[ day ] ) {
-			notesByDay[ day ].push( note );
-			notesByDay[ day ] = sortBy( notesByDay[ day ], 'date_created' ).reverse();
+function getSortedEvents( events ) {
+	const eventsByDay = {};
+	events.forEach( event => {
+		const day = moment( event.date ).format( 'YYYYMMDD' );
+		if ( eventsByDay[ day ] ) {
+			eventsByDay[ day ].push( event );
+			eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'date' ).reverse();
 		} else {
-			notesByDay[ day ] = [ note ];
+			eventsByDay[ day ] = [ event ];
 		}
 	} );
-	return notesByDay;
+	return eventsByDay;
 }
 
-class OrderNotes extends Component {
+class ActivityLog extends Component {
 	static propTypes = {
 		orderId: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -48,8 +48,8 @@ class OrderNotes extends Component {
 		this.setState( () => ( { openIndex: index } ) );
 	}
 
-	renderNotes = () => {
-		const { days, notesByDay, translate } = this.props;
+	renderEvents = () => {
+		const { days, eventsByDay, translate } = this.props;
 		if ( ! days.length ) {
 			return (
 				<p>{ translate( 'No activity yet' ) }</p>
@@ -57,17 +57,21 @@ class OrderNotes extends Component {
 		}
 
 		return days.map( ( day, index ) => {
-			const notes = notesByDay[ day ];
+			const events = eventsByDay[ day ];
 			return (
-				<OrderNotesByDay
+				<EventsByDay
 					key={ day }
-					count={ notes.length }
+					count={ events.length }
 					date={ day }
 					index={ index }
 					isOpen={ index === this.state.openIndex }
 					onClick={ this.toggleOpenDay } >
-					{ notes.map( note => <OrderNote { ...note } key={ note.id } /> ) }
-				</OrderNotesByDay>
+					{ events.map( event => {
+						if ( event.type === 'order-note' ) {
+							return <OrderNote { ...event } key={ event.id } />;
+						}
+					} ) }
+				</EventsByDay>
 			);
 		} );
 	}
@@ -75,24 +79,24 @@ class OrderNotes extends Component {
 	renderPlaceholder = () => {
 		const noop = () => {};
 		return (
-			<OrderNotesByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
+			<EventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
 				<OrderNote note="" />
-			</OrderNotesByDay>
+			</EventsByDay>
 		);
 	}
 
 	render() {
-		const { areNotesLoaded, translate } = this.props;
+		const { isLoaded, translate } = this.props;
 		const classes = classNames( {
-			'is-placeholder': ! areNotesLoaded
+			'is-placeholder': ! isLoaded
 		} );
 
 		return (
-			<div className="order-notes">
+			<div className="activity-log">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
 				<Card className={ classes }>
-					{ areNotesLoaded
-						? this.renderNotes()
+					{ isLoaded
+						? this.renderEvents()
 						: this.renderPlaceholder()
 					}
 				</Card>
@@ -105,19 +109,28 @@ export default connect(
 	( state, props ) => {
 		const orderId = props.orderId || false;
 		const siteId = props.siteId || false;
-		const areNotesLoaded = areOrderNotesLoaded( state, orderId );
+		const isLoaded = areOrderNotesLoaded( state, orderId );
+
 		const notes = getOrderNotes( state, orderId );
-		const notesByDay = notes.length ? getSortedNotes( notes ) : false;
-		const days = notesByDay ? keys( notesByDay ) : [];
+		const events = notes.map( ( note ) => {
+			return {
+				...note,
+				type: 'order-note',
+				date: note.date_created,
+			}
+		} );
+
+		const eventsByDay = events.length ? getSortedEvents( events ) : false;
+		const days = eventsByDay ? keys( eventsByDay ) : [];
 		days.sort().reverse();
 
 		return {
-			areNotesLoaded,
+			isLoaded,
 			days,
-			notes,
-			notesByDay,
+			events,
+			eventsByDay,
 			orderId,
 			siteId,
 		};
 	}
-)( localize( OrderNotes ) );
+)( localize( ActivityLog ) );
