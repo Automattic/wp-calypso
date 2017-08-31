@@ -23,10 +23,13 @@ function getSortedEvents( events ) {
 		const day = moment( event.date ).format( 'YYYYMMDD' );
 		if ( eventsByDay[ day ] ) {
 			eventsByDay[ day ].push( event );
-			eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'date' ).reverse();
 		} else {
 			eventsByDay[ day ] = [ event ];
 		}
+	} );
+
+	keys( eventsByDay ).forEach( day => {
+		eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'date' ).reverse();
 	} );
 	return eventsByDay;
 }
