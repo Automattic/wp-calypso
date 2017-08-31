@@ -131,7 +131,7 @@ class ActivityLogDay extends Component {
 				<div className="activity-log-day__events">
 					{ /* eslint-disable indent */ }
 					{ isEmpty( logs )
-						? translate( 'No Events' )
+						? translate( 'No activity' )
 						: translate( '%d Event', '%d Events', {
 								args: logs.length,
 								count: logs.length,
