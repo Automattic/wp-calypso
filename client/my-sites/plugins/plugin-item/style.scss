@@ -37,8 +37,6 @@
 
 	@include breakpoint( '>1040px' ) {
 		flex-direction: column;
-		width: 100%;
-		height: 100%;
 	}
 
 	&.disabled {
@@ -249,7 +247,7 @@
 	}
 }
 
-.plugin-item__wrapper {
+.plugin-item {
 	box-sizing: border-box;
 	border: 0 solid lighten( $gray, 30% );
 
