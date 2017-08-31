@@ -8,8 +8,10 @@ import { expect } from 'chai';
  */
 import {
 	ZONINATOR_ADD_ZONE,
+	ZONINATOR_DELETE_ZONE,
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_SAVE_ZONE,
 	ZONINATOR_UPDATE_ZONE,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
@@ -19,6 +21,8 @@ import {
 	updateZones,
 	updateZone,
 	addZone,
+	deleteZone,
+	saveZone,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -91,6 +95,32 @@ describe( 'actions', () => {
 				type: ZONINATOR_ADD_ZONE,
 				data: zones[ 1 ],
 				form: 'form',
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#saveZone', () => {
+		it( 'should return an action object', () => {
+			const action = saveZone( siteId, zones[ 1 ].id, 'form', zones[ 1 ] );
+
+			expect( action ).to.deep.equal( {
+				type: ZONINATOR_SAVE_ZONE,
+				data: zones[ 1 ],
+				form: 'form',
+				zoneId: 1,
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#deleteZone', () => {
+		it( 'should return an action object', () => {
+			const action = deleteZone( siteId, zones[ 1 ].id );
+
+			expect( action ).to.deep.equal( {
+				type: ZONINATOR_DELETE_ZONE,
+				zoneId: 1,
 				siteId,
 			} );
 		} );
