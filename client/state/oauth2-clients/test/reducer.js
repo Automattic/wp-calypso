@@ -51,18 +51,19 @@ describe( 'reducer', () => {
 			type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 			data: {
 				id: 930,
-				name: 'vaultpress2',
 				title: 'Vaultpress 2',
-				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav.png',
+				url: 'https://vaultpress.com/'
 			}
 		} );
 
 		expect( state ).to.deep.equal( {
 			930: {
 				id: 930,
-				name: 'vaultpress2',
+				name: 'vaultpress',
 				title: 'Vaultpress 2',
-				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav.png',
+				url: 'https://vaultpress.com/'
 			},
 			973: {
 				id: 973,

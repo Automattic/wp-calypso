@@ -2,7 +2,7 @@
  * External dependencies
  */
 import qs from 'qs';
-import url from 'url';
+import urlModule from 'url';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ const getQueryStringParamsFromUrl = uri => {
 		return null;
 	}
 
-	const { query } = url.parse( uri );
+	const { query } = urlModule.parse( uri );
 
 	if ( ! query ) {
 		return null;
@@ -94,9 +94,23 @@ const getClientIdFromSignupUrl = signupUrl => {
 	return oauth2RedirectParams.client_id;
 };
 
+/**
+ * Parses and normalizes data returned by the API.
+ *
+ * @param {Object} data - raw data
+ * @return {Object} the normalized data
+ */
+const fromApi = ( { icon, id, title, url } ) => ( {
+	id: Number( id ),
+	title,
+	url,
+	icon
+} );
+
 export default createReducer( initialClientsData, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		const newData = Object.assign( {}, state[ data.id ], data );
+		const newData = Object.assign( {}, state[ data.id ], fromApi( data ) );
+
 		return Object.assign( {}, state, { [ data.id ]: newData } );
 	},
 	[ OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS ]: ( state, { signupUrl } ) => {
