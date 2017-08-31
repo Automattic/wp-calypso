@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { isEqual, uniqBy } from 'lodash';
+import { flowRight as compose, isEqual, uniqBy } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
 
 /**
@@ -16,6 +17,7 @@ import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'components/count';
 import Notice from 'components/notice';
 import PluginNotices from 'lib/plugins/notices';
+import { errorNotice } from 'state/notices/actions';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;
@@ -31,11 +33,6 @@ function checkPropsChange( nextProps, propArr ) {
 }
 
 class PluginItem extends Component {
-
-	state = {
-		clicked: false
-	};
-
 	static propTypes = {
 		plugin: PropTypes.object,
 		sites: PropTypes.array,
@@ -68,7 +65,7 @@ class PluginItem extends Component {
 		hasUpdate: () => false,
 	};
 
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate( nextProps ) {
 		const propsToCheck = [ 'plugin', 'sites', 'selectedSite', 'isMock', 'isSelectable', 'isSelected' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
@@ -82,9 +79,6 @@ class PluginItem extends Component {
 			return true;
 		}
 
-		if ( this.state.clicked !== nextState.clicked ) {
-			return true;
-		}
 		return false;
 	}
 
@@ -215,13 +209,12 @@ class PluginItem extends Component {
 	}
 
 	clickNoManageItem = () => {
-		this.setState( { clicked: true } );
-	}
-
-	getNoManageWarning() {
-		return <Notice text={ this.props.translate( 'Jetpack Manage is disabled for all the sites where this plugin is installed' ) }
-			status="is-error"
-			showDismiss={ false } />;
+		this.props.errorNotice(
+			this.props.translate(
+				'Jetpack Manage is disabled for all the sites where this plugin is installed'
+			),
+			{ id: 'plugin-no-manage-error' } // Display the notice only once on repeated clicks
+		);
 	}
 
 	renderActions() {
@@ -322,9 +315,6 @@ class PluginItem extends Component {
 						</span>
 						{ this.props.selectedSite ? null : this.renderSiteCount() }
 					</CompactCard>
-					<div>
-					{ this.state.clicked ? this.getNoManageWarning() : null }
-					</div>
 				</div>
 			);
 		}
@@ -357,4 +347,7 @@ class PluginItem extends Component {
 	}
 }
 
-export default localize( PluginItem );
+export default compose(
+	connect( null, { errorNotice } ),
+	localize
+)( PluginItem );
