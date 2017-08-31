@@ -104,11 +104,20 @@ class PostComment extends React.PureComponent {
 		);
 	};
 
+	// has hidden child --> true
 	shouldRenderCaterpillar = () => {
 		const { enableCaterpillar, toShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
 		return enableCaterpillar && toShow && some( childIds, id => ! toShow[ id ] );
+	};
+
+	// has visisble child --> true
+	shouldRenderReplies = () => {
+		const { toShow, commentId } = this.props;
+		const childIds = this.getAllChildrenIds( commentId );
+
+		return toShow && some( childIds, id => toShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -242,6 +251,7 @@ class PostComment extends React.PureComponent {
 		} else if ( toShow && ! toShow[ commentId ] ) {
 			// this comment should be hidden so just render children
 			return (
+				this.shouldRenderReplies() &&
 				<div>
 					{ this.renderRepliesList() }
 				</div>
