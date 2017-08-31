@@ -51,6 +51,11 @@ class JPOSummaryStep extends React.Component {
 
 	constructor( props ) {
 		super( props );
+		this.state = {
+			pluginsReady: 'no',
+			settingsReady: 'no',
+			widgetsReady: 'no',
+		};
 		this.getOnboardingChoices = this.getOnboardingChoices.bind( this );
 		this.renderStepContent = this.renderStepContent.bind( this );
 	}
@@ -98,6 +103,12 @@ class JPOSummaryStep extends React.Component {
 		if ( sendToJetpack.onboarding.addContactForm ) {
 			sendToJetpack = extend( {}, sendToJetpack, {
 				'contact-form': true
+			} );
+		}
+
+		if ( some( sendToJetpack.onboarding.businessInfo, i => '' !== i ) ) {
+			sendToJetpack = extend( {}, sendToJetpack, {
+				widgets: true,
 			} );
 		}
 
@@ -221,24 +232,37 @@ class JPOSummaryStep extends React.Component {
 		);
 	}
 
-	componentWillMount() {
-		let choices = this.getOnboardingChoices();
-		const siteId = get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
-			hasBusinessInfo = some( choices.onboarding.businessInfo, i => '' !== i );
-		if ( 'store' === choices.onboarding.genre ) {
-			this.props.installPlugin( siteId, { slug: 'woocommerce', id: 'woocommerce/woocommerce' } );
+	componentWillReceiveProps() {
+		const choices = this.getOnboardingChoices();
+		const siteId = get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 );
+
+		if ( 'no' === this.state.pluginsReady ) {
+			this.setState( { pluginsReady: 'progress' } );
+			if ( 'store' === choices.onboarding.genre ) {
+				this.props.installPlugin(
+					siteId,
+					{
+						slug: 'woocommerce',
+						id: 'woocommerce/woocommerce'
+					}
+					).then( () => this.setState( { pluginsReady: 'yes' } ) );
+			} else {
+				this.setState( { pluginsReady: 'yes' } );
+			}
 		}
-		if ( hasBusinessInfo ) {
-			choices = extend( {}, choices, {
-				widgets: true,
-			} );
+
+		if ( 'no' === this.state.settingsReady ) {
+			this.setState( { settingsReady: 'progress' } );
+			this.props.updateSettings(
+				siteId,
+				choices,
+				false // don't sanitize settings
+			).then( () => this.setState( { settingsReady: 'yes' } ) );
 		}
-		this.props.updateSettings(
-			siteId,
-			choices,
-			false // don't sanitize settings
-		).then( () => {
-			if ( hasBusinessInfo ) {
+
+		if ( 'no' === this.state.widgetsReady ) {
+			this.setState( { widgetsReady: 'progress' } );
+			if ( some( choices.onboarding.businessInfo, i => '' !== i ) ) {
 				const {
 					businessName,
 					businessAddress,
@@ -246,15 +270,20 @@ class JPOSummaryStep extends React.Component {
 					businessState,
 					businessZipCode
 				} = choices.onboarding.businessInfo;
-				this.props.addWidget( siteId, {
-					id_base: 'widget_contact_info',
-					settings: {
-						title: businessName,
-						address: businessAddress + '\n' + businessCity + '\n' + businessState + '\n' + businessZipCode,
+				this.props.addWidget(
+					siteId,
+					{
+						id_base: 'widget_contact_info',
+						settings: {
+							title: businessName,
+							address: [ businessAddress, businessCity, businessState, businessZipCode ].join( '\n' ),
+						}
 					}
-				} );
+				).then( () => this.setState( { widgetsReady: 'yes' } ) );
+			} else {
+				this.setState( { widgetsReady: 'yes' } );
 			}
-		} );
+		}
 	}
 
 	render() {
@@ -264,6 +293,10 @@ class JPOSummaryStep extends React.Component {
 		const subHeaderText = translate(
 			'You have unlocked dozens of website-bolstering features with Jetpack. Continue preparing your site below.'
 		);
+		let stepContent = translate( 'Getting everything ready…' );
+		if ( 'yes' === this.state.pluginsReady && 'yes' === this.state.settingsReady && 'yes' === this.state.widgetsReady ) {
+			stepContent = this.renderStepContent();
+		}
 
 		return (
 			<div>
@@ -276,7 +309,7 @@ class JPOSummaryStep extends React.Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderStepContent() }
+					stepContent={ stepContent }
 					shouldHideNavButtons={ true }
 				/>
 			</div>
