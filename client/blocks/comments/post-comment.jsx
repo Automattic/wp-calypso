@@ -46,6 +46,7 @@ class PostComment extends React.PureComponent {
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
 		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
+		showReadMoreInActions: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -74,6 +75,7 @@ class PostComment extends React.PureComponent {
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
 		displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		showReadMoreInActions: false,
 	};
 
 	state = {
@@ -381,6 +383,7 @@ class PostComment extends React.PureComponent {
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
+					showReadMore={ this.props.showReadMoreInActions }
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }

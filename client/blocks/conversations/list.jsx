@@ -112,6 +112,7 @@ export class ConversationCommentList extends React.Component {
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }
+								showReadMoreInActions={ true }
 							/>
 						);
 					} ) }
