@@ -208,7 +208,7 @@ class PluginItem extends Component {
 		return null;
 	}
 
-	clickNoManageItem = () => {
+	showNoManageNotice() {
 		this.props.errorNotice(
 			this.props.translate(
 				'Jetpack Manage is disabled for all the sites where this plugin is installed'
@@ -271,7 +271,10 @@ class PluginItem extends Component {
 	}
 
 	onItemClick = ( event ) => {
-		if ( this.props.isSelectable ) {
+		if ( this.props.hasAllNoManageSites ) {
+			event.preventDefault();
+			this.showNoManageNotice();
+		} else if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );
 		}
@@ -300,50 +303,45 @@ class PluginItem extends Component {
 			</div>
 			);
 
-		if ( this.props.hasAllNoManageSites ) {
-			const pluginItemClasses = classNames( 'plugin-item', {
-				disabled: this.props.hasAllNoManageSites,
-			} );
-			return (
-				<div className="plugin-item__wrapper">
-					<CompactCard className={ pluginItemClasses }
-						onClick={ this.clickNoManageItem }>
-						<span className="plugin-item__disabled">
-							<PluginIcon image={ plugin.icon } />
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</span>
-						{ this.props.selectedSite ? null : this.renderSiteCount() }
-					</CompactCard>
-				</div>
-			);
+		const disabled = this.props.hasAllNoManageSites;
+
+		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
+
+		let pluginActions = null;
+		if ( ! this.props.selectedSite ) {
+			pluginActions = this.renderSiteCount();
+		} else if ( ! disabled ) {
+			pluginActions = this.renderActions();
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugin-item__wrapper">
-				<CompactCard className="plugin-item">
-					{ ! this.props.isSelectable
+				<CompactCard className={ pluginItemClasses }>
+					{ disabled || ! this.props.isSelectable
 						? null
-						: <input className="plugin-item__checkbox"
+						: <input
+								className="plugin-item__checkbox"
 								id={ plugin.slug }
 								type="checkbox"
 								onClick={ this.props.onClick }
 								checked={ this.props.isSelected }
 								readOnly={ true } />
 					}
-					<a href={ this.props.pluginLink } onClick={ this.onItemClick } className="plugin-item__link">
+					<a
+						className="plugin-item__link"
+						href={ this.props.pluginLink }
+						onClick={ this.onItemClick }
+					>
 						<PluginIcon image={ plugin.icon } />
 						<div className="plugin-item__info">
 							{ pluginTitle }
 							{ this.pluginMeta( plugin ) }
 						</div>
 					</a>
-					{ this.props.selectedSite ? this.renderActions() : this.renderSiteCount() }
+					{ pluginActions }
 				</CompactCard>
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
