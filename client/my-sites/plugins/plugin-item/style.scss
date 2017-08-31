@@ -47,26 +47,16 @@
 	}
 }
 
-.plugin-item__link,
-.plugin-item__disabled {
-	display: block;
+.plugin-item__link {
+	display: flex;
 	flex-grow: 1;
 	padding: 16px;
 	overflow: hidden; // lazy clearfix
 	cursor: pointer;
-}
-
-.plugin-item__link {
-	display: flex;
 
 	.is-bulk-editing & {
 		padding-left: 32px;
 	}
-}
-
-.plugin-item__disabled {
-	opacity: 0.5;
-	background: $gray-light;
 }
 
 // Checkbox for multiselect purposes
