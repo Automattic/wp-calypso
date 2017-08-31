@@ -231,10 +231,7 @@ module.exports = React.createClass( {
 
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
-
-			if ( ! viewport.isMobile() ) {
-				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
-			}
+			editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 		}.bind( this );
 
 		this.localize();
