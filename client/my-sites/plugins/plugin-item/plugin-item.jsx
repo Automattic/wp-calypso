@@ -257,16 +257,14 @@ class PluginItem extends Component {
 
 	renderPlaceholder() {
 		return (
-			<div className="plugin-item__wrapper">
-				<CompactCard className="plugin-item is-placeholder">
-					<div className="plugin-item__link">
-						<PluginIcon isPlaceholder />
-						<div className="plugin-item__info">
-							<div className="plugin-item__title is-placeholder"></div>
-						</div>
+			<CompactCard className="plugin-item is-placeholder">
+				<div className="plugin-item__link">
+					<PluginIcon isPlaceholder />
+					<div className="plugin-item__info">
+						<div className="plugin-item__title is-placeholder"></div>
 					</div>
-				</CompactCard>
-			</div>
+				</div>
+			</CompactCard>
 		);
 	}
 
@@ -305,32 +303,30 @@ class PluginItem extends Component {
 		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
 
 		return (
-			<div className="plugin-item__wrapper">
-				<CompactCard className={ pluginItemClasses }>
-					{ disabled || ! this.props.isSelectable
-						? null
-						: <input
-								className="plugin-item__checkbox"
-								id={ plugin.slug }
-								type="checkbox"
-								onClick={ this.props.onClick }
-								checked={ this.props.isSelected }
-								readOnly={ true } />
-					}
-					<a
-						className="plugin-item__link"
-						href={ this.props.pluginLink }
-						onClick={ this.onItemClick }
-					>
-						<PluginIcon image={ plugin.icon } />
-						<div className="plugin-item__info">
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</div>
-					</a>
-					{ pluginActions }
-				</CompactCard>
-			</div>
+			<CompactCard className={ pluginItemClasses }>
+				{ disabled || ! this.props.isSelectable
+					? null
+					: <input
+							className="plugin-item__checkbox"
+							id={ plugin.slug }
+							type="checkbox"
+							onClick={ this.props.onClick }
+							checked={ this.props.isSelected }
+							readOnly={ true } />
+				}
+				<a
+					className="plugin-item__link"
+					href={ this.props.pluginLink }
+					onClick={ this.onItemClick }
+				>
+					<PluginIcon image={ plugin.icon } />
+					<div className="plugin-item__info">
+						{ pluginTitle }
+						{ this.pluginMeta( plugin ) }
+					</div>
+				</a>
+				{ pluginActions }
+			</CompactCard>
 		);
 	}
 }
