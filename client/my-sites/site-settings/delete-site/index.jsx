@@ -4,8 +4,8 @@
  * @format
  */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { some } from 'lodash';
@@ -31,6 +31,7 @@ import Notice from 'components/notice';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { deleteSite } from 'state/sites/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 class DeleteSite extends Component {
 	static propTypes = {
@@ -131,7 +132,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { siteDomain, siteId, siteSlug, translate } = this.props;
+		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
 		const exportLink = '/settings/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
@@ -234,7 +235,7 @@ class DeleteSite extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						<Button
-							className="settings-action-panel__export-button"
+							className="delete-site__export-button settings-action-panel__export-button"
 							disabled={ ! siteId }
 							onClick={ this._checkSiteLoaded }
 							href={ exportLink }
@@ -283,20 +284,30 @@ class DeleteSite extends Component {
 							) }
 						</p>
 						<p>
-							<a className="settings-action-panel__body-text-link" href="/help/contact">
+							<a
+								className="delete-site__body-text-link settings-action-panel__body-text-link"
+								href="/help/contact"
+							>
 								{ strings.contactSupport }
 							</a>
 						</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<Button
-							scary
-							disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
-							onClick={ this.handleDeleteSiteClick }
-						>
-							<Gridicon icon="trash" />
-							{ strings.deleteSite }
-						</Button>
+						{ ! isAtomic && (
+							<Button
+								scary
+								disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
+								onClick={ this.handleDeleteSiteClick }
+							>
+								<Gridicon icon="trash" />
+								{ strings.deleteSite }
+							</Button>
+						) }
+						{ isAtomic && (
+							<Button primary href="/help/contact">
+								{ strings.contactSupport }
+							</Button>
+						) }
 					</ActionPanelFooter>
 					<DeleteSiteWarningDialog
 						isVisible={ this.state.showWarningDialog }
@@ -344,6 +355,7 @@ export default connect(
 		const siteSlug = getSelectedSiteSlug( state );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteDomain,
 			siteId,
 			sitePurchases: getSitePurchases( state, siteId ),
