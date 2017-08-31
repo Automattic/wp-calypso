@@ -112,11 +112,19 @@ class PostItem extends React.Component {
 	}
 
 	inAllSitesModeWithMultipleUsers() {
-		return this.props.isAllSitesModeSelected && ! this.props.allSitesSingleUser;
+		return (
+			this.props.isAllSitesModeSelected &&
+			! this.props.allSitesSingleUser &&
+			! this.props.singleUserQuery
+		);
 	}
 
 	inSingleSiteModeWithMultipleUsers() {
-		return ! this.props.isAllSitesModeSelected && ! this.props.singleUserSite;
+		return (
+			! this.props.isAllSitesModeSelected &&
+			! this.props.singleUserSite &&
+			! this.props.singleUserQuery
+		);
 	}
 
 	renderVariableHeightContent() {
@@ -214,6 +222,7 @@ PostItem.propTypes = {
 	isAllSitesModeSelected: PropTypes.bool,
 	allSitesSingleUser: PropTypes.bool,
 	singleUserSite: PropTypes.bool,
+	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
 	onHeightChange: PropTypes.func,
