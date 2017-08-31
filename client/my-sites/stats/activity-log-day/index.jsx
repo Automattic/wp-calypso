@@ -70,7 +70,7 @@ class ActivityLogDay extends Component {
 	 * @param {string} type Whether the button will be a primary or not.
 	 * @returns { object } Button to display.
 	 */
-	getRewindButton( type = '' ) {
+	renderRewindButton( type = '' ) {
 		const {
 			disableRestore,
 			hideRestore,
@@ -101,7 +101,7 @@ class ActivityLogDay extends Component {
 	 *
 	 * @returns { object } Heading to display with date and number of events
 	 */
-	getEventsHeading() {
+	renderEventsHeading() {
 		const {
 			applySiteOffset,
 			isToday,
@@ -150,10 +150,10 @@ class ActivityLogDay extends Component {
 				<FoldableCard
 					clickableHeader
 					expanded={ isToday }
-					expandedSummary={ this.getRewindButton() }
-					header={ this.getEventsHeading() }
+					expandedSummary={ this.renderRewindButton() }
+					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
-					summary={ this.getRewindButton( 'primary' ) }
+					summary={ this.renderRewindButton( 'primary' ) }
 				>
 					{ logs.map( ( log ) => (
 						<ActivityLogItem
