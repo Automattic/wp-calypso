@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { isEmpty, isNull, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import { isEmpty, map } from 'lodash';
 import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
+import Placeholder from './placeholder';
 import QueryActivityLog from 'components/data/query-activity-log';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getActivityLogs } from 'state/selectors';
@@ -128,37 +129,42 @@ class ActivityLogDay extends Component {
 			tsStartOfSiteDay,
 		} = this.props;
 
-		const hasLogs = ! isEmpty( logs );
+		const isLoadingLogs = isNull( logs );
+		const hasLogs = ! isLoadingLogs && ! isEmpty( logs );
 
 		return (
-			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
+			<div
+				className={ classnames( 'activity-log-day', { 'is-empty': ! isLoadingLogs && ! hasLogs } ) }
+			>
 				<QueryActivityLog
 					dateEnd={ tsEndOfSiteDay }
 					dateStart={ tsStartOfSiteDay }
 					number={ 1000 }
 					siteId={ siteId }
 				/>
-				<FoldableCard
-					clickableHeader={ hasLogs }
-					expanded={ hasLogs && isToday }
-					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
-					header={ this.renderEventsHeading() }
-					onOpen={ this.trackOpenDay }
-					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
-				>
-					{ hasLogs &&
-						map( logs, log =>
-							<ActivityLogItem
-								applySiteOffset={ applySiteOffset }
-								disableRestore={ disableRestore }
-								hideRestore={ hideRestore }
-								key={ log.activityId }
-								log={ log }
-								requestRestore={ requestRestore }
-								siteId={ siteId }
-							/>
-						) }
-				</FoldableCard>
+				{ isLoadingLogs
+					? <Placeholder />
+					: <FoldableCard
+							clickableHeader={ hasLogs }
+							expanded={ hasLogs && isToday }
+							expandedSummary={ hasLogs ? this.renderRewindButton() : null }
+							header={ this.renderEventsHeading() }
+							onOpen={ this.trackOpenDay }
+							summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
+						>
+							{ hasLogs &&
+								map( logs, log =>
+									<ActivityLogItem
+										applySiteOffset={ applySiteOffset }
+										disableRestore={ disableRestore }
+										hideRestore={ hideRestore }
+										key={ log.activityId }
+										log={ log }
+										requestRestore={ requestRestore }
+										siteId={ siteId }
+									/>
+								) }
+						</FoldableCard> }
 			</div>
 		);
 	}
