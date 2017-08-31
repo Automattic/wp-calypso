@@ -77,7 +77,7 @@ class TwoFactorActions extends Component {
 				{ isAuthenticatorAvailable && (
 					<p>
 						<a href="#" onClick={ this.recordAuthenticatorLinkClick }>
-							{ translate( 'Your Authenticator app' ) }
+							{ translate( 'Your authenticator app' ) }
 						</a>
 					</p>
 				) }
