@@ -287,25 +287,13 @@ class PluginItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		let numberOfWarningIcons = 0;
-
-		if ( this.props.hasNoManageSite ) {
-			numberOfWarningIcons++;
-		}
-
-		if ( this.props.hasUpdate( plugin ) ) {
-			numberOfWarningIcons++;
-		}
-
-		const pluginTitle = (
-			<div className="plugin-item__title" data-warnings={ numberOfWarningIcons }>
-				{ plugin.name }
-			</div>
-			);
-
 		const disabled = this.props.hasAllNoManageSites;
 
-		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
+		const pluginTitle = (
+			<div className="plugin-item__title">
+				{ plugin.name }
+			</div>
+		);
 
 		let pluginActions = null;
 		if ( ! this.props.selectedSite ) {
@@ -313,6 +301,8 @@ class PluginItem extends Component {
 		} else if ( ! disabled ) {
 			pluginActions = this.renderActions();
 		}
+
+		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
 
 		return (
 			<div className="plugin-item__wrapper">
