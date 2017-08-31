@@ -26,17 +26,18 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_TREE_SITE_ADD,
+	COMMENTS_EDIT,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
 import { expandComments } from '../actions';
 
 const commentsNestedTree = [
-	{ ID: 11, parent: { ID: 9 }, text: 'eleven', date: '2016-01-31T10:07:18-08:00' },
-	{ ID: 10, parent: { ID: 9 }, text: 'ten', date: '2016-01-29T10:07:18-08:00' },
-	{ ID: 9, parent: { ID: 6 }, text: 'nine', date: '2016-01-28T11:07:18-08:00' },
-	{ ID: 8, parent: false, text: 'eight', date: '2016-01-28T10:17:18-08:00' },
-	{ ID: 7, parent: false, text: 'seven', date: '2016-01-28T10:08:18-08:00' },
-	{ ID: 6, parent: false, text: 'six', date: '2016-01-28T10:07:18-08:00' },
+	{ ID: 11, parent: { ID: 9 }, content: 'eleven', date: '2016-01-31T10:07:18-08:00' },
+	{ ID: 10, parent: { ID: 9 }, content: 'ten', date: '2016-01-29T10:07:18-08:00' },
+	{ ID: 9, parent: { ID: 6 }, content: 'nine', date: '2016-01-28T11:07:18-08:00' },
+	{ ID: 8, parent: false, content: 'eight', date: '2016-01-28T10:17:18-08:00' },
+	{ ID: 7, parent: false, content: 'seven', date: '2016-01-28T10:08:18-08:00' },
+	{ ID: 6, parent: false, content: 'six', date: '2016-01-28T10:07:18-08:00' },
 ];
 
 describe( 'reducer', () => {
@@ -137,6 +138,23 @@ describe( 'reducer', () => {
 			expect( result[ '1-1' ][ 0 ].placeholderState ).to.equal( PLACEHOLDER_STATE.ERROR );
 			expect( result[ '1-1' ][ 0 ].placeholderError ).to.equal( 'error_message' );
 		} );
+
+		it( 'should edit a comment by id', () => {
+			const state = deepFreeze( {
+				'1-1': [ { ID: 123, content: 'lorem ipsum' } ],
+			} );
+
+			const result = items( state, {
+				type: COMMENTS_EDIT,
+				siteId: 1,
+				postId: 1,
+				commentId: 123,
+				comment: { content: 'lorem ipsum dolor' },
+			} );
+
+			expect( result ).to.eql( { '1-1': [ { ID: 123, content: 'lorem ipsum dolor' } ] } );
+			expect( result[ '1-1' ] ).to.have.lengthOf( 1 );
+		} );
 	} );
 
 	describe( '#fetchStatus', () => {
@@ -207,6 +225,7 @@ describe( 'reducer', () => {
 			expect( response[ '1-1' ] ).to.eql( 2 );
 		} );
 	} );
+
 	describe( '#treesInitialized()', () => {
 		it( 'should track when a tree is initialized for a given query', () => {
 			const state = treesInitialized( undefined, {

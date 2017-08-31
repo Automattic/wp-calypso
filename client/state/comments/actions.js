@@ -3,13 +3,10 @@
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
-	COMMENTS_EDIT_FAILURE,
-	COMMENTS_EDIT_SUCCESS,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
@@ -172,7 +169,7 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} siteId Site identifier
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
- * @param {Number} status New status
+ * @param {String} status New status
  * @returns {Object} Action that changes a comment status
  */
 export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
@@ -183,38 +180,36 @@ export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
 	status,
 } );
 
-export function editComment( siteId, postId, commentId, content ) {
-	return dispatch => {
-		dispatch( {
-			type: COMMENTS_EDIT,
-			siteId,
-			postId,
-			content,
-		} );
+/**
+ * @typedef {Object} Comment
+ * @property {Number} ID specific API version for request
+ * @property {Author} author comment author
+ * @property {String} content comment content
+ * @property {Date} date date the comment was created
+ * @property {String} status status of the comment
+ */
 
-		return wpcom
-			.site( siteId )
-			.comment( commentId )
-			.update( { content } )
-			.then( data =>
-				dispatch( {
-					type: COMMENTS_EDIT_SUCCESS,
-					siteId,
-					postId,
-					commentId,
-					content: data.content,
-				} )
-			)
-			.catch( () =>
-				dispatch( {
-					type: COMMENTS_EDIT_FAILURE,
-					siteId,
-					postId,
-					commentId,
-				} )
-			);
-	};
-}
+/**
+ * @typedef {Object} Author
+ * @property {String} name Full name of the comment author
+ * @property {String} url Address of the commenter site or blog
+ */
+
+/**
+ * Creates an action that edits a comment.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Comment} comment New comment data
+ * @returns {Object} Action that edits a comment
+ */
+export const editComment = ( siteId, postId, commentId, comment ) => ( {
+	type: COMMENTS_EDIT,
+	siteId,
+	postId,
+	commentId,
+	comment,
+} );
 
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
 	type: READER_EXPAND_COMMENTS,

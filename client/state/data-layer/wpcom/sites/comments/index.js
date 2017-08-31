@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, omit } from 'lodash';
+import { forEach, get, groupBy, keys, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
 	COMMENTS_TREE_SITE_ADD,
+	COMMENTS_EDIT,
 } from 'state/action-types';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -49,7 +50,7 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
+export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
 
 const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
@@ -202,10 +203,48 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
+// @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
+export const editComment = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId, comment } = action;
+	const originalComment = pick(
+		getSiteComment( getState(), action.siteId, action.commentId ),
+		keys( comment )
+	);
+
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/comments/${ commentId }`,
+				apiVersion: '1.1',
+				body: comment,
+			},
+			{
+				...action,
+				originalComment,
+			}
+		)
+	);
+};
+
+export const announceEditFailure = ( { dispatch }, action ) => {
+	dispatch(
+		local( {
+			...omit( action, [ 'originalComment' ] ),
+			comment: action.originalComment,
+		} )
+	);
+	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
+	dispatch( errorNotice( translate( "We couldn't update this comment." ), {
+		id: `comment-notice-error-${ action.commentId }`,
+	} ) );
+};
+
 export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
+	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, removeCommentStatusErrorNotice, announceEditFailure ) ],
 };
 
 export default mergeHandlers( fetchHandler, replies, likes );
