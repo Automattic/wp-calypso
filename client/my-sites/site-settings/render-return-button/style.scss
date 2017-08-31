@@ -1,0 +1,30 @@
+.render-return-button__container {
+	margin: 0;
+	position: fixed;
+		top: 47px;
+		left: 600px;
+		bottom: 200px;
+
+	.button.is-compact.is-borderless {
+		padding: 18px 40px 18px 20px;
+
+		@include breakpoint( "<660px" ) {
+			padding: 20px 8px 16px;
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 46px;
+		background: $white;
+		border-bottom: 1px solid $gray-light;
+	}
+}
+
+.render-return-button__label {
+	@include breakpoint( "<660px") {
+		display: none;
+	}
+}
