@@ -16,16 +16,17 @@ import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { getSite, getSiteTitle } from 'state/sites/selectors';
+import { isSingleUserSite } from 'state/sites/selectors';
+import { areAllSitesSingleUser } from 'state/selectors';
 import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel } from 'state/ui/post-type-list/actions';
-import SiteIcon from 'blocks/site-icon';
 import Card from 'components/card';
 import PostRelativeTime from 'blocks/post-relative-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
@@ -110,6 +111,22 @@ class PostItem extends React.Component {
 		this.props.hideSharePanel( this.props.globalId );
 	}
 
+	inAllSitesModeWithMultipleUsers() {
+		return (
+			this.props.isAllSitesModeSelected &&
+			! this.props.allSitesSingleUser &&
+			! this.props.singleUserQuery
+		);
+	}
+
+	inSingleSiteModeWithMultipleUsers() {
+		return (
+			! this.props.isAllSitesModeSelected &&
+			! this.props.singleUserSite &&
+			! this.props.singleUserQuery
+		);
+	}
+
 	renderVariableHeightContent() {
 		const {
 			post,
@@ -135,8 +152,6 @@ class PostItem extends React.Component {
 			className,
 			post,
 			globalId,
-			site,
-			siteTitle,
 			isAllSitesModeSelected,
 			compact,
 			editUrl,
@@ -151,12 +166,16 @@ class PostItem extends React.Component {
 			'is-placeholder': ! globalId
 		} );
 
-		const isSiteVisible = (
+		const isSiteInfoVisible = (
 			isEnabled( 'posts/post-type-list' ) &&
 			isAllSitesModeSelected
 		);
+
+		const isAuthorVisible = ( this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers() ) &&
+			post && post.author && isEnabled( 'posts/post-type-list' );
+
 		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'site-is-visible': isSiteVisible
+			'is-post-item-info-visible': isSiteInfoVisible || isAuthorVisible
 		} );
 
 		const variableHeightContent = this.renderVariableHeightContent();
@@ -171,14 +190,10 @@ class PostItem extends React.Component {
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>
-							{ isSiteVisible && (
-								<div className="post-item__site">
-									<SiteIcon size={ 16 } site={ site } />
-									<div className="post-item__site-title">
-										{ siteTitle }
-									</div>
-								</div>
-							) }
+							<div className="post-item__info">
+								{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+								{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
+							</div>
 							<h1 className="post-item__title">
 								<a href={ editUrl } className="post-item__title-link">
 									{ title || translate( 'Untitled' ) }
@@ -187,7 +202,6 @@ class PostItem extends React.Component {
 							<div className="post-item__meta">
 								<PostRelativeTime globalId={ globalId } />
 								<PostStatus globalId={ globalId } />
-								<PostTypePostAuthor globalId={ globalId } />
 							</div>
 						</div>
 					</div>
@@ -203,10 +217,12 @@ class PostItem extends React.Component {
 PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
+	editUrl: PropTypes.string,
 	post: PropTypes.object,
-	site: PropTypes.object,
-	siteTitle: PropTypes.string,
 	isAllSitesModeSelected: PropTypes.bool,
+	allSitesSingleUser: PropTypes.bool,
+	singleUserSite: PropTypes.bool,
+	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
 	onHeightChange: PropTypes.func,
@@ -224,9 +240,9 @@ export default connect( ( state, { globalId } ) => {
 
 	return {
 		post,
-		site: getSite( state, siteId ),
-		siteTitle: getSiteTitle( state, siteId ),
 		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
+		allSitesSingleUser: areAllSitesSingleUser( state ),
+		singleUserSite: isSingleUserSite( state, siteId ),
 		editUrl: getEditorPath( state, siteId, post.ID ),
 		isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
 	};

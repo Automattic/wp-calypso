@@ -118,7 +118,15 @@ class PostTypeList extends Component {
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostItem key={ globalId } globalId={ globalId } onHeightChange={ this.handleHeightChange } />;
+		const { query } = this.props;
+		return (
+			<PostItem
+				key={ globalId }
+				globalId={ globalId }
+				onHeightChange={ this.handleHeightChange }
+				singleUserQuery={ query && !! query.author }
+			/>
+		);
 	}
 
 	cellRendererWrapper( { key, style, ...rest } ) {
