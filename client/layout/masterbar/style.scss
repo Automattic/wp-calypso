@@ -135,7 +135,7 @@ $autobar-height: 20px;
 
 	@include breakpoint( "<480px" ) {
 		& {
-			margin-right: 10px;
+			padding-right: 14px;
 		}
 
 		.masterbar__item-content {
