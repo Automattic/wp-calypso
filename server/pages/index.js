@@ -138,7 +138,7 @@ function getDefaultContext( request ) {
 	}
 
 	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
-	const pride = indexOf( prideLanguages, '*' ) > -1 || intersection( prideLanguages, acceptedLanguages );
+	const pride = indexOf( prideLanguages, '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0;
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
