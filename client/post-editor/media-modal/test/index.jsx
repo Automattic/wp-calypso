@@ -79,7 +79,8 @@ describe( 'EditorMediaModal', function() {
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
-			'It will be permanently removed from all other locations where it currently appears.' );
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -93,7 +94,8 @@ describe( 'EditorMediaModal', function() {
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete these items? ' +
-			'They will be permanently removed from all other locations where they currently appear.' );
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 			done();
@@ -110,7 +112,8 @@ describe( 'EditorMediaModal', function() {
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
-			'It will be permanently removed from all other locations where it currently appears.' );
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -124,7 +127,8 @@ describe( 'EditorMediaModal', function() {
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
-			'It will be permanently removed from all other locations where it currently appears.' );
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 			done();
