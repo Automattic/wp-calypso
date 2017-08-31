@@ -14,15 +14,14 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SiteOwnership from './site-ownership';
-import redirectNonJetpackToGeneral from
-	'my-sites/site-settings/redirect-to-general';
+import redirectNonJetpackToGeneral from 'my-sites/site-settings/redirect-to/redirect-to-general';
 
 class ManageConnection extends Component {
 
 	render() {
 		const {
-			translate,
-			redirectToGeneral
+			redirectToGeneral,
+			translate
 		} = this.props;
 
 		return (

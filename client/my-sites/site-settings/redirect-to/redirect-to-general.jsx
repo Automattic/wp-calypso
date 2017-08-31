@@ -15,10 +15,13 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 
-const redirectNonJetpackToGeneral = ( ComponentToRender ) => {
+const redirectNonJetpackToGeneral = ( WrappedComponent ) => {
 	class RedirectNonJetpackToGeneral extends Component {
 		static propTypes = {
-			siteSlug: PropTypes.string,
+			// Connected props
+			siteIsAtomic: PropTypes.bool,
+			siteIsJetpack: PropTypes.bool,
+			siteSlug: PropTypes.string
 		}
 
 		componentDidMount() {
@@ -36,20 +39,19 @@ const redirectNonJetpackToGeneral = ( ComponentToRender ) => {
 		}
 
 		redirectToGeneral = () => {
-			const {
-				siteSlug,
-			} = this.props;
+			const { siteSlug } = this.props;
 
-			if ( ! siteSlug ) {
-				return null;
+			if ( siteSlug ) {
+				page( '/settings/general/' + siteSlug );
 			}
-			page( '/settings/general/' + siteSlug );
 		};
 
 		render() {
 			return (
-				<ComponentToRender redirectToGeneral={ this.redirectToGeneral }
-					{ ...this.props } />
+				<WrappedComponent
+					redirectToGeneral={ this.redirectToGeneral }
+					{ ...this.props }
+				/>
 			);
 		}
 	}
