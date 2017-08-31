@@ -83,8 +83,9 @@ export class ConversationCommentList extends React.Component {
 			commentIds,
 			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )
 		);
-		const toShow = { ...startingExpanded, ...expansions };
-		const showCaterpillar = enableCaterpillar && size( toShow ) < post.discussion.comment_count;
+		const commentsToShow = { ...startingExpanded, ...expansions };
+		const showCaterpillar =
+			enableCaterpillar && size( commentsToShow ) < post.discussion.comment_count;
 
 		return (
 			<div className="conversations__comment-list">
@@ -101,7 +102,7 @@ export class ConversationCommentList extends React.Component {
 								key={ commentId }
 								commentId={ commentId }
 								maxDepth={ 2 }
-								toShow={ toShow }
+								commentsToShow={ commentsToShow }
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.state.activeReplyCommentId }

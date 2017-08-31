@@ -46,7 +46,19 @@ class PostComment extends React.PureComponent {
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
 		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
-		toShow: PropTypes.object, // if provided, hide comments not specified in this object
+
+		/**
+		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
+		 * If it is provided then it should have the following shape:
+		 * {
+		 *   [ commentId ]: POST_COMMENT_DISPLAY_TYPE // (full, excerpt, singleLine, etc.)
+		 * }
+		 * - it specifies exactly which comments to display and with which displayType.
+		 * - if a comment's id is not in the object it is assumed that it should be hidden
+		 *
+		 */
+		commentsToShow: PropTypes.object,
+
 		enableCaterpillar: PropTypes.bool,
 
 		// connect()ed props:
@@ -106,23 +118,23 @@ class PostComment extends React.PureComponent {
 
 	// has hidden child --> true
 	shouldRenderCaterpillar = () => {
-		const { enableCaterpillar, toShow, commentId } = this.props;
+		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return enableCaterpillar && toShow && some( childIds, id => ! toShow[ id ] );
+		return enableCaterpillar && commentsToShow && some( childIds, id => ! commentsToShow[ id ] );
 	};
 
 	// has visisble child --> true
 	shouldRenderReplies = () => {
-		const { toShow, commentId } = this.props;
+		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return toShow && some( childIds, id => toShow[ id ] );
+		return commentsToShow && some( childIds, id => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
 		const {
-			toShow,
+			commentsToShow,
 			depth,
 			commentId,
 			commentsTree,
@@ -135,7 +147,7 @@ class PostComment extends React.PureComponent {
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar;
-		const childDepth = ! toShow || toShow[ commentId ] ? depth + 1 : depth;
+		const childDepth = ! commentsToShow || commentsToShow[ commentId ] ? depth + 1 : depth;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -240,7 +252,7 @@ class PostComment extends React.PureComponent {
 			enableCaterpillar,
 			maxDepth,
 			post,
-			toShow,
+			commentsToShow,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -248,7 +260,7 @@ class PostComment extends React.PureComponent {
 
 		if ( ! comment || ( this.props.hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
 			return null;
-		} else if ( toShow && ! toShow[ commentId ] ) {
+		} else if ( commentsToShow && ! commentsToShow[ commentId ] ) {
 			// this comment should be hidden so just render children
 			return (
 				this.shouldRenderReplies() &&
@@ -261,7 +273,7 @@ class PostComment extends React.PureComponent {
 		const displayType =
 			this.state.showFull || ! enableCaterpillar
 				? POST_COMMENT_DISPLAY_TYPES.full
-				: toShow[ commentId ];
+				: commentsToShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
