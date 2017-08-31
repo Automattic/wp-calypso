@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
+import some from 'lodash/some';
 import extend from 'lodash/extend';
 
 /**
@@ -16,6 +17,7 @@ import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { installPlugin } from 'state/plugins/installed/actions';
+import { addWidget } from 'state/widgets/actions';
 
 class JPOSummaryStep extends React.Component {
 
@@ -220,16 +222,39 @@ class JPOSummaryStep extends React.Component {
 	}
 
 	componentWillMount() {
+		let choices = this.getOnboardingChoices();
 		const siteId = get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
-			choices = this.getOnboardingChoices();
+			hasBusinessInfo = some( choices.onboarding.businessInfo, i => '' !== i );
 		if ( 'store' === choices.onboarding.genre ) {
 			this.props.installPlugin( siteId, { slug: 'woocommerce', id: 'woocommerce/woocommerce' } );
+		}
+		if ( hasBusinessInfo ) {
+			choices = extend( {}, choices, {
+				widgets: true,
+			} );
 		}
 		this.props.updateSettings(
 			siteId,
 			choices,
 			false // don't sanitize settings
-		);
+		).then( () => {
+			if ( hasBusinessInfo ) {
+				const {
+					businessName,
+					businessAddress,
+					businessCity,
+					businessState,
+					businessZipCode
+				} = choices.onboarding.businessInfo;
+				this.props.addWidget( siteId, {
+					id_base: 'widget_contact_info',
+					settings: {
+						title: businessName,
+						address: businessAddress + '\n' + businessCity + '\n' + businessState + '\n' + businessZipCode,
+					}
+				} );
+			}
+		} );
 	}
 
 	render() {
@@ -264,6 +289,7 @@ export default connect(
 	{
 		setJPOSummary,
 		updateSettings,
-		installPlugin
+		installPlugin,
+		addWidget,
 	}
 )( JPOSummaryStep );
