@@ -8,6 +8,7 @@ import {
 } from 'state/utils';
 
 import {
+	AUTOMATED_TRANSFER_INITIATE,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	PLUGIN_UPLOAD,
 	PLUGIN_UPLOAD_CLEAR,
@@ -43,6 +44,7 @@ export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: () => false,
 	[ PLUGIN_UPLOAD_ERROR ]: () => false,
 	[ PLUGIN_UPLOAD_CLEAR ]: () => false,
+	[ AUTOMATED_TRANSFER_INITIATE ]: () => true,
 	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { status } ) => status !== 'complete',
 } ) );
 
