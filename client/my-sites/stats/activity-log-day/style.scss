@@ -3,12 +3,26 @@
 	position: relative;
 	z-index: 2;
 
+
 	.card {
 		background: transparent;
 
 		.foldable-card__content {
 			padding: 0 0 24px;
 			background: transparent;
+		}
+	}
+
+	&.is-empty {
+		.card {
+			box-shadow: none;
+		}
+
+		.foldable-card__header {
+			background: $gray-light;
+			min-height: initial;
+			padding-bottom: 4px;
+			padding-top: 4px;
 		}
 	}
 

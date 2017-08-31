@@ -3,9 +3,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -117,20 +119,25 @@ class ActivityLogDay extends Component {
 		return (
 			<div>
 				<div className="activity-log-day__day">
+					{ /* eslint-disable indent */ }
 					{ isToday
 						? translate( '%s — Today', {
-							args: formattedDate,
-							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
-						} )
-						: formattedDate
-					}
+								args: formattedDate,
+								comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+							} )
+						: formattedDate }
+					{ /* eslint-enable indent */ }
 				</div>
-				<div className="activity-log-day__events">{
-					translate( '%d Event', '%d Events', {
-						args: logs.length,
-						count: logs.length,
-					} )
-				}</div>
+				<div className="activity-log-day__events">
+					{ /* eslint-disable indent */ }
+					{ isEmpty( logs )
+						? translate( 'No Events' )
+						: translate( '%d Event', '%d Events', {
+								args: logs.length,
+								count: logs.length,
+							} ) }
+					{ /* eslint-enable indent */ }
+				</div>
 			</div>
 		);
 	}
@@ -146,27 +153,30 @@ class ActivityLogDay extends Component {
 			siteId,
 		} = this.props;
 
+		const hasLogs = ! isEmpty( logs );
+
 		return (
-			<div className="activity-log-day">
+			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
 				<FoldableCard
-					clickableHeader
+					clickableHeader={ hasLogs }
 					expanded={ isToday }
 					expandedSummary={ this.renderRewindButton() }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
 					summary={ this.renderRewindButton( 'primary' ) }
 				>
-					{ logs.map( ( log ) => (
-						<ActivityLogItem
-							applySiteOffset={ applySiteOffset }
-							disableRestore={ disableRestore }
-							hideRestore={ hideRestore }
-							key={ log.activityId }
-							log={ log }
-							requestRestore={ requestRestore }
-							siteId={ siteId }
-						/>
-					) ) }
+					{ hasLogs &&
+						map( logs, log =>
+							<ActivityLogItem
+								applySiteOffset={ applySiteOffset }
+								disableRestore={ disableRestore }
+								hideRestore={ hideRestore }
+								key={ log.activityId }
+								log={ log }
+								requestRestore={ requestRestore }
+								siteId={ siteId }
+							/>
+						) }
 				</FoldableCard>
 			</div>
 		);
