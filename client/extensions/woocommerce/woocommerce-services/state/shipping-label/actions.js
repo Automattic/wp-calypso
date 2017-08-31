@@ -8,15 +8,15 @@ import _ from 'lodash';
 /**
  * Internal dependencies
  */
-import * as api from 'api';
-import printDocument from 'lib/utils/print-document';
-import getPDFSupport from 'lib/utils/pdf-support';
+import * as api from 'woocommerce/woocommerce-services/api';
+import printDocument from 'woocommerce/woocommerce-services/lib/utils/print-document';
+import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import * as NoticeActions from 'state/notices/actions';
 import getFormErrors from './selectors/errors';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+// import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
-import { getPrintURL } from 'lib/pdf-label-utils';
+import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 
 export const INIT_LABELS = 'INIT_LABELS';
 export const SET_IS_FETCHING = 'SET_IS_FETCHING';

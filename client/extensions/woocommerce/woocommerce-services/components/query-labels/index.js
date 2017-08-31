@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { fetchLabelsData } from '../../apps/shipping-label/state/actions';
+import { fetchLabelsData } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class QueryLabels extends Component {
 	fetch() {

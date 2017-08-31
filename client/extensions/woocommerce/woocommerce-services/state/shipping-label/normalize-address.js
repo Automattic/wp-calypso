@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import * as api from 'api';
+import * as api from 'woocommerce/woocommerce-services/api';
 import {
 	ADDRESS_NORMALIZATION_IN_PROGRESS,
 	SET_NORMALIZED_ADDRESS,
