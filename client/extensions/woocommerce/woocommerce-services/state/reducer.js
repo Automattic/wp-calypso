@@ -11,11 +11,13 @@ import { combineReducers, keyedReducer } from 'state/utils';
  */
 import labelSettings from './label-settings/reducer';
 import packages from './packages/reducer';
+import shippingLabel from './shipping-label/reducer';
 
 export default keyedReducer(
 	'siteId',
 	combineReducers( {
 		labelSettings,
 		packages,
+		shippingLabel,
 	} )
 );

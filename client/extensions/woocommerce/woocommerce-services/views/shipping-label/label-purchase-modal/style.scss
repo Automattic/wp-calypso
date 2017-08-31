@@ -1,0 +1,94 @@
+@import './step-confirmation-button/style';
+@import './address-step/style';
+@import './packages-step/style';
+@import './rates-step/style';
+
+
+.label-purchase-modal__sidebar {
+	flex-basis: 100%;
+	padding: 32px;
+	margin-bottom: 61px;
+
+	@include breakpoint( ">660px" ) {
+		flex-basis: 40%;
+		padding: 8px 0px 8px 16px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-basis: 30%;
+	}
+}
+
+.label-purchase-modal__content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	.gridicon.is-success {
+		color: $alert-green;
+	}
+
+	.gridicon.is-warning {
+		color: $alert-yellow;
+	}
+
+	.is-error {
+		color: $alert-red;
+	}
+}
+
+.label-purchase-modal__body {
+	display: flex;
+	flex-wrap: wrap;
+	flex-grow: 1;
+	overflow-y: auto;
+	height: 100%;
+
+	@include breakpoint( ">660px" ) {
+		flex-wrap: nowrap;
+	}
+}
+
+.label-purchase-modal__main-section {
+	flex-basis: 100%;
+	padding: 8px 0;
+
+	@include breakpoint( ">660px" ) {
+		flex-basis: 60%;
+		overflow-y: auto;
+		padding: 16px 16px 8px 1px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-basis: 70%;
+	}
+}
+
+.label-purchase-modal__purchasing-label {
+	margin-left: 6px;
+	color: $blue-wordpress;
+	animation: pulsate 2s ease-out;
+	animation-iteration-count: infinite;
+	opacity: 0.5;
+}
+
+@keyframes pulsate {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1.0;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
+
+.label-purchase-modal__step-title,
+.label-purchase-modal__step-status {
+	float: left;
+}
+
+.label-purchase-modal__step-title {
+	margin: 4px 0 0 8px;
+}
