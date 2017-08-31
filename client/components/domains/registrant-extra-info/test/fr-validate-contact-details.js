@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { expect } from 'chai';
+import { omit } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -86,6 +87,28 @@ describe( 'validateContactDetails', function() {
 				}
 			);
 		} );
+
+		it( 'should accept an empty value', function() {
+			const testDetails = Object.assign(
+				{},
+				contactDetails,
+				{ extra: { sirenSiret: '' } }
+			);
+
+			const result = validateContactDetails( testDetails );
+			expect( result )
+				.to.eql( {} );
+		} );
+
+		it( 'should accept a missing value', function() {
+			const testDetails = {
+				...contactDetails,
+				extra: omit( contactDetails.extra, 'sirenSiret' )
+			};
+
+			expect( validateContactDetails( testDetails ) )
+				.to.eql( {} );
+		} );
 	} );
 
 	describe( 'VAT', function() {
@@ -167,6 +190,98 @@ describe( 'validateContactDetails', function() {
 						.with.property( 'registrantVatId' );
 				}
 			);
+		} );
+
+		it( 'should accept an empty value', function() {
+			const testDetails = Object.assign(
+				{},
+				contactDetails,
+				{ extra: { registrantVatId: '' } }
+			);
+
+			const result = validateContactDetails( testDetails );
+			expect( result )
+				.to.eql( {} );
+		} );
+
+		it( 'should accept a missing value', function() {
+			const testDetails = {
+				...contactDetails,
+				extra: omit( contactDetails.extra, 'registrantVatId' )
+			};
+
+			expect( validateContactDetails( testDetails ) )
+				.to.eql( {} );
+		} );
+	} );
+
+	describe( 'trademarkNumber', function() {
+		const goodTrademarkNumbers = [
+			[ '012345678' ],
+			[ '999999999' ],
+			[ '000000001' ],
+		];
+
+		const badTrademarkNumbers = [
+			[ '123456' ],
+			[ '88888888' ],
+			[ '1' ],
+			[ 'ABCDEFGHI' ],
+		];
+
+		it( 'should accept all good trademark examples', function() {
+			goodTrademarkNumbers.forEach(
+				( [ trademarkNumber ] ) => {
+					const testDetails = Object.assign(
+						{},
+						contactDetails,
+						{ extra: { trademarkNumber } }
+					);
+
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to accept '${ trademarkNumber }'` )
+						.to.eql( {} );
+				}
+			);
+		} );
+
+		it( 'should reject our bad SIRET examples', function() {
+			badTrademarkNumbers.forEach(
+				( [ trademarkNumber ] ) => {
+					const testDetails = Object.assign(
+						{},
+						contactDetails,
+						{ extra: { trademarkNumber } }
+					);
+
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to reject '${ trademarkNumber }'` )
+						.to.have.property( 'extra' )
+						.with.property( 'trademarkNumber' );
+				}
+			);
+		} );
+
+		it( 'should accept an empty value', function() {
+			const testDetails = Object.assign(
+				{},
+				contactDetails,
+				{ extra: { trademarkNumber: '' } }
+			);
+
+			const result = validateContactDetails( testDetails );
+			expect( result )
+				.to.eql( {} );
+		} );
+
+		it( 'should accept a missing value', function() {
+			const testDetails = {
+				...contactDetails,
+				extra: omit( contactDetails.extra, 'trademarkNumber' )
+			};
+
+			expect( validateContactDetails( testDetails ) )
+				.to.eql( {} );
 		} );
 	} );
 } );
