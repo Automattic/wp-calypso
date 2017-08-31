@@ -34,26 +34,13 @@
 .post-item__title-meta {
 	padding: 6px 0;
 
-	&.site-is-visible {
+	&.is-post-item-info-visible {
 		padding: 0;
 	}
 }
 
-.post-item__site {
+.post-item__info {
 	display: flex;
-}
-
-.post-item__site .site-icon {
-	margin-right: 6px;
-}
-
-.post-item__site-title {
-	display: inline;
-	margin: 0;
-	line-height: 16px;
-	vertical-align: middle;
-	font-size: 13px;
-	color: $gray-dark;
 }
 
 .post-item__title {
@@ -94,10 +81,6 @@ a.post-item__title-link {
 
 .post-item__meta .post-relative-time,
 .post-item__meta .post-status,
-.post-item__meta .post-type-post-author {
-	float: left;
-	margin-right: 12px;
-}
 
 .post-item__meta .post-relative-time,
 .post-item__meta .post-status {
@@ -125,7 +108,7 @@ a.post-item__title-link {
 		margin: 0;
 	}
 
-	.post-item__site-title {
+	.post-type-site-info__title {
 		font-size: 11px;
 	}
 

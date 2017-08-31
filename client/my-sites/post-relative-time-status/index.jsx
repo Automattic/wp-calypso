@@ -105,7 +105,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
-			realtiveTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
+			relativeTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
 			innerText = ( <span>{ timeText }{ statusText }</span> ),
 			time = this.getTimestamp();
 
@@ -117,7 +117,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<p className={ realtiveTimeClass } title={ time }>
+			<p className={ relativeTimeClass } title={ time }>
 				{ innerText }
 			</p>
 		);

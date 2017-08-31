@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, noop } from 'lodash';
@@ -10,26 +10,44 @@ import { flowRight, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import ZoneContentForm from '../../forms/zone-content-form';
+import { settingsPath } from '../../../app/util';
 
-const Zone = ( { siteSlug, translate } ) => (
-	<div>
-		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` } onClick={ noop }>
-			{ translate( 'Edit zone' ) }
-		</HeaderCake>
-	</div>
-);
+class Zone extends Component {
 
-Zone.propTypes = {
-	siteSlug: PropTypes.string,
-};
+	static propTypes = {
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	}
 
-const connectComponent = connect( state => {
-	return {
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} );
+	render() {
+		const { siteId, siteSlug, translate } = this.props;
+
+		return (
+			<div>
+				<HeaderCake
+					backHref={ `${ settingsPath }/${ siteSlug }` }
+					actionButton={ <Button compact primary scary>{ translate( 'Delete' ) }</Button> } >
+					{ translate( 'Edit zone' ) }
+				</HeaderCake>
+
+				<ZoneDetailsForm label={ translate( 'Zone label' ) } siteId={ siteId } onSubmit={ noop } />
+
+				<ZoneContentForm label={ translate( 'Zone content' ) } siteId={ siteId } onSubmit={ noop } />
+			</div>
+		);
+	}
+}
+
+const connectComponent = connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+	siteSlug: getSelectedSiteSlug( state ),
+} ) );
 
 export default flowRight(
 	connectComponent,

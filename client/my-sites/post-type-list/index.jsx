@@ -164,6 +164,8 @@ class PostTypeList extends Component {
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
+		const { query } = this.props;
+
 		return (
 			<PostItem
 				key={ globalId }
@@ -172,6 +174,7 @@ class PostTypeList extends Component {
 				largeTitle={ this.props.largeTitles }
 				wrapTitle={ this.props.wrapTitles }
 				windowWidth={ this.state.windowWidth }
+				singleUserQuery={ query && !! query.author }
 			/>
 		);
 	}

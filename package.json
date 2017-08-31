@@ -163,7 +163,7 @@
     "wpcom": "5.4.0",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "4.0.5",
-    "wpcom-xhr-request": "1.1.0"
+    "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
     "node": "6.11.2",
