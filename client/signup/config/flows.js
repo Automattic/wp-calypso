@@ -114,6 +114,27 @@ const flows = {
 		lastModified: '2017-08-01'
 	},
 
+	'my-blog': {
+		steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with blog themes',
+		lastModified: '2017-09-01'
+	},
+
+	'my-website': {
+		steps: [ 'website-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with website themes',
+		lastModified: '2017-09-01'
+	},
+
+	'my-portfolio': {
+		steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with portfolio themes',
+		lastModified: '2017-09-01'
+	},
+
 	subdomain: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
