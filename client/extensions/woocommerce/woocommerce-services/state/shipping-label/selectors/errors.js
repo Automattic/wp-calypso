@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createSelector } from 'reselect';
+import { createSelector } from 'reselect'; // TODO refactor to use lib/create-selector and uninstall reselect
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 
