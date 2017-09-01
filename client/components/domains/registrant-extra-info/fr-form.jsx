@@ -7,14 +7,11 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import {
-	compact,
 	defaults,
-	drop,
 	get,
 	identity,
 	isEmpty,
 	isString,
-	join,
 	map,
 	noop
 } from 'lodash';
