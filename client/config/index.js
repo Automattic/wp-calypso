@@ -13,7 +13,7 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 
 const configData = window.configData;
 
-if ( process.env.NODE_ENV === 'development' ) {
+if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' ) {
 	const match = (
 		document.location.search &&
 		document.location.search.match( /[?&]flags=([^&]+)(&|$)/ )
