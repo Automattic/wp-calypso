@@ -79,6 +79,15 @@ const commentsTree = {
 	},
 };
 
+const { singleLine, excerpt, full } = POST_COMMENT_DISPLAY_TYPES;
+const commentsToShow = {
+	0: singleLine,
+	1: excerpt,
+	2: full,
+	3: excerpt,
+	4: excerpt,
+};
+
 export default class PostCommentExample extends React.Component {
 	static displayName = 'PostCommentExample';
 
@@ -88,45 +97,51 @@ export default class PostCommentExample extends React.Component {
 				<Card compact>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 0 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.singleLine }
+						commentsToShow={ commentsToShow }
 					/>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 2 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+						commentsToShow={ commentsToShow }
 					/>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 3 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+						commentsToShow={ commentsToShow }
 					/>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 3 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.singleLine }
+						commentsToShow={ commentsToShow }
 					/>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 4 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+						commentsToShow={ commentsToShow }
 					/>
 					<PostComment
 						showNestingReplyArrow
+						enableCaterpillar
 						commentId={ 4 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.singleLine }
+						commentsToShow={ commentsToShow }
 					/>
 				</Card>
 			</div>

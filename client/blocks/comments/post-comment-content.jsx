@@ -18,6 +18,11 @@ class PostCommentContent extends React.Component {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
+		setWithDimensionsRef: PropTypes.func,
+	};
+
+	static defaultProps = {
+		setWithDimensionsRef: () => {},
 	};
 
 	render() {
@@ -43,6 +48,7 @@ class PostCommentContent extends React.Component {
 					<Emojify>
 						<div
 							className="comments__comment-content"
+							ref={ this.props.setWithDimensionsRef }
 							dangerouslySetInnerHTML={ { __html: this.props.content } }
 						/>
 					</Emojify>

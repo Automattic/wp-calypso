@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit, flatMap } from 'lodash';
+import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -47,7 +47,6 @@ class PostComment extends React.PureComponent {
 		onCommentSubmit: PropTypes.func,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
-		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
 		showReadMoreInActions: PropTypes.bool,
 
 		/**
@@ -76,7 +75,6 @@ class PostComment extends React.PureComponent {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
-		displayType: POST_COMMENT_DISPLAY_TYPES.full,
 		showReadMoreInActions: false,
 	};
 
@@ -190,11 +188,14 @@ class PostComment extends React.PureComponent {
 				{ showReplies &&
 					<ol className="comments__list">
 						{ commentChildrenIds.map( childId =>
-							<PostComment
-								{ ...omit( this.props, 'displayType' ) }
+							<ConnectedPostComment
+								showNestingReplyArrow={ this.props.showNestingReplyArrow }
+								enableCaterpillar={ enableCaterpillar }
 								depth={ childDepth }
 								key={ childId }
 								commentId={ childId }
+								commentsTree={ commentsTree }
+								commentsToShow={ commentsToShow }
 							/>
 						) }
 					</ol> }
@@ -366,15 +367,14 @@ class PostComment extends React.PureComponent {
 					: null }
 
 				{ this.props.activeEditCommentId !== this.props.commentId &&
-					<div className="comments__content-wrapper" ref={ this.props.setWithDimensionsRef }>
-						<PostCommentContent
-							content={ comment.content }
-							isPlaceholder={ comment.isPlaceholder }
-							className={ displayType }
-							onMoreClicked={ this.handleReadMoreClicked }
-							hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
-						/>
-					</div> }
+					<PostCommentContent
+						content={ comment.content }
+						setWithDimensionsRef={ this.props.setWithDimensionsRef }
+						isPlaceholder={ comment.isPlaceholder }
+						className={ displayType }
+						onMoreClicked={ this.handleReadMoreClicked }
+						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
+					/> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					this.props.activeEditCommentId === this.props.commentId &&
@@ -416,9 +416,11 @@ class PostComment extends React.PureComponent {
 	}
 }
 
-export default connect(
+const ConnectedPostComment = connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ expandComments }
 )( withDimensions( PostComment ) );
+
+export default ConnectedPostComment;

@@ -56,8 +56,14 @@ export default EnhancedComponent =>
 			window.removeEventListener( 'resize', this.resizeEventListener );
 		}
 
-		handleMount = ref => ( this.divRef = ref );
-		setWithDimensionsRef = ref => ( this.setRef = ref );
+		handleMount = ref => {
+			this.divRef = ref;
+			this.handleResize;
+		};
+		setWithDimensionsRef = ref => {
+			this.setRef = ref;
+			this.handleResize();
+		};
 
 		render() {
 			return (
