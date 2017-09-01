@@ -158,7 +158,7 @@ export class MySitesSidebar extends Component {
 		const siteUrl = site && site.URL || '';
 		const externalButton = isPreviewable && (
 			<SidebarButton href={ siteUrl }>
-				<Gridicon className="sidebar__external" icon="external" size={ 12 } />
+				<Gridicon className="sidebar__view-site-external" icon="external" size={ 12 } />
 			</SidebarButton> );
 
 		return (
