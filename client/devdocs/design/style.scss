@@ -158,3 +158,17 @@
 		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
 	}
 }
+
+.docs__design-group {
+	pre {
+		padding: (12 / 15) * 1em;
+		background: $white;
+		background-color: $white;
+	}
+	code {
+		font-size: 0.86667em;
+	    background-color: white;
+	    padding: 0.2em;
+	    border-radius: 3px;
+	}
+}
