@@ -173,7 +173,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		const trademarkNumberStrings = {
 			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
 			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
-			pattern: this.props.translate( 'Digits only. An EU Trademark number is a 9 digit number, like 012345678' ),
 		};
 
 		const trademarkNumberValidationMessage = map(
