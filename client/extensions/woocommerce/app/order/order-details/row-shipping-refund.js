@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import { getCurrencyDefaults } from 'lib/format-currency';
 import PriceInput from 'woocommerce/components/price-input';
 
 class OrderShippingRefundRow extends Component {
@@ -23,11 +24,17 @@ class OrderShippingRefundRow extends Component {
 	render() {
 		const {
 			currency,
+			numberFormat,
 			onChange,
 			shippingTotal,
 			translate
 		} = this.props;
-		const total = Math.round( shippingTotal * 100 ) / 100;
+		const { decimal, grouping, precision } = getCurrencyDefaults( currency );
+		const total = numberFormat( Math.abs( shippingTotal ), {
+			decimals: precision,
+			decPoint: decimal,
+			thousandsSep: grouping,
+		} );
 
 		return (
 			<div className="order-details__total-shipping-refund">
