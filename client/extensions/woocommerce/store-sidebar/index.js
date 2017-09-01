@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -145,6 +146,37 @@ class StoreSidebar extends Component {
 		);
 	}
 
+	promotions = () => {
+		// TODO: Remove this check when ready to release to production.
+		if ( ! config.isEnabled( 'woocommerce/extension-promotions' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/promotions' + siteSuffix;
+		const validLinks = [
+			'/store/promotions',
+			'/store/promotion',
+		];
+
+		const selected = this.isItemLinkSelected( validLinks );
+		const classes = classNames( {
+			promotions: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Promotions' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
 	settings = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/settings' + siteSuffix;
@@ -183,6 +215,7 @@ class StoreSidebar extends Component {
 						{ this.dashboard() }
 						{ showAllSidebarItems && this.products() }
 						{ showAllSidebarItems && this.orders() }
+						{ showAllSidebarItems && this.promotions() }
 						{ showAllSidebarItems && <SidebarSeparator /> }
 						{ showAllSidebarItems && this.settings() }
 					</ul>
