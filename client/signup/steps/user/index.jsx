@@ -59,7 +59,7 @@ export class UserStep extends Component {
 		let subHeaderText = props.subHeaderText;
 
 		if ( flowName === 'wpcc' && oauth2Client ) {
-			if ( oauth2Client.id === 50916 ) {
+			if ( oauth2Client.name === 'woo' ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
 						a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
