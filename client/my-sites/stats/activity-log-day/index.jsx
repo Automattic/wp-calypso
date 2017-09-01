@@ -119,24 +119,20 @@ class ActivityLogDay extends Component {
 		return (
 			<div>
 				<div className="activity-log-day__day">
-					{ /* eslint-disable indent */ }
 					{ isToday
 						? translate( '%s — Today', {
-								args: formattedDate,
-								comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
-							} )
+							args: formattedDate,
+							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+						} )
 						: formattedDate }
-					{ /* eslint-enable indent */ }
 				</div>
 				<div className="activity-log-day__events">
-					{ /* eslint-disable indent */ }
 					{ isEmpty( logs )
 						? translate( 'No activity' )
 						: translate( '%d Event', '%d Events', {
-								args: logs.length,
-								count: logs.length,
-							} ) }
-					{ /* eslint-enable indent */ }
+							args: logs.length,
+							count: logs.length,
+						} ) }
 				</div>
 			</div>
 		);
