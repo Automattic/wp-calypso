@@ -124,7 +124,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
-		datestamp: '20170830',
+		datestamp: '20170904',
 		variations: {
 			skip: 50,
 			show: 50,
