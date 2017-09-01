@@ -123,6 +123,15 @@ function getDestination( destination, dependencies, flowName ) {
 	return flows.filterDestination( destination, dependencies, flowName );
 }
 
+function getThemeForDesignType( designType ) {
+	switch ( designType ) {
+		case 'blog': return 'pub/independent-publisher-2';
+		case 'grid': return 'pub/altofocus';
+		case 'page': return 'pub/dara';
+		default: return 'pub/twentyseventeen';
+	}
+}
+
 export default {
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
@@ -135,5 +144,6 @@ export default {
 	getNextStepName: getNextStepName,
 	getValueFromProgressStore: getValueFromProgressStore,
 	getDestination: getDestination,
-	mergeFormWithValue: mergeFormWithValue
+	mergeFormWithValue: mergeFormWithValue,
+	getThemeForDesignType: getThemeForDesignType
 };

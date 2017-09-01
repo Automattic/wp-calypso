@@ -55,12 +55,12 @@ export default {
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	'design-type-with-store': {
 		stepName: 'design-type-with-store',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	site: {
