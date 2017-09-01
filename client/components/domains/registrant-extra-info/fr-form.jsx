@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import {
+	castArray,
 	defaults,
 	get,
 	identity,
@@ -56,6 +57,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		children: PropTypes.node,
 		contactDetails: PropTypes.object,
+		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func,
@@ -97,9 +99,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	render() {
 		const {
 			contactDetails,
-			translate
+			contactDetailsValidationErrors,
+			translate,
 		} = this.props;
 		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const formIsValid = isEmpty( contactDetailsValidationErrors );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -132,7 +136,16 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ this.props.children }
+				{ formIsValid
+					? this.props.children
+					: map(
+						castArray( this.props.children ),
+						( child ) =>
+							child.props.className.match( /submit-button/ )
+								? React.cloneElement( child, {
+									disabled: true
+								} )
+								: child	) }
 			</form>
 		);
 	}
@@ -140,14 +153,15 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	renderOrganizationFields() {
 		const {
 			contactDetails,
-			translate
+			contactDetailsValidationErrors,
+			translate,
 		} = this.props;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
 		} = defaults( {}, contactDetails.extra, emptyValues );
-		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
+		const validationErrors = get( contactDetailsValidationErrors, 'extra', {} );
 		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
 			renderValidationError(
 				translate( 'The VAT Number field is a pattern ' +
@@ -255,6 +269,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoFrForm ) );
