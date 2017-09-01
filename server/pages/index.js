@@ -153,6 +153,7 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 function getDefaultContext( request ) {
 	let initialServerState = {};
+	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
 
 	if ( cacheKey ) {
@@ -161,7 +162,13 @@ function getDefaultContext( request ) {
 	}
 
 	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
-	const pride = prideLanguages.indexOf( '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0;
+	if ( prideLanguages.indexOf( '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0 ) {
+		bodyClasses.push( 'pride' );
+	}
+
+	if ( config( 'rtl' ) ) {
+		bodyClasses.push( 'rtl' );
+	}
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
@@ -179,7 +186,7 @@ function getDefaultContext( request ) {
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
-		pride: pride,
+		bodyClasses,
 	} );
 
 	context.app = {

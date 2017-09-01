@@ -55,7 +55,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
-	body( class=[ isRTL ? 'rtl' : '', pride ? 'pride' : '' ] )
+	body( class=bodyClasses )
 		if renderedLayout
 			#wpcom.wpcom-site!= renderedLayout
 		else
