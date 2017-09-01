@@ -56,7 +56,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			siteId: blogId,
 			postId,
 			commentIds: map( commentsToExpand, 'ID' ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
+			displayType: POST_COMMENT_DISPLAY_TYPES.full,
 		} );
 	};
 
