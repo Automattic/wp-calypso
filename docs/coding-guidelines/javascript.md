@@ -244,11 +244,13 @@ Variable and function names should be full words, using camel case with a lowerc
 
 ```js
 // Bad
-let userIDToDelete, siteURL;
+let userIDToDelete;
+let siteURL;
 ```
 ```js
 // Good
-let userIdToDelete, siteUrl;
+let userIdToDelete;
+let siteUrl;
 ```
 
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
@@ -288,7 +290,7 @@ When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
  * @param {string} title - The title of the book.
  * @param {string} author - The author of the book.
  */
-function Book(title, author) {
+function Book( title, author ) {
 
 }
 
