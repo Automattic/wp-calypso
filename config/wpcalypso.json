@@ -112,6 +112,7 @@
 		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
 		"signup/social": true,
+		"signup/wpcc": true,
 		"simple-payments": true,
 		"standalone-site-preview": true,
 		"support-user": true,

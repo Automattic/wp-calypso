@@ -142,7 +142,8 @@ class Login extends Component {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
 					clientTitle: oauth2Client.title
-				}
+				},
+				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
 			} );
 			if ( oauth2Client.name === 'woo' ) {
 				preHeader = (
@@ -152,7 +153,8 @@ class Login extends Component {
 					<p>
 						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
 							components: {
-								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />,
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+									target="_blank" rel="noopener noreferrer" />,
 								br: <br />,
 							}
 						} ) }

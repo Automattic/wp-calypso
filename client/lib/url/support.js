@@ -75,5 +75,6 @@ export default {
 	UPDATE_NAMESERVERS: `${ root }/domains/domain-management/#update-nameservers`,
 	USERS: `${ root }/category/users`,
 	USER_ROLES: `${ root }/user-roles`,
-	VIDEOS: `${ root }/videos`
+	VIDEOS: `${ root }/videos`,
+	WPCC: `${ root }/wpcc-faq`
 };
