@@ -36,6 +36,7 @@ const CommentActions = ( {
 	editComment,
 	editCommentCancel,
 	showReadMore,
+	onReadMore,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
@@ -50,7 +51,7 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore &&
-				<button className="comments__comment-actions-read-more" onClick={ noop }>
+				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
@@ -125,6 +126,10 @@ const CommentActions = ( {
 				</div> }
 		</div>
 	);
+};
+
+CommentActions.defaultProps = {
+	onReadMore: noop,
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {

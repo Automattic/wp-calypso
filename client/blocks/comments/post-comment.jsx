@@ -31,6 +31,7 @@ import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import withDimensions from 'lib/with-dimensions';
+import { expandComments } from 'state/comments/actions';
 
 class PostComment extends React.PureComponent {
 	static propTypes = {
@@ -247,6 +248,15 @@ class PostComment extends React.PureComponent {
 				</strong>;
 	};
 
+	onReadMore = () => {
+		this.props.expandComments(
+			this.props.post.site_ID,
+			this.props.commentId,
+			this.props.post.ID,
+			POST_COMMENT_DISPLAY_TYPES.full
+		);
+	};
+
 	render() {
 		const {
 			commentsTree,
@@ -387,6 +397,7 @@ class PostComment extends React.PureComponent {
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
 					showReadMore={ this.props.showReadMoreInActions }
+					onReadMore={ this.onReadMore }
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
@@ -405,6 +416,9 @@ class PostComment extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( withDimensions( PostComment ) );
+export default connect(
+	state => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{ expandComments }
+)( withDimensions( PostComment ) );
