@@ -305,12 +305,19 @@ Multi-line comments that are not a jsdoc comment should use `//`:
 
 ## Equality
 
-Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null.
+Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null, though it is preferable to use Lodash's [`isNil`](https://lodash.com/docs#isNil) for this purpose.
 
 ```js
-// Check for both undefined and null values, for some important reason.
-if ( undefOrNull == null ) {
-	// Expressions
+// Check that 'someValue' is either undefined or null, for some important reason.
+
+// Good
+if ( someValue == null ) {
+	...
+}
+
+// better
+if ( isNil( someValue ) ) {
+	...
 }
 ```
 
