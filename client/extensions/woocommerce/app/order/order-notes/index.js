@@ -13,6 +13,7 @@ import { sortBy, keys } from 'lodash';
  */
 import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
 import Card from 'components/card';
+import CreateOrderNote from './new-note';
 import OrderNote from './note';
 import OrderNotesByDay from './day';
 import SectionHeader from 'components/section-header';
@@ -82,7 +83,7 @@ class OrderNotes extends Component {
 	}
 
 	render() {
-		const { areNotesLoaded, translate } = this.props;
+		const { areNotesLoaded, orderId, siteId, translate } = this.props;
 		const classes = classNames( {
 			'is-placeholder': ! areNotesLoaded
 		} );
@@ -95,6 +96,7 @@ class OrderNotes extends Component {
 						? this.renderNotes()
 						: this.renderPlaceholder()
 					}
+					<CreateOrderNote orderId={ orderId } siteId={ siteId } />
 				</Card>
 			</div>
 		);
