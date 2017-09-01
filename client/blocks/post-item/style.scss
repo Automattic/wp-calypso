@@ -37,6 +37,11 @@
 	width: 100%;
 	margin-right: auto;
 
+	padding: 16px 0;
+	.post-item__card.is-mini & {
+		padding: 12px 0;
+	}
+
 	.post-item__card:not( .has-wrapped-title ) & {
 		overflow: hidden;
 		&::after {
@@ -57,6 +62,7 @@
 
 	.post-item__card.has-large-title & {
 		font-size: 20px;
+		line-height: 1.2;
 	}
 
 	.post-item__card:not( .has-wrapped-title ) & {
