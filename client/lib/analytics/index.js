@@ -90,8 +90,10 @@ function checkForBlockedTracks() {
 	loadScript( '/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
 }
 
-loadScript( '//stats.wp.com/w.js?56', function( /* error */ ) {
-	_loadTracksError = true;
+loadScript( '//stats.wp.com/w.js?56', function( error ) {
+	if ( error ) {
+		_loadTracksError = true;
+	}
 } ); // W_JS_VER
 
 // Google Analytics
