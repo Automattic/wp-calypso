@@ -99,6 +99,14 @@
 				border-bottom: 1px solid lighten( $gray, 20% );
 			}
 		}
+
+		&.preview .sidebar__button {
+			padding-left: 24px;
+			& .sidebar__external {
+				top: 2px;
+				right: 4px;
+			}
+		}
 	}
 
 	a:first-child {
@@ -241,6 +249,11 @@ form.sidebar__button {
 			fill: $white;
 		}
 
+		&.preview .gridicons-external {
+			fill: $gray-text;
+		}
+
+
 		&.is-action-button-selected a {
 			&:first-child:after {
 				background: linear-gradient(
@@ -278,6 +291,18 @@ form.sidebar__button {
 		.gridicon,
 		.jetpack-logo {
 			fill: $blue-medium;
+		}
+
+		&.preview {
+			& .sidebar__button {
+				.gridicons-external {
+					fill: $gray-text;
+				}
+				&:hover .gridicons-external {
+					fill: $blue-medium;
+				}
+
+			}
 		}
 	}
 
