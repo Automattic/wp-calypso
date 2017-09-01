@@ -356,14 +356,15 @@ class PostComment extends React.PureComponent {
 					: null }
 
 				{ this.props.activeEditCommentId !== this.props.commentId &&
-					<PostCommentContent
-						ref={ this.props.setWithDimensionsRef }
-						content={ comment.content }
-						isPlaceholder={ comment.isPlaceholder }
-						className={ displayType }
-						onMoreClicked={ this.handleReadMoreClicked }
-						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
-					/> }
+					<div className="comments__content-wrapper" ref={ this.props.setWithDimensionsRef }>
+						<PostCommentContent
+							content={ comment.content }
+							isPlaceholder={ comment.isPlaceholder }
+							className={ displayType }
+							onMoreClicked={ this.handleReadMoreClicked }
+							hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
+						/>
+					</div> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					this.props.activeEditCommentId === this.props.commentId &&

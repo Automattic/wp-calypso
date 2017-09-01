@@ -113,6 +113,7 @@ export class ConversationCommentList extends React.Component {
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }
 								showReadMoreInActions={ true }
+								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 							/>
 						);
 					} ) }
