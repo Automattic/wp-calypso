@@ -87,6 +87,10 @@
 	li {
 		display: flex;
 
+		&.preview .sidebar__button {
+			padding-left: 24px;
+		}
+
 		@include breakpoint( "<660px" ) {
 			background-color: $gray-light;
 			border-bottom: 1px solid rgba( lighten( $gray, 20% ), 0.5 );
@@ -182,6 +186,15 @@
 			height: 18px;
 			margin-right: 0;
 
+			&.sidebar__view-site-external {
+				fill: darken( $gray, 20% );
+				top: 2px;
+				right: 4px;
+
+				@include breakpoint( "<660px" ) {
+					top: 5px;
+				}
+			}
 
 		}
 	}
@@ -278,6 +291,15 @@ form.sidebar__button {
 		.gridicon,
 		.jetpack-logo {
 			fill: $blue-medium;
+		}
+
+		&.preview {
+			.sidebar__view-site-external {
+				fill: $gray-text;
+			}
+			.sidebar__button:hover .sidebar__view-site-external {
+				fill: $blue-medium;
+			}
 		}
 	}
 

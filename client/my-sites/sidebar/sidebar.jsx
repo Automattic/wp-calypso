@@ -156,6 +156,10 @@ export class MySitesSidebar extends Component {
 
 		const { site, isPreviewable } = this.props;
 		const siteUrl = site && site.URL || '';
+		const externalButton = isPreviewable && (
+			<SidebarButton href={ siteUrl }>
+				<Gridicon className="sidebar__view-site-external" icon="external" size={ 12 } />
+			</SidebarButton> );
 
 		return (
 			<SidebarItem
@@ -165,8 +169,10 @@ export class MySitesSidebar extends Component {
 				link={ isPreviewable ? '/view' + this.props.siteSuffix : siteUrl }
 				onNavigate={ this.onNavigate }
 				icon="computer"
-				preloadSectionName="preview"
-			/>
+				preloadSectionName="preview">{
+					externalButton
+				}
+			</SidebarItem>
 		);
 	}
 
