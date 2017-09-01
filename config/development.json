@@ -169,6 +169,7 @@
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-products": true,
 		"woocommerce/extension-promotions": true,
+		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,

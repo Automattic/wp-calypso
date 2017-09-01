@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import App from './app';
 
 import controller from 'my-sites/controller';
+import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -24,7 +25,7 @@ import ProductUpdate from './app/products/product-update';
 import Promotions from './app/promotions';
 import PromotionCreate from './app/promotions/promotion-create';
 import PromotionUpdate from './app/promotions/promotion-update';
-import Dashboard from './app/dashboard';
+import Reviews from './app/reviews';
 import SettingsPayments from './app/settings/payments';
 import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
@@ -96,6 +97,12 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-promotions',
 			documentTitle: translate( 'Edit Promotion' ),
 			path: '/store/promotion/:site/:promotion',
+		},
+		{
+			container: Reviews,
+			configKey: 'woocommerce/extension-reviews',
+			documentTitle: translate( 'Reviews' ),
+			path: '/store/reviews/:site',
 		},
 		{
 			container: SettingsPayments,

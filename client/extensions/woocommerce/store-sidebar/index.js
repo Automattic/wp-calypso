@@ -117,6 +117,32 @@ class StoreSidebar extends Component {
 		);
 	}
 
+	reviews = () => {
+		if ( ! config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/reviews' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link ] );
+		const classes = classNames( {
+			reviews: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		// TODO Add bubble containing count of unapproved reviews.
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Reviews' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
 	orders = () => {
 		const { orders, site, siteSuffix, translate } = this.props;
 		const link = '/store/orders' + siteSuffix;
@@ -216,6 +242,7 @@ class StoreSidebar extends Component {
 						{ showAllSidebarItems && this.products() }
 						{ showAllSidebarItems && this.orders() }
 						{ showAllSidebarItems && this.promotions() }
+						{ showAllSidebarItems && this.reviews() }
 						{ showAllSidebarItems && <SidebarSeparator /> }
 						{ showAllSidebarItems && this.settings() }
 					</ul>
