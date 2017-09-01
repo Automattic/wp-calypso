@@ -22,19 +22,13 @@ if ( process.env.NODE_ENV === 'development' ) {
 		const flags = match[ 1 ].split( ',' );
 		flags.forEach( flagRaw => {
 			const flag = flagRaw.replace( /^[-+]/, '' );
-			if ( /^-/.test( flagRaw ) ) {
-				console.log( // eslint-disable-line no-console
-					'Config flag disabled via URL:',
-					flag
-				);
-				configData.features[ flag ] = false;
-			} else {
-				console.log( // eslint-disable-line no-console
-					'Config flag enabled via URL:',
-					flag
-				);
-				configData.features[ flag ] = true;
-			}
+			const enabled = ! /^-/.test( flagRaw );
+			configData.features[ flag ] = enabled;
+			console.warn( // eslint-disable-line no-console
+				'Config flag %s via URL: %s',
+				( enabled ? 'enabled' : 'disabled' ),
+				flag
+			);
 		} );
 	}
 }
