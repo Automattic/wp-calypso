@@ -87,7 +87,7 @@ function checkForBlockedTracks() {
 		}
 	}
 
-	loadScript( '/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
+	loadScript( '/public/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
 }
 
 loadScript( '//stats.wp.com/w.js?56', function( error ) {
