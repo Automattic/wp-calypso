@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +38,12 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' }
+];
+
+// List of browser languages to show pride styling for.
+// Add a '*' element to show the styling for all visitors.
+const prideLanguages = [
+	'en-au',
 ];
 
 const sections = sectionsModule.get();
@@ -121,13 +127,47 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
+/**
+ * Given the content of an 'Accept-Language' request header, returns an array of the languages.
+ *
+ * This differs slightly from other language functions, as it doesn't try to validate the language codes,
+ * or merge similar language codes.
+ *
+ * @param  {string} header - The content of the AcceptedLanguages header.
+ * @return {Array} An array of language codes in the header, all in lowercase.
+ */
+function getAcceptedLanguagesFromHeader( header ) {
+	if ( ! header ) {
+		return [];
+	}
+
+	return header.split( ',' ).map( lang => {
+		const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
+		if ( ! match ) {
+			return false;
+		}
+
+		return match[ 0 ].toLowerCase();
+	} ).filter( lang => lang );
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
+	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
 		initialServerState = getInitialServerState( serializeCachedServerState );
+	}
+
+	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
+	if ( prideLanguages.indexOf( '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0 ) {
+		bodyClasses.push( 'pride' );
+	}
+
+	if ( config( 'rtl' ) ) {
+		bodyClasses.push( 'rtl' );
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -145,7 +185,8 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState )
+		store: createReduxStore( initialServerState ),
+		bodyClasses,
 	} );
 
 	context.app = {
