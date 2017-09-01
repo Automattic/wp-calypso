@@ -9,32 +9,20 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { PostRelativeTime } from 'blocks/post-relative-time';
+import { PostTime } from 'blocks/post-time';
 
-describe( 'PostRelativeTime', () => {
-	it( 'should contain a time gridicon', () => {
-		const wrapper = shallow(
-			<PostRelativeTime
-				moment={ moment }
-			/>
-		);
-
-		const icon = wrapper.find( '.post-relative-time__icon' );
-		expect( icon.props().icon ).to.be.equal( 'time' );
-		expect( icon.props().size ).to.be.equal( 18 );
-	} );
-
+describe( 'PostTime', () => {
 	it( 'should display a recent time if there is no post', () => {
 		const post = null;
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
+		const text = wrapper.text();
 		expect( text ).to.equal( 'a few seconds ago' );
 	} );
 
@@ -46,14 +34,14 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
-		expect( text ).to.equal( moment( post.modified ).fromNow() );
+		const text = wrapper.text();
+		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
 	it( 'should use the modified date if the post status is pending', () => {
@@ -64,14 +52,14 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
-		expect( text ).to.equal( moment( post.modified ).fromNow() );
+		const text = wrapper.text();
+		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
 	it( 'should use the actual date if the post status is not pending/draft', () => {
@@ -82,21 +70,38 @@ describe( 'PostRelativeTime', () => {
 		};
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>
 		);
 
-		const text = wrapper.find( '.post-relative-time__text' ).text();
-		expect( text ).to.equal( moment( post.date ).fromNow() );
+		const text = wrapper.text();
+		expect( text ).to.equal( moment( post.date ).format( 'LLL' ) );
+	} );
+
+	it( 'should use a human-readable approximation for recent dates', () => {
+		const post = {
+			status: 'publish',
+			date: moment().subtract( 2, 'days' ).format()
+		};
+
+		const wrapper = shallow(
+			<PostTime
+				post={ post }
+				moment={ moment }
+			/>
+		);
+
+		const text = wrapper.text();
+		expect( text ).to.equal( '2 days ago' );
 	} );
 
 	it( 'should render placeholder when post is null', () => {
 		const post = null;
 
 		const wrapper = shallow(
-			<PostRelativeTime
+			<PostTime
 				post={ post }
 				moment={ moment }
 			/>

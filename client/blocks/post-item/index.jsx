@@ -20,7 +20,7 @@ import { areAllSitesSingleUser } from 'state/selectors';
 import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel } from 'state/ui/post-type-list/actions';
 import Card from 'components/card';
-import PostRelativeTime from 'blocks/post-relative-time';
+import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
@@ -136,6 +136,13 @@ class PostItem extends React.Component {
 		);
 	}
 
+	hasMultipleUsers() {
+		return (
+			this.inAllSitesModeWithMultipleUsers() ||
+			this.inSingleSiteModeWithMultipleUsers()
+		);
+	}
+
 	renderVariableHeightContent() {
 		const {
 			post,
@@ -184,12 +191,12 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected
 		);
 
-		const isAuthorVisible = ( this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers() ) &&
-			post && post.author && isEnabled( 'posts/post-type-list' );
-
-		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'is-post-item-info-visible': isSiteInfoVisible || isAuthorVisible
-		} );
+		const isAuthorVisible = (
+			isEnabled( 'posts/post-type-list' ) &&
+			this.hasMultipleUsers() &&
+			! compact &&
+			post && post.author
+		);
 
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
@@ -205,20 +212,18 @@ class PostItem extends React.Component {
 			>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
-						<div className={ titleMetaClasses }>
-							<div className="post-item__info">
-								{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
-								{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
-							</div>
-							<h1 className="post-item__title">
-								<a href={ editUrl } className="post-item__title-link">
-									{ title || translate( 'Untitled' ) }
-								</a>
-							</h1>
-							<div className="post-item__meta">
-								<PostRelativeTime globalId={ globalId } />
-								<PostStatus globalId={ globalId } />
-							</div>
+						<div className="post-item__info">
+							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
+						</div>
+						<h1 className="post-item__title">
+							<a href={ editUrl } className="post-item__title-link">
+								{ title || translate( 'Untitled' ) }
+							</a>
+						</h1>
+						<div className="post-item__meta">
+							<PostTime globalId={ globalId } />
+							<PostStatus globalId={ globalId } />
 						</div>
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />

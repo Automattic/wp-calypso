@@ -10,17 +10,39 @@
 	}
 }
 
-.card.post-item__card /* for specificity */ {
+.card.is-compact.post-item__card /* for specificity */ {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin: 0;
+
+	// These heights must also be updated in JavaScript:
+	// client/my-sites/post-type-list/index.jsx
+	// const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
+	// const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
+	min-height: 84px;
+	&.has-large-title {
+		min-height: 89px;
+	}
+	// <PostItem compact> -> <Card className="... is-mini">
+	// This height is not defined in JavaScript because <PostItem compact> is
+	// never used with wrapped titles or other variable-height content.
+	&.is-mini {
+		min-height: 50px;
+	}
 }
 
 .post-item__detail {
 	position: relative;
-	display: flex;
 	width: 100%;
 	margin-right: auto;
+
+	padding: 16px 0;
+	.post-item__card.is-mini & {
+		padding: 12px 0;
+	}
 
 	.post-item__card:not( .has-wrapped-title ) & {
 		overflow: hidden;
@@ -28,14 +50,6 @@
 			@include long-content-fade( $size: 40px );
 			right: 0;
 		}
-	}
-}
-
-.post-item__title-meta {
-	padding: 6px 0;
-
-	&.is-post-item-info-visible {
-		padding: 0;
 	}
 }
 
@@ -50,6 +64,7 @@
 
 	.post-item__card.has-large-title & {
 		font-size: 20px;
+		line-height: 1.2;
 	}
 
 	.post-item__card:not( .has-wrapped-title ) & {
@@ -76,27 +91,30 @@ a.post-item__title-link {
 
 .post-item__meta {
 	font-size: 12px;
+	line-height: 14px;
 	color: $gray-text-min;
 }
 
-.post-item__meta .post-relative-time,
+.post-item__meta .post-time,
 .post-item__meta .post-status,
-
-.post-item__meta .post-relative-time,
-.post-item__meta .post-status {
+.post-item__meta .post-status__text {
 	margin-bottom: 0;
+	vertical-align: top;
 }
 
-.post-item__meta .post-relative-time__icon,
+.post-item__meta .post-status {
+	margin-left: 7px;
+}
+
 .post-item__meta .post-status__icon {
 	width: 14px;
 	height: 14px;
-	margin-top: -1px;
-	margin-right: 6px;
+	margin-top: -3px;
+	margin-right: 2px;
 }
 
 .post-item__card.is-mini.is-compact {
-	padding: 8px 16px;
+	padding: 0 16px;
 
 	.post-item__meta {
 		display: none;

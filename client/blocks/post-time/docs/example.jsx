@@ -10,11 +10,11 @@ import { get } from 'lodash';
  */
 import QueryPosts from 'components/data/query-posts';
 import Card from 'components/card';
-import PostRelativeTime from '../';
+import PostTime from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 
-function PostRelativeTimeExample( { primarySiteId, primarySiteUrl, globalId } ) {
+function PostTimeExample( { primarySiteId, primarySiteUrl, globalId } ) {
 	return (
 		<Card>
 			{ primarySiteUrl && (
@@ -26,12 +26,12 @@ function PostRelativeTimeExample( { primarySiteId, primarySiteUrl, globalId } ) 
 					query={ { number: 1, type: 'any' } } />
 			) }
 			{ ! globalId && <em>No matching post found</em> }
-			{ globalId && <PostRelativeTime globalId={ globalId } /> }
+			{ globalId && <PostTime globalId={ globalId } /> }
 		</Card>
 	);
 }
 
-const ConnectedPostRelativeTimeExample = connect( ( state ) => {
+const ConnectedPostTimeExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const primarySiteId = get( user, 'primary_blog' );
 
@@ -40,8 +40,8 @@ const ConnectedPostRelativeTimeExample = connect( ( state ) => {
 		primarySiteUrl: get( user, 'primary_blog_url' ),
 		globalId: get( getSitePosts( state, primarySiteId ), [ 0, 'global_ID' ] )
 	};
-} )( PostRelativeTimeExample );
+} )( PostTimeExample );
 
-ConnectedPostRelativeTimeExample.displayName = 'PostRelativeTime';
+ConnectedPostTimeExample.displayName = 'PostTime';
 
-export default ConnectedPostRelativeTimeExample;
+export default ConnectedPostTimeExample;
