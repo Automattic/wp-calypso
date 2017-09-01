@@ -227,10 +227,11 @@ counter++;
 ### Globals
 
 Globals should almost never be used. If they are used or you need to reference a pre-existing global do so via `window`.
+Because some of our code runs on the server, always check for the presence of `window` before making reference to it.
 
 ```js
 let userId;
-if ( typeof window !== 'undefined' ) {
+if ( isPlainObject( window ) ) {
 	userId = window.currentUser.ID;
 }
 ```
