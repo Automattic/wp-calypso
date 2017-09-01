@@ -10,7 +10,8 @@ import { get, reduce } from 'lodash';
  * @return {Float} Tax amount as a decimal number
  */
 export function getOrderDiscountTax( order ) {
-	const tax = get( order, 'coupon_lines[0].discount_tax', 0 );
+	const coupons = get( order, 'coupon_lines', [] );
+	const tax = reduce( coupons, ( sum, value ) => sum + parseFloat( value.discount_tax ), 0 );
 	return parseFloat( tax ) || 0;
 }
 

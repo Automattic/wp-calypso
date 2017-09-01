@@ -15,6 +15,7 @@ import {
 } from '../index';
 import orderWithTax from './fixtures/order';
 import orderWithoutTax from './fixtures/order-no-tax';
+import orderWithCoupons from './fixtures/order-with-coupons';
 
 describe( 'getOrderDiscountTax', () => {
 	it( 'should be a function', () => {
@@ -23,6 +24,10 @@ describe( 'getOrderDiscountTax', () => {
 
 	it( 'should get the correct tax amount', () => {
 		expect( getOrderDiscountTax( orderWithTax ) ).to.eql( 0.95 );
+	} );
+
+	it( 'should get the correct tax amount with multiple coupons', () => {
+		expect( getOrderDiscountTax( orderWithCoupons ) ).to.eql( 1.42 );
 	} );
 
 	it( 'should return 0 if there is no tax', () => {
@@ -50,6 +55,10 @@ describe( 'getOrderLineItemTax', () => {
 	it( 'should return 0 if there is no tax', () => {
 		expect( getOrderLineItemTax( orderWithoutTax, 0 ) ).to.eql( 0 );
 	} );
+
+	it( 'should get the correct tax amount for an item with multiple coupons', () => {
+		expect( getOrderLineItemTax( orderWithCoupons, 1 ) ).to.eql( 2.3109 );
+	} );
 } );
 
 describe( 'getOrderShippingTax', () => {
@@ -63,6 +72,10 @@ describe( 'getOrderShippingTax', () => {
 
 	it( 'should return 0 if there is no tax', () => {
 		expect( getOrderShippingTax( orderWithoutTax ) ).to.eql( 0 );
+	} );
+
+	it( 'should get the correct tax amount with multiple coupons', () => {
+		expect( getOrderShippingTax( orderWithCoupons ) ).to.eql( 0.635 );
 	} );
 } );
 
@@ -78,6 +91,10 @@ describe( 'getOrderSubtotalTax', () => {
 	it( 'should return 0 if there is no tax', () => {
 		expect( getOrderSubtotalTax( orderWithoutTax ) ).to.eql( 0 );
 	} );
+
+	it( 'should get the correct tax amount with multiple coupons', () => {
+		expect( getOrderSubtotalTax( orderWithCoupons ) ).to.eql( 3.7893 );
+	} );
 } );
 
 describe( 'getOrderTotalTax', () => {
@@ -91,5 +108,9 @@ describe( 'getOrderTotalTax', () => {
 
 	it( 'should return 0 if there is no tax', () => {
 		expect( getOrderTotalTax( orderWithoutTax ) ).to.eql( 0 );
+	} );
+
+	it( 'should get the correct tax amount with multiple coupons', () => {
+		expect( getOrderTotalTax( orderWithCoupons ) ).to.eql( 4.4243 );
 	} );
 } );
