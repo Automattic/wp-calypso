@@ -69,18 +69,6 @@ const flows = {
 		}
 	},
 
-	'rebrand-cities': {
-		steps: [ 'rebrand-cities-welcome', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/business/' + dependencies.siteSlug;
-		},
-		description: 'Create an account for REBRAND cities partnership',
-		lastModified: '2017-07-01',
-		meta: {
-			skipBundlingPlan: true
-		}
-	},
-
 	premium: {
 		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
@@ -93,11 +81,60 @@ const flows = {
 		}
 	},
 
+	personal: {
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/personal/' + dependencies.siteSlug;
+		},
+		description: 'Create an account and a blog and then add the personal plan to the users cart.',
+		lastModified: '2016-01-21'
+	},
+
 	free: {
 		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
 		lastModified: '2016-06-02'
+	},
+
+	blog: {
+		steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with blog themes',
+		lastModified: '2017-09-01'
+	},
+
+	website: {
+		steps: [ 'website-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with website themes',
+		lastModified: '2017-09-01'
+	},
+
+	portfolio: {
+		steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow starting with portfolio themes',
+		lastModified: '2017-09-01'
+	},
+
+	store: {
+		steps: [ 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for creating an online store',
+		lastModified: '2016-06-27'
+	},
+
+	'rebrand-cities': {
+		steps: [ 'rebrand-cities-welcome', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/business/' + dependencies.siteSlug;
+		},
+		description: 'Create an account for REBRAND cities partnership',
+		lastModified: '2017-07-01',
+		meta: {
+			skipBundlingPlan: true
+		}
 	},
 
 	'with-theme': {
@@ -112,27 +149,6 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'Signup flow for creative mornings partnership',
 		lastModified: '2017-08-01'
-	},
-
-	'my-blog': {
-		steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Signup flow starting with blog themes',
-		lastModified: '2017-09-01'
-	},
-
-	'my-website': {
-		steps: [ 'website-themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Signup flow starting with website themes',
-		lastModified: '2017-09-01'
-	},
-
-	'my-portfolio': {
-		steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Signup flow starting with portfolio themes',
-		lastModified: '2017-09-01'
 	},
 
 	subdomain: {
@@ -154,33 +170,6 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
-	},
-
-	website: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Website" ' +
-			'on the two-button homepage. It is now linked to from the default homepage CTA as ' +
-			'the main flow was slightly behind given translations.',
-		lastModified: '2016-05-23'
-	},
-
-	blog: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Blog" on ' +
-			'the two-button homepage. It is now used from blog-specific landing pages so that ' +
-			'verbiage in survey steps refers to "blog" instead of "website".',
-		lastModified: '2016-05-23'
-	},
-
-	personal: {
-		steps: [ 'design-type', 'themes', 'domains', 'user' ],
-		destination: function( dependencies ) {
-			return '/plans/select/personal/' + dependencies.siteSlug;
-		},
-		description: 'Create an account and a blog and then add the personal plan to the users cart.',
-		lastModified: '2016-01-21'
 	},
 
 	'test-site': {
