@@ -168,6 +168,7 @@ const ThemeShowcase = React.createClass( {
 			pathName,
 			title,
 			filterString,
+			isMultisite,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -216,6 +217,7 @@ const ThemeShowcase = React.createClass( {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
+						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect } />
 					{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
 						onClick={ this.onUploadClick }
