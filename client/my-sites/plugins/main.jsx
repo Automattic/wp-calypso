@@ -23,6 +23,7 @@ import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsList from './plugins-list';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
@@ -43,6 +44,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
+import HeaderButton from 'components/header-button';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -344,6 +346,23 @@ const PluginsMain = React.createClass( {
 		} );
 	},
 
+	handleAddPluginButtonClick() {
+		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
+	},
+
+	getAddPluginButton() {
+		const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
+		return (
+			<HeaderButton
+				icon="plus"
+				label={ this.props.translate( 'Add Plugin' ) }
+				aria-label={ this.props.translate( 'Browse all plugins', { context: 'button label' } ) }
+				href={ browserUrl }
+				onClick={ this.handleAddPluginButtonClick }
+			/>
+		);
+	},
+
 	render() {
 		const {
 			category,
@@ -384,6 +403,7 @@ const PluginsMain = React.createClass( {
 			);
 		}
 
+		const addPluginButton = this.getAddPluginButton();
 		const navItems = this.getFilters().map( filterItem => {
 			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 				return null;
@@ -410,20 +430,22 @@ const PluginsMain = React.createClass( {
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ navItems }
-					</NavTabs>
-
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.doSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() } />
-				</SectionNav>
+				<div className="plugins__header">
+					<SectionNav selectedText={ this.getSelectedText() }>
+						<NavTabs>
+							{ navItems }
+						</NavTabs>
+						<Search
+							pinned
+							fitsContainer
+							onSearch={ this.doSearch }
+							initialValue={ this.props.search }
+							ref="url-search"
+							analyticsGroup="Plugins"
+							placeholder={ this.getSearchPlaceholder() } />
+					</SectionNav>
+					{ addPluginButton }
+				</div>
 				{ this.renderPluginsContent() }
 			</Main>
 		);
@@ -450,5 +472,5 @@ export default connect(
 				: canCurrentUserManagePlugins( state ) )
 		};
 	},
-	{ wporgFetchPluginData }
+	{ wporgFetchPluginData, recordGoogleEvent }
 )( localize( PluginsMain ) );
