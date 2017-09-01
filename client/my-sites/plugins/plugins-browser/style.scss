@@ -1,8 +1,24 @@
 .plugins-browser__main-header {
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), 0.5 ), 0 1px 2px lighten( $gray, 30% );
+	flex-direction: column;
 	display: flex;
+	margin-bottom: 9px;
 
-	.section-nav {
-		flex: auto;
-		margin: 0;
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		margin-bottom: 17px;
+	}
+}
+
+.plugins-browser__main-header .section-nav {
+	border: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
+	border-width: 0 0 1px;
+	box-shadow: none;
+	flex: auto;
+	margin: 0;
+
+	@include breakpoint( '>480px' ) {
+		border-width: 0 1px 0 0;
 	}
 }
