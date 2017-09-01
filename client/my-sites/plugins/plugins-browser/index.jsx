@@ -32,6 +32,7 @@ import {
 } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
+import HeaderButton from 'components/header-button';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -282,16 +283,29 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
+	getManageButton() {
+		const site = this.props.site ? '/' + this.props.site : '';
+		return (
+			<HeaderButton
+				icon="cog"
+				label={ this.props.translate( 'Manage Plugins' ) }
+				href={ '/plugins' + site }
+			/>
+		);
+	},
+
 	getPageHeaderView() {
 		if ( this.props.hideSearchForm ) {
 			return null;
 		}
 
 		const navigation = this.props.category ? this.getNavigationBar() : this.getSearchBar();
+		const manageButton = this.props.isJetpackSite && this.getManageButton();
 
 		return (
 			<div className="plugins-browser__main-header">
 				{ navigation }
+				{ manageButton }
 			</div>
 		);
 	},
@@ -351,6 +365,7 @@ export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 			jetpackManageError: !! isJetpackSite( state, selectedSiteId ) && ! canJetpackSiteManage( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			noPermissionsError: !! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
