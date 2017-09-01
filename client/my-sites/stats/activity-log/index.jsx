@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,12 @@ import {
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
+
+const earliestMoment = ( ...moments ) =>
+	reduce(
+		moments,
+		( current, compare ) => ( current.valueOf() < compare.valueOf() ? current : compare )
+	);
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -282,7 +288,10 @@ class ActivityLog extends Component {
 
 		// loop backwards through each day in the month
 		for (
-			const m = startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+			const m = earliestMoment(
+					startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+					this.applySiteOffset( moment.utc() ).startOf( 'day' )
+				),
 				startOfMonth = startMoment.clone().startOf( 'month' ).valueOf();
 			startOfMonth <= m.valueOf();
 			m.subtract( 1, 'day' )
