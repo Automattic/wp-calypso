@@ -35,6 +35,14 @@ import validateContactDetails from './fr-validate-contact-details';
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
 
+const threeGroupsOfThreeRegex = /(\d{3})?(\d{3})?(\d{3})?(\d*)/;
+
+function formatSiret( string ) {
+	const regexResult = threeGroupsOfThreeRegex.exec( string );
+	const justTheGroups = drop( compact( regexResult ) );
+	return join( justTheGroups, ' ' );
+}
+
 /*
  * Sanitize a string by removing everything except digits
  */
@@ -202,7 +210,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					</FormLabel>
 					<FormTextInput
 						id="sirenSiret"
-						value={ sirenSiret }
+						value={ formatSiret( sirenSiret ) }
 						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
