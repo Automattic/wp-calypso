@@ -13,35 +13,35 @@ import { localize } from 'i18n-calypso';
  */
 import { getNormalizedPost } from 'state/posts/selectors';
 
-export function PostTime( { moment, post } ) {
-	let timeDisplay;
-
-	if ( post ) {
-		const { status, modified, date } = post;
-		const time = moment(
-			includes( [ 'draft', 'pending' ], status )
-				? modified
-				: date
-		);
-		if ( time.isBefore( moment().subtract( 7, 'days' ) ) ) {
-			// "August 30, 2017 4:46 PM" in English locale
-			timeDisplay = time.format( 'LLL' );
-		} else {
-			// "3 days ago" in English locale
-			timeDisplay = time.fromNow();
-		}
-	} else {
+function getDisplayedTimeFromPost( moment, post ) {
+	if ( ! post ) {
 		// Placeholder text: "a few seconds ago" in English locale
-		timeDisplay = moment().fromNow();
+		return moment().fromNow();
 	}
 
+	const { status, modified, date } = post;
+	const time = moment(
+		includes( [ 'draft', 'pending' ], status )
+			? modified
+			: date
+	);
+	if ( time.isBefore( moment().subtract( 7, 'days' ) ) ) {
+		// Like "August 30, 2017 4:46 PM" in English locale
+		return time.format( 'LLL' );
+	}
+
+	// Like "3 days ago" in English locale
+	return time.fromNow();
+}
+
+export function PostTime( { moment, post } ) {
 	const classes = classNames( 'post-time', {
 		'is-placeholder': ! post
 	} );
 
 	return (
 		<span className={ classes }>
-			{ timeDisplay }
+			{ getDisplayedTimeFromPost( moment, post ) }
 		</span>
 	);
 }
