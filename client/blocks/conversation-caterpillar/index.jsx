@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
@@ -148,7 +149,12 @@ class ConversationCaterpillarComponent extends React.Component {
 								},
 							} ) }
 				</button>
-				<button onClick={ this.handleShowAll }>
+				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
+					<Gridicon
+						icon="chevron-down"
+						size={ 12 }
+						className="conversation-caterpillar__show-all-chevron"
+					/>
 					{ translate( 'Show all' ) }
 				</button>
 			</Card>

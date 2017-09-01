@@ -12,20 +12,30 @@
 }
 
 .conversation-caterpillar__gravatars,
-.conversation-caterpillar__count {
+.conversation-caterpillar__count
+.conversation-caterpillar__show-all {
 	display: flex;
 	height: 38px;
 	flex-shrink: 0;
 }
 
+.conversation-caterpillar__show-all,
 .conversation-caterpillar__count {
+	display: flex;
 	color: #87a6bc;
 	cursor: pointer;
-	display: flex;
-	flex-shrink: 1;
-	flex: 1 1 auto;
 	font-size: 13px;
 	font-weight: 400;
+}
+
+.conversation-caterpillar__show-all-chevron {
+	margin-top: 3px;
+	margin-right: 5px;
+}
+
+.conversation-caterpillar__count {
+	flex-shrink: 1;
+	flex: 1 1 auto;
 	margin-left: 8px;
 	overflow: hidden;
 	position: relative;
