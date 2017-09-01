@@ -256,15 +256,7 @@ const PluginsBrowser = React.createClass( {
 		};
 	},
 
-	getPageHeaderView() {
-		if ( this.props.category ) {
-			return this.getNavigationBar();
-		}
-
-		if ( this.props.hideSearchForm ) {
-			return;
-		}
-
+	getSearchBar() {
 		const suggestedSearches = [
 			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
 			this.props.translate( 'Security', { context: 'Plugins suggested search term' } ),
@@ -273,7 +265,11 @@ const PluginsBrowser = React.createClass( {
 		];
 
 		return (
-			<SectionNav selectedText={ this.props.translate( 'Suggested Searches', { context: 'Suggested searches for plugins' } ) }>
+			<SectionNav
+				selectedText={ this.props.translate( 'Suggested Searches', {
+					context: 'Suggested searches for plugins',
+				} ) }
+			>
 				<NavTabs label="Suggested Searches">
 					{ suggestedSearches.map( term =>
 						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
@@ -283,6 +279,20 @@ const PluginsBrowser = React.createClass( {
 				</NavTabs>
 				{ this.getSearchBox() }
 			</SectionNav>
+		);
+	},
+
+	getPageHeaderView() {
+		if ( this.props.hideSearchForm ) {
+			return null;
+		}
+
+		const navigation = this.props.category ? this.getNavigationBar() : this.getSearchBar();
+
+		return (
+			<div className="plugins-browser__main-header">
+				{ navigation }
+			</div>
 		);
 	},
 
