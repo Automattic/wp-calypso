@@ -37,3 +37,8 @@ page load.  Examples:
 - `?flags=flag1`: Enable feature `flag1`.
 - `?flags=-flag2`: Disable feature `flag2`.
 - `?flags=+flag1,-flag2`: Enable feature `flag1` and disable feature `flag2`.
+
+Note: the `?flags` argument won't work for feature flags used by the Node.js
+server.  For this case, you can use the
+[`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../config/README.md#feature-flags)
+environment variables instead.
