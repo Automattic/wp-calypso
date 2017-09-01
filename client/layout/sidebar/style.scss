@@ -187,6 +187,7 @@
 			margin-right: 0;
 
 			&.sidebar__view-site-external {
+				fill: darken( $gray, 20% );
 				top: 2px;
 				right: 4px;
 
@@ -260,9 +261,6 @@ form.sidebar__button {
 					rgba( $gray-light, 0 ),
 					rgba( $gray-light, 1 ) 50% );
 			}
-		}
-		& .sidebar__view-site-external {
-			fill: $gray-text;
 		}
 	}
 }
