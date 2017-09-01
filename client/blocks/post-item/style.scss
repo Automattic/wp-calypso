@@ -27,6 +27,8 @@
 		min-height: 89px;
 	}
 	// <PostItem compact> -> <Card className="... is-mini">
+	// This height is not defined in JavaScript because <PostItem compact> is
+	// never used with wrapped titles or other variable-height content.
 	&.is-mini {
 		min-height: 50px;
 	}
