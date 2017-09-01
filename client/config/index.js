@@ -24,8 +24,9 @@ if ( process.env.NODE_ENV === 'development' ) {
 			const flag = flagRaw.replace( /^[-+]/, '' );
 			const enabled = ! /^-/.test( flagRaw );
 			configData.features[ flag ] = enabled;
-			console.warn( // eslint-disable-line no-console
-				'Config flag %s via URL: %s',
+			console.log( // eslint-disable-line no-console
+				'%cConfig flag %s via URL: %s',
+				'font-weight: bold;',
 				( enabled ? 'enabled' : 'disabled' ),
 				flag
 			);
