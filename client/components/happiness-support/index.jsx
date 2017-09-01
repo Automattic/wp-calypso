@@ -31,15 +31,12 @@ export class HappinessSupport extends Component {
 		showLiveChatButton: false,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			user: sample( [
-				{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
-				{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
-			] )
-		};
-	}
+	state = {
+		user: sample( [
+			{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
+			{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
+		] )
+	};
 
 	onLiveChatButtonClick = () => {
 		if ( this.props.liveChatButtonEventName ) {
