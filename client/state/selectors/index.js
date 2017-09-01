@@ -116,6 +116,7 @@ export getSiteId from './get-site-id';
 export getSiteMonitorSettings from './get-site-monitor-settings';
 export getSiteOptions from './get-site-options';
 export getSites from './get-sites';
+export getSitesItems from './get-sites-items';
 export getSiteSetting from './get-site-setting';
 export getSiteSlugsForUpcomingTransactions from './get-site-slugs-for-upcoming-transactions';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
