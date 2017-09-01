@@ -13,7 +13,7 @@ import printDocument from 'woocommerce/woocommerce-services/lib/utils/print-docu
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import * as NoticeActions from 'state/notices/actions';
 import getFormErrors from './selectors/errors';
-// import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
