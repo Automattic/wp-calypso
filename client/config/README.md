@@ -5,7 +5,8 @@ This module reads config data from `window.configData` (passed from the Node.js
 server via the Jade template file) and initializes a `config` object that is
 used to read these values.
 
-You can read more about how to use `config` in the [config documentation](../config).
+You can read more about how to use `config` in the
+[config documentation](../../config).
 
 Feature Flags API
 -----------------
@@ -40,5 +41,5 @@ page load.  Examples:
 
 Note: the `?flags` argument won't work for feature flags used by the Node.js
 server.  For this case, you can use the
-[`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../config/README.md#feature-flags)
+[`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.
