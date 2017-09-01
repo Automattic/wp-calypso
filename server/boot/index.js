@@ -54,10 +54,7 @@ function setup() {
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
-		// load tracking pixel for nostats browser
-		console.log( request.cookies );
 		const analytics = require( '../lib/analytics' );
-		console.log( analytics );
 		analytics.tracks.recordEvent( 'calypso_nostats', {}, request );
 		response.setHeader( 'content-type', 'application/javascript' );
 		response.end( "console.log('Your browser appears to be blocking our stats');" );
