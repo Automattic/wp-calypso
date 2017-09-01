@@ -23,7 +23,7 @@ export default React.createClass( {
 		icon: PropTypes.string,
 		selected: PropTypes.bool,
 		preloadSectionName: PropTypes.string,
-		preventExternalIcon: PropTypes.bool,
+		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
 		tipTarget: PropTypes.string
 	},
@@ -38,9 +38,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const isExternalLink = isExternal( this.props.link );
+		const showAsExternal = isExternal( this.props.link ) && ! this.props.forceInternalLink;
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
-		const showExternalIcon = isExternalLink && ! this.props.preventExternalIcon;
 
 		return (
 			<li
@@ -51,13 +50,13 @@ export default React.createClass( {
 				<a
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
-					target={ isExternalLink ? '_blank' : null }
-					rel={ isExternalLink ? 'noopener noreferrer' : null }
+					target={ showAsExternal ? '_blank' : null }
+					rel={ showAsExternal ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />
 					<span className="menu-link-text">{ this.props.label }</span>
-					{ showExternalIcon && <Gridicon icon="external" size={ 24 } /> }
+					{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				</a>
 				{ this.props.children }
 			</li>

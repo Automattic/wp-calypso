@@ -194,7 +194,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onViewSiteClick }
 				icon="computer"
 				preloadSectionName="preview"
-				preventExternalIcon={ isPreviewable }
+				forceInternalLink={ isPreviewable }
 			/>
 		);
 	}
