@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -146,6 +147,11 @@ class StoreSidebar extends Component {
 	}
 
 	promotions = () => {
+		// TODO: Remove this check when ready to release to production.
+		if ( ! config.isEnabled( 'woocommerce/extension-promotions' ) ) {
+			return null;
+		}
+
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/promotions' + siteSuffix;
 
