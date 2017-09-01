@@ -48,22 +48,26 @@ export default {
 
 			if ( client_id !== redirectQueryString.client_id ) {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
+
 				return next( new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' ) );
 			}
 
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
 				.then( () => {
 					enhanceContextWithLogin( context );
+
 					next();
-				} );
+				} ).catch( error => next( error ) );
 		} else {
 			enhanceContextWithLogin( context );
+
 			next();
 		}
 	},
 
 	magicLogin( context, next ) {
 		context.primary = <MagicLogin />;
+
 		next();
 	},
 
