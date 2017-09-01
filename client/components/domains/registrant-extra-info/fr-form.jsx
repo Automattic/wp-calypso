@@ -4,9 +4,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defaults, get, isEmpty, map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import {
+	compact,
+	defaults,
+	drop,
+	get,
+	identity,
+	isEmpty,
+	isString,
+	join,
+	map,
+	noop
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +34,13 @@ import validateContactDetails from './fr-validate-contact-details';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
+
+/*
+ * Sanitize a string by removing everything except digits
+ */
+function onlyNumericCharacters( string ) {
+	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
+}
 
 // If we set a field to null, react decides it's uncontrolled and complains
 // and we don't particularly want to make the parent remember all our fields
@@ -52,6 +70,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		onSubmit: noop,
 	};
 
+	sanitizeFunctions = {
+		sirenSiret: onlyNumericCharacters,
+		trademarkNumber: onlyNumericCharacters,
+	};
+
 	componentWillMount() {
 		// We're pushing props out into the global state here because:
 		// 1) We want to use these values if the user navigates unexpectedly then returns
@@ -65,9 +88,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	handleChangeEvent = ( event ) => {
-		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
+		const field = event.target.id;
+		const value = this.sanitizeField( event.target.value, field );
+
+		debug( 'Setting ' + field + ' to ' + value );
 		this.props.updateContactDetailsCache( {
-			extra: { [ event.target.id ]: event.target.value },
+			extra: { [ field ]: value },
 		} );
 	}
 
@@ -181,8 +207,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
-						type="number"
+						type="text"
 						inputMode="numeric"
+						pattern="[0-9]*"
 						placeholder={
 							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -205,8 +232,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="number"
+						type="text"
 						inputMode="numeric"
+						pattern="[0-9]*"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
@@ -227,6 +255,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		return (
 			<span className="registrant-extra-info__optional-label">{ this.props.translate( 'Optional' ) }</span>
 		);
+	}
+
+	sanitizeField( value, field ) {
+		return ( this.sanitizeFunctions[ field ] || identity )( value );
 	}
 }
 
