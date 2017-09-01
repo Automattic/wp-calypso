@@ -18,57 +18,43 @@ export const initialClientsData = {
 		id: 930,
 		name: 'vaultpress',
 		title: 'Vaultpress',
-		img_url: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
-		img_height: 50,
-		img_width: 70,
+		icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
 	},
 	973: {
 		id: 973,
 		name: 'akismet',
 		title: 'Akismet',
-		img_url: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
-		img_height: 50,
-		img_width: 70,
+		icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
 	},
 	978: {
 		id: 978,
 		name: 'polldaddy',
 		title: 'Polldaddy',
-		img_url: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
-		img_height: 50,
-		img_width: 70,
+		icon: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
 	},
 	1854: {
 		id: 1854,
 		name: 'gravatar',
 		title: 'Gravatar',
-		img_url: 'https://gravatar.com/images/grav-logo-2x.png',
-		img_height: 50,
-		img_width: 70,
+		icon: 'https://gravatar.com/images/grav-logo-2x.png',
 	},
 	50019: {
 		id: 50019,
 		name: 'woo',
 		title: 'WooCommerce',
-		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		img_height: 41,
-		img_width: 200,
+		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 	},
 	50915: {
 		id: 50915,
 		name: 'woo',
 		title: 'WooCommerce',
-		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		img_height: 41,
-		img_width: 200,
+		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 	},
 	50916: {
 		id: 50916,
 		name: 'woo',
 		title: 'WooCommerce.com',
-		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		img_height: 41,
-		img_width: 200,
+		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 	},
 };
 
@@ -94,22 +80,9 @@ const getClientIdFromSignupUrl = signupUrl => {
 	return oauth2RedirectParams.client_id;
 };
 
-/**
- * Parses and normalizes data returned by the API.
- *
- * @param {Object} data - raw data
- * @return {Object} the normalized data
- */
-const fromApi = ( { icon, id, title, url } ) => ( {
-	id: Number( id ),
-	title,
-	url,
-	icon
-} );
-
 export default createReducer( initialClientsData, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		const newData = Object.assign( {}, state[ data.id ], fromApi( data ) );
+		const newData = Object.assign( {}, state[ data.id ], data );
 
 		return Object.assign( {}, state, { [ data.id ]: newData } );
 	},

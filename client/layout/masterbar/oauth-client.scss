@@ -1,6 +1,5 @@
 .masterbar__oauth-client {
 	background-color: $blue-wordpress;
-	height: 50px;
 
 	nav {
 		display: flex;
@@ -26,15 +25,19 @@
 	}
 }
 
+.masterbar__oauth-client-logo img {
+	max-height: 46px;
+}
+
 .masterbar__oauth-client-wpcc-sign-in {
 	background-color: rgba(255, 255, 255, 0.15);
 	border-radius: 3px;
 	color: #fff;
 	display: block;
 	line-height: 100%;
-	margin-right: 5px;
+	margin-right: 4px;
 	position: relative;
-	top: 6px;
+	top: 4px;
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.2);
@@ -104,9 +107,8 @@
 	}
 
 	.masterbar__oauth-client-logo img {
-		max-width: none;
+		max-height: 41px;
 		margin-top: 22px;
-		vertical-align: middle;
 	}
 
 	.masterbar__oauth-client-main-nav {

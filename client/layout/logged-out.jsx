@@ -21,7 +21,7 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 } ) => {
-	const classNameObject = {
+	const classes = {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
@@ -32,17 +32,14 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	if ( useOAuth2Layout ) {
-		const hasValidOAuth2ClientData = !! oauth2Client;
-		const oauthClientName = hasValidOAuth2ClientData && oauth2Client.name;
-		classNameObject.dops = hasValidOAuth2ClientData;
-		classNameObject[ oauthClientName ] = hasValidOAuth2ClientData;
-
-		if ( oauthClientName ) {
-			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
+		// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
+		if ( oauth2Client.name ) {
+			classes.dops = true;
+			classes[ oauth2Client.name ] = true;
 		}
-	}
 
-	if ( ! masterbar ) {
+		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
+	} else {
 		masterbar = <MasterbarLoggedOut
 			title={ section.title }
 			sectionName={ section.name }
@@ -51,12 +48,14 @@ const LayoutLoggedOut = ( {
 	}
 
 	return (
-		<div className={ classNames( 'layout', classNameObject ) }>
+		<div className={ classNames( 'layout', classes ) }>
 			{ masterbar }
+
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
+
 				<div id="secondary" className="layout__secondary">
 				</div>
 			</div>
