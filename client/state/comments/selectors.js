@@ -2,7 +2,7 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy } from 'lodash';
+import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export const getDateSortedPostComments = createSelector(
 		const comments = getPostCommentItems( state, siteId, postId );
 		return sortBy( comments, comment => new Date( comment.date ) );
 	},
-	( state ) => [ state.comments.items ]
+	state => [ state.comments.items ]
 );
 
 export const getCommentById = createSelector(
@@ -120,6 +120,19 @@ export const getPostCommentsTree = createSelector(
 		};
 	},
 	state => state.comments.items
+);
+
+export const getExpansionsForPost = ( state, siteId, postId ) =>
+	state.comments.expansions[ getStateKey( siteId, postId ) ];
+
+export const getHiddenCommentsForPost = createSelector(
+	( state, siteId, postId ) => {
+		const comments = keyBy( getPostCommentItems( state, siteId, postId ), 'ID' );
+		const expanded = getExpansionsForPost( state, siteId, postId );
+
+		return pickBy( comments, comment => ! get( expanded, comment.ID ) );
+	},
+	state => [ state.comments.items, state.comments.expansions ]
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
