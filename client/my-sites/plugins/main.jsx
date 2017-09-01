@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -385,39 +384,35 @@ const PluginsMain = React.createClass( {
 			);
 		}
 
-		const containerClass = classNames( {
-			'main-column': true,
-			plugins: true,
-			'search-open': this.getSearchOpen()
+		const navItems = this.getFilters().map( filterItem => {
+			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+				return null;
+			}
+
+			const attr = {
+				key: filterItem.id,
+				path: filterItem.path,
+				selected: filterItem.id === this.props.filter,
+			};
+
+			if ( 'updates' === filterItem.id ) {
+				attr.count = this.state.pluginUpdateCount;
+			}
+			return (
+				<NavItem { ...attr } >
+					{ filterItem.title }
+				</NavItem>
+			);
 		} );
 
 		return (
-			<Main className={ containerClass }>
+			<Main>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-								return null;
-							}
-
-							const attr = {
-								key: filterItem.id,
-								path: filterItem.path,
-								selected: filterItem.id === this.props.filter,
-							};
-
-							if ( 'updates' === filterItem.id ) {
-								attr.count = this.state.pluginUpdateCount;
-							}
-							return (
-								<NavItem { ...attr } >
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
+						{ navItems }
 					</NavTabs>
 
 					<Search
