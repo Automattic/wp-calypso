@@ -260,7 +260,7 @@ class TaxesRates extends Component {
 		const { translate } = this.props;
 
 		return (
-			<p>
+			<div className="taxes__taxes-taxjar-notice">
 				{ translate( 'Sales tax calculations are provided by a third party: TaxJar. By enabling this option, ' +
 					'TaxJar will have access to some of your data.' )
 				}
@@ -270,9 +270,9 @@ class TaxesRates extends Component {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Learn more.' ) }
+					{ translate( 'Learn more' ) }
 				</ExternalLink>
-			</p>
+			</div>
 		);
 	}
 
