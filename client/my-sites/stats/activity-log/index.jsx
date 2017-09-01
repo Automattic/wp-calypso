@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,14 +16,11 @@ import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
-import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
-import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
-import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -38,7 +35,6 @@ import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
-	getActivityLogs,
 	getRestoreProgress,
 	getRewindStatusError,
 	getSiteGmtOffset,
@@ -181,7 +177,6 @@ class ActivityLog extends Component {
 		if ( status === 'finished' ) {
 			return (
 				<div>
-					<QueryActivityLog siteId={ siteId } />
 					{ errorCode
 						? <ErrorBanner
 								errorCode={ errorCode }
@@ -231,52 +226,38 @@ class ActivityLog extends Component {
 		}
 	}
 
-	renderLogs() {
-		const { isPressable, isRewindActive, logs, moment, translate, siteId, startDate } = this.props;
-
-		if ( isNull( logs ) ) {
-			return (
-				<section className="activity-log__wrapper" key="logs">
-					<ActivityLogDayPlaceholder />
-					<ActivityLogDayPlaceholder />
-					<ActivityLogDayPlaceholder />
-				</section>
-			);
-		}
+	renderMonth() {
+		const { isPressable, isRewindActive, moment, siteId, startDate } = this.props;
 
 		const disableRestore = this.isRestoreInProgress();
 
-		if ( isEmpty( logs ) ) {
-			return (
-				<EmptyContent
-					title={ translate( 'No activity for %s', {
-						args: moment.utc( startDate ).format( 'MMMM YYYY' ),
-					} ) }
-				/>
-			);
-		}
-
-		const logsGroupedByDay = map(
-			groupBy( logs, log =>
-				this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
-			),
-			( dailyLogs, tsEndOfSiteDay ) =>
+		const activityDays = [];
+		for (
+			const m = this.applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).startOf( 'day' ),
+				startOfMonth = this.applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
+			startOfMonth <= m.valueOf();
+			m.subtract( 1, 'day' )
+		) {
+			const dayEnd = m.endOf( 'day' ).valueOf();
+			const dayStart = m.startOf( 'day' ).valueOf();
+			activityDays.push(
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
-					key={ tsEndOfSiteDay }
-					logs={ dailyLogs }
+					key={ dayEnd }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
-					tsEndOfSiteDay={ +tsEndOfSiteDay }
+					tsEndOfSiteDay={ dayEnd }
+					tsStartOfSiteDay={ dayStart }
 				/>
-		);
+			);
+		}
 
 		return (
-			<section className="activity-log__wrapper" key="logs">
-				{ logsGroupedByDay }
+			<section className="activity-log__wrapper">
+				{ activityDays }
 			</section>
 		);
 	}
@@ -303,21 +284,12 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { isPressable, isRewindActive, moment, siteId, siteTitle, slug, startDate } = this.props;
+		const { isPressable, isRewindActive, siteId, siteTitle, slug } = this.props;
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
-
-		const queryStart = this.applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
-		const queryEnd = this.applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).valueOf();
 
 		return (
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
-				<QueryActivityLog
-					siteId={ siteId }
-					dateStart={ queryStart }
-					dateEnd={ queryEnd }
-					number={ 1000 }
-				/>
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
@@ -326,7 +298,7 @@ class ActivityLog extends Component {
 				{ this.renderMonthNavigation() }
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
-				{ this.renderLogs() }
+				{ this.renderMonth() }
 				{ this.renderMonthNavigation( 'bottom' ) }
 
 				<ActivityLogConfirmDialog
@@ -350,7 +322,6 @@ export default connect(
 		return {
 			gmtOffset: getSiteGmtOffset( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
-			logs: getActivityLogs( state, siteId ),
 			restoreProgress: getRestoreProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,

@@ -1,18 +1,47 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { mapValues } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { logItemsSchema } from './schema';
-import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import ActivityQueryManager from 'lib/query-manager/activity';
+import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { createReducer, keyedReducer, isValidStateWithSchema } from 'state/utils';
 
-// FIXME: No-op reducers
+import { logItemsSchema } from './schema';
+
 export const logError = keyedReducer( 'siteId', state => state );
 
-export const logItems = keyedReducer(
-	'siteId',
-	createReducer( [], {
-		[ ACTIVITY_LOG_UPDATE ]: ( state, { data } ) => data,
-	} )
+export const logItems = createReducer(
+	{},
+	{
+		[ ACTIVITY_LOG_UPDATE ]: ( state, { data, found, query, siteId } ) => {
+			/* eslint-disable indent */
+			return state[ siteId ]
+				? {
+						...state,
+						[ siteId ]: state[ siteId ].receive( data, { found, query } ),
+					}
+				: {
+						...state,
+						[ siteId ]: new ActivityQueryManager().receive( data, { found, query } ),
+					};
+			/* eslint-enable indent */
+		},
+		[ DESERIALIZE ]: state => {
+			if ( ! isValidStateWithSchema( state, logItemsSchema ) ) {
+				return {};
+			}
+
+			return mapValues( state, ( { data, options } ) => {
+				return new ActivityQueryManager( data, options );
+			} );
+		},
+		[ SERIALIZE ]: state => {
+			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+		},
+	}
 );
-logItems.schema = logItemsSchema;
