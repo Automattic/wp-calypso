@@ -68,13 +68,14 @@ class OrderDetailsTable extends Component {
 			if ( ! order.line_items[ i ] ) {
 				return 0;
 			}
+
 			const price = parseFloat( order.line_items[ i ].price );
-			const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
-			const taxIncludedPrice = price + tax;
 			if ( order.prices_include_tax ) {
 				return price * q;
 			}
-			return taxIncludedPrice * q;
+
+			const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
+			return ( price + tax ) * q;
 		} ) );
 		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
 		this.props.onChange( total );
