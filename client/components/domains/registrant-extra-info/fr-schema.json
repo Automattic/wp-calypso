@@ -38,12 +38,10 @@
 					]
 				},
 				"trademarkNumber": {
-					"anyOf": [
-						{
-							"minLength": 9,
-							"maxLength": 9,
-							"pattern": "^[0-9]*$"
-						},
+					"pattern": "^[0-9]*$",
+					"maxLength": 9,
+					"oneOf": [
+						{ "minLength": 9 },
 						{ "$ref": "#/definitions/empty" }
 					]
 				}

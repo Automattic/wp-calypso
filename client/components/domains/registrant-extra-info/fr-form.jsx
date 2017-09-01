@@ -150,29 +150,25 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			sirenSiret,
 			trademarkNumber
 		} = defaults( {}, contactDetails.extra, emptyValues );
-
 		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
-		const registrantVatIdValidationMessage = registrantVatId &&
-			validationErrors.registrantVatId &&
+		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
 			renderValidationError(
 				translate( 'The VAT Number field is a pattern ' +
 					'of letters and numbers that depends on the country, ' +
 					'but it always includes a 2 letter country code' ) );
 
-		const sirenSiretValidationMessage = sirenSiret &&
-			validationErrors.sirenSiret &&
+		const sirenSiretValidationMessage = validationErrors.sirenSiret &&
 			renderValidationError(
 				translate( 'The SIREN/SIRET field must be either a ' +
 					'9 digit SIREN number, or a 14 digit SIRET number' ) );
 
 		const trademarkNumberStrings = {
 			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
-			minLength: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
+			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
 			pattern: this.props.translate( 'Digits only. An EU Trademark number is a 9 digit number, like 012345678' ),
 		};
 
-		const trademarkNumberValidationMessage = trademarkNumber &&
-			map(
+		const trademarkNumberValidationMessage = map(
 				validationErrors.trademarkNumber,
 				( error ) =>
 					renderValidationError( trademarkNumberStrings[ error ] )
