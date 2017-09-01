@@ -59,7 +59,7 @@ const analytics = {
 				_pf: req.useragent.platform,
 				_via_ip: req.headers[ 'x-forwarded-for' ] || req.connection.remoteAddress,
 				_via_ua: req.useragent.source
-			} ), eventProperties );
+			}, eventProperties ) );
 		},
 	}
 };
