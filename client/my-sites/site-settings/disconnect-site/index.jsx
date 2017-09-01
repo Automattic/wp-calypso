@@ -11,12 +11,13 @@ import page from 'page';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
-import SkipSurvey from './skip-survey';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import SkipSurvey from './skip-survey';
 import redirectNonJetpackToGeneral from 'my-sites/site-settings/redirect-to-general';
 import ReturnToPreviousPage from 'my-sites/site-settings/render-return-button/back';
 
@@ -47,7 +48,9 @@ class DisconnectSite extends Component {
 							'Tell us why you want to disconnect your site from WordPress.com.'
 						) }
 					/>
-					<Card className="disconnect-site__card"> </Card>
+					<Card className="disconnect-site__card">
+						<DisconnectSurvey />
+					</Card>
 					<SkipSurvey />
 				</Main>
 			</div>
