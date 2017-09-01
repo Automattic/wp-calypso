@@ -48,6 +48,17 @@ class ConversationCaterpillarComponent extends React.Component {
 		return commentsToExpand;
 	};
 
+	handleShowAll = () => {
+		const { blogId, postId } = this.props;
+		const commentsToExpand = this.getExpandableComments();
+		this.props.expandComments( {
+			siteId: blogId,
+			postId,
+			commentIds: map( commentsToExpand, 'ID' ),
+			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
+		} );
+	};
+
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
 		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
@@ -136,6 +147,9 @@ class ConversationCaterpillarComponent extends React.Component {
 									commenterName: lastAuthorName,
 								},
 							} ) }
+				</button>
+				<button onClick={ this.handleShowAll }>
+					{ translate( 'Show all' ) }
 				</button>
 			</Card>
 		);
