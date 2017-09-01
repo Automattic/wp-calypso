@@ -33,8 +33,8 @@ import PostTypeListEmptyContent from './empty-content';
 /**
  * Constants
  */
-const DEFAULT_POST_ROW_HEIGHT_NORMAL = 86;
-const DEFAULT_POST_ROW_HEIGHT_LARGE = 91;
+const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
+const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 

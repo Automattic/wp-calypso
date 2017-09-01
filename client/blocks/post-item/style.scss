@@ -10,15 +10,30 @@
 	}
 }
 
-.card.post-item__card /* for specificity */ {
+.card.is-compact.post-item__card /* for specificity */ {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin: 0;
+
+	// These heights must also be updated in JavaScript:
+	// client/my-sites/post-type-list/index.jsx
+	// const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
+	// const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
+	min-height: 84px;
+	&.has-large-title {
+		min-height: 89px;
+	}
+	// This is controlled by the `compact` property of `PostItem`.
+	&.is-mini {
+		//min-height: xx;
+	}
 }
 
 .post-item__detail {
 	position: relative;
-	display: flex;
 	width: 100%;
 	margin-right: auto;
 
@@ -28,14 +43,6 @@
 			@include long-content-fade( $size: 40px );
 			right: 0;
 		}
-	}
-}
-
-.post-item__title-meta {
-	padding: 6px 0;
-
-	&.is-post-item-info-visible {
-		padding: 0;
 	}
 }
 

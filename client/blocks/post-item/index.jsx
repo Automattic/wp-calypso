@@ -187,10 +187,6 @@ class PostItem extends React.Component {
 		const isAuthorVisible = ( this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers() ) &&
 			post && post.author && isEnabled( 'posts/post-type-list' );
 
-		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'is-post-item-info-visible': isSiteInfoVisible || isAuthorVisible
-		} );
-
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
 
@@ -205,20 +201,18 @@ class PostItem extends React.Component {
 			>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
-						<div className={ titleMetaClasses }>
-							<div className="post-item__info">
-								{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
-								{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
-							</div>
-							<h1 className="post-item__title">
-								<a href={ editUrl } className="post-item__title-link">
-									{ title || translate( 'Untitled' ) }
-								</a>
-							</h1>
-							<div className="post-item__meta">
-								<PostTime globalId={ globalId } />
-								<PostStatus globalId={ globalId } />
-							</div>
+						<div className="post-item__info">
+							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
+						</div>
+						<h1 className="post-item__title">
+							<a href={ editUrl } className="post-item__title-link">
+								{ title || translate( 'Untitled' ) }
+							</a>
+						</h1>
+						<div className="post-item__meta">
+							<PostTime globalId={ globalId } />
+							<PostStatus globalId={ globalId } />
 						</div>
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
