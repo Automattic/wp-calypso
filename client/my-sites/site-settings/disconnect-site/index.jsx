@@ -11,6 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
@@ -40,7 +41,9 @@ class DisconnectSite extends Component {
 						'Tell us why you want to disconnect your site from Wordpress.com.'
 					) }
 				/>
-				<Card className="disconnect-site__card"> </Card>
+				<Card className="disconnect-site__card">
+					<DisconnectSurvey />
+				</Card>
 				<PaginationFlow />
 			</Main>
 		);
