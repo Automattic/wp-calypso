@@ -26,9 +26,9 @@
 	&.has-large-title {
 		min-height: 89px;
 	}
-	// This is controlled by the `compact` property of `PostItem`.
+	// <PostItem compact> -> <Card className="... is-mini">
 	&.is-mini {
-		//min-height: xx;
+		min-height: 50px;
 	}
 }
 
@@ -106,7 +106,7 @@ a.post-item__title-link {
 }
 
 .post-item__card.is-mini.is-compact {
-	padding: 8px 16px;
+	padding: 0 16px;
 
 	.post-item__meta {
 		display: none;

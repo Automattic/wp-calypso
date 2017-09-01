@@ -136,6 +136,13 @@ class PostItem extends React.Component {
 		);
 	}
 
+	hasMultipleUsers() {
+		return (
+			this.inAllSitesModeWithMultipleUsers() ||
+			this.inSingleSiteModeWithMultipleUsers()
+		);
+	}
+
 	renderVariableHeightContent() {
 		const {
 			post,
@@ -184,8 +191,12 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected
 		);
 
-		const isAuthorVisible = ( this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers() ) &&
-			post && post.author && isEnabled( 'posts/post-type-list' );
+		const isAuthorVisible = (
+			isEnabled( 'posts/post-type-list' ) &&
+			this.hasMultipleUsers() &&
+			! compact &&
+			post && post.author
+		);
 
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
