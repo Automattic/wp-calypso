@@ -173,6 +173,7 @@ export class MySitesSidebar extends Component {
 
 	preview() {
 		const {
+			isPreviewable,
 			site,
 			siteId,
 			translate,
@@ -193,7 +194,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onViewSiteClick }
 				icon="computer"
 				preloadSectionName="preview"
-				preventExternalIcon
+				preventExternalIcon={ isPreviewable }
 			/>
 		);
 	}
