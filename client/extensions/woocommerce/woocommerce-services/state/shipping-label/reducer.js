@@ -3,6 +3,7 @@
  * External dependencies
  */
 import _ from 'lodash';
+import { keyedReducer } from 'state/utils';
 
 /**
  * Internal dependencies
@@ -54,8 +55,8 @@ import {
 	SET_ADDED_ITEM,
 	ADD_ITEMS,
 } from './actions';
-import getBoxDimensions from 'lib/utils/get-box-dimensions';
-import initializeLabelsState from 'lib/initialize-labels-state';
+import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
+import initializeLabelsState from 'woocommerce/woocommerce-services/lib/initialize-labels-state';
 
 const generateUniqueBoxId = ( keyBase, boxIds ) => {
 	for ( let i = 0; i <= boxIds.length; i++ ) {
@@ -730,9 +731,9 @@ reducers[ CONFIRM_REPRINT ] = ( state ) => {
 	};
 };
 
-export default ( state = {}, action ) => {
+export default keyedReducer( 'orderId', ( state = initializeLabelsState(), action ) => {
 	if ( reducers[ action.type ] ) {
 		return reducers[ action.type ]( state, action );
 	}
 	return state;
-};
+} );

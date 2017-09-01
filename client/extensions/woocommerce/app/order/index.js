@@ -78,7 +78,7 @@ class Order extends Component {
 				</ActionHeader>
 
 				<div className="order__container">
-					<QueryLabels />
+					<QueryLabels orderId={ order.id } />
 					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
 					<OrderNotes orderId={ order.id } siteId={ site.ID } />
 					<OrderCustomer order={ order } />
