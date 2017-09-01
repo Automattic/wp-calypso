@@ -29,6 +29,7 @@ import {
 } from 'woocommerce/lib/countries/constants';
 import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import ExternalLink from 'components/external-link';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
@@ -261,11 +262,16 @@ class TaxesRates extends Component {
 		return (
 			<p>
 				{ translate( 'Sales tax calculations are provided by a third party: TaxJar. By enabling this option, ' +
-					'TaxJar will have access to some of your data. {{a}}Learn more.{{/a}}',
-					{
-						components: { a: <a href="https://en.support.wordpress.com/taxjar/" target="_blank" rel="noopener noreferrer" /> }
-					}
-				) }
+					'TaxJar will have access to some of your data.' )
+				}
+				<ExternalLink
+					icon
+					href="https://en.support.wordpress.com/taxjar/"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Learn more.' ) }
+				</ExternalLink>
 			</p>
 		);
 	}
