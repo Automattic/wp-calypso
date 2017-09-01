@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import withDimensions from 'lib/with-dimensions';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
@@ -19,8 +18,6 @@ class PostCommentContent extends React.Component {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
-		onMoreClicked: PropTypes.func,
-		hideMore: PropTypes.bool,
 	};
 
 	render() {
@@ -46,15 +43,9 @@ class PostCommentContent extends React.Component {
 					<Emojify>
 						<div
 							className="comments__comment-content"
-							ref={ this.props.setWithDimensionsRef }
 							dangerouslySetInnerHTML={ { __html: this.props.content } }
 						/>
 					</Emojify>
-					{ this.props.overflowY &&
-						! this.props.hideMore &&
-						<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
-							{ this.props.translate( 'Read More' ) }
-						</span> }
 				</div>
 			</AutoDirection>
 		);
@@ -62,4 +53,4 @@ class PostCommentContent extends React.Component {
 	}
 }
 
-export default localize( withDimensions( PostCommentContent ) );
+export default localize( PostCommentContent );

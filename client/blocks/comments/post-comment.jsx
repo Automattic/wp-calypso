@@ -30,6 +30,7 @@ import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import withDimensions from 'lib/with-dimensions';
 
 class PostComment extends React.PureComponent {
 	static propTypes = {
@@ -356,6 +357,7 @@ class PostComment extends React.PureComponent {
 
 				{ this.props.activeEditCommentId !== this.props.commentId &&
 					<PostCommentContent
+						ref={ this.props.setWithDimensionsRef }
 						content={ comment.content }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
@@ -394,6 +396,9 @@ class PostComment extends React.PureComponent {
 						parentCommentId={ commentId }
 					/> }
 				{ this.renderRepliesList() }
+				<span>
+					overflowY: { this.props.overflowY }
+				</span>
 			</li>
 		);
 	}
@@ -401,4 +406,4 @@ class PostComment extends React.PureComponent {
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
-} ) )( PostComment );
+} ) )( withDimensions( PostComment ) );
