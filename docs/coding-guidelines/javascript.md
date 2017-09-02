@@ -397,11 +397,16 @@ Note that the `in` operator checks all inherited properties of an object prototy
 'valueOf' in {}; // true
 ```
 
-If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) instead.
+If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) or Lodash's [`has`](https://lodash.com/docs#has) instead.
 
 ```js
-const key = 'valueOf';
-{}.hasOwnProperty( key ); // false
+const key = 'someParam';
+const object = {
+	someParam: 'someValue'
+};
+
+object.hasOwnProperty( key ); // true
+has( object, key ); // true
 ```
 
 ## Strings
