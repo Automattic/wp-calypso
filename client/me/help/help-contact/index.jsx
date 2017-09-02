@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ import {
 	getCurrentUserSiteCount,
 } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
-import { isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
@@ -56,11 +56,14 @@ import { getHelpSelectedSiteId } from 'state/help/selectors';
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
-const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
-const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
-const SUPPORT_TICKET = 'SUPPORT_TICKET';
-const SUPPORT_FORUM = 'SUPPORT_FORUM';
+export const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
+export const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
+export const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
+export const SUPPORT_TICKET = 'SUPPORT_TICKET';
+export const SUPPORT_FORUM = 'SUPPORT_FORUM';
+
+const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
+const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
 const HelpContact = React.createClass( {
 
@@ -582,15 +585,11 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation } = this.state;
-		const { translate } = this.props;
+		const { confirmation } = this.state;
+		const { translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
-		}
-
-		if ( olark.isSupportClosed ) {
-			return <HelpContactClosed />;
 		}
 
 		if ( this.shouldShowPreloadForm() ) {
@@ -643,8 +642,20 @@ const HelpContact = React.createClass( {
 			this.getContactFormPropsVariation( supportVariation ),
 		);
 
+		const currentDate = Date.now();
+
+		// Customers sent to Directly and Forum are not affected by the GM closures
+		const isUserAffectedByGM17Closure = ( supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM );
+
+		const shouldShowClosureNotice = (
+			isUserAffectedByGM17Closure &&
+			currentDate > startShowingGM17ClosureNoticeAt &&
+			currentDate < stopShowingGM17ClosureNoticeAt
+		);
+
 		return (
 			<div>
+				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
@@ -678,6 +689,7 @@ const HelpContact = React.createClass( {
 export default connect(
 	( state ) => {
 		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+		const selectedSitePlan = getSitePlan( state, helpSelectedSiteId );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
@@ -694,6 +706,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			isRequestingSites: isRequestingSites( state ),
 			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
+			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
 		};
 	},
 	{

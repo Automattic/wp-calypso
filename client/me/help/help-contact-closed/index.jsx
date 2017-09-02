@@ -7,31 +7,45 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
-import supportUrls from 'lib/url/support';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import HelpContactClosedDetail from './detail';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 
-export default localize( ( props ) => {
-	const {	translate } = props;
+// In the translated dates 7am UTC is 12am/midnight PT
+const closedStartDate = i18n.moment( 'Mon, 11 Sep 2017 07:00:00 +0000' );
+const closedEndDate = i18n.moment( 'Mon, 18 Sep 2017 07:00:00 +0000' );
+const limitedHoursStartDate = i18n.moment( 'Wed, 13 Sep 2017 07:00:00 +0000' );
+const limitedHoursEndDate = i18n.moment( 'Fri, 15 Sep 2017 07:00:00 +0000' );
+const supportResumeDate = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
-	//In the date translated below 7am UTC is 12am/midnight PT
+const NonPlanPaidMessage = localize( ( { translate } ) => {
 	return (
-		<div className="help-contact-closed">
-			<FormSectionHeading>{ translate( 'Limited Support This Week' ) }</FormSectionHeading>
+		<div>
 			<p>
-				{ translate(
-					'Private email and live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, ' +
-					'included. We will reopen private email support on %(email_open_date)s, and live chat support will be back as ' +
-					'usual on %(livechat_open_date)s.', {
-						args: {
-							closed_start_date: i18n.moment( 'Wed, 14 Sep 2016 07:00:00 +0000' ).format( 'dddd, MMMM Do, YYYY' ),
-							closed_end_date: i18n.moment( 'Wed, 23 Sep 2016 07:00:00 +0000' ).format( 'dddd, MMMM Do, YYYY' ),
-							email_open_date: i18n.moment( 'Thu, 22 Sept 2016 07:00:00 +0000' ).format( 'dddd, MMMM Do' ),
-							livechat_open_date: i18n.moment( 'Mon, 26 Sep 2016 07:00:00 +0000' ).format( 'dddd, MMMM Do' ),
+				{ Date.now() < closedStartDate
+					? translate(
+						'Private support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
+						'We will reopen private support on %(support_resume_date)s.', {
+							args: {
+								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
 						}
-					}
-				) }
+					)
+					: translate(
+						'Private support will be closed through %(closed_end_date)s, included. ' +
+						'We will reopen private support on %(support_resume_date)s.', {
+							args: {
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
+						}
+					)
+				}
 			</p>
 			<p>
 				{ translate(
@@ -40,41 +54,131 @@ export default localize( ( props ) => {
 					'But never fear! If you need help in the meantime:'
 				) }
 			</p>
-			<HelpContactClosedDetail icon="help">
+			<p>
+				<a href="https://en.support.wordpress.com" target="_blank" rel="noopener noreferrer">
+					https://en.support.wordpress.com
+				</a>
+			</p>
+			<p>
 				{ translate(
-					'The {{link}}forums{{/link}} remain open and staffed during this time.', {
+					'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.', {
 						components: {
-							link: <a href="https://forums.wordpress.com/" target="_blank" rel="noopener noreferrer" />
+							link: <a href="https://en.forums.wordpress.com/forum/support" target="_blank" rel="noopener noreferrer" />
 						}
 					}
 				) }
-			</HelpContactClosedDetail>
-			<HelpContactClosedDetail icon="credit-card">
-				{ translate(
-					'If you require a refund, you can still request one directly from your {{link}}Purchases{{/link}} ' +
-					'screen.', {
-						components: {
-							link: <a href={ purchasesPaths.purchasesRoot() } />
-						}
-					}
-				) }
-			</HelpContactClosedDetail>
-			<HelpContactClosedDetail icon="book">
-				{ translate(
-					'If you are new to WordPress.com we have a step-by-step {{guide_link}}guide{{/guide_link}} to all things WordPress. ' +
-					'You can find more details in our {{support_doc_link}}support documentation{{/support_doc_link}}. There we have ' +
-					'guides on {{get_started_link}}getting started{{/get_started_link}}, {{first_post_link}}writing your first ' +
-					'post{{/first_post_link}}, and {{find_readers_link}}finding your readers{{/find_readers_link}}.', {
-						components: {
-							guide_link: <a href="https://learn.wordpress.com/" target="_blank" rel="noopener noreferrer" />,
-							support_doc_link: <a href={ supportUrls.SUPPORT_ROOT } target="_blank" rel="noopener noreferrer" />,
-							get_started_link: <a href={ supportUrls.START } target="_blank" rel="noopener noreferrer" />,
-							first_post_link: <a href={ supportUrls.CREATE } target="_blank" rel="noopener noreferrer" />,
-							find_readers_link: <a href={ supportUrls.CONNECT } target="_blank" rel="noopener noreferrer" />
-						}
-					}
-				) }
-			</HelpContactClosedDetail>
+			</p>
 		</div>
 	);
 } );
+
+const PersonalAndPremiumPlanMessage = localize( ( { translate } ) => {
+	return (
+		<div>
+			<p>
+				{ Date.now() < closedStartDate
+					? translate(
+						'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
+						'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.', {
+							args: {
+								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
+						}
+					)
+					: translate(
+						'Private support will be closed through %(closed_end_date)s, included. ' +
+						'We will reopen private support on %(support_resume_date)s.', {
+							args: {
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
+						}
+					)
+				}
+			</p>
+			<p>
+				{ translate(
+					'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together ' +
+					'to work on improving our services, building new features, and learning how to better serve you, our users. ' +
+					'But never fear! If you need help in the meantime, you can submit an email ticket through the contact form.'
+				) }
+			</p>
+		</div>
+	);
+} );
+
+const BusinessPlanMessage = localize( ( { translate } ) => {
+	return (
+		<div>
+			<p>
+				{ Date.now() < closedStartDate
+					? translate(
+						'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, with the ' +
+						'exception of limited hours %(limited_hours_start_date)s–%(limited_hours_end_date)s. ' +
+						'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.', {
+							args: {
+								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								limited_hours_start_date: limitedHoursStartDate.format( 'MMMM D' ),
+								limited_hours_end_date: limitedHoursEndDate.format( 'D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
+						}
+					)
+					: translate(
+						'Private support will be closed through %(closed_end_date)s, included. ' +
+						'We will reopen private support on %(support_resume_date)s.', {
+							args: {
+								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+							}
+						}
+					)
+				}
+			</p>
+			<p>
+				{ translate(
+					'Live chat will be available on September 13, 14, and 15 between the hours of 10:00am-1:00pm PDT ' +
+					'and 2:30pm-5:00pm PDT.'
+				) }
+			</p>
+			<p>
+				{ translate(
+					'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together ' +
+					'to work on improving our services, building new features, and learning how to better serve you, our users. ' +
+					'But never fear! If you need help in the meantime, you can submit an email ticket through the contact form.'
+				) }
+			</p>
+		</div>
+	);
+} );
+
+const HelpContactClosed = ( { translate, sitePlanSlug } ) => {
+	let message;
+
+	// Show different messages based on the plan of the site requesting help
+	switch ( sitePlanSlug ) {
+		case PLAN_PERSONAL:
+		case PLAN_PREMIUM:
+			message = <PersonalAndPremiumPlanMessage />;
+			break;
+		case PLAN_BUSINESS:
+			message = <BusinessPlanMessage />;
+			break;
+		default:
+			message = <NonPlanPaidMessage />;
+			break;
+	}
+
+	return (
+		<div className="help-contact-closed">
+			<FormSectionHeading>{ translate( 'Limited Support This Week' ) }</FormSectionHeading>
+			{ message }
+			<hr />
+		</div>
+	);
+};
+
+export default localize( HelpContactClosed );
