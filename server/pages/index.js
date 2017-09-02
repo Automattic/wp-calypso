@@ -46,6 +46,12 @@ const prideLanguages = [
 	'en-au',
 ];
 
+// List of geolocated locations to show pride styling for.
+// Geolocation may not be 100% accurate.
+const prideLocations = [
+	'au',
+];
+
 const sections = sectionsModule.get();
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
@@ -161,8 +167,13 @@ function getDefaultContext( request ) {
 		initialServerState = getInitialServerState( serializeCachedServerState );
 	}
 
+	// Note: The x-geoip-country-code header should *not* be considered 100% accurate.
+	// It should only be used for guestimating the visitor's location.
 	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
-	if ( prideLanguages.indexOf( '*' ) > -1 || intersection( prideLanguages, acceptedLanguages ).length > 0 ) {
+	if ( prideLanguages.indexOf( '*' ) > -1 ||
+		intersection( prideLanguages, acceptedLanguages ).length > 0 ||
+		prideLocations.indexOf( '*' ) > -1 ||
+		prideLocations.indexOf( request.headers[ 'x-geoip-country-code' ].toLowerCase() ) > -1 ) {
 		bodyClasses.push( 'pride' );
 	}
 
