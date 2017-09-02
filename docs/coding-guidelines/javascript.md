@@ -547,6 +547,25 @@ prop = object[ 'default' ];
 prop = object[ 'key-with-hyphens' ];
 ```
 
+That said, avoid accessing nested properties through a chain of dot notation as this can lead cause access errors.
+Instead, use Lodash's [`get`](https://lodash.com/docs#get) function. It will safely handle cases where a property or object is missing at any point in the nesting chain.
+
+```js
+const object = {
+	nestedObject: {
+		property: 'value'
+	}
+};
+
+// Bad
+nestedProp = object.nestedObject.property;
+anotherNestedProp = object.nestedObject.anotherProperty; // This will throw an error
+
+// Good
+nestedProp = get( object, 'nestedObject.property' );
+anotherNestedProp = get( object, 'nestedObject.anotherProperty' ); // safely returns undefined
+```
+
 ## “Yoda” Conditions #
 
 Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
