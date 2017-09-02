@@ -53,7 +53,7 @@ function setup() {
 		express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
-	app.get( '/public/nostats.js', function( request, response ) {
+	app.get( '/nostats.js', function( request, response ) {
 		const analytics = require( '../lib/analytics' );
 		analytics.tracks.recordEvent( 'calypso_nostats', {}, request );
 		response.setHeader( 'content-type', 'application/javascript' );
