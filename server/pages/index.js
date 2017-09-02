@@ -161,6 +161,7 @@ function getDefaultContext( request ) {
 	let initialServerState = {};
 	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
+	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -173,7 +174,7 @@ function getDefaultContext( request ) {
 	if ( prideLanguages.indexOf( '*' ) > -1 ||
 		intersection( prideLanguages, acceptedLanguages ).length > 0 ||
 		prideLocations.indexOf( '*' ) > -1 ||
-		prideLocations.indexOf( request.headers[ 'x-geoip-country-code' ].toLowerCase() ) > -1 ) {
+		prideLocations.indexOf( geoLocation ) > -1 ) {
 		bodyClasses.push( 'pride' );
 	}
 
