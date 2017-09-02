@@ -4,9 +4,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defaults, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import {
+	castArray,
+	defaults,
+	get,
+	identity,
+	isEmpty,
+	isString,
+	map,
+	noop
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +27,18 @@ import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
+import validateContactDetails from './fr-validate-contact-details';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
+
+/*
+ * Sanitize a string by removing everything except digits
+ */
+function onlyNumericCharacters( string ) {
+	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
+}
 
 // If we set a field to null, react decides it's uncontrolled and complains
 // and we don't particularly want to make the parent remember all our fields
@@ -31,15 +49,29 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
+function renderValidationError( message ) {
+	return <FormInputValidation isError key={ message } text={ message } />;
+}
+
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
+		children: PropTypes.node,
+		contactDetails: PropTypes.object,
+		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
+		translate: PropTypes.func,
+		updateContactDetailsCache: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isVisible: true,
 		onSubmit: noop,
+	};
+
+	sanitizeFunctions = {
+		sirenSiret: onlyNumericCharacters,
+		trademarkNumber: onlyNumericCharacters,
 	};
 
 	componentWillMount() {
@@ -55,15 +87,24 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	handleChangeEvent = ( event ) => {
-		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
+		const field = event.target.id;
+		const value = this.sanitizeField( event.target.value, field );
+
+		debug( 'Setting ' + field + ' to ' + value );
 		this.props.updateContactDetailsCache( {
-			extra: { [ event.target.id ]: event.target.value },
+			extra: { [ field ]: value },
 		} );
 	}
 
 	render() {
-		const translate = this.props.translate;
-		const registrantType = get( this.props.contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const {
+			contactDetails,
+			contactDetailsValidationErrors,
+			translate,
+		} = this.props;
+		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const formIsValid = isEmpty( contactDetailsValidationErrors );
+
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
@@ -95,19 +136,53 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ this.props.children }
+				{ formIsValid
+					? this.props.children
+					: map(
+						castArray( this.props.children ),
+						( child ) =>
+							child.props.className.match( /submit-button/ )
+								? React.cloneElement( child, {
+									disabled: true
+								} )
+								: child	) }
 			</form>
 		);
 	}
 
 	renderOrganizationFields() {
-		const translate = this.props.translate;
-		const { extra } = this.props.contactDetails;
+		const {
+			contactDetails,
+			contactDetailsValidationErrors,
+			translate,
+		} = this.props;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = defaults( {}, extra, emptyValues );
+		} = defaults( {}, contactDetails.extra, emptyValues );
+		const validationErrors = get( contactDetailsValidationErrors, 'extra', {} );
+		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
+			renderValidationError(
+				translate( 'The VAT Number field is a pattern ' +
+					'of letters and numbers that depends on the country, ' +
+					'but it always includes a 2 letter country code' ) );
+
+		const sirenSiretValidationMessage = validationErrors.sirenSiret &&
+			renderValidationError(
+				translate( 'The SIREN/SIRET field must be either a ' +
+					'9 digit SIREN number, or a 14 digit SIRET number' ) );
+
+		const trademarkNumberStrings = {
+			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
+			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
+		};
+
+		const trademarkNumberValidationMessage = map(
+				validationErrors.trademarkNumber,
+				( error ) =>
+					renderValidationError( trademarkNumberStrings[ error ] )
+			);
 
 		return (
 			<div>
@@ -123,8 +198,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex. XX123456789' ) }
-						onChange={ this.handleChangeEvent } />
+						placeholder={ translate( 'ex. FRXX123456789' ) }
+						onChange={ this.handleChangeEvent }
+						isError={ Boolean( registrantVatIdValidationMessage ) } />
+						{ registrantVatIdValidationMessage }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -136,6 +213,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
+						type="text"
+						inputMode="numeric"
+						pattern="[0-9]*"
 						placeholder={
 							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -144,7 +224,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
+						isError={ Boolean( sirenSiretValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
+						{ sirenSiretValidationMessage }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -156,16 +238,20 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="number"
+						type="text"
+						inputMode="numeric"
+						pattern="[0-9]*"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={
-							translate( 'ex. 123456789',
+							translate( 'ex. 012345678',
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
+						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
+					{ trademarkNumberValidationMessage }
 				</FormFieldset>
 			</div>
 		);
@@ -176,9 +262,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			<span className="registrant-extra-info__optional-label">{ this.props.translate( 'Optional' ) }</span>
 		);
 	}
+
+	sanitizeField( value, field ) {
+		return ( this.sanitizeFunctions[ field ] || identity )( value );
+	}
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoFrForm ) );
