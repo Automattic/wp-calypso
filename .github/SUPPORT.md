@@ -17,7 +17,7 @@ blog](https://developer.wordpress.com/blog/) for technical news.
 If you are a developer who needs help with *WordPress.com APIs and related
 tools*, please [contact us](https://developer.wordpress.com/contact/).
 
-If you need help with your *ordPress.com site or account*, please [contact our
+If you need help with your *WordPress.com site or account*, please [contact our
 happiness engineers](http://en.support.wordpress.com/contact/).
 
 ## Twitter
