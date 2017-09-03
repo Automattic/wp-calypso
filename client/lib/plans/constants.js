@@ -800,7 +800,7 @@ export const FEATURES_LIST = {
 
 			return i18n.translate(
 				'Get a free custom domain name (example.com) with this plan ' +
-				'to use for your website.'
+				'to use for your website. Does not apply to premium domains.'
 			);
 		}
 	},
