@@ -48,27 +48,42 @@ function deserialize( state ) {
 }
 
 /**
- * Adds "sympathy" by randomly clearing out persistent
+ * Determines whether to add "sympathy" by randomly clearing out persistent
  * browser state and loading without it
  *
- * Can be overridden on the command-line with two flags
+ * Can be overridden on the command-line with two flags:
  *   - ENABLE_FEATURES=force-sympathy npm start (always sympathize)
  *   - ENABLE_FEATURES=no-force-sympathy npm start (always prevent sympathy)
  *
- * @param {Function} initialStateLoader normal unsympathetic state loader
- * @returns {Function} augmented initial state loader
+ * If both of these flags are set, then `force-sympathy` takes precedence.
+ *
+ * @returns {bool} Whether to clear persistent state on page load
  */
-function addSympathy( initialStateLoader ) {
-	const shouldAdd = (
-		'development' === process.env.NODE_ENV && // only work in local dev mode
-		(
-      Math.random() < 0.25 || // clear 25% of the time
-			config.isEnabled( 'force-sympathy' ) // or whenever the flag is set
-		) &&
-		! config.isEnabled( 'no-force-sympathy' ) // unless purposefully disabled
-	);
+function shouldAddSympathy() {
+	if ( config.isEnabled( 'force-sympathy' ) ) {
+		return true;
+	}
 
-	if ( ! shouldAdd ) {
+	if ( config.isEnabled( 'no-force-sympathy' ) ) {
+		return false;
+	}
+
+	if ( 'development' === process.env.NODE_ENV && Math.random() < 0.25 ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Augments the initial state loader to clear persistent state if
+ * `shouldAddSympathy()` returns true.
+ *
+ * @param {Function} initialStateLoader normal unsympathetic state loader
+ * @returns {Function} maybe-augmented initial state loader
+ */
+function maybeAddSympathy( initialStateLoader ) {
+	if ( ! shouldAddSympathy() ) {
 		return initialStateLoader;
 	}
 
@@ -81,7 +96,7 @@ function addSympathy( initialStateLoader ) {
 	return () => createReduxStore( getInitialServerState() );
 }
 
-const loadInitialState = addSympathy( initialState => {
+const loadInitialState = maybeAddSympathy( initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
