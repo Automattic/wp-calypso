@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import config from 'config';
 import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import OrderCreated from '../order-created';
 import OrderDetailsTable from './table';
@@ -17,6 +18,7 @@ import OrderRefundCard from '../order-refund';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
 import SectionHeader from 'components/section-header';
+import ShippingLabel from 'woocommerce/woocommerce-services/views/shipping-label';
 
 class OrderDetails extends Component {
 	static propTypes = {
@@ -55,6 +57,8 @@ class OrderDetails extends Component {
 			return null;
 		}
 
+		const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
+
 		return (
 			<div className="order-details">
 				<SectionHeader label={ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ order.id }` } } ) }>
@@ -65,6 +69,7 @@ class OrderDetails extends Component {
 					<OrderDetailsTable order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />
+					{ wcsEnabled && <ShippingLabel orderId={ order.id } /> }
 				</Card>
 			</div>
 		);

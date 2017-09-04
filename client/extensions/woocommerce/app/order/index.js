@@ -21,7 +21,6 @@ import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderNotes from './order-notes';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
-import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 
 class Order extends Component {
 	state = {
@@ -78,7 +77,6 @@ class Order extends Component {
 				</ActionHeader>
 
 				<div className="order__container">
-					<QueryLabels orderId={ order.id } />
 					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
 					<OrderNotes orderId={ order.id } siteId={ site.ID } />
 					<OrderCustomer order={ order } />
