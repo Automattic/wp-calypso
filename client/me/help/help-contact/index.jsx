@@ -56,11 +56,11 @@ import { getHelpSelectedSiteId } from 'state/help/selectors';
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
-export const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
-export const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-export const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
-export const SUPPORT_TICKET = 'SUPPORT_TICKET';
-export const SUPPORT_FORUM = 'SUPPORT_FORUM';
+const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
+const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
+const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
+const SUPPORT_TICKET = 'SUPPORT_TICKET';
+const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
 const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
