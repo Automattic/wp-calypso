@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, isEmpty, keys, merge } from 'lodash';
+import { assign, get, isEmpty, keys, merge } from 'lodash';
 var debug = require( 'debug' )( 'calypso:user:settings' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
@@ -152,12 +152,7 @@ UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
  * @return {*} setting key value
  */
 UserSettings.prototype.getOriginalSetting = function( settingName ) {
-	var setting = null;
-	if ( this.settings && this.settings[ settingName ] ) {
-		setting = this.settings[ settingName ];
-	}
-
-	return setting;
+	return get( this.settings, settingName, null );
 };
 
 /**
