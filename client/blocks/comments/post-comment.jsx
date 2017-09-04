@@ -142,6 +142,7 @@ class PostComment extends React.PureComponent {
 			commentsTree,
 			maxChildrenToShow,
 			enableCaterpillar,
+			post,
 		} = this.props;
 
 		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
@@ -196,6 +197,7 @@ class PostComment extends React.PureComponent {
 								commentId={ childId }
 								commentsTree={ commentsTree }
 								commentsToShow={ commentsToShow }
+								post={ post }
 							/>
 						) }
 					</ol> }
