@@ -110,7 +110,7 @@ function renderPluginList( context, basePath ) {
 			: ''
 		);
 
-	let baseAnalyticsPath = 'plugins';
+	let baseAnalyticsPath = 'plugins/manage';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
 	}
