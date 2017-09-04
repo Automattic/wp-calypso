@@ -107,18 +107,7 @@ class ActivityLog extends Component {
 			return moment.tz( startDate, timezone );
 		}
 		if ( null !== gmtOffset ) {
-			const time = 'T00:00:00';
-			let offset = 'Z';
-			let pad = '';
-			let sign = '';
-
-			if ( 0 !== gmtOffset ) {
-				offset = `${ Math.abs( gmtOffset ) }`;
-				pad = 10 > Math.abs( gmtOffset ) ? '0' : '';
-				sign = 0 > gmtOffset ? '-' : '+';
-			}
-
-			return moment( `${ startDate }${ time }${ sign }${ pad }${ offset }` );
+			return moment.utc( startDate ).subtract( gmtOffset, 'hours' ).utcOffset( gmtOffset );
 		}
 		return moment.utc( startDate );
 	}
