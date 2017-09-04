@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import LoadingSpinner from 'components/loading-spinner';
+import LoadingSpinner from 'components/spinner';
 import FoldableCard from 'components/foldable-card';
 
 const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summary, children, expanded, toggleStep } ) => {

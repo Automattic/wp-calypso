@@ -15,7 +15,7 @@ import PackageInfo from './package-info';
 import MoveItemDialog from './move-item';
 import AddItemDialog from './add-item';
 import StepConfirmationButton from '../step-confirmation-button';
-import ErrorNotice from 'components/error-notice';
+import Notice from 'components/notice';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
@@ -97,13 +97,16 @@ const PackagesStep = ( props ) => {
 
 	const renderWarning = () => {
 		if ( ! hasAnyPackagesConfigured ) {
-			return <ErrorNotice isWarning>
+			return <Notice
+			className="error-notice"
+			status="is-warning"
+			showDismiss={ false } >
 				<span>{ __(
 					'There are no packages configured. The items have been packed individually. ' +
 					'You can add or enable packages using the {{a}}Packaging Manager{{/a}}.',
 					{ components: { a: <a href="admin.php?page=wc-settings&tab=shipping&section=package-settings" /> } }
 				) }</span>
-			</ErrorNotice>;
+			</Notice>;
 		}
 
 		return null;

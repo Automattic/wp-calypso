@@ -9,13 +9,13 @@ import { translate as __ } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
-import LoadingSpinner from 'components/loading-spinner';
+import LoadingSpinner from 'components/spinner';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
-import { getRatesTotal } from 'apps/shipping-label/state/selectors/rates';
+import { getRatesTotal } from 'woocommerce/woocommerce-services/state/shipping-label/selectors/rates';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
 const PurchaseDialog = ( props ) => {

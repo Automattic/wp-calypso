@@ -12,13 +12,19 @@ import { translate as __ } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
-import Dropdown from 'components/dropdown';
+//import Dropdown from 'components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
 
 const ReprintDialog = ( props ) => {
-	const { reprintDialog, paperSize, storeOptions, label_id } = props;
+	const { reprintDialog, /*paperSize, storeOptions,*/ label_id } = props;
+	// <Dropdown
+	// id={ 'paper_size' }
+	// valuesMap={ getPaperSizes( storeOptions.origin_country ) }
+	// title={ __( 'Paper size' ) }
+	// value={ paperSize }
+	// updateValue={ props.updatePaperSize } />
 	return (
 		<Dialog
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
@@ -34,12 +40,6 @@ const ReprintDialog = ( props ) => {
 				{ __( 'NOTE: If you already used the label in a package, printing and using it again ' +
 					'is a violation of our terms of service and may result in criminal charges.' ) }
 			</p>
-			<Dropdown
-				id={ 'paper_size' }
-				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
-				title={ __( 'Paper size' ) }
-				value={ paperSize }
-				updateValue={ props.updatePaperSize } />
 			<ActionButtons buttons={ [
 				{
 					onClick: props.confirmReprint,
