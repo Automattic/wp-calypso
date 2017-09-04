@@ -63,6 +63,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import { removep } from 'lib/formatting';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -1259,10 +1260,7 @@ export const PostEditor = React.createClass( {
 		 * Unfortunately the content goes through some more changes after this step, before it gets inserted
 		 * in the `textarea`. This means that we have to do some minor cleanup on our own here.
 		 */
-		const content = editor.getContent()
-			.replace( /(\[\/[^\]]+\]\s*)<p>/g, '$1\n\n' ) // fix short codes
-			.replace( /<p>/g, '' ) // remove `<p>`s, as they don't play any role
-			.replace( /<\/p>/g, '\n\n' ); // replace `</p>` with two new lines.
+		const content = removep( editor.getContent() );
 
 		const startRegex = new RegExp(
 			'<span[^>]*\\s*class="mce_SELRES_start"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
