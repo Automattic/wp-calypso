@@ -254,7 +254,7 @@ class PostComment extends React.PureComponent {
 	onReadMore = () => {
 		this.props.expandComments( {
 			siteId: this.props.post.site_ID,
-			commentId: this.props.commentId,
+			commentIds: [ this.props.commentId ],
 			postId: this.props.post.ID,
 			displayType: POST_COMMENT_DISPLAY_TYPES.full,
 		} );
