@@ -21,6 +21,11 @@ import {
 
 const siteId = 1916284;
 
+const ERROR_RESPONSE = {
+	error: 'invalid_input',
+	message: 'Invalid file type.',
+};
+
 describe( 'initiateTransfer', () => {
 	it( 'should dispatch an http request', () => {
 		const dispatch = sinon.spy();
@@ -46,9 +51,9 @@ describe( 'receiveResponse', () => {
 describe( 'receiveError', () => {
 	it( 'should dispatch a plugin upload error', () => {
 		const dispatch = sinon.spy();
-		receiveError( { dispatch }, { siteId }, 'zip too large' );
+		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			pluginUploadError( siteId, 'zip too large' )
+			pluginUploadError( siteId, ERROR_RESPONSE )
 		);
 	} );
 } );
