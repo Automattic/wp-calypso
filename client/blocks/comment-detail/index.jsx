@@ -22,6 +22,7 @@ import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Creates a stripped down comment object containing only the information needed by
@@ -62,6 +63,7 @@ export class CommentDetail extends Component {
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
+		isRawContentSupported: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		refreshCommentData: PropTypes.bool,
@@ -212,6 +214,7 @@ export class CommentDetail extends Component {
 			commentUrl,
 			isBulkEdit,
 			isLoading,
+			isRawContentSupported,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -300,7 +303,7 @@ export class CommentDetail extends Component {
 								authorDisplayName={ authorDisplayName }
 								authorUrl={ authorUrl }
 								closeEditMode={ this.edit }
-								commentContent={ commentRawContent }
+								commentContent={ isRawContentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
 								postId={ postId }
 								updateComment={ updateComment }
@@ -375,6 +378,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
 		isLoading,
+		isRawContentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
