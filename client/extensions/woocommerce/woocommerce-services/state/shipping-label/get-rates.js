@@ -3,27 +3,29 @@
  */
 import * as api from 'woocommerce/woocommerce-services/api';
 import {
-	RATES_RETRIEVAL_IN_PROGRESS,
-	SET_RATES,
-	RATES_RETRIEVAL_COMPLETED,
 	exitPrintingFlow,
 } from './actions';
+import {
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
+} from '../action-types';
 
 export default ( dispatch, origin, destination, packages, orderId ) => {
-	dispatch( { type: RATES_RETRIEVAL_IN_PROGRESS } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
 		const setSuccess = ( json ) => {
 			dispatch( {
-				type: SET_RATES,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
 				rates: json.rates,
 			} );
 		};
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
 				dispatch( {
-					type: RATES_RETRIEVAL_COMPLETED,
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
 				} );
 				if ( 'rest_cookie_invalid_nonce' === error ) {
 					dispatch( exitPrintingFlow( true ) );
