@@ -10,8 +10,8 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Modal from 'components/modal';
-import ActionButtons from 'components/action-buttons';
+import Dialog from 'components/dialog';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import Dropdown from 'components/dropdown';
 import { getPaperSizes } from 'lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -20,10 +20,10 @@ import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state
 const ReprintDialog = ( props ) => {
 	const { reprintDialog, paperSize, storeOptions, label_id } = props;
 	return (
-		<Modal
+		<Dialog
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
 			onClose={ props.closeReprintDialog }
-			additionalClassNames="label-reprint-modal">
+			additionalClassNames="label-reprint-modal woocommerce">
 			<FormSectionHeading>
 				{ __( 'Reprint shipping label' ) }
 			</FormSectionHeading>
@@ -52,7 +52,7 @@ const ReprintDialog = ( props ) => {
 					label: __( 'Cancel' ),
 				},
 			] } />
-		</Modal>
+		</Dialog>
 	);
 };
 

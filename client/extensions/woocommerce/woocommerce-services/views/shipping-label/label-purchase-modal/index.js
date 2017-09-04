@@ -7,8 +7,8 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Modal from 'components/modal';
-import ActionButtons from 'components/action-buttons';
+import Dialog from 'components/dialog';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import LoadingSpinner from 'components/loading-spinner';
 import getPDFSupport from 'lib/utils/pdf-support';
 import AddressStep from './address-step';
@@ -79,7 +79,8 @@ const PurchaseDialog = ( props ) => {
 	}
 
 	return (
-		<Modal
+		<Dialog
+			additionalClassNames="woocommerce"
 			isVisible={ props.showPurchaseDialog }
 			onClose={ exitPrintingFlow } >
 			<div className="label-purchase-modal__content">
@@ -111,7 +112,7 @@ const PurchaseDialog = ( props ) => {
 				</div>
 				<ActionButtons buttons={ buttons } />
 			</div>
-		</Modal>
+		</Dialog>
 	);
 };
 

@@ -14,7 +14,7 @@ import _ from 'lodash';
 import Dialog from 'components/dialog';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import ActionButtons from 'components/action-buttons';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeAddItem, setAddedItem, addItems } from 'woocommerce/woocommerce-services/state/shipping-label/actions';

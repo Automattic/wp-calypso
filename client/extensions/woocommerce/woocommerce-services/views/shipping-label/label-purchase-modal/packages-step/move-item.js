@@ -13,7 +13,7 @@ import { translate as __ } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
-import ActionButtons from 'components/action-buttons';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
