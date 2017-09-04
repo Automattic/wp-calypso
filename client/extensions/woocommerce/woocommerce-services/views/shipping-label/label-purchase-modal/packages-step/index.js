@@ -18,8 +18,8 @@ import StepConfirmationButton from '../step-confirmation-button';
 import ErrorNotice from 'components/error-notice';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import StepContainer from '../step-container';
-import getFormErrors from '../../../state/selectors/errors';
-import { toggleStep, confirmPackages } from '../../../state/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { toggleStep, confirmPackages } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const PackagesStep = ( props ) => {
 	const {

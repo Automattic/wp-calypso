@@ -12,8 +12,8 @@ import { translate as __ } from 'i18n-calypso';
  */
 import { getPaperSizes } from 'lib/pdf-label-utils';
 import Dropdown from 'components/dropdown';
-import getFormErrors from '../../state/selectors/errors';
-import { updatePaperSize } from '../../state/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const Sidebar = ( props ) => {
 	const { form, errors, paperSize } = props;

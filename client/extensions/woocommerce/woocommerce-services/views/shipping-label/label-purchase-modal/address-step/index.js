@@ -14,8 +14,8 @@ import _ from 'lodash';
 import AddressFields from './fields';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import StepContainer from '../step-container';
-import getFormErrors from '../../../state/selectors/errors';
-import { toggleStep } from '../../../state/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { toggleStep } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const renderSummary = ( {
 		values,

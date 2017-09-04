@@ -17,13 +17,13 @@ import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Button from 'components/button';
 import getBoxDimensions from 'lib/utils/get-box-dimensions';
-import getFormErrors from '../../../state/selectors/errors';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import {
 	updateWeight,
 	removePackage,
 	setPackageType,
 	openAddItem,
-} from '../../../state/actions';
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
 	return `${ dimensions.length } ${ dimensionUnit } x

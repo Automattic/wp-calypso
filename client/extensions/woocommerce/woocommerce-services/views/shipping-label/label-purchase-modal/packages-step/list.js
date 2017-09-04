@@ -13,8 +13,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import getPackageDescriptions from './get-package-descriptions';
-import getFormErrors from '../../../state/selectors/errors';
-import { openPackage } from '../../../state/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const PackageList = ( props ) => {
 	const { selected, all, errors, packageId } = props;

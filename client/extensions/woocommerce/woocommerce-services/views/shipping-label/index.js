@@ -12,11 +12,11 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import LoadingSpinner from 'components/loading-spinner';
-import PurchaseDialog from './components/label-purchase-modal';
-import QueryLabels from 'components/query-labels';
-import LabelItem from './components/label-item';
-import { fetchLabelsStatus, openPrintingFlow } from './state/actions';
+import LoadingSpinner from 'components/spinner';
+import PurchaseDialog from './label-purchase-modal';
+import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
+import LabelItem from './label-item';
+import { fetchLabelsStatus, openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import notices from 'notices';
 import GlobalNotices from 'components/global-notices';
 import Notice from 'components/notice';

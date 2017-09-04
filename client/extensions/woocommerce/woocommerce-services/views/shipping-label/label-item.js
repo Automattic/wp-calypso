@@ -11,13 +11,13 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import RefundDialog from '../label-refund-modal';
-import ReprintDialog from '../label-reprint-modal';
-import TrackingLink from '../tracking-link';
-import InfoTooltip from 'components/info-tooltip';
+import RefundDialog from './label-refund-modal';
+import ReprintDialog from './label-reprint-modal';
+import TrackingLink from './tracking-link';
+//import InfoTooltip from 'components/info-tooltip';
 import formatDate from 'lib/utils/format-date';
 import timeAgo from 'lib/utils/time-ago';
-import { openRefundDialog, openReprintDialog } from '../../state/actions';
+import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
@@ -104,20 +104,20 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const tooltipAnchor = (
-			<span className="label-item__detail">
-				{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
-			</span>
-		);
-		return (
-			<InfoTooltip anchor={ tooltipAnchor }>
-				<h3>{ label.package_name }</h3>
-				<p>{ label.service_name }</p>
-				<ul>
-					{ label.product_names.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
-				</ul>
-			</InfoTooltip>
-		);
+		// const tooltipAnchor = (
+		// 	<span className="label-item__detail">
+		// 		{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
+		// 	</span>
+		// );
+		// return (
+		// 	<InfoTooltip anchor={ tooltipAnchor }>
+		// 		<h3>{ label.package_name }</h3>
+		// 		<p>{ label.service_name }</p>
+		// 		<ul>
+		// 			{ label.product_names.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
+		// 		</ul>
+		// 	</InfoTooltip>
+		// );
 	};
 
 	render() {

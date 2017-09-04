@@ -11,7 +11,7 @@ import { translate as __ } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { openItemMove, removeItem } from '../../../state/actions';
+import { openItemMove, removeItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ItemInfo = ( props ) => {
 	const { item, itemIndex } = props;

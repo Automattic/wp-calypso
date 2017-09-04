@@ -18,14 +18,14 @@ import StateDropdown from 'components/state-dropdown';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'lib/utils/phone-format';
-import getFormErrors from '../../../state/selectors/errors';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,
 	editAddress,
 	updateAddressValue,
 	submitAddressForNormalization,
-} from '../../../state/actions';
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const AddressFields = ( props ) => {
 	const {

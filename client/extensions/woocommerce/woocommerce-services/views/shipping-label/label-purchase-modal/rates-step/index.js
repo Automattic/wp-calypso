@@ -15,8 +15,8 @@ import ShippingRates from './list';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import { getRatesTotal } from 'apps/shipping-label/state/selectors/rates';
-import getFormErrors from '../../../state/selectors/errors';
-import { toggleStep, updateRate } from '../../../state/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved ) => {
 	if ( ! packagesSaved ) {
