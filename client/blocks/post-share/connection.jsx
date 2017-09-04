@@ -36,6 +36,9 @@ const PostShareConnection = ( {
 	if ( external_profile_picture ) {
 		accountImageStyle.backgroundImage =
 			'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
+	} else {
+		// Display a solid color circle: lighten( $gray, 10% )
+		accountImageStyle.backgroundColor = 'rgb( 168, 190, 206 )';
 	}
 
 	return (

@@ -206,8 +206,6 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	position: relative;
 	flex: 0 0 32px;
 	opacity: 0.3;
-	// Specify a color for accounts with no valid image
-	background-color: lighten( $gray, 10% );
 }
 
 .post-share__service.is-active .post-share__service-account-image {
