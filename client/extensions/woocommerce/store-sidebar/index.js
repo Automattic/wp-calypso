@@ -203,9 +203,17 @@ class StoreSidebar extends Component {
 	}
 
 	render = () => {
-		const { finishedAddressSetup, hasProducts, site } = this.props;
+		const {
+			finishedAddressSetup,
+			hasProducts,
+			path,
+			site,
+			siteSuffix,
+		} = this.props;
 
-		const showAllSidebarItems = finishedAddressSetup || hasProducts;
+		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
+		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
+		const showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
