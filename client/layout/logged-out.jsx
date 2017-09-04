@@ -31,12 +31,10 @@ const LayoutLoggedOut = ( {
 
 	let masterbar = null;
 
-	if ( useOAuth2Layout ) {
-		// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-		if ( oauth2Client.name ) {
-			classes.dops = true;
-			classes[ oauth2Client.name ] = true;
-		}
+	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
+	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+		classes.dops = true;
+		classes[ oauth2Client.name ] = true;
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else {
