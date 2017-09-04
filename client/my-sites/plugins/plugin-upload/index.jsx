@@ -145,12 +145,12 @@ class PluginUpload extends React.Component {
 					backUrl={ `/plugins/${ siteSlug }` }
 					onProceed={ this.onProceedClick } /> }
 				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
-			</export>
+			</Main>
 		);
 	}
 }
 
-Main default connect(
+export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
