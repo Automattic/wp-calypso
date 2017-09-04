@@ -16,7 +16,7 @@ import MoveItemDialog from './move-item';
 import AddItemDialog from './add-item';
 import StepConfirmationButton from '../step-confirmation-button';
 import ErrorNotice from 'components/error-notice';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import { toggleStep, confirmPackages } from 'woocommerce/woocommerce-services/state/shipping-label/actions';

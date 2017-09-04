@@ -12,7 +12,7 @@ import { translate as __ } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
-import formatDate from 'lib/utils/format-date';
+import formatDate from 'woocommerce/woocommerce-services/lib/utils/format-date';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeRefundDialog, confirmRefund } from '../../state/actions';
 

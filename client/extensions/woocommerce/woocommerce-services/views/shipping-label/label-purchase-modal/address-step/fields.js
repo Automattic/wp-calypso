@@ -15,9 +15,9 @@ import TextField from 'components/text-field';
 import StepConfirmationButton from '../step-confirmation-button';
 import CountryDropdown from 'components/country-dropdown';
 import StateDropdown from 'components/state-dropdown';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
-import { getPlainPhoneNumber, formatPhoneForDisplay } from 'lib/utils/phone-format';
+import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import {
 	selectNormalizedAddress,

@@ -15,8 +15,8 @@ import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import TrackingLink from './tracking-link';
 //import InfoTooltip from 'components/info-tooltip';
-import formatDate from 'lib/utils/format-date';
-import timeAgo from 'lib/utils/time-ago';
+import formatDate from 'woocommerce/woocommerce-services/lib/utils/format-date';
+//import timeAgo from 'lib/utils/time-ago';
 import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
@@ -122,7 +122,7 @@ class LabelItem extends Component {
 
 	render() {
 		const { label } = this.props;
-		const purchased = timeAgo( label.created );
+		const purchased = 'TODO';//timeAgo( label.created );
 
 		return (
 			<div key={ label.label_id } className="label-item" >

@@ -10,7 +10,7 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPaperSizes } from 'lib/pdf-label-utils';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Dropdown from 'components/dropdown';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';

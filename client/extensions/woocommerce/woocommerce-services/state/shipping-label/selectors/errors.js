@@ -8,7 +8,7 @@ import _ from 'lodash';
 /**
  * Internal dependencies
  */
-import { isValidPhone } from '../../../lib/utils/phone-format';
+import { isValidPhone } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
 
 const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
 	if ( isNormalized && ! normalized ) {

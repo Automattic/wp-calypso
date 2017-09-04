@@ -12,7 +12,7 @@ import _ from 'lodash';
  * Internal dependencies
  */
 import AddressFields from './fields';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import { toggleStep } from 'woocommerce/woocommerce-services/state/shipping-label/actions';

@@ -7,7 +7,7 @@ import _ from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import getErrors from './errors';
 
 export default createSelector(

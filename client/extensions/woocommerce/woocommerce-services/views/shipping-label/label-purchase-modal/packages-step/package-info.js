@@ -16,7 +16,7 @@ import NumberField from 'components/number-field';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Button from 'components/button';
-import getBoxDimensions from 'lib/utils/get-box-dimensions';
+import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import {
 	updateWeight,

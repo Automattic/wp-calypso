@@ -10,7 +10,7 @@ import { translate as __ } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import LoadingSpinner from 'components/loading-spinner';
-import getPDFSupport from 'lib/utils/pdf-support';
+import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import RatesStep from './rates-step';

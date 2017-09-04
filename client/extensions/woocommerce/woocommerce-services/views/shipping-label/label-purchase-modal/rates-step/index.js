@@ -13,7 +13,7 @@ import _ from 'lodash';
  */
 import ShippingRates from './list';
 import StepContainer from '../step-container';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import { getRatesTotal } from 'apps/shipping-label/state/selectors/rates';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';

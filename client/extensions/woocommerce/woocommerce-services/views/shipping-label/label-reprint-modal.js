@@ -13,7 +13,7 @@ import { translate as __ } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import Dropdown from 'components/dropdown';
-import { getPaperSizes } from 'lib/pdf-label-utils';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
 
