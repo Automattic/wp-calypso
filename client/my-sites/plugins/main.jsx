@@ -126,7 +126,7 @@ const PluginsMain = React.createClass( {
 		return [
 			{
 				title: translate( 'All', { context: 'Filter label for plugins list' } ),
-				path: '/plugins' + siteFilter,
+				path: '/plugins/manage' + siteFilter,
 				id: 'all'
 			},
 			{

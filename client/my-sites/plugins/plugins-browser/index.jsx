@@ -289,7 +289,7 @@ const PluginsBrowser = React.createClass( {
 			<HeaderButton
 				icon="cog"
 				label={ this.props.translate( 'Manage Plugins' ) }
-				href={ '/plugins' + site }
+				href={ '/plugins/manage' + site }
 			/>
 		);
 	},
