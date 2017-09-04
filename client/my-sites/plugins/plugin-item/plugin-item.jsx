@@ -257,6 +257,7 @@ class PluginItem extends Component {
 
 	renderPlaceholder() {
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<CompactCard className="plugin-item is-placeholder">
 				<div className="plugin-item__link">
 					<PluginIcon isPlaceholder />
