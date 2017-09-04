@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
@@ -34,7 +35,9 @@ import SuccessBanner from '../activity-log-banner/success-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY } from 'lib/plans/constants';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
@@ -47,6 +50,9 @@ import {
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
+
+// FIXME: Initial release only
+const allowedPlans = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -78,12 +84,15 @@ class ActivityLog extends Component {
 		siteTitle: PropTypes.string,
 		slug: PropTypes.string,
 
-		// FIXME: Testing only
-		isPressable: PropTypes.bool,
+		// connected
+		sitePlanSlug: PropTypes.string,
 
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+
+		// FIXME: Testing only
+		isPressable: PropTypes.bool,
 	};
 
 	state = {
@@ -93,6 +102,19 @@ class ActivityLog extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+		this.redirectIfNeeded();
+	}
+
+	componentDidUpdate( prevProps ) {
+		this.redirectIfNeeded( prevProps );
+	}
+
+	redirectIfNeeded( prevProps = {} ) {
+		const { sitePlanSlug: prevSitePlanSlug } = prevProps;
+		const { sitePlanSlug } = this.props;
+		if ( prevSitePlanSlug !== sitePlanSlug && ! includes( allowedPlans, sitePlanSlug ) ) {
+			page.redirect( '/stats' );
+		}
 	}
 
 	handlePeriodChange = ( { date, direction } ) => {
@@ -369,6 +391,7 @@ export default connect(
 			timezone: getSiteTimezoneValue( state, siteId ),
 
 			// FIXME: Testing only
+			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 		};
 	},
