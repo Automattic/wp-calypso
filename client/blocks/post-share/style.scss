@@ -10,6 +10,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
+	background-color: $white;
 }
 
 .post-share__wrapper .notice {
