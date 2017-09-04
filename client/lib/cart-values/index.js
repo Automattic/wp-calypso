@@ -156,7 +156,7 @@ function isCreditCardPaymentsEnabled( cart ) {
 function isPayPalExpressEnabled( cart ) {
 	return (
 		config.isEnabled( 'upgrades/paypal' ) &&
-		0 <= cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' )
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' ) >= 0
 	);
 }
 

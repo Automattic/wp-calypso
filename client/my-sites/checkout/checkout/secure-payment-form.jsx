@@ -55,8 +55,7 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	getVisiblePaymentBox( cart, paymentMethods ) {
-		const primary = 0,
-			secondary = 1;
+		let i;
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -66,10 +65,12 @@ const SecurePaymentForm = createReactClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ primary ] ) ) ) {
-			return paymentMethods[ primary ];
-		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ secondary ] ) ) ) {
-			return paymentMethods[ secondary ];
+		}
+
+		for ( i = 0; i < paymentMethods.length; i++ ) {
+			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+				return paymentMethods[ i ];
+			}
 		}
 
 		return null;
@@ -148,7 +149,7 @@ const SecurePaymentForm = createReactClass( {
 		} );
 	},
 
-	renderCreditsPayentBox() {
+	renderCreditsPaymentBox() {
 		return (
 			<CreditsPaymentBox
 				cart={ this.props.cart }
@@ -188,8 +189,9 @@ const SecurePaymentForm = createReactClass( {
 				cart={ this.props.cart }
 				countriesList={ countriesListForPayments }
 				initialCard={ this.getInitialCard() }
+				paymentMethods={ this.props.paymentMethods }
 				selectedSite={ this.props.selectedSite }
-				onToggle={ this.selectPaymentBox }
+				onSelectPaymentMethod={ this.selectPaymentBox }
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 			/>
@@ -203,7 +205,8 @@ const SecurePaymentForm = createReactClass( {
 				transaction={ this.props.transaction }
 				countriesList={ countriesListForPayments }
 				selectedSite={ this.props.selectedSite }
-				onToggle={ this.selectPaymentBox }
+				paymentMethods={ this.props.paymentMethods }
+				onSelectPaymentMethod={ this.selectPaymentBox }
 				redirectTo={ this.props.redirectTo }
 			/>
 		);
@@ -238,7 +241,7 @@ const SecurePaymentForm = createReactClass( {
 
 		switch ( visiblePaymentBox ) {
 			case 'credits':
-				return this.renderCreditsPayentBox();
+				return this.renderCreditsPaymentBox();
 
 			case 'free-trial':
 				return this.renderFreeTrialConfirmationBox();
@@ -251,6 +254,7 @@ const SecurePaymentForm = createReactClass( {
 
 			case 'paypal':
 				return this.renderPayPalPaymentBox();
+
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;
