@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
@@ -13,23 +15,24 @@ import FormLabel from 'components/forms/form-label';
 import ActionButtons from 'components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { closeItemMove, setTargetPackage, moveItem } from '../../../state/actions';
 
-const MoveItemDialog = ( {
-	showItemMoveDialog,
-	movedItemIndex,
-	targetPackageId,
-	openedPackageId,
-	selected,
-	all,
-	closeItemMove,
-	setTargetPackage,
-	moveItem } ) => {
+const MoveItemDialog = ( props ) => {
+	const {
+		showItemMoveDialog,
+		movedItemIndex,
+		targetPackageId,
+		openedPackageId,
+		selected,
+		all,
+	} = props;
+
 	if ( -1 === movedItemIndex || ! showItemMoveDialog ) {
 		return null;
 	}
 
 	const renderRadioButton = ( pckgId, label ) => {
-		const onChange = () => setTargetPackage( pckgId );
+		const onChange = () => props.setTargetPackage( pckgId );
 		return (
 			<FormLabel
 				key={ pckgId }
@@ -93,8 +96,8 @@ const MoveItemDialog = ( {
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
 				isFullScreen={ false }
-				onClickOutside={ closeItemMove }
-				onClose={ closeItemMove }
+				onClickOutside={ props.closeItemMove }
+				onClose={ props.closeItemMove }
 				additionalClassNames="wcc-root packages-step__dialog" >
 			<FormSectionHeading>{ __( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
@@ -109,9 +112,9 @@ const MoveItemDialog = ( {
 					label: __( 'Move' ),
 					isPrimary: true,
 					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
-					onClick: () => moveItem( openedPackageId, movedItemIndex, targetPackageId ),
+					onClick: () => props.moveItem( openedPackageId, movedItemIndex, targetPackageId ),
 				},
-				{ label: __( 'Cancel' ), onClick: closeItemMove },
+				{ label: __( 'Cancel' ), onClick: props.closeItemMove },
 			] } />
 		</Dialog>
 	);
@@ -127,4 +130,19 @@ MoveItemDialog.propTypes = {
 	moveItem: PropTypes.func.isRequired,
 };
 
-export default MoveItemDialog;
+const mapStateToProps = ( state ) => {
+	return {
+		showItemMoveDialog: state.shippingLabel.showItemMoveDialog || false,
+		movedItemIndex: isNaN( state.shippingLabel.movedItemIndex ) ? -1 : state.shippingLabel.movedItemIndex,
+		targetPackageId: state.shippingLabel.targetPackageId,
+		openedPackageId: state.shippingLabel.openedPackageId,
+		selected: state.shippingLabel.form.packages.selected,
+		all: state.shippingLabel.form.packages.all,
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( MoveItemDialog );

@@ -1,5 +1,4 @@
 @import './label-purchase-modal/style';
-
 .shipping-label__container {
 	margin-bottom: 0;
 	text-align: center;
@@ -9,11 +8,11 @@
 		margin-top: 8px;
 	}
 
-	.shipping-label__item {
+	.shipping-label__item, .label-item {
 		padding: 16px;
 		border-bottom: 1px solid #eee;
 
-		.shipping-label__item-created {
+		.label-item__created {
 			color: $gray;
 			font-size: 12px;
 		}
@@ -26,7 +25,7 @@
 			margin-bottom: 3px;
 			text-align: left;
 
-			&.shipping-label__item-tracking {
+			&.label-item__tracking {
 				margin-bottom: 16px;
 				font-size: 12px;
 
@@ -36,7 +35,7 @@
 				}
 			}
 
-			& .shipping-label__item-detail {
+			& .label-item__detail {
 				font-weight: bold;
 				font-size: 14px;
 				color: $gray-dark;
@@ -52,7 +51,7 @@
 			margin-top: 16px;
 		}
 
-		.shipping-label__item-actions {
+		.label-item__actions {
 			display: flex;
 			justify-content: space-between;
 			font-size: 12px;
@@ -89,6 +88,14 @@
 			.is-refund-rejected {
 				color: $alert-red;
 			}
+		}
+
+		.shipping-label__purchase-error {
+			color: $alert-red;
+			cursor: help;
+			text-decoration: underline;
+			text-decoration-color: $alert-red;
+			text-decoration-style: dotted;
 		}
 	}
 }
