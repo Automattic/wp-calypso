@@ -12,15 +12,17 @@ import { sortBy, keys } from 'lodash';
  * Internal dependencies
  */
 import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
+import { isLoaded as areLabelsLoaded, getLabels } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import Card from 'components/card';
-import OrderNote from './note';
+import Event from './event';
 import EventsByDay from './day';
 import SectionHeader from 'components/section-header';
+import { decodeEntities, stripHTML } from 'lib/formatting';
 
 function getSortedEvents( events ) {
 	const eventsByDay = {};
 	events.forEach( event => {
-		const day = moment( event.date ).format( 'YYYYMMDD' );
+		const day = moment( event.timestamp ).format( 'YYYYMMDD' );
 		if ( eventsByDay[ day ] ) {
 			eventsByDay[ day ].push( event );
 		} else {
@@ -29,7 +31,7 @@ function getSortedEvents( events ) {
 	} );
 
 	keys( eventsByDay ).forEach( day => {
-		eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'date' ).reverse();
+		eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'timestamp' ).reverse();
 	} );
 	return eventsByDay;
 }
@@ -51,6 +53,37 @@ class ActivityLog extends Component {
 		this.setState( () => ( { openIndex: index } ) );
 	}
 
+	renderEvent = ( event ) => {
+		const { translate } = this.props;
+
+		let icon, heading, content,
+			timestamp = event.timestamp;
+		if ( event.type === 'order-note' ) {
+			// @todo Add comment author once we have that info
+			icon = 'aside';
+			heading = translate( 'Internal note' );
+			if ( event.data.customer_note ) {
+				icon = 'mail';
+				heading = translate( 'Note sent to customer' );
+			}
+			content = decodeEntities( stripHTML( event.data.note ) );
+			timestamp = timestamp && timestamp + 'Z';
+		} else if ( event.type === 'shipping-label' ) {
+			icon = 'print';
+			content = 'A shipping label was purchased!';
+		}
+
+		return (
+			<Event
+				key={ `${ event.type }-${ event.key }` }
+				timestamp={ timestamp }
+				icon={ icon }
+				heading={ heading } >
+				{ content }
+			</Event>
+		);
+	}
+
 	renderEvents = () => {
 		const { days, eventsByDay, translate } = this.props;
 		if ( ! days.length ) {
@@ -69,11 +102,7 @@ class ActivityLog extends Component {
 					index={ index }
 					isOpen={ index === this.state.openIndex }
 					onClick={ this.toggleOpenDay } >
-					{ events.map( event => {
-						if ( event.type === 'order-note' ) {
-							return <OrderNote { ...event } key={ event.id } />;
-						}
-					} ) }
+					{ events.map( event => this.renderEvent( event ) ) }
 				</EventsByDay>
 			);
 		} );
@@ -83,7 +112,7 @@ class ActivityLog extends Component {
 		const noop = () => {};
 		return (
 			<EventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
-				<OrderNote note="" />
+				<Event note="" />
 			</EventsByDay>
 		);
 	}
@@ -112,16 +141,24 @@ export default connect(
 	( state, props ) => {
 		const orderId = props.orderId || false;
 		const siteId = props.siteId || false;
-		const isLoaded = areOrderNotesLoaded( state, orderId );
+		const isLoaded = areOrderNotesLoaded( state, orderId ) && areLabelsLoaded( state, orderId );
 
-		const notes = getOrderNotes( state, orderId );
-		const events = notes.map( ( note ) => {
-			return {
-				...note,
+		const events = [
+			...getOrderNotes( state, orderId ).map( ( note ) => ( {
 				type: 'order-note',
-				date: note.date_created,
-			}
-		} );
+				timestamp: note.date_created_gmt,
+				data: note,
+				key: note.id,
+			} ) ),
+
+			// TODO split out refund events
+			...getLabels( state, orderId ).map( ( label ) => ( {
+				type: 'shipping-label',
+				timestamp: new Date( label.created_date ).toISOString(),
+				data: label,
+				key: label.label_id,
+			} ) ),
+		];
 
 		const eventsByDay = events.length ? getSortedEvents( events ) : false;
 		const days = eventsByDay ? keys( eventsByDay ) : [];

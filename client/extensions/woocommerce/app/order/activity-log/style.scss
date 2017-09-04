@@ -17,30 +17,30 @@
 .activity-log .is-placeholder {
 	.foldable-card__main h3,
 	.foldable-card__main small,
-	.activity-log__note-time,
-	.activity-log__note-type,
-	.activity-log__note-content,
-	.activity-log__note-meta .gridicon {
+	.activity-log__event-time,
+	.activity-log__event-heading,
+	.activity-log__event-content,
+	.activity-log__event-meta .gridicon {
 		@include placeholder();
 	}
 
-	.activity-log__note-time {
+	.activity-log__event-time {
 		height: 1.3em;
 	}
 
-	.activity-log__note-meta .gridicon {
+	.activity-log__event-meta .gridicon {
 		fill: transparent;
 	}
 }
 
-.activity-log__note {
+.activity-log__event {
 	display: flex;
 
-	& + .activity-log__note {
+	& + .activity-log__event {
 		margin-top: 16px;
 	}
 
-	.activity-log__note-meta {
+	.activity-log__event-meta {
 		flex: 1 0 60px;
 		width: 60px;
 		text-align: center;
@@ -55,13 +55,13 @@
 		}
 	}
 
-	.activity-log__note-time {
+	.activity-log__event-time {
 		display: block;
 		font-size: 12px;
 		background: white;
 	}
 
-	.activity-log__note-body {
+	.activity-log__event-body {
 		flex: 1 0 calc( 100% - 76px );
 		width: calc( 100% - 76px );
 		box-sizing: border-box;
@@ -70,13 +70,13 @@
 		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 
-	.activity-log__note-type {
+	.activity-log__event-heading {
 		font-size: 12px;
 		color: $gray-text-min;
 		text-transform: uppercase;
 	}
 
-	.activity-log__note-content {
+	.activity-log__event-content {
 		margin: 8px 8px 0 0;
 	}
 }
