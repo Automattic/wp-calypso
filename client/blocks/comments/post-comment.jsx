@@ -252,12 +252,12 @@ class PostComment extends React.PureComponent {
 	};
 
 	onReadMore = () => {
-		this.props.expandComments(
-			this.props.post.site_ID,
-			this.props.commentId,
-			this.props.post.ID,
-			POST_COMMENT_DISPLAY_TYPES.full
-		);
+		this.props.expandComments( {
+			siteId: this.props.post.site_ID,
+			commentId: this.props.commentId,
+			postId: this.props.post.ID,
+			displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		} );
 	};
 
 	render() {
