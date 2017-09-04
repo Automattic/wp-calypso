@@ -16,6 +16,8 @@ import fromApi, {
 	validateItem,
 } from '../from-api';
 
+const SITE_ID = 123456;
+
 const VALID_API_ITEM = deepFreeze( {
 	summary: 'Jane Doe updated post I wrote a new post!',
 	name: 'post__updated',
@@ -43,7 +45,7 @@ const VALID_API_ITEM = deepFreeze( {
 	published: '2014-09-14T00:30:00+02:00',
 	generator: {
 		jetpack_version: 5.3,
-		blog_id: 123456,
+		blog_id: SITE_ID,
 	},
 	gridicon: 'posts',
 	activity_id: 'foobarbaz',
@@ -51,10 +53,20 @@ const VALID_API_ITEM = deepFreeze( {
 
 const API_RESPONSE_BODY = deepFreeze( {
 	'@context': 'https://www.w3.org/ns/activitystreams',
-	orderedItems: [ VALID_API_ITEM ],
+	id: `https://public-api.wordpress.com/wpcom/v2/sites/${ SITE_ID }/activity`,
+	itemsPerPage: 1000,
+	page: 1,
 	summary: 'Activity log',
 	totalItems: 1,
+	totalPages: 1,
 	type: 'OrderedCollection',
+
+	current: {
+		totalItems: 1,
+		orderedItems: [ VALID_API_ITEM ],
+		type: 'OrderedCollectionPage',
+		id: `https://public-api.wordpress.com/wpcom/v2/sites/${ SITE_ID }/activity?number=1000`,
+	},
 } );
 
 describe( 'fromApi', () => {
@@ -67,7 +79,11 @@ describe( 'fromApi', () => {
 			fromApi( {
 				...API_RESPONSE_BODY,
 				totalItems: 0,
-				orderedItems: [],
+				current: {
+					...API_RESPONSE_BODY.current,
+					totalItems: 0,
+					orderedItems: [],
+				},
 			} )
 		).to.be.an( 'array' ).that.is.empty;
 	} );
