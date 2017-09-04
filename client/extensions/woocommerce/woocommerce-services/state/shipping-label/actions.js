@@ -19,7 +19,7 @@ import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 
 import {
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
@@ -33,13 +33,13 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
@@ -68,7 +68,7 @@ export const fetchLabelsData = ( siteId, orderId ) => ( dispatch ) => {
 	api.get( siteId, api.url.orderLabels( orderId ) )
 		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
 			dispatch( {
-				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 				siteId,
 				orderId,
 				formData,
@@ -500,9 +500,9 @@ export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 	};
 	const setIsSaving = ( saving ) => {
 		if ( saving ) {
-			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST } );
 		} else {
-			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE, response, error } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE, response, error } );
 			if ( 'rest_cookie_invalid_nonce' === error ) {
 				dispatch( exitPrintingFlow( true ) );
 			} else if ( error ) {
@@ -627,7 +627,7 @@ export const fetchLabelsStatus = () => ( dispatch, getState, { orderId } ) => {
 		};
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE, labelId, response, error } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE, labelId, response, error } );
 				if ( error ) {
 					dispatch( NoticeActions.errorNotice( error.toString() ) );
 				}
