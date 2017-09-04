@@ -98,17 +98,18 @@ class ActivityLog extends Component {
 	getStartMoment() {
 		const { gmtOffset, moment, startDate, timezone } = this.props;
 
-		// Use current site time if no startDate is supplied
-		if ( ! startDate ) {
-			return this.applySiteOffset( moment(), true );
-		}
-
 		if ( timezone ) {
+			if ( ! startDate ) {
+				return moment().tz( timezone );
+			}
+
 			return moment.tz( startDate, timezone );
 		}
+
 		if ( null !== gmtOffset ) {
 			return moment.utc( startDate ).subtract( gmtOffset, 'hours' ).utcOffset( gmtOffset );
 		}
+
 		return moment.utc( startDate );
 	}
 
@@ -281,8 +282,8 @@ class ActivityLog extends Component {
 
 		// loop backwards through each day in the month
 		for (
-			const m = startMoment.endOf( 'month' ).startOf( 'day' ),
-				startOfMonth = startMoment.startOf( 'month' ).valueOf();
+			const m = startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+				startOfMonth = startMoment.clone().startOf( 'month' ).valueOf();
 			startOfMonth <= m.valueOf();
 			m.subtract( 1, 'day' )
 		) {
@@ -311,8 +312,7 @@ class ActivityLog extends Component {
 
 	renderMonthNavigation( position ) {
 		const { slug } = this.props;
-		const startMoment = this.getStartMoment();
-		const startOfMonth = startMoment.startOf( 'month' );
+		const startOfMonth = this.getStartMoment().startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' ),
