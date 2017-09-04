@@ -27,12 +27,16 @@ import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	canJetpackSiteManage,
+	getSitePlan,
 	isJetpackSite,
 	isRequestingSites
 } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import Banner from 'components/banner';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -340,6 +344,26 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
+	hasBusinessPlan() {
+		const { sitePlan } = this.props;
+		return sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
+	},
+
+	renderUpgradeNudge() {
+		if ( ! this.props.selectedSiteId || this.props.isJetpackSite || this.hasBusinessPlan() ) {
+			return null;
+		}
+
+		return (
+			<Banner
+				feature={ FEATURE_UPLOAD_PLUGINS }
+				event={ 'calypso_plugins_browser_upgrade_nudge' }
+				plan={ PLAN_BUSINESS }
+				title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+			/>
+		);
+	},
+
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
@@ -354,6 +378,7 @@ const PluginsBrowser = React.createClass( {
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
+				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
 			</MainComponent>
@@ -365,6 +390,7 @@ export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			sitePlan: getSitePlan( state, selectedSiteId ),
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 			jetpackManageError: !! isJetpackSite( state, selectedSiteId ) && ! canJetpackSiteManage( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
