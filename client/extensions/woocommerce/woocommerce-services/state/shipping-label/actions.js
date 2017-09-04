@@ -490,65 +490,97 @@ export const updatePaperSize = ( value ) => {
 	};
 };
 
+const purchaseLabelResponse = ( response, error ) => {
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE, response, error };
+};
+
+const handleLabelPurchaseError = ( dispatch, getState, error, orderId ) => {
+	dispatch( purchaseLabelResponse( null, true ) );
+	if ( 'rest_cookie_invalid_nonce' === error ) {
+		dispatch( exitPrintingFlow( true ) );
+	} else {
+		dispatch( NoticeActions.errorNotice( error ) );
+		//re-request the rates on failure to avoid attempting repurchase of the same shipment id
+		dispatch( clearAvailableRates() );
+		getLabelRates( dispatch, getState, _.noop, { orderId } );
+	}
+};
+
+const pollForLabelsPurchase = ( dispatch, getState, orderId, labels ) => {
+	const errorLabel = _.find( labels, { status: 'PURCHASE_ERROR' } );
+	if ( errorLabel ) {
+		handleLabelPurchaseError( dispatch, getState, errorLabel.error, orderId );
+		return;
+	}
+
+	if ( ! _.every( labels, { status: 'PURCHASED' } ) ) {
+		setTimeout( () => {
+			const statusTasks = labels.map( ( label ) => (
+				api.get( api.url.labelStatus( orderId, label.label_id ) )
+					.then( ( statusResponse ) => statusResponse.label )
+			) );
+
+			Promise.all( statusTasks )
+				.then( ( pollResponse ) => pollForLabelsPurchase( dispatch, getState, orderId, pollResponse ) )
+				.catch( ( pollError ) => handleLabelPurchaseError( dispatch, getState, pollError, orderId ) );
+		}, 1000 );
+		return;
+	}
+
+	dispatch( purchaseLabelResponse( labels, false ) );
+
+	const labelsToPrint = labels.map( ( label, index ) => ( {
+		caption: __( 'PACKAGE %(num)d (OF %(total)d)', {
+			args: {
+				num: index + 1,
+				total: labels.length,
+			},
+		} ),
+		labelId: label.label_id,
+	} ) );
+	const state = getState().shippingLabel;
+	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
+	if ( 'addon' === getPDFSupport() ) {
+		// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
+		dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, printUrl } );
+	} else {
+		printDocument( printUrl )
+			.then( () => {
+				dispatch( NoticeActions.successNotice( __(
+					'Your shipping label was purchased successfully',
+					'Your %(count)d shipping labels were purchased successfully',
+					{
+						count: labels.length,
+						args: { count: labels.length },
+					}
+				) ) );
+			} )
+			.catch( ( err ) => {
+				console.error( err );
+				dispatch( NoticeActions.errorNotice( err.toString() ) );
+			} )
+			.then( () => {
+				dispatch( exitPrintingFlow( true ) );
+				dispatch( clearAvailableRates() );
+			} );
+	}
+};
+
 export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 	let error = null;
-	let response = null;
+	let labels = null;
 
 	const setError = ( err ) => error = err;
 	const setSuccess = ( json ) => {
-		response = json.labels;
+		labels = json.labels;
 	};
 	const setIsSaving = ( saving ) => {
 		if ( saving ) {
 			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST } );
+		} else if ( error ) {
+			handleLabelPurchaseError( dispatch, getState, error, orderId );
 		} else {
-			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE, response, error } );
-			if ( 'rest_cookie_invalid_nonce' === error ) {
-				dispatch( exitPrintingFlow( true ) );
-			} else if ( error ) {
-				console.error( error );
-				dispatch( NoticeActions.errorNotice( error.toString() ) );
-				//re-request the rates on failure to avoid attempting repurchase of the same shipment id
-				dispatch( clearAvailableRates() );
-				getLabelRates( dispatch, getState, _.noop, { orderId } );
-			} else {
-				const labelsToPrint = response.map( ( label, index ) => ( {
-					caption: __( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PACKAGE %(num)d (OF %(total)d)', {
-						args: {
-							num: index + 1,
-							total: response.length,
-						},
-					} ),
-					labelId: label.label_id,
-				} ) );
-				const state = getState().shippingLabel;
-				const printUrl = getPrintURL( state.paperSize, labelsToPrint );
-				if ( 'addon' === getPDFSupport() ) {
-					// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-					dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, printUrl } );
-				} else {
-					printDocument( printUrl )
-						.then( () => {
-							const noticeText = __(
-								'Your shipping label was purchased successfully',
-								'Your %(count)d shipping labels were purchased successfully',
-								{
-									count: response.length,
-									args: { count: response.length },
-								}
-							);
-							dispatch( NoticeActions.successNotice( noticeText ) );
-						} )
-						.catch( ( err ) => {
-							console.error( err );
-							dispatch( NoticeActions.errorNotice( err.toString() ) );
-						} )
-						.then( () => {
-							dispatch( exitPrintingFlow( true ) );
-							dispatch( clearAvailableRates() );
-						} );
-				}
-			}
+			pollForLabelsPurchase( dispatch, getState, orderId, labels );
 		}
 	};
 
@@ -570,6 +602,7 @@ export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 		const state = getState().shippingLabel;
 		form = state.form;
 		const formData = {
+			async: true,
 			origin: form.origin.selectNormalized ? form.origin.normalized : form.origin.values,
 			destination: form.destination.selectNormalized ? form.destination.normalized : form.destination.values,
 			packages: _.map( form.packages.selected, ( pckg, pckgId ) => {
