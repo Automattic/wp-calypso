@@ -366,7 +366,7 @@ export default connect(
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
-			timezone: getSiteTimezoneValue( state, siteId ),
+			timezone: null, //getSiteTimezoneValue( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
