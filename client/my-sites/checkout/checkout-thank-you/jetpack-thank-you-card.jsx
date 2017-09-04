@@ -641,7 +641,7 @@ class JetpackThankYouCard extends Component {
 				<div>
 					{ this.renderLiveChatButton() }
 					<a
-						className={ classNames( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
+						className={ classNames( 'button', 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
 						href={ buttonUrl }>
 						{ translate( 'Visit Your Site' ) }
 					</a>
