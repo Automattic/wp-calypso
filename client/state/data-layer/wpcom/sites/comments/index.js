@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, keys, omit, pick } from 'lodash';
+import { forEach, get, groupBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -206,10 +206,18 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
 export const editComment = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, comment } = action;
-	const originalComment = pick(
-		getSiteComment( getState(), action.siteId, action.commentId ),
-		keys( comment )
-	);
+	const originalComment = getSiteComment( getState(), action.siteId, action.commentId );
+
+	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
+	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
+	// This ternary matches the updated fields sent by Comment Management's Edit form to the fields expected by the API.
+	const body = ( comment.authorDisplayName && comment.authorUrl && comment.commentContent )
+		? {
+			author: comment.authorDisplayName,
+			author_url: comment.authorUrl,
+			content: comment.commentContent,
+		}
+		: comment;
 
 	dispatch(
 		http(
@@ -217,13 +225,23 @@ export const editComment = ( { dispatch, getState }, action ) => {
 				method: 'POST',
 				path: `/sites/${ siteId }/comments/${ commentId }`,
 				apiVersion: '1.1',
-				body: comment,
+				body,
 			},
 			{
 				...action,
 				originalComment,
 			}
 		)
+	);
+};
+
+export const updateComment = ( store, action, data ) => {
+	removeCommentStatusErrorNotice( store, action );
+	store.dispatch(
+		local( {
+			...omit( action, [ 'originalComment' ] ),
+			comment: data,
+		} )
 	);
 };
 
@@ -244,7 +262,7 @@ export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
-	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, removeCommentStatusErrorNotice, announceEditFailure ) ],
+	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, updateComment, announceEditFailure ) ],
 };
 
 export default mergeHandlers( fetchHandler, replies, likes );

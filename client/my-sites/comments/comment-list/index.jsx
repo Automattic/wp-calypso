@@ -338,7 +338,7 @@ export class CommentList extends Component {
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
 	updateComment = ( commentId, postId, commentData ) => {
-		this.props.editComment( commentId, postId, commentData.commentContent );
+		this.props.editComment( commentId, postId, commentData );
 		this.props.successNotice( this.props.translate( 'Comment updated.' ), {
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
@@ -491,12 +491,12 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		deleteComment( siteId, postId, commentId, options )
 	) ),
 
-	editComment: ( commentId, postId, content ) => dispatch( withAnalytics(
+	editComment: ( commentId, postId, comment ) => dispatch( withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_comment_management_edit' ),
 			bumpStat( 'calypso_comment_management', 'comment_updated' )
 		),
-		editComment( siteId, postId, commentId, content )
+		editComment( siteId, postId, commentId, comment )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
