@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { delay } from 'lodash';
+import { delay, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ export const receiveStatus = ( { dispatch }, { siteId }, { status, uploaded_plug
 export default {
 	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest(
 		requestStatus,
-		receiveStatus
+		receiveStatus,
+		noop
 	) ]
 };
