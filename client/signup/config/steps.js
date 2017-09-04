@@ -7,6 +7,7 @@ import i18n from 'i18n-calypso';
 /**
 * Internal dependencies
 */
+import config from 'config';
 import stepActions from 'lib/signup/step-actions';
 
 export default {
@@ -85,17 +86,8 @@ export default {
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
 		unstorableDependencies: [ 'bearer_token' ],
-	},
-
-	'user-social': {
-		stepName: 'user-social',
-		apiRequestFunction: stepActions.createAccount,
-		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ],
-		unstorableDependencies: [ 'bearer_token' ],
 		props: {
-			headerText: i18n.translate( 'Create your account.' ),
-			isSocialSignupEnabled: true
+			isSocialSignupEnabled: config.isEnabled( 'signup/social' )
 		},
 	},
 
