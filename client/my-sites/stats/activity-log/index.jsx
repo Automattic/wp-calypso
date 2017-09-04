@@ -32,7 +32,7 @@ import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import JetpackColophon from 'components/jetpack-colophon';
-import { adjustMoment, earliestMoment } from './utils';
+import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -282,7 +282,7 @@ class ActivityLog extends Component {
 
 		// loop backwards through each day in the month
 		for (
-			const m = earliestMoment(
+			const m = moment.min(
 					startMoment.clone().endOf( 'month' ).startOf( 'day' ),
 					this.applySiteOffset( moment.utc() ).startOf( 'day' )
 				),
