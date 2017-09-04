@@ -27,7 +27,6 @@ export const CommentDetailActions = ( {
 	commentIsLiked,
 	commentStatus,
 	deleteCommentPermanently,
-	isEditMode,
 	toggleApprove,
 	toggleLike,
 	toggleSpam,
@@ -44,7 +43,6 @@ export const CommentDetailActions = ( {
 				<Button
 					borderless
 					className={ classNames( 'comment-detail__action-like', { 'is-liked': commentIsLiked } ) }
-					disabled={ isEditMode }
 					onClick={ toggleLike }
 				>
 					<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
@@ -60,7 +58,6 @@ export const CommentDetailActions = ( {
 				<Button
 					borderless
 					className={ classNames( 'comment-detail__action-approve', { 'is-approved': isApproved } ) }
-					disabled={ isEditMode }
 					onClick={ toggleApprove }
 				>
 					<Gridicon icon={ isApproved ? 'checkmark-circle' : 'checkmark' } />
@@ -87,7 +84,6 @@ export const CommentDetailActions = ( {
 				<Button
 					borderless
 					className={ classNames( 'comment-detail__action-spam', { 'is-spam': isSpam } ) }
-					disabled={ isEditMode }
 					onClick={ toggleSpam }
 				>
 					<Gridicon icon="spam" />
@@ -103,7 +99,6 @@ export const CommentDetailActions = ( {
 				<Button
 					borderless
 					className={ classNames( 'comment-detail__action-trash', { 'is-trash': isTrash } ) }
-					disabled={ isEditMode }
 					onClick={ toggleTrash }
 				>
 					<Gridicon icon="trash" />

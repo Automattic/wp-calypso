@@ -82,6 +82,10 @@
 		display: flex;
 		flex-wrap: nowrap;
 		width: calc( 100% - 36px );
+
+		@supports( -webkit-line-clamp: 2 ) {
+			align-items: center;
+		}
 	}
 
 	&.is-preview {
@@ -291,6 +295,16 @@
 	}
 }
 
+.comment-detail__header-edit-mode {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+	.comment-detail__header-edit-title {
+		padding: 0 16px;
+	}
+}
 
 .comment-detail__post {
 	border-bottom: 1px solid lighten( $gray, 30% );
