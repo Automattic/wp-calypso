@@ -60,18 +60,22 @@ function deserialize( state ) {
  * @returns {bool} Whether to clear persistent state on page load
  */
 function shouldAddSympathy() {
+	// If `force-sympathy` flag is enabled, always clear persistent state.
 	if ( config.isEnabled( 'force-sympathy' ) ) {
 		return true;
 	}
 
+	// If `no-force-sympathy` flag is enabled, never clear persistent state.
 	if ( config.isEnabled( 'no-force-sympathy' ) ) {
 		return false;
 	}
 
+	// Otherwise, in development mode, clear persistent state 25% of the time.
 	if ( 'development' === process.env.NODE_ENV && Math.random() < 0.25 ) {
 		return true;
 	}
 
+	// Otherwise, do not clear persistent state.
 	return false;
 }
 
