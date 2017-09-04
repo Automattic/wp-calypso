@@ -58,10 +58,7 @@ export class UserStep extends Component {
 
 		let subHeaderText = props.subHeaderText;
 
-		if ( flowName === 'social' ) {
-			// Hides sub header for this particular flow
-			subHeaderText = '';
-		} else if ( flowName === 'wpcc' && oauth2Client ) {
+		if ( flowName === 'wpcc' && oauth2Client ) {
 			if ( oauth2Client.id === 50916 ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
