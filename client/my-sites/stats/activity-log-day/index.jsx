@@ -115,6 +115,7 @@ class ActivityLogDay extends Component {
 		} = this.props;
 
 		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
+		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
 
 		return (
 			<div>
@@ -128,7 +129,7 @@ class ActivityLogDay extends Component {
 				</div>
 				<div className="activity-log-day__events">
 					{ isEmpty( logs )
-						? translate( 'No activity' )
+						? noActivityText
 						: translate( '%d Event', '%d Events', {
 							args: logs.length,
 							count: logs.length,
@@ -155,7 +156,7 @@ class ActivityLogDay extends Component {
 			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
 				<FoldableCard
 					clickableHeader={ hasLogs }
-					expanded={ isToday }
+					expanded={ hasLogs && isToday }
 					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }

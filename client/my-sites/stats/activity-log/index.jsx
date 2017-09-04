@@ -282,7 +282,10 @@ class ActivityLog extends Component {
 
 		// loop backwards through each day in the month
 		for (
-			const m = startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+			const m = moment.min(
+					startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+					this.applySiteOffset( moment.utc() ).startOf( 'day' )
+				),
 				startOfMonth = startMoment.clone().startOf( 'month' ).valueOf();
 			startOfMonth <= m.valueOf();
 			m.subtract( 1, 'day' )
