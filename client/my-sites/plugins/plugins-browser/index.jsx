@@ -374,7 +374,7 @@ const PluginsBrowser = React.createClass( {
 		}
 
 		return (
-			<MainComponent className="is-wide-layout">
+			<MainComponent wideLayout>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
