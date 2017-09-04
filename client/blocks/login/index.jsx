@@ -23,6 +23,7 @@ import {
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -145,7 +146,8 @@ class Login extends Component {
 				},
 				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
 			} );
-			if ( oauth2Client.name === 'woo' ) {
+
+			if ( isWooOAuth2Client( oauth2Client ) ) {
 				preHeader = (
 					<Gridicon icon="my-sites" size={ 72 } />
 				);

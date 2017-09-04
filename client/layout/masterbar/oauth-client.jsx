@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 
 const OauthClientMasterbar = ( { oauth2Client } ) => (
 	<header className="masterbar masterbar__oauth-client">
@@ -23,7 +24,7 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 				</li>
 			</ul>
 
-			{ oauth2Client.name === 'woo' ? (
+			{ isWooOAuth2Client( oauth2Client ) ? (
 				<li className="masterbar__oauth-client-close">
 					<a href="https://woocommerce.com">Cancel <span>X</span></a>
 				</li>

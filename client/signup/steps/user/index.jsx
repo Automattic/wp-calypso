@@ -10,6 +10,7 @@ import { identity, omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
@@ -59,7 +60,7 @@ export class UserStep extends Component {
 		let subHeaderText = props.subHeaderText;
 
 		if ( flowName === 'wpcc' && oauth2Client ) {
-			if ( oauth2Client.name === 'woo' ) {
+			if ( isWooOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
 						a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
