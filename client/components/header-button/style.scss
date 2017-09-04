@@ -1,6 +1,6 @@
 .header-button {
 	align-items: center;
-	border: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	border: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
 	border-width: 0 1px 0 0;
 	border-radius: 0;
 	display: flex;
@@ -9,22 +9,21 @@
 	justify-content: center;
 	min-height: 46px;
 	width: 50%;
-	padding: 0;
+	padding: 0 16px;
 
-	@include breakpoint( ">480px" ) {
-		min-height: 51px;
-	}
-
-	@include breakpoint( ">660px" ) {
-		width: 10em;
+	@include breakpoint( '>480px' ) {
+		border: 0;
+		flex: 0 0 auto;
+		min-width: 140px;
+		width: auto;
 	}
 
 	&:hover {
-		border-color: transparentize( lighten( $gray, 20% ), .5 );
+		border-color: transparentize( lighten( $gray, 20% ), 0.5 );
 	}
 
-	.gridicon {
-		margin-top: -5px;
+	&:active {
+		border-width: 0 1px 0 0;
 	}
 }
 
