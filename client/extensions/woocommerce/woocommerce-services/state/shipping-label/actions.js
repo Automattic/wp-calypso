@@ -17,6 +17,7 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
+import { getShippingLabel } from './selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -646,8 +647,10 @@ export const openRefundDialog = ( labelId ) => {
 	};
 };
 
-export const fetchLabelsStatus = () => ( dispatch, getState, { orderId } ) => {
-	getState().shippingLabel.labels.forEach( ( label ) => {
+export const fetchLabelsStatus = ( siteId, orderId ) => ( dispatch, getState ) => {
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+
+	shippingLabel.labels.forEach( ( label ) => {
 		if ( label.statusUpdated ) {
 			return;
 		}
@@ -668,7 +671,7 @@ export const fetchLabelsStatus = () => ( dispatch, getState, { orderId } ) => {
 		};
 
 		setIsSaving( true );
-		api.get( api.url.labelStatus( orderId, labelId ) )
+		api.get( siteId, api.url.labelStatus( orderId, labelId ) )
 			.then( setSuccess )
 			.catch( setError )
 			.then( () => setIsSaving( false ) );

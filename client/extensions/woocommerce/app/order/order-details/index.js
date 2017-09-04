@@ -69,7 +69,7 @@ class OrderDetails extends Component {
 					<OrderDetailsTable order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />
-					{ wcsEnabled && <ShippingLabel orderId={ order.id } /> }
+					{ wcsEnabled && <ShippingLabel siteId={ site.ID } orderId={ order.id } /> }
 				</Card>
 			</div>
 		);

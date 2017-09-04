@@ -2,6 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
@@ -15,8 +18,12 @@ import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
-import { getRatesTotal } from 'woocommerce/woocommerce-services/state/shipping-label/selectors/rates';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getRatesTotal } from 'woocommerce/woocommerce-services/state/shipping-label/selectors/rates';
+import { getShippingLabel, isLoaded } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import canPurchase from 'woocommerce/woocommerce-services/state/shipping-label/selectors/can-purchase';
 
 const PurchaseDialog = ( props ) => {
 	const getPurchaseButtonLabel = () => {
@@ -69,7 +76,7 @@ const PurchaseDialog = ( props ) => {
 		},
 	];
 
-	const exitPrintingFlow = () => props.labelActions.exitPrintingFlow( false );
+	const onClose = () => props.labelActions.exitPrintingFlow( false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
 		buttons.push( {
@@ -82,7 +89,7 @@ const PurchaseDialog = ( props ) => {
 		<Dialog
 			additionalClassNames="woocommerce"
 			isVisible={ props.showPurchaseDialog }
-			onClose={ exitPrintingFlow } >
+			onClose={ onClose } >
 			<div className="label-purchase-modal__content">
 				<FormSectionHeading>
 					{ 1 === props.form.packages.selected.length ? __( 'Create shipping label' ) : __( 'Create shipping labels' ) }
@@ -116,4 +123,26 @@ const PurchaseDialog = ( props ) => {
 	);
 };
 
-export default PurchaseDialog;
+PurchaseDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
+};
+
+const mapStateToProps = ( state, { orderId } ) => {
+	const loaded = isLoaded( state, orderId );
+	const shippingLabel = getShippingLabel( state, orderId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	return {
+		form: loaded && shippingLabel.form,
+		showPurchaseDialog: shippingLabel.showPurchaseDialog,
+		currency_symbol: storeOptions.currency_symbol,
+		errors: loaded && getFormErrors( state, storeOptions ),
+		canPurchase: loaded && canPurchase( state, storeOptions ),
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { confirmPrintLabel, purchaseLabel, exitPrintingFlow }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( PurchaseDialog );

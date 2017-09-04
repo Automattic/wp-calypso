@@ -20,17 +20,18 @@ import { fetchLabelsStatus, openPrintingFlow } from 'woocommerce/woocommerce-ser
 import notices from 'notices';
 import GlobalNotices from 'components/global-notices';
 import Notice from 'components/notice';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class ShippingLabelRootView extends Component {
 	componentWillMount() {
 		if ( this.props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus();
+			this.props.fetchLabelsStatus( this.props.siteId, this.props.orderId );
 		}
 	}
 
 	componentWillReceiveProps( props ) {
 		if ( props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus();
+			this.props.fetchLabelsStatus( props.siteId, props.orderId );
 		}
 	}
 
@@ -79,7 +80,7 @@ class ShippingLabelRootView extends Component {
 	renderPurchaseLabelFlow = () => {
 		return (
 			<div className="shipping-label__item" >
-				<PurchaseDialog />
+				<PurchaseDialog orderId={ this.props.orderId } siteId={ this.props.siteId } />
 				{ this.renderPaymentInfo() }
 				{ this.props.paymentMethod && this.renderLabelButton() }
 			</div>
@@ -128,24 +129,19 @@ class ShippingLabelRootView extends Component {
 }
 
 ShippingLabelRootView.propTypes = {
+	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
-	loaded: PropTypes.bool.isRequired,
-	needToFetchLabelStatus: PropTypes.bool.isRequired,
-	numPaymentMethods: PropTypes.number.isRequired,
-	paymentMethod: PropTypes.number.isRequired,
-	labels: PropTypes.array.isRequired,
-	fetchLabelsStatus: PropTypes.func.isRequired,
-	openPrintingFlow: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
+const mapStateToProps = ( state, { orderId } ) => {
+	const loaded = isLoaded( state, orderId );
+	const shippingLabel = getShippingLabel( state, orderId );
 	return {
 		loaded,
-		needToFetchLabelStatus: loaded && ! state.shippingLabel.refreshedLabelStatus,
-		numPaymentMethods: state.shippingLabel.numPaymentMethods,
-		paymentMethod: state.shippingLabel.paymentMethod,
-		labels: state.shippingLabel.labels,
+		needToFetchLabelStatus: loaded && ! shippingLabel.refreshedLabelStatus,
+		numPaymentMethods: loaded && shippingLabel.numPaymentMethods,
+		paymentMethod: loaded && shippingLabel.paymentMethod,
+		labels: loaded && shippingLabel.labels,
 	};
 };
 
