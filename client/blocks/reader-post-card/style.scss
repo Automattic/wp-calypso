@@ -567,6 +567,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-right: -2px;
 	}
 
+	.reader-share__button .gridicon {
+		position: relative;
+		top: 1px;
+	}
+
 	.like-button .gridicon {
 		top: 5px;
 	}
