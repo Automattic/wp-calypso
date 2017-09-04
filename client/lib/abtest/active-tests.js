@@ -71,10 +71,10 @@ module.exports = {
 	jetpackConnectPlansCopyChanges: {
 		datestamp: '20170728',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'modified',
 	},
 	postPublishConfirmation: {
 		datestamp: '20170801',
