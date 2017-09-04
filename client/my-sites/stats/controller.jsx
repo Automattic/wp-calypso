@@ -189,7 +189,7 @@ module.exports = {
 
 			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
 			const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
+			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
@@ -269,7 +269,7 @@ module.exports = {
 			if ( Number.isFinite( gmtOffset ) ) {
 				momentSiteZone = i18n.moment().utcOffset( gmtOffset );
 			}
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
+			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
 				date = i18n.moment( queryOptions.startDate );
 			} else {
 				date = momentSiteZone.endOf( activeFilter.period );
