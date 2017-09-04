@@ -32,13 +32,17 @@ const PostShareConnection = ( {
 		'is-broken': status === 'broken'
 	} );
 
-	const backgroundImage = `url(${ cssSafeUrl( external_profile_picture ) })`;
+	const accountImageStyle = {};
+	if ( external_profile_picture ) {
+		accountImageStyle.backgroundImage =
+			'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
+	}
 
 	return (
 		<div onClick={ toggle } className={ classes }>
 			<div
-				style={ { backgroundImage } }
 				className="post-share__service-account-image"
+				style={ accountImageStyle }
 			>
 				&nbsp;
 			</div>
