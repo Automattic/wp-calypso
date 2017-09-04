@@ -176,7 +176,7 @@ export class PluginsListHeader extends PureComponent {
 						compact
 						href={ browserUrl }
 						onClick={ this.onBrowserLinkClick }
-						className="plugin-list-header__browser-button"
+						className="plugin-list-header__browser-button is-icon-only"
 						onMouseEnter={ this.showPluginTooltip }
 						onMouseLeave={ this.hidePluginTooltip }
 						ref="addPluginButton"

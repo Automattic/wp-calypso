@@ -72,7 +72,7 @@ class PeopleListSectionHeader extends Component {
 						<Button
 							compact
 							href={ siteLink }
-							className="people-list-section-header__add-button"
+							className="people-list-section-header__add-button is-icon-only"
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
 							ref="addPeopleButton"

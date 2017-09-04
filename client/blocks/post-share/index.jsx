@@ -461,7 +461,7 @@ class PostShare extends Component {
 					<Button
 						compact
 						href={ '/sharing/' + siteId }
-						className="post-share__add-button"
+						className="post-share__add-button is-icon-only"
 						onMouseEnter={ this.showAddTooltip }
 						onMouseLeave={ this.hideAddTooltip }
 						ref="addAccountButton"

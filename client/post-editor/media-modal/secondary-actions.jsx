@@ -83,7 +83,7 @@ class MediaModalSecondaryActions extends Component {
 		return (
 			<div>
 				{ this.getButtons().map( button => <Button
-					className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
+					className={ classNames( 'editor-media-modal__secondary-action is-icon-only', button.className ) }
 					icon={ !! button.icon }
 					compact
 					{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }

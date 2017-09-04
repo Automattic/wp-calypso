@@ -179,6 +179,7 @@ class JetpackPluginsPanel extends Component {
 						<Button
 							compact
 							href={ browserUrl }
+							className="plugins-wpcom__browse-plugins is-icon-only"
 							onMouseEnter={ this.showPluginTooltip }
 							onMouseLeave={ this.hidePluginTooltip }
 							ref="addPluginButton"

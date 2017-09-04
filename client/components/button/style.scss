@@ -63,6 +63,14 @@ button {
 			border-color: $blue-medium;
 			box-shadow: 0 0 0 2px $blue-light;
 	}
+
+ 	&.is-desktop,
+ 	&.is-compact:not(.is-icon-only) {
+		.gridicon {
+			margin-right: 4px;
+		}
+	}
+
 	&.is-compact {
 		padding: 7px;
 		color: $gray-text-min;
@@ -304,7 +312,6 @@ button {
 	}
 }
 
-
 @keyframes button__busy-animation {
-  0%   { background-position: 240px 0; }
+  0% { background-position: 240px 0; }
 }
