@@ -53,35 +53,31 @@ class ActivityLog extends Component {
 		this.setState( () => ( { openIndex: index } ) );
 	}
 
-	renderEvent = ( event ) => {
-		const { translate } = this.props;
+	eventPropsByType = {
+		'order-note': ( event ) => {
+			const { translate } = this.props;
 
-		let icon, heading, content,
-			timestamp = event.timestamp;
-		if ( event.type === 'order-note' ) {
 			// @todo Add comment author once we have that info
-			icon = 'aside';
-			heading = translate( 'Internal note' );
+			let icon = 'aside';
+			let heading = translate( 'Internal note' );
 			if ( event.data.customer_note ) {
 				icon = 'mail';
 				heading = translate( 'Note sent to customer' );
 			}
-			content = decodeEntities( stripHTML( event.data.note ) );
-			timestamp = timestamp && timestamp + 'Z';
-		} else if ( event.type === 'shipping-label' ) {
-			icon = 'print';
-			content = 'A shipping label was purchased!';
-		}
 
-		return (
-			<Event
-				key={ `${ event.type }-${ event.key }` }
-				timestamp={ timestamp }
-				icon={ icon }
-				heading={ heading } >
-				{ content }
-			</Event>
-		);
+			return {
+				icon,
+				heading,
+				timestamp: event.timestamp && event.timestamp + 'Z',
+				children: decodeEntities( stripHTML( event.data.note ) ),
+			};
+		},
+
+		'shipping-label': ( event ) => ( {
+			icon: 'print',
+			timestamp: event.timestamp,
+			children: 'A shipping label was purchased!',
+		} ),
 	}
 
 	renderEvents = () => {
@@ -102,7 +98,10 @@ class ActivityLog extends Component {
 					index={ index }
 					isOpen={ index === this.state.openIndex }
 					onClick={ this.toggleOpenDay } >
-					{ events.map( event => this.renderEvent( event ) ) }
+					{ events.map( event => {
+						const eventProps = this.eventPropsByType[ event.type ]( event );
+						return <Event key={ `${ event.type }-${ event.key }` } { ...eventProps } />;
+					} ) }
 				</EventsByDay>
 			);
 		} );
