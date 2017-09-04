@@ -49,7 +49,6 @@ class Zone extends Component {
 				{
 					showDeleteDialog &&
 					<DeleteZoneDialog
-						siteSlug={ siteSlug }
 						zoneName="[zone name]"
 						onConfirm={ noop }
 						onCancel={ this.hideDeleteDialog } />
