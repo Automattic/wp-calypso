@@ -100,13 +100,9 @@ var CreditCardPaymentBox = React.createClass( {
 			showPaymentChatButton = config.isEnabled( 'upgrades/presale-chat' ) &&
 				abtest( 'presaleChatButton' ) === 'showChatButton' &&
 				hasBusinessPlanInCart,
-			showPaypalLogo = abtest( 'paymentShowPaypalLogo' ) === 'show',
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
-			} ),
-			paypalLinkContent = showPaypalLogo
-				? <img src="/calypso/images/upgrades/paypal.svg" alt="PayPal" width="80" />
-				: <span>PayPal</span>;
+			} );
 
 		return (
 			<div className="payment-box__payment-buttons">
@@ -118,7 +114,7 @@ var CreditCardPaymentBox = React.createClass( {
 					? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
 						{ this.props.translate( 'or use {{paypal/}}', {
 							components: {
-								paypal: paypalLinkContent
+								paypal: <img src="/calypso/images/upgrades/paypal.svg" alt="PayPal" width="80" />
 							}
 						} ) }</a>
 					: null

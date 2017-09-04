@@ -95,16 +95,6 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	paymentShowPaypalLogo: {
-		datestamp: '20170719',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	postSignupUpgradeScreen: {
 		datestamp: '20170810',
 		variations: {
