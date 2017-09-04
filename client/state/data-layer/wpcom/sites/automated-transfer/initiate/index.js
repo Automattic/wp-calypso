@@ -7,6 +7,12 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
+/*
+ * Currently this module is only used for initiating transfers
+ * with a plugin zip file. For initiating with a plugin ID
+ * or theme zip, see state/themes/actions#initiateThemeTransfer.
+ */
+
 export const initiateTransfer = ( { dispatch }, action ) => {
 	const { siteId, pluginZip } = action;
 
