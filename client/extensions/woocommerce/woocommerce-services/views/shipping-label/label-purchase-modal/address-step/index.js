@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 
@@ -11,6 +13,8 @@ import _ from 'lodash';
 import AddressFields from './fields';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import StepContainer from '../step-container';
+import getFormErrors from '../../../state/selectors/errors';
+import { toggleStep } from '../../../state/actions';
 
 const renderSummary = ( {
 		values,
@@ -55,56 +59,52 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 	return {};
 };
 
-const Origin = ( props ) => {
-	const showCountryInSummary = false;
-	const toggleStep = () => props.labelActions.toggleStep( 'origin' );
+const AddressStep = ( props ) => {
+	const toggleStepHandler = () => props.toggleStep( props.type );
 	return (
 		<StepContainer
-			title={ __( 'Origin address' ) }
-			summary={ renderSummary( props, showCountryInSummary ) }
+			title={ props.title }
+			summary={ props.summary }
 			expanded={ props.expanded }
-			toggleStep={ toggleStep }
-			{ ...getNormalizationStatus( props ) } >
-			<AddressFields
-				{ ...props }
-				group="origin" />
+			toggleStep={ toggleStepHandler }
+			{ ...props.normalizationStatus } >
+			<AddressFields group={ props.type } />
 		</StepContainer>
 	);
 };
 
-const Destination = ( props ) => {
-	const showCountryInSummary = props.form.origin.values.country !== props.values.country;
-	const toggleStep = () => props.labelActions.toggleStep( 'destination' );
-	return (
-		<StepContainer
-			title={ __( 'Destination address' ) }
-			summary={ renderSummary( props, showCountryInSummary ) }
-			expanded={ props.expanded }
-			toggleStep={ toggleStep }
-			{ ...getNormalizationStatus( props ) } >
-			<AddressFields
-				{ ...props }
-				group="destination" />
-		</StepContainer>
-	);
-};
-
-Origin.propTypes = Destination.propTypes = {
+AddressStep.propTypes = {
 	values: PropTypes.object.isRequired,
 	isNormalized: PropTypes.bool.isRequired,
 	normalized: PropTypes.object,
-	selectNormalized: PropTypes.bool.isRequired,
 	normalizationInProgress: PropTypes.bool.isRequired,
-	allowChangeCountry: PropTypes.bool.isRequired,
-	labelActions: PropTypes.object.isRequired,
-	storeOptions: PropTypes.object.isRequired,
 	errors: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.bool,
 	] ).isRequired,
+	toggleStep: PropTypes.func.isRequired,
 };
 
-export default {
-	Origin,
-	Destination,
+const mapStateToProps = ( state, ownProps ) => {
+	const loaded = state.shippingLabel.loaded;
+	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+
+	const form = state.shippingLabel.form[ ownProps.type ];
+	const errors = loaded && getFormErrors( state, storeOptions )[ ownProps.type ];
+
+	const showCountryInSummary = ownProps.type === 'destination' &&
+		state.shippingLabel.form.origin.values.country !== form.values.country;
+
+	return {
+		errors,
+		expanded: form.expanded,
+		summary: renderSummary( { ...form, storeOptions, errors }, showCountryInSummary ),
+		normalizationStatus: getNormalizationStatus( { ...form, errors } ),
+	};
 };
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { toggleStep }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( AddressStep );

@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 
@@ -12,6 +14,8 @@ import ShippingRates from './list';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import { getRatesTotal } from 'apps/shipping-label/state/selectors/rates';
+import getFormErrors from '../../../state/selectors/errors';
+import { toggleStep, updateRate } from '../../../state/actions';
 
 const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved ) => {
 	if ( ! packagesSaved ) {
@@ -74,20 +78,19 @@ const RatesStep = ( props ) => {
 		form,
 		values,
 		available,
-		storeOptions,
-		labelActions,
+		currencySymbol,
 		errors,
 		expanded,
 	} = props;
-	const summary = ratesSummary( values, available, getRatesTotal( form.rates ), storeOptions.currency_symbol, form.packages.saved );
+	const summary = ratesSummary( values, available, getRatesTotal( form.rates ), currencySymbol, form.packages.saved );
 
-	const toggleStep = () => labelActions.toggleStep( 'rates' );
+	const toggleStepHandler = () => props.toggleStep( 'rates' );
 	return (
 		<StepContainer
 			title={ __( 'Rates' ) }
 			summary={ summary }
 			expanded={ expanded }
-			toggleStep={ toggleStep }
+			toggleStep={ toggleStepHandler }
 			{ ...getRatesStatus( props ) } >
 			<ShippingRates
 				id="rates"
@@ -96,8 +99,8 @@ const RatesStep = ( props ) => {
 				allPackages={ form.packages.all }
 				selectedRates={ values }
 				availableRates={ available }
-				updateRate={ labelActions.updateRate }
-				currencySymbol={ storeOptions.currency_symbol }
+				updateRate={ props.updateRate }
+				currencySymbol={ currencySymbol }
 				errors={ errors } />
 		</StepContainer>
 	);
@@ -107,9 +110,25 @@ RatesStep.propTypes = {
 	form: PropTypes.object.isRequired,
 	values: PropTypes.object.isRequired,
 	available: PropTypes.object.isRequired,
-	labelActions: PropTypes.object.isRequired,
-	storeOptions: PropTypes.object.isRequired,
+	currencySymbol: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
+	toggleStep: PropTypes.func.isRequired,
+	updateRate: PropTypes.func.isRequired,
 };
 
-export default RatesStep;
+const mapStateToProps = ( state ) => {
+	const loaded = state.shippingLabel.loaded;
+	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+	return {
+		...state.shippingLabel.form.rates,
+		form: state.shippingLabel.form,
+		currencySymbol: storeOptions.currency_symbol,
+		errors: loaded && getFormErrors( state, storeOptions ).rates,
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { toggleStep, updateRate }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( RatesStep );

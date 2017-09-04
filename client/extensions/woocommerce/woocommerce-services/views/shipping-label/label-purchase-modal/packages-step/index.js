@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
@@ -15,22 +17,16 @@ import StepConfirmationButton from '../step-confirmation-button';
 import ErrorNotice from 'components/error-notice';
 import { hasNonEmptyLeaves } from 'lib/utils/tree';
 import StepContainer from '../step-container';
+import getFormErrors from '../../../state/selectors/errors';
+import { toggleStep, confirmPackages } from '../../../state/actions';
 
 const PackagesStep = ( props ) => {
 	const {
-		openedPackageId,
 		selected,
 		all,
-		flatRateGroups,
-		storeOptions,
-		labelActions,
+		weightUnit,
 		errors,
 		expanded,
-		showItemMoveDialog,
-		movedItemIndex,
-		targetPackageId,
-		showAddItemDialog,
-		addedItems,
 	} = props;
 
 	const packageIds = Object.keys( selected );
@@ -69,7 +65,7 @@ const PackagesStep = ( props ) => {
 			summary = __( '1 item in 1 package: %(weight)f %(unit)s total', {
 				args: {
 					weight: totalWeight,
-					unit: storeOptions.weight_unit,
+					unit: weightUnit,
 				},
 			} );
 		} else if ( 1 === packageIds.length ) {
@@ -77,7 +73,7 @@ const PackagesStep = ( props ) => {
 				args: {
 					itemsCount,
 					weight: totalWeight,
-					unit: storeOptions.weight_unit,
+					unit: weightUnit,
 				},
 			} );
 		} else {
@@ -86,7 +82,7 @@ const PackagesStep = ( props ) => {
 					itemsCount,
 					packageCount: packageIds.length,
 					weight: totalWeight,
-					unit: storeOptions.weight_unit,
+					unit: weightUnit,
 				},
 			} );
 		}
@@ -112,94 +108,59 @@ const PackagesStep = ( props ) => {
 		return null;
 	};
 
-	const renderContents = () => {
-		return (
-			<div className="packages-step">
-				<PackageList
-					key="packages-list"
-					openPackage={ labelActions.openPackage }
-					packageId={ openedPackageId }
-					selected={ selected }
-					all={ all }
-					errors={ errors }
-					addPackage={ labelActions.addPackage } />
-
-				{ packageIds.length
-					? ( <PackageInfo
-							key="package-info"
-							packageId={ openedPackageId }
-							selected={ selected }
-							all={ all }
-							flatRateGroups={ flatRateGroups }
-							dimensionUnit={ storeOptions.dimension_unit }
-							weightUnit={ storeOptions.weight_unit }
-							errors={ errors }
-							updateWeight={ labelActions.updatePackageWeight }
-							openItemMove={ labelActions.openItemMove }
-							removeItem={ labelActions.removeItem }
-							removePackage={ labelActions.removePackage }
-							setPackageType={ labelActions.setPackageType }
-							openAddItem={ labelActions.openAddItem } /> )
-
-					: ( <div key="no-packages" className="packages-step__package">
-							{ __( 'There are no packages or items associated with this order' ) }
-						</div> )
-				}
-			</div>
-		);
-	};
-
-	const toggleStep = () => labelActions.toggleStep( 'packages' );
+	const toggleStepHandler = () => props.toggleStep( 'packages' );
 	return (
 		<StepContainer
 			title={ __( 'Packages' ) }
 			{ ...getContainerState() }
 			expanded={ expanded }
-			toggleStep={ toggleStep } >
+			toggleStep={ toggleStepHandler } >
+
 			{ renderWarning() }
-			{ renderContents() }
+			<div className="packages-step__contents">
+				<PackageList />
+				{ packageIds.length
+					? <PackageInfo />
+					: ( <div key="no-packages" className="packages-step__package">
+							{ __( 'There are no packages or items associated with this order' ) }
+						</div> )
+				}
+			</div>
+
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || ! packageIds.length }
-				onClick={ labelActions.confirmPackages } >
+				onClick={ props.confirmPackages } >
 					{ __( 'Use these packages' ) }
 			</StepConfirmationButton>
-			<MoveItemDialog
-				showItemMoveDialog={ showItemMoveDialog || false }
-				movedItemIndex={ isNaN( movedItemIndex ) ? -1 : movedItemIndex }
-				openedPackageId={ openedPackageId }
-				targetPackageId={ targetPackageId }
-				selected={ selected }
-				all={ all }
-				closeItemMove={ labelActions.closeItemMove }
-				setTargetPackage={ labelActions.setTargetPackage }
-				moveItem={ labelActions.moveItem } />
-			<AddItemDialog
-				showAddItemDialog={ showAddItemDialog || false }
-				addedItems={ addedItems }
-				openedPackageId={ openedPackageId }
-				selected={ selected }
-				all={ all }
-				closeAddItem={ labelActions.closeAddItem }
-				setAddedItem={ labelActions.setAddedItem }
-				addItems={ labelActions.addItems } />
+
+			<MoveItemDialog />
+			<AddItemDialog />
 		</StepContainer>
 	);
 };
 
 PackagesStep.propTypes = {
-	openedPackageId: PropTypes.string,
-	showItemMoveDialog: PropTypes.bool,
 	selected: PropTypes.object.isRequired,
 	all: PropTypes.object.isRequired,
-	flatRateGroups: PropTypes.object.isRequired,
-	labelActions: PropTypes.object.isRequired,
-	storeOptions: PropTypes.object.isRequired,
+	weightUnit: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
 	expanded: PropTypes.bool,
-	movedItemIndex: PropTypes.number,
-	targetPackageId: PropTypes.string,
-	showAddItemDialog: PropTypes.bool,
-	sourcePackageId: PropTypes.string,
 };
 
-export default PackagesStep;
+const mapStateToProps = ( state ) => {
+	const loaded = state.shippingLabel.loaded;
+	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+	return {
+		errors: loaded && getFormErrors( state, storeOptions ).packages,
+		weightUnit: storeOptions.weight_unit,
+		expanded: state.shippingLabel.form.packages.expanded,
+		selected: state.shippingLabel.form.packages.selected,
+		all: state.shippingLabel.form.packages.all,
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { toggleStep, confirmPackages }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( PackagesStep );

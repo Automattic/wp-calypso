@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
@@ -11,8 +13,11 @@ import Modal from 'components/modal';
 import ActionButtons from 'components/action-buttons';
 import formatDate from 'lib/utils/format-date';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { closeRefundDialog, confirmRefund } from '../../state/actions';
 
-const RefundDialog = ( { refundDialog, labelActions, storeOptions, created, refundable_amount, label_id } ) => {
+const RefundDialog = ( props ) => {
+	const { refundDialog, storeOptions, created, refundable_amount, label_id } = props;
+
 	const getRefundableAmount = () => {
 		return storeOptions.currency_symbol + Number( refundable_amount ).toFixed( 2 );
 	};
@@ -20,7 +25,7 @@ const RefundDialog = ( { refundDialog, labelActions, storeOptions, created, refu
 	return (
 		<Modal
 			isVisible={ Boolean( refundDialog && refundDialog.labelId === label_id ) }
-			onClose={ labelActions.closeRefundDialog }
+			onClose={ props.closeRefundDialog }
 			additionalClassNames="label-refund-modal">
 			<FormSectionHeading>
 				{ __( 'Request a refund' ) }
@@ -39,13 +44,13 @@ const RefundDialog = ( { refundDialog, labelActions, storeOptions, created, refu
 			</dl>
 			<ActionButtons buttons={ [
 				{
-					onClick: labelActions.confirmRefund,
+					onClick: props.confirmRefund,
 					isPrimary: true,
 					isDisabled: refundDialog && refundDialog.isSubmitting,
 					label: __( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
 				},
 				{
-					onClick: labelActions.closeRefundDialog,
+					onClick: props.closeRefundDialog,
 					label: __( 'Cancel' ),
 				},
 			] } />
@@ -55,11 +60,25 @@ const RefundDialog = ( { refundDialog, labelActions, storeOptions, created, refu
 
 RefundDialog.propTypes = {
 	refundDialog: PropTypes.object,
-	labelActions: PropTypes.object.isRequired,
 	storeOptions: PropTypes.object.isRequired,
 	created: PropTypes.number,
 	refundable_amount: PropTypes.number,
 	label_id: PropTypes.number,
+	closeRefundDialog: PropTypes.func.isRequired,
+	confirmRefund: PropTypes.func.isRequired,
 };
 
-export default RefundDialog;
+const mapStateToProps = ( state ) => {
+	const shippingLabel = state.shippingLabel;
+	const loaded = shippingLabel.loaded;
+	return {
+		refundDialog: loaded ? shippingLabel.refundDialog : {},
+		storeOptions: loaded ? shippingLabel.storeOptions : {},
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( RefundDialog );
