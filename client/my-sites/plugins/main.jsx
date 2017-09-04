@@ -268,29 +268,13 @@ const PluginsMain = React.createClass( {
 	},
 
 	renderPluginsContent() {
-		const plugins = this.state.plugins || [];
-		const { selectedSite } = this.props;
+		const { plugins = [] } = this.state;
+		const { filter, search, selectedSite } = this.props;
 
-		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
-			if ( this.props.search ) {
-				const searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
-					textOnly: true,
-					args: {
-						searchQuery: this.props.search
-					}
-				} );
+		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
+		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
 
-				return <PluginsBrowser
-						hideSearchForm
-						site={ selectedSite ? selectedSite.slug : null }
-						path={ this.context.path }
-						sites={ this.props.sites }
-						search={ this.props.search }
-						store={ this.context.store }
-						searchTitle={ searchTitle }
-					/>;
-			}
-
+		if ( ! showInstalledPluginList && ! search ) {
 			const emptyContentData = this.getEmptyContentData();
 			if ( emptyContentData ) {
 				return <EmptyContent
@@ -300,14 +284,48 @@ const PluginsMain = React.createClass( {
 					action={ emptyContentData.action } />;
 			}
 		}
+
+		const installedPluginsList = showInstalledPluginList && (
+			<PluginsList
+				header={ this.props.translate( 'Installed Plugins' ) }
+				plugins={ plugins }
+				sites={ this.props.sites }
+				pluginUpdateCount={ this.state.pluginUpdateCount }
+				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+			/>
+		);
+
+		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
+			<h3 className="plugins__more-header">More Plugins</h3>
+		);
+
+		let searchTitle;
+		if ( search ) {
+			searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+				textOnly: true,
+				args: {
+					searchQuery: search,
+				},
+			} );
+		}
+
+		const suggestedPluginsList = showSuggestedPluginsList && (
+			<PluginsBrowser
+				hideSearchForm
+				site={ selectedSite ? selectedSite.slug : null }
+				path={ this.context.path }
+				sites={ this.props.sites }
+				search={ search }
+				store={ this.context.store }
+				searchTitle={ searchTitle }
+			/>
+		);
+
 		return (
-			<div className="plugins__lists">
-				<PluginsList
-					header={ this.props.translate( 'Plugins' ) }
-					plugins={ plugins }
-					sites={ this.props.sites }
-					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
+			<div>
+				{ installedPluginsList }
+				{ morePluginsHeader }
+				{ suggestedPluginsList }
 			</div>
 		);
 	},
@@ -377,7 +395,7 @@ const PluginsMain = React.createClass( {
 
 		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
-				<Main>
+				<Main wideLayout>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<WpcomPluginPanel { ...{
@@ -426,7 +444,7 @@ const PluginsMain = React.createClass( {
 		} );
 
 		return (
-			<Main>
+			<Main wideLayout>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
