@@ -79,6 +79,11 @@ export class ConversationCommentList extends React.Component {
 
 	render() {
 		const { commentIds, commentsTree, post, expansions, enableCaterpillar } = this.props;
+
+		if ( ! post ) {
+			return null;
+		}
+
 		const startingExpanded = zipObject(
 			commentIds,
 			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )

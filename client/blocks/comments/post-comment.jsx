@@ -372,8 +372,6 @@ class PostComment extends React.PureComponent {
 						setWithDimensionsRef={ this.props.setWithDimensionsRef }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
-						onMoreClicked={ this.handleReadMoreClicked }
-						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
 					/> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
@@ -396,7 +394,7 @@ class PostComment extends React.PureComponent {
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
-					showReadMore={ this.props.showReadMoreInActions }
+					showReadMore={ this.props.overflowY }
 					onReadMore={ this.onReadMore }
 				/>
 
@@ -408,9 +406,6 @@ class PostComment extends React.PureComponent {
 						parentCommentId={ commentId }
 					/> }
 				{ this.renderRepliesList() }
-				<span>
-					overflowY: { this.props.overflowY }
-				</span>
 			</li>
 		);
 	}
