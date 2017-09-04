@@ -383,7 +383,9 @@ module.exports = {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const { startDate } = context.query;
+		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
+			? context.query.startDate
+			: undefined;
 
 		if ( siteId && ! isJetpack ) {
 			page.redirect( '/stats' );
