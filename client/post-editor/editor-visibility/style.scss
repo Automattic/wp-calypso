@@ -3,11 +3,7 @@
 	font-size: 13px;
 	justify-content: space-between;
 	align-items: center;
-	margin: 0;
-
-	&.is-dropdown {
-		margin: 8px 0;
-	}
+	margin: 8px 0;
 }
 
 .editor-visibility__dropdown {
@@ -73,7 +69,6 @@
 }
 
 .editor-visibility .button {
-	&.is-dialog-open,
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
@@ -93,10 +88,6 @@
 
 	.form-text-input {
 		font-size: 13px;
-
-		&.is-info-open {
-			margin-top: 8px;
-		}
 	}
 
 	.form-input-validation {
