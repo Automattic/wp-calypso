@@ -11,14 +11,9 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	margin: 0;
 	position: relative;
 	background-color: $white;
-}
 
-.post-share__wrapper .notice {
-	margin-top: 4px;
-	margin-bottom: 0px;
-
-	&:first-of-type {
-		margin-top: 0px;
+	& .notice {
+		margin: 0;
 	}
 }
 
