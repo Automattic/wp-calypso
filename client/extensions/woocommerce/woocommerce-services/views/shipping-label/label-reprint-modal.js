@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
@@ -12,12 +14,14 @@ import ActionButtons from 'components/action-buttons';
 import Dropdown from 'components/dropdown';
 import { getPaperSizes } from 'lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
 
-const ReprintDialog = ( { reprintDialog, labelActions, paperSize, storeOptions } ) => {
+const ReprintDialog = ( props ) => {
+	const { reprintDialog, paperSize, storeOptions, label_id } = props;
 	return (
 		<Modal
-			isVisible={ Boolean( reprintDialog ) }
-			onClose={ labelActions.closeReprintDialog }
+			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
+			onClose={ props.closeReprintDialog }
 			additionalClassNames="label-reprint-modal">
 			<FormSectionHeading>
 				{ __( 'Reprint shipping label' ) }
@@ -34,16 +38,16 @@ const ReprintDialog = ( { reprintDialog, labelActions, paperSize, storeOptions }
 				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
 				title={ __( 'Paper size' ) }
 				value={ paperSize }
-				updateValue={ labelActions.updatePaperSize } />
+				updateValue={ props.updatePaperSize } />
 			<ActionButtons buttons={ [
 				{
-					onClick: labelActions.confirmReprint,
+					onClick: props.confirmReprint,
 					isPrimary: true,
 					isDisabled: reprintDialog && reprintDialog.isFetching,
 					label: __( 'Print' ),
 				},
 				{
-					onClick: labelActions.closeReprintDialog,
+					onClick: props.closeReprintDialog,
 					label: __( 'Cancel' ),
 				},
 			] } />
@@ -53,9 +57,25 @@ const ReprintDialog = ( { reprintDialog, labelActions, paperSize, storeOptions }
 
 ReprintDialog.propTypes = {
 	reprintDialog: PropTypes.object,
-	labelActions: PropTypes.object.isRequired,
 	paperSize: PropTypes.string.isRequired,
 	storeOptions: PropTypes.object.isRequired,
+	closeReprintDialog: PropTypes.func.isRequired,
+	confirmReprint: PropTypes.func.isRequired,
+	updatePaperSize: PropTypes.func.isRequired,
 };
 
-export default ReprintDialog;
+const mapStateToProps = ( state ) => {
+	const shippingLabel = state.shippingLabel;
+	const loaded = shippingLabel.loaded;
+	return {
+		reprintDialog: loaded ? shippingLabel.reprintDialog : {},
+		paperSize: shippingLabel.paperSize,
+		storeOptions: loaded ? shippingLabel.storeOptions : {},
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( ReprintDialog );
