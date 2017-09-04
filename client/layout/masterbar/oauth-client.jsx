@@ -16,9 +16,9 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 			<ul className="masterbar__oauth-client-main-nav">
 				<li className="masterbar__oauth-client-current">
 					{ oauth2Client.icon && (
-						<a className="masterbar__oauth-client-logo">
+						<div className="masterbar__oauth-client-logo">
 							<img src={ oauth2Client.icon } />
-						</a>
+						</div>
 					) }
 				</li>
 			</ul>
