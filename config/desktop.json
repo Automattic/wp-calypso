@@ -23,6 +23,7 @@
 		"desktop-promo": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
+		"domains/cctlds/fr": true,
 		"external-media": true,
 		"fluid-width": true,
 		"help": true,
