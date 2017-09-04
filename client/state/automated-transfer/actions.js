@@ -20,7 +20,11 @@ export const getAutomatedTransferStatus = ( siteId ) => ( {
 } );
 
 /**
- * Sets the status of an automated transfer for a particular site
+ * Sets the status of an automated transfer for a particular site.
+ *
+ * If the transfer has been initiated by uploading a plugin, the
+ * ID of that plugin is returned in the API response alongside the
+ * current status.
  *
  * @see state/automated-transfer/constants#transferStates
  *
