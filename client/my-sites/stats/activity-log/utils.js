@@ -1,5 +1,10 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { reduce } from 'lodash';
+
+/**
  * @typedef OffsetParams
  * @property {?string} timezone  Timezone representation to apply.
  * @property {?string} gmtOffset Offset to apply if timezone isn't supplied.
@@ -23,4 +28,19 @@ export function adjustMoment( { timezone, gmtOffset, moment } ) {
 		return moment.utcOffset( gmtOffset );
 	}
 	return moment;
+}
+
+/**
+ * Takes one or more moment objects and returns the earliest one unmodified.
+ *
+ * If moments are equal, return the first.
+ *
+ * @param  {...object} moments One or more moment objects
+ * @return {object}            Earliest moment from those provided
+ */
+export function earliestMoment( ...moments ) {
+	return reduce(
+		moments,
+		( current, compare ) => ( compare.valueOf() < current.valueOf() ? compare : current )
+	);
 }

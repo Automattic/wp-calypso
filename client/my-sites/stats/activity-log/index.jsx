@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull, reduce } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import JetpackColophon from 'components/jetpack-colophon';
-import { adjustMoment } from './utils';
+import { adjustMoment, earliestMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -47,12 +47,6 @@ import {
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
-
-const earliestMoment = ( ...moments ) =>
-	reduce(
-		moments,
-		( current, compare ) => ( current.valueOf() < compare.valueOf() ? current : compare )
-	);
 
 class ActivityLog extends Component {
 	static propTypes = {
