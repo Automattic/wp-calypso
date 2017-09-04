@@ -115,7 +115,7 @@ class ActivityLogDay extends Component {
 		} = this.props;
 
 		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
-		const noActivityText = isToday ? translate( 'No activity yet' ) : translate( 'No activity' );
+		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
 
 		return (
 			<div>
