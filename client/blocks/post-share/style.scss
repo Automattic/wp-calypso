@@ -40,18 +40,16 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
-.post-share__placeholder {
-	@include placeholder;
-	margin: 0 0 24px 24px;
-	width: 300px;
-	height: 80px;
+.post-share__wrapper.is-placeholder {
+	padding-bottom: 24px;
+	border-bottom: 1px solid lighten( $gray, 25% );
 }
 
-.post-share__form.is-placeholder,
-.post-share__services.is-placeholder {
+.post-share__placeholder {
 	@include placeholder;
-	margin-top: 16px;
-	height: 48px;
+	margin: 0 0 0 24px;
+	width: 300px;
+	height: 80px;
 }
 
 .post-share__head {
