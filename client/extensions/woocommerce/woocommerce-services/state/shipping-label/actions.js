@@ -18,61 +18,57 @@ import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 
-export const INIT_LABELS = 'INIT_LABELS';
-export const SET_IS_FETCHING = 'SET_IS_FETCHING';
-export const SET_FETCH_ERROR = 'SET_FETCH_ERROR';
-export const OPEN_PRINTING_FLOW = 'OPEN_PRINTING_FLOW';
-export const EXIT_PRINTING_FLOW = 'EXIT_PRINTING_FLOW';
-export const TOGGLE_STEP = 'TOGGLE_STEP';
-export const UPDATE_ADDRESS_VALUE = 'UPDATE_ADDRESS_VALUE';
-export const REMOVE_IGNORE_VALIDATION = 'REMOVE_IGNORE_VALIDATION';
-export const ADDRESS_NORMALIZATION_IN_PROGRESS = 'ADDRESS_NORMALIZATION_IN_PROGRESS';
-export const SET_NORMALIZED_ADDRESS = 'SET_NORMALIZED_ADDRESS';
-export const ADDRESS_NORMALIZATION_COMPLETED = 'ADDRESS_NORMALIZATION_COMPLETED';
-export const SELECT_NORMALIZED_ADDRESS = 'SELECT_NORMALIZED_ADDRESS';
-export const EDIT_ADDRESS = 'EDIT_ADDRESS';
-export const CONFIRM_ADDRESS_SUGGESTION = 'CONFIRM_ADDRESS_SUGGESTION';
-export const UPDATE_PACKAGE_WEIGHT = 'UPDATE_PACKAGE_WEIGHT';
-export const UPDATE_RATE = 'UPDATE_RATE';
-export const UPDATE_PAPER_SIZE = 'UPDATE_PAPER_SIZE';
-export const PURCHASE_LABEL_REQUEST = 'PURCHASE_LABEL_REQUEST';
-export const PURCHASE_LABEL_RESPONSE = 'PURCHASE_LABEL_RESPONSE';
-export const SHOW_PRINT_CONFIRMATION = 'SHOW_PRINT_CONFIRMATION';
-export const RATES_RETRIEVAL_IN_PROGRESS = 'RATES_RETRIEVAL_IN_PROGRESS';
-export const SET_RATES = 'SET_RATES';
-export const RATES_RETRIEVAL_COMPLETED = 'RATES_RETRIEVAL_COMPLETED';
-export const CLEAR_AVAILABLE_RATES = 'CLEAR_AVAILABLE_RATES';
-export const OPEN_REFUND_DIALOG = 'OPEN_REFUND_DIALOG';
-export const CLOSE_REFUND_DIALOG = 'CLOSE_REFUND_DIALOG';
-export const LABEL_STATUS_RESPONSE = 'LABEL_STATUS_RESPONSE';
-export const REFUND_REQUEST = 'REFUND_REQUEST';
-export const REFUND_RESPONSE = 'REFUND_RESPONSE';
-export const OPEN_REPRINT_DIALOG = 'OPEN_REPRINT_DIALOG';
-export const CLOSE_REPRINT_DIALOG = 'CLOSE_REPRINT_DIALOG';
-export const CONFIRM_REPRINT = 'CONFIRM_REPRINT';
-export const OPEN_PACKAGE = 'OPEN_PACKAGE';
-export const OPEN_ITEM_MOVE = 'OPEN_ITEM_MOVE';
-export const MOVE_ITEM = 'MOVE_ITEM';
-export const CLOSE_ITEM_MOVE = 'CLOSE_ITEM_MOVE';
-export const SET_TARGET_PACKAGE = 'SET_TARGET_PACKAGE';
-export const ADD_PACKAGE = 'ADD_PACKAGE';
-export const REMOVE_PACKAGE = 'REMOVE_PACKAGE';
-export const SET_PACKAGE_TYPE = 'SET_PACKAGE_TYPE';
-export const SAVE_PACKAGES = 'SAVE_PACKAGES';
-export const OPEN_ADD_ITEM = 'OPEN_ADD_ITEM';
-export const CLOSE_ADD_ITEM = 'CLOSE_ADD_ITEM';
-export const SET_ADDED_ITEM = 'SET_ADDED_ITEM';
-export const ADD_ITEMS = 'ADD_ITEMS';
+import {
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EXIT_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_IGNORE_VALIDATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_TARGET_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
+} from '../action-types.js';
 
 const FORM_STEPS = [ 'origin', 'destination', 'packages', 'rates' ];
 
 export const fetchLabelsData = ( siteId, orderId ) => ( dispatch ) => {
-	dispatch( { type: SET_IS_FETCHING, siteId, orderId, isFetching: true } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING, siteId, orderId, isFetching: true } );
 
 	api.get( siteId, api.url.orderLabels( orderId ) )
 		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
 			dispatch( {
-				type: INIT_LABELS,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS,
 				siteId,
 				orderId,
 				formData,
@@ -84,15 +80,15 @@ export const fetchLabelsData = ( siteId, orderId ) => ( dispatch ) => {
 			} );
 		} )
 		.catch( ( error ) => {
-			dispatch( { type: SET_FETCH_ERROR, siteId, orderId, error: true } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR, siteId, orderId, error: true } );
 			console.error( error ); // eslint-disable-line no-console
 		} )
-		.then( () => dispatch( { type: SET_IS_FETCHING, siteId, orderId, isFetching: false } ) );
+		.then( () => dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING, siteId, orderId, isFetching: false } ) );
 };
 
 export const toggleStep = ( stepName ) => {
 	return {
-		type: TOGGLE_STEP,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 		stepName,
 	};
 };
@@ -139,7 +135,7 @@ export const submitStep = ( stepName ) => ( dispatch, getState ) => {
 	const storeOptions = state.storeOptions;
 
 	dispatch( {
-		type: TOGGLE_STEP,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 		stepName,
 	} );
 	expandFirstErroneousStep( dispatch, getState, storeOptions, stepName );
@@ -150,7 +146,7 @@ const convertToApiPackage = ( pckg ) => {
 };
 
 export const clearAvailableRates = () => {
-	return { type: CLEAR_AVAILABLE_RATES };
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES };
 };
 
 const getLabelRates = ( dispatch, getState, handleResponse, { orderId } ) => {
@@ -233,11 +229,11 @@ export const openPrintingFlow = () => (
 		expandStepAfterAction();
 	} );
 
-	dispatch( { type: OPEN_PRINTING_FLOW } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW } );
 };
 
 export const exitPrintingFlow = ( force ) => ( dispatch, getState ) => {
-	dispatch( { type: EXIT_PRINTING_FLOW, force } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EXIT_PRINTING_FLOW, force } );
 
 	const form = getState().shippingLabel.form;
 
@@ -248,7 +244,7 @@ export const exitPrintingFlow = ( force ) => ( dispatch, getState ) => {
 
 export const updateAddressValue = ( group, name, value ) => {
 	return {
-		type: UPDATE_ADDRESS_VALUE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE,
 		group,
 		name,
 		value,
@@ -257,7 +253,7 @@ export const updateAddressValue = ( group, name, value ) => {
 
 export const selectNormalizedAddress = ( group, selectNormalized ) => {
 	return {
-		type: SELECT_NORMALIZED_ADDRESS,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS,
 		group,
 		selectNormalized,
 	};
@@ -265,14 +261,14 @@ export const selectNormalizedAddress = ( group, selectNormalized ) => {
 
 export const editAddress = ( group ) => {
 	return {
-		type: EDIT_ADDRESS,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
 		group,
 	};
 };
 
 export const removeIgnoreValidation = ( group ) => {
 	return {
-		type: REMOVE_IGNORE_VALIDATION,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_IGNORE_VALIDATION,
 		group,
 	};
 };
@@ -281,7 +277,7 @@ export const confirmAddressSuggestion = ( group ) => ( dispatch, getState, { ord
 	const storeOptions = getState().shippingLabel.storeOptions;
 
 	dispatch( {
-		type: CONFIRM_ADDRESS_SUGGESTION,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 		group,
 	} );
 
@@ -360,7 +356,7 @@ export const submitAddressForNormalization = ( group ) => ( dispatch, getState, 
 
 export const updatePackageWeight = ( packageId, value ) => {
 	return {
-		type: UPDATE_PACKAGE_WEIGHT,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
 		packageId,
 		value,
 	};
@@ -368,21 +364,21 @@ export const updatePackageWeight = ( packageId, value ) => {
 
 export const openPackage = ( openedPackageId ) => {
 	return {
-		type: OPEN_PACKAGE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 		openedPackageId,
 	};
 };
 
 export const openItemMove = ( movedItemIndex ) => {
 	return {
-		type: OPEN_ITEM_MOVE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 		movedItemIndex,
 	};
 };
 
 export const moveItem = ( originPackageId, movedItemIndex, targetPackageId ) => {
 	return {
-		type: MOVE_ITEM,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
 		originPackageId,
 		movedItemIndex,
 		targetPackageId,
@@ -391,32 +387,32 @@ export const moveItem = ( originPackageId, movedItemIndex, targetPackageId ) => 
 
 export const closeItemMove = () => {
 	return {
-		type: CLOSE_ITEM_MOVE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE,
 	};
 };
 
 export const setTargetPackage = ( targetPackageId ) => {
 	return {
-		type: SET_TARGET_PACKAGE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_TARGET_PACKAGE,
 		targetPackageId,
 	};
 };
 
 export const openAddItem = () => {
 	return {
-		type: OPEN_ADD_ITEM,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM,
 	};
 };
 
 export const closeAddItem = () => {
 	return {
-		type: CLOSE_ADD_ITEM,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
 	};
 };
 
 export const setAddedItem = ( sourcePackageId, movedItemIndex, added ) => {
 	return {
-		type: SET_ADDED_ITEM,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
 		sourcePackageId,
 		movedItemIndex,
 		added,
@@ -425,27 +421,27 @@ export const setAddedItem = ( sourcePackageId, movedItemIndex, added ) => {
 
 export const addItems = ( targetPackageId ) => {
 	return {
-		type: ADD_ITEMS,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
 		targetPackageId,
 	};
 };
 
 export const addPackage = () => {
 	return {
-		type: ADD_PACKAGE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE,
 	};
 };
 
 export const removePackage = ( packageId ) => {
 	return {
-		type: REMOVE_PACKAGE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE,
 		packageId,
 	};
 };
 
 export const setPackageType = ( packageId, boxTypeId ) => {
 	return {
-		type: SET_PACKAGE_TYPE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
 		packageId,
 		boxTypeId,
 	};
@@ -453,7 +449,7 @@ export const setPackageType = ( packageId, boxTypeId ) => {
 
 export const savePackages = () => {
 	return {
-		type: SAVE_PACKAGES,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES,
 	};
 };
 
@@ -481,7 +477,7 @@ export const confirmPackages = () => ( dispatch, getState, { orderId } ) => {
 
 export const updateRate = ( packageId, value ) => {
 	return {
-		type: UPDATE_RATE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
 		packageId,
 		value,
 	};
@@ -489,7 +485,7 @@ export const updateRate = ( packageId, value ) => {
 
 export const updatePaperSize = ( value ) => {
 	return {
-		type: UPDATE_PAPER_SIZE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
 		value,
 	};
 };
@@ -504,9 +500,9 @@ export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 	};
 	const setIsSaving = ( saving ) => {
 		if ( saving ) {
-			dispatch( { type: PURCHASE_LABEL_REQUEST } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST } );
 		} else {
-			dispatch( { type: PURCHASE_LABEL_RESPONSE, response, error } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE, response, error } );
 			if ( 'rest_cookie_invalid_nonce' === error ) {
 				dispatch( exitPrintingFlow( true ) );
 			} else if ( error ) {
@@ -517,7 +513,7 @@ export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 				getLabelRates( dispatch, getState, _.noop, { orderId } );
 			} else {
 				const labelsToPrint = response.map( ( label, index ) => ( {
-					caption: __( 'PACKAGE %(num)d (OF %(total)d)', {
+					caption: __( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PACKAGE %(num)d (OF %(total)d)', {
 						args: {
 							num: index + 1,
 							total: response.length,
@@ -529,7 +525,7 @@ export const purchaseLabel = () => ( dispatch, getState, { orderId } ) => {
 				const printUrl = getPrintURL( state.paperSize, labelsToPrint );
 				if ( 'addon' === getPDFSupport() ) {
 					// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-					dispatch( { type: SHOW_PRINT_CONFIRMATION, printUrl } );
+					dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, printUrl } );
 				} else {
 					printDocument( printUrl )
 						.then( () => {
@@ -612,7 +608,7 @@ export const confirmPrintLabel = ( url ) => ( dispatch ) => {
 
 export const openRefundDialog = ( labelId ) => {
 	return {
-		type: OPEN_REFUND_DIALOG,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG,
 		labelId,
 	};
 };
@@ -631,7 +627,7 @@ export const fetchLabelsStatus = () => ( dispatch, getState, { orderId } ) => {
 		};
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
-				dispatch( { type: LABEL_STATUS_RESPONSE, labelId, response, error } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE, labelId, response, error } );
 				if ( error ) {
 					dispatch( NoticeActions.errorNotice( error.toString() ) );
 				}
@@ -647,7 +643,7 @@ export const fetchLabelsStatus = () => ( dispatch, getState, { orderId } ) => {
 };
 
 export const closeRefundDialog = () => {
-	return { type: CLOSE_REFUND_DIALOG };
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG };
 };
 
 export const confirmRefund = () => ( dispatch, getState, { orderId } ) => {
@@ -662,9 +658,9 @@ export const confirmRefund = () => ( dispatch, getState, { orderId } ) => {
 	};
 	const setIsSaving = ( saving ) => {
 		if ( saving ) {
-			dispatch( { type: REFUND_REQUEST } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST } );
 		} else {
-			dispatch( { type: REFUND_RESPONSE, response, error } );
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE, response, error } );
 			if ( error ) {
 				dispatch( NoticeActions.errorNotice( error.toString() ) );
 			} else {
@@ -681,15 +677,15 @@ export const confirmRefund = () => ( dispatch, getState, { orderId } ) => {
 };
 
 export const openReprintDialog = ( labelId ) => {
-	return { type: OPEN_REPRINT_DIALOG, labelId };
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId };
 };
 
 export const closeReprintDialog = () => {
-	return { type: CLOSE_REPRINT_DIALOG };
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG };
 };
 
 export const confirmReprint = () => ( dispatch, getState ) => {
-	dispatch( { type: CONFIRM_REPRINT } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT } );
 	const state = getState().shippingLabel;
 	const labelId = state.reprintDialog.labelId;
 	printDocument( getPrintURL( getState().shippingLabel.paperSize, [ { labelId } ] ) )

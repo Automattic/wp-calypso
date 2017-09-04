@@ -3,20 +3,22 @@
  */
 import * as api from 'woocommerce/woocommerce-services/api';
 import {
-	ADDRESS_NORMALIZATION_IN_PROGRESS,
-	SET_NORMALIZED_ADDRESS,
-	ADDRESS_NORMALIZATION_COMPLETED,
 	exitPrintingFlow,
 } from './actions';
+import {
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
+} from '../action-types';
 
 export default ( dispatch, address, group ) => {
-	dispatch( { type: ADDRESS_NORMALIZATION_IN_PROGRESS, group } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS, group } );
 	return new Promise( ( resolve ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
 		const setSuccess = ( json ) => {
 			dispatch( {
-				type: SET_NORMALIZED_ADDRESS,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
 				group,
 				normalized: json.normalized,
 				isTrivialNormalization: json.is_trivial_normalization,
@@ -25,7 +27,7 @@ export default ( dispatch, address, group ) => {
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
 				dispatch( {
-					type: ADDRESS_NORMALIZATION_COMPLETED,
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 					group,
 					error,
 				} );

@@ -9,52 +9,52 @@ import { keyedReducer } from 'state/utils';
  * Internal dependencies
  */
 import {
-	INIT_LABELS,
-	SET_IS_FETCHING,
-	SET_FETCH_ERROR,
-	OPEN_PRINTING_FLOW,
-	EXIT_PRINTING_FLOW,
-	TOGGLE_STEP,
-	UPDATE_ADDRESS_VALUE,
-	REMOVE_IGNORE_VALIDATION,
-	ADDRESS_NORMALIZATION_IN_PROGRESS,
-	SET_NORMALIZED_ADDRESS,
-	ADDRESS_NORMALIZATION_COMPLETED,
-	SELECT_NORMALIZED_ADDRESS,
-	EDIT_ADDRESS,
-	CONFIRM_ADDRESS_SUGGESTION,
-	UPDATE_PACKAGE_WEIGHT,
-	UPDATE_RATE,
-	UPDATE_PAPER_SIZE,
-	PURCHASE_LABEL_REQUEST,
-	PURCHASE_LABEL_RESPONSE,
-	SHOW_PRINT_CONFIRMATION,
-	RATES_RETRIEVAL_IN_PROGRESS,
-	SET_RATES,
-	RATES_RETRIEVAL_COMPLETED,
-	CLEAR_AVAILABLE_RATES,
-	OPEN_REFUND_DIALOG,
-	CLOSE_REFUND_DIALOG,
-	LABEL_STATUS_RESPONSE,
-	REFUND_REQUEST,
-	REFUND_RESPONSE,
-	OPEN_REPRINT_DIALOG,
-	CLOSE_REPRINT_DIALOG,
-	CONFIRM_REPRINT,
-	OPEN_PACKAGE,
-	OPEN_ITEM_MOVE,
-	MOVE_ITEM,
-	CLOSE_ITEM_MOVE,
-	SET_TARGET_PACKAGE,
-	ADD_PACKAGE,
-	REMOVE_PACKAGE,
-	SET_PACKAGE_TYPE,
-	SAVE_PACKAGES,
-	OPEN_ADD_ITEM,
-	CLOSE_ADD_ITEM,
-	SET_ADDED_ITEM,
-	ADD_ITEMS,
-} from './actions';
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EXIT_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_IGNORE_VALIDATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_TARGET_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
+} from '../action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import initializeLabelsState from 'woocommerce/woocommerce-services/lib/initialize-labels-state';
 
@@ -71,34 +71,35 @@ const round = ( n ) => _.round( n, 8 );
 
 const reducers = {};
 
-reducers[ INIT_LABELS ] = ( state, { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
-	return {
-		...state,
-		...initializeLabelsState( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods ),
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT_LABELS ] =
+	( state, { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
+		return {
+			...state,
+			...initializeLabelsState( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods ),
+		};
 	};
-};
 
-reducers[ SET_IS_FETCHING ] = ( state, { isFetching } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING ] = ( state, { isFetching } ) => {
 	return {
 		...state,
 		isFetching,
 	};
 };
 
-reducers[ SET_FETCH_ERROR ] = ( state, { error } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FETCH_ERROR ] = ( state, { error } ) => {
 	return {
 		...state,
 		error,
 	};
 };
 
-reducers[ OPEN_PRINTING_FLOW ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW ] = ( state ) => {
 	return { ...state,
 		showPurchaseDialog: true,
 	};
 };
 
-reducers[ EXIT_PRINTING_FLOW ] = ( state, { force } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EXIT_PRINTING_FLOW ] = ( state, { force } ) => {
 	if ( ! force && state.form.isSubmitting ) {
 		return state;
 	}
@@ -110,7 +111,7 @@ reducers[ EXIT_PRINTING_FLOW ] = ( state, { force } ) => {
 	};
 };
 
-reducers[ TOGGLE_STEP ] = ( state, { stepName } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP ] = ( state, { stepName } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ stepName ]: { ...state.form[ stepName ],
@@ -120,7 +121,7 @@ reducers[ TOGGLE_STEP ] = ( state, { stepName } ) => {
 	};
 };
 
-reducers[ UPDATE_ADDRESS_VALUE ] = ( state, { group, name, value } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE ] = ( state, { group, name, value } ) => {
 	const newState = { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -133,7 +134,7 @@ reducers[ UPDATE_ADDRESS_VALUE ] = ( state, { group, name, value } ) => {
 		},
 	};
 	if ( 'country' === name ) {
-		return reducers[ UPDATE_ADDRESS_VALUE ]( newState, { group, name: 'state', value: '' } );
+		return reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE ]( newState, { group, name: 'state', value: '' } );
 	}
 	if ( state.form[ group ].ignoreValidation ) {
 		newState.form[ group ].ignoreValidation = { ...state.form[ group ].ignoreValidation,
@@ -143,7 +144,7 @@ reducers[ UPDATE_ADDRESS_VALUE ] = ( state, { group, name, value } ) => {
 	return newState;
 };
 
-reducers[ REMOVE_IGNORE_VALIDATION ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_IGNORE_VALIDATION ] = ( state, { group } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -153,7 +154,7 @@ reducers[ REMOVE_IGNORE_VALIDATION ] = ( state, { group } ) => {
 	};
 };
 
-reducers[ ADDRESS_NORMALIZATION_IN_PROGRESS ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS ] = ( state, { group } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -163,7 +164,7 @@ reducers[ ADDRESS_NORMALIZATION_IN_PROGRESS ] = ( state, { group } ) => {
 	};
 };
 
-reducers[ SET_NORMALIZED_ADDRESS ] = ( state, { group, normalized, isTrivialNormalization } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS ] = ( state, { group, normalized, isTrivialNormalization } ) => {
 	const newState = { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -178,7 +179,7 @@ reducers[ SET_NORMALIZED_ADDRESS ] = ( state, { group, normalized, isTrivialNorm
 	return newState;
 };
 
-reducers[ ADDRESS_NORMALIZATION_COMPLETED ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] = ( state, { group } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -189,7 +190,7 @@ reducers[ ADDRESS_NORMALIZATION_COMPLETED ] = ( state, { group } ) => {
 	};
 };
 
-reducers[ SELECT_NORMALIZED_ADDRESS ] = ( state, { group, selectNormalized } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SELECT_NORMALIZED_ADDRESS ] = ( state, { group, selectNormalized } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -199,7 +200,7 @@ reducers[ SELECT_NORMALIZED_ADDRESS ] = ( state, { group, selectNormalized } ) =
 	};
 };
 
-reducers[ EDIT_ADDRESS ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EDIT_ADDRESS ] = ( state, { group } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
@@ -211,7 +212,7 @@ reducers[ EDIT_ADDRESS ] = ( state, { group } ) => {
 	};
 };
 
-reducers[ CONFIRM_ADDRESS_SUGGESTION ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION ] = ( state, { group } ) => {
 	const groupState = {
 		...state.form[ group ],
 		expanded: false,
@@ -228,7 +229,7 @@ reducers[ CONFIRM_ADDRESS_SUGGESTION ] = ( state, { group } ) => {
 	};
 };
 
-reducers[ UPDATE_PACKAGE_WEIGHT ] = ( state, { packageId, value } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT ] = ( state, { packageId, value } ) => {
 	const newPackages = { ...state.form.packages.selected };
 
 	newPackages[ packageId ] = {
@@ -247,13 +248,13 @@ reducers[ UPDATE_PACKAGE_WEIGHT ] = ( state, { packageId, value } ) => {
 	};
 };
 
-reducers[ OPEN_PACKAGE ] = ( state, { openedPackageId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE ] = ( state, { openedPackageId } ) => {
 	return { ...state,
 		openedPackageId,
 	};
 };
 
-reducers[ OPEN_ITEM_MOVE ] = ( state, { movedItemIndex } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE ] = ( state, { movedItemIndex } ) => {
 	return {
 		...state,
 		showItemMoveDialog: true,
@@ -262,7 +263,7 @@ reducers[ OPEN_ITEM_MOVE ] = ( state, { movedItemIndex } ) => {
 	};
 };
 
-reducers[ MOVE_ITEM ] = ( state, { originPackageId, movedItemIndex, targetPackageId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ] = ( state, { originPackageId, movedItemIndex, targetPackageId } ) => {
 	if ( -1 === movedItemIndex || originPackageId === targetPackageId || undefined === originPackageId ) {
 		return state;
 	}
@@ -340,7 +341,7 @@ reducers[ MOVE_ITEM ] = ( state, { originPackageId, movedItemIndex, targetPackag
 	};
 };
 
-reducers[ CLOSE_ITEM_MOVE ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ITEM_MOVE ] = ( state ) => {
 	return {
 		...state,
 		movedItemIndex: -1,
@@ -348,14 +349,14 @@ reducers[ CLOSE_ITEM_MOVE ] = ( state ) => {
 	};
 };
 
-reducers[ SET_TARGET_PACKAGE ] = ( state, { targetPackageId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_TARGET_PACKAGE ] = ( state, { targetPackageId } ) => {
 	return {
 		...state,
 		targetPackageId,
 	};
 };
 
-reducers[ OPEN_ADD_ITEM ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ADD_ITEM ] = ( state ) => {
 	return {
 		...state,
 		showAddItemDialog: true,
@@ -363,14 +364,14 @@ reducers[ OPEN_ADD_ITEM ] = ( state ) => {
 	};
 };
 
-reducers[ CLOSE_ADD_ITEM ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM ] = ( state ) => {
 	return {
 		...state,
 		showAddItemDialog: false,
 	};
 };
 
-reducers[ SET_ADDED_ITEM ] = ( state, { sourcePackageId, movedItemIndex, added } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM ] = ( state, { sourcePackageId, movedItemIndex, added } ) => {
 	let newItemIndices;
 	if ( added ) {
 		const itemIndices = state.addedItems[ sourcePackageId ] || [];
@@ -385,19 +386,20 @@ reducers[ SET_ADDED_ITEM ] = ( state, { sourcePackageId, movedItemIndex, added }
 	};
 };
 
-reducers[ ADD_ITEMS ] = ( state, { targetPackageId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPackageId } ) => {
 	// For each origin package
 	_.each( state.addedItems, ( itemIndices, originPackageId ) => {
 		// Move items in reverse order of index, to maintain validity as items are removed.
 		// e.g. when index 0 is removed from the package, index 1 would become index 0
 		_.sortBy( itemIndices, ( i ) => -i ).forEach( ( movedItemIndex ) => {
-			state = reducers[ MOVE_ITEM ]( state, { originPackageId, movedItemIndex, targetPackageId } );
+			state =
+				reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ]( state, { originPackageId, movedItemIndex, targetPackageId } );
 		} );
 	} );
 	return { ...state, showAddItemDialog: false };
 };
 
-reducers[ ADD_PACKAGE ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const packageKeys = Object.keys( newPackages );
 	const boxesKeys = Object.keys( state.form.packages.all );
@@ -437,7 +439,7 @@ reducers[ ADD_PACKAGE ] = ( state ) => {
 	};
 };
 
-reducers[ REMOVE_PACKAGE ] = ( state, { packageId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE ] = ( state, { packageId } ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const pckg = newPackages[ packageId ];
 	const removedItems = pckg.items;
@@ -468,7 +470,7 @@ reducers[ REMOVE_PACKAGE ] = ( state, { packageId } ) => {
 	};
 };
 
-reducers[ SET_PACKAGE_TYPE ] = ( state, { packageId, boxTypeId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { packageId, boxTypeId } ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const oldPackage = newPackages[ packageId ];
 
@@ -519,7 +521,7 @@ reducers[ SET_PACKAGE_TYPE ] = ( state, { packageId, boxTypeId } ) => {
 	};
 };
 
-reducers[ SAVE_PACKAGES ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = ( state ) => {
 	return {
 		...state,
 		form: {
@@ -532,7 +534,7 @@ reducers[ SAVE_PACKAGES ] = ( state ) => {
 	};
 };
 
-reducers[ UPDATE_RATE ] = ( state, { packageId, value } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE ] = ( state, { packageId, value } ) => {
 	const newRates = { ...state.form.rates.values };
 	newRates[ packageId ] = value;
 
@@ -545,13 +547,13 @@ reducers[ UPDATE_RATE ] = ( state, { packageId, value } ) => {
 	};
 };
 
-reducers[ UPDATE_PAPER_SIZE ] = ( state, { value } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE ] = ( state, { value } ) => {
 	return { ...state,
 		paperSize: value,
 	};
 };
 
-reducers[ PURCHASE_LABEL_REQUEST ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_REQUEST ] = ( state ) => {
 	return { ...state,
 		form: { ...state.form,
 			isSubmitting: true,
@@ -559,7 +561,7 @@ reducers[ PURCHASE_LABEL_REQUEST ] = ( state ) => {
 	};
 };
 
-reducers[ PURCHASE_LABEL_RESPONSE ] = ( state, { response, error } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_LABEL_RESPONSE ] = ( state, { response, error } ) => {
 	if ( error ) {
 		return { ...state,
 			form: { ...state.form,
@@ -578,7 +580,7 @@ reducers[ PURCHASE_LABEL_RESPONSE ] = ( state, { response, error } ) => {
 	};
 };
 
-reducers[ SHOW_PRINT_CONFIRMATION ] = ( state, { printUrl } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( state, { printUrl } ) => {
 	return { ...state,
 		form: { ...state.form,
 			needsPrintConfirmation: true,
@@ -587,7 +589,7 @@ reducers[ SHOW_PRINT_CONFIRMATION ] = ( state, { printUrl } ) => {
 	};
 };
 
-reducers[ RATES_RETRIEVAL_IN_PROGRESS ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS ] = ( state ) => {
 	return { ...state,
 		form: { ...state.form,
 			rates: { ...state.form.rates,
@@ -597,7 +599,7 @@ reducers[ RATES_RETRIEVAL_IN_PROGRESS ] = ( state ) => {
 	};
 };
 
-reducers[ SET_RATES ] = ( state, { rates } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } ) => {
 	return { ...state,
 		form: { ...state.form,
 			rates: {
@@ -617,7 +619,7 @@ reducers[ SET_RATES ] = ( state, { rates } ) => {
 	};
 };
 
-reducers[ RATES_RETRIEVAL_COMPLETED ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = ( state ) => {
 	return { ...state,
 		form: { ...state.form,
 			rates: { ...state.form.rates,
@@ -627,7 +629,7 @@ reducers[ RATES_RETRIEVAL_COMPLETED ] = ( state ) => {
 	};
 };
 
-reducers[ CLEAR_AVAILABLE_RATES ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES ] = ( state ) => {
 	return { ...state,
 		form: { ...state.form,
 			needsPrintConfirmation: false,
@@ -638,7 +640,7 @@ reducers[ CLEAR_AVAILABLE_RATES ] = ( state ) => {
 	};
 };
 
-reducers[ OPEN_REFUND_DIALOG ] = ( state, { labelId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REFUND_DIALOG ] = ( state, { labelId } ) => {
 	return { ...state,
 		refundDialog: {
 			labelId,
@@ -646,7 +648,7 @@ reducers[ OPEN_REFUND_DIALOG ] = ( state, { labelId } ) => {
 	};
 };
 
-reducers[ CLOSE_REFUND_DIALOG ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REFUND_DIALOG ] = ( state ) => {
 	if ( state.refundDialog.isSubmitting ) {
 		return state;
 	}
@@ -655,7 +657,7 @@ reducers[ CLOSE_REFUND_DIALOG ] = ( state ) => {
 	};
 };
 
-reducers[ LABEL_STATUS_RESPONSE ] = ( state, { labelId, response, error } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_LABEL_STATUS_RESPONSE ] = ( state, { labelId, response, error } ) => {
 	if ( error ) {
 		response = {};
 	}
@@ -675,7 +677,7 @@ reducers[ LABEL_STATUS_RESPONSE ] = ( state, { labelId, response, error } ) => {
 	return newState;
 };
 
-reducers[ REFUND_REQUEST ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST ] = ( state ) => {
 	return { ...state,
 		refundDialog: { ...state.refundDialog,
 			isSubmitting: true,
@@ -683,7 +685,7 @@ reducers[ REFUND_REQUEST ] = ( state ) => {
 	};
 };
 
-reducers[ REFUND_RESPONSE ] = ( state, { response, error } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE ] = ( state, { response, error } ) => {
 	if ( error ) {
 		return { ...state,
 			refundDialog: {
@@ -709,7 +711,7 @@ reducers[ REFUND_RESPONSE ] = ( state, { response, error } ) => {
 	return newState;
 };
 
-reducers[ OPEN_REPRINT_DIALOG ] = ( state, { labelId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG ] = ( state, { labelId } ) => {
 	return { ...state,
 		reprintDialog: {
 			labelId,
@@ -717,13 +719,13 @@ reducers[ OPEN_REPRINT_DIALOG ] = ( state, { labelId } ) => {
 	};
 };
 
-reducers[ CLOSE_REPRINT_DIALOG ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG ] = ( state ) => {
 	return { ...state,
 		reprintDialog: null,
 	};
 };
 
-reducers[ CONFIRM_REPRINT ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT ] = ( state ) => {
 	return { ...state,
 		reprintDialog: { ...state.reprintDialog,
 			isFetching: true,
