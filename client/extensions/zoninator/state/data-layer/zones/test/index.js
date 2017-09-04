@@ -4,7 +4,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
-import { startSubmit, stopSubmit } from 'redux-form';
+import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import {
 	announceZoneSaved,
 	createZone,
 	deleteZone,
+	handleZoneSaved,
 	requestZonesError,
 	requestZonesList,
 	saveZone,
@@ -242,6 +243,38 @@ describe( '#announceZoneSaved()', () => {
 		expect( dispatch ).to.have.been.calledWith( successNotice(
 			translate( 'Zone saved!' ),
 			{ id: 'zoninator-zone-create' },
+		) );
+	} );
+} );
+
+describe( '#handleZoneSaved()', () => {
+	const getState = () => ( { extensions: { zoninator: { zones: { items: {
+		123: {
+			456: {
+				name: 'Before',
+				description: 'Zone before update',
+			}
+		}
+	} } } } } );
+
+	it( 'should dispatch `initialize`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123,
+			zoneId: 456,
+			form: 'form',
+			data: { name: 'After' },
+		};
+
+		handleZoneSaved( { dispatch, getState }, action );
+
+		expect( dispatch ).to.have.been.calledWith( initialize(
+			'form',
+			{
+				name: 'After',
+				description: 'Zone before update',
+			},
 		) );
 	} );
 } );

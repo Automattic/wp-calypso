@@ -97,21 +97,22 @@ export const announceZoneSaved = ( dispatch, { form, siteId }, data ) => {
 	) );
 };
 
-export const announceZoneCreated = ( { dispatch, getState }, action, response ) => {
+export const handleZoneCreated = ( { dispatch, getState }, action, response ) => {
 	const { siteId } = action;
 
 	page( `/extensions/zoninator/${ getSiteSlug( getState(), siteId ) }` );
 	announceZoneSaved( dispatch, action, response.data );
 };
 
-export const announceZoneUpdated = ( { dispatch, getState }, action ) => {
+export const handleZoneSaved = ( { dispatch, getState }, action ) => {
 	const { data, form, siteId, zoneId } = action;
 	const newZone = merge(
+		{},
 		getZone( getState(), siteId, zoneId ),
 		data,
 	);
 
-	dispatch( initialize( form, data ) );
+	dispatch( initialize( form, newZone ) );
 	announceZoneSaved( dispatch, action, newZone );
 };
 
@@ -152,8 +153,8 @@ export const announceDeleteFailure = ( { dispatch } ) =>
 	) );
 
 const dispatchFetchZonesRequest = dispatchRequest( requestZonesList, updateZonesList, requestZonesError );
-const dispatchAddZoneRequest = dispatchRequest( createZone, announceZoneCreated, announceSaveFailure );
-const dispatchSaveZoneRequest = dispatchRequest( saveZone, announceZoneUpdated, announceSaveFailure );
+const dispatchAddZoneRequest = dispatchRequest( createZone, handleZoneCreated, announceSaveFailure );
+const dispatchSaveZoneRequest = dispatchRequest( saveZone, handleZoneSaved, announceSaveFailure );
 const dispatchDeleteZoneRequest = dispatchRequest( deleteZone, announceZoneDeleted, announceDeleteFailure );
 
 export default {
