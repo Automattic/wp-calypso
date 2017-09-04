@@ -28,7 +28,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
-	USER_RECEIVE,
+	USER_REQUEST_SUCCESS,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -662,7 +662,7 @@ describe( 'reducer', () => {
 			const newState = socialAccount(
 				state,
 				{
-					type: USER_RECEIVE,
+					type: USER_REQUEST_SUCCESS,
 				}
 			);
 
@@ -718,7 +718,7 @@ describe( 'reducer', () => {
 			const newState = socialAccountLink(
 				state,
 				{
-					type: USER_RECEIVE,
+					type: USER_REQUEST_SUCCESS,
 				}
 			);
 

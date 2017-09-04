@@ -15,11 +15,11 @@ import url from 'url';
 import accessibleFocus from 'lib/accessible-focus';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
-import { receiveUser } from 'state/users/actions';
 import {
 	setCurrentUserId,
 	setCurrentUserFlags
 } from 'state/current-user/actions';
+import { receiveUser, requestUser } from 'state/users/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import touchDetect from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
@@ -186,14 +186,12 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	bindWpLocaleState( reduxStore );
 
 	if ( currentUser.get() ) {
-		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( currentUser.get() ) );
-		currentUser.on( 'change', () => {
-			reduxStore.dispatch( receiveUser( currentUser.get() ) );
-		} );
 		reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
 	}
+
+	reduxStore.dispatch( requestUser() );
 
 	if ( config.isEnabled( 'network-connection' ) ) {
 		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );

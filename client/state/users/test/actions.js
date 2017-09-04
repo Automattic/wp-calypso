@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { USER_RECEIVE } from 'state/action-types';
+import { USER_REQUEST_SUCCESS } from 'state/action-types';
 import { receiveUser } from '../actions';
 
 describe( 'actions', () => {
@@ -16,7 +16,7 @@ describe( 'actions', () => {
 			const action = receiveUser( user );
 
 			expect( action ).to.eql( {
-				type: USER_RECEIVE,
+				type: USER_REQUEST_SUCCESS,
 				user
 			} );
 		} );

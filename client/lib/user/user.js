@@ -56,31 +56,6 @@ User.prototype.initialize = function() {
 		// We're booting into support user mode, skip initialization of the main user.
 		return;
 	}
-
-	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		this.data = window.currentUser || false;
-
-		// Store the current user in localStorage so that we can use it to determine
-		// if the logged in user has changed when initializing in the future
-		if ( this.data ) {
-			this.clearStoreIfChanged( this.data.ID );
-			store.set( 'wpcom_user', this.data );
-		} else {
-			// The user is logged out
-			this.initialized = true;
-		}
-	} else {
-		this.data = store.get( 'wpcom_user' ) || false;
-
-		// Make sure that the user stored in localStorage matches the logged-in user
-		this.fetch();
-
-	}
-
-	if ( this.data ) {
-		this.initialized = true;
-		this.emit( 'change' );
-	}
 };
 
 
@@ -101,70 +76,8 @@ User.prototype.clearStoreIfChanged = function( userId ) {
  * Get user data
  */
 User.prototype.get = function() {
-	if ( ! this.data ) {
-		this.fetch();
-	}
 	return this.data;
 };
-
-
-/**
- * Fetch the current user from WordPress.com via the REST API
- * and stores it in local cache.
- *
- * @uses `wpcom`
- */
-User.prototype.fetch = function() {
-	if ( this.fetching ) {
-		return;
-	}
-
-	var me = wpcom.me();
-
-	// Request current user info
-	this.fetching = true;
-	debug( 'Getting user from api' );
-
-	me.get( { meta: 'flags' }, function( error, data ) {
-		if ( error ) {
-			if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
-				/**
-				 * if the user bootstrap is disabled (in development), we need to rely on a request to
-				 * /me to determine if the user is logged in.
-				 */
-				debug( 'The user is not logged in.' );
-
-				this.initialized = true;
-				this.emit( 'change' );
-			} else {
-				debug( 'Something went wrong trying to get the user.' );
-			}
-			return;
-		}
-
-		var userData = userUtils.filterUserObject( data );
-
-		// Release lock from subsequent fetches
-		this.fetching = false;
-
-		this.clearStoreIfChanged( userData.ID );
-
-		// Store user info in `this.data` and localstorage as `wpcom_user`
-		store.set( 'wpcom_user', userData );
-		this.data = userData;
-		if ( this.settings ) {
-			debug( 'Retaining fetched settings data in new user data' );
-			this.data.settings = this.settings;
-		}
-		this.initialized = true;
-
-		this.emit( 'change' );
-
-		debug( 'User successfully retrieved' );
-
-	}.bind( this ) );
-};
-
 
 User.prototype.getLanguage = function() {
 	var languages = config( 'languages' ),
@@ -248,6 +161,7 @@ User.prototype.set = function( attributes ) {
 	var changed = false,
 		computedAttributes = userUtils.getComputedAttributes( attributes );
 
+	this.data = this.data || {};
 	attributes = Object.assign( {}, attributes, computedAttributes );
 
 	for ( var prop in attributes ) {
