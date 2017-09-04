@@ -11,7 +11,7 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 * `name`: (string) Unique name of tour in camelCase.
 * `version` (string): Version identifier. We use date string like "20161224".
 * `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `path={ [ '/stats', '/settings' ] }`
-* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)).
+* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)). *Note:* you can reset the tours history by adding `?tour=reset` to the URL. 
 * `children` (nodes): only supported type is `<Step>`
 
 ### Example
