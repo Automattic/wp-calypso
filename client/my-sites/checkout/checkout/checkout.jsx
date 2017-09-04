@@ -316,7 +316,7 @@ const Checkout = React.createClass( {
 							args: {
 								productName: renewalItem.product_name,
 								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
-								date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
+								date: i18n.moment( product.expiry ).format( 'LL' ),
 								email: product.user_email
 							}
 						}
