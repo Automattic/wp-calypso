@@ -10,7 +10,7 @@ import _ from 'lodash';
  * Internal dependencies
  */
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
-//import Dropdown from 'components/dropdown';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 
@@ -26,48 +26,39 @@ const renderRateNotice = () => {
 };
 
 const ShippingRates = ( {
-		// id,
-		// selectedRates, // Store owner selected rates, not customer
+		id,
+		selectedRates, // Store owner selected rates, not customer
 		availableRates,
 		selectedPackages,
 		allPackages,
-		// updateRate,
+		updateRate,
 		currencySymbol,
 		errors,
 		shouldShowRateNotice,
 	} ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
-	// const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
+	const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
 	const hasMultiplePackages = ( 1 < Object.keys( selectedPackages ).length );
 
-	// const getTitle = ( pckg, pckgId ) => {
-	// 	if ( hasSinglePackage ) {
-	// 		return __( 'Choose rate' );
-	// 	}
-	// 	return __( 'Choose rate: %(pckg)s', { args: { pckg: packageNames[ pckgId ] } } );
-	// };
+	const getTitle = ( pckg, pckgId ) => {
+		if ( hasSinglePackage ) {
+			return __( 'Choose rate' );
+		}
+		return __( 'Choose rate: %(pckg)s', { args: { pckg: packageNames[ pckgId ] } } );
+	};
 
 	const renderSinglePackage = ( pckg, pckgId ) => {
-		// const selectedRate = selectedRates[ pckgId ] || '';
+		const selectedRate = selectedRates[ pckgId ] || '';
 		const packageRates = _.get( availableRates, [ pckgId, 'rates' ], [] );
 		const valuesMap = { '': __( 'Select one...' ) };
 		const serverErrors = errors.server && errors.server[ pckgId ];
-		// const formError = errors.form && errors.form[ pckgId ];
+		const formError = errors.form && errors.form[ pckgId ];
 
 		packageRates.forEach( ( rateObject ) => {
 			valuesMap[ rateObject.service_id ] = rateObject.title + ' (' + currencySymbol + Number( rateObject.rate ).toFixed( 2 ) + ')';
 		} );
 
-		// const onRateUpdate = ( value ) => updateRate( pckgId, value );
-		// { ! _.isEmpty( packageRates ) &&
-		// 	<Dropdown
-		// 		id={ id + '_' + pckgId }
-		// 		valuesMap={ valuesMap }
-		// 		title={ getTitle( pckg, pckgId ) }
-		// 		value={ selectedRate }
-		// 		updateValue={ onRateUpdate }
-		// 		error={ formError } />
-		// }
+		const onRateUpdate = ( value ) => updateRate( pckgId, value );
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
 				{ serverErrors &&
@@ -75,7 +66,15 @@ const ShippingRates = ( {
 					hasMultiplePackages &&
 					<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
 				}
-
+				{ ! _.isEmpty( packageRates ) &&
+					<Dropdown
+						id={ id + '_' + pckgId }
+						valuesMap={ valuesMap }
+						title={ getTitle( pckg, pckgId ) }
+						value={ selectedRate }
+						updateValue={ onRateUpdate }
+						error={ formError } />
+				}
 				{ serverErrors && serverErrors.map( ( serverError, index ) => {
 					return <FieldError
 						type="server-error"

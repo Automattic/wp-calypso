@@ -5,27 +5,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-//import { translate as __ } from 'i18n-calypso';
+import { translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-//import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-//import Dropdown from 'components/dropdown';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
 import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-const Sidebar = ( /*props*/ ) => {
-	// const { form, errors, paperSize } = props;
-	// <Dropdown
-	// id={ 'paper_size' }
-	// valuesMap={ getPaperSizes( form.origin.values.country ) }
-	// title={ __( 'Paper size' ) }
-	// value={ paperSize }
-	// updateValue={ props.updatePaperSize }
-	// error={ errors.paperSize } />
+const Sidebar = ( props ) => {
+	const { form, errors, paperSize } = props;
+
 	return (
 		<div className="label-purchase-modal__sidebar">
+			<Dropdown
+				id={ 'paper_size' }
+				valuesMap={ getPaperSizes( form.origin.values.country ) }
+				title={ __( 'Paper size' ) }
+				value={ paperSize }
+				updateValue={ props.updatePaperSize }
+				error={ errors.paperSize } />
 		</div>
 	);
 };

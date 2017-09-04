@@ -11,10 +11,10 @@ import _ from 'lodash';
 /**
  * Internal dependencies
  */
-import TextField from 'components/text-field';
+import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import StepConfirmationButton from '../step-confirmation-button';
-import CountryDropdown from 'components/country-dropdown';
-import StateDropdown from 'components/state-dropdown';
+import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
+import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';

@@ -12,7 +12,7 @@ import _ from 'lodash';
  * Internal dependencies
  */
 import ItemInfo from './item-info';
-import NumberField from 'components/number-field';
+import NumberField from 'woocommerce/woocommerce-services/components/number-field';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Button from 'components/button';
