@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { translate as __ } from 'i18n-calypso';
 import classNames from 'classnames';

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -104,7 +105,7 @@ class ShippingLabelRootView extends Component {
 	renderLoading() {
 		return (
 			<div>
-				<QueryLabels />
+				<QueryLabels orderId={ this.props.orderId } />
 				<LoadingSpinner />
 			</div>
 		);
@@ -117,7 +118,7 @@ class ShippingLabelRootView extends Component {
 
 		return (
 			<div className="shipping-label__container">
-				<QueryLabels />
+				<QueryLabels orderId={ this.props.orderId } />
 				<GlobalNotices id="notices" notices={ notices.list } />
 				{ this.renderPurchaseLabelFlow() }
 				{ this.props.labels.length ? this.renderLabels() : null }
@@ -127,6 +128,7 @@ class ShippingLabelRootView extends Component {
 }
 
 ShippingLabelRootView.propTypes = {
+	orderId: PropTypes.number.isRequired,
 	loaded: PropTypes.bool.isRequired,
 	needToFetchLabelStatus: PropTypes.bool.isRequired,
 	numPaymentMethods: PropTypes.number.isRequired,

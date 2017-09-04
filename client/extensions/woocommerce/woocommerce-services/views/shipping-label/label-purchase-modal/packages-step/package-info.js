@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -25,8 +26,8 @@ import {
 } from '../../../state/actions';
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
-	return `${ dimensions.length } ${ dimensionUnit } x 
-			${ dimensions.width } ${ dimensionUnit } x 
+	return `${ dimensions.length } ${ dimensionUnit } x
+			${ dimensions.width } ${ dimensionUnit } x
 			${ dimensions.height } ${ dimensionUnit }`;
 };
 
