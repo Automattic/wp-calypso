@@ -18,6 +18,7 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
+import OrderCreate from './app/order/order-create';
 import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
@@ -79,6 +80,12 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-orders',
 			documentTitle: translate( 'Order Details' ),
 			path: '/store/order/:site/:order',
+		},
+		{
+			container: OrderCreate,
+			configKey: 'woocommerce/extension-orders-create',
+			documentTitle: translate( 'New Order' ),
+			path: '/store/order/:site/',
 		},
 		{
 			container: Promotions,

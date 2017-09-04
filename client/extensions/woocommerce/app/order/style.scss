@@ -1,4 +1,5 @@
-.order__container {
+.order__container,
+.order-create__container {
 	padding-bottom: 0;
 
 	@include breakpoint( ">660px" ) {
