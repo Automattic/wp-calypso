@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 
@@ -14,16 +16,17 @@ import FormLabel from 'components/forms/form-label';
 import ActionButtons from 'components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { closeAddItem, setAddedItem, addItems } from '../../../state/actions';
 
-const AddItemDialog = ( {
-	showAddItemDialog,
-	addedItems,
-	openedPackageId,
-	selected,
-	all,
-	closeAddItem,
-	setAddedItem,
-	addItems } ) => {
+const AddItemDialog = ( props ) => {
+	const {
+		showAddItemDialog,
+		addedItems,
+		openedPackageId,
+		selected,
+		all,
+	} = props;
+
 	if ( ! showAddItemDialog ) {
 		return null;
 	}
@@ -38,7 +41,7 @@ const AddItemDialog = ( {
 			? __( '%(item)s from {{pckg/}}', { args: { item: item.name }, components: { pckg: getPackageNameElement( pckgId ) } } )
 			: item;
 
-		const onChange = ( event ) => setAddedItem( pckgId, itemIdx, event.target.checked );
+		const onChange = ( event ) => props.setAddedItem( pckgId, itemIdx, event.target.checked );
 		return (
 			<FormLabel
 				key={ `${ pckgId }-${ itemIdx }` }
@@ -66,8 +69,8 @@ const AddItemDialog = ( {
 	return (
 		<Dialog isVisible={ showAddItemDialog }
 				isFullScreen={ false }
-				onClickOutside={ closeAddItem }
-				onClose={ closeAddItem }
+				onClickOutside={ props.closeAddItem }
+				onClose={ props.closeAddItem }
 				additionalClassNames="wcc-root packages-step__dialog" >
 			<FormSectionHeading>{ __( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
@@ -85,9 +88,9 @@ const AddItemDialog = ( {
 					label: __( 'Add' ),
 					isPrimary: true,
 					isDisabled: ! _.some( addedItems, _.size ),
-					onClick: () => addItems( openedPackageId ),
+					onClick: () => props.addItems( openedPackageId ),
 				},
-				{ label: __( 'Close' ), onClick: closeAddItem },
+				{ label: __( 'Close' ), onClick: props.closeAddItem },
 			] } />
 		</Dialog>
 	);
@@ -104,4 +107,18 @@ AddItemDialog.propTypes = {
 	addItems: PropTypes.func.isRequired,
 };
 
-export default AddItemDialog;
+const mapStateToProps = ( state ) => {
+	return {
+		showAddItemDialog: state.shippingLabel.showAddItemDialog || false,
+		addedItems: state.shippingLabel.addedItems,
+		openedPackageId: state.shippingLabel.openedPackageId,
+		selected: state.shippingLabel.form.packages.selected,
+		all: state.shippingLabel.form.packages.all,
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( AddItemDialog );

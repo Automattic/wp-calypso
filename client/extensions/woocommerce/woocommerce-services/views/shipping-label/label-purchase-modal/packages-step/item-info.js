@@ -2,15 +2,19 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import { openItemMove, removeItem } from '../../../state/actions';
 
-const ItemInfo = ( { item, itemIndex, openItemMove } ) => {
-	const onMoveClick = () => openItemMove( itemIndex );
+const ItemInfo = ( props ) => {
+	const { item, itemIndex } = props;
+	const onMoveClick = () => props.openItemMove( itemIndex );
 
 	const renderMoveToPackage = () => {
 		return (
@@ -44,4 +48,11 @@ ItemInfo.propTypes = {
 	openItemMove: PropTypes.func.isRequired,
 };
 
-export default ItemInfo;
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( {
+		openItemMove,
+		removeItem,
+	}, dispatch );
+};
+
+export default connect( null, mapDispatchToProps )( ItemInfo );
