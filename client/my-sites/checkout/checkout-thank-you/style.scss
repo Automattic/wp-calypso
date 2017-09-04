@@ -331,3 +331,11 @@
 	color: inherit;
 	text-decoration: underline;
 }
+
+.checkout-thank-you__jetpack-action-buttons {
+	display:flex;
+}
+
+.checkout-thank-you__jetpack .thank-you-card__action .button {
+	max-width: 45%;
+}

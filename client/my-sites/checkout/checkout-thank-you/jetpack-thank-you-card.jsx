@@ -638,13 +638,13 @@ class JetpackThankYouCard extends Component {
 
 		if ( 100 === progress ) {
 			return (
-				<div>
-					{ this.renderLiveChatButton() }
+				<div className="checkout-thank-you__jetpack-action-buttons">
 					<a
 						className={ classNames( 'button', 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
 						href={ buttonUrl }>
 						{ translate( 'Visit Your Site' ) }
 					</a>
+					{ this.renderLiveChatButton() }
 				</div>
 			);
 		}
