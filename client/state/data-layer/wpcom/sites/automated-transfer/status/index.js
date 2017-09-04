@@ -24,7 +24,7 @@ export const requestStatus = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveStatus = ( { dispatch }, { siteId }, next, { status, uploaded_plugin_slug } ) => {
+export const receiveStatus = ( { dispatch }, { siteId }, { status, uploaded_plugin_slug } ) => {
 	dispatch( setAutomatedTransferStatus( siteId, status, uploaded_plugin_slug ) );
 	if ( status !== 'complete' ) {
 		delay( dispatch, 3000, getAutomatedTransferStatus( siteId ) );

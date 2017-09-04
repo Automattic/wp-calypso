@@ -48,7 +48,7 @@ describe( 'receiveStatus', () => {
 
 	it( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, null, COMPLETE_RESPONSE );
+		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
@@ -56,7 +56,7 @@ describe( 'receiveStatus', () => {
 
 	it( 'should request status again if not complete', () => {
 		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, null, IN_PROGRESS_RESPONSE );
+		receiveStatus( { dispatch }, { siteId }, IN_PROGRESS_RESPONSE );
 		clock.tick( 4000 );
 
 		expect( dispatch ).to.have.been.calledTwice;
