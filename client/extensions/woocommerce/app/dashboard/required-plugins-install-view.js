@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -22,7 +22,6 @@ import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import wp from 'lib/wp';
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
@@ -74,7 +73,6 @@ class RequiredPluginsInstallView extends Component {
 
 		return {
 			woocommerce: translate( 'WooCommerce' ),
-			'wc-api-dev': translate( 'WooCommerce API Dev' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
 			'taxjar-simplified-taxes-for-woocommerce': translate( 'TaxJar - Sales Tax Automation for WooCommerce' ),
@@ -117,7 +115,7 @@ class RequiredPluginsInstallView extends Component {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
 			// pluginData will be null until the action has had
 			// a chance to try and fetch data for the plugin slug
-			// given. Note that non-wp-org plugins (like wc-api-dev)
+			// given. Note that non-wp-org plugins
 			// will be accepted too, but with
 			// { fetched: false, wporg: false }
 			// as their response
@@ -194,17 +192,7 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			if ( 'wc-api-dev' === workingOn ) {
-				// Special handling for wc-api-dev
-				wp.req.post( {
-					path: `/sites/${ site.ID }/woocommerce/install-api-dev-plugin`
-				} ).then( () => {
-					this.props.fetchPlugins( [ site.ID ] );
-				} );
-			} else {
-				// Otherwise, handle plugin installation the normal way
-				this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
-			}
+			this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
 
 			this.setState( {
 				toInstall,
@@ -385,7 +373,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			activatePlugin,
 			fetchPluginData,
-			fetchPlugins,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
 		},
