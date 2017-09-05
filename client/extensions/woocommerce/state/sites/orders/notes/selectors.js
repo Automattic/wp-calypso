@@ -36,7 +36,7 @@ export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId
  * @param {Object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of orders, or false if there was an error
+ * @return {array} List of order notes
  */
 export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areOrderNotesLoaded( state, orderId, siteId ) ) {
@@ -45,10 +45,7 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
 
 	const notes = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'items' ], {} );
 	const notesForOrder = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'orders', orderId ], [] );
-	if ( notesForOrder.length ) {
-		return notesForOrder.map( id => notes[ id ] );
-	}
-	return false;
+	return notesForOrder.map( id => notes[ id ] );
 };
 
 /**
