@@ -79,11 +79,11 @@ const PurchaseDialog = ( props ) => {
 		},
 	];
 
-	const onClose = () => props.exitPrintingFlow( false );
+	const onClose = () => props.exitPrintingFlow( props.siteId, props.orderId, false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
 		buttons.push( {
-			onClick: exitPrintingFlow,
+			onClick: onClose,
 			label: __( 'Cancel' ),
 		} );
 	}

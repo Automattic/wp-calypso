@@ -11,14 +11,16 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 } from '../action-types';
 
-export default ( dispatch, address, group ) => {
-	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS, group } );
+export default ( siteId, orderId, dispatch, address, group ) => {
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS, group, siteId, orderId } );
 	return new Promise( ( resolve ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
 		const setSuccess = ( json ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
+				siteId,
+				orderId,
 				group,
 				normalized: json.normalized,
 				isTrivialNormalization: json.is_trivial_normalization,
@@ -28,12 +30,14 @@ export default ( dispatch, address, group ) => {
 			if ( ! saving ) {
 				dispatch( {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
+					siteId,
+					orderId,
 					group,
 					error,
 				} );
 				if ( error ) {
 					if ( 'rest_cookie_invalid_nonce' === error ) {
-						dispatch( exitPrintingFlow( true ) );
+						dispatch( exitPrintingFlow( siteId, orderId, true ) );
 					}
 
 					console.error( error ); // eslint-disable-line no-console
@@ -42,7 +46,7 @@ export default ( dispatch, address, group ) => {
 			}
 		};
 		setIsSaving( true );
-		api.post( api.url.addressNormalization(), { address, type: group } )
+		api.post( siteId, api.url.addressNormalization(), { address, type: group } )
 			.then( setSuccess )
 			.catch( setError )
 			.then( () => ( setIsSaving( false ) ) );

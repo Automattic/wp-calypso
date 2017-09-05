@@ -70,8 +70,9 @@ class ShippingLabelRootView extends Component {
 	};
 
 	renderLabelButton = () => {
+		const onNewLabelClick = () => this.props.openPrintingFlow( this.props.siteId, this.props.orderId );
 		return (
-			<Button className="shipping-label__new-label-button" onClick={ this.props.openPrintingFlow } >
+			<Button className="shipping-label__new-label-button" onClick={ onNewLabelClick } >
 				{ __( 'Create new label' ) }
 			</Button>
 		);
