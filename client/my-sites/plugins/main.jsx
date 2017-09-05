@@ -45,6 +45,7 @@ import {
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
 import HeaderButton from 'components/header-button';
+import { isEnabled } from 'config';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -368,15 +369,40 @@ const PluginsMain = React.createClass( {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
 	},
 
-	getAddPluginButton() {
-		const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
+	renderAddPluginButton() {
+		const { selectedSiteSlug, translate } = this.props;
+		const browserUrl = '/plugins/browse' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
 		return (
 			<HeaderButton
 				icon="plus"
-				label={ this.props.translate( 'Add Plugin' ) }
-				aria-label={ this.props.translate( 'Browse all plugins', { context: 'button label' } ) }
+				label={ translate( 'Add Plugin' ) }
+				aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
+			/>
+		);
+	},
+
+	handleUploadPluginButtonClick() {
+		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
+	},
+
+	renderUploadPluginButton() {
+		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
+			return null;
+		}
+
+		const { selectedSiteSlug, translate } = this.props;
+		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		return (
+			<HeaderButton
+				icon="cloud-upload"
+				label={ translate( 'Upload Plugin' ) }
+				aria-label={ translate( 'Upload Plugin' ) }
+				href={ uploadUrl }
+				onClick={ this.handleUploadPluginButtonClick }
 			/>
 		);
 	},
@@ -421,7 +447,6 @@ const PluginsMain = React.createClass( {
 			);
 		}
 
-		const addPluginButton = this.getAddPluginButton();
 		const navItems = this.getFilters().map( filterItem => {
 			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
 				return null;
@@ -462,7 +487,10 @@ const PluginsMain = React.createClass( {
 							analyticsGroup="Plugins"
 							placeholder={ this.getSearchPlaceholder() } />
 					</SectionNav>
-					{ addPluginButton }
+					<div className="plugins__header-buttons">
+						{ this.renderAddPluginButton() }
+						{ this.renderUploadPluginButton() }
+					</div>
 				</div>
 				{ this.renderPluginsContent() }
 			</Main>
