@@ -11,7 +11,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
@@ -71,15 +70,13 @@ const getAvailableControls = props => {
 			text: translate( 'Stats' ),
 		} );
 
-		if ( isEnabled( 'republicize' ) ) {
-			controls.main.push( {
-				className: 'share' + ( current === 'share' ? ' is-active' : '' ),
-				disabled: ! props.isPublicizeEnabled,
-				icon: 'share',
-				onClick: onToggleShare,
-				text: translate( 'Share' ),
-			} );
-		}
+		controls.main.push( {
+			className: 'share' + ( current === 'share' ? ' is-active' : '' ),
+			disabled: ! props.isPublicizeEnabled,
+			icon: 'share',
+			onClick: onToggleShare,
+			text: translate( 'Share' ),
+		} );
 	} else if ( 'trash' !== post.status ) {
 		controls.main.push( {
 			className: 'view' + ( current === 'preview' ? ' is-active' : '' ),
