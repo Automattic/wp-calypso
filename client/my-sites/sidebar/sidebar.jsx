@@ -238,7 +238,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const manageButton = this.props.isJetpack
+		const manageButton = this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites )
 			? <SidebarButton href={ managePluginsLink }>
 					{ this.props.translate( 'Manage' ) }
 				</SidebarButton>
