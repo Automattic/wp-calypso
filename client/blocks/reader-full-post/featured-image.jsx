@@ -5,6 +5,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+
 export default class FeaturedImage extends React.Component {
 	constructor( props ) {
 		super();
