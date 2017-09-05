@@ -272,8 +272,6 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore = this.isRestoreInProgress();
-
 		if ( isEmpty( logs ) ) {
 			return (
 				<EmptyContent
@@ -284,6 +282,7 @@ class ActivityLog extends Component {
 			);
 		}
 
+		const disableRestore = this.isRestoreInProgress();
 		const logsGroupedByDay = groupBy( logs, log =>
 			this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
 		);
@@ -323,12 +322,17 @@ class ActivityLog extends Component {
 	}
 
 	renderMonthNavigation( position ) {
-		const { slug } = this.props;
+		const { logs, slug } = this.props;
 		const startOfMonth = this.getStartMoment().startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' ),
 		};
+
+		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
+			return null;
+		}
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }

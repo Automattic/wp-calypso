@@ -46,6 +46,9 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 
 	debug( 'Handling activity request', query );
 
+	// Clear current logs, this will allow loading placeholders to appear
+	dispatch( activityLogUpdate( siteId, undefined ) );
+
 	dispatch(
 		http(
 			{

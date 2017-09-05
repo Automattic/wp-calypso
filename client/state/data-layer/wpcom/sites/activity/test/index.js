@@ -94,7 +94,7 @@ describe( 'handleActivityLogRequest', () => {
 
 		handleActivityLogRequest( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
@@ -120,7 +120,7 @@ describe( 'handleActivityLogRequest', () => {
 
 		handleActivityLogRequest( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
@@ -149,7 +149,7 @@ describe( 'handleActivityLogRequest', () => {
 
 		handleActivityLogRequest( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
