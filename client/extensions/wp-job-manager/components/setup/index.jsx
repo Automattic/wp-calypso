@@ -14,8 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import Intro from './intro';
 import Main from 'components/main';
 import Wizard from 'components/wizard';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const SetupWizard = ( {
 	slug,
@@ -41,15 +40,9 @@ const SetupWizard = ( {
 	);
 };
 
-const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-
-		return {
-			slug: getSiteSlug( state, siteId ),
-		};
-	}
-);
+const connectComponent = connect( state => ( {
+	slug: getSelectedSiteSlug( state ),
+} ) );
 
 SetupWizard.propTypes = {
 	slug: PropTypes.string,
