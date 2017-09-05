@@ -17,7 +17,7 @@ import {
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
 } from 'state/action-types';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
@@ -59,7 +59,7 @@ const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
 	dispatch(
-		local( {
+		bypassDataLayer( {
 			...omit( action, [ 'meta' ] ),
 			status: previousStatus,
 		} )
@@ -229,7 +229,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 
 export const announceEditFailure = ( { dispatch }, action ) => {
 	dispatch(
-		local( {
+		bypassDataLayer( {
 			...omit( action, [ 'originalComment' ] ),
 			comment: action.originalComment,
 		} )

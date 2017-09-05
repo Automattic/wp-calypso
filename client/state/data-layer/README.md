@@ -86,7 +86,7 @@ const myHandler = ( store, action ) => { … }
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
 When dispatching through the store's `dispatch` function the action will start at the beginning of the entire middleware chain.
 Sometimes we need to bypass the data layer so that we don't create endless loops of action dispatches.
-In these cases we can import the `local()` function which will cause the action to do just that: bypass the data layer.
+In these cases we can import the `bypassDataLayer()` function which will cause the action to do just that: bypass the data layer.
 
 
 ```js

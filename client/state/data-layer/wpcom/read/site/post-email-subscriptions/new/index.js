@@ -17,7 +17,7 @@ import {
 } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(
@@ -42,7 +42,7 @@ export function receivePostEmailSubscription( store, action, response ) {
 	}
 	// pass this on, but tack in the delivery_frequency that we got back from the API
 	store.dispatch(
-		local(
+		bypassDataLayer(
 			updateNewPostEmailSubscription(
 				action.payload.blogId,
 				get( response, [ 'subscription', 'delivery_frequency' ] )
@@ -53,7 +53,7 @@ export function receivePostEmailSubscription( store, action, response ) {
 
 export function receivePostEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	dispatch( local( unsubscribeToNewPostEmail( action.payload.blogId ) ) );
+	dispatch( bypassDataLayer( unsubscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
 export default {

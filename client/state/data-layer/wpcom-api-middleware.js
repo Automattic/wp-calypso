@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { local } from './utils';
+import { bypassDataLayer } from './utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
 
 import wpcomHttpHandlers from './wpcom-http';
@@ -91,7 +91,7 @@ export const middleware = handlers => store => next => {
 		handlerChain.forEach( handler => handler( store, action ) );
 
 		if ( shouldNext( action ) ) {
-			next( local( action ) );
+			next( bypassDataLayer( action ) );
 		}
 	};
 };

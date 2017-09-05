@@ -19,7 +19,7 @@ import {
 	updateNewPostEmailSubscription,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailSubscription', () => {
@@ -50,7 +50,7 @@ describe( 'comment-email-subscriptions', () => {
 				},
 			} );
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, 'daily' ) )
+				bypassDataLayer( updateNewPostEmailSubscription( 1234, 'daily' ) )
 			);
 		} );
 
@@ -68,7 +68,9 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewPostEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) )
+			);
 		} );
 	} );
 
@@ -81,7 +83,9 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewPostEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) )
+			);
 		} );
 	} );
 } );

@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import {
 	addComments,
 	announceEditFailure,
@@ -256,7 +256,7 @@ describe( '#announceEditFailure', () => {
 	it( 'should dispatch a local comment edit action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith( local( {
+		expect( dispatch ).to.have.been.calledWith( bypassDataLayer( {
 			type: COMMENTS_EDIT,
 			siteId: 1,
 			postId: 1,
