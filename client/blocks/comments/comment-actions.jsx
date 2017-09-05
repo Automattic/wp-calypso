@@ -57,7 +57,7 @@ const CommentActions = ( {
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
-					{ translate( 'Read more' ) }
+					{ translate( 'Read More' ) }
 				</button> }
 			{ showReplyButton &&
 				<button className="comments__comment-actions-reply" onClick={ handleReply }>

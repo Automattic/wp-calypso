@@ -322,13 +322,21 @@
 
 	&.is-excerpt,
 	&.is-excerpt .comments__comment-content {
-		max-height: 15px * 1.6 * 3;
+		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
 	}
 
 	&.is-single-line .comments__comment-content,
 	&.is-excerpt .comments__comment-content {
 		overflow: hidden;
 	}
+}
+
+.comments__comment-content-wrapper.is-excerpt ~ .comments__comment-actions {
+	margin-top: -10px;
+}
+
+.comments__comment-content-wrapper.is-full ~ .comments__comment-actions {
+	margin-top: -5px;
 }
 
 .comments__comment-read-more {
@@ -429,7 +437,6 @@ a.comments__comment-username {
 	list-style: none;
 	color: $gray;
 	font-size: 14px;
-	margin-top: -5px;
 
 	button {
 		display: inline-block;
@@ -480,7 +487,7 @@ a.comments__comment-username {
 	}
 
 	// Aligns Like icon to comment text when it's by itself
-	:only-child {
+	> :only-child {
 		left: -3px;
 		top: 3px;
 	}
@@ -574,6 +581,12 @@ a.comments__comment-username {
 	text-transform: uppercase;
 }
 
-.comments__comment-actions button .comments__comment-actions-read-more-icon {
-	margin-right: -2px;
+.comments__comment-actions .comments__comment-actions-read-more {
+	color: $blue-medium;
+	margin: 0 10px 0 -3px;
+	padding-left: 0;
+}
+
+.comments__comment-actions-read-more-icon {
+	fill: $blue-medium;
 }
