@@ -1,4 +1,4 @@
-module.exports = function( key ) {
+export default function( key ) {
 	if ( key === 'mc_analytics_enabled' ) {
 		return true;
 	}
@@ -8,4 +8,4 @@ module.exports = function( key ) {
 	}
 
 	throw new Error( 'key ' + key + ' not expected to be needed' );
-};
+}

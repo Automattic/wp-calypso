@@ -493,4 +493,4 @@ const analytics = {
 	}
 };
 emitter( analytics );
-module.exports = analytics;
+export default analytics;
