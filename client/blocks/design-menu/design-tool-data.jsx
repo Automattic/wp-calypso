@@ -43,7 +43,7 @@ export default function designTool( Component ) {
 		buildOnChangeFor( id ) {
 			return customizations => {
 				const newCustomizations = this.getUpdatedCustomizationsForKey( id, customizations );
-				debug( `changed customizations for "${id}" to`, newCustomizations );
+				debug( `changed customizations for "${ id }" to`, newCustomizations );
 				return this.props.updateCustomizations( this.props.selectedSiteId, newCustomizations );
 			};
 		},

@@ -99,11 +99,11 @@ const Site = React.createClass( {
 					title={
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 							: translate( 'Select site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
@@ -111,11 +111,11 @@ const Site = React.createClass( {
 					aria-label={
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 							: translate( 'Select site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 					}
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
