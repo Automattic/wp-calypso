@@ -65,8 +65,8 @@ class Intro extends Component {
 						{ translate( 'Skip setup. I will set up the plugin manually.' ) }
 					</a>
 					<Button primary
-						className="intro__continue">
-						{ translate( 'Continue' ) }
+						className="intro__start-setup">
+						{ translate( 'Start Setup' ) }
 					</Button>
 				</CompactCard>
 			</div>
