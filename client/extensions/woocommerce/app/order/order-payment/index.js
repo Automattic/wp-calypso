@@ -71,29 +71,38 @@ class OrderPaymentCard extends Component {
 
 	getPaymentStatus = () => {
 		const { order, translate } = this.props;
-		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
-			args: {
-				total: formatCurrency( order.total, order.currency ),
-				method: order.payment_method_title,
-			}
-		} );
+		let paymentStatus;
 
 		if ( 'refunded' === order.status ) {
-			refundStatus = translate( 'Payment of %(total)s has been refunded', {
+			paymentStatus = translate( 'Payment of %(total)s has been refunded', {
 				args: {
 					total: formatCurrency( order.total, order.currency ),
 				}
 			} );
+		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
+			paymentStatus = translate( 'Awaiting payment of %(total)s via %(method)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+					method: order.payment_method_title,
+				}
+			} );
 		} else if ( order.refunds.length ) {
 			const refund = this.getRefundedTotal( order );
-			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
+			paymentStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
 				args: {
 					total: formatCurrency( order.total, order.currency ),
 					refund: formatCurrency( refund, order.currency ),
 				}
 			} );
+		} else {
+			paymentStatus = translate( 'Payment of %(total)s received via %(method)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+					method: order.payment_method_title,
+				}
+			} );
 		}
-		return refundStatus;
+		return paymentStatus;
 	}
 
 	toggleDialog = () => {
