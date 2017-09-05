@@ -134,9 +134,5 @@ export default connect(
 			liveChatAvailable: isHappychatAvailable( state ),
 		};
 	},
-	dispatch => ( {
-		recordTracksEvent( eventName ) {
-			dispatch( recordTracksEvent( eventName ) );
-		}
-	} )
+	{ recordTracksEvent }
 )( localize( HappinessSupport ) );
