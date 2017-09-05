@@ -263,8 +263,6 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore = this.isRestoreInProgress();
-
 		if ( isEmpty( logs ) ) {
 			return (
 				<EmptyContent
@@ -275,6 +273,7 @@ class ActivityLog extends Component {
 			);
 		}
 
+		const disableRestore = this.isRestoreInProgress();
 		const logsGroupedByDay = groupBy( logs, log =>
 			this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
 		);
