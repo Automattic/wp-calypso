@@ -313,12 +313,17 @@ class ActivityLog extends Component {
 	}
 
 	renderMonthNavigation( position ) {
-		const { slug } = this.props;
+		const { logs, slug } = this.props;
 		const startOfMonth = this.getStartMoment().startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' ),
 		};
+
+		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
+			return null;
+		}
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
