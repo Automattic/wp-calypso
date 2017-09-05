@@ -22,12 +22,11 @@ class ZoneContentForm extends PureComponent {
 		handleSubmit: PropTypes.func.isRequired,
 		label: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
 		submitting: PropTypes.bool.isRequired,
 		translate: PropTypes.func.isRequired,
 	}
 
-	save = data => this.props.onSubmit( this.props.siteId, form, data );
+	save = data => this.props.onSubmit( form, data );
 
 	render() {
 		const {
@@ -57,7 +56,10 @@ class ZoneContentForm extends PureComponent {
 	}
 }
 
-const createReduxForm = reduxForm( { form } );
+const createReduxForm = reduxForm( {
+	enableReinitialize: true,
+	form,
+} );
 
 export default flowRight(
 	localize,

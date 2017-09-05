@@ -13,7 +13,7 @@ import Settings from '../components/settings';
 
 export const renderTab = ( component ) => ( context ) => {
 	const siteId = getSiteFragment( context.path );
-	const zoneId = context.params.zone;
+	const zoneId = parseInt( context.params.zone );
 
 	let baseAnalyticsPath = sectionify( context.path );
 

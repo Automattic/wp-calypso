@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, noop } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,16 +14,25 @@ import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
+import QueryFeed from '../../data/query-feed';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import ZoneContentForm from '../../forms/zone-content-form';
+import { saveFeed } from '../../../state/feeds/actions';
+import { deleteZone, saveZone } from '../../../state/zones/actions';
+import { getFeed } from '../../../state/feeds/selectors';
+import { getZone } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
 
 	static propTypes = {
+		saveFeed: PropTypes.func.isRequired,
+		saveZone: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		zone: PropTypes.object,
+		zoneId: PropTypes.number,
 	}
 
 	state = {
@@ -34,12 +43,20 @@ class Zone extends Component {
 
 	hideDeleteDialog = () => this.setState( { showDeleteDialog: false } );
 
+	deleteZone = () => this.props.deleteZone( this.props.siteId, this.props.zoneId );
+
+	saveZoneDetails = ( form, data ) => this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
+
+	saveZoneFeed = ( form, data ) => this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
+
 	render() {
-		const { siteId, siteSlug, translate } = this.props;
+		const { feed, siteId, siteSlug, translate, zone, zoneId } = this.props;
 		const { showDeleteDialog } = this.state;
 
 		return (
 			<div>
+				<QueryFeed siteId={ siteId } zoneId={ zoneId } />
+
 				<HeaderCake
 					backHref={ `${ settingsPath }/${ siteSlug }` }
 					actionButton={ <Button compact primary scary onClick={ this.showDeleteDialog }>{ translate( 'Delete' ) }</Button> } >
@@ -49,23 +66,38 @@ class Zone extends Component {
 				{
 					showDeleteDialog &&
 					<DeleteZoneDialog
-						zoneName="[zone name]"
-						onConfirm={ noop }
+						zoneName={ zone.name }
+						onConfirm={ this.deleteZone }
 						onCancel={ this.hideDeleteDialog } />
 					}
 
-				<ZoneDetailsForm label={ translate( 'Zone label' ) } siteId={ siteId } onSubmit={ noop } />
+				<ZoneDetailsForm
+					label={ translate( 'Zone label' ) }
+					onSubmit={ this.saveZoneDetails }
+					initialValues={ zone } />
 
-				<ZoneContentForm label={ translate( 'Zone content' ) } siteId={ siteId } onSubmit={ noop } />
+				<ZoneContentForm
+					label={ translate( 'Zone content' ) }
+					onSubmit={ this.saveZoneFeed }
+					initialValues={ { posts: feed } } />
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) );
+const connectComponent = connect(
+	( state, { zoneId } ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			zone: getZone( state, siteId, zoneId ),
+			feed: getFeed( state, siteId, zoneId ),
+		};
+	},
+	{ deleteZone, saveZone, saveFeed },
+);
 
 export default flowRight(
 	connectComponent,

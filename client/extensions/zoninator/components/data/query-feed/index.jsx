@@ -22,18 +22,14 @@ class QueryFeed extends PureComponent {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			! nextProps.siteId ||
-			! nextProps.zoneId ||
-			( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId )
-		) {
+		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
 			return;
 		}
 
 		this.requestFeed( nextProps );
 	}
 
-	requestFeed = props => props.requestFeed( props.siteId, props.zoneId );
+	requestFeed = props => props.siteId && props.zoneId && props.requestFeed( props.siteId, props.zoneId );
 
 	render() {
 		return null;
