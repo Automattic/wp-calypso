@@ -19,6 +19,10 @@ import {
 	uploadedPluginId,
 	uploadError,
 } from '../reducer';
+import {
+	initiateAutomatedTransfer,
+	setAutomatedTransferStatus,
+} from 'state/automated-transfer/actions';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';
@@ -30,6 +34,11 @@ const error = {
 describe( 'uploadedPluginId', () => {
 	it( 'should contain plugin id after upload completes', () => {
 		const state = uploadedPluginId( {}, completePluginUpload( siteId, pluginId ) );
+		expect( state[ siteId ] ).to.equal( pluginId );
+	} );
+
+	it( 'should contain plugin id after transfer status', () => {
+		const state = uploadedPluginId( {}, setAutomatedTransferStatus( siteId, 'complete', pluginId ) );
 		expect( state[ siteId ] ).to.equal( pluginId );
 	} );
 
@@ -100,17 +109,27 @@ describe( 'inProgress', () => {
 	} );
 
 	it( 'should not be true after completed upload', () => {
-		const state = inProgress( { [ siteId ]: error }, completePluginUpload( siteId, pluginId ) );
+		const state = inProgress( { [ siteId ]: true }, completePluginUpload( siteId, pluginId ) );
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
 
 	it( 'should not be true after upload error', () => {
-		const state = inProgress( { [ siteId ]: error }, pluginUploadError( siteId, error ) );
+		const state = inProgress( { [ siteId ]: true }, pluginUploadError( siteId, error ) );
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
 
 	it( 'should not be true after upload clear', () => {
-		const state = inProgress( { [ siteId ]: error }, clearPluginUpload( siteId ) );
+		const state = inProgress( { [ siteId ]: true }, clearPluginUpload( siteId ) );
+		expect( state[ siteId ] ).to.not.be.true;
+	} );
+
+	it( 'should be true on transfer start', () => {
+		const state = inProgress( {}, initiateAutomatedTransfer( siteId ) );
+		expect( state[ siteId ] ).to.be.true;
+	} );
+
+	it( 'should not be true after completed transfer', () => {
+		const state = inProgress( { [ siteId ]: true }, setAutomatedTransferStatus( siteId, 'complete' ) );
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
 } );
