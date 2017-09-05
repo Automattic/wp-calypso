@@ -357,7 +357,7 @@ class ActivityLog extends Component {
 
 		if ( false === canViewActivityLog ) {
 			return (
-				<Main wideLayout>
+				<Main>
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
