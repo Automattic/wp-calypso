@@ -76,6 +76,7 @@ export getPostRevisionsAuthorsId from './get-post-revisions-authors-id';
 export getPostSharePublishedActions from './get-post-share-published-actions';
 export getPostShareScheduledActions from './get-post-share-scheduled-actions';
 export getPrimarySiteId from './get-primary-site-id';
+export getPrimaryDomainBySiteId from './get-primary-domain-by-site-id';
 export getPublicizeConnection from './get-publicize-connection';
 export getPublicSites from './get-public-sites';
 export getRawOffsets from './get-raw-offsets';
