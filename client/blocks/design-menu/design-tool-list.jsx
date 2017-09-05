@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -35,11 +36,11 @@ const DesignToolList = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-tool-list">
-				<SidebarHeading>{ this.translate( 'Site Identity' ) }</SidebarHeading>
+		    <div className="design-tool-list">
+				<SidebarHeading>{ this.props.translate( 'Site Identity' ) }</SidebarHeading>
 				<SidebarMenu>
 					<ul>
-						{ this.renderControl( { icon: 'heading', label: this.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
+						{ this.renderControl( { icon: 'heading', label: this.props.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
 					</ul>
 				</SidebarMenu>
 			</div>
@@ -47,4 +48,4 @@ const DesignToolList = React.createClass( {
 	}
 } );
 
-export default DesignToolList;
+export default localize( DesignToolList );
