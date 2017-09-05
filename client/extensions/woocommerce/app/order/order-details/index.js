@@ -13,7 +13,7 @@ import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import OrderCreated from '../order-created';
 import OrderDetailsTable from './table';
 import OrderFulfillment from '../order-fulfillment';
-import OrderPaymentCard from '../order-refund';
+import OrderPaymentCard from '../order-payment';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
 import SectionHeader from 'components/section-header';
