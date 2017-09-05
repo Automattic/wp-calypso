@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
@@ -12,6 +7,7 @@ import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes } from '../not
 import {
 	isLoaded as areShippingLabelsLoaded,
 	isFetching as areShippingLabelsLoading,
+	getLabels,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors'
 
 export const EVENT_TYPES = {
@@ -42,8 +38,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 	} ) );
 
 	if ( config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
-		const labels = get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId, 'labels' ], [] );
-		labels.forEach( ( label, index ) => {
+		getLabels( state, orderId, siteId ).forEach( ( label, index ) => {
 			if ( label.refund ) {
 				switch ( label.refund.status ) {
 					case 'complete':
