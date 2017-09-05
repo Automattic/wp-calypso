@@ -22,6 +22,7 @@ import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
@@ -32,8 +33,8 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import JetpackColophon from 'components/jetpack-colophon';
 import { adjustMoment } from './utils';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -348,7 +349,28 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { isPressable, isRewindActive, siteId, siteTitle, slug } = this.props;
+		const {
+			canViewActivityLog,
+			isPressable,
+			isRewindActive,
+			siteId,
+			siteTitle,
+			slug,
+			translate,
+		} = this.props;
+
+		if ( false === canViewActivityLog ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		const startMoment = this.getStartMoment();
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
 
@@ -394,6 +416,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset: getSiteGmtOffset( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logs: getActivityLogs( state, siteId ),
