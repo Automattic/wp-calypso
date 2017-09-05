@@ -52,12 +52,14 @@ class ConversationCaterpillarComponent extends React.Component {
 		const { blogId, postId } = this.props;
 		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
 
+		// expand all N comments to excerpt
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
 			commentIds: map( commentsToExpand, 'ID' ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
+		// for each of those comments, expand the comment's parent to singleLine
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
