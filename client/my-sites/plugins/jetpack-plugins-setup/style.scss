@@ -17,6 +17,14 @@
 	.plugin-item__link {
 		cursor: default;
 	}
+
+	.plugin-item {
+		width: 100%;
+
+		&:nth-last-child( n + 2 ) {
+			border-bottom-width: 1px;
+		}
+	}
 }
 
 .jetpack-plugins-setup__header {
