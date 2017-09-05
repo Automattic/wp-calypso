@@ -25,10 +25,8 @@ import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
 import GoogleLoginButton from 'components/social-buttons/google';
-import userFactory from 'lib/user';
 import Notice from 'components/notice';
-
-const user = userFactory();
+import { requestUser } from 'state/users/actions';
 
 class SocialLogin extends Component {
 	static displayName = 'SocialLogin';
@@ -52,14 +50,8 @@ class SocialLogin extends Component {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 	}
 
-	refreshUser() {
-		user.fetch();
-		this.setState( { fetchingUser: true } );
-		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
-	}
-
 	disconnectFromGoogle = () => {
-		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
+		this.props.disconnectSocialUser( 'google' ).then( () => this.props.requestUser() );
 	};
 
 	handleGoogleLoginResponse = ( response ) => {
@@ -73,7 +65,7 @@ class SocialLogin extends Component {
 			id_token: response.Zi.id_token,
 		};
 
-		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
+		return this.props.connectSocialUser( socialInfo ).then( () => this.props.requestUser() );
 	};
 
 	renderContent() {
@@ -173,5 +165,6 @@ export default connect(
 	{
 		connectSocialUser,
 		disconnectSocialUser,
+		requestUser,
 	}
 )( localize( SocialLogin ) );

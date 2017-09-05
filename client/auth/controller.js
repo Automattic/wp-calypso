@@ -16,9 +16,9 @@ import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
 import WPOAuth from 'wpcom-oauth';
-import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
+import { requestUser } from 'state/users/actions';
 
 export default {
 
@@ -103,10 +103,7 @@ export default {
 		), document.getElementById( 'primary' ) );
 
 		// Fetch user and redirect to /sites on success.
-		const user = userFactory();
-		user.fetching = false;
-		user.fetch();
-		user.on( 'change', function() {
+		context.store.dispatch( requestUser() ).then( () => {
 			if ( config.isEnabled( 'devdocs' ) ) {
 				window.location = '/devdocs/welcome';
 			} else {

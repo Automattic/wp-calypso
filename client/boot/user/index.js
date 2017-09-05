@@ -23,7 +23,7 @@ export const getUserFromCache = reduxStore => {
 		reduxStore.dispatch( receiveUser( userData ) );
 	} else {
 		userData = store.get( 'wpcom_user' ) || false;
-		reduxStore.dispatch( requestUser( userData ) );
+		reduxStore.dispatch( requestUser() );
 	}
 
 	if ( userData ) {
