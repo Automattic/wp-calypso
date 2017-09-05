@@ -8,7 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
-	initiateTransfer,
+	initiateTransferWithPluginZip,
 	receiveResponse,
 	receiveError,
 	updateUploadProgress,
@@ -28,10 +28,10 @@ const ERROR_RESPONSE = {
 	message: 'Invalid file type.',
 };
 
-describe( 'initiateTransfer', () => {
+describe( 'initiateTransferWithPluginZip', () => {
 	it( 'should dispatch an http request', () => {
 		const dispatch = sinon.spy();
-		initiateTransfer( { dispatch }, { siteId, pluginZip: 'foo' } );
+		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			method: 'POST',
 			path: `/sites/${ siteId }/automated-transfers/initiate`,

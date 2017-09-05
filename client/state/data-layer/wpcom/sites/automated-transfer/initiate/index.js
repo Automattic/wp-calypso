@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_INITIATE } from 'state/action-types';
+import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
@@ -13,7 +13,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
  * or theme zip, see state/themes/actions#initiateThemeTransfer.
  */
 
-export const initiateTransfer = ( { dispatch }, action ) => {
+export const initiateTransferWithPluginZip = ( { dispatch }, action ) => {
 	const { siteId, pluginZip } = action;
 
 	dispatch( http( {
@@ -38,8 +38,8 @@ export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total 
 };
 
 export default {
-	[ AUTOMATED_TRANSFER_INITIATE ]: [ dispatchRequest(
-		initiateTransfer,
+	[ AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP ]: [ dispatchRequest(
+		initiateTransferWithPluginZip,
 		receiveResponse,
 		receiveError,
 		{ onProgress: updateUploadProgress }
