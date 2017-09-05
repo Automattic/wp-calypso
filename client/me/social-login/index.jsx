@@ -40,6 +40,10 @@ class SocialLogin extends Component {
 		userSettings: PropTypes.object,
 	};
 
+	state = {
+		fetchingUser: false
+	};
+
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component has mounted.' );
 	}
@@ -48,8 +52,14 @@ class SocialLogin extends Component {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 	}
 
+	refreshUser() {
+		user.fetch();
+		this.setState( { fetchingUser: true } );
+		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
+	}
+
 	disconnectFromGoogle = () => {
-		this.props.disconnectSocialUser( 'google' ).then( () => user.fetch() );
+		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
 	};
 
 	handleGoogleResponse = ( response ) => {
@@ -63,7 +73,7 @@ class SocialLogin extends Component {
 			id_token: response.Zi.id_token,
 		};
 
-		return this.props.connectSocialUser( socialInfo ).then( () => user.fetch() );
+		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
 	};
 
 	renderContent() {
@@ -84,6 +94,7 @@ class SocialLogin extends Component {
 	renderGoogleConnection() {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
 		const buttonLabel = isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' );
+		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
 
 		return (
 			<CompactCard>
@@ -100,7 +111,7 @@ class SocialLogin extends Component {
 							isUserConnectedToGoogle
 								? <FormButton
 									compact={ true }
-									disabled={ isUpdatingSocialConnection }
+									disabled={ disableButton }
 									isPrimary={ false }
 									onClick={ this.disconnectFromGoogle }>
 									{ buttonLabel }
@@ -110,7 +121,7 @@ class SocialLogin extends Component {
 									responseHandler={ this.handleGoogleResponse } >
 									<FormButton
 										compact={ true }
-										disabled={ isUpdatingSocialConnection }
+										disabled={ disableButton }
 										isPrimary={ true }
 										onClick={ this.disconnectFromGoogle }>
 										{ buttonLabel }
