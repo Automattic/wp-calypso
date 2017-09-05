@@ -100,7 +100,7 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ ROUTE_SET ]: () => null,
 	[ LOGIN_FORM_UPDATE ]: () => null,
 } );

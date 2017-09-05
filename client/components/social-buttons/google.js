@@ -154,34 +154,40 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled || this.state.error );
 
 		const { children } = this.props;
+		let customButton = null;
+
 		if ( children ) {
 			const childProps = {
+				onClick: this.handleClick,
 				onMouseOver: this.showError,
 				onMouseOut: this.hideError,
-				onClick: this.handleClick,
+				className: classNames( { disabled: isDisabled } ),
 			};
 
-			return React.cloneElement( children, childProps );
+			customButton = React.cloneElement( children, childProps );
 		}
 
 		return (
 			<div className="social-buttons__button-container">
-				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-					onMouseOver={ this.showError }
-					onMouseOut={ this.hideError }
-					onClick={ this.handleClick }
-				>
-					<GoogleIcon isDisabled={ isDisabled } />
+				{
+					customButton
+						? customButton
+						: <button
+							className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+							onMouseOver={ this.showError }
+							onMouseOut={ this.hideError }
+							onClick={ this.handleClick }
+						>
+							<GoogleIcon isDisabled={ isDisabled } />
 
-					<span className="social-buttons__service-name">
-						{ this.props.translate( 'Continue with %(service)s', {
-							args: { service: 'Google' },
-							comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
-						} ) }
-					</span>
-				</button>
-
+							<span className="social-buttons__service-name">
+								{ this.props.translate( 'Continue with %(service)s', {
+									args: { service: 'Google' },
+									comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
+								} ) }
+							</span>
+						</button>
+				}
 				<Popover
 					id="social-buttons__error"
 					className="social-buttons__error"

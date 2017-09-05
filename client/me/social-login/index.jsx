@@ -27,6 +27,7 @@ import { isRequesting, getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
 import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
+import Notice from 'components/notice';
 
 const user = userFactory();
 
@@ -41,7 +42,7 @@ class SocialLogin extends Component {
 	};
 
 	state = {
-		fetchingUser: false
+		fetchingUser: false,
 	};
 
 	componentDidMount() {
@@ -98,9 +99,10 @@ class SocialLogin extends Component {
 
 		return (
 			<FormButton
-				compact={ true }
+				className="social-login__button button"
 				disabled={ disableButton }
-				isPrimary={ true }
+				compact={ true }
+				isPrimary={ ! isUserConnectedToGoogle }
 				onClick={ onClickAction }>
 				{ buttonLabel }
 			</FormButton>
@@ -108,10 +110,16 @@ class SocialLogin extends Component {
 	}
 
 	renderGoogleConnection() {
-		const { isUserConnectedToGoogle } = this.props;
+		const { errorUpdatingSocialConnection, isUserConnectedToGoogle } = this.props;
 
 		return (
 			<CompactCard>
+				{
+					errorUpdatingSocialConnection &&
+						<Notice status={ 'is-error' } showDismiss={ false }>
+							{ errorUpdatingSocialConnection }
+						</Notice>
+				}
 				<div className="social-login__header">
 					<div className="social-login__header-info">
 						<div className="social-login__header-icon">
@@ -126,7 +134,7 @@ class SocialLogin extends Component {
 								? this.renderActionButton( this.disconnectFromGoogle )
 								: <GoogleLoginButton
 									clientId={ config( 'google_oauth_client_id' ) }
-									responseHandler={ this.handleGoogleLoginResponse } >
+									responseHandler={ this.handleGoogleLoginResponse }>
 									{ this.renderActionButton() }
 								</GoogleLoginButton>
 						}
