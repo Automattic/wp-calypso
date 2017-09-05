@@ -37,6 +37,19 @@
 
 .plugins__header-buttons {
 	display: flex;
+
+	.header-button {
+		flex: auto;
+		flex-basis: 0;
+
+		&:not( :last-child ) {
+			border-right: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
+		}
+
+		@include breakpoint( '>480px' ) {
+			flex: none;
+		}
+	}
 }
 
 .plugins__more-header {

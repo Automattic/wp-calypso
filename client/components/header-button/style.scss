@@ -1,30 +1,14 @@
 .header-button {
 	align-items: center;
-	border: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
-	border-width: 0 1px 0 0;
+	border: none;
 	border-radius: 0;
 	display: flex;
 	flex-direction: column;
 	font-weight: normal;
 	justify-content: center;
+	min-width: 140px;
 	min-height: 46px;
-	width: 50%;
 	padding: 0 16px;
-
-	@include breakpoint( '>480px' ) {
-		border: 0;
-		flex: 0 0 auto;
-		min-width: 140px;
-		width: auto;
-	}
-
-	&:hover {
-		border-color: transparentize( lighten( $gray, 20% ), 0.5 );
-	}
-
-	&:active {
-		border-width: 0 1px 0 0;
-	}
 }
 
 .header-button__text {
