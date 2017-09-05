@@ -23,7 +23,7 @@ import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, hasJetpackSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	canJetpackSiteManage,
@@ -298,13 +298,20 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
+	shouldShowManageButton() {
+		if ( this.props.isJetpackSite ) {
+			return true;
+		}
+		return ( ! this.props.selectedSiteId && this.props.hasJetpackSites );
+	},
+
 	getPageHeaderView() {
 		if ( this.props.hideSearchForm ) {
 			return null;
 		}
 
 		const navigation = this.props.category ? this.getNavigationBar() : this.getSearchBar();
-		const manageButton = this.props.isJetpackSite && this.getManageButton();
+		const manageButton = this.shouldShowManageButton() && this.getManageButton();
 
 		return (
 			<div className="plugins-browser__main-header">
@@ -392,6 +399,7 @@ export default connect(
 		return {
 			sitePlan: getSitePlan( state, selectedSiteId ),
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
+			hasJetpackSites: hasJetpackSites( state ),
 			jetpackManageError: !! isJetpackSite( state, selectedSiteId ) && ! canJetpackSiteManage( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			noPermissionsError: !! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
