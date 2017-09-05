@@ -339,6 +339,10 @@
 	margin-top: -5px;
 }
 
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
+	margin-bottom: 0;
+}
+
 // Avoids long trackback links from wrapping
 // Using General Sibling Selector so this doesn't affect regular comment usernames
 .comments__comment-trackbackicon ~ .comments__comment-username {
