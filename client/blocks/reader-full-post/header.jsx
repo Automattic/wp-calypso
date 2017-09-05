@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { keys, trim } from 'lodash';
 import classNames from 'classnames';
@@ -83,8 +85,8 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 };
 
 ReaderFullPostHeader.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	referralPost: React.PropTypes.object,
+	post: PropTypes.object.isRequired,
+	referralPost: PropTypes.object,
 };
 
 export default ReaderFullPostHeader;

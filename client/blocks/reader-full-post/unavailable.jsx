@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import config from 'config';
 import { localize } from 'i18n-calypso';
@@ -39,8 +41,8 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 };
 
 ReaderFullPostUnavailable.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	onBackClick: React.PropTypes.func.isRequired,
+	post: PropTypes.object.isRequired,
+	onBackClick: PropTypes.func.isRequired,
 };
 
 ReaderFullPostUnavailable.defaultProps = {

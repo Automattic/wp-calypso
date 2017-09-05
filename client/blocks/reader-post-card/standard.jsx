@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { get, partial } from 'lodash';
 
@@ -44,8 +46,8 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 };
 
 StandardPost.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	isDiscover: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	isDiscover: PropTypes.bool,
 };
 
 export default StandardPost;

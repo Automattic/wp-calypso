@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -48,9 +50,9 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 };
 
 CompactPost.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	postByline: React.PropTypes.object,
-	isDiscover: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	postByline: PropTypes.object,
+	isDiscover: PropTypes.bool,
 };
 
 export default CompactPost;

@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop } from 'lodash';
 import page from 'page';
@@ -30,11 +32,11 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		feed: React.PropTypes.object,
-		onBlock: React.PropTypes.func,
-		showFollow: React.PropTypes.bool,
-		position: React.PropTypes.string,
+		post: PropTypes.object.isRequired,
+		feed: PropTypes.object,
+		onBlock: PropTypes.func,
+		showFollow: PropTypes.bool,
+		position: PropTypes.string,
 	};
 
 	static defaultProps = {

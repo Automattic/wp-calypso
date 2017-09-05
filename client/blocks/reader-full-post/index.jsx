@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
@@ -72,9 +74,9 @@ import config from 'config';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		referralPost: React.PropTypes.object,
+		post: PropTypes.object.isRequired,
+		onClose: PropTypes.func.isRequired,
+		referralPost: PropTypes.object,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -484,11 +486,11 @@ export default class FullPostFluxContainer extends React.Component {
 	}
 
 	static propTypes = {
-		blogId: React.PropTypes.string,
-		postId: React.PropTypes.string.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		onPostNotFound: React.PropTypes.func.isRequired,
-		referral: React.PropTypes.object,
+		blogId: PropTypes.string,
+		postId: PropTypes.string.isRequired,
+		onClose: PropTypes.func.isRequired,
+		onPostNotFound: PropTypes.func.isRequired,
+		referral: PropTypes.object,
 	};
 
 	getStateFromStores( props = this.props ) {

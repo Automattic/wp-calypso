@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
@@ -23,7 +25,7 @@ class CalendarButton extends Component {
 		closeOnEsc: PropTypes.bool,
 		disabledDays: PropTypes.array,
 		events: PropTypes.array,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		rootClassName: PropTypes.string,
 		selectedDay: PropTypes.object,

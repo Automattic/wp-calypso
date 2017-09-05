@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Blob from 'blob';
 import { saveAs } from 'browser-filesaver';
@@ -17,7 +19,7 @@ import { errorNotice } from 'state/notices/actions';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
-		saveAs: React.PropTypes.string,
+		saveAs: PropTypes.string,
 	};
 
 	static defaultProps = {

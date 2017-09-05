@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 
@@ -116,15 +118,15 @@ const ReaderPostActions = props => {
 };
 
 ReaderPostActions.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	site: React.PropTypes.object,
-	onCommentClick: React.PropTypes.func,
-	showEdit: React.PropTypes.bool,
-	iconSize: React.PropTypes.number,
-	showMenu: React.PropTypes.bool,
-	showMenuFollow: React.PropTypes.bool,
-	visitUrl: React.PropTypes.string,
-	fullPost: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	site: PropTypes.object,
+	onCommentClick: PropTypes.func,
+	showEdit: PropTypes.bool,
+	iconSize: PropTypes.number,
+	showMenu: PropTypes.bool,
+	showMenuFollow: PropTypes.bool,
+	visitUrl: PropTypes.string,
+	fullPost: PropTypes.bool,
 };
 
 ReaderPostActions.defaultProps = {

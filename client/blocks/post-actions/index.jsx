@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -91,12 +93,12 @@ const PostActions = ( {
 };
 
 PostActions.propTypes = {
-	className: React.PropTypes.string,
-	post: React.PropTypes.object.isRequired,
-	siteId: React.PropTypes.number.isRequired,
-	toggleComments: React.PropTypes.func.isRequired,
-	trackRelativeTimeStatusOnClick: React.PropTypes.func,
-	trackTotalViewsOnClick: React.PropTypes.func,
+	className: PropTypes.string,
+	post: PropTypes.object.isRequired,
+	siteId: PropTypes.number.isRequired,
+	toggleComments: PropTypes.func.isRequired,
+	trackRelativeTimeStatusOnClick: PropTypes.func,
+	trackTotalViewsOnClick: PropTypes.func,
 };
 
 const mapStateToProps = ( state, { siteId, post } ) => {

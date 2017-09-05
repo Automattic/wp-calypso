@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -35,7 +37,7 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 };
 
 BlogStickers.propTypes = {
-	blogId: React.PropTypes.number.isRequired,
+	blogId: PropTypes.number.isRequired,
 };
 
 export default connect( ( state, ownProps ) => {

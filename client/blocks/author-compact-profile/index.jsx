@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has } from 'lodash';
@@ -19,16 +21,16 @@ import AuthorCompactProfilePlaceholder from './placeholder';
 
 class AuthorCompactProfile extends React.Component {
 	static propTypes = {
-		author: React.PropTypes.object,
-		siteName: React.PropTypes.string,
-		siteUrl: React.PropTypes.string,
-		feedUrl: React.PropTypes.string,
-		followCount: React.PropTypes.number,
-		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		siteIcon: React.PropTypes.string,
-		feedIcon: React.PropTypes.string,
-		post: React.PropTypes.object,
+		author: PropTypes.object,
+		siteName: PropTypes.string,
+		siteUrl: PropTypes.string,
+		feedUrl: PropTypes.string,
+		followCount: PropTypes.number,
+		feedId: PropTypes.number,
+		siteId: PropTypes.number,
+		siteIcon: PropTypes.string,
+		feedIcon: PropTypes.string,
+		post: PropTypes.object,
 	};
 
 	render() {

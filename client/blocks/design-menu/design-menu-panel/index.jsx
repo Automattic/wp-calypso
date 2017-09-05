@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -10,7 +12,7 @@ import Card from 'components/card';
 
 class DesignMenuPanel extends React.Component {
 	static propTypes = {
-		label: React.PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
 	};
 
 	render() {

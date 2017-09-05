@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { get } from 'lodash';
 import classnames from 'classnames';
@@ -56,9 +58,9 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 };
 
 ReaderAuthorLink.propTypes = {
-	author: React.PropTypes.object.isRequired,
-	post: React.PropTypes.object, // for stats only,
-	siteUrl: React.PropTypes.string, // used instead of author.URL if present
+	author: PropTypes.object.isRequired,
+	post: PropTypes.object, // for stats only,
+	siteUrl: PropTypes.string, // used instead of author.URL if present
 };
 
 export default ReaderAuthorLink;

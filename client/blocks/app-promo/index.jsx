@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
@@ -55,7 +57,7 @@ export class AppPromo extends React.Component {
 	static displayName = 'AppPromo';
 
 	static propTypes = {
-		location: React.PropTypes.string.isRequired
+		location: PropTypes.string.isRequired
 	};
 
 	constructor( props ) {

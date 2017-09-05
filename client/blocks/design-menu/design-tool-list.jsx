@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -14,7 +16,7 @@ import SidebarItem from 'layout/sidebar/item';
 
 class DesignToolList extends React.Component {
 	static propTypes = {
-		onChange: React.PropTypes.func.isRequired,
+		onChange: PropTypes.func.isRequired,
 	};
 
 	renderControl = tool => {

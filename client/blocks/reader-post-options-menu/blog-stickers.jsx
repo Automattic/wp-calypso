@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { map, includes } from 'lodash';
 import { connect } from 'react-redux';
@@ -15,7 +17,7 @@ import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	static propTypes = {
-		blogId: React.PropTypes.number.isRequired,
+		blogId: PropTypes.number.isRequired,
 	};
 
 	render() {

@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { get, size, filter, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -23,15 +25,15 @@ import FollowButton from 'reader/follow-button';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {
-		posts: React.PropTypes.array.isRequired,
-		site: React.PropTypes.object,
-		feed: React.PropTypes.object,
-		onClick: React.PropTypes.func,
-		isDiscover: React.PropTypes.bool,
-		postKey: React.PropTypes.object.isRequired,
-		selectedPostKey: React.PropTypes.object,
-		showFollowButton: React.PropTypes.bool,
-		followSource: React.PropTypes.string,
+		posts: PropTypes.array.isRequired,
+		site: PropTypes.object,
+		feed: PropTypes.object,
+		onClick: PropTypes.func,
+		isDiscover: PropTypes.bool,
+		postKey: PropTypes.object.isRequired,
+		selectedPostKey: PropTypes.object,
+		showFollowButton: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {

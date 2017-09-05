@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { map, take, filter } from 'lodash';
 
@@ -71,8 +73,8 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 };
 
 PostGallery.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	isDiscover: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	isDiscover: PropTypes.bool,
 };
 
 export default PostGallery;

@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop, debounce } from 'lodash';
 import classnames from 'classnames';
@@ -143,10 +145,10 @@ class PostPhoto extends React.Component {
 }
 
 PostPhoto.propTypes = {
-	post: React.PropTypes.object,
-	site: React.PropTypes.object,
-	title: React.PropTypes.string,
-	onClick: React.PropTypes.func,
+	post: PropTypes.object,
+	site: PropTypes.object,
+	title: PropTypes.string,
+	onClick: PropTypes.func,
 };
 
 PostPhoto.defaultProps = {
