@@ -10,6 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import PlansGrid from './plans-grid';
 import { PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
@@ -38,6 +39,7 @@ import {
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import { abtest } from 'lib/abtest';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -95,6 +97,10 @@ class Plans extends Component {
 				! this.redirecting ) {
 			return this.autoselectPlan();
 		}
+	}
+
+	handleSkipButtonClick = () => {
+		this.selectFreeJetpackPlan();
 	}
 
 	isFlowTypePaid() {
@@ -281,6 +287,9 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
+		const { translate } = this.props;
+		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
+
 		return (
 			<div>
 				<QueryPlans />
@@ -291,7 +300,23 @@ class Plans extends Component {
 				<PlansGrid
 					{ ...this.props }
 					basePlansPath={ this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
-					onSelect={ this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan } />
+					onSelect={ this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan }
+					hideFreePlan={ hideFreePlanTest }
+				>
+					{
+						hideFreePlanTest && (
+							<div className="jetpack-connect__plans-nav-buttons">
+								<Button
+									onClick={ this.handleSkipButtonClick }
+									compact
+									borderless
+								>
+									{ translate( 'Skip' ) }
+								</Button>
+							</div>
+						)
+					}
+				</PlansGrid>
 			</div>
 		);
 	}
