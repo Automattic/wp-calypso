@@ -13,9 +13,7 @@ import {
 	receiveError,
 	updateUploadProgress,
 } from '../';
-import {
-	getAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import {
 	pluginUploadError,
 	updatePluginUploadProgress,
