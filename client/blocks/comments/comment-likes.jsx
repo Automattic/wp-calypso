@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { get, pick } from 'lodash';
 import { connect } from 'react-redux';

@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { throttle, constant, noop } from 'lodash';

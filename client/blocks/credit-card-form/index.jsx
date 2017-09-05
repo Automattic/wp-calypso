@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';

@@ -3,7 +3,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import Blob from 'blob';
 import { saveAs } from 'browser-filesaver';

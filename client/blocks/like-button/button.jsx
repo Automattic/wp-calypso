@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { omitBy, isNull } from 'lodash';

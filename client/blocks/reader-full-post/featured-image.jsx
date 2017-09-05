@@ -3,7 +3,6 @@
 * External dependencies
 */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 export default class FeaturedImage extends React.Component {

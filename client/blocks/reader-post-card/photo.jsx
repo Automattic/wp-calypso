@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { noop, debounce } from 'lodash';
 import classnames from 'classnames';

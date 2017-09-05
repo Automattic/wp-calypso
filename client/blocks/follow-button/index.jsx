@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { noop, omitBy, isUndefined } from 'lodash';
 import { connect } from 'react-redux';

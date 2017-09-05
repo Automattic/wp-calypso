@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { get, size, filter, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';

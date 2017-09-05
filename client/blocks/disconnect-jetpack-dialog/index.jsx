@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';

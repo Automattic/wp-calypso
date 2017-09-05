@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 import { connect } from 'react-redux';
 import url from 'url';
@@ -10,7 +11,6 @@ import classnames from 'classnames';
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import qs from 'qs';
 import page from 'page';
 import SocialLogo from 'social-logos';

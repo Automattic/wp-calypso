@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has } from 'lodash';

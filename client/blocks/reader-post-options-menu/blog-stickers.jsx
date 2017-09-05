@@ -3,7 +3,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { map, includes } from 'lodash';
 import { connect } from 'react-redux';

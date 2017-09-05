@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
@@ -7,7 +8,6 @@ import page from 'page';
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-
 import qs from 'qs';
 import { get, defer } from 'lodash';
 import Gridicon from 'gridicons';
