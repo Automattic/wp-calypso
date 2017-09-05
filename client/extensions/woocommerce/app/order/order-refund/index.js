@@ -24,7 +24,7 @@ import OrderDetailsTable from '../order-details/table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
-class OrderRefundCard extends Component {
+class OrderPaymentCard extends Component {
 	static propTypes = {
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
@@ -69,11 +69,11 @@ class OrderRefundCard extends Component {
 		return order.refunds.reduce( ( sum, i ) => sum + parseFloat( i.total ), 0 );
 	}
 
-	getRefundStatus = () => {
+	getPaymentStatus = () => {
 		const { order, translate } = this.props;
 		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
 			args: {
-				total: formatCurrency( order.total, order.currency ) || order.total,
+				total: formatCurrency( order.total, order.currency ),
 				method: order.payment_method_title,
 			}
 		} );
@@ -81,15 +81,15 @@ class OrderRefundCard extends Component {
 		if ( 'refunded' === order.status ) {
 			refundStatus = translate( 'Payment of %(total)s has been refunded', {
 				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
+					total: formatCurrency( order.total, order.currency ),
 				}
 			} );
 		} else if ( order.refunds.length ) {
 			const refund = this.getRefundedTotal( order );
 			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
 				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-					refund: formatCurrency( refund, order.currency ) || refund,
+					total: formatCurrency( order.total, order.currency ),
+					refund: formatCurrency( refund, order.currency ),
 				}
 			} );
 		}
@@ -173,7 +173,7 @@ class OrderRefundCard extends Component {
 
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
-			refundTotal = formatCurrency( this.state.refundTotal, order.currency ) || this.state.refundTotal;
+			refundTotal = formatCurrency( this.state.refundTotal, order.currency );
 		}
 		refundTotal = refundTotal.replace( /[^0-9.,]/g, '' );
 
@@ -186,7 +186,7 @@ class OrderRefundCard extends Component {
 			<div className="order-refund">
 				<div className="order-refund__label">
 					<Gridicon icon="checkmark" />
-					{ this.getRefundStatus() }
+					{ this.getPaymentStatus() }
 				</div>
 				<div className="order-refund__action">
 					{ ( 'refunded' !== order.status )
@@ -242,4 +242,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
-)( localize( OrderRefundCard ) );
+)( localize( OrderPaymentCard ) );

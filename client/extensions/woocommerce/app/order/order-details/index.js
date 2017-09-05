@@ -13,7 +13,7 @@ import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import OrderCreated from '../order-created';
 import OrderDetailsTable from './table';
 import OrderFulfillment from '../order-fulfillment';
-import OrderRefundCard from '../order-refund';
+import OrderPaymentCard from '../order-refund';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
 import SectionHeader from 'components/section-header';
@@ -63,7 +63,7 @@ class OrderDetails extends Component {
 				<Card className="order-details__card">
 					<OrderCreated order={ order } site={ site } />
 					<OrderDetailsTable order={ order } site={ site } />
-					<OrderRefundCard order={ order } site={ site } />
+					<OrderPaymentCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />
 				</Card>
 			</div>
