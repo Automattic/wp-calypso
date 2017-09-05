@@ -73,7 +73,7 @@ button {
 			color: lighten( $gray, 30% );
 		}
 		.gridicon {
-			top: 4px;
+			top: 5px;
 			margin-top: -8px;
 			margin-right: 4px;
 		}
@@ -88,10 +88,6 @@ button {
 		// Make plus icon nudged closer to adjacent icons for add-people and add-plugin type buttons
 		.gridicons-plus-small + .gridicon {
 			margin-left: -4px;
-		}
-		// Move the upload icon a little lower to appear vertically centered
-		.gridicons-cloud-upload {
-			top: 6px;
 		}
 	}
 	&.is-busy {
