@@ -117,9 +117,14 @@
 		margin-bottom: 16px;
 	}
 
-	.gravatar {
+	.gravatar,
+	.jetpack-logo {
 		float: left;
 		margin-right: 16px;
+	}
+
+	.jetpack-logo path {
+		fill: $green-jetpack;
 	}
 }
 
