@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,24 +19,26 @@ const debug = debugFactory( 'calypso:design-tool-data' );
 
 export default function designTool( Component ) {
 	class DesignToolData extends React.Component {
-	    static propTypes = {
+		static propTypes = {
 			// This is the key for the customizations in the Redux store (under preview)
-		previewDataKey: PropTypes.string.isRequired,
+			previewDataKey: PropTypes.string.isRequired,
 			// These are provided by the connect method
-		updateCustomizations: PropTypes.func.isRequired,
-		customizations: PropTypes.object,
-		selectedSiteId: PropTypes.number,
-		selectedSite: PropTypes.object,
-		allPages: PropTypes.array,
-		requestSitePosts: PropTypes.func.isRequired,
-	};
+			updateCustomizations: PropTypes.func.isRequired,
+			customizations: PropTypes.object,
+			selectedSiteId: PropTypes.number,
+			selectedSite: PropTypes.object,
+			allPages: PropTypes.array,
+			requestSitePosts: PropTypes.func.isRequired,
+		};
 
 		static defaultProps = {
 			customizations: {},
 		};
 
 		getUpdatedCustomizationsForKey = ( id, customizations ) => {
-			const updatedCustomizations = { [ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ) };
+			const updatedCustomizations = {
+				[ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ),
+			};
 			return Object.assign( {}, this.props.customizations, updatedCustomizations );
 		};
 
@@ -69,7 +72,11 @@ export default function designTool( Component ) {
 		};
 
 		getChildProps = () => {
-			return Object.assign( {}, this.getDefaultChildProps(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			return Object.assign(
+				{},
+				this.getDefaultChildProps(),
+				this.getCustomizationsForKey( this.props.previewDataKey )
+			);
 		};
 
 		render() {
