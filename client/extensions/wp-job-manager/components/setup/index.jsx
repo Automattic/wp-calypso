@@ -40,9 +40,9 @@ const SetupWizard = ( {
 	);
 };
 
-const connectComponent = connect( state => ( {
+const mapStateToProps = state => ( {
 	slug: getSelectedSiteSlug( state ),
-} ) );
+} );
 
 SetupWizard.propTypes = {
 	slug: PropTypes.string,
@@ -50,4 +50,4 @@ SetupWizard.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connectComponent( localize( SetupWizard ) );
+export default connect( mapStateToProps )( localize( SetupWizard ) );
