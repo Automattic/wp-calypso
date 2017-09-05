@@ -42,6 +42,7 @@ describe( 'reducer', () => {
 					actorName: 'User display name',
 					actorRemoteId: 1,
 					actorRole: 'administrator',
+					actorType: 'Person',
 					actorWpcomId: 123456,
 				},
 			] );
@@ -71,6 +72,7 @@ describe( 'reducer', () => {
 						actorName: 'User display name',
 						actorRemoteId: 1,
 						actorRole: 'administrator',
+						actorType: 'Person',
 						actorWpcomId: 123456,
 					},
 				],
@@ -95,6 +97,7 @@ describe( 'reducer', () => {
 						actorName: 'User display name',
 						actorRemoteId: 1,
 						actorRole: 'administrator',
+						actorType: 'Person',
 						actorWpcomId: 123456,
 					},
 				],

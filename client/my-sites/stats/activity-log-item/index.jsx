@@ -46,6 +46,7 @@ class ActivityLogItem extends Component {
 			actorName: PropTypes.string.isRequired,
 			actorRemoteId: PropTypes.number.isRequired,
 			actorRole: PropTypes.string.isRequired,
+			actorType: PropTypes.string.isRequired,
 			actorWpcomId: PropTypes.number.isRequired,
 		} ).isRequired,
 
@@ -125,7 +126,14 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor { ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole' ] ) } />
+				<ActivityActor
+					{ ...pick( log, [
+						'actorAvatarUrl',
+						'actorName',
+						'actorRole',
+						'actorType',
+					] ) }
+				/>
 				<div className="activity-log-item__title">
 					{ log.activityTitle }
 				</div>

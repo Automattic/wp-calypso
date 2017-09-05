@@ -84,6 +84,7 @@ export function processItemActor( item ) {
 		actorName: get( item, [ 'actor', 'name' ], '' ),
 		actorRemoteId: get( item, [ 'actor', 'external_user_id' ], 0 ),
 		actorRole: get( item, [ 'actor', 'role' ], '' ),
+		actorType: get( item, [ 'actor', 'type' ], '' ),
 		actorWpcomId: get( item, [ 'actor', 'wpcom_user_id' ], 0 ),
 	};
 }
