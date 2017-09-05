@@ -3,6 +3,7 @@
  */
 import createReactClass from 'create-react-class';
 import debug from 'debug';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { isFunction } from 'lodash';
 
@@ -37,7 +38,7 @@ const log = debug( 'calypso:devdocs' );
 export default createReactClass( {
 	displayName: 'Devdocs',
 	propTypes: {
-		term: React.PropTypes.string
+		term: PropTypes.string
 	},
 
 	getDefaultProps: function() {

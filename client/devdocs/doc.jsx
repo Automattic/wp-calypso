@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
 
@@ -14,9 +15,9 @@ import highlight from 'lib/highlight';
 export default createReactClass( {
 	displayName: 'SingleDocument',
 	propTypes: {
-		path: React.PropTypes.string.isRequired,
-		term: React.PropTypes.string,
-		sectionId: React.PropTypes.string
+		path: PropTypes.string.isRequired,
+		term: PropTypes.string,
+		sectionId: PropTypes.string
 	},
 	timeoutID: null,
 
