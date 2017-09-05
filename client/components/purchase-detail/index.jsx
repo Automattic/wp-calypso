@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,94 +13,103 @@ import Gridicon from 'gridicons';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
-const PurchaseDetail = ( {
-	body,
-	buttonText,
-	description,
-	href,
-	icon,
-	id,
-	info,
-	isPlaceholder,
-	isRequired,
-	isSubmitting,
-	onClick,
-	requiredText,
-	target,
-	rel,
-	title
-} ) => {
-	const classes = classNames( 'purchase-detail', {
-		'is-placeholder': isPlaceholder
-	} );
+export default class PurchaseDetail extends PureComponent {
+	static propTypes = {
+		buttonText: PropTypes.string,
+		description: PropTypes.oneOfType( [
+			PropTypes.array,
+			PropTypes.string,
+			PropTypes.object
+		] ),
+		href: PropTypes.string,
+		icon: PropTypes.string,
+		isPlaceholder: PropTypes.bool,
+		isRequired: PropTypes.bool,
+		isSubmitting: PropTypes.bool,
+		onClick: PropTypes.func,
+		requiredText: PropTypes.string,
+		target: PropTypes.string,
+		rel: PropTypes.string,
+		title: PropTypes.string,
+	};
 
-	let buttonElement;
+	static defaultProps = {
+		onClick: noop,
+	};
 
-	if ( buttonText || isPlaceholder ) {
-		buttonElement = (
+	renderPurchaseButton() {
+		const { buttonText, isPlaceholder, isSubmitting, href, onClick, target, rel } = this.props;
+
+		if ( ! buttonText && ! isPlaceholder ) {
+			return null;
+		}
+
+		return (
 			<PurchaseButton
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
 				target={ target }
 				rel={ rel }
-				text={ buttonText } />
+				text={ buttonText }
+			/>
 		);
 	}
 
-	return (
-		<div className={ classes } id={ id || null }>
-			{ requiredText && (
-				<div className="purchase-detail__required-notice">
-					<em>{ requiredText }</em>
-				</div>
-			) }
-			<div className="purchase-detail__content">
-				{ icon && (
-					<div className="purchase-detail__icon">
-						<Gridicon icon={ icon } />
-						{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
+	renderBody() {
+		if ( this.props.body ) {
+			return (
+				<div className="purchase-detail__body">{ this.props.body }</div>
+			);
+		}
+
+		return (
+			<div className="purchase-detail__body">
+				{ this.renderPurchaseButton() }
+				{ this.props.info && <TipInfo info={ this.props.info } /> }
+			</div>
+		);
+	}
+
+	renderIcon() {
+		const { icon, isRequired } = this.props;
+
+		if ( ! icon ) {
+			return null;
+		}
+
+		return (
+			<div className="purchase-detail__icon">
+				<Gridicon icon={ icon } />
+				{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
+			</div>
+		);
+	}
+
+	render() {
+		const { id, requiredText, title, description } = this.props;
+		const classes = classNames( 'purchase-detail', {
+			'is-placeholder': this.props.isPlaceholder,
+		} );
+
+		return (
+			<div className={ classes } id={ id }>
+				{ requiredText && (
+					<div className="purchase-detail__required-notice">
+						<em>{ requiredText }</em>
 					</div>
 				) }
+				<div className="purchase-detail__content">
+					{ this.renderIcon() }
 
-				<div className="purchase-detail__text">
-					<h3 className="purchase-detail__title">{ title }</h3>
-					<div className="purchase-detail__description">{ description }</div>
-				</div>
-
-				{ body
-					? <div className="purchase-detail__body">{ body }</div>
-					: <div className="purchase-detail__body">
-						{ buttonElement }
-						{ info && <TipInfo info={ info } /> }
+					<div className="purchase-detail__text">
+						<h3 className="purchase-detail__title">{ title }</h3>
+						<div className="purchase-detail__description">{ description }</div>
 					</div>
-				}
+
+					{ this.renderBody() }
+				</div>
 			</div>
-		</div>
-	);
-};
-
-PurchaseDetail.propTypes = {
-	buttonText: PropTypes.string,
-	description: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.string,
-		PropTypes.object
-	] ),
-	href: PropTypes.string,
-	icon: PropTypes.string,
-	isPlaceholder: PropTypes.bool,
-	isRequired: PropTypes.bool,
-	isSubmitting: PropTypes.bool,
-	onClick: PropTypes.func,
-	requiredText: PropTypes.string,
-	target: PropTypes.string,
-	rel: PropTypes.string,
-	title: PropTypes.string
-};
-
-PurchaseDetail.defaultProps = {
-	onClick: () => {},
-};
-
-export default PurchaseDetail;
+		);
+	}
+}
