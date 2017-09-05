@@ -4,9 +4,26 @@
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
 	AUTOMATED_TRANSFER_STATUS_SET,
 } from 'state/action-types';
+
+/**
+ * Initiate a transfer to an Atomic site.
+ *
+ * This action is only for initiating with a plugin zip. For initiating with
+ * plugin ID or theme zip, see state/themes/actions#initiateThemeTransfer
+ *
+ * @param {number} siteId The id of the site to transfer
+ * @param {File} pluginZip The plugin to upload and install on transferred site
+ * @returns {Object} An action object
+ */
+export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
+	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
+	siteId,
+	pluginZip,
+} );
 
 /**
  * Query the automated transfer status of a given site.
