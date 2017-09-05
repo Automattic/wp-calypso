@@ -32,7 +32,7 @@ export const requestZoneFeed = ( { dispatch }, action ) => {
 };
 
 export const updateZoneFeed = ( { dispatch }, { siteId, zoneId }, { data } ) =>
-	dispatch( updateFeed( siteId, zoneId, fromApi( data ) ) );
+	dispatch( updateFeed( siteId, zoneId, fromApi( data, siteId ) ) );
 
 export const requestZoneFeedError = ( { dispatch, getState }, { siteId, zoneId } ) => {
 	const { name } = getZone( getState(), siteId, zoneId );

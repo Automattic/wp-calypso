@@ -96,7 +96,7 @@ describe( '#updateZoneFeed()', () => {
 		updateZoneFeed( { dispatch }, dummyAction, { data: apiResponse } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, fromApi( apiResponse ) ) );
+		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, fromApi( apiResponse, dummyAction.siteId ) ) );
 	} );
 } );
 

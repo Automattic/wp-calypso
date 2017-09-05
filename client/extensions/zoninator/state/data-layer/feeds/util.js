@@ -1,7 +1,8 @@
-export const fromApi = posts => posts.map( post => ( {
-	ID: post.ID,
+export const fromApi = ( posts, siteId ) => posts.map( post => ( {
+	id: post.ID,
+	siteId,
 	title: post.post_title,
-	URL: post.guid,
+	url: post.guid,
 } ) );
 
 export const toApi = posts => ( {
