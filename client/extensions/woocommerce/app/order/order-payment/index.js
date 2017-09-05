@@ -23,8 +23,9 @@ import Notice from 'components/notice';
 import OrderDetailsTable from '../order-details/table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
-class OrderRefundCard extends Component {
+class OrderPaymentCard extends Component {
 	static propTypes = {
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
@@ -69,31 +70,59 @@ class OrderRefundCard extends Component {
 		return order.refunds.reduce( ( sum, i ) => sum + parseFloat( i.total ), 0 );
 	}
 
-	getRefundStatus = () => {
+	getPaymentStatus = () => {
 		const { order, translate } = this.props;
-		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
-			args: {
-				total: formatCurrency( order.total, order.currency ) || order.total,
-				method: order.payment_method_title,
-			}
-		} );
+		let paymentStatus;
 
 		if ( 'refunded' === order.status ) {
-			refundStatus = translate( 'Payment of %(total)s has been refunded', {
+			paymentStatus = translate( 'Payment of %(total)s has been refunded', {
 				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
+					total: formatCurrency( order.total, order.currency ),
+				}
+			} );
+		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
+			paymentStatus = translate( 'Awaiting payment of %(total)s via %(method)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+					method: order.payment_method_title,
 				}
 			} );
 		} else if ( order.refunds.length ) {
 			const refund = this.getRefundedTotal( order );
-			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
+			paymentStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
 				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-					refund: formatCurrency( refund, order.currency ) || refund,
+					total: formatCurrency( order.total, order.currency ),
+					refund: formatCurrency( refund, order.currency ),
+				}
+			} );
+		} else {
+			paymentStatus = translate( 'Payment of %(total)s received via %(method)s', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+					method: order.payment_method_title,
 				}
 			} );
 		}
-		return refundStatus;
+		return paymentStatus;
+	}
+
+	getPaymentAction = () => {
+		const { order, translate } = this.props;
+		if ( 'refunded' === order.status ) {
+			return null;
+		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
+			return (
+				<Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>
+			);
+		}
+		return (
+			<Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
+		);
+	}
+
+	markAsPaid = () => {
+		const { order, siteId } = this.props;
+		this.props.updateOrder( siteId, { ...order, status: 'processing' } );
 	}
 
 	toggleDialog = () => {
@@ -142,7 +171,7 @@ class OrderRefundCard extends Component {
 
 		if ( paymentMethod && ( -1 === paymentMethod.method_supports.indexOf( 'refunds' ) ) ) {
 			return (
-				<div className="order-refund__method">
+				<div className="order-payment__method">
 					<h3>{ translate( 'Manual Refund' ) }</h3>
 					<p>{ translate( 'This payment method doesn\'t support automated refunds and must be submitted manually.' ) }</p>
 				</div>
@@ -150,7 +179,7 @@ class OrderRefundCard extends Component {
 		}
 
 		return (
-			<div className="order-refund__method">
+			<div className="order-payment__method">
 				<h3>
 					{ translate( 'Refunding payment via %(method)s', {
 						args: {
@@ -173,7 +202,7 @@ class OrderRefundCard extends Component {
 
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
-			refundTotal = formatCurrency( this.state.refundTotal, order.currency ) || this.state.refundTotal;
+			refundTotal = formatCurrency( this.state.refundTotal, order.currency );
 		}
 		refundTotal = refundTotal.replace( /[^0-9.,]/g, '' );
 
@@ -183,16 +212,13 @@ class OrderRefundCard extends Component {
 		];
 
 		return (
-			<div className="order-refund">
-				<div className="order-refund__label">
+			<div className="order-payment">
+				<div className="order-payment__label">
 					<Gridicon icon="checkmark" />
-					{ this.getRefundStatus() }
+					{ this.getPaymentStatus() }
 				</div>
-				<div className="order-refund__action">
-					{ ( 'refunded' !== order.status )
-						? <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
-						: null
-					}
+				<div className="order-payment__action">
+					{ this.getPaymentAction() }
 				</div>
 
 				<Dialog
@@ -200,19 +226,19 @@ class OrderRefundCard extends Component {
 					onClose={ this.toggleDialog }
 					className={ dialogClass }
 					buttons={ dialogButtons }
-					additionalClassNames="order-refund__dialog woocommerce">
+					additionalClassNames="order-payment__dialog woocommerce">
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
-					<form className="order-refund__container">
-						<FormLabel className="order-refund__note">
+					<form className="order-payment__container">
+						<FormLabel className="order-payment__note">
 							{ translate( 'Refund note' ) }
 							<FormTextarea onChange={ this.updateNote } name="refund_note" value={ refundNote } />
 						</FormLabel>
 
-						<FormFieldset className="order-refund__details">
-							<FormLabel className="order-refund__amount">
-								<span className="order-refund__amount-label">{ translate( 'Total refund amount' ) }</span>
-								<div className="order-refund__amount-value">
+						<FormFieldset className="order-payment__details">
+							<FormLabel className="order-payment__amount">
+								<span className="order-payment__amount-label">{ translate( 'Total refund amount' ) }</span>
+								<div className="order-payment__amount-value">
 									<PriceInput
 										name="refund_total"
 										readOnly
@@ -241,5 +267,5 @@ export default connect(
 			paymentMethod,
 		};
 	},
-	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
-)( localize( OrderRefundCard ) );
+	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund, updateOrder }, dispatch )
+)( localize( OrderPaymentCard ) );

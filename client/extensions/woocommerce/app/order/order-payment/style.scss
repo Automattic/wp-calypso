@@ -1,4 +1,4 @@
-&.order-refund__dialog {
+&.order-payment__dialog {
 	max-width: 720px;
 	display: flex;
 	flex-direction: column;
@@ -21,7 +21,7 @@
 	}
 }
 
-.order-refund__container {
+.order-payment__container {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -30,12 +30,12 @@
 	border-top: 1px solid lighten( $gray, 30% );
 	background: lighten( $gray, 35% );
 
-	.order-refund__note,
-	.order-refund__details {
+	.order-payment__note,
+	.order-payment__details {
 		flex: 1;
 	}
 
-	.order-refund__note {
+	.order-payment__note {
 		margin-bottom: 0;
 
 		.form-textarea {
@@ -43,12 +43,12 @@
 		}
 	}
 
-	.order-refund__details {
+	.order-payment__details {
 		margin-left: 50px;
 		margin-bottom: 0;
 	}
 
-	.order-refund__amount {
+	.order-payment__amount {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -56,13 +56,13 @@
 		margin-bottom: 16px;
 		border-bottom: 1px solid lighten( $gray, 30% );
 
-		.order-refund__amount-label,
-		.order-refund__amount-value {
+		.order-payment__amount-label,
+		.order-payment__amount-value {
 			flex: 1;
 		}
 	}
 
-	.order-refund__method h3 {
+	.order-payment__method h3 {
 		font-size: 11px;
 		text-transform: uppercase;
 		margin-bottom: 8px;
