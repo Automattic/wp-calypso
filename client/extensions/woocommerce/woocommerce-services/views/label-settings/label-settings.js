@@ -88,7 +88,7 @@ class ShippingLabels extends Component {
 
 		let description, buttonLabel;
 		if ( paymentMethods.length ) {
-			description = translate( 'To purchase shipping labels, use your credit card on file or add a new one.' );
+			description = translate( 'To purchase shipping labels, choose a credit card you have on file or add a new card.' );
 			buttonLabel = translate( 'Add another credit card' );
 		} else {
 			description = translate( 'To purchase shipping labels, add a credit card.' );
