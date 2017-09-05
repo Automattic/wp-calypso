@@ -117,7 +117,7 @@ class SocialLogin extends Component {
 				{
 					errorUpdatingSocialConnection &&
 						<Notice status={ 'is-error' } showDismiss={ false }>
-							{ errorUpdatingSocialConnection }
+							{ errorUpdatingSocialConnection.message }
 						</Notice>
 				}
 				<div className="social-login__header">
