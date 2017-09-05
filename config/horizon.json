@@ -29,6 +29,7 @@
 		"happychat": false,
 		"help": true,
 		"help/courses": true,
+		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
