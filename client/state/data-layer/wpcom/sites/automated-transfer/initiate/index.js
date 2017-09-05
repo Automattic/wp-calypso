@@ -42,6 +42,6 @@ export default {
 		initiateTransfer,
 		receiveResponse,
 		receiveError,
-		updateUploadProgress
+		{ onProgress: updateUploadProgress }
 	) ]
 };
