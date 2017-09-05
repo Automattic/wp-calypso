@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import { decodeEntities } from 'lib/formatting';
 import {
 	getPostCommentsTree,
 	getDateSortedPostComments,
@@ -93,7 +94,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			MAX_GRAVATARS_TO_DISPLAY
 		);
 		const displayedAuthorsCount = size( displayedAuthors );
-		const lastAuthorName = get( last( displayedAuthors ), 'name' );
+		const lastAuthorName = decodeEntities( get( last( displayedAuthors ), 'name' ) );
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		return (
