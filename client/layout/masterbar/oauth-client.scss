@@ -9,7 +9,6 @@
 
 	ul {
 		margin: 0;
-		padding-left: 0;
 
 		li {
 			list-style-type: none;
@@ -25,6 +24,14 @@
 	}
 }
 
+.masterbar__oauth-client-main-nav {
+	width: 100%;
+}
+
+.masterbar__oauth-client-current {
+	float: left;
+}
+
 .masterbar__oauth-client-logo img {
 	max-height: 47px;
 }
@@ -34,6 +41,7 @@
 	border-radius: 3px;
 	color: #fff;
 	display: block;
+	float: right;
 	line-height: 100%;
 	margin-right: 4px;
 	position: relative;
@@ -91,42 +99,40 @@
 		background-color: #fff;
 		border: 1px solid #d3d3d3;
 		box-sizing: border-box;
-		height: 83px;
+		height: 85px;
 		line-height: 83px;
 		margin: 0 auto;
-		padding: 0 10px;
 		z-index: 100;
 
-		a {
-			color: #fff;
-			float: left;
-			line-height: 55px;
-			padding: 0 10px;
-			transition: 0.05 all ease-in-out;
+		nav {
+			box-sizing: border-box;
+			max-width: 1500px;
+			margin-left: auto;
+			margin-right: auto;
+			padding-left: 55px;
+			padding-right: 13px;
 		}
 	}
 
-	.masterbar__oauth-client-logo img {
-		max-height: 41px;
-		margin-top: 22px;
-	}
+	.masterbar__oauth-client-logo {
+		padding-top: 23px;
+		transition: 0.05 all ease-in-out;
 
-	.masterbar__oauth-client-main-nav {
-		margin: 0;
+		img {
+			max-height: 37px;
+		}
 	}
 
 	.masterbar__oauth-client-close {
 		float: right;
-		padding-top: 13px;
 
 		a {
 			color: #999;
-			cursor: pointer;
-			float: right;
 			font-size: 0.9em;
+			font-weight: bold;
+			padding: 32px;
 			text-decoration: none;
 			text-transform: uppercase;
-			font-weight: bold;
 		}
 	}
 

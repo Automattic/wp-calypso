@@ -22,14 +22,12 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 						</div>
 					) }
 				</li>
-			</ul>
 
-			{ isWooOAuth2Client( oauth2Client ) ? (
-				<li className="masterbar__oauth-client-close">
-					<a href="https://woocommerce.com">Cancel <span>X</span></a>
-				</li>
-			) : (
-				<ul className="masterbar__oauth-client-user-nav">
+				{ isWooOAuth2Client( oauth2Client ) ? (
+					<li className="masterbar__oauth-client-close">
+						<a href="https://woocommerce.com">Cancel <span>X</span></a>
+					</li>
+				) : (
 					<li className="masterbar__oauth-client-wpcc-sign-in">
 						<a
 							href={ addLocaleToWpcomUrl( 'https://wordpress.com/', getLocaleSlug() ) }
@@ -40,8 +38,8 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 							WordPress.com
 						</a>
 					</li>
-				</ul>
-			) }
+				) }
+			</ul>
 		</nav>
 	</header>
 );
