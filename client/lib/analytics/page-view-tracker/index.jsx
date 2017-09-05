@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { flowRight, noop } from 'lodash';
@@ -10,6 +11,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { recordPageView } from 'state/analytics/actions';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
 
 export class PageViewTracker extends React.Component {
 	static displayName = 'PageViewTracker';
@@ -26,10 +32,12 @@ export class PageViewTracker extends React.Component {
 	};
 
 	componentDidMount() {
+		debug( 'Component has mounted.' );
 		this.queuePageView();
 	}
 
 	componentWillUnmount() {
+		debug( 'Component has unmounted.' );
 		clearTimeout( this.state.timer );
 	}
 
@@ -40,6 +48,8 @@ export class PageViewTracker extends React.Component {
 			recorder = noop,
 			title
 		} = this.props;
+
+		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
 		if ( this.state.timer ) {
 			return;
