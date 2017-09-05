@@ -15,12 +15,18 @@ import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
-import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
+import { getInitialQueryArguments, getSectionName, isSectionLoading } from 'state/ui/selectors';
+import { nextGuidedTourStep, quitGuidedTour, resetGuidedToursHistory } from 'state/ui/guided-tours/actions';
 
 class GuidedTours extends Component {
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
+			this.props.resetGuidedToursHistory();
+		}
 	}
 
 	start = ( { step, tour, tourVersion: tour_version } ) => {
@@ -109,7 +115,9 @@ export default connect( ( state ) => ( {
 	tourState: getGuidedTourState( state ),
 	isValid: ( when ) => !! when( state ),
 	lastAction: getLastAction( state ),
+	requestedTour: getInitialQueryArguments( state ).tour,
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
+	resetGuidedToursHistory,
 } )( localize( GuidedTours ) );
