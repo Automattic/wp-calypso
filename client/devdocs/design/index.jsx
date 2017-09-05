@@ -80,27 +80,24 @@ import Wizard from 'components/wizard/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 
-let DesignAssets = React.createClass( {
-	displayName: 'DesignAssets',
-
-	getInitialState() {
-		return { filter: '' };
-	},
+class DesignAssets extends React.Component {
+	static displayName = 'DesignAssets';
+	state = { filter: '' };
 
 	componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();
 		}
-	},
+	}
 
-	onSearch( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents() {
+	backToComponents = () => {
 		page( '/devdocs/design/' );
-	},
+	};
 
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
@@ -181,8 +178,8 @@ let DesignAssets = React.createClass( {
 				</Collection>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {

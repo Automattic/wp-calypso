@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -10,7 +11,7 @@ import DocService from './service';
 import CompactCard from 'components/card/compact';
 import highlight from 'lib/highlight';
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'SingleDocument',
 	propTypes: {
 		path: React.PropTypes.string.isRequired,

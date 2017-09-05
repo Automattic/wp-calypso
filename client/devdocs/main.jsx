@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import createReactClass from 'create-react-class';
 import debug from 'debug';
-import { isFunction } from 'lodash';
 import React from 'react';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +34,7 @@ const DEFAULT_FILES = [
 
 const log = debug( 'calypso:devdocs' );
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'Devdocs',
 	propTypes: {
 		term: React.PropTypes.string
