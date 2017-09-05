@@ -26,15 +26,15 @@ export const requestFeed = ( siteId, zoneId ) => ( {
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
  * @param  {String} zoneId  Form name
- * @param  {Array}  postIds Feed post IDs
+ * @param  {Array}  posts   Feed posts
  * @return {Object}         Action object
  */
-export const saveFeed = ( siteId, zoneId, form, postIds ) => ( {
+export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
 	type: ZONINATOR_SAVE_FEED,
 	siteId,
 	zoneId,
 	form,
-	postIds,
+	posts,
 } );
 
 /**
@@ -42,12 +42,12 @@ export const saveFeed = ( siteId, zoneId, form, postIds ) => ( {
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
- * @param  {Array}  postIds Feed post IDs
+ * @param  {Array}  posts   Feed posts
  * @return {Object}         Action object
  */
-export const updateFeed = ( siteId, zoneId, postIds ) => ( {
+export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_UPDATE_FEED,
 	siteId,
 	zoneId,
-	postIds,
+	posts,
 } );

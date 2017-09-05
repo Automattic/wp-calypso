@@ -13,7 +13,10 @@ describe( 'actions', () => {
 	const siteId = 1234;
 	const zoneId = 5678;
 
-	const feed = [ 1, 2, 3, 4 ];
+	const posts = [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	];
 
 	describe( 'requestFeed()', () => {
 		it( 'should return an action object', () => {
@@ -29,12 +32,12 @@ describe( 'actions', () => {
 
 	describe( 'saveFeed()', () => {
 		it( 'should return an action object', () => {
-			const action = saveFeed( siteId, zoneId, 'test-form', feed );
+			const action = saveFeed( siteId, zoneId, 'test-form', posts );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_SAVE_FEED,
 				form: 'test-form',
-				postIds: feed,
+				posts,
 				siteId,
 				zoneId,
 			} );
@@ -43,11 +46,11 @@ describe( 'actions', () => {
 
 	describe( 'updateFeed()', () => {
 		it( 'should return an action object', () => {
-			const action = updateFeed( siteId, zoneId, feed );
+			const action = updateFeed( siteId, zoneId, posts );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_UPDATE_FEED,
-				postIds: feed,
+				posts,
 				siteId,
 				zoneId,
 			} );
