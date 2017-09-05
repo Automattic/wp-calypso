@@ -123,6 +123,7 @@ describe( 'fromApi', () => {
 					'actorName',
 					'actorRemoteId',
 					'actorRole',
+					'actorType',
 					'actorWpcomId',
 				] );
 		} );

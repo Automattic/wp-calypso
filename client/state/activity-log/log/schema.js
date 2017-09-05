@@ -18,6 +18,7 @@ export const logItemsSchema = {
 					'actorAvatarUrl',
 					'actorName',
 					'actorRole',
+					'actorType',
 				],
 				properties: {
 					activityDate: { type: 'string' },
@@ -125,6 +126,7 @@ export const logItemsSchema = {
 					actorName: { type: 'string' },
 					actorRemoteId: { type: 'integer' },
 					actorRole: { type: 'string' },
+					actorType: { type: 'string' },
 					actorWpcomId: { type: 'integer' },
 				},
 			},
