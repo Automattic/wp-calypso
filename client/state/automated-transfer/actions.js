@@ -10,8 +10,9 @@ import {
 } from 'state/action-types';
 
 /**
- * Initiate a transfer to an Atomic site. This action is currently
- * only for initiating with a plugin zip. For initiating with
+ * Initiate a transfer to an Atomic site.
+ *
+ * This action is only for initiating with a plugin zip. For initiating with
  * plugin ID or theme zip, see state/themes/actions#initiateThemeTransfer
  *
  * @param {number} siteId The id of the site to transfer
