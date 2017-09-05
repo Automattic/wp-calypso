@@ -100,6 +100,8 @@ class Plans extends Component {
 	}
 
 	handleSkipButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+
 		this.selectFreeJetpackPlan();
 	}
 
