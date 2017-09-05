@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,54 +17,55 @@ import {
 import reducer, { initialClientsData } from '../reducer';
 
 describe( 'reducer', () => {
-	const testState = {
-		930: {
-			id: 930,
-			name: 'vaultpress',
-			title: 'Vaultpress',
-			icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
-		},
-		973: {
-			id: 973,
-			name: 'akismet',
-			title: 'Akismet',
-			icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
-		}
-	};
+	// Uses default data but reduces the size of this data set for tests
+	const initialState = pick( initialClientsData, [ 930, 973 ] );
 
-	it( 'should default to a non empty object', () => {
-		const state = reducer( undefined, {} );
-
-		expect( state ).to.be.an( 'object' ).that.is.not.empty;
+	it( 'should throw an error when no parameter is provided', () => {
+		expect( () => reducer() ).to.throw( TypeError );
 	} );
 
-	it( 'should keep using stale client data when a fetch request for this client id is emitted', () => {
-		const state = reducer( testState, {
+	it( 'should throw an error when no action is provided', () => {
+		expect( () => reducer( {} ) ).to.throw( TypeError );
+	} );
+
+	it( 'should return the current state for an empty action', () => {
+		const newState = reducer( initialState, {} );
+
+		expect( newState ).to.be.eql( initialState );
+	} );
+
+	it( 'should return the current state for an unknown action type', () => {
+		const newState = reducer( initialState, { type: 'BUY_BURGER', } );
+
+		expect( newState ).to.be.eql( initialState );
+	} );
+
+	it( 'should return the current state when fetching client data starts', () => {
+		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST,
 			clientId: 930
 		} );
 
-		expect( state ).to.deep.equal( testState );
+		expect( newState ).to.deep.equal( initialState );
 	} );
 
-	it( 'should update the client data from the list of clients on response from the server', () => {
-		const state = reducer( testState, {
+	it( 'should return updated state with updated data when client data was fetched successful', () => {
+		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 			data: {
 				id: 930,
-				title: 'Vaultpress 2',
-				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav.png',
-				url: 'https://vaultpress.com/'
+				title: 'Vaultpress Pro',
+				url: 'https://vaultpress.pro/'
 			}
 		} );
 
-		expect( state ).to.deep.equal( {
+		expect( newState ).to.deep.equal( {
 			930: {
 				id: 930,
 				name: 'vaultpress',
-				title: 'Vaultpress 2',
-				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav.png',
-				url: 'https://vaultpress.com/'
+				title: 'Vaultpress Pro',
+				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+				url: 'https://vaultpress.pro/'
 			},
 			973: {
 				id: 973,
@@ -74,18 +76,53 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	it( 'should return updated state with new data when client data was fetched successful', () => {
+		const newState = reducer( initialState, {
+			type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
+			data: {
+				id: 2665,
+				title: 'IntenseDebate',
+				url: 'https://intensedebate.com/',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100'
+			}
+		} );
+
+		expect( newState ).to.deep.equal( {
+			930: {
+				id: 930,
+				name: 'vaultpress',
+				title: 'Vaultpress',
+				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+			},
+			973: {
+				id: 973,
+				name: 'akismet',
+				title: 'Akismet',
+				icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
+			},
+			2665: {
+				id: 2665,
+				title: 'IntenseDebate',
+				url: 'https://intensedebate.com/',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100'
+			}
+		} );
+	} );
+
 	it( 'should not persist state', () => {
-		const state = reducer( undefined, {
+		const newState = reducer( undefined, {
 			type: SERIALIZE
 		} );
-		expect( state ).to.deep.equal( initialClientsData );
+
+		expect( newState ).to.deep.equal( initialClientsData );
 	} );
 
 	it( 'should not load persisted state', () => {
-		const state = reducer( undefined, {
+		const newState = reducer( undefined, {
 			type: DESERIALIZE
 		} );
-		expect( state ).to.deep.equal( initialClientsData );
+
+		expect( newState ).to.deep.equal( initialClientsData );
 	} );
 
 	it( 'should assign signup url to proper client', () => {
@@ -96,13 +133,13 @@ describe( 'reducer', () => {
 			'redirect_uri%3Dhttps%253A%252F%252Fwoocommerce.com%252Fwc-api%252Fwpcom-signin%253Fnext%253D' +
 			'myaccount%26blog_id%3D0%26wpcom_connect%3D1%26jetpack-code%26jetpack-user-id%3D0&wpcom_connect=1';
 
-		const state = reducer( {
+		const newState = reducer( {
 			[ clientId ]: {}
 		}, {
 			type: OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS,
 			signupUrl,
 		} );
 
-		expect( state[ clientId ].signupUrl ).to.equal( signupUrl );
+		expect( newState[ clientId ].signupUrl ).to.equal( signupUrl );
 	} );
 } );
