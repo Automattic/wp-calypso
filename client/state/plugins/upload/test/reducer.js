@@ -20,7 +20,7 @@ import {
 	uploadError,
 } from '../reducer';
 import {
-	initiateAutomatedTransfer,
+	initiateAutomatedTransferWithPluginZip,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
 
@@ -124,7 +124,7 @@ describe( 'inProgress', () => {
 	} );
 
 	it( 'should be true on transfer start', () => {
-		const state = inProgress( {}, initiateAutomatedTransfer( siteId ) );
+		const state = inProgress( {}, initiateAutomatedTransferWithPluginZip( siteId ) );
 		expect( state[ siteId ] ).to.be.true;
 	} );
 
