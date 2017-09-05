@@ -31,7 +31,7 @@ const analytics = {
 				pathname: '/t.gif',
 				query: data
 			} );
-			superagent.get( pixelUrl );
+			superagent.get( pixelUrl ).end();
 		},
 
 		recordEvent: function( eventName, eventProperties, req ) {
