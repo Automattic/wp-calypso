@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import getPackageDescriptions from './get-package-descriptions';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const PackageList = ( props ) => {

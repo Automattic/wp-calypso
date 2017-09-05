@@ -17,7 +17,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Button from 'components/button';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	updateWeight,
 	removePackage,

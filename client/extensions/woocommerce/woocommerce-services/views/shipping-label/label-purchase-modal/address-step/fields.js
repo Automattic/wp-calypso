@@ -18,7 +18,7 @@ import StateDropdown from 'woocommerce/woocommerce-services/components/state-dro
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,

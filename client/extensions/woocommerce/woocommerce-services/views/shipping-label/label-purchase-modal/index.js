@@ -20,10 +20,13 @@ import RatesStep from './rates-step';
 import Sidebar from './sidebar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { getRatesTotal } from 'woocommerce/woocommerce-services/state/shipping-label/selectors/rates';
-import { getShippingLabel, isLoaded } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
-import canPurchase from 'woocommerce/woocommerce-services/state/shipping-label/selectors/can-purchase';
+import {
+	getShippingLabel,
+	isLoaded,
+	getRatesTotal,
+	getFormErrors,
+	canPurchase,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
 	const getPurchaseButtonLabel = () => {

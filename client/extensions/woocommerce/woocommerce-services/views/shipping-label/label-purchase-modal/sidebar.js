@@ -12,7 +12,7 @@ import { translate as __ } from 'i18n-calypso';
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const Sidebar = ( props ) => {

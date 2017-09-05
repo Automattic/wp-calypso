@@ -14,7 +14,7 @@ import _ from 'lodash';
 import AddressFields from './fields';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
-import getFormErrors from 'woocommerce/woocommerce-services/state/shipping-label/selectors/errors';
+import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { toggleStep } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const renderSummary = ( {
