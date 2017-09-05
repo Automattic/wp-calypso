@@ -22,7 +22,7 @@ import {
 } from 'state/login/selectors';
 import { http } from 'state/http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
 /**
@@ -99,7 +99,7 @@ const makePushNotificationRequest = dispatchRequest(
 export default {
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [ ( store, action ) => {
 		// We need to store to update for `getTwoFactorPushPollInProgress` selector
-		store.dispatch( local( action ) );
+		store.dispatch( bypassDataLayer( action ) );
 		return makePushNotificationRequest( store, action );
 	} ],
 };

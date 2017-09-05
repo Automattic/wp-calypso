@@ -15,7 +15,7 @@ import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { getReaderFollowForBlog } from 'state/selectors';
 import { buildBody } from '../utils';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestUpdatePostEmailSubscription( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
@@ -55,7 +55,7 @@ export function receiveUpdatePostEmailSubscriptionError(
 			translate( 'Sorry, we had a problem updating that subscription. Please try again.' )
 		)
 	);
-	dispatch( local( updateNewPostEmailSubscription( blogId, previousState ) ) );
+	dispatch( bypassDataLayer( updateNewPostEmailSubscription( blogId, previousState ) ) );
 }
 
 export default {

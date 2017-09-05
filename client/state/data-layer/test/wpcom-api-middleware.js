@@ -8,7 +8,7 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { middleware } from '../wpcom-api-middleware';
-import { local } from '../utils';
+import { bypassDataLayer } from '../utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
 
 describe( 'WordPress.com API Middleware', () => {
@@ -43,7 +43,7 @@ describe( 'WordPress.com API Middleware', () => {
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
-		const action = local( { type: 'ADD' } );
+		const action = bypassDataLayer( { type: 'ADD' } );
 
 		middleware( handlers )( store )( next )( action );
 
@@ -100,7 +100,7 @@ describe( 'WordPress.com API Middleware', () => {
 		middleware( handlers )( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
-		expect( next ).to.have.been.calledWith( local( action ) );
+		expect( next ).to.have.been.calledWith( bypassDataLayer( action ) );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
