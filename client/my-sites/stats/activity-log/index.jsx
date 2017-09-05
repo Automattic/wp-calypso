@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
@@ -46,7 +47,11 @@ import {
 	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
+/**
+ * Module constants
+ */
 const debug = debugFactory( 'calypso:activity-log' );
+const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -226,6 +231,10 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
+		if ( ! rewindEnabledByConfig ) {
+			return null;
+		}
+
 		const { isPressable, rewindStatusError, translate } = this.props;
 
 		// Do not match null
@@ -295,7 +304,7 @@ class ActivityLog extends Component {
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
-					hideRestore={ ! isPressable }
+					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ dayEnd }
 					logs={ get( logsGroupedByDay, dayEnd, [] ) }
@@ -344,7 +353,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				<QueryRewindStatus siteId={ siteId } />
+				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog
 					siteId={ siteId }
 					dateStart={ queryStart }
