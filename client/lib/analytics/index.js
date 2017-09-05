@@ -1,17 +1,29 @@
 /**
  * External dependencies
  */
-import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 import cookie from 'cookie';
-const debug = require( 'debug' ),
-	url = require( 'url' ),
-	qs = require( 'qs' );
+import debug from 'debug';
+import qs from 'qs';
+import url from 'url';
+import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' ),
-	loadScript = require( 'lib/load-script' ).loadScript;
+import config from 'config';
+import emitter from 'lib/mixins/emitter';
+import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { loadScript } from 'lib/load-script';
+import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+import { statsdTimingUrl } from 'lib/analytics/statsd';
+
+/**
+ * Module variables
+ */
+const mcDebug = debug( 'calypso:analytics:mc' );
+const gaDebug = debug( 'calypso:analytics:ga' );
+const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps,
 	_user,
@@ -19,17 +31,6 @@ let _superProps,
 	_siteCount,
 	_dispatch,
 	_loadTracksError;
-
-import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-const mcDebug = debug( 'calypso:analytics:mc' );
-const gaDebug = debug( 'calypso:analytics:ga' );
-const tracksDebug = debug( 'calypso:analytics:tracks' );
-
-import emitter from 'lib/mixins/emitter';
-
-import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 // Load tracking scripts
 window._tkq = window._tkq || [];

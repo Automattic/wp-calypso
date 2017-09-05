@@ -3,9 +3,6 @@
  */
 import config from 'config';
 import { assign } from 'lodash';
-/**
- * Internal dependencies
- */
 
 module.exports = {
 	getAll: function( selectedSite, siteCount ) {

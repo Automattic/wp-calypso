@@ -2,17 +2,16 @@
  * External dependencies
  */
 import async from 'async';
-import { assign, clone, cloneDeep, noop, some } from 'lodash';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 import cookie from 'cookie';
+import debugFactory from 'debug';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
 import config from 'config';
+import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
 import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
@@ -20,6 +19,7 @@ import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 /**
  * Module variables
  */
+const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
