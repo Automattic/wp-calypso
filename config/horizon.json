@@ -86,7 +86,6 @@
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,
-		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
