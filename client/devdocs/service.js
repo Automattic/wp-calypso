@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var request = require( 'superagent' );
+import request from 'superagent';
 
 function fetchDocsEndpoint( endpoint, params, callback ) {
 	request.
@@ -13,7 +13,7 @@ function fetchDocsEndpoint( endpoint, params, callback ) {
 			} else {
 				callback( 'Error invoking /devdocs/' + endpoint + ': ' + res.text, null );
 			}
-		});
+		} );
 }
 
 /**
@@ -26,7 +26,7 @@ module.exports = {
 	},
 
 	list: function( filenames, callback ) {
-		fetchDocsEndpoint( 'list', { files: filenames.join(',') }, callback );
+		fetchDocsEndpoint( 'list', { files: filenames.join( ',' ) }, callback );
 	},
 
 	fetch: function( path, callback ) {

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var DocService = require( './service' ),
-	CompactCard = require( 'components/card/compact' ),
-	highlight = require( 'lib/highlight' );
+import DocService from './service';
+import CompactCard from 'components/card/compact';
+import highlight from 'lib/highlight';
 
 module.exports = React.createClass( {
 	displayName: 'SingleDocument',
@@ -58,7 +58,7 @@ module.exports = React.createClass( {
 
 	setBodyScrollPosition: function() {
 		if ( this.props.sectionId ) {
-			var sectionNode = document.getElementById( this.props.sectionId );
+			const sectionNode = document.getElementById( this.props.sectionId );
 
 			if ( sectionNode ) {
 				sectionNode.scrollIntoView();
@@ -85,8 +85,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-
-		var editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
+		const editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
 		return (
@@ -98,7 +97,7 @@ module.exports = React.createClass( {
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }} //eslint-disable-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } } //eslint-disable-line react/no-danger
 				/>
 			</div>
 		);
