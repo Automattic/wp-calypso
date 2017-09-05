@@ -7,7 +7,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import classNames from 'classnames';
-import { find, includes, startsWith, identity, isEqual } from 'lodash';
+import { find, includes, startsWith, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,7 +81,7 @@ const store = createStore(
 );
 
 const wrapConsole = fn => ( message, ...args ) => {
-	store.dispatch( { type: CONSOLE_MESSAGE, message } );
+	Promise.resolve().then( () => store.dispatch( { type: CONSOLE_MESSAGE, message } ) );
 	fn.call( window, message, ...args );
 };
 
@@ -102,19 +102,25 @@ const RELOAD_REQUIRED_ELEMENT = (
 	<div className="webpack-build-monitor is-warning">Need to refresh</div>
 );
 
-class WebpackBuildMonitor extends React.Component {
+class WebpackBuildMonitor extends React.PureComponent {
 	state = {
 		buildStatus: IDLE,
 		reloadRequired: false,
 	};
 
 	componentDidMount() {
-		this.unsubscribe = store.subscribe( () => {
-			const status = store.getState();
-			if ( ! isEqual( status, this.state ) ) {
-				this.setState( store.getState() );
-			}
-		} );
+		this.unsubscribe = store.subscribe(
+			( function() {
+				let prevState = undefined;
+				return () => {
+					const nextState = store.getState();
+					if ( nextState !== prevState ) {
+						this.setState( nextState );
+						prevState = nextState;
+					}
+				};
+			} )()
+		);
 	}
 
 	componentWillUnmount() {
