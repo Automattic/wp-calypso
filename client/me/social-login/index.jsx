@@ -62,7 +62,7 @@ class SocialLogin extends Component {
 		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
 	};
 
-	handleGoogleResponse = ( response ) => {
+	handleGoogleLoginResponse = ( response ) => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
@@ -91,10 +91,24 @@ class SocialLogin extends Component {
 		);
 	}
 
-	renderGoogleConnection() {
+	renderActionButton( onClickAction = null ) {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
 		const buttonLabel = isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' );
 		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
+
+		return (
+			<FormButton
+				compact={ true }
+				disabled={ disableButton }
+				isPrimary={ true }
+				onClick={ onClickAction }>
+				{ buttonLabel }
+			</FormButton>
+		);
+	}
+
+	renderGoogleConnection() {
+		const { isUserConnectedToGoogle } = this.props;
 
 		return (
 			<CompactCard>
@@ -109,23 +123,11 @@ class SocialLogin extends Component {
 					<div className="social-login__header-action">
 						{
 							isUserConnectedToGoogle
-								? <FormButton
-									compact={ true }
-									disabled={ disableButton }
-									isPrimary={ false }
-									onClick={ this.disconnectFromGoogle }>
-									{ buttonLabel }
-								</FormButton>
+								? this.renderActionButton( this.disconnectFromGoogle )
 								: <GoogleLoginButton
 									clientId={ config( 'google_oauth_client_id' ) }
-									responseHandler={ this.handleGoogleResponse } >
-									<FormButton
-										compact={ true }
-										disabled={ disableButton }
-										isPrimary={ true }
-										onClick={ this.disconnectFromGoogle }>
-										{ buttonLabel }
-									</FormButton>
+									responseHandler={ this.handleGoogleLoginResponse } >
+									{ this.renderActionButton() }
 								</GoogleLoginButton>
 						}
 					</div>
