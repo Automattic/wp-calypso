@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { translate } from 'i18n-calypso';
 import sinon from 'sinon';
 
@@ -9,15 +10,24 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-import { requestZoneFeed, requestZoneFeedError, updateZoneFeed } from '../';
-import { fromApi } from '../util';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import {
+	announceSuccess,
+	announceFailure,
+	requestZoneFeed,
+	requestZoneFeedError,
+	saveZoneFeed,
+	updateZoneFeed,
+} from '../';
+import { fromApi, toApi } from '../util';
 import { updateFeed } from 'zoninator/state/feeds/actions';
 
 const dummyAction = {
 	type: 'DUMMY_ACTION',
+	form: 'test-form',
 	siteId: 123,
 	zoneId: 456,
+	postIds: [ 7, 8, 9 ],
 };
 
 const apiResponse = [
@@ -85,5 +95,100 @@ describe( '#updateZoneFeed()', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, fromApi( apiResponse ) ) );
+	} );
+} );
+
+describe( '#saveZoneFeed()', () => {
+	it( 'should dispatch a HTTP request to the feed endpoint', () => {
+		const dispatch = sinon.spy();
+
+		saveZoneFeed( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( http( {
+			method: 'PUT',
+			path: '/jetpack-blogs/123/rest-api/',
+			query: {
+				body: JSON.stringify( toApi( dummyAction.postIds ) ),
+				json: true,
+				path: '/zoninator/v1/zones/456/posts',
+			},
+		}, dummyAction ) );
+	} );
+
+	it( 'should dispatch `removeNotice`', () => {
+		const dispatch = sinon.spy();
+
+		saveZoneFeed( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-save-feed' ) );
+	} );
+
+	it( 'should dispatch `startSubmit`', () => {
+		const dispatch = sinon.spy();
+
+		saveZoneFeed( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( startSubmit( dummyAction.form ) );
+	} );
+} );
+
+describe( '#announceSuccess()', () => {
+	it( 'should dispatch `stopSubmit`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
+	} );
+
+	it( 'should dispatch `initialize`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( initialize(
+			dummyAction.form,
+			dummyAction.postIds,
+		) );
+	} );
+
+	it( 'should dispatch `successNotice`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( successNotice(
+			translate( 'Zone feed saved!' ),
+			{ id: 'zoninator-save-feed' },
+		) );
+	} );
+
+	it( 'should dispatch `updateFeed`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, dummyAction.postIds ) );
+	} );
+} );
+
+describe( '#announceFailure()', () => {
+	it( 'should dispatch `stopSubmit`', () => {
+		const dispatch = sinon.spy();
+
+		announceFailure( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
+	} );
+
+	it( 'should dispatch `errorNotice`', () => {
+		const dispatch = sinon.spy();
+
+		announceFailure( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWith( errorNotice(
+			translate( 'There was a problem saving your changes. Please try again' ),
+			{ id: 'zoninator-save-feed' },
+		) );
 	} );
 } );
