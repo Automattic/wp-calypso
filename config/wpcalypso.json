@@ -35,6 +35,7 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
 		"help/courses": true,
+		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
 		"login/magic-login": true,
