@@ -155,6 +155,47 @@ describe( 'reducer', () => {
 			expect( result ).to.eql( { '1-1': [ { ID: 123, content: 'lorem ipsum dolor' } ] } );
 			expect( result[ '1-1' ] ).to.have.lengthOf( 1 );
 		} );
+
+		it( 'should allow Comment Management to edit content and author details', () => {
+			const state = deepFreeze( {
+				'1-1': [
+					{
+						ID: 123,
+						author: {
+							name: 'Foo',
+							url: 'https://example.com/',
+						},
+						content: 'Lorem ipsum',
+					},
+				],
+			} );
+
+			const result = items( state, {
+				type: COMMENTS_EDIT,
+				siteId: 1,
+				postId: 1,
+				commentId: 123,
+				comment: {
+					authorDisplayName: 'Bar',
+					authorUrl: 'https://wordpress.com/',
+					commentContent: 'Lorem ipsum dolor sit amet',
+				},
+			} );
+
+			expect( result ).to.eql( {
+				'1-1': [
+					{
+						ID: 123,
+						author: {
+							name: 'Bar',
+							url: 'https://wordpress.com/',
+						},
+						content: 'Lorem ipsum dolor sit amet',
+					},
+				],
+			} );
+			expect( result[ '1-1' ] ).to.have.lengthOf( 1 );
+		} );
 	} );
 
 	describe( '#fetchStatus', () => {
