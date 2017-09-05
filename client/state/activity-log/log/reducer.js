@@ -11,7 +11,7 @@ export const logError = keyedReducer( 'siteId', state => state );
 
 export const logItems = keyedReducer(
 	'siteId',
-	createReducer( [], {
+	createReducer( undefined, {
 		[ ACTIVITY_LOG_UPDATE ]: ( state, { data } ) => data,
 	} )
 );
