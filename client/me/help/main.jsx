@@ -46,11 +46,8 @@ const Help = React.createClass( {
 		const helpfulResults = [
 			{
 				link: 'https://en.support.wordpress.com/com-vs-org/',
-				title: this.translate( 'Can\'t add your theme or plugin?' ),
-				description: this.translate(
-					'Learn about the differences between a fully hosted WordPress.com site and a ' +
-					'self-hosted WordPress.org site. Themes and plugins can be uploaded to self-hosted sites only.'
-				)
+				title: this.translate( 'Uploading custom plugins and themes' ),
+				description: this.translate( 'Learn more about installing a custom theme or plugin using the Business plan.' )
 			},
 			{
 				link: 'https://en.support.wordpress.com/all-about-domains/',
