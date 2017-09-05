@@ -29,7 +29,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 				line={ translate( 'Start a site now to unlock everything WordPress.com can offer.' ) }
 				action={ translate( 'Create Site' ) }
 				actionURL={
-					`/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }`
+					`/start/site-selected/?siteSlug=${ encodeURIComponent( slug ) }&siteId=${ encodeURIComponent( siteId ) }`
 				}
 				secondaryAction={ translate( 'Manage Domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }

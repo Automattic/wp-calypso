@@ -5,7 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { union, uniq, some, startsWith } from 'lodash';
+import { uniq, some, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -183,13 +183,9 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		domainManagementTransferToOtherSite
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
-
+	const domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
 	if ( primaryDomain && slug !== primaryDomain.name ) {
-		domainManagementPaths = union(
-			domainManagementPaths,
-			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
-		);
+		domainManagementPaths.concat( allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) ) );
 	}
 
 	const otherPaths = [
