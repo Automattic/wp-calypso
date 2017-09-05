@@ -93,6 +93,10 @@
 	@include breakpoint( ">660px" ) {
 		color: lighten( $gray, 20% );
 	}
+
+	.gridicon {
+		top: 2px;
+	}
 }
 
 .editor-action-bar__view-post-tooltip .popover__inner {

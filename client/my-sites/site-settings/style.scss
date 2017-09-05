@@ -274,8 +274,6 @@
 }
 
 .site-settings__site-options {
-	padding-bottom: 24px;
-
 	@include breakpoint( ">660px" ) {
 		display: flex;
 	}
