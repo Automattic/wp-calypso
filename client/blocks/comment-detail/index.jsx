@@ -200,6 +200,7 @@ export class CommentDetail extends Component {
 		const {
 			authorAvatarUrl,
 			authorEmail,
+			authorId,
 			authorIp,
 			authorName,
 			authorUrl,
@@ -305,6 +306,7 @@ export class CommentDetail extends Component {
 								closeEditMode={ this.edit }
 								commentContent={ isRawContentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
+								isAuthorRegistered={ authorId !== 0 }
 								postId={ postId }
 								updateComment={ updateComment }
 							/>

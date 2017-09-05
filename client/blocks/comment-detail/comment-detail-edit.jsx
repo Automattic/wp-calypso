@@ -21,6 +21,7 @@ export class CommentDetailEdit extends Component {
 		closeEditMode: PropTypes.func,
 		commentContent: PropTypes.string,
 		commentId: PropTypes.number,
+		isAuthorRegistered: PropTypes.bool,
 		postId: PropTypes.number,
 		updateComment: PropTypes.func,
 	};
@@ -50,6 +51,7 @@ export class CommentDetailEdit extends Component {
 	render() {
 		const {
 			closeEditMode,
+			isAuthorRegistered,
 			translate,
 		} = this.props;
 		const {
@@ -65,6 +67,7 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'Name' ) }
 					</FormLabel>
 					<FormTextInput
+						disabled={ isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
 						value={ authorDisplayName }
 					/>
@@ -75,6 +78,7 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'URL' ) }
 					</FormLabel>
 					<FormTextInput
+						disabled={ isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }
 						value={ authorUrl }
 					/>
