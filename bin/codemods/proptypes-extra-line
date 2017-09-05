@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Initialize from the provided arguments
+TARGET="${1:?No target supplied. Please provide a target directory or file.}"
+
+FILES=$(find $TARGET -type f -name '*.jsx' -o -name '*.js')
+
+for filename in $FILES; do
+    echo "Processing $filename"
+    node bin/codemods/src/proptypes-extra-line.js $filename
+done
