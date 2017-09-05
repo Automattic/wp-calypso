@@ -31,6 +31,23 @@ import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
+/**
+ * A PostComment is the visual representation for a comment within a tree of comments.
+ * Each comment may have a different displayType.  It will be one of:
+ *  1. full: display the full content.  no max-height.
+ *  2. excerpt: show 3 lines.  max-height clipping is involved.  if the content overflows
+ *       then show a "Read More" button that will the comment to full
+ *  3. singleLine: show only 1 line of the comment and then show a Read More if the content overflows.
+ *  4. hidden: do not show at all.  this is implied by a lack of displayType.
+ *
+ * - An individual PostComment determines its displayType by looking at the prop commentsToShow.
+ *      displayType = commentsToShow[ commentId ] || hidden;
+ * - If a PostComment has caterpillars enabled, it will show a caterpillar if it has hidden children.
+ *
+ * As of the time of this comment writing, ReaderFullPost uses exclusively 'full' comments, whereas
+ *   conversations tool uses a mix depending on the situation.
+ */
+
 class PostComment extends React.PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,

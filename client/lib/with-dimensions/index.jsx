@@ -9,9 +9,21 @@ import { debounce } from 'lodash';
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
 
 /**
- * withDimensions is a Hoc that hands down a width and height prop of how much available space there is for it to consume.
- * withDimensions assumes that you care about the space at the dom location of the component, but you may also pass
- * in a domTarget in case you want to be tracking the dimensions of a different component
+ * withDimensions is a Hoc that keeps track of a domNode's dimension-related info and then hands that down to its child:
+ * dimensio-related info:
+ *  1. width: the pixel width of the domNode
+ *  2. height: the pixel height of the domNode
+ *  3. overflowX: true if the container is overflowing in the x direction. aka: scrollWidth > width
+ *  4. overflowY: true if the container is overflowing in the y direction. aka: scrollHeight > height
+ *  5. setWithDimensionsRef: a ref setter to aid in picking which domNode to target.
+ *
+ * How to specify which domNode to keep track of? In React it is always a bit awkward to get a handle on
+ * actual domnodes so this HoC provides a few methods:
+ * 1. default: wrap child component in a div and track the div.  requires no ref passing.  means the component essentially gets its own
+ *     available width/height/overflow properties
+ * 2. provide a prom domTarget to the created component: <EnhancedComponent domTarget={ domNode } />
+ * 3. call the provided setWithDimensionsRef function:
+ *    withDimensions( ({}) => <div> <span ref ={ this.props.setWithDimensionsRef }> </span></div> )
  *
  * @example: withDimensions( Component )
  *
