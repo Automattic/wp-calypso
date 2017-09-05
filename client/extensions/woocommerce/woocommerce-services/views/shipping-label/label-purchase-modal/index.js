@@ -65,9 +65,9 @@ const PurchaseDialog = ( props ) => {
 
 	const getPurchaseButtonAction = () => {
 		if ( props.form.needsPrintConfirmation ) {
-			return () => props.labelActions.confirmPrintLabel( props.form.printUrl );
+			return () => props.confirmPrintLabel( props.form.printUrl );
 		}
-		return props.labelActions.purchaseLabel;
+		return props.purchaseLabel;
 	};
 
 	const buttons = [
@@ -79,7 +79,7 @@ const PurchaseDialog = ( props ) => {
 		},
 	];
 
-	const onClose = () => props.labelActions.exitPrintingFlow( false );
+	const onClose = () => props.exitPrintingFlow( false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
 		buttons.push( {
