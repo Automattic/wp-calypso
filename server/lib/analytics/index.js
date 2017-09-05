@@ -47,6 +47,7 @@ const analytics = {
 			eventProperties = omit( eventProperties, isUndefined );
 
 			const date = new Date();
+			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';
 
 			this.createPixel( assign( {
 				_en: eventName,
@@ -55,9 +56,9 @@ const analytics = {
 				_ui: req.query._ui,
 				_ut: req.query._ut,
 				_dl: req.get( 'Referer' ),
-				_lg: req.get( 'Accept-Language' ).split( ',' )[ 0 ],
+				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
 				_pf: req.useragent.platform,
-				_via_ip: req.headers[ 'x-forwarded-for' ] || req.connection.remoteAddress,
+				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
 				_via_ua: req.useragent.source
 			}, eventProperties ) );
 		},
