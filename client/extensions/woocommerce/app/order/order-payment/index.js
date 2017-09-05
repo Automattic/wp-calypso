@@ -23,6 +23,7 @@ import Notice from 'components/notice';
 import OrderDetailsTable from '../order-details/table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class OrderPaymentCard extends Component {
 	static propTypes = {
@@ -103,6 +104,25 @@ class OrderPaymentCard extends Component {
 			} );
 		}
 		return paymentStatus;
+	}
+
+	getPaymentAction = () => {
+		const { order, translate } = this.props;
+		if ( 'refunded' === order.status ) {
+			return null;
+		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
+			return (
+				<Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>
+			);
+		}
+		return (
+			<Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
+		);
+	}
+
+	markAsPaid = () => {
+		const { order, siteId } = this.props;
+		this.props.updateOrder( siteId, { ...order, status: 'processing' } );
 	}
 
 	toggleDialog = () => {
@@ -198,10 +218,7 @@ class OrderPaymentCard extends Component {
 					{ this.getPaymentStatus() }
 				</div>
 				<div className="order-payment__action">
-					{ ( 'refunded' !== order.status )
-						? <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
-						: null
-					}
+					{ this.getPaymentAction() }
 				</div>
 
 				<Dialog
@@ -250,5 +267,5 @@ export default connect(
 			paymentMethod,
 		};
 	},
-	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
+	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund, updateOrder }, dispatch )
 )( localize( OrderPaymentCard ) );
