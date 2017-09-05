@@ -83,8 +83,6 @@ class PostComment extends React.PureComponent {
 		showFull: false,
 	};
 
-	handleReadMoreClicked = () => this.setState( { showFull: true } );
-
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
@@ -252,12 +250,14 @@ class PostComment extends React.PureComponent {
 	};
 
 	onReadMore = () => {
-		this.props.expandComments( {
-			siteId: this.props.post.site_ID,
-			commentIds: [ this.props.commentId ],
-			postId: this.props.post.ID,
-			displayType: POST_COMMENT_DISPLAY_TYPES.full,
-		} );
+		this.setState( { showFull: true } );
+		this.props.post &&
+			this.props.expandComments( {
+				siteId: this.props.post.site_ID,
+				commentIds: [ this.props.commentId ],
+				postId: this.props.post.ID,
+				displayType: POST_COMMENT_DISPLAY_TYPES.full,
+			} );
 	};
 
 	render() {
@@ -396,7 +396,7 @@ class PostComment extends React.PureComponent {
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
-					showReadMore={ this.props.overflowY }
+					showReadMore={ this.props.overflowY && ! this.state.showFull }
 					onReadMore={ this.onReadMore }
 				/>
 
