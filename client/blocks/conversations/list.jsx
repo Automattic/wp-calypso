@@ -27,10 +27,12 @@ export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
+		shouldRequestComments: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		enableCaterpillar: true,
+		shouldRequestComments: true,
 	};
 
 	state = {
@@ -64,7 +66,11 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	reqMoreComments = ( props = this.props ) => {
-		const { siteId, postId, enableCaterpillar } = props;
+		const { siteId, postId, enableCaterpillar, shouldRequestComments } = props;
+
+		if ( ! shouldRequestComments || ! props.commentsFetchingStatus ) {
+			return;
+		}
 
 		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } = props.commentsFetchingStatus;
 

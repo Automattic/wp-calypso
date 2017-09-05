@@ -22,6 +22,7 @@ const ConversationCommentListExample = () => {
 				commentIds={ [ 1, 2, 3 ] }
 				post={ post }
 				enableCaterpillar={ false }
+				shouldRequestComments={ false }
 			/>
 		</div>
 	);
