@@ -9,8 +9,8 @@ import React from 'react';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'ReaderSiteStreamLink',
+export default class extends React.Component {
+    static displayName = 'ReaderSiteStreamLink';
 
 	render() {
 		const feedId = 40474296;
@@ -20,5 +20,5 @@ export default React.createClass( {
 				<ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>futonbleu</ReaderSiteStreamLink>
 			</Card>
 		);
-	},
-} );
+	}
+}

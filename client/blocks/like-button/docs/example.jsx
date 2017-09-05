@@ -2,7 +2,6 @@
 * External dependencies
 */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -10,15 +9,11 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import LikeButton from 'blocks/like-button/button';
 import Card from 'components/card/compact';
 
-const SimpleLikeButtonContainer = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			liked: !! this.props.liked,
-			count: this.props.likeCount || 0,
-		};
-	},
+class SimpleLikeButtonContainer extends React.PureComponent {
+    state = {
+		liked: !! this.props.liked,
+		count: this.props.likeCount || 0,
+	};
 
 	render() {
 		return (
@@ -29,20 +24,18 @@ const SimpleLikeButtonContainer = React.createClass( {
 				liked={ this.state.liked }
 			/>
 		);
-	},
+	}
 
-	handleLikeToggle( newState ) {
+	handleLikeToggle = newState => {
 		this.setState( {
 			liked: newState,
 			count: ( this.state.count += newState ? 1 : -1 ),
 		} );
-	},
-} );
+	};
+}
 
-const LikeButtons = React.createClass( {
-	displayName: 'LikeButton',
-
-	mixins: [ PureRenderMixin ],
+class LikeButtons extends React.PureComponent {
+    static displayName = 'LikeButton';
 
 	render() {
 		return (
@@ -58,7 +51,7 @@ const LikeButtons = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default LikeButtons;

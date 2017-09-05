@@ -12,12 +12,12 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 
-const DesignToolList = React.createClass( {
-	propTypes: {
+class DesignToolList extends React.Component {
+	static propTypes = {
 		onChange: React.PropTypes.func.isRequired,
-	},
+	};
 
-	renderControl( tool ) {
+	renderControl = tool => {
 		const onChange = event => {
 			event.preventDefault();
 			this.props.onChange( tool.value );
@@ -32,7 +32,7 @@ const DesignToolList = React.createClass( {
 							<Gridicon icon="chevron-right" size={ 24 } onClick={ onChange } className="design-tool-list__button__icon" />
 						</SidebarItem>
 					);
-	},
+	};
 
 	render() {
 		return (
@@ -46,6 +46,6 @@ const DesignToolList = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( DesignToolList );

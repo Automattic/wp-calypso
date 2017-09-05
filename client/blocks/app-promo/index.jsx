@@ -51,46 +51,47 @@ export const getPromoLink = ( location, promoDetails ) => {
 	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
 };
 
-export const AppPromo = React.createClass( {
+export class AppPromo extends React.Component {
+	static displayName = 'AppPromo';
 
-	displayName: 'AppPromo',
-
-	propTypes: {
+	static propTypes = {
 		location: React.PropTypes.string.isRequired
-	},
+	};
 
-	getInitialState: function() {
-		const promoItem = this.props.promoItem || getRandomPromo();
-		return {
+	constructor( props ) {
+	    super( props );
+		const promoItem = props.promoItem || getRandomPromo();
+
+		this.state = {
 			promoItem,
 			showPromo: true
 		};
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
 		} );
-	},
+	}
 
-	recordClickEvent: function() {
+	recordClickEvent = () => {
 		this.props.recordTracksEvent( 'calypso_desktop_promo_click', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode
 		} );
-	},
+	};
 
-	dismiss: function() {
+	dismiss = () => {
 		this.setState( { showPromo: false } );
 		this.props.saveDismissal();
 		this.props.recordTracksEvent( 'calypso_desktop_promo_dismiss', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.state.showPromo ) {
 			return null;
 		}
@@ -125,8 +126,8 @@ export const AppPromo = React.createClass( {
 				</a>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 AppPromo.defaultProps = {
 	translate: identity,

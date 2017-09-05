@@ -9,8 +9,8 @@ import React from 'react';
 import CommentButton from 'blocks/comment-button';
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'CommentButtonExample',
+export default class extends React.Component {
+    static displayName = 'CommentButtonExample';
 
 	render() {
 		return (
@@ -24,4 +24,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

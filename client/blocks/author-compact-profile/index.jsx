@@ -17,8 +17,8 @@ import { getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
-const AuthorCompactProfile = React.createClass( {
-	propTypes: {
+class AuthorCompactProfile extends React.Component {
+	static propTypes = {
 		author: React.PropTypes.object,
 		siteName: React.PropTypes.string,
 		siteUrl: React.PropTypes.string,
@@ -29,7 +29,7 @@ const AuthorCompactProfile = React.createClass( {
 		siteIcon: React.PropTypes.string,
 		feedIcon: React.PropTypes.string,
 		post: React.PropTypes.object,
-	},
+	};
 
 	render() {
 		const {
@@ -98,7 +98,7 @@ const AuthorCompactProfile = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( AuthorCompactProfile );

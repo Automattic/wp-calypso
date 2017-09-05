@@ -8,10 +8,10 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-const DesignMenuPanel = React.createClass( {
-	propTypes: {
+class DesignMenuPanel extends React.Component {
+	static propTypes = {
 		label: React.PropTypes.string.isRequired,
-	},
+	};
 
 	render() {
 		return (
@@ -25,6 +25,6 @@ const DesignMenuPanel = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default DesignMenuPanel;

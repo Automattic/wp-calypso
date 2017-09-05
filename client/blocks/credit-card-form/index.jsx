@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -24,7 +25,9 @@ import support from 'lib/url/support';
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
-const CreditCardForm = React.createClass( {
+const CreditCardForm = createReactClass( {
+	displayName: 'CreditCardForm',
+
 	propTypes: {
 		apiParams: PropTypes.object,
 		createPaygateToken: PropTypes.func.isRequired,
@@ -288,6 +291,7 @@ const CreditCardForm = React.createClass( {
 			</form>
 		);
 	},
+
 	renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (
