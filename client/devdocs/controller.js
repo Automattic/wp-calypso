@@ -183,4 +183,4 @@ const devdocs = {
 	}
 };
 
-module.exports = devdocs;
+export default devdocs;

@@ -10,7 +10,7 @@ import DocService from './service';
 import CompactCard from 'components/card/compact';
 import highlight from 'lib/highlight';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SingleDocument',
 	propTypes: {
 		path: React.PropTypes.string.isRequired,
