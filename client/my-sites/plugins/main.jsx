@@ -31,7 +31,8 @@ import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import {
 	canCurrentUser,
-	canCurrentUserManagePlugins
+	canCurrentUserManagePlugins,
+	getJetpackSites,
 } from 'state/selectors';
 import {
 	canJetpackSiteManage,
@@ -45,6 +46,7 @@ import {
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
 import HeaderButton from 'components/header-button';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -269,8 +271,10 @@ const PluginsMain = React.createClass( {
 
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
-		const { filter, search, selectedSite } = this.props;
+		const { filter, search, selectedSite, jetPackSites } = this.props;
 
+		const fetchPluginsQuery = isEmpty( plugins ) && jetPackSites &&
+			<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />;
 		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
 		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
 
@@ -323,6 +327,7 @@ const PluginsMain = React.createClass( {
 
 		return (
 			<div>
+				{ fetchPluginsQuery }
 				{ installedPluginsList }
 				{ morePluginsHeader }
 				{ suggestedPluginsList }
@@ -479,6 +484,7 @@ export default connect(
 			selectedSiteId: selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
+			jetPackSites: getJetpackSites( state ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
 			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
