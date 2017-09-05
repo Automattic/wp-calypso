@@ -426,7 +426,7 @@ const Signup = React.createClass( {
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
-						flow = { this.props.flowName }
+						flowSteps = { flow.steps }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }
