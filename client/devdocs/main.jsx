@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import createReactClass from 'create-react-class';
 import debug from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -35,44 +34,41 @@ const DEFAULT_FILES = [
 
 const log = debug( 'calypso:devdocs' );
 
-export default createReactClass( {
-	displayName: 'Devdocs',
-	propTypes: {
+export default class Devdocs extends React.Component {
+	static displayName = 'Devdocs';
+
+	static propTypes = {
 		term: PropTypes.string
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			term: ''
-		};
-	},
+	static defaultProps = {
+		term: ''
+	};
 
-	getInitialState: function() {
-		return {
-			term: this.props.term,
-			results: [],
-			defaultResults: [],
-			inputValue: '',
-			searching: false
-		};
-	},
+	state = {
+		term: this.props.term,
+		results: [],
+		defaultResults: [],
+		inputValue: '',
+		searching: false
+	};
 
 	// load default files if not already cached
-	loadDefaultFiles: function() {
+	loadDefaultFiles = () => {
 		if ( this.state.defaultResults.length ) {
 			return;
 		}
 
 		DocService.list( DEFAULT_FILES, function( err, results ) {
-			if ( ! err && this.isMounted() ) {
+			if ( ! err ) {
 				this.setState( {
 					defaultResults: results
 				} );
 			}
 		}.bind( this ) );
-	},
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		const { term } = this.state;
 		this.loadDefaultFiles();
 		if ( ! term ) {
@@ -80,27 +76,27 @@ export default createReactClass( {
 		}
 		this.onSearchChange( this.state.term );
 		this.onSearch( this.state.term );
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( isFunction( this.props.onSearchChange ) ) {
 			this.props.onSearchChange( this.state.term );
 		}
-	},
+	}
 
-	notFound: function() {
+	notFound = () => {
 		return this.state.inputValue && this.state.term && ! this.state.results.length && ! this.state.searching;
-	},
+	};
 
-	onSearchChange: function( term ) {
+	onSearchChange = term => {
 		this.setState( {
 			inputValue: term,
 			term: term,
 			searching: !! term
 		} );
-	},
+	};
 
-	onSearch: function( term ) {
+	onSearch = term => {
 		if ( ! term ) {
 			return;
 		}
@@ -114,16 +110,14 @@ export default createReactClass( {
 				searching: false
 			} );
 		}.bind( this ) );
-	},
+	};
 
-	results: function() {
-		let searchResults;
-
+	results = () => {
 		if ( this.notFound() ) {
 			return <p>Not Found</p>;
 		}
 
-		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
+		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
 			let url = '/devdocs/' + result.path;
 
@@ -143,9 +137,9 @@ export default createReactClass( {
 				</Card>
 			);
 		}, this );
-	},
+	};
 
-	snippet: function( result ) {
+	snippet = result => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
 		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
@@ -155,15 +149,14 @@ export default createReactClass( {
 					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
 						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
-					} else {
-						return part;
 					}
+					return part;
 				} ) }
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<Main className="devdocs">
 				<SearchCard
@@ -181,4 +174,4 @@ export default createReactClass( {
 			</Main>
 		);
 	}
-} );
+}

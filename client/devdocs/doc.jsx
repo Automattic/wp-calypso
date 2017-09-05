@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -12,53 +11,51 @@ import DocService from './service';
 import CompactCard from 'components/card/compact';
 import highlight from 'lib/highlight';
 
-export default createReactClass( {
-	displayName: 'SingleDocument',
-	propTypes: {
+export default class extends React.Component {
+	static displayName = 'SingleDocument';
+
+	static propTypes = {
 		path: PropTypes.string.isRequired,
 		term: PropTypes.string,
 		sectionId: PropTypes.string
-	},
-	timeoutID: null,
+	};
 
-	getInitialState: function() {
-		return {
-			body: ''
-		};
-	},
+	state = {
+		body: ''
+	};
 
-	componentDidMount: function() {
+	timeoutID = null;
+
+	componentDidMount() {
 		this.fetch();
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.path !== prevProps.path ) {
 			this.fetch();
 		}
 		if ( this.state.body ) {
 			this.setBodyScrollPosition();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.clearLoadingMessage();
-	},
+	}
 
-	fetch: function() {
+	fetch = () => {
 		this.setState( {
 			body: ''
 		} );
 		this.delayLoadingMessage();
 		DocService.fetch( this.props.path, function( err, body ) {
-			if ( this.isMounted() ) {
-				this.setState( {
-					body: ( err || body )
-				} );
-			}
+			this.setState( {
+				body: ( err || body )
+			} );
 		}.bind( this ) );
-	},
+	};
 
-	setBodyScrollPosition: function() {
+	setBodyScrollPosition = () => {
 		if ( this.props.sectionId ) {
 			const sectionNode = document.getElementById( this.props.sectionId );
 
@@ -66,9 +63,9 @@ export default createReactClass( {
 				sectionNode.scrollIntoView();
 			}
 		}
-	},
+	};
 
-	delayLoadingMessage: function() {
+	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
 		this.timeoutID = setTimeout( function() {
 			if ( ! this.state.body ) {
@@ -77,16 +74,16 @@ export default createReactClass( {
 				} );
 			}
 		}.bind( this ), 1000 );
-	},
+	};
 
-	clearLoadingMessage: function() {
+	clearLoadingMessage = () => {
 		if ( 'number' === typeof this.timeoutID ) {
 			window.clearTimeout( this.timeoutID );
 			this.timeoutID = null;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		const editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
@@ -99,9 +96,11 @@ export default createReactClass( {
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } } //eslint-disable-line react/no-danger
+					dangerouslySetInnerHTML={ //eslint-disable-line react/no-danger
+						{ __html: highlight( this.props.term, this.state.body ) }
+					}
 				/>
 			</div>
 		);
 	}
-} );
+}
