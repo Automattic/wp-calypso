@@ -27,13 +27,15 @@ const dummyAction = {
 	form: 'test-form',
 	siteId: 123,
 	zoneId: 456,
-	postIds: [ 7, 8, 9 ],
+	posts: [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	],
 };
 
 const apiResponse = [
-	{ ID: 1 },
-	{ ID: 2 },
-	{ ID: 3 },
+	{ ID: 1, title: 'Test one', guid: 'http://my.blog/test-one' },
+	{ ID: 2, title: 'Test two', guid: 'http://my.blog/test-two' },
 ];
 
 const getState = () => ( {
@@ -56,7 +58,7 @@ describe( '#requestZoneFeed()', () => {
 			method: 'GET',
 			path: '/jetpack-blogs/123/rest-api/',
 			query: {
-				path: '/zoninator/v1/zones/456'
+				path: '/zoninator/v1/zones/456/posts'
 			},
 		}, dummyAction ) );
 	} );
@@ -105,12 +107,12 @@ describe( '#saveZoneFeed()', () => {
 		saveZoneFeed( { dispatch }, dummyAction );
 
 		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'PUT',
+			method: 'POST',
 			path: '/jetpack-blogs/123/rest-api/',
 			query: {
-				body: JSON.stringify( toApi( dummyAction.postIds ) ),
+				body: JSON.stringify( toApi( dummyAction.posts ) ),
 				json: true,
-				path: '/zoninator/v1/zones/456/posts',
+				path: '/zoninator/v1/zones/456/posts&_method=PUT',
 			},
 		}, dummyAction ) );
 	} );
@@ -148,7 +150,7 @@ describe( '#announceSuccess()', () => {
 
 		expect( dispatch ).to.have.been.calledWith( initialize(
 			dummyAction.form,
-			dummyAction.postIds,
+			{ posts: dummyAction.posts },
 		) );
 	} );
 
@@ -168,7 +170,7 @@ describe( '#announceSuccess()', () => {
 
 		announceSuccess( { dispatch }, dummyAction );
 
-		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, dummyAction.postIds ) );
+		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, dummyAction.posts ) );
 	} );
 } );
 

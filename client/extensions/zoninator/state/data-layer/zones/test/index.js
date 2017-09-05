@@ -191,12 +191,12 @@ describe( '#saveZone()', () => {
 		saveZone( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'PUT',
+			method: 'POST',
 			path: '/jetpack-blogs/123/rest-api/',
 			query: {
 				body: JSON.stringify( zone ),
 				json: true,
-				path: '/zoninator/v1/zones/456',
+				path: '/zoninator/v1/zones/456&_method=PUT',
 			},
 		}, action ) );
 	} );
@@ -336,10 +336,10 @@ describe( '#deleteZone()', () => {
 		deleteZone( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'DELETE',
+			method: 'POST',
 			path: '/jetpack-blogs/123/rest-api/',
 			query: {
-				path: '/zoninator/v1/zones/456',
+				path: '/zoninator/v1/zones/456&_method=DELETE',
 			},
 		}, action ) );
 	} );

@@ -26,7 +26,7 @@ export const requestZoneFeed = ( { dispatch }, action ) => {
 		method: 'GET',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
-			path: `/zoninator/v1/zones/${ zoneId }`,
+			path: `/zoninator/v1/zones/${ zoneId }/posts`,
 		},
 	}, action ) );
 };
@@ -47,25 +47,25 @@ export const requestZoneFeedError = ( { dispatch, getState }, { siteId, zoneId }
 };
 
 export const saveZoneFeed = ( { dispatch }, action ) => {
-	const { form, postIds, siteId, zoneId } = action;
+	const { form, posts, siteId, zoneId } = action;
 
 	dispatch( startSubmit( form ) );
 	dispatch( removeNotice( saveFeedNotice ) );
 	dispatch( http( {
-		method: 'PUT',
+		method: 'POST',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
-			body: JSON.stringify( toApi( postIds ) ),
+			body: JSON.stringify( toApi( posts ) ),
 			json: true,
-			path: `/zoninator/v1/zones/${ zoneId }/posts`,
+			path: `/zoninator/v1/zones/${ zoneId }/posts&_method=PUT`,
 		},
 	}, action ) );
 };
 
-export const announceSuccess = ( { dispatch }, { form, postIds, siteId, zoneId } ) => {
+export const announceSuccess = ( { dispatch }, { form, posts, siteId, zoneId } ) => {
 	dispatch( stopSubmit( form ) );
-	dispatch( initialize( form, postIds ) );
-	dispatch( updateFeed( siteId, zoneId, postIds ) );
+	dispatch( initialize( form, { posts } ) );
+	dispatch( updateFeed( siteId, zoneId, posts ) );
 	dispatch( successNotice(
 		translate( 'Zone feed saved!' ),
 		{ id: saveFeedNotice },

@@ -76,12 +76,12 @@ export const saveZone = ( { dispatch }, action ) => {
 	dispatch( startSubmit( form ) );
 	dispatch( removeNotice( saveZoneNotice ) );
 	dispatch( http( {
-		method: 'PUT',
+		method: 'POST',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
 			body: JSON.stringify( data ),
 			json: true,
-			path: `/zoninator/v1/zones/${ zoneId }`,
+			path: `/zoninator/v1/zones/${ zoneId }&_method=PUT`,
 		},
 	}, action ) );
 };
@@ -129,10 +129,10 @@ export const deleteZone = ( { dispatch }, action ) => {
 
 	dispatch( removeNotice( deleteZoneNotice ) );
 	dispatch( http( {
-		method: 'DELETE',
+		method: 'POST',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
-			path: `/zoninator/v1/zones/${ zoneId }`,
+			path: `/zoninator/v1/zones/${ zoneId }&_method=DELETE`,
 		},
 	}, action ) );
 };
