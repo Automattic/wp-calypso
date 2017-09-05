@@ -17,7 +17,15 @@ import { getSiteSlug } from 'state/sites/selectors';
 
 const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => {
 	if ( ! primaryDomain ) {
-		return <QuerySiteDomains siteId={ siteId } />;
+		return (
+			<div>
+				<QuerySiteDomains siteId={ siteId } />
+				<EmptyContent
+					className={ 'domain-only-site__placeholder' }
+					illustration={ '/calypso/images/drake/drake-browser.svg' }
+				/>
+			</div>
+		);
 	}
 
 	const domainName = primaryDomain.name;
@@ -33,7 +41,8 @@ const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => 
 				}
 				secondaryAction={ translate( 'Manage Domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
-				illustration={ '/calypso/images/drake/drake-browser.svg' } />
+				illustration={ '/calypso/images/drake/drake-browser.svg' }
+			/>
 			{ hasNotice && (
 				<div className="domain-only-site__settings-notice">
 					{ translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) }
