@@ -273,7 +273,7 @@ function loadTrackingScripts( callback ) {
  * 2. `Do Not Track` is enabled
  * 3. `document.location.href` may contain personally identifiable information
  *
- * @returns {Boolean}
+ * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
 	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
