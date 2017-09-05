@@ -19,7 +19,6 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
@@ -451,7 +450,6 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 		comments,
 		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
-		notices: getNotices( state ),
 		siteId,
 	};
 };
