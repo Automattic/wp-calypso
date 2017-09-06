@@ -15,10 +15,10 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 
-const redirectNonJetpack = ( WrappedComponent, redirectUrl ) => {
+const redirectNonJetpack = redirectRoute => WrappedComponent => {
 	class RedirectNonJetpack extends Component {
 		static propTypes = {
-			redirectUrl: PropTypes.string,
+			redirectRoute: PropTypes.string,
 			// Connected props
 			siteIsAtomic: PropTypes.bool,
 			siteIsJetpack: PropTypes.bool,
@@ -26,24 +26,24 @@ const redirectNonJetpack = ( WrappedComponent, redirectUrl ) => {
 		}
 
 		componentDidMount() {
-			this.verifySiteIsJetpack();
+			this.redirectIfNoAccess();
 		}
 
 		componentDidUpdate() {
-			this.verifySiteIsJetpack();
+			this.redirectIfNoAccess();
 		}
 
-		verifySiteIsJetpack() {
+		redirectIfNoAccess() {
 			if ( this.props.siteIsJetpack === false || this.props.siteIsAtomic ) {
-				this.redirectTo();
+				this.redirect();
 			}
 		}
 
-		redirectTo = () => {
+		redirect = () => {
 			const { siteSlug } = this.props;
 
 			if ( siteSlug ) {
-				const url = redirectUrl ? redirectUrl : '/settings/general/';
+				const url = redirectRoute ? redirectRoute : '/settings/general/';
 
 				page( url + siteSlug );
 			}
@@ -52,7 +52,7 @@ const redirectNonJetpack = ( WrappedComponent, redirectUrl ) => {
 		render() {
 			return (
 				<WrappedComponent
-					redirectTo={ this.redirectTo }
+					redirect={ this.redirect }
 					{ ...this.props }
 				/>
 			);

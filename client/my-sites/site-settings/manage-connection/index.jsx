@@ -14,13 +14,12 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SiteOwnership from './site-ownership';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-to/redirect-to';
+import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
 class ManageConnection extends Component {
-
 	render() {
 		const {
-			redirectTo,
+			redirect,
 			translate
 		} = this.props;
 
@@ -28,7 +27,7 @@ class ManageConnection extends Component {
 			<Main className="manage-connection site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 
-				<HeaderCake onClick={ redirectTo }>
+				<HeaderCake onClick={ redirect }>
 					{ translate( 'Manage Connection' ) }
 				</HeaderCake>
 
