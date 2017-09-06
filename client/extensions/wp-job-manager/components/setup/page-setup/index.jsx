@@ -42,38 +42,33 @@ class PageSetup extends Component {
 			<div>
 				<SectionHeader label={ translate( 'Page Setup' ) } />
 				<CompactCard>
-					<p>
-						{ translate(
-							'{{em}}WP Job Manager{{/em}} includes {{shortcodes}}shortcodes{{/shortcodes}} which can ' +
-							'be used within your {{pages}}pages{{/pages}} to output content. These can be created ' +
-							'for you below. For more information on the job shortcodes view the ' +
-							'{{shortcodeRef}}shortcode documentation{{/shortcodeRef}}.',
-							{ components: {
-								em: <em />,
-								pages: (
-									<ExternalLink
-										icon={ true }
-										target="_blank"
-										href="https://codex.wordpress.org/Pages"
-									/>
-								),
-								shortcodes: (
-									<ExternalLink
-										icon={ true }
-										target="_blank"
-										href="https://codex.wordpress.org/Shortcode"
-									/>
-								),
-								shortcodeRef: (
-									<ExternalLink
-										icon={ true }
-										target="_blank"
-										href="https://wpjobmanager.com/document/shortcode-reference/"
-									/>
-								)
-							} }
-						) }
-					</p>
+					{ translate(
+						'{{p}}With WP Job Manager, employers and applicants can post, manage, and browse job listings ' +
+						'right on your website. Tell us which of these common pages you\'d like your site to have ' +
+						'and we\'ll create and configure them for you.{{/p}}' +
+						'{{p}}(These pages are created using {{shortcodes}}shortcodes{{/shortcodes}}, which we take care of ' +
+						'in this step. If you\'d like to build these pages yourself or want to add one of these options to an ' +
+						'existing page on your site, you can skip this step and take a look at {{shortcodeRef}}shortcode ' +
+						'support documentation{{/shortcodeRef}} for detailed instructions.){{/p}}',
+						{ components: {
+							em: <em />,
+							p: <p />,
+							shortcodes: (
+								<ExternalLink
+									icon={ true }
+									target="_blank"
+									href="https://codex.wordpress.org/Shortcode"
+								/>
+							),
+							shortcodeRef: (
+								<ExternalLink
+									icon={ true }
+									target="_blank"
+									href="https://wpjobmanager.com/document/shortcode-reference/"
+								/>
+							)
+						} }
+					) }
 
 					<div className="page-setup__pages">
 						<form>
@@ -86,10 +81,10 @@ class PageSetup extends Component {
 
 								<FormSettingExplanation>
 									{ translate(
-										'This page allows employers to post jobs to your website from the front-end. ' +
-										'If you do not want to accept submissions from users in this way (for example, you ' +
-										'just want to post jobs from the admin dashboard), you can skip creating this page. ' +
-										'Alternatively, you can add the [submit_job_form] shortcode to an existing page.'
+										'Creates a page that allows employers to post new jobs directly from a page on your website, ' +
+										'instead of requiring them to log in to an admin area. If you\'d rather not allow this -- ' +
+										'for example, if you want employers to use the admin dashboard only -- you can uncheck ' +
+										'this setting.'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
@@ -103,9 +98,9 @@ class PageSetup extends Component {
 
 								<FormSettingExplanation>
 									{ translate(
-										'This page allows employers to manage and edit their own jobs from the front-end. ' +
-										'If you plan on managing all listings from the admin dashboard, you can skip creating ' +
-										'this page. Alternatively, you can add the [job_dashboard] shortcode to an existing page.'
+										'Creates a page that allows employers to manage their job listings directly from a page on your ' +
+										'website, instead of requiring them to log in to an admin area. If you want to manage all ' +
+										'job listings from the admin dashboard only, you can uncheck this setting.'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
@@ -119,8 +114,7 @@ class PageSetup extends Component {
 
 								<FormSettingExplanation>
 									{ translate(
-										'This page allows users to browse, search, and filter job listings on the front-end ' +
-										'of your site. Alternatively, you can add the [jobs] shortcode to an existing page.'
+										'Creates a page where visitors can browse, search, and filter job listings.'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
