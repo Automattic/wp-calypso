@@ -26,3 +26,9 @@
 	flex: 1 1;
 	justify-content: flex-end;
 }
+.social-login__header-action__error {
+	.popover__inner {
+		padding: 10px;
+		max-width: 200px;
+	}
+}
