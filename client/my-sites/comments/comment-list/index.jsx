@@ -374,6 +374,7 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				{ isJetpack &&
 					<QuerySiteCommentsList
+						context="edit"
 						number={ 100 }
 						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }

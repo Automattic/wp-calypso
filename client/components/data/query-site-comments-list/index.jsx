@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { PureComponent, PropTypes } from 'react';
+import { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -11,6 +12,7 @@ import { requestCommentsList } from 'state/comments/actions';
 
 export class QuerySiteCommentsList extends PureComponent {
 	static propTypes = {
+		context: PropTypes.string,
 		listType: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
@@ -18,6 +20,7 @@ export class QuerySiteCommentsList extends PureComponent {
 	};
 
 	static defaultProps = {
+		context: 'display',
 		listType: 'site',
 		status: 'unapproved',
 		type: 'comment',
