@@ -25,7 +25,6 @@ import Card from 'components/card';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
-import { isEnabled } from 'config';
 import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
@@ -53,7 +52,7 @@ export default protectForm( React.createClass( {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ this.translate( 'Profile' ) } />
 				<Card className="me-profile-settings">
-					{ isEnabled( 'me/edit-gravatar' ) && <EditGravatar /> }
+					<EditGravatar />
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
