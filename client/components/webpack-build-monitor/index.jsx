@@ -110,7 +110,7 @@ class WebpackBuildMonitor extends React.PureComponent {
 
 	componentDidMount() {
 		this.unsubscribe = store.subscribe(
-			( function() {
+			( () => {
 				let prevState = undefined;
 				return () => {
 					const nextState = store.getState();
