@@ -28,7 +28,7 @@ class ZoneCreator extends PureComponent {
 	save = ( form, data ) => this.props.addZone( this.props.siteId, form, data );
 
 	render() {
-		const { siteId, siteSlug, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 
 		return (
 			<div>
@@ -36,7 +36,7 @@ class ZoneCreator extends PureComponent {
 					{ translate( 'Add a zone' ) }
 				</HeaderCake>
 
-				<ZoneDetailsForm label={ translate( 'New zone' ) } siteId={ siteId } onSubmit={ this.save } />
+				<ZoneDetailsForm label={ translate( 'New zone' ) } onSubmit={ this.save } />
 			</div>
 		);
 	}
