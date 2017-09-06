@@ -238,7 +238,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 export const updateComment = ( store, action, data ) => {
 	removeCommentStatusErrorNotice( store, action );
 	store.dispatch(
-		local( {
+		bypassDataLayer( {
 			...omit( action, [ 'originalComment' ] ),
 			comment: data,
 		} )
