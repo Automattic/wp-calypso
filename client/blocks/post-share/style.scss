@@ -10,14 +10,10 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-}
+	background-color: $white;
 
-.post-share__wrapper .notice {
-	margin-top: 4px;
-	margin-bottom: 0px;
-
-	&:first-of-type {
-		margin-top: 0px;
+	& .notice {
+		margin: 0;
 	}
 }
 
@@ -39,23 +35,25 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
+.post-share__wrapper.is-placeholder {
+	padding-bottom: 24px;
+	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+}
+
 .post-share__placeholder {
 	@include placeholder;
-	margin: 0 0 24px 24px;
+	margin: 0 0 0 24px;
 	width: 300px;
 	height: 80px;
 }
 
-.post-share__form.is-placeholder,
-.post-share__services.is-placeholder {
-	@include placeholder;
-	margin-top: 16px;
-	height: 48px;
-}
-
 .post-share__head {
-	padding: 0 16px 16px;
+	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	.post-share__wrapper.is-placeholder & {
+		border-bottom-width: 0;
+	}
 
+	padding: 0 16px 16px;
 	@include breakpoint( ">480px" ) {
 		padding: 0 24px 16px;
 	}
@@ -72,7 +70,10 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__form {
 	flex: 3 0 0;
-	padding-bottom: 16px;
+	margin: 0 16px 16px;
+	@include breakpoint( ">480px" ) {
+		margin: 0 24px 16px;
+	}
 
 	.post-share__share-button {
 		margin-left: 8px;
@@ -83,39 +84,21 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		padding-left: 8px;
 	}
 
-	@include breakpoint( ">480px" ) {
-		padding-bottom: 24px;
-	}
-
 	.editor-sharing__publicize-message {
-			margin-top: 0;
+		margin-top: 0;
 
 		.editor-sharing__message-heading {
-			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
 			line-height: 28px;
 			margin-bottom: 0;
-			padding: 11.5px 16px;
-
-			@include breakpoint( ">480px" ) {
-				padding-right: 24px;
-				padding-left: 24px;
-			}
+			padding: 11.5px 0;
 		}
 
 		.editor-sharing__message-input {
-			margin: 16px 16px 8px;
-
-			@include breakpoint( ">480px" ) {
-				margin: 24px 24px 8px;
-			}
+			margin: 0;
 
 			&.form-textarea {
 				padding: 8px;
-				width: calc(100% - 32px);
-
-				@include breakpoint( ">480px" ) {
-					width: calc(100% - 48px);
-				}
+				width: 100%;
 			}
 		}
 	}
@@ -123,26 +106,24 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share__services {
 	flex: 2 1 0;
-
+	margin: 0 16px 16px;
+	@include breakpoint( ">480px" ) {
+		margin: 0 24px 16px;
+	}
 	@include breakpoint( ">960px" ) {
-		border-left: $section-border;
+		margin: 0 24px 16px 0;
 	}
 }
 
-.post-share .post-share__services-header {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
+.post-share .card.post-share__services-header {
+	// Override some Card styles
+	box-shadow: none;
+	padding: 11.5px 0;
+	line-height: 28px;
 }
 
 .post-share__services .section-header__actions {
 	flex: 0 0 auto;
-}
-
-.post-share__connections {
-	padding: 16px;
-
-	@include breakpoint( ">480px" ) {
-		padding: 24px;
-	}
 }
 
 .post-share__service {
@@ -288,11 +269,6 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .post-share__button-actions {
 	display: flex;
 	justify-content: flex-end;
-	margin: 0 16px;
-
-	@include breakpoint( ">480px" ) {
-		margin: 0 24px;
-	}
 }
 
 .post-share__share-combo {

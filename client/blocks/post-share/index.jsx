@@ -555,7 +555,7 @@ class PostShare extends Component {
 		}
 
 		const classes = classNames( 'post-share__wrapper', {
-			'is-placeholder': ! this.hasFetchedConnections,
+			'is-placeholder': ! hasFetchedConnections,
 			'has-connections': this.hasConnections(),
 			'has-republicize-scheduling-feature': hasRepublicizeFeature,
 		} );
