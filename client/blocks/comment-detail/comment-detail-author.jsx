@@ -153,14 +153,16 @@ export class CommentDetailAuthor extends Component {
 					<Gravatar user={ this.getAuthorObject() } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
-							<Emojify>
-								<strong>
-										{ authorDisplayName }
-								</strong>
-								<ExternalLink href={ authorUrl }>
+							<strong>
+								<Emojify>
+									{ authorDisplayName }
+								</Emojify>
+							</strong>
+							<ExternalLink href={ authorUrl }>
+								<Emojify>
 									{ urlToDomainAndPath( authorUrl ) }
-								</ExternalLink>
-							</Emojify>
+								</Emojify>
+							</ExternalLink>
 						</div>
 						<ExternalLink
 							className="comment-detail__author-info-element comment-detail__comment-date"

@@ -97,21 +97,25 @@ export const CommentDetailHeader = ( {
 						}
 						<Gravatar user={ author } />
 						<div className="comment-detail__author-info">
-							<Emojify>
-								<div className="comment-detail__author-info-element">
-									<strong>
+							<div className="comment-detail__author-info-element">
+								<strong>
+									<Emojify>
 										{ authorDisplayName }
-									</strong>
-									<span>
+									</Emojify>
+								</strong>
+								<span>
+									<Emojify>
 										{ urlToDomainAndPath( authorUrl ) }
-									</span>
-								</div>
-								<div className="comment-detail__author-info-element">
+									</Emojify>
+								</span>
+							</div>
+							<div className="comment-detail__author-info-element">
+								<Emojify>
 									{ translate( 'on %(postTitle)s', { args: {
 										postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
 									} } ) }
-								</div>
-							</Emojify>
+								</Emojify>
+							</div>
 						</div>
 					</div>
 					<AutoDirection>
