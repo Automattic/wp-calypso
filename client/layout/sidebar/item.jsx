@@ -38,7 +38,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const showAsExternal = isExternal( this.props.link ) && ! this.props.forceInternalLink;
+		const isExternalLink = isExternal( this.props.link );
+		const showAsExternal = isExternalLink && ! this.props.forceInternalLink;
 		const classes = classnames( this.props.className, { selected: this.props.selected } );
 
 		return (
@@ -51,7 +52,7 @@ export default React.createClass( {
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
 					target={ showAsExternal ? '_blank' : null }
-					rel={ showAsExternal ? 'noopener noreferrer' : null }
+					rel={ isExternalLink ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />
