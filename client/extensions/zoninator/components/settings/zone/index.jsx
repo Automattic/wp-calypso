@@ -55,7 +55,7 @@ class Zone extends Component {
 
 		return (
 			<div>
-				<QueryFeed siteId={ siteId } zoneId={ zoneId } />
+				{ siteId && zoneId && <QueryFeed siteId={ siteId } zoneId={ zoneId } /> }
 
 				<HeaderCake
 					backHref={ `${ settingsPath }/${ siteSlug }` }
