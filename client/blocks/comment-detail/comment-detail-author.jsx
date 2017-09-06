@@ -101,7 +101,9 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
 						<ExternalLink href={ authorUrl }>
-							{ urlToDomainAndPath( authorUrl ) }
+							<Emojify>
+								{ urlToDomainAndPath( authorUrl ) }
+							</Emojify>
 						</ExternalLink>
 					</div>
 					<div className="comment-detail__author-more-element">
@@ -151,14 +153,14 @@ export class CommentDetailAuthor extends Component {
 					<Gravatar user={ this.getAuthorObject() } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
-							<strong>
-								<Emojify>
-									{ authorDisplayName }
-								</Emojify>
-							</strong>
-							<ExternalLink href={ authorUrl }>
-								{ urlToDomainAndPath( authorUrl ) }
-							</ExternalLink>
+							<Emojify>
+								<strong>
+										{ authorDisplayName }
+								</strong>
+								<ExternalLink href={ authorUrl }>
+									{ urlToDomainAndPath( authorUrl ) }
+								</ExternalLink>
+							</Emojify>
 						</div>
 						<ExternalLink
 							className="comment-detail__author-info-element comment-detail__comment-date"
