@@ -3,16 +3,6 @@
 	margin-top: -10px;
 	@include breakpoint( ">480px" ) {
 		margin-top: -16px;
-
-		.foldable-card__header,
-		.foldable-card__content {
-			padding-left: 24px;
-			padding-right: 24px;
-		}
-
-		.foldable-card__action {
-			padding-right: 16px;
-		}
 	}
 
 	.date-time-format__title {
