@@ -61,6 +61,7 @@ export class CommentDetail extends Component {
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
+		editComment: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isRawContentSupported: PropTypes.bool,
@@ -73,7 +74,6 @@ export class CommentDetail extends Component {
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
-		updateComment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -114,8 +114,6 @@ export class CommentDetail extends Component {
 		}
 	}
 
-	edit = () => this.setState( ( { isEditMode } ) => ( { isEditMode: ! isEditMode } ) );
-
 	toggleApprove = () => {
 		if ( this.state.isEditMode ) {
 			return;
@@ -137,6 +135,8 @@ export class CommentDetail extends Component {
 			this.setState( { isExpanded: false } );
 		}
 	}
+
+	toggleEditMode = () => this.setState( ( { isEditMode } ) => ( { isEditMode: ! isEditMode } ) );
 
 	toggleExpanded = () => {
 		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
@@ -213,6 +213,7 @@ export class CommentDetail extends Component {
 			commentRawContent,
 			commentStatus,
 			commentUrl,
+			editComment,
 			isBulkEdit,
 			isLoading,
 			isRawContentSupported,
@@ -227,7 +228,6 @@ export class CommentDetail extends Component {
 			replyComment,
 			siteId,
 			translate,
-			updateComment,
 		} = this.props;
 
 		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
@@ -273,13 +273,13 @@ export class CommentDetail extends Component {
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
-					edit={ this.edit }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
+					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
 					toggleSelected={ this.toggleSelected }
@@ -303,12 +303,12 @@ export class CommentDetail extends Component {
 							<CommentDetailEdit
 								authorDisplayName={ authorDisplayName }
 								authorUrl={ authorUrl }
-								closeEditMode={ this.edit }
+								closeEditMode={ this.toggleEditMode }
 								commentContent={ isRawContentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
+								editComment={ editComment }
 								isAuthorRegistered={ authorId !== 0 }
 								postId={ postId }
-								updateComment={ updateComment }
 							/>
 						}
 

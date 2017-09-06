@@ -93,6 +93,15 @@ export class CommentList extends Component {
 		this.props.deleteComment( commentId, postId );
 	}
 
+	editComment = ( commentId, postId, commentData ) => {
+		this.props.editComment( commentId, postId, commentData );
+		this.props.successNotice( this.props.translate( 'Comment updated.' ), {
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+		} );
+	}
+
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
 
 	getCommentsPage = ( comments, page ) => {
@@ -337,15 +346,6 @@ export class CommentList extends Component {
 
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
-	updateComment = ( commentId, postId, commentData ) => {
-		this.props.editComment( commentId, postId, commentData );
-		this.props.successNotice( this.props.translate( 'Comment updated.' ), {
-			duration: 5000,
-			id: `comment-notice-${ commentId }`,
-			isPersistent: true,
-		} );
-	}
-
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
 			this.removeFromPersistedComments( commentId );
@@ -416,9 +416,10 @@ export class CommentList extends Component {
 					{ map( commentsPage, commentId =>
 						<CommentDetail
 							commentId={ commentId }
-							deleteCommentPermanently={ this.deleteCommentPermanently }
-							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
+							deleteCommentPermanently={ this.deleteCommentPermanently }
+							editComment={ this.editComment }
+							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
@@ -426,7 +427,6 @@ export class CommentList extends Component {
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
-							updateComment={ this.updateComment }
 						/>
 					) }
 

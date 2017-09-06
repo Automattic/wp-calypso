@@ -27,12 +27,12 @@ export const CommentDetailHeader = ( {
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
-	edit,
 	isBulkEdit,
 	isEditMode,
 	isExpanded,
 	postTitle,
 	toggleApprove,
+	toggleEditMode,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
@@ -59,11 +59,11 @@ export const CommentDetailHeader = ( {
 		>
 			{ isExpanded && ! isEditMode &&
 				<CommentDetailActions
-					edit={ edit }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
+					toggleEditMode={ toggleEditMode }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
@@ -79,7 +79,7 @@ export const CommentDetailHeader = ( {
 					<Button
 						borderless
 						className="comment-detail__action-collapse"
-						onClick={ edit }
+						onClick={ toggleEditMode }
 					>
 						<Gridicon icon="cross" />
 					</Button>

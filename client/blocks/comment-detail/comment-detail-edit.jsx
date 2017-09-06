@@ -21,9 +21,9 @@ export class CommentDetailEdit extends Component {
 		closeEditMode: PropTypes.func,
 		commentContent: PropTypes.string,
 		commentId: PropTypes.number,
+		editComment: PropTypes.func,
 		isAuthorRegistered: PropTypes.bool,
 		postId: PropTypes.number,
-		updateComment: PropTypes.func,
 	};
 
 	state = {
@@ -43,8 +43,8 @@ export class CommentDetailEdit extends Component {
 
 	setCommentContentValue = event => this.setState( { commentContent: event.target.value } );
 
-	updateCommentAndCloseEditMode = () => {
-		this.props.updateComment( this.props.commentId, this.props.postId, this.state );
+	editCommentAndCloseEditMode = () => {
+		this.props.editComment( this.props.commentId, this.props.postId, this.state );
 		this.props.closeEditMode();
 	};
 
@@ -92,7 +92,7 @@ export class CommentDetailEdit extends Component {
 				<div className="comment-detail__edit-buttons">
 					<FormButton
 						compact
-						onClick={ this.updateCommentAndCloseEditMode }
+						onClick={ this.editCommentAndCloseEditMode }
 					>
 						{ translate( 'Save' ) }
 					</FormButton>

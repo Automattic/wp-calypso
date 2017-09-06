@@ -23,11 +23,11 @@ const commentActions = {
 const hasAction = ( status, action ) => includes( commentActions[ status ], action );
 
 export const CommentDetailActions = ( {
-	edit,
 	commentIsLiked,
 	commentStatus,
 	deleteCommentPermanently,
 	toggleApprove,
+	toggleEditMode,
 	toggleLike,
 	toggleSpam,
 	toggleTrash,
@@ -73,7 +73,7 @@ export const CommentDetailActions = ( {
 				<Button
 					borderless
 					className="comment-detail__action-edit"
-					onClick={ edit }
+					onClick={ toggleEditMode }
 				>
 					<Gridicon icon="pencil" />
 					<span>{ translate( 'Edit' ) }</span>
