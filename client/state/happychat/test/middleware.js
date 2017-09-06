@@ -146,7 +146,9 @@ describe( 'middleware', () => {
 			}
 		};
 
-		const previousGlobal = global;
+		const previousWindow = global.window;
+		const previousScreen = global.screen;
+		const previousNavigator = global.navigator;
 
 		before( () => {
 			global.window = {
@@ -163,7 +165,9 @@ describe( 'middleware', () => {
 		} );
 
 		after( () => {
-			global = previousGlobal;
+			global.window = previousWindow;
+			global.screen = previousScreen;
+			global.navigator = previousNavigator;
 		} );
 
 		it( 'should send relevant browser information to the connection', () => {
