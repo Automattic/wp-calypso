@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { getSiteSlug } from 'state/sites/selectors';
 
 export class CommentDetailEdit extends Component {
 	static propTypes = {
@@ -23,7 +27,10 @@ export class CommentDetailEdit extends Component {
 		commentId: PropTypes.number,
 		editComment: PropTypes.func,
 		isAuthorRegistered: PropTypes.bool,
+		isEditCommentSupported: PropTypes.bool,
 		postId: PropTypes.number,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 	};
 
 	state = {
@@ -52,6 +59,8 @@ export class CommentDetailEdit extends Component {
 		const {
 			closeEditMode,
 			isAuthorRegistered,
+			isEditCommentSupported,
+			siteSlug,
 			translate,
 		} = this.props;
 		const {
@@ -85,13 +94,29 @@ export class CommentDetailEdit extends Component {
 				</FormFieldset>
 
 				<FormTextarea
+					disabled={ ! isEditCommentSupported }
 					onChange={ this.setCommentContentValue }
 					value={ commentContent }
 				/>
 
+				{ ! isEditCommentSupported &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Comment editing requires a newer version of Jetpack.'
+						) }
+					>
+						<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+							{ translate( 'Update Now' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
 				<div className="comment-detail__edit-buttons">
 					<FormButton
 						compact
+						disabled={ ! isEditCommentSupported }
 						onClick={ this.editCommentAndCloseEditMode }
 					>
 						{ translate( 'Save' ) }
@@ -110,4 +135,8 @@ export class CommentDetailEdit extends Component {
 	}
 }
 
-export default localize( CommentDetailEdit );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	siteSlug: getSiteSlug( state, siteId ),
+} );
+
+export default connect( mapStateToProps )( localize( CommentDetailEdit ) );
