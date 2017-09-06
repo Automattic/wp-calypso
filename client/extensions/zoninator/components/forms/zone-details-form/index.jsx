@@ -69,6 +69,10 @@ const createReduxForm = reduxForm( {
 	validate: ( data, { translate } ) => {
 		const errors = {};
 
+		if ( ! /[a-z0-9]/i.test( data.name ) ) {
+			errors.name = translate( 'Zone name must contain at least one alphanumeric character.' );
+		}
+
 		if ( ! data.name ) {
 			errors.name = translate( 'Zone name cannot be empty.' );
 		}
