@@ -13,6 +13,7 @@ import { noop } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import CommentDetailActions from './comment-detail-actions';
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
@@ -113,7 +114,9 @@ export const CommentDetailHeader = ( {
 					</div>
 					<AutoDirection>
 						<div className="comment-detail__comment-preview">
-							{ decodeEntities( stripHTML( commentContent ) ) }
+							<Emojify>
+								{ decodeEntities( stripHTML( commentContent ) ) }
+							</Emojify>
 						</div>
 					</AutoDirection>
 				</div>
