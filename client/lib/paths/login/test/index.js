@@ -56,11 +56,11 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should return the login url with encoded user_email param', () => {
-			const url = login( { isNative: true, userEmail: 'foo@bar.com' } );
+		it( 'should return the login url with encoded email_address param', () => {
+			const url = login( { isNative: true, emailAddress: 'foo@bar.com' } );
 
 			expect( url ).to.equal(
-				'/log-in?user_email=foo%40bar.com'
+				'/log-in?email_address=foo%40bar.com'
 			);
 		} );
 	} );
