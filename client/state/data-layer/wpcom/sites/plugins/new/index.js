@@ -7,7 +7,7 @@ import { find, includes, toLower } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD, PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
+import { PLUGIN_UPLOAD } from 'state/action-types';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -15,8 +15,9 @@ import {
 } from 'state/plugins/upload/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Dispatcher from 'dispatcher';
 
 export const uploadPlugin = ( { dispatch }, action ) => {
 	const { siteId, file } = action;
@@ -29,15 +30,6 @@ export const uploadPlugin = ( { dispatch }, action ) => {
 		apiVersion: '1',
 		formData: [ [ 'zip[]', file ] ],
 	}, action ) );
-};
-
-const showSuccessNotice = ( dispatch, { name } ) => {
-	dispatch( successNotice(
-		translate( "You've successfully uploaded the %(name)s plugin.", {
-			args: { name }
-		} ),
-		{ duration: 5000 }
-	) );
 };
 
 const showErrorNotice = ( dispatch, error ) => {
@@ -71,14 +63,18 @@ export const uploadComplete = ( { dispatch }, { siteId }, data ) => {
 	} ) );
 
 	dispatch( completePluginUpload( siteId, pluginId ) );
-	dispatch( {
-		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
-		siteId,
-		pluginId,
-		data
-	} );
 
-	showSuccessNotice( dispatch, data );
+	/*
+	 * Adding plugin to legacy flux store provides data for plugin page
+     * and displays a success message.
+     */
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_INSTALLED_PLUGIN',
+		action: 'PLUGIN_UPLOAD',
+		site: { ID: siteId },
+		plugin: data,
+		data,
+	} );
 };
 
 export const receiveError = ( { dispatch }, { siteId }, error ) => {
