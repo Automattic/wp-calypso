@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, isUndefined, noop } from 'lodash';
+import { get, isUndefined } from 'lodash';
 import ReactDom from 'react-dom';
 
 /**
@@ -15,12 +15,14 @@ import ReactDom from 'react-dom';
 import Card from 'components/card';
 import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
+import CommentDetailEdit from './comment-detail-edit';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Creates a stripped down comment object containing only the information needed by
@@ -55,11 +57,14 @@ export class CommentDetail extends Component {
 		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
+		commentRawContent: PropTypes.string,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
+		editComment: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
+		isRawContentSupported: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		refreshCommentData: PropTypes.bool,
@@ -80,6 +85,7 @@ export class CommentDetail extends Component {
 
 	state = {
 		authorIsBlocked: false,
+		isEditMode: false,
 	};
 
 	componentWillMount() {
@@ -98,15 +104,21 @@ export class CommentDetail extends Component {
 	}
 
 	deleteCommentPermanently = () => {
+		if ( this.state.isEditMode ) {
+			return;
+		}
+
 		const { commentId, deleteCommentPermanently, postId, translate } = this.props;
 		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
 			deleteCommentPermanently( commentId, postId );
 		}
 	}
 
-	edit = () => noop;
-
 	toggleApprove = () => {
+		if ( this.state.isEditMode ) {
+			return;
+		}
+
 		const { commentStatus, setCommentStatus } = this.props;
 		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
 
@@ -124,17 +136,29 @@ export class CommentDetail extends Component {
 		}
 	}
 
+	toggleEditMode = () => this.setState( ( { isEditMode } ) => ( { isEditMode: ! isEditMode } ) );
+
 	toggleExpanded = () => {
-		if ( ! this.props.isLoading ) {
+		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
 			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
 		}
 	}
 
-	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
+	toggleLike = () => {
+		if ( this.state.isEditMode ) {
+			return;
+		}
+
+		this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
+	}
 
 	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleSpam = () => {
+		if ( this.state.isEditMode ) {
+			return;
+		}
+
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
 			getCommentStatusAction( this.props ),
@@ -143,6 +167,10 @@ export class CommentDetail extends Component {
 	}
 
 	toggleTrash = () => {
+		if ( this.state.isEditMode ) {
+			return;
+		}
+
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
 			getCommentStatusAction( this.props ),
@@ -156,7 +184,7 @@ export class CommentDetail extends Component {
 
 	keyHandler = event => {
 		const commentHasFocus = document && this.commentCard && document.activeElement === ReactDom.findDOMNode( this.commentCard );
-		if ( this.state.isExpanded && ! commentHasFocus ) {
+		if ( this.state.isEditMode || ( this.state.isExpanded && ! commentHasFocus ) ) {
 			return;
 		}
 		switch ( event.keyCode ) {
@@ -172,6 +200,7 @@ export class CommentDetail extends Component {
 		const {
 			authorAvatarUrl,
 			authorEmail,
+			authorId,
 			authorIp,
 			authorName,
 			authorUrl,
@@ -181,10 +210,13 @@ export class CommentDetail extends Component {
 			commentId,
 			commentIsLiked,
 			commentIsSelected,
+			commentRawContent,
 			commentStatus,
 			commentUrl,
+			editComment,
 			isBulkEdit,
 			isLoading,
+			isRawContentSupported,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -203,6 +235,7 @@ export class CommentDetail extends Component {
 
 		const {
 			authorIsBlocked,
+			isEditMode,
 			isExpanded,
 		} = this.state;
 
@@ -212,6 +245,7 @@ export class CommentDetail extends Component {
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
+			'is-edit-mode': isEditMode,
 			'is-expanded': isExpanded,
 			'is-collapsed': ! isExpanded,
 			'is-liked': commentIsLiked,
@@ -240,10 +274,12 @@ export class CommentDetail extends Component {
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
+					isEditMode={ isEditMode }
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
+					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
 					toggleSelected={ this.toggleSelected }
@@ -262,28 +298,46 @@ export class CommentDetail extends Component {
 							postUrl={ postUrl }
 							siteId={ siteId }
 						/>
-						<CommentDetailComment
-							authorAvatarUrl={ authorAvatarUrl }
-							authorDisplayName={ authorDisplayName }
-							authorEmail={ authorEmail }
-							authorIp={ authorIp }
-							authorIsBlocked={ authorIsBlocked }
-							authorUrl={ authorUrl }
-							authorUsername={ authorUsername }
-							blockUser={ this.blockUser }
-							commentContent={ commentContent }
-							commentDate={ commentDate }
-							commentStatus={ commentStatus }
-							commentUrl={ commentUrl }
-							repliedToComment={ repliedToComment }
-							siteId={ siteId }
-						/>
-						<CommentDetailReply
-							authorDisplayName={ authorDisplayName }
-							comment={ getCommentStatusAction( this.props ) }
-							postTitle={ postTitle }
-							replyComment={ replyComment }
-						/>
+
+						{ isEditMode &&
+							<CommentDetailEdit
+								authorDisplayName={ authorDisplayName }
+								authorUrl={ authorUrl }
+								closeEditMode={ this.toggleEditMode }
+								commentContent={ isRawContentSupported ? commentRawContent : commentContent }
+								commentId={ commentId }
+								editComment={ editComment }
+								isAuthorRegistered={ authorId !== 0 }
+								postId={ postId }
+							/>
+						}
+
+						{ ! isEditMode &&
+							<div>
+								<CommentDetailComment
+									authorAvatarUrl={ authorAvatarUrl }
+									authorDisplayName={ authorDisplayName }
+									authorEmail={ authorEmail }
+									authorIp={ authorIp }
+									authorIsBlocked={ authorIsBlocked }
+									authorUrl={ authorUrl }
+									authorUsername={ authorUsername }
+									blockUser={ this.blockUser }
+									commentContent={ commentContent }
+									commentDate={ commentDate }
+									commentStatus={ commentStatus }
+									commentUrl={ commentUrl }
+									repliedToComment={ repliedToComment }
+									siteId={ siteId }
+								/>
+								<CommentDetailReply
+									authorDisplayName={ authorDisplayName }
+									comment={ getCommentStatusAction( this.props ) }
+									postTitle={ postTitle }
+									replyComment={ replyComment }
+								/>
+							</div>
+						}
 					</div>
 				}
 			</Card>
@@ -322,9 +376,11 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentDate: get( comment, 'date' ),
 		commentId,
 		commentIsLiked: get( comment, 'i_like' ),
+		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
 		isLoading,
+		isRawContentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,

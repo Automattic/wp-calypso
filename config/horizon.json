@@ -20,6 +20,7 @@
 		"code-splitting": true,
 		"comments/management": true,
 		"comments/management/all-list": false,
+		"comments/management/edit": true,
 		"manage/comments/bulk-actions": true,
 		"devdocs": false,
 		"domains/cctlds": true,

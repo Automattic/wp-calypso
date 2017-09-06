@@ -14,6 +14,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
 	changeCommentStatus,
 	deleteComment,
+	editComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
@@ -89,6 +90,15 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		this.props.deleteComment( commentId, postId );
+	}
+
+	editComment = ( commentId, postId, commentData ) => {
+		this.props.editComment( commentId, postId, commentData );
+		this.props.successNotice( this.props.translate( 'Comment updated.' ), {
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+		} );
 	}
 
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
@@ -405,9 +415,10 @@ export class CommentList extends Component {
 					{ map( commentsPage, commentId =>
 						<CommentDetail
 							commentId={ commentId }
-							deleteCommentPermanently={ this.deleteCommentPermanently }
-							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
+							deleteCommentPermanently={ this.deleteCommentPermanently }
+							editComment={ this.editComment }
+							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
@@ -476,6 +487,14 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			bumpStat( 'calypso_comment_management', 'comment_deleted' )
 		),
 		deleteComment( siteId, postId, commentId, options )
+	) ),
+
+	editComment: ( commentId, postId, comment ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_edit' ),
+			bumpStat( 'calypso_comment_management', 'comment_updated' )
+		),
+		editComment( siteId, postId, commentId, comment )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(

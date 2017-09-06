@@ -50,15 +50,35 @@ export const deconstructStateKey = key => {
 	return { siteId: +siteId, postId: +postId };
 };
 
+const isCommentManagementEdit = newProperties =>
+	has( newProperties, 'commentContent' ) &&
+	has( newProperties, 'authorDisplayName' ) &&
+	has( newProperties, 'authorUrl' );
+
 const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
 	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
 
+	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
+	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
+	// This ternary matches and formats the updated fields sent by Comment Management's Edit form,
+	// in order to optimistically update the state without temporary loss of information.
+	const newComment = isCommentManagementEdit( newProperties )
+		? {
+				...comment,
+				author: {
+					...comment.author,
+					name: newProperties.authorDisplayName,
+					url: newProperties.authorUrl,
+				},
+				content: newProperties.commentContent,
+			}
+		: { ...comment, ...newProperties };
+
 	return {
-		...comment,
-		...newProperties,
+		...newComment,
 		...( updateLikeCount && {
 			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1,
 		} ),

@@ -27,11 +27,12 @@ export const CommentDetailHeader = ( {
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
-	edit,
 	isBulkEdit,
+	isEditMode,
 	isExpanded,
 	postTitle,
 	toggleApprove,
+	toggleEditMode,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
@@ -56,17 +57,33 @@ export const CommentDetailHeader = ( {
 			className={ classes }
 			onClick={ isExpanded ? noop : handleFullHeaderClick }
 		>
-			{ isExpanded &&
+			{ isExpanded && ! isEditMode &&
 				<CommentDetailActions
-					edit={ edit }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
+					toggleEditMode={ toggleEditMode }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
+			}
+
+			{ isExpanded && isEditMode &&
+				<div className="comment-detail__header-edit-mode">
+					<div className="comment-detail__header-edit-title">
+						<Gridicon icon="pencil" />
+						<span>{ translate( 'Edit Comment' ) }</span>
+					</div>
+					<Button
+						borderless
+						className="comment-detail__action-collapse"
+						onClick={ toggleEditMode }
+					>
+						<Gridicon icon="cross" />
+					</Button>
+				</div>
 			}
 
 			{ ! isExpanded &&
@@ -102,10 +119,11 @@ export const CommentDetailHeader = ( {
 				</div>
 			}
 
-			{ ! isBulkEdit &&
+			{ ! isBulkEdit && ! isEditMode &&
 				<Button
 					borderless
 					className="comment-detail__action-collapse"
+					disabled={ isEditMode }
 					onClick={ isExpanded ? toggleExpanded : noop }
 				>
 					<Gridicon icon="chevron-down" />
