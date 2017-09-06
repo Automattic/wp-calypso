@@ -58,7 +58,7 @@ export default EnhancedComponent =>
 
 		handleMount = ref => {
 			this.divRef = ref;
-			this.handleResize;
+			this.handleResize();
 		};
 		setWithDimensionsRef = ref => {
 			this.setRef = ref;
