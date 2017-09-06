@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -43,20 +44,13 @@ const CreditCardForm = createReactClass( {
 		return {
 			form: null,
 			formSubmitting: false,
-			notice: null
+			notice: null,
 		};
 	},
 
 	_mounted: false,
 
-	fieldNames: [
-		'name',
-		'number',
-		'cvv',
-		'expirationDate',
-		'country',
-		'postalCode'
-	],
+	fieldNames: [ 'name', 'number', 'cvv', 'expirationDate', 'country', 'postalCode' ],
 
 	componentWillMount() {
 		this._mounted = true;
@@ -72,11 +66,11 @@ const CreditCardForm = createReactClass( {
 		this.formStateController = formState.Controller( {
 			initialFields: fields,
 			onNewState: this.setFormState,
-			validatorFunction: this.validate
+			validatorFunction: this.validate,
 		} );
 
 		this.setState( {
-			form: this.formStateController.getInitialState()
+			form: this.formStateController.getInitialState(),
 		} );
 	},
 
@@ -104,7 +98,7 @@ const CreditCardForm = createReactClass( {
 
 			this.setState( {
 				form,
-				notice
+				notice,
 			} );
 		} else {
 			if ( this.state.notice ) {
@@ -112,7 +106,7 @@ const CreditCardForm = createReactClass( {
 			}
 			this.setState( {
 				form,
-				notice: null
+				notice: null,
 			} );
 		}
 	},
@@ -122,7 +116,7 @@ const CreditCardForm = createReactClass( {
 		forOwn( rawDetails, ( value, name ) => {
 			this.formStateController.handleFieldChange( {
 				name,
-				value
+				value,
 			} );
 		} );
 	},
@@ -136,7 +130,7 @@ const CreditCardForm = createReactClass( {
 
 		this.setState( { formSubmitting: true } );
 
-		this.formStateController.handleSubmit( ( hasErrors ) => {
+		this.formStateController.handleSubmit( hasErrors => {
 			if ( hasErrors ) {
 				this.setState( { formSubmitting: false } );
 				return;
@@ -163,23 +157,26 @@ const CreditCardForm = createReactClass( {
 			}
 
 			if ( this.props.saveStoredCard ) {
-				this.props.saveStoredCard( paygateToken ).then( () => {
-					notices.success( this.props.translate( 'Card added successfully' ), {
-						persistent: true
+				this.props
+					.saveStoredCard( paygateToken )
+					.then( () => {
+						notices.success( this.props.translate( 'Card added successfully' ), {
+							persistent: true,
+						} );
+
+						this.props.successCallback();
+					} )
+					.catch( ( { message } ) => {
+						if ( this._mounted ) {
+							this.setState( { formSubmitting: false } );
+						}
+
+						if ( typeof message === 'object' ) {
+							notices.error( <ValidationErrorList messages={ values( message ) } /> );
+						} else {
+							notices.error( message );
+						}
 					} );
-
-					this.props.successCallback();
-				} ).catch( ( { message } ) => {
-					if ( this._mounted ) {
-						this.setState( { formSubmitting: false } );
-					}
-
-					if ( typeof message === 'object' ) {
-						notices.error( <ValidationErrorList messages={ values( message ) } /> );
-					} else {
-						notices.error( message );
-					}
-				} );
 			} else {
 				const apiParams = this.getParamsForApi( cardDetails, paygateToken, this.props.apiParams );
 
@@ -201,7 +198,7 @@ const CreditCardForm = createReactClass( {
 					}
 
 					notices.success( response.success, {
-						persistent: true
+						persistent: true,
 					} );
 
 					this.props.successCallback();
@@ -218,7 +215,7 @@ const CreditCardForm = createReactClass( {
 			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
 			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
 			name: cardDetails.name,
-			paygateToken
+			paygateToken,
 		};
 	},
 
@@ -244,33 +241,40 @@ const CreditCardForm = createReactClass( {
 
 	render() {
 		return (
-		    <form onSubmit={ this.onSubmit }>
+			<form onSubmit={ this.onSubmit }>
 				<Card className="credit-card-form__content">
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }
 						eventFormName="Edit Card Details Form"
 						isFieldInvalid={ this.isFieldInvalid }
-						onFieldChange={ this.onFieldChange } />
+						onFieldChange={ this.onFieldChange }
+					/>
 					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
 							{ this.props.translate(
 								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
-								'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
-								'on a recurring basis until you cancel, which you can do at any time. ' +
-								'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
-								'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
+									'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
+									'on a recurring basis until you cancel, which you can do at any time. ' +
+									'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
+									'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 								{
 									components: {
-										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL }
-											target="_blank"
-											rel="noopener noreferrer" />,
-										managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES }
-											target="_blank"
-											rel="noopener noreferrer" />
-									}
+										tosLink: (
+											<a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
+										),
+										autoRenewalSupportPage: (
+											<a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+										),
+										managePurchasesSupportPage: (
+											<a
+												href={ support.MANAGE_PURCHASES }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
 								}
 							) }
 						</p>
@@ -279,14 +283,20 @@ const CreditCardForm = createReactClass( {
 				</Card>
 
 				<CompactCard className="credit-card-form__footer">
-					<em>{ this.props.translate( 'All fields required' ) }</em>
+					<em>
+						{ this.props.translate( 'All fields required' ) }
+					</em>
 
-					<FormButton
-						disabled={ this.state.formSubmitting }
-						type="submit">
+					<FormButton disabled={ this.state.formSubmitting } type="submit">
 						{ this.state.formSubmitting
-							? this.props.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
-							: this.props.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } ) }
+							? this.props.translate( 'Saving Card…', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} )
+							: this.props.translate( 'Save Card', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} ) }
 					</FormButton>
 				</CompactCard>
 			</form>
@@ -296,15 +306,17 @@ const CreditCardForm = createReactClass( {
 	renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (
-			    <div className="credit-card-form__card-terms">
+				<div className="credit-card-form__card-terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						{ this.props.translate( 'This card will be used for future renewals of existing purchases.' ) }
+						{ this.props.translate(
+							'This card will be used for future renewals of existing purchases.'
+						) }
 					</p>
 				</div>
 			);
 		}
-	}
+	},
 } );
 
 export default localize( CreditCardForm );
