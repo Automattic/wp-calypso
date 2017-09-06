@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { find } from 'lodash';
 
 /**
@@ -484,7 +485,6 @@ class SignupForm extends Component {
 		return (
 			<p className="signup-form__terms-of-service-link">{ tosText }</p>
 		);
-
 	}
 
 	getNotice() {
