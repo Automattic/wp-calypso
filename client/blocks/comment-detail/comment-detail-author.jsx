@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -10,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import { urlToDomainAndPath } from 'lib/url';
@@ -80,7 +82,9 @@ export class CommentDetailAuthor extends Component {
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
-									{ authorDisplayName }
+									<Emojify>
+										{ authorDisplayName }
+									</Emojify>
 								</strong>
 							</div>
 							<div className="comment-detail__author-username">
@@ -148,7 +152,9 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>
-								{ authorDisplayName }
+								<Emojify>
+									{ authorDisplayName }
+								</Emojify>
 							</strong>
 							<ExternalLink href={ authorUrl }>
 								{ urlToDomainAndPath( authorUrl ) }
