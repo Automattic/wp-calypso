@@ -211,7 +211,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
 	// This ternary matches the updated fields sent by Comment Management's Edit form to the fields expected by the API.
-	const body = ( comment.authorDisplayName && comment.authorUrl && comment.commentContent )
+	const body = ( comment.authorDisplayName || comment.authorUrl || comment.commentContent )
 		? {
 			author: comment.authorDisplayName,
 			author_url: comment.authorUrl,
