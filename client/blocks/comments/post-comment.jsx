@@ -286,6 +286,8 @@ class PostComment extends React.PureComponent {
 			maxDepth,
 			post,
 			commentsToShow,
+			overflowY,
+			showReadMoreInActions,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -413,7 +415,7 @@ class PostComment extends React.PureComponent {
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
-					showReadMore={ this.props.overflowY && ! this.state.showFull }
+					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
 					onReadMore={ this.onReadMore }
 				/>
 
