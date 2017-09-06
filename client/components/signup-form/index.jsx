@@ -308,12 +308,35 @@ class SignupForm extends Component {
 		} );
 	};
 
+	getNoticeMessageWithLogin( notice ) {
+		const link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.redirectToAfterLoginUrl
+		} );
+
+		if ( notice.error === '2FA_enabled' ) {
+			return (
+				<span>
+					<p>
+						{ notice.message }&nbsp;
+						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
+							}
+						} ) }
+					</p>
+				</span>
+			);
+		}
+		return notice.message;
+	}
+
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
-			text={ notice.message } />;
+			text={ this.getNoticeMessageWithLogin( notice ) } />;
 	}
 
 	getUserData() {
