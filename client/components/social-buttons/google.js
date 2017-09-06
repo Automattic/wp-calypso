@@ -158,10 +158,10 @@ class GoogleLoginButton extends Component {
 
 		if ( children ) {
 			const childProps = {
+				className: classNames( { disabled: isDisabled } ),
 				onClick: this.handleClick,
 				onMouseOver: this.showError,
 				onMouseOut: this.hideError,
-				className: classNames( { disabled: isDisabled } ),
 			};
 
 			customButton = React.cloneElement( children, childProps );
