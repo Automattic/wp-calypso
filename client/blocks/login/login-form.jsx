@@ -49,6 +49,7 @@ export class LoginForm extends Component {
 		socialAccountIsLinking: PropTypes.bool,
 		socialAccountLinkEmail: PropTypes.string,
 		socialAccountLinkService: PropTypes.string,
+		userEmail: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
 		oauth2Client: PropTypes.object,
@@ -56,7 +57,7 @@ export class LoginForm extends Component {
 
 	state = {
 		isDisabledWhileLoading: true,
-		usernameOrEmail: this.props.socialAccountLinkEmail || '',
+		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		password: '',
 		rememberMe: false,
 	};
@@ -310,6 +311,7 @@ export class LoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+		userEmail: getCurrentQueryArguments( state ).user_email,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
 		socialAccountIsLinking: getSocialAccountIsLinking( state ),

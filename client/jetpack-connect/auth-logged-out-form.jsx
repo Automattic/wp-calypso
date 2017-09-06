@@ -57,12 +57,13 @@ class LoggedOutForm extends Component {
 	}
 
 	renderLoginUser() {
-		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
+		const { userData, bearerToken, queryObject } = this.props.jetpackConnectAuthorize;
 
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
+				userEmail={ queryObject.user_email }
 				redirectTo={ this.getRedirectAfterLoginUrl() } />
 		);
 	}
@@ -94,10 +95,12 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
+		const userEmail = this.props.jetpackConnectAuthorize.queryObject.user_email;
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ) }>
+				<LoggedOutFormLinkItem
+					href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo, userEmail } ) }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.handleClickHelp } />
