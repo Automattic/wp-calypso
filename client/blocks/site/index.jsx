@@ -99,7 +99,7 @@ class Site extends React.Component {
 							? translate( 'View site %(domain)s', {
 									args: { domain: site.domain },
 								} )
-							: translate( 'Select site %(domain)s', {
+							: translate( 'Site %(domain)s', {
 									args: { domain: site.domain },
 								} )
 					}
@@ -111,7 +111,7 @@ class Site extends React.Component {
 							? translate( 'View site %(domain)s', {
 									args: { domain: site.domain },
 								} )
-							: translate( 'Select site %(domain)s', {
+							: translate( 'Site %(domain)s', {
 									args: { domain: site.domain },
 								} )
 					}
