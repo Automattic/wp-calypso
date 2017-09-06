@@ -48,29 +48,26 @@ function deserialize( state ) {
 }
 
 /**
- * Determines whether to add "sympathy" by randomly clearing out persistent
- * browser state and loading without it
+ * Determines whether to clear persistent state before a given page load.
  *
- * Can be overridden on the command-line with two flags:
- *   - ENABLE_FEATURES=force-sympathy npm start (always sympathize)
- *   - ENABLE_FEATURES=no-force-sympathy npm start (always prevent sympathy)
+ * Can be overridden on the command line with two flags:
+ *   - ENABLE_FEATURES=always-clear-persistent-state npm start
+ *   - ENABLE_FEATURES=never-clear-persistent-state npm start
  *
- * If both of these flags are set, then `force-sympathy` takes precedence.
+ * If both flags are set, `always-clear-persistent-state` takes precedence.
  *
  * @returns {bool} Whether to clear persistent state on page load
  */
-function shouldAddSympathy() {
-	// If `force-sympathy` flag is enabled, always clear persistent state.
-	if ( config.isEnabled( 'force-sympathy' ) ) {
+function shouldClearPersistentState() {
+	if ( config.isEnabled( 'always-clear-persistent-state' ) ) {
 		return true;
 	}
 
-	// If `no-force-sympathy` flag is enabled, never clear persistent state.
-	if ( config.isEnabled( 'no-force-sympathy' ) ) {
+	if ( config.isEnabled( 'never-clear-persistent-state' ) ) {
 		return false;
 	}
 
-	// Otherwise, in development mode, clear persistent state 25% of the time.
+	// In development mode, clear persistent state 25% of the time.
 	if ( 'development' === process.env.NODE_ENV && Math.random() < 0.25 ) {
 		return true;
 	}
@@ -80,14 +77,14 @@ function shouldAddSympathy() {
 }
 
 /**
- * Augments the initial state loader to clear persistent state if
- * `shouldAddSympathy()` returns true.
+ * Adds sympathy for fresh-load users by augmenting the initial state loader to
+ * clear persistent state for some page loads.
  *
  * @param {Function} initialStateLoader normal unsympathetic state loader
- * @returns {Function} maybe-augmented initial state loader
+ * @returns {Function} more sympathetic initial state loader
  */
-function maybeAddSympathy( initialStateLoader ) {
-	if ( ! shouldAddSympathy() ) {
+function addSympathy( initialStateLoader ) {
+	if ( ! shouldClearPersistentState() ) {
 		return initialStateLoader;
 	}
 
@@ -100,7 +97,7 @@ function maybeAddSympathy( initialStateLoader ) {
 	return () => createReduxStore( getInitialServerState() );
 }
 
-const loadInitialState = maybeAddSympathy( initialState => {
+const loadInitialState = addSympathy( initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
