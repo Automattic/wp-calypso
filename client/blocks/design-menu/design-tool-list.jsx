@@ -1,7 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -11,40 +14,52 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 
-const DesignToolList = React.createClass( {
-	propTypes: {
-		onChange: React.PropTypes.func.isRequired,
-	},
+class DesignToolList extends React.Component {
+	static propTypes = {
+		onChange: PropTypes.func.isRequired,
+	};
 
-	renderControl( tool ) {
+	renderControl = tool => {
 		const onChange = event => {
 			event.preventDefault();
 			this.props.onChange( tool.value );
 		};
-		return ( <SidebarItem
-							className="design-tool-list__button"
-							icon={ tool.icon }
-							label={ tool.label }
-							link="/customize"
-							onNavigate={ onChange }
-						>
-							<Gridicon icon="chevron-right" size={ 24 } onClick={ onChange } className="design-tool-list__button__icon" />
-						</SidebarItem>
-					);
-	},
+		return (
+			<SidebarItem
+				className="design-menu__tool-list-button"
+				icon={ tool.icon }
+				label={ tool.label }
+				link="/customize"
+				onNavigate={ onChange }
+			>
+				<Gridicon
+					icon="chevron-right"
+					size={ 24 }
+					onClick={ onChange }
+					className="design-menu__tool-list-button-icon"
+				/>
+			</SidebarItem>
+		);
+	};
 
 	render() {
 		return (
-			<div className="design-tool-list">
-				<SidebarHeading>{ this.translate( 'Site Identity' ) }</SidebarHeading>
+			<div className="design-menu__tool-list">
+				<SidebarHeading>
+					{ this.props.translate( 'Site Identity' ) }
+				</SidebarHeading>
 				<SidebarMenu>
 					<ul>
-						{ this.renderControl( { icon: 'heading', label: this.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
+						{ this.renderControl( {
+							icon: 'heading',
+							label: this.props.translate( 'Title and Tagline' ),
+							value: 'siteTitle',
+						} ) }
 					</ul>
 				</SidebarMenu>
 			</div>
 		);
 	}
-} );
+}
 
-export default DesignToolList;
+export default localize( DesignToolList );

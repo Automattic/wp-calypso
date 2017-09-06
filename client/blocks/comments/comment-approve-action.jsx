@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -24,10 +25,10 @@ const CommentApproveAction = ( { translate, status, approveComment, unapproveCom
 };
 
 CommentApproveAction.propTypes = {
-	translate: React.PropTypes.func.isRequired,
-	approveComment: React.PropTypes.func,
-	unapproveComment: React.PropTypes.func,
-	status: React.PropTypes.string.isRequired,
+	translate: PropTypes.func.isRequired,
+	approveComment: PropTypes.func,
+	unapproveComment: PropTypes.func,
+	status: PropTypes.string.isRequired,
 };
 
 CommentApproveAction.defaultProps = {

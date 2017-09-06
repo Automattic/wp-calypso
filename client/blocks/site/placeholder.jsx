@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site' );
+import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'SitePlaceholder',
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:site' );
 
-	componentDidMount: function() {
+export default class extends React.Component {
+	static displayName = 'SitePlaceholder';
+
+	componentDidMount() {
 		debug( 'The Site component is mounted.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="site is-loading">
 				<div className="site__content">
@@ -24,4 +26,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}

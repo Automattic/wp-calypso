@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -203,13 +204,13 @@ class PostCommentForm extends Component {
 }
 
 PostCommentForm.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	commentId: React.PropTypes.number,
-	commentText: React.PropTypes.string,
-	onCommentSubmit: React.PropTypes.func,
+	post: PropTypes.object.isRequired,
+	commentId: PropTypes.number,
+	commentText: PropTypes.string,
+	onCommentSubmit: PropTypes.func,
 
 	// connect()ed props:
-	editComment: React.PropTypes.func.isRequired,
+	editComment: PropTypes.func.isRequired,
 };
 
 PostCommentForm.defaultProps = {

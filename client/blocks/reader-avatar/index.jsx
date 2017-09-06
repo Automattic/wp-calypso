@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { startsWith, endsWith, noop, get } from 'lodash';
 
@@ -105,14 +106,14 @@ const ReaderAvatar = ( {
 };
 
 ReaderAvatar.propTypes = {
-	author: React.PropTypes.object,
-	siteIcon: React.PropTypes.string,
-	feedIcon: React.PropTypes.string,
-	siteUrl: React.PropTypes.string,
-	preferGravatar: React.PropTypes.bool,
-	showPlaceholder: React.PropTypes.bool,
-	isCompact: React.PropTypes.bool,
-	onClick: React.PropTypes.func,
+	author: PropTypes.object,
+	siteIcon: PropTypes.string,
+	feedIcon: PropTypes.string,
+	siteUrl: PropTypes.string,
+	preferGravatar: PropTypes.bool,
+	showPlaceholder: PropTypes.bool,
+	isCompact: PropTypes.bool,
+	onClick: PropTypes.func,
 };
 
 ReaderAvatar.defaultProps = {

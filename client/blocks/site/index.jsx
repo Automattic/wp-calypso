@@ -17,32 +17,30 @@ import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getSite } from 'state/sites/selectors';
 
-const Site = React.createClass( {
-	getDefaultProps() {
-		return {
-			// onSelect callback
-			onSelect: noop,
-			// mouse event callbacks
-			onMouseEnter: noop,
-			onMouseLeave: noop,
+class Site extends React.Component {
+	static defaultProps = {
+		// onSelect callback
+		onSelect: noop,
+		// mouse event callbacks
+		onMouseEnter: noop,
+		onMouseLeave: noop,
 
-			// Set a href attribute to the anchor
-			href: null,
+		// Set a href attribute to the anchor
+		href: null,
 
-			// Choose to show the SiteIndicator
-			indicator: true,
+		// Choose to show the SiteIndicator
+		indicator: true,
 
-			// Mark as selected or not
-			isSelected: false,
+		// Mark as selected or not
+		isSelected: false,
 
-			homeLink: false,
-			// if homeLink is enabled
-			showHomeIcon: true,
-			compact: false,
-		};
-	},
+		homeLink: false,
+		// if homeLink is enabled
+		showHomeIcon: true,
+		compact: false,
+	};
 
-	propTypes: {
+	static propTypes = {
 		href: PropTypes.string,
 		externalLink: PropTypes.bool,
 		indicator: PropTypes.bool,
@@ -56,19 +54,19 @@ const Site = React.createClass( {
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
 		compact: PropTypes.bool,
-	},
+	};
 
-	onSelect( event ) {
+	onSelect = event => {
 		this.props.onSelect( event, this.props.site.ID );
-	},
+	};
 
-	onMouseEnter( event ) {
+	onMouseEnter = event => {
 		this.props.onMouseEnter( event, this.props.site.ID );
-	},
+	};
 
-	onMouseLeave( event ) {
+	onMouseLeave = event => {
 		this.props.onMouseLeave( event, this.props.site.ID );
-	},
+	};
 
 	render() {
 		const { site, translate } = this.props;
@@ -99,11 +97,11 @@ const Site = React.createClass( {
 					title={
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 							: translate( 'Select site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
@@ -111,11 +109,11 @@ const Site = React.createClass( {
 					aria-label={
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 							: translate( 'Select site %(domain)s', {
-									args: { domain: site.domain },
-								} )
+								args: { domain: site.domain },
+							} )
 					}
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
@@ -152,8 +150,8 @@ const Site = React.createClass( {
 				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( ( state, { siteId, site } ) => ( {
 	site: siteId ? getSite( state, siteId ) : site,

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -10,10 +9,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import PostEditButton from 'blocks/post-edit-button';
 
-export default React.createClass( {
-	displayName: 'PostEditButton',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+    static displayName = 'PostEditButton';
 
 	render() {
 		const post = { ID: 123, type: 'post' };
@@ -27,4 +24,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

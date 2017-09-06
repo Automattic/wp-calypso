@@ -2,7 +2,12 @@
 /**
 * External dependencies
 */
+import PropTypes from 'prop-types';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
 
 export default class FeaturedImage extends React.Component {
 	constructor( props ) {
@@ -33,5 +38,5 @@ export default class FeaturedImage extends React.Component {
 }
 
 FeaturedImage.propTypes = {
-	src: React.PropTypes.string,
+	src: PropTypes.string,
 };
