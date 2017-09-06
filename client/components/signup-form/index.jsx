@@ -337,7 +337,7 @@ class SignupForm extends Component {
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
-				link += '&email_address=' + encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
+				link += '&user_email=' + encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
 				return (
 					<span>
 						<p>
