@@ -15,6 +15,7 @@ import {
 	queries,
 	total,
 } from '../reducer';
+import reducer from 'woocommerce/state/sites/reducer';
 import {
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEWS_RECEIVE,
@@ -66,6 +67,37 @@ describe( 'reducer', () => {
 			};
 			const newState = isQueryLoading( { '{}': true }, action );
 			expect( newState ).to.eql( { '{}': false } );
+		} );
+
+		it( 'should not update state for another site ID', () => {
+			const action = {
+				type: WOOCOMMERCE_REVIEWS_RECEIVE,
+				siteId: 546,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				reviews,
+			};
+
+			const newState = reducer( {
+				546: {
+					reviews: {
+						isQueryLoading: {
+							'{}': true,
+						}
+					}
+				},
+				123: {
+					reviews: {
+						isQueryLoading: {
+							'{}': true,
+						}
+					}
+				}
+			}, action );
+			expect( newState[ 546 ].reviews.isQueryLoading ).to.eql( { '{}': false } );
+			expect( newState[ 123 ].reviews.isQueryLoading ).to.eql( { '{}': true } );
 		} );
 	} );
 	describe( 'isQueryError', () => {

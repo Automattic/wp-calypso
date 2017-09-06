@@ -33,7 +33,7 @@ This is saved on a per-site basis. All reviews are collected in `items`, and the
 				"rating": 5,
 				...
 			},
-			2: { … }
+			2: { ... }
 		},
 		// Keyed by serialized query (a list of review IDs)
 		"queries": {
