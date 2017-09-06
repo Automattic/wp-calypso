@@ -98,9 +98,11 @@ export const CommentDetailHeader = ( {
 						<Gravatar user={ author } />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
-								<strong>
-									{ authorDisplayName }
-								</strong>
+								<Emojify>
+									<strong>
+										{ authorDisplayName }
+									</strong>
+								</Emojify>
 								<span>
 									{ urlToDomainAndPath( authorUrl ) }
 								</span>
