@@ -1,0 +1,26 @@
+.order-create__container {
+	padding-bottom: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	.section-header__label {
+		font-size: 16px;
+	}
+}
+
+.order-create__card-customer {
+	.order-create__fieldset {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.order-create__field {
+		flex: 0 1 calc( 50% - 10px );
+		max-width: calc( 50% - 10px );
+		margin-bottom: 20px;
+	}
+}
