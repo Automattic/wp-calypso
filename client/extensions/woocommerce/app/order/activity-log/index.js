@@ -7,12 +7,18 @@ import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { sortBy, keys } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
-import { isLoaded as areLabelsLoaded, getLabels } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	isActivityLogLoaded,
+	getActivityLogEvents,
+	EVENT_TYPES,
+} from 'woocommerce/state/sites/orders/activity-log/selectors';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import Card from 'components/card';
 import Event from './event';
 import EventsByDay from './day';
@@ -38,8 +44,10 @@ function getSortedEvents( events ) {
 
 class ActivityLog extends Component {
 	static propTypes = {
-		orderId: PropTypes.number.isRequired,
-		siteId: PropTypes.number.isRequired,
+		isLoaded: PropTypes.bool.isRequired,
+		events: PropTypes.arrayOf( PropTypes.object ).isRequired,
+		days: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		eventsByDay: PropTypes.objectOf( PropTypes.array ).isRequired,
 	}
 
 	constructor( props ) {
@@ -54,30 +62,91 @@ class ActivityLog extends Component {
 	}
 
 	eventPropsByType = {
-		'order-note': ( event ) => {
+		[ EVENT_TYPES.INTERNAL_NOTE ]: ( event ) => {
 			const { translate } = this.props;
-
-			// @todo Add comment author once we have that info
-			let icon = 'aside';
-			let heading = translate( 'Internal note' );
-			if ( event.data.customer_note ) {
-				icon = 'mail';
-				heading = translate( 'Note sent to customer' );
-			}
-
 			return {
-				icon,
-				heading,
-				timestamp: event.timestamp && event.timestamp + 'Z',
-				children: decodeEntities( stripHTML( event.data.note ) ),
+				icon: 'aside',
+				// @todo Add comment author once we have that info
+				heading: translate( 'Internal note' ),
+				timestamp: event.timestamp,
+				children: decodeEntities( stripHTML( event.content ) ),
 			};
 		},
 
-		'shipping-label': ( event ) => ( {
-			icon: 'print',
-			timestamp: event.timestamp,
-			children: 'A shipping label was purchased!',
-		} ),
+		[ EVENT_TYPES.CUSTOMER_NOTE ]: ( event ) => {
+			const { translate } = this.props;
+			return {
+				icon: 'mail',
+				// @todo Add comment author once we have that info
+				heading: translate( 'Note sent to customer' ),
+				timestamp: event.timestamp,
+				children: decodeEntities( stripHTML( event.content ) ),
+			};
+		},
+
+		[ EVENT_TYPES.LABEL_PURCHASED ]: ( event ) => {
+			// TODO const { translate } = this.props;
+			return {
+				icon: 'print',
+				timestamp: event.timestamp,
+				children:
+					<div>
+						<div>
+							Label { event.labelIndex + 1 }
+							<span> (for <span title={ event.productNames.join( '\n' ) }>{ event.packageName }</span>) </span>
+							purchased
+						</div>
+						<div>Tracking #: { event.tracking }</div>
+						{ ! event.showDetails
+							? null
+							: (
+								<div>
+									<ButtonGroup>
+										<Button compact><Gridicon icon="print" /> Reprint</Button>
+										<Button compact>
+											<Gridicon icon="refund" /> Refund ({ event.currency } { event.refundableAmount })
+										</Button>
+									</ButtonGroup>
+								</div>
+							)
+						}
+					</div>,
+			};
+		},
+
+		[ EVENT_TYPES.LABEL_REFUND_REQUESTED ]: ( event ) => {
+			return {
+				icon: 'refund',
+				timestamp: event.timestamp,
+				children:
+					<div>
+						<span>Label { event.labelIndex + 1 } refund requested</span>
+						{ event.amount != null ? <span> ({ event.currency } { event.amount })</span> : null }
+					</div>,
+			};
+		},
+
+		[ EVENT_TYPES.LABEL_REFUND_COMPLETED ]: ( event ) => {
+			return {
+				icon: 'refund',
+				timestamp: event.timestamp,
+				children:
+				<div>
+					Label { event.labelIndex + 1 } refunded ({ event.currency } { event.amount })
+				</div>,
+			};
+		},
+
+		[ EVENT_TYPES.LABEL_REFUND_REJECTED ]: ( event ) => {
+			return {
+				icon: 'refund',
+				timestamp: event.timestamp,
+				children:
+				<div>
+					Label { event.labelIndex + 1 } refund rejected
+				</div>,
+			};
+		},
 	}
 
 	renderEvents = () => {
@@ -139,27 +208,11 @@ class ActivityLog extends Component {
 export default connect(
 	( state, props ) => {
 		const orderId = props.orderId || false;
-		const siteId = props.siteId || false;
-		const isLoaded = areOrderNotesLoaded( state, orderId ) && areLabelsLoaded( state, orderId );
 
-		const events = [
-			...getOrderNotes( state, orderId ).map( ( note ) => ( {
-				type: 'order-note',
-				timestamp: note.date_created_gmt,
-				data: note,
-				key: note.id,
-			} ) ),
+		const isLoaded = isActivityLogLoaded( state, orderId );
+		const events = getActivityLogEvents( state, orderId );
 
-			// TODO split out refund events
-			...getLabels( state, orderId ).map( ( label ) => ( {
-				type: 'shipping-label',
-				timestamp: new Date( label.created_date ).toISOString(),
-				data: label,
-				key: label.label_id,
-			} ) ),
-		];
-
-		const eventsByDay = events.length ? getSortedEvents( events ) : false;
+		const eventsByDay = events.length ? getSortedEvents( events ) : {};
 		const days = eventsByDay ? keys( eventsByDay ) : [];
 		days.sort().reverse();
 
@@ -168,8 +221,6 @@ export default connect(
 			days,
 			events,
 			eventsByDay,
-			orderId,
-			siteId,
 		};
 	}
 )( localize( ActivityLog ) );

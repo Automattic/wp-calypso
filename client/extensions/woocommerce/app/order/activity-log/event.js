@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 
 class Event extends Component {
 	static propTypes = {
-		timestamp: PropTypes.string,
+		timestamp: PropTypes.number,
 		icon: PropTypes.string,
 		heading: PropTypes.string,
 	}
