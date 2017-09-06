@@ -66,7 +66,7 @@ function getHoldMessages( siteSlug, translate ) {
 		NO_SSL_CERTIFICATE: {
 			title: translate( 'Security certificate required' ),
 			description: translate(
-				'We are setting up a security certificate for you domain now. Please try again in a few minutes.'
+				'We are setting up a security certificate for your domain now. Please try again in a few minutes.'
 			),
 		},
 		EMAIL_UNVERIFIED: {
