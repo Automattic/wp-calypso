@@ -322,7 +322,7 @@
 
 	&.is-excerpt,
 	&.is-excerpt .comments__comment-content {
-		max-height: 15px * 1.6 * 3;
+		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
 	}
 
 	&.is-single-line .comments__comment-content,
@@ -331,30 +331,16 @@
 	}
 }
 
-.comments__comment-read-more {
-	background: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, rgba( 255, 255, 255, 1 ) 50%, rgba( 255, 255, 255, 1 ) 96%, rgba( 255, 255, 255, 1) 100% );
-	color: $blue-medium;
-	cursor: pointer;
-	display: inline-block;
-	float: right;
-	font-size: 15px;
-	max-height: 15px * 1.6 * 3;
-	min-width: 160px;
-	position: relative;
-	text-align: right;
-	width: 140px;
-
-	&:hover {
-		color: $blue-light;
-	}
+.comments__comment-content-wrapper.is-excerpt ~ .comments__comment-actions {
+	margin-top: -10px;
 }
 
-.comments__comment-content-wrapper.is-single-line .comments__comment-content ~ .comments__comment-read-more {
-	top: -24px;
+.comments__comment-content-wrapper.is-full ~ .comments__comment-actions {
+	margin-top: -5px;
 }
 
-.comments__comment-content-wrapper.is-excerpt .comments__comment-content ~ .comments__comment-read-more {
-	top: -22px;
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
+	margin-bottom: 0;
 }
 
 // Avoids long trackback links from wrapping
@@ -429,7 +415,6 @@ a.comments__comment-username {
 	list-style: none;
 	color: $gray;
 	font-size: 14px;
-	margin-top: -5px;
 
 	button {
 		display: inline-block;
@@ -480,7 +465,7 @@ a.comments__comment-username {
 	}
 
 	// Aligns Like icon to comment text when it's by itself
-	:only-child {
+	> :only-child {
 		left: -3px;
 		top: 3px;
 	}
@@ -572,4 +557,14 @@ a.comments__comment-username {
 
 .comments__comment-count-phrase {
 	text-transform: uppercase;
+}
+
+.comments__comment-actions .comments__comment-actions-read-more {
+	color: $blue-medium;
+	margin: 0 10px 0 -3px;
+	padding-left: 0;
+}
+
+.comments__comment-actions-read-more-icon {
+	fill: $blue-medium;
 }
