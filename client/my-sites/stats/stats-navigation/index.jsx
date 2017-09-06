@@ -41,6 +41,7 @@ const StatsNavigation = props => {
 		const validSection = includes( [ 'day', 'week', 'month', 'year' ], section ) ? section : 'day';
 		statsControl = (
 			<SegmentedControl
+				primary
 				className="stats-navigation__control is-store"
 				initialSelected="site"
 				options={ [
