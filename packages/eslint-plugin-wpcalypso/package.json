@@ -25,8 +25,8 @@
     "requireindex": "^1.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.0",
-    "eslint": "^3.3.1",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.6.1",
     "eslint-config-wpcalypso": "^0.3.0",
     "eslint-plugin-wpcalypso": "file:.",
     "mocha": "^3.0.2"

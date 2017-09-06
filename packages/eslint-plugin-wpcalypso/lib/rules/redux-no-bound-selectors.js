@@ -145,6 +145,15 @@ module.exports = {
 			}
 		}
 
+		function isBindCallee( node ) {
+			const { callee } = node;
+			if ( contains( [ 'bind', 'partial', 'partialRight' ], callee.name ) ) {
+				return true;
+			}
+
+			return !! callee.property && callee.property.name === 'bind';
+		}
+
 		return {
 			'Program:exit': function() {
 				reports
@@ -159,12 +168,7 @@ module.exports = {
 					return onConnectCall( node );
 				}
 
-				if ( contains(
-							[ 'bind', 'partial', 'partialRight' ],
-							node.callee.name
-						) || (
-							node.callee.property &&
-							node.callee.property.name === 'bind' ) ) {
+				if ( isBindCallee( node ) ) {
 					return onBindCall( node );
 				}
 			},

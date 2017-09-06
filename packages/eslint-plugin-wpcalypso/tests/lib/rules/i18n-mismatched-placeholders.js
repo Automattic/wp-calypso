@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 
 var rule = require( '../../../lib/rules/i18n-mismatched-placeholders' ),
-	config = { env: { es6: true } },  // support for string templates
+	config = { env: { es6: true } }, // support for string templates
 	RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
