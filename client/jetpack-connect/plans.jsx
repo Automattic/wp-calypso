@@ -10,8 +10,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import PlansGrid from './plans-grid';
+import PlansSkipButton from './plans-skip-button';
 import { PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
@@ -289,7 +289,6 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
-		const { translate } = this.props;
 		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
 
 		return (
@@ -306,17 +305,8 @@ class Plans extends Component {
 					hideFreePlan={ hideFreePlanTest }
 				>
 					{
-						hideFreePlanTest && (
-							<div className="jetpack-connect__plans-nav-buttons">
-								<Button
-									onClick={ this.handleSkipButtonClick }
-									compact
-									borderless
-								>
-									{ translate( 'Skip' ) }
-								</Button>
-							</div>
-						)
+						hideFreePlanTest &&
+						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 					}
 				</PlansGrid>
 			</div>
