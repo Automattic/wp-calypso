@@ -109,6 +109,7 @@ class LoggedOutForm extends Component {
 		const {
 			isAuthorizing,
 			userData,
+			queryObject,
 		} = this.props.jetpackConnectAuthorize;
 
 		return (
@@ -122,6 +123,7 @@ class LoggedOutForm extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
+					email={ queryObject.user_email }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }
