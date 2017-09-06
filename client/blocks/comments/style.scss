@@ -314,6 +314,7 @@
 .comments__comment-content-wrapper {
 	display: inline-block;
 	position: relative;
+	width: 100%;
 
 	&.is-single-line,
 	&.is-single-line .comments__comment-content {
@@ -341,6 +342,10 @@
 
 .comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
 	margin-bottom: 0;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content blockquote {
+	margin: 10px 0 16px;
 }
 
 // Avoids long trackback links from wrapping
