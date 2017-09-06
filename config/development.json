@@ -65,7 +65,7 @@
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,
-		"login/native-login-links": true,
+		"login/native-login-links": false,
 		"login/wp-login": true,
 		"happychat": true,
 		"manage/customize": true,
