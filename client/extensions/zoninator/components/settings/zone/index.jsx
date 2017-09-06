@@ -26,6 +26,8 @@ import { settingsPath } from '../../../app/util';
 class Zone extends Component {
 
 	static propTypes = {
+		deleteZone: PropTypes.func.isRequired,
+		feed: PropTypes.array,
 		saveFeed: PropTypes.func.isRequired,
 		saveZone: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
