@@ -14,7 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
-import PaginationFlow from './pagination-flow';
+import SkipSurvey from './skip-survey';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpackToGeneral from 'my-sites/site-settings/redirect-to-general';
 
@@ -31,21 +31,19 @@ class DisconnectSite extends Component {
 				<FormattedHeader
 					headerText={ translate( 'Disconnect Site' ) }
 					subHeaderText={ translate(
-						'Tell us why you want to disconnect your site from Wordpress.com.'
+						'Tell us why you want to disconnect your site from WordPress.com.'
 					) }
 				/>
 				<Card className="disconnect-site__card"> </Card>
-				<PaginationFlow />
+				<SkipSurvey />
 			</Main>
 		);
 	}
 }
 
-const connectComponent = connect( state => {
-	return {
-		site: getSelectedSite( state ),
-	};
-} );
+const connectComponent = connect( state => ( {
+	site: getSelectedSite( state ),
+} ) );
 
 export default flowRight( connectComponent, localize, redirectNonJetpackToGeneral )(
 	DisconnectSite
