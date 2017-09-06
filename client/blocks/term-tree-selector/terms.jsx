@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -44,10 +43,10 @@ const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 25;
 
-const TermTreeSelectorList = createReactClass( {
-	displayName: 'TermTreeSelectorList',
+class TermTreeSelectorList extends React.Component {
+	static displayName = 'TermTreeSelectorList';
 
-	propTypes: {
+	static propTypes = {
 		hideTermAndChildren: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
@@ -62,28 +61,23 @@ const TermTreeSelectorList = createReactClass( {
 		onChange: PropTypes.func,
 		isError: PropTypes.bool,
 		height: PropTypes.number,
-	},
+	};
 
-	getInitialState() {
-		// getInitialState is also used to reset state when a the taxonomy prop changes
-		return {
-			searchTerm: '',
-			requestedPages: [ 1 ],
-		};
-	},
+	static defaultProps = {
+		analyticsPrefix: 'Category Selector',
+		searchThreshold: 8,
+		loading: true,
+		terms: [],
+		onSearch: () => {},
+		onChange: () => {},
+		onNextPage: () => {},
+		height: 300,
+	};
 
-	getDefaultProps() {
-		return {
-			analyticsPrefix: 'Category Selector',
-			searchThreshold: 8,
-			loading: true,
-			terms: [],
-			onSearch: () => {},
-			onChange: () => {},
-			onNextPage: () => {},
-			height: 300,
-		};
-	},
+	state = {
+		searchTerm: '',
+		requestedPages: [ 1 ],
+	};
 
 	componentWillMount() {
 		this.itemHeights = {};
@@ -96,18 +90,21 @@ const TermTreeSelectorList = createReactClass( {
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
 		}, SEARCH_DEBOUNCE_TIME_MS );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( this.getInitialState() );
+			this.setState( {
+				searchTerm: '',
+				requestedPages: [ 1 ],
+			} );
 		}
 
 		if ( this.props.terms !== nextProps.terms ) {
 			this.getTermChildren.cache.clear();
 			this.termIds = map( nextProps.terms, 'ID' );
 		}
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate =
@@ -122,9 +119,9 @@ const TermTreeSelectorList = createReactClass( {
 		if ( this.props.terms !== prevProps.terms ) {
 			this.recomputeRowHeights();
 		}
-	},
+	}
 
-	recomputeRowHeights: function() {
+	recomputeRowHeights = () => {
 		if ( ! this.list ) {
 			return;
 		}
@@ -136,25 +133,25 @@ const TermTreeSelectorList = createReactClass( {
 		if ( this.isSmall() ) {
 			this.forceUpdate();
 		}
-	},
+	};
 
-	setSelectorRef( selectorRef ) {
+	setSelectorRef = selectorRef => {
 		if ( ! selectorRef ) {
 			return;
 		}
 
 		this.setState( { selectorRef } );
-	},
+	};
 
-	getPageForIndex( index ) {
+	getPageForIndex = index => {
 		const { query, lastPage } = this.props;
 		const perPage = query.number || DEFAULT_TERMS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
 
 		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
-	},
+	};
 
-	setRequestedPages( { startIndex, stopIndex } ) {
+	setRequestedPages = ( { startIndex, stopIndex } ) => {
 		const { requestedPages } = this.state;
 		const pagesToRequest = difference(
 			range(
@@ -171,9 +168,9 @@ const TermTreeSelectorList = createReactClass( {
 		this.setState( {
 			requestedPages: requestedPages.concat( pagesToRequest ),
 		} );
-	},
+	};
 
-	setItemRef( item, itemRef ) {
+	setItemRef = ( item, itemRef ) => {
 		if ( ! itemRef || ! item ) {
 			return;
 		}
@@ -190,44 +187,44 @@ const TermTreeSelectorList = createReactClass( {
 		if ( height !== nextHeight ) {
 			this.queueRecomputeRowHeights();
 		}
-	},
+	};
 
-	hasNoSearchResults() {
+	hasNoSearchResults = () => {
 		return (
 			! this.props.loading &&
 			( this.props.terms && ! this.props.terms.length ) &&
 			!! this.state.searchTerm.length
 		);
-	},
+	};
 
-	hasNoTerms() {
+	hasNoTerms = () => {
 		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
-	},
+	};
 
-	getItem( index ) {
+	getItem = index => {
 		if ( this.props.terms ) {
 			return this.props.terms[ index ];
 		}
-	},
+	};
 
-	isSmall() {
+	isSmall = () => {
 		if ( ! this.props.terms || this.state.searchTerm ) {
 			return false;
 		}
 
 		return this.props.terms.length < this.props.searchThreshold;
-	},
+	};
 
-	isRowLoaded( { index } ) {
+	isRowLoaded = ( { index } ) => {
 		return this.props.lastPage || !! this.getItem( index );
-	},
+	};
 
-	getTermChildren( termId ) {
+	getTermChildren = termId => {
 		const { terms } = this.props;
 		return filter( terms, ( { parent } ) => parent === termId );
-	},
+	};
 
-	getItemHeight( item, _recurse = false ) {
+	getItemHeight = ( item, _recurse = false ) => {
 		if ( ! item ) {
 			return ITEM_HEIGHT;
 		}
@@ -253,28 +250,28 @@ const TermTreeSelectorList = createReactClass( {
 			},
 			ITEM_HEIGHT
 		);
-	},
+	};
 
-	getRowHeight( { index } ) {
+	getRowHeight = ( { index } ) => {
 		return this.getItemHeight( this.getItem( index ) );
-	},
+	};
 
-	getCompactContainerHeight() {
+	getCompactContainerHeight = () => {
 		return range( 0, this.getRowCount() ).reduce( ( memo, index ) => {
 			return memo + this.getRowHeight( { index } );
 		}, 0 );
-	},
+	};
 
-	getResultsWidth() {
+	getResultsWidth = () => {
 		const { selectorRef } = this.state;
 		if ( selectorRef ) {
 			return selectorRef.clientWidth;
 		}
 
 		return 0;
-	},
+	};
 
-	getRowCount() {
+	getRowCount = () => {
 		let count = 0;
 
 		if ( this.props.terms ) {
@@ -286,9 +283,9 @@ const TermTreeSelectorList = createReactClass( {
 		}
 
 		return count;
-	},
+	};
 
-	onSearch( event ) {
+	onSearch = event => {
 		const searchTerm = event.target.value;
 		if ( this.state.searchTerm && ! searchTerm ) {
 			this.props.onSearch( '' );
@@ -305,13 +302,13 @@ const TermTreeSelectorList = createReactClass( {
 
 		this.setState( { searchTerm } );
 		this.debouncedSearch();
-	},
+	};
 
-	setListRef( ref ) {
+	setListRef = ref => {
 		this.list = ref;
-	},
+	};
 
-	renderItem( item, _recurse = false ) {
+	renderItem = ( item, _recurse = false ) => {
 		// if item has a parent and it is in current props.terms, do not render
 		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
 			return;
@@ -358,9 +355,9 @@ const TermTreeSelectorList = createReactClass( {
 					</div> }
 			</div>
 		);
-	},
+	};
 
-	renderNoResults() {
+	renderNoResults = () => {
 		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
 			return (
 				<div key="no-results" className="term-tree-selector__list-item is-empty">
@@ -370,9 +367,9 @@ const TermTreeSelectorList = createReactClass( {
 				</div>
 			);
 		}
-	},
+	};
 
-	renderRow( { index } ) {
+	renderRow = ( { index } ) => {
 		const item = this.getItem( index );
 		if ( item ) {
 			return this.renderItem( item );
@@ -392,15 +389,15 @@ const TermTreeSelectorList = createReactClass( {
 				</label>
 			</div>
 		);
-	},
+	};
 
-	cellRendererWrapper( { key, style, ...rest } ) {
+	cellRendererWrapper = ( { key, style, ...rest } ) => {
 		return (
 			<div key={ key } style={ style }>
 				{ this.renderRow( rest ) }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const rowCount = this.getRowCount();
@@ -442,8 +439,8 @@ const TermTreeSelectorList = createReactClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
