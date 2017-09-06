@@ -108,9 +108,11 @@ export const CommentDetailHeader = ( {
 								</span>
 							</div>
 							<div className="comment-detail__author-info-element">
-								{ translate( 'on %(postTitle)s', { args: {
-									postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-								} } ) }
+								<Emojify>
+									{ translate( 'on %(postTitle)s', { args: {
+										postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+									} } ) }
+								</Emojify>
 							</div>
 						</div>
 					</div>
