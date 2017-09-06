@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, mapValues, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ class ZoneDetailsForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	}
 
-	save = data => this.props.onSubmit( form, data );
+	save = data => this.props.onSubmit( form, mapValues( data, trim ) );
 
 	render() {
 		const {
