@@ -86,9 +86,7 @@ export const saveZone = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const announceZoneSaved = ( dispatch, { form, siteId }, data ) => {
-	const zone = fromApi( data );
-
+export const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
 	dispatch( stopSubmit( form ) );
 	dispatch( updateZone( siteId, zone.id, zone ) );
 	dispatch( successNotice(
@@ -101,7 +99,7 @@ export const handleZoneCreated = ( { dispatch, getState }, action, response ) =>
 	const { siteId } = action;
 
 	page( `/extensions/zoninator/${ getSiteSlug( getState(), siteId ) }` );
-	announceZoneSaved( dispatch, action, response.data );
+	announceZoneSaved( dispatch, action, fromApi( response.data ) );
 };
 
 export const handleZoneSaved = ( { dispatch, getState }, action ) => {
