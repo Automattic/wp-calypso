@@ -211,6 +211,19 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
 	comment,
 } );
 
+/**
+ * Expand selected comments to the level of displayType. It's important to note that a comment will
+ * only get expanded and cannot unexpand from this action.
+ * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
+ *
+ * @param {Object} options options object.
+ * @param {number} options.siteId siteId for the comments to expand.
+ * @param {Array<number>} options.commentIds list of commentIds to expand.
+ * @param {number} options.postId postId for the comments to expand.
+ * @param {string} options.displayType which displayType to set the comment to.
+ *
+ * @returns {Object} reader expand comments action
+ */
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
 	type: READER_EXPAND_COMMENTS,
 	payload: { siteId, commentIds, postId, displayType },
