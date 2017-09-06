@@ -17,14 +17,6 @@
 	.plugin-item__link {
 		cursor: default;
 	}
-
-	.plugin-item {
-		width: 100%;
-
-		&:nth-last-child( n + 2 ) {
-			border-bottom-width: 1px;
-		}
-	}
 }
 
 .jetpack-plugins-setup__header {
@@ -47,6 +39,14 @@
 
 	.button + .button {
 		margin-right: 16px;
+	}
+}
+
+.jetpack-plugins-setup .plugin-item {
+	width: 100%;
+
+	&:nth-last-child( n + 2 ) {
+		border-bottom-width: 1px;
 	}
 }
 
