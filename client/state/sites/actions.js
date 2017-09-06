@@ -27,13 +27,15 @@ import {
  * Returns an action object to be used in signalling that a site has been
  * deleted.
  *
- * @param  {Number} siteId ID of deleted site
- * @return {Object}        Action object
+ * @param  {Number} siteId  ID of deleted site
+ * @param  {Boolean} silent Indicates to not show the global notice after the site is removed from the state.
+ * @return {Object}         Action object
  */
-export function receiveDeletedSite( siteId ) {
+export function receiveDeletedSite( siteId, silent = false ) {
 	return {
 		type: SITE_DELETE_RECEIVE,
-		siteId
+		siteId,
+		silent
 	};
 }
 

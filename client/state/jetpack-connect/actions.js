@@ -360,7 +360,7 @@ export default {
 				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
-					dispatch( receiveDeletedSite( siteId ) );
+					dispatch( receiveDeletedSite( siteId, true ) );
 				}
 			} );
 		};
