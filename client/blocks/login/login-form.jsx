@@ -311,7 +311,7 @@ export class LoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
-		userEmail: getCurrentQueryArguments( state ).user_email,
+		userEmail: getCurrentQueryArguments( state ).email_address,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
 		socialAccountIsLinking: getSocialAccountIsLinking( state ),
