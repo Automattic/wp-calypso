@@ -95,6 +95,7 @@
 		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"simple-payments": true,
+		"standalone-site-preview": true,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,

@@ -82,6 +82,7 @@
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
 		"signup/social": false,
+		"standalone-site-preview": true,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
