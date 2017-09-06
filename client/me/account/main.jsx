@@ -103,15 +103,6 @@ const Account = React.createClass( {
 		this.updateUserSetting( event.target.name, event.target.checked );
 	},
 
-	updateLanguage( event ) {
-		const { value } = event.target;
-		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
-
-		this.updateUserSetting( 'language', value );
-		const redirect = value !== originalLanguage ? '/me/account' : false;
-		this.setState( { redirect } );
-	},
-
 	getEmailAddress() {
 		return this.hasPendingEmailChange()
 			? this.getUserSetting( 'new_user_email' )
@@ -521,7 +512,7 @@ const Account = React.createClass( {
 						onClick={ this.recordClickEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={ this.getUserSetting( 'language' ) || '' }
-						onChange={ this.updateLanguage }
+						onChange={ this.updateUsetSettingInput }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'This is the language of the interface you see across WordPress.com as a whole.' ) }
