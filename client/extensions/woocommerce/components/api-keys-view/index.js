@@ -50,7 +50,7 @@ class APIKeysView extends Component {
 
 	render = () => {
 		const { keys } = this.props;
-		if ( 0 >= keys.length ) {
+		if ( ! keys.length ) {
 			return null;
 		}
 

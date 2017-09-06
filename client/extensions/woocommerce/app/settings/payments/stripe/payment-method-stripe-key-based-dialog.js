@@ -15,13 +15,14 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { hasStripeKeyPairForMode } from './payment-method-stripe-utils.js';
+import { getStripeSampleStatementDescriptor, hasStripeKeyPairForMode } from './payment-method-stripe-utils.js';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
 class PaymentMethodStripeKeyBasedDialog extends Component {
 
 	static propTypes = {
+		domain: PropTypes.string.isRequired,
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
 				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
@@ -37,9 +38,6 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
 		onUserRequestsConnectFlow: PropTypes.func,
-		site: PropTypes.shape( {
-			domain: PropTypes.string.isRequired,
-		} ),
 	};
 
 	constructor( props ) {
@@ -79,6 +77,8 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 
 	renderModePromptAndKeyFields = () => {
 		const { method, translate } = this.props;
+		const secretPlaceholder = translate( 'Enter your secret key from your Stripe.com account' );
+		const publishablePlaceholder = translate( 'Enter your publishable key from your Stripe.com account' );
 
 		let keys = [];
 
@@ -87,13 +87,13 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 				{
 					id: 'secret_key',
 					label: translate( 'Live Secret Key' ),
-					placeholder: translate( 'Enter your secret key from your Stripe.com account' ),
+					placeholder: secretPlaceholder,
 					value: method.settings.secret_key.value,
 				},
 				{
 					id: 'publishable_key',
 					label: translate( 'Live Publishable Key' ),
-					placeholder: translate( 'Enter your publishable key from your Stripe.com account' ),
+					placeholder: publishablePlaceholder,
 					value: method.settings.publishable_key.value,
 				}
 			];
@@ -102,13 +102,13 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 				{
 					id: 'test_secret_key',
 					label: translate( 'Test Secret Key' ),
-					placeholder: translate( 'Enter your secret key from your Stripe.com account' ),
+					placeholder: secretPlaceholder,
 					value: method.settings.test_secret_key.value,
 				},
 				{
 					id: 'test_publishable_key',
 					label: translate( 'Test Publishable Key' ),
-					placeholder: translate( 'Enter your publishable key from your Stripe.com account' ),
+					placeholder: publishablePlaceholder,
 					value: method.settings.test_publishable_key.value,
 				}
 			];
@@ -140,14 +140,9 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		this.props.onEditField( { target: { name: 'capture', value: 'yes' } } );
 	}
 
-	getStatementDescriptorPlaceholder = () => {
-		const { site, translate } = this.props;
-		const domain = site.domain.substr( 0, 22 ).trim().toUpperCase();
-		return translate( 'e.g. %(domain)s', { args: { domain } } );
-	}
-
 	renderMoreSettings = () => {
-		const { method, translate } = this.props;
+		const { domain, method, translate } = this.props;
+		const sampleDescriptor = getStripeSampleStatementDescriptor( domain );
 
 		return (
 			<div>
@@ -164,7 +159,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 						name="statement_descriptor"
 						onChange={ this.props.onEditField }
 						value={ method.settings.statement_descriptor.value }
-						placeholder={ this.getStatementDescriptorPlaceholder() } />
+						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) } />
 					<FormSettingExplanation>
 						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
 					</FormSettingExplanation>

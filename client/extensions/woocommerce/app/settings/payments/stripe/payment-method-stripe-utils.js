@@ -6,3 +6,7 @@ export function hasStripeKeyPairForMode( method ) {
 	}
 	return settings.test_secret_key.value.trim() && settings.test_publishable_key.value.trim();
 }
+
+export function getStripeSampleStatementDescriptor( domain ) {
+	return domain.substr( 0, 22 ).trim().toUpperCase();
+}

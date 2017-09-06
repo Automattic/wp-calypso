@@ -138,11 +138,11 @@ class PaymentMethodStripe extends Component {
 		} else if ( 'connected' === dialog ) {
 			return (
 				<PaymentMethodStripeConnectedDialog
+					domain={ site.domain }
 					method={ method }
 					onCancel={ onCancel }
 					onDone={ onDone }
 					onEditField={ this.onEditFieldHandler }
-					site={ site }
 					stripeConnectAccount={ stripeConnectAccount }
 				/>
 			);
@@ -151,12 +151,12 @@ class PaymentMethodStripe extends Component {
 		// Key-based dialog by default
 		return (
 			<PaymentMethodStripeKeyBasedDialog
+				domain={ site.domain }
 				method={ method }
 				onCancel={ onCancel }
 				onDone={ onDone }
 				onEditField={ this.onEditFieldHandler }
 				onUserRequestsConnectFlow={ connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined }
-				site={ site }
 			/>
 		);
 	}

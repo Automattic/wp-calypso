@@ -14,21 +14,14 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils.js';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 
 class PaymentMethodStripeConnectedDialog extends Component {
 
 	static propTypes = {
-		stripeConnectAccount: PropTypes.shape( {
-			connectedUserID: PropTypes.string,
-			displayName: PropTypes.string,
-			email: PropTypes.string,
-			firstName: PropTypes.string,
-			isActivated: PropTypes.bool,
-			lastName: PropTypes.string,
-			logo: PropTypes.string,
-		} ),
+		domain: PropTypes.string.isRequired,
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
 				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
@@ -43,8 +36,14 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
-		site: PropTypes.shape( {
-			domain: PropTypes.string.isRequired,
+		stripeConnectAccount: PropTypes.shape( {
+			connectedUserID: PropTypes.string,
+			displayName: PropTypes.string,
+			email: PropTypes.string,
+			firstName: PropTypes.string,
+			isActivated: PropTypes.bool,
+			lastName: PropTypes.string,
+			logo: PropTypes.string,
 		} ),
 	};
 
@@ -67,14 +66,9 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		this.props.onEditField( { target: { name: 'capture', value: 'yes' } } );
 	}
 
-	getStatementDescriptorPlaceholder = () => {
-		const { site, translate } = this.props;
-		const domain = site.domain.substr( 0, 22 ).trim().toUpperCase();
-		return translate( 'e.g. %(domain)s', { args: { domain } } );
-	}
-
 	renderMoreSettings = () => {
-		const { method, onEditField, translate } = this.props;
+		const { domain, method, onEditField, translate } = this.props;
+		const sampleDescriptor = getStripeSampleStatementDescriptor( domain );
 
 		return (
 			<div>
@@ -91,7 +85,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 						name="statement_descriptor"
 						onChange={ onEditField }
 						value={ method.settings.statement_descriptor.value }
-						placeholder={ this.getStatementDescriptorPlaceholder() } />
+						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) } />
 					<FormSettingExplanation>
 						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
 					</FormSettingExplanation>
