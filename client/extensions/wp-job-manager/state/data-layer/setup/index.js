@@ -46,13 +46,7 @@ export const announceFailure = ( dispatch, siteId ) => {
 	) );
 };
 
-export const areRequestsComplete = () => {
-	if ( errorCount + successCount >= totalPages ) {
-		return true;
-	}
-
-	return false;
-};
+export const areRequestsComplete = () => errorCount + successCount >= totalPages;
 
 export const handleSuccess = ( { dispatch }, { siteId } ) => {
 	successCount++;
