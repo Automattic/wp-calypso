@@ -34,6 +34,7 @@ const StoreStatsNavigation = props => {
 						{ value: 'site', label: translate( 'Site' ), path: `/stats/${ unit }/${ slug }` },
 						{ value: 'store', label: translate( 'Store' ) },
 					] }
+					primary
 				/>
 				<FollowersCount />
 			</SectionNav>
