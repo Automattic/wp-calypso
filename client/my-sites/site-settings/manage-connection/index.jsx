@@ -14,13 +14,13 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SiteOwnership from './site-ownership';
-import redirectNonJetpackToGeneral from 'my-sites/site-settings/redirect-to/redirect-to-general';
+import redirectNonJetpack from 'my-sites/site-settings/redirect-to/redirect-to';
 
 class ManageConnection extends Component {
 
 	render() {
 		const {
-			redirectToGeneral,
+			redirectTo,
 			translate
 		} = this.props;
 
@@ -28,7 +28,7 @@ class ManageConnection extends Component {
 			<Main className="manage-connection site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 
-				<HeaderCake onClick={ redirectToGeneral }>
+				<HeaderCake onClick={ redirectTo }>
 					{ translate( 'Manage Connection' ) }
 				</HeaderCake>
 
@@ -42,5 +42,5 @@ class ManageConnection extends Component {
 
 export default flowRight(
 	localize,
-	redirectNonJetpackToGeneral
+	redirectNonJetpack
 )( ManageConnection );
