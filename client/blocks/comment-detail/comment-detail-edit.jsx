@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -14,8 +15,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import { getSiteSlug } from 'state/sites/selectors';
 
 export class CommentDetailEdit extends Component {
@@ -100,17 +99,13 @@ export class CommentDetailEdit extends Component {
 				/>
 
 				{ ! isEditCommentSupported &&
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate(
-							'Comment editing requires a newer version of Jetpack.'
-						) }
-					>
-						<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+					<p className="comment-detail__edit-jetpack-update-notice">
+						<Gridicon icon="notice-outline" />
+						{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
+						<a href={ `/plugins/jetpack/${ siteSlug }` }>
 							{ translate( 'Update Now' ) }
-						</NoticeAction>
-					</Notice>
+						</a>
+					</p>
 				}
 
 				<div className="comment-detail__edit-buttons">
