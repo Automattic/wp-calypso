@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import moment from 'moment';
 import { spy, stub } from 'sinon';
 import { noop } from 'lodash';
 
@@ -145,14 +146,60 @@ describe( 'middleware', () => {
 			}
 		};
 
+		const previousGlobal = global;
+
+		before( () => {
+			global.window = {
+				innerWidth: 'windowInnerWidth',
+				innerHeight: 'windowInnerHeight',
+			};
+			global.screen = {
+				width: 'screenWidth',
+				height: 'screenHeight',
+			};
+			global.navigator = {
+				userAgent: 'navigatorUserAgent'
+			};
+		} );
+
+		after( () => {
+			global = previousGlobal;
+		} );
+
 		it( 'should send relevant browser information to the connection', () => {
+			const expectedInfo = {
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+				siteId: 'siteId',
+				siteUrl: 'siteUrl',
+				localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
+				screenSize: {
+					width: 'screenWidth',
+					height: 'screenHeight',
+				},
+				browserSize: {
+					width: 'windowInnerWidth',
+					height: 'windowInnerHeight',
+				},
+				userAgent: 'navigatorUserAgent',
+				geoLocation: state.happychat.geoLocation
+			};
+
 			const getState = () => state;
-			const connection = { info: spy() };
-			const action = { type: HAPPYCHAT_SEND_USER_INFO, siteUrl: 'http://butt.holdings/' };
+			const connection = { sendInfo: spy() };
+			const action = {
+				type: HAPPYCHAT_SEND_USER_INFO,
+				site: {
+					ID: 'siteId',
+					URL: 'siteUrl'
+				},
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+			};
 			sendInfo( connection, { getState }, action );
 
-			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
+			expect( connection.sendInfo ).to.have.been.calledOnce;
+			expect( connection.sendInfo ).to.have.been.calledWithMatch( expectedInfo );
 		} );
 	} );
 
