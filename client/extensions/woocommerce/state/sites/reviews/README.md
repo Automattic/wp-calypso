@@ -48,3 +48,24 @@ This is saved on a per-site basis. All reviews are collected in `items`, and the
 	}
 }
 ```
+## Selectors
+
+### `areReviewsLoaded( state, query, [siteId] )`
+
+Whether reviews for a given query have been successfully loaded from the server. Optional `siteId`, will default to the currently selected site.
+
+### `areReviewsLoading( state, query, [siteId] )`
+
+Whether reviews for a given query are currently being retrieved from the server. Optional `siteId`, will default to the currently selected site.
+
+### `getReviews( state, query: object, siteId: number )`
+
+Gets reviews for the specified query from the current state, or an empty array if not yet loaded.
+
+### `getReview( state, reviewId: number, siteId: number )`
+
+Gets a requested review object from the current state, or null if not yet loaded.
+
+### `getTotalReviews( state, query: object, siteId: number )`
+
+Gets the total number of reviews available on a site for a query. Optional `siteId`, will default to the currently selected site.
