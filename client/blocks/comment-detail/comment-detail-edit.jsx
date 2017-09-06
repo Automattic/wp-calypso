@@ -44,7 +44,8 @@ export class CommentDetailEdit extends Component {
 	setCommentContentValue = event => this.setState( { commentContent: event.target.value } );
 
 	editCommentAndCloseEditMode = () => {
-		this.props.editComment( this.props.commentId, this.props.postId, this.state );
+		const { authorDisplayName, authorUrl, commentContent } = this.props;
+		this.props.editComment( this.props.commentId, this.props.postId, this.state, { authorDisplayName, authorUrl, commentContent } );
 		this.props.closeEditMode();
 	};
 
