@@ -25,31 +25,31 @@ var rule = require( '../../../lib/rules/post-message-no-wildcard-targets' ),
 		{ code: 'postMessage( 1, \'test\' )' },
 		{ code: 'postMessage( null, test )' },
 		{ code: 'postMessage( true, test() )' },
-		{ code: 'postMessage( \'*\', \'some.domain\' )' }
+		{ code: 'postMessage( \'*\', \'some.domain\' )' },
 	],
 
 	invalid: [
 		{
 			code: 'postMessage( \'bob\', \'*\' )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'postMessage( false, \'*\' )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'postMessage( JSON.stringify( {} ), "*" )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'postMessage( null, `*` )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'window.postMessage( null, \'*\' )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'frame.postMessage( null, \'*\' )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
 		}, {
 			code: 'a.contentWindow.postMessage( null, \'*\' )',
-			errors: [ { message: rule.ERROR_MESSAGE } ]
-		}
-	]
+			errors: [ { message: rule.ERROR_MESSAGE } ],
+		},
+	],
 } );

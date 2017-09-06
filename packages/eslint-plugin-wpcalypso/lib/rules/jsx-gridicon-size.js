@@ -30,7 +30,7 @@ var rule = module.exports = function( context ) {
 			if ( -1 === VALID_SIZES.indexOf( node.value.expression.value ) ) {
 				context.report( node, rule.ERROR_MESSAGE );
 			}
-		}
+		},
 	};
 };
 

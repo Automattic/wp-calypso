@@ -16,8 +16,8 @@ module.exports = {
 	meta: {
 		docs: {
 			description: 'Disallow combineReducers import from redux',
-			category: 'Possible Errors'
-		}
+			category: 'Possible Errors',
+		},
 	},
 	create( context ) {
 		return {

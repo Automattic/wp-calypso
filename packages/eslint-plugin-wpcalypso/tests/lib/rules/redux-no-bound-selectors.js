@@ -69,7 +69,7 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 
 		'connect();',
 
-		"connect( partialRight( mapState, 'foo' ) );"
+		"connect( partialRight( mapState, 'foo' ) );",
 	],
 
 	invalid: [
@@ -80,8 +80,8 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 				};
 			} )( Foo )`,
 			errors: [ {
-				message: BIND_ERROR_MESSAGE
-			} ]
+				message: BIND_ERROR_MESSAGE,
+			} ],
 		},
 		{
 			code: `connect( function( state ) {
@@ -90,8 +90,8 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 				};
 			} )( Foo )`,
 			errors: [ {
-				message: BIND_ERROR_MESSAGE
-			} ]
+				message: BIND_ERROR_MESSAGE,
+			} ],
 		},
 		{
 			code: `connect( function( state ) {
@@ -100,8 +100,8 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 				};
 			} )( Foo )`,
 			errors: [ {
-				message: BIND_ERROR_MESSAGE
-			} ]
+				message: BIND_ERROR_MESSAGE,
+			} ],
 		},
 		{
 			code: `connect( function( state ) {
@@ -110,8 +110,8 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 				};
 			} )( Foo )`,
 			errors: [ {
-				message: BIND_ERROR_MESSAGE
-			} ]
+				message: BIND_ERROR_MESSAGE,
+			} ],
 		},
 		{
 			code: `connect( function( state ) {
@@ -122,8 +122,8 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 				};
 			} )( Foo )`,
 			errors: [ {
-				message: FUNC_ERROR_MESSAGE
-			} ]
+				message: FUNC_ERROR_MESSAGE,
+			} ],
 		},
 		{
 			code: `var mapState = function( state ) {
@@ -139,7 +139,7 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 			errors: [
 				{ message: BIND_ERROR_MESSAGE },
 				{ message: FUNC_ERROR_MESSAGE },
-			]
+			],
 		},
-	]
+	],
 } );

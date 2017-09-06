@@ -47,12 +47,12 @@ var rule = module.exports = function( context ) {
 						node: arg,
 						message: rule.ERROR_MESSAGE,
 						data: {
-							problem: problemString
-						}
+							problem: problemString,
+						},
 					} );
 				}
 			} );
-		}
+		},
 	};
 };
 

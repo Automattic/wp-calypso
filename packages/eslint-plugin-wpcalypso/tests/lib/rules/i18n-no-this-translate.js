@@ -21,15 +21,15 @@ var rule = require( '../../../lib/rules/i18n-no-this-translate' ),
 	valid: [
 		'i18n.translate(\'hello\')',
 		'translate(\'hello\')',
-		'this.props.translate(\'hello\')'
+		'this.props.translate(\'hello\')',
 	],
 
 	invalid: [
 		{
 			code: 'this.translate(\'hello\')',
 			errors: [ {
-				message: 'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi'
-			} ]
-		}
-	]
+				message: 'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi',
+			} ],
+		},
+	],
 } );

@@ -58,7 +58,7 @@ var rule = module.exports = function( context ) {
 					( singularMatch.length !== pluralMatch.length ) ) {
 				context.report( node, rule.ERROR_MESSAGE );
 			}
-		}
+		},
 	};
 };
 

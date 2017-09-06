@@ -32,11 +32,11 @@ var rule = module.exports = function( context ) {
 						message: rule.ERROR_MESSAGE,
 						fix: function( fixer ) {
 							return fixer.replaceText( arg, argumentString.replace( /\.\.\./g, '…' ) );
-						}
+						},
 					} );
 				}
 			} );
-		}
+		},
 	};
 };
 

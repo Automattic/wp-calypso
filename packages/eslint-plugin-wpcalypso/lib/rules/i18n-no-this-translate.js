@@ -17,9 +17,9 @@ module.exports = {
 		docs: {
 			description: 'Disallow the use of this.translate',
 			category: 'Deprecation',
-			recommended: true
+			recommended: true,
 		},
-		schema: []
+		schema: [],
 	},
 	create: function( context ) {
 		return {
@@ -29,7 +29,7 @@ module.exports = {
 					node.callee.property.name === 'translate' ) {
 					context.report( node, ERROR_MESSAGE );
 				}
-			}
+			},
 		};
-	}
+	},
 };

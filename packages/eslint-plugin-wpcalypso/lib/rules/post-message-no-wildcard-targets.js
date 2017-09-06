@@ -32,7 +32,7 @@ var rule = module.exports = function( context ) {
 			if ( '*' === getTextContentFromNode( target ) ) {
 				context.report( node, rule.ERROR_MESSAGE );
 			}
-		}
+		},
 	};
 };
 

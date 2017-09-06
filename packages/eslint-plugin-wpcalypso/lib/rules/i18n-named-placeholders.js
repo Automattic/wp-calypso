@@ -68,7 +68,7 @@ rule = module.exports = function( context ) {
 			if ( 'string' === typeof plural && hasUnqualifiedPlaceholders( plural ) ) {
 				context.report( node.arguments[ 1 ], rule.ERROR_MESSAGE );
 			}
-		}
+		},
 	};
 };
 

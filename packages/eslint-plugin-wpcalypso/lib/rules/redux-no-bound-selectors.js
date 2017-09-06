@@ -27,9 +27,9 @@ module.exports = {
 		docs: {
 			description: 'Disallow binding or instantiation of functions ' +
 				'within a function passed as the first argument to `connect`.',
-			recommended: true
+			recommended: true,
 		},
-		schema: []
+		schema: [],
 	},
 	create: function( context ) {
 		/*
@@ -179,5 +179,5 @@ module.exports = {
 			'FunctionExpression:exit': onFunctionExit,
 			'ArrowFunctionExpression:exit': onFunctionExit,
 		};
-	}
+	},
 };

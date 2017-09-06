@@ -20,8 +20,8 @@ const rule = require( '../../../lib/rules/import-docblock' ),
 ( new RuleTester( {
 	parserOptions: {
 		ecmaVersion: 6,
-		sourceType: 'module'
-	}
+		sourceType: 'module',
+	},
 } ) ).run( 'import-docblock', rule, {
 	valid: [
 		{
@@ -29,30 +29,30 @@ const rule = require( '../../../lib/rules/import-docblock' ),
 `/**
  * External dependencies
  */
-import eslint from \'eslint\';`
+import eslint from \'eslint\';`,
 		},
 		{
 			code:
 `/**
  * External dependencies
  */
-import eslint from \'eslint\';`
+import eslint from \'eslint\';`,
 		},
 		{
 			code:
 `/**
  * External dependencies${ ' ' }
  */
-import eslint from \'eslint\';`
-		}
+import eslint from \'eslint\';`,
+		},
 	],
 
 	invalid: [
 		{
 			code: 'import eslint from \'eslint\';',
 			errors: [ {
-				message: 'Missing external, internal dependencies docblocks'
-			} ]
-		}
-	]
+				message: 'Missing external, internal dependencies docblocks',
+			} ],
+		},
+	],
 } );

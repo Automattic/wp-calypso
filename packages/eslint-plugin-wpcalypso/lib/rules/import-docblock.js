@@ -17,8 +17,8 @@ module.exports = {
 	meta: {
 		docs: {
 			description: 'Enforce external, internal dependencies docblocks',
-			category: 'Stylistic Issues'
-		}
+			category: 'Stylistic Issues',
+		},
 	},
 	create( context ) {
 		let hasIssue = false;
@@ -31,7 +31,7 @@ module.exports = {
 				if ( hasIssue ) {
 					context.report( node, ERROR_MESSAGE );
 				}
-			}
+			},
 		};
-	}
+	},
 };

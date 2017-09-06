@@ -94,7 +94,7 @@ var rule = module.exports = function( context ) {
 			if ( options && options.type === 'ObjectExpression' ) {
 				validateOptions( options );
 			}
-		}
+		},
 	};
 };
 

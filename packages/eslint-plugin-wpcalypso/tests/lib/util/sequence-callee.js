@@ -15,8 +15,8 @@ describe( '#getCallee', function() {
 			type: 'CallExpression',
 			callee: {
 				type: 'Identifier',
-				name: 'translate'
-			}
+				name: 'translate',
+			},
 		};
 		callee = getCallee( node );
 
@@ -31,12 +31,12 @@ describe( '#getCallee', function() {
 				type: 'SequenceExpression',
 				expressions: [ {
 					type: 'Literal',
-					value: 0
+					value: 0,
 				}, {
 					type: 'Identifier',
-					name: 'translate'
-				} ]
-			}
+					name: 'translate',
+				} ],
+			},
 		};
 		callee = getCallee( node );
 
@@ -50,13 +50,13 @@ describe( '#getCallee', function() {
 			callee: {
 				type: 'MemberExpression',
 				object: {
-					type: 'ThisExpression'
+					type: 'ThisExpression',
 				},
 				property: {
 					type: 'Identifier',
-					value: 'translate'
-				}
-			}
+					value: 'translate',
+				},
+			},
 		};
 		callee = getCallee( node );
 

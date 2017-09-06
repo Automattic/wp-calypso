@@ -78,7 +78,7 @@ var rule = module.exports = function( context ) {
 		return -1 !== [
 			'FunctionExpression',
 			'FunctionDeclaration',
-			'ArrowFunctionExpression'
+			'ArrowFunctionExpression',
 		].indexOf( node.type );
 	}
 
@@ -289,7 +289,7 @@ var rule = module.exports = function( context ) {
 				message: rule.ERROR_MESSAGE,
 				data: { expected },
 			} );
-		}
+		},
 	};
 };
 

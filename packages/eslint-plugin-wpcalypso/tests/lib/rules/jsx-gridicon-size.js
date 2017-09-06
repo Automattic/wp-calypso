@@ -21,8 +21,8 @@ var rule = require( '../../../lib/rules/jsx-gridicon-size' ),
 	valid: [
 		{
 			code: '<Gridicon size={ 18 } />',
-			parserOptions: { ecmaFeatures: { jsx: true } }
-		}
+			parserOptions: { ecmaFeatures: { jsx: true } },
+		},
 	],
 
 	invalid: [
@@ -30,8 +30,8 @@ var rule = require( '../../../lib/rules/jsx-gridicon-size' ),
 			code: '<Gridicon size={ 20 } />',
 			parserOptions: { ecmaFeatures: { jsx: true } },
 			errors: [ {
-				message: rule.ERROR_MESSAGE
-			} ]
-		}
-	]
+				message: rule.ERROR_MESSAGE,
+			} ],
+		},
+	],
 } );

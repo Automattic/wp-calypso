@@ -49,7 +49,7 @@ var rule = module.exports = function( context ) {
 					context.report( arg, rule.ERROR_MESSAGE );
 				}
 			} );
-		}
+		},
 	};
 };
 

@@ -20,18 +20,18 @@ const rule = require( '../../../lib/rules/import-no-redux-combine-reducers' ),
 ( new RuleTester( {
 	parserOptions: {
 		ecmaVersion: 6,
-		sourceType: 'module'
-	}
+		sourceType: 'module',
+	},
 } ) ).run( 'import-no-redux-combine-reducers', rule, {
 	valid: [
 		{
-			code: 'import { combineReducers } from \'state/utils\';'
+			code: 'import { combineReducers } from \'state/utils\';',
 		},
 		{
-			code: 'import { combineReducers as bar } from \'state/utils\';'
+			code: 'import { combineReducers as bar } from \'state/utils\';',
 		},
 		{
-			code: 'import { createStore } from \'redux\';'
+			code: 'import { createStore } from \'redux\';',
 		},
 	],
 
@@ -39,20 +39,20 @@ const rule = require( '../../../lib/rules/import-no-redux-combine-reducers' ),
 		{
 			code: 'import { combineReducers } from \'redux\';',
 			errors: [ {
-				message: 'combineReducers should be imported from state/utils not redux'
-			} ]
+				message: 'combineReducers should be imported from state/utils not redux',
+			} ],
 		},
 		{
 			code: 'import { createStore, combineReducers } from \'redux\';',
 			errors: [ {
-				message: 'combineReducers should be imported from state/utils not redux'
-			} ]
+				message: 'combineReducers should be imported from state/utils not redux',
+			} ],
 		},
 		{
 			code: 'import { createStore, combineReducers as bar } from \'redux\';',
 			errors: [ {
-				message: 'combineReducers should be imported from state/utils not redux'
-			} ]
-		}
-	]
+				message: 'combineReducers should be imported from state/utils not redux',
+			} ],
+		},
+	],
 } );
