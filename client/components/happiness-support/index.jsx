@@ -6,13 +6,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { sample } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gravatar from 'components/gravatar';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import support from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
@@ -29,13 +27,6 @@ export class HappinessSupport extends Component {
 
 	static defaultProps = {
 		showLiveChatButton: false,
-	};
-
-	state = {
-		user: sample( [
-			{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
-			{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
-		] )
 	};
 
 	onLiveChatButtonClick = () => {
@@ -68,13 +59,10 @@ export class HappinessSupport extends Component {
 		);
 	}
 
-	renderGravatar() {
+	renderIllustration() {
 		return (
-			<div className="happiness-support__gravatar">
-				<Gravatar user={ this.state.user } size={ 80 } />
-				<em className="happiness-support__gravatar-name">
-					{ this.state.user.display_name }
-				</em>
+			<div className="happiness-support__illustration">
+				<img src="/calypso/images/illustrations/happiness-support.svg" />
 			</div>
 		);
 	}
@@ -101,7 +89,7 @@ export class HappinessSupport extends Component {
 
 		return (
 			<div className={ classNames( 'happiness-support', classes ) }>
-				{ this.renderGravatar() }
+				{ this.renderIllustration() }
 
 				<h3 className="happiness-support__heading">
 					{ translate( 'Enjoy priority support from our Happiness Engineers' ) }
@@ -129,10 +117,8 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => {
-		return {
-			liveChatAvailable: isHappychatAvailable( state ),
-		};
-	},
+	state => ( {
+		liveChatAvailable: isHappychatAvailable( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( HappinessSupport ) );

@@ -12,7 +12,6 @@ import { noop } from 'lodash';
  */
 import { HappinessSupport } from '..';
 import support from 'lib/url/support';
-import Gravatar from 'components/gravatar';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
 
@@ -22,10 +21,6 @@ describe( 'HappinessSupport', function() {
 
 	beforeEach( function() {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
-	} );
-
-	it( 'should render a <Gravatar />', function() {
-		expect( wrapper.find( Gravatar ) ).to.have.length( 1 );
 	} );
 
 	it( 'should render translated heading content', function() {
