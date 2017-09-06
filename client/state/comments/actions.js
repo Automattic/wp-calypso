@@ -212,7 +212,7 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
 } );
 
 /**
- * Expand selected comments to the level of displayType. Its important to note that a comment will
+ * Expand selected comments to the level of displayType. It's important to note that a comment will
  * only get expanded and cannot unexpand from this action.
  * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
  *

@@ -9,8 +9,9 @@ import { debounce } from 'lodash';
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
 
 /**
- * withDimensions is a Hoc that keeps track of a domNode's dimension-related info and then hands that down to its child:
- * dimensio-related info:
+ * withDimensions is a HOC that keeps track of a domNode's dimension-related info and then hands that down to its child.
+ *
+ * Dimension-related info:
  *  1. width: the pixel width of the domNode
  *  2. height: the pixel height of the domNode
  *  3. overflowX: true if the container is overflowing in the x direction. aka: scrollWidth > width
