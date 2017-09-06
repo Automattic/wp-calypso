@@ -55,5 +55,13 @@ describe( 'index', () => {
 				'/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2F%3Fsearch%3Dtest%26foo%3Dbar'
 			);
 		} );
+
+		it( 'should return the login url with encoded user_email param', () => {
+			const url = login( { isNative: true, userEmail: 'foo@bar.com' } );
+
+			expect( url ).to.equal(
+				'/log-in?user_email=foo%40bar.com'
+			);
+		} );
 	} );
 } );

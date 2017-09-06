@@ -5,7 +5,7 @@ import { addQueryArgs } from 'lib/url';
 import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
-export function login( { isNative, locale, redirectTo, twoFactorAuthType, socialConnect } = {} ) {
+export function login( { isNative, locale, redirectTo, twoFactorAuthType, socialConnect, userEmail } = {} ) {
 	let url = config( 'login_url' );
 
 	if ( isNative && isEnabled( 'login/wp-login' ) ) {
@@ -30,6 +30,10 @@ export function login( { isNative, locale, redirectTo, twoFactorAuthType, social
 
 	if ( redirectTo ) {
 		url = addQueryArgs( { redirect_to: redirectTo }, url );
+	}
+
+	if ( userEmail ) {
+		url = addQueryArgs( { user_email: userEmail }, url );
 	}
 
 	return url;
