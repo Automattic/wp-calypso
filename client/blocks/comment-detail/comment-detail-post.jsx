@@ -43,16 +43,16 @@ export const CommentDetailPost = ( {
 					<Gravatar user={ author } />
 				</div>
 				<div className="comment-detail__post-info">
-					{ parentCommentAuthorDisplayName &&
-						<Emojify>
+					<Emojify>
+						{ parentCommentAuthorDisplayName &&
 							<span>
 								{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
 							</span>
-						</Emojify>
-					}
-					<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ recordReaderCommentOpened }>
-						{ parentCommentContent }
-					</a>
+						}
+						<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ recordReaderCommentOpened }>
+							{ parentCommentContent }
+						</a>
+					</Emojify>
 				</div>
 			</div>
 		);
@@ -62,16 +62,16 @@ export const CommentDetailPost = ( {
 		<div className="comment-detail__post">
 			<SiteIcon siteId={ siteId } size={ 24 } />
 			<div className="comment-detail__post-info">
-				{ postAuthorDisplayName &&
-					<Emojify>
+				<Emojify>
+					{ postAuthorDisplayName &&
 						<span>
 							{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
 						</span>
-					</Emojify>
-				}
-				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
-					{ postTitle || translate( 'Untitled' ) }
-				</a>
+					}
+					<a href={ postUrl } onClick={ recordReaderArticleOpened }>
+						{ postTitle || translate( 'Untitled' ) }
+					</a>
+				</Emojify>
 			</div>
 		</div>
 	);
