@@ -590,12 +590,11 @@ a.comment-detail__author-more-element {
 		color: $alert-red;
 		margin-left: 8px;
 		margin-right: 8px;
-
-		a {
-			color: $alert-red;
-			margin-left: 4px;
-			text-decoration: underline;
-		}
+	}
+	.comment-detail__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
 	}
 
 	.comment-detail__edit-buttons {

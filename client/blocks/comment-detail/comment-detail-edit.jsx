@@ -102,7 +102,10 @@ export class CommentDetailEdit extends Component {
 					<p className="comment-detail__edit-jetpack-update-notice">
 						<Gridicon icon="notice-outline" />
 						{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
-						<a href={ `/plugins/jetpack/${ siteSlug }` }>
+						<a
+							className="comment-detail__edit-jetpack-update-notice-link"
+							href={ `/plugins/jetpack/${ siteSlug }` }
+						>
 							{ translate( 'Update Now' ) }
 						</a>
 					</p>
