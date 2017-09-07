@@ -8,6 +8,6 @@ import get from 'lodash/get';
  * @param  {Object} state Global state tree
  * @return {String} Site title in state tree.
  */
-export function getJPOConnect( state ) {
+export default function getJpoConnect( state ) {
 	return get( state, [ 'signup', 'dependencyStore', 'jpoConnect' ], '' );
 }
