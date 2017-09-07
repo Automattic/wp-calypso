@@ -73,7 +73,7 @@ class PreviewMain extends React.Component {
 
 		const baseUrl = this.getBasePreviewUrl();
 		const newUrl = addQueryArgs( {
-			preview: true,
+			theme_preview: true,
 			iframe: true,
 			'frame-nonce': this.props.site.options.frame_nonce
 		}, baseUrl );
