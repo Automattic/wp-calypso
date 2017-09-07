@@ -74,15 +74,13 @@ class PluginUpload extends React.Component {
 	}
 
 	renderUploadCard() {
-		const { inProgress, complete, isEligible, isJetpack } = this.props;
+		const { inProgress, complete, isJetpack } = this.props;
 
 		const uploadAction = isJetpack ? this.props.uploadPlugin : this.props.initiateAutomatedTransferWithPluginZip;
 
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone
-					doUpload={ uploadAction }
-					disabled={ ! isEligible } /> }
+				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
 				{ inProgress && this.renderProgressBar() }
 			</Card>
 		);
@@ -181,7 +179,6 @@ export default connect(
 			isJetpackMultisite,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-			isEligible,
 		};
 	},
 	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip }
