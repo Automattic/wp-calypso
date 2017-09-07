@@ -1,3 +1,8 @@
+#### v1.0.0 (2017-09-07)
+
+- Breaking: Upgraded ESLint peer dependency from 3.x to 4.x. [See v4.0.0 Migration Guide](https://eslint.org/docs/user-guide/migrating-to-4.0.0)
+- Added: [`comma-dangle`](https://eslint.org/docs/rules/comma-dangle) as error, `"always-multiline"`
+
 #### v0.9.0 (2017-06-14)
 
 - Added: [`wpcalypso/redux-no-bound-selectors`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/redux-no-bound-selectors.md) as error
