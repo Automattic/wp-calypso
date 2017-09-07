@@ -13,7 +13,6 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
  */
 import config from 'config';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import FormButton from 'components/forms/form-button';
 import Main from 'components/main';
@@ -82,7 +81,6 @@ class SocialLogin extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Manage Social Login Connections' ) } />
 				<CompactCard>
 					{ translate( 'You’ll be able to log in faster by linking your WordPress.com account with your ' +
 						'social networks. We’ll never post without your permission.' ) }
