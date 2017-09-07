@@ -17,10 +17,8 @@ import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { isFreePlan } from 'lib/plans';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPluginActive } from 'state/selectors';
+import { isPluginActive, isSiteOnPaidPlan } from 'state/selectors';
 import config from 'config';
 
 const StatsNavigation = props => {
@@ -41,6 +39,7 @@ const StatsNavigation = props => {
 		const validSection = includes( [ 'day', 'week', 'month', 'year' ], section ) ? section : 'day';
 		statsControl = (
 			<SegmentedControl
+				primary
 				className="stats-navigation__control is-store"
 				initialSelected="site"
 				options={ [
@@ -105,7 +104,7 @@ const localized = localize( StatsNavigation );
 export default connect( ( state, { siteId } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	return {
-		hasPaidPlan: ! isFreePlan( getSitePlanSlug( state, siteId ) ),
+		hasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack,
 		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
 		siteId,

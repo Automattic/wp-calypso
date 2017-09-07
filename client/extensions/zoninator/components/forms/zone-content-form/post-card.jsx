@@ -20,7 +20,7 @@ class PostCard extends Component {
 		editorPath: PropTypes.string.isRequired,
 		post: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
-			URL: PropTypes.string.isRequired,
+			url: PropTypes.string.isRequired,
 		} ).isRequired,
 		remove: PropTypes.func.isRequired,
 	};
@@ -33,7 +33,7 @@ class PostCard extends Component {
 	render() {
 		const {
 			editorPath,
-			post: { URL, title },
+			post: { url, title },
 			remove,
 			translate,
 		} = this.props;
@@ -45,7 +45,7 @@ class PostCard extends Component {
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }
-					href={ URL }
+					href={ url }
 					target="_blank">
 					{ translate( 'View' ) }
 				</Button>
@@ -68,7 +68,7 @@ class PostCard extends Component {
 }
 
 const connectComponent = connect( ( state, { post } ) => ( {
-	editorPath: getEditorPath( state, post.site_ID, post.ID ),
+	editorPath: getEditorPath( state, post.siteId, post.id ),
 } ) );
 
 export default flowRight(

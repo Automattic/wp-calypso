@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -10,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import CommentDetailAuthor from './comment-detail-author';
 import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 
 export class CommentDetailComment extends Component {
 	static propTypes = {
@@ -66,9 +68,11 @@ export class CommentDetailComment extends Component {
 						siteId={ siteId }
 					/>
 					<AutoDirection>
-						<div className="comment-detail__comment-body"
-							dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
-						/>
+						<Emojify>
+							<div className="comment-detail__comment-body"
+								dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+							/>
+						</Emojify>
 					</AutoDirection>
 
 					{ repliedToComment &&

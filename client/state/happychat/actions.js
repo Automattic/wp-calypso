@@ -54,7 +54,22 @@ export const clearChatMessage = () => setChatMessage( '' );
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
-export const sendUserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_USER_INFO, siteUrl } );
+/**
+ * Returns an action object that sends information about the customer to happychat
+ *
+ * @param  { String } howCanWeHelp Selected value of `How can we help?` form input
+ * @param  { String } howYouFeel Selected value of `Mind sharing how you feel?` form input
+ * @param  { Object } site Selected site info
+ * @return { Object } Action object
+ */
+export const sendUserInfo = ( howCanWeHelp, howYouFeel, site ) => {
+	return {
+		type: HAPPYCHAT_SEND_USER_INFO,
+		howCanWeHelp,
+		howYouFeel,
+		site
+	};
+};
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
 

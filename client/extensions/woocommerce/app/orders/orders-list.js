@@ -124,7 +124,8 @@ class Orders extends Component {
 	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
 		return (
-			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
+			<TableRow className={ 'orders__status-' + order.status } key={ i }
+				href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
 				<TableItem className="orders__table-name" isRowHeader>
 					<span className="orders__item-link">#{ order.number }</span>
 					<span className="orders__item-name">

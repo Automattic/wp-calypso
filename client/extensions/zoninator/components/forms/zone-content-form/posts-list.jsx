@@ -22,7 +22,12 @@ class PostsList extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	addPost = ( { push } ) => post => push( post );
+	addPost = ( { push } ) => post => push( {
+		id: post.ID,
+		siteId: post.site_ID,
+		title: post.title,
+		url: post.URL,
+	} );
 
 	removePost = ( { remove }, index ) => () => remove( index );
 
@@ -56,8 +61,8 @@ class PostsList extends Component {
 							'Add content to the zone by using search or by selecting it from the recent posts list below.'
 						) }
 					</p>
-					<SearchAutocomplete onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.ID ) }>
-						<RecentPostsDropdown onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.ID ) } />
+					<SearchAutocomplete onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.id ) }>
+						<RecentPostsDropdown onSelect={ this.addPost( fields ) } exclude={ map( posts, post => post.id ) } />
 					</SearchAutocomplete>
 				</FormFieldset>
 

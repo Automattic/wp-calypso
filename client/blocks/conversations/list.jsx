@@ -23,14 +23,35 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentForm from 'blocks/comments/form';
 import { requestPostComments } from 'state/comments/actions';
 
+/**
+ * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
+ * Some of it is boilerplate stolen from PostCommnentList (all the activeXCommentId bits) but the special
+ * convos parts are related to:
+ *  1. caterpillars
+ *  2. commentsToShow
+ *
+ * As of the time of this writing, commentsToShow is constructing by merging two objects:
+ *  1. expansion state in the reducer for the specific post
+ *  2. commentIds handed from the api as seeds to start with as open. high watermark will replace this logic.
+ *
+ * So when a post is loaded, the api gives us 3 comments.  This component creates an object that looks like:
+ *   { [commentId1]: 'is-excerpt', [commentId2]: 'is-excerpt', [commentId3]: 'is-excerpt' } and then
+ *   hands that down to all of the PostComments so they will know how to render.
+ *
+ * This component will also display a caterpillar if it has any children comments that are hidden.
+ * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost
+ */
+
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
+		shouldRequestComments: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		enableCaterpillar: true,
+		shouldRequestComments: true,
 	};
 
 	state = {
@@ -64,7 +85,11 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	reqMoreComments = ( props = this.props ) => {
-		const { siteId, postId, enableCaterpillar } = props;
+		const { siteId, postId, enableCaterpillar, shouldRequestComments } = props;
+
+		if ( ! shouldRequestComments || ! props.commentsFetchingStatus ) {
+			return;
+		}
 
 		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } = props.commentsFetchingStatus;
 
@@ -79,6 +104,11 @@ export class ConversationCommentList extends React.Component {
 
 	render() {
 		const { commentIds, commentsTree, post, expansions, enableCaterpillar } = this.props;
+
+		if ( ! post ) {
+			return null;
+		}
+
 		const startingExpanded = zipObject(
 			commentIds,
 			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )
@@ -112,6 +142,8 @@ export class ConversationCommentList extends React.Component {
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }
+								showReadMoreInActions={ true }
+								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 							/>
 						);
 					} ) }

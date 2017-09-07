@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
@@ -48,16 +49,29 @@ class ConversationCaterpillarComponent extends React.Component {
 		return commentsToExpand;
 	};
 
+	handleShowAll = () => {
+		const { blogId, postId } = this.props;
+		const commentsToExpand = this.getExpandableComments();
+		this.props.expandComments( {
+			siteId: blogId,
+			postId,
+			commentIds: map( commentsToExpand, 'ID' ),
+			displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		} );
+	};
+
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
 		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
 
+		// expand all N comments to excerpt
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
 			commentIds: map( commentsToExpand, 'ID' ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
+		// for each of those comments, expand the comment's parent to singleLine
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
@@ -136,6 +150,14 @@ class ConversationCaterpillarComponent extends React.Component {
 									commenterName: lastAuthorName,
 								},
 							} ) }
+				</button>
+				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
+					<Gridicon
+						icon="chevron-down"
+						size={ 12 }
+						className="conversation-caterpillar__show-all-chevron"
+					/>
+					{ translate( 'Show all' ) }
 				</button>
 			</Card>
 		);

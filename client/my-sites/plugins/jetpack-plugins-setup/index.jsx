@@ -243,26 +243,30 @@ const PlansSetup = React.createClass( {
 		return plugins.map( ( item, i ) => {
 			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
 
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<CompactCard className="plugin-item" key={ i }>
 					<span className="plugin-item__link">
 						<PluginIcon image={ plugin.icon } />
-						<div className="plugin-item__title">
-							{ plugin.name }
+						<div className="plugin-item__info">
+							<div className="plugin-item__title">
+								{ plugin.name }
+							</div>
+							{ hidden
+								? <Notice
+									key={ 0 }
+									isCompact={ true }
+									showDismiss={ false }
+									icon="plugins"
+									text={ this.props.translate( 'Waiting to install' ) } />
+								: this.renderStatus( plugin )
+							}
 						</div>
-						{ hidden
-							? <Notice
-								key={ 0 }
-								isCompact={ true }
-								showDismiss={ false }
-								icon="plugins"
-								text={ this.props.translate( 'Waiting to install' ) } />
-							: this.renderStatus( plugin )
-						}
 					</span>
 					{ this.renderActions( plugin ) }
 				</CompactCard>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		} );
 	},
 

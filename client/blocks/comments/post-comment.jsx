@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit, flatMap } from 'lodash';
+import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -30,6 +30,25 @@ import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import withDimensions from 'lib/with-dimensions';
+import { expandComments } from 'state/comments/actions';
+
+/**
+ * A PostComment is the visual representation for a comment within a tree of comments.
+ * Each comment may have a different displayType.  It will be one of:
+ *  1. full: display the full content.  no max-height.
+ *  2. excerpt: show 3 lines.  max-height clipping is involved.  if the content overflows
+ *       then show a "Read More" button that will the comment to full
+ *  3. singleLine: show only 1 line of the comment and then show a Read More if the content overflows.
+ *  4. hidden: do not show at all.  this is implied by a lack of displayType.
+ *
+ * - An individual PostComment determines its displayType by looking at the prop commentsToShow.
+ *      displayType = commentsToShow[ commentId ] || hidden;
+ * - If a PostComment has caterpillars enabled, it will show a caterpillar if it has hidden children.
+ *
+ * As of the time of this comment writing, ReaderFullPost uses exclusively 'full' comments, whereas
+ *   conversations tool uses a mix depending on the situation.
+ */
 
 class PostComment extends React.PureComponent {
 	static propTypes = {
@@ -45,7 +64,7 @@ class PostComment extends React.PureComponent {
 		onCommentSubmit: PropTypes.func,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
-		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
+		showReadMoreInActions: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -73,15 +92,13 @@ class PostComment extends React.PureComponent {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
-		displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		showReadMoreInActions: false,
 	};
 
 	state = {
 		showReplies: false,
 		showFull: false,
 	};
-
-	handleReadMoreClicked = () => this.setState( { showFull: true } );
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
@@ -140,6 +157,7 @@ class PostComment extends React.PureComponent {
 			commentsTree,
 			maxChildrenToShow,
 			enableCaterpillar,
+			post,
 		} = this.props;
 
 		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
@@ -186,11 +204,15 @@ class PostComment extends React.PureComponent {
 				{ showReplies &&
 					<ol className="comments__list">
 						{ commentChildrenIds.map( childId =>
-							<PostComment
-								{ ...omit( this.props, 'displayType' ) }
+							<ConnectedPostComment
+								showNestingReplyArrow={ this.props.showNestingReplyArrow }
+								enableCaterpillar={ enableCaterpillar }
 								depth={ childDepth }
 								key={ childId }
 								commentId={ childId }
+								commentsTree={ commentsTree }
+								commentsToShow={ commentsToShow }
+								post={ post }
 							/>
 						) }
 					</ol> }
@@ -244,6 +266,17 @@ class PostComment extends React.PureComponent {
 				</strong>;
 	};
 
+	onReadMore = () => {
+		this.setState( { showFull: true } );
+		this.props.post &&
+			this.props.expandComments( {
+				siteId: this.props.post.site_ID,
+				commentIds: [ this.props.commentId ],
+				postId: this.props.post.ID,
+				displayType: POST_COMMENT_DISPLAY_TYPES.full,
+			} );
+	};
+
 	render() {
 		const {
 			commentsTree,
@@ -253,6 +286,8 @@ class PostComment extends React.PureComponent {
 			maxDepth,
 			post,
 			commentsToShow,
+			overflowY,
+			showReadMoreInActions,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -355,10 +390,9 @@ class PostComment extends React.PureComponent {
 				{ this.props.activeEditCommentId !== this.props.commentId &&
 					<PostCommentContent
 						content={ comment.content }
+						setWithDimensionsRef={ this.props.setWithDimensionsRef }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
-						onMoreClicked={ this.handleReadMoreClicked }
-						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
 					/> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
@@ -381,6 +415,8 @@ class PostComment extends React.PureComponent {
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
+					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
+					onReadMore={ this.onReadMore }
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
@@ -396,6 +432,11 @@ class PostComment extends React.PureComponent {
 	}
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( PostComment );
+const ConnectedPostComment = connect(
+	state => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{ expandComments }
+)( withDimensions( PostComment ) );
+
+export default ConnectedPostComment;

@@ -8,7 +8,7 @@ import React from 'react';
  */
 import HeaderButton from 'components/header-button';
 
-export default function HeaderButtonExample() {
+const HeaderButtonExample = () => {
 	const onClick = () => alert( 'clicked me!' );
 	return (
 		<div>
@@ -18,6 +18,9 @@ export default function HeaderButtonExample() {
 				onClick={ onClick }
 			/>
 		</div>
-		);
-}
+	);
+};
 
+HeaderButtonExample.displayName = 'HeaderButton';
+
+export default HeaderButtonExample;

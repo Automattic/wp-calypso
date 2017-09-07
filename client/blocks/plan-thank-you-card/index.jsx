@@ -78,6 +78,15 @@ class PlanThankYouCard extends Component {
 		);
 	}
 
+	renderHeading() {
+		const { heading, translate } = this.props;
+		if ( heading ) {
+			return heading;
+		}
+
+		return translate( 'Thank you for your purchase!' );
+	}
+
 	render() {
 		const { siteUrl, siteId, translate } = this.props;
 		return (
@@ -88,7 +97,7 @@ class PlanThankYouCard extends Component {
 				<ThankYouCard
 					name={ this.renderPlanName() }
 					price={ this.renderPlanPrice() }
-					heading={ translate( 'Thank you for your purchase!' ) }
+					heading={ this.renderHeading() }
 					description={ this.renderDescription() }
 					buttonUrl={ siteUrl }
 					buttonText={ translate( 'Visit Your Site' ) }
@@ -101,12 +110,13 @@ class PlanThankYouCard extends Component {
 }
 
 PlanThankYouCard.propTypes = {
+	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
 	siteUrl: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	action: PropTypes.node,
-	description: PropTypes.string
+	description: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {

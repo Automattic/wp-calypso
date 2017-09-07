@@ -174,7 +174,14 @@ const HelpContactClosed = ( { translate, sitePlanSlug } ) => {
 
 	return (
 		<div className="help-contact-closed">
-			<FormSectionHeading>{ translate( 'Limited Support This Week' ) }</FormSectionHeading>
+			<FormSectionHeading>
+				{ translate( 'Limited Support %(closed_start_date)s - %(closed_end_date)s', {
+					args: {
+						closed_start_date: closedStartDate.format( 'MMM D' ),
+						closed_end_date: closedEndDate.format( 'D' ),
+					}
+				} ) }
+			</FormSectionHeading>
 			{ message }
 			<hr />
 		</div>

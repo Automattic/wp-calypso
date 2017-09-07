@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, get, isEmpty, keys, merge } from 'lodash';
+import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 var debug = require( 'debug' )( 'calypso:user:settings' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
@@ -24,6 +24,26 @@ function decodeUserSettingsEntities( data ) {
 	};
 
 	return assign( {}, data, decodedValues );
+}
+
+/*
+ * Deletes a provided unsaved setting, then calls itself recursively
+ * to delete any empty parents of the setting passed to it
+ */
+function deleteUnsavedSetting( settings, settingName, recursive ) {
+	if ( ! isEmpty( get( settings, settingName ) ) || recursive ) {
+		unset( settings, settingName );
+
+		const settingKeys = settingName.split( '.' );
+		if ( settingKeys.length > 1 ) {
+			settingKeys.pop();
+			const parentKey = settingKeys.join( '.' );
+			//if parent is empty, call function again
+			if ( parentKey && isEmpty( get( settings, parentKey ) ) ) {
+				deleteUnsavedSetting( settings, parentKey, true );
+			}
+		}
+	}
 }
 
 /**
@@ -196,10 +216,11 @@ UserSettings.prototype.getSetting = function( settingName ) {
 	var setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null
-	if ( this.settings && 'undefined' !== typeof this.settings[ settingName ] ) {
-		setting = ( 'undefined' !== typeof this.unsavedSettings[ settingName ] )
-			? this.unsavedSettings[ settingName ]
-			: this.settings[ settingName ];
+	if ( has( this.settings, settingName ) ) {
+		setting =
+			this.isSettingUnsaved( settingName )
+				? get( this.unsavedSettings, settingName )
+				: get( this.settings, settingName );
 	}
 
 	return setting;
@@ -214,8 +235,8 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * @return {Boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
-	if ( this.settings && 'undefined' !== typeof this.settings[ settingName ] ) {
-		this.unsavedSettings[ settingName ] = value;
+	if ( has( this.settings, settingName ) ) {
+		set( this.unsavedSettings, settingName, value );
 
 		/*
 		 * If the two match, we don't consider the setting "changed".
@@ -223,11 +244,11 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 * is more complicated.
 		 */
 		if (
-			this.settings[ settingName ] === this.unsavedSettings[ settingName ] &&
+			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
 			'user_login' !== settingName
 		) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
-			delete this.unsavedSettings[ settingName ];
+			deleteUnsavedSetting( this.unsavedSettings, settingName );
 		}
 
 		this.emit( 'change' );
@@ -239,12 +260,13 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 };
 
 UserSettings.prototype.isSettingUnsaved = function( settingName ) {
-	return ( settingName in this.unsavedSettings );
+	return has( this.unsavedSettings, settingName );
 };
 
 UserSettings.prototype.removeUnsavedSetting = function( settingName ) {
-	if ( settingName in this.unsavedSettings ) {
-		delete this.unsavedSettings[ settingName ];
+
+	if ( this.isSettingUnsaved( settingName ) ) {
+		deleteUnsavedSetting( this.unsavedSettings, settingName );
 
 		this.emit( 'change' );
 	}

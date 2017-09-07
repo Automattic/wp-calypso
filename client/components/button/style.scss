@@ -122,7 +122,8 @@ button {
 		color: $white;
 	}
 	&[disabled],
-	&:disabled {
+	&:disabled,
+	&.disabled {
 		color: lighten( $gray, 30% );
 		background: $white;
 		border-color: lighten( $gray, 30% );

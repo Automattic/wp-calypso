@@ -44,7 +44,8 @@ const apiResponse = {
 
 const zone = {
 	term_id: 43,
-	none: 'New zone',
+	name: 'New zone',
+	slug: 'new-zone',
 	description: 'A new zone',
 };
 
@@ -225,9 +226,13 @@ describe( '#announceZoneSaved()', () => {
 			form: 'form',
 		};
 
-		announceZoneSaved( dispatch, action, zone );
+		announceZoneSaved( dispatch, action, fromApi( zone ) );
 
-		expect( dispatch ).to.have.been.calledWith( updateZone( 123456, zone.term_id, fromApi( zone ) ) );
+		expect( dispatch ).to.have.been.calledWith(	updateZone(
+			123456,
+			zone.term_id,
+			fromApi( zone ),
+		) );
 	} );
 
 	it( 'should dispatch `successNotice`', () => {

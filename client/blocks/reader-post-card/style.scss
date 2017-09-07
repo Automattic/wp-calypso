@@ -324,6 +324,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__byline-author-site {
 	font-family: $sans;
+	font-weight: 500;
 	overflow: hidden;
 	position: relative;
 	height: 20px;

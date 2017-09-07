@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { parse as parseUrl } from 'url';
+import page from 'page';
 import qs from 'qs';
 
 /**
@@ -40,7 +41,9 @@ export default {
 
 		if ( client_id ) {
 			if ( ! redirect_to ) {
-				return next( new Error( 'The `redirect_to` query parameter is missing.' ) );
+				const error = new Error( 'The `redirect_to` query parameter is missing.' );
+				error.status = 401;
+				return next( error );
 			}
 
 			const parsedRedirectUrl = parseUrl( redirect_to );
@@ -49,7 +52,9 @@ export default {
 			if ( client_id !== redirectQueryString.client_id ) {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
 
-				return next( new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' ) );
+				const error = new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' );
+				error.status = 401;
+				return next( error );
 			}
 
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
@@ -72,12 +77,23 @@ export default {
 	},
 
 	magicLoginUse( context, next ) {
+		/**
+		 * Pull the query arguments out of the URL & into the state.
+		 * It unclutters the address bar & will keep tokens out of tracking pixels.
+		 */
+		if ( context.querystring ) {
+			page.replace( '/log-in/link/use', context.query );
+			return;
+		}
+
+		const previousQuery = context.state || {};
+
 		const {
 			client_id,
 			email,
 			token,
 			tt,
-		} = context.query;
+		} = previousQuery;
 
 		context.primary = (
 			<HandleEmailedLinkForm

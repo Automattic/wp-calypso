@@ -12,20 +12,29 @@
 }
 
 .conversation-caterpillar__gravatars,
-.conversation-caterpillar__count {
+.conversation-caterpillar__count
+.conversation-caterpillar__show-all {
 	display: flex;
-	height: 38px;
 	flex-shrink: 0;
 }
 
+.conversation-caterpillar__show-all,
 .conversation-caterpillar__count {
-	color: #87a6bc;
+	color: $gray;
 	cursor: pointer;
 	display: flex;
-	flex-shrink: 1;
-	flex: 1 1 auto;
 	font-size: 13px;
 	font-weight: 400;
+}
+
+.conversation-caterpillar__show-all-chevron {
+	margin-top: 3px;
+	margin-right: 5px;
+}
+
+.conversation-caterpillar__count {
+	flex-shrink: 1;
+	flex: 1 1 auto;
 	margin-left: 8px;
 	overflow: hidden;
 	position: relative;
@@ -37,8 +46,12 @@
 		white-space: normal;
 	}
 
+	&:hover {
+		color: $blue-medium;
+	}
+
 	&::after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 35px );
 		height: 16px * 2;
 		width: 16px * 2;
 		z-index: 1;
@@ -70,4 +83,18 @@
 	font-weight: 400;
 	margin-left: 8px;
 	cursor: pointer;
+}
+
+.conversation-caterpillar__show-all {
+
+	&:hover {
+		color: $blue-medium;
+	}
+
+	.gridicon {
+
+		&:hover {
+			fill: $blue-medium;
+		}
+	}
 }
