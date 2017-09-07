@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,10 +31,14 @@ class TagEmptyContent extends React.Component {
 
 	render() {
 		var action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
-				{ this.props.translate( 'Back to Following' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/"
+				>
+					{ this.props.translate( 'Back to Following' ) }
+				</a>
+			),
 			secondaryAction = isDiscoverEnabled()
 				? <a
 						className="empty-content__action button"
@@ -50,8 +55,8 @@ class TagEmptyContent extends React.Component {
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 400 }
 			/>
 		);
 	}

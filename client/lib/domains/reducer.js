@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 import update from 'react-addons-update';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies

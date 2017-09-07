@@ -1,11 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import includes from 'lodash/includes';
-import sortBy from 'lodash/sortBy';
-import find from 'lodash/find';
-import has from 'lodash/has';
+import { filter, find, has, includes, sortBy } from 'lodash';
 
 /**
  * Internal dependencies

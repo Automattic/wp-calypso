@@ -20,7 +20,7 @@ import userFactory from 'lib/user';
 /**
  * Re-export
  */
-export { setSection } from './shared.js';
+export { setSection, setUpLocale } from './shared.js';
 
 const user = userFactory();
 

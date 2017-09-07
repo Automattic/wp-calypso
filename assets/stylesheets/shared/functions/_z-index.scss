@@ -34,34 +34,34 @@ $z-layers: (
 	'root': (
 		'.community-translator__translator-invitation:before': -1,
 		'.NuxWelcome:before': -1,
-		'.infinite-scroll-end:before': -1,
+		'.list-end:before': -1,
 		'.is-group-editor::before': -1,
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.gear-dropdown:after': 0,
-		'.media-library .search.is-expanded-to-container': 1,
-		'.ribbon': 1,
 		'.reader__featured-post': 0,
-		'.reader__featured-post-title': 1,
 		'.search-stream__input-card': 0,
-		'.search-stream__sort-picker': 23,
 		'.reader-search-card': 0,
 		'.reader-featured-image': 0,
 		'.reader-post-card__title': 0,
-		'.reader-list-gap__button': 1,
-		'.reader-following-search': 1,
 		'.reader-feed-header': 0,
 		'.reader-feed-header__back-and-follow': 0,
 		'.reader-related-card-v2.card': 0,
 		'.list-stream__header-follow': 0,
 		'.following__intro-close-icon-bg' : 0,
+		'.media-library .search.is-expanded-to-container': 1,
+		'.ribbon': 1,
+		'.reader__featured-post-title': 1,
+		'.reader-list-gap__button': 1,
+		'.reader-following-search': 1,
+		'.following-manage__url-follow': 1,
 		'.following__intro-close-icon': 1,
 		'.post-trends__title': 1,
 		'.plugin-item__label': 1,
 		'.wp-editor-tools': 1,
 		'.plan .gridicons-checkmark-circle': 1,
 		'.plan-discount-message': 1,
-		'.editor__switch-mode': 1,
+		'.post-editor__switch-mode': 1,
 		'.auth__form .form-fieldset input': 1,
 		'.chart__empty': 1,
 		'.chart__bar-marker': 1,
@@ -76,10 +76,13 @@ $z-layers: (
 		'.domain-suggestion.is-clickable:hover': 1,
 		'.editor-html-toolbar': 1,
 		'.thank-you-card__header': 1,
-		'.post-editor__sidebar': 2,
+		'.comment-detail.card.is-collapsed:hover': 1,
+		'.comment-detail.card.accessible-focus:focus': 1,
+		'.web-preview__loading-message-wrapper': 1,
+		'.web-preview__inner .spinner-line': 1,
+		'.editor-sidebar': 2,
 		'.editor-action-bar .editor-status-label': 2,
 		'.is-installing .theme': 2,
-		'.reader-update-notice': 22,
 		'.people-list-item .card__link-indicator': 2,
 		'.updated-confirmation': 2,
 		'.auth__form .form-fieldset input:focus': 2,
@@ -104,7 +107,9 @@ $z-layers: (
 		'.main': 20, //TODO: this doesn't always have a stacking context
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.search': 22,
+		'.reader-update-notice': 22,
 		'.editor-ground-control': 22,
+		'.search-stream__sort-picker': 23,
 		'.billing-history-page .filter-popover-content': 23,
 		'.reader-mobile-sidebar': 23,
 		'.community-translator': 99,
@@ -112,10 +117,17 @@ $z-layers: (
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
 		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
+		'.editor-publish-date.is-open .editor-publish-date__wrapper': 170,
 		'.first-view': 175,
+		'.editor-confirmation-sidebar__overlay': 176,
+		'.editor-confirmation-sidebar__sidebar': 177,
+		'.popover.editor-ground-control__post-schedule-popover': 178,
 		'.popover.editor-visibility__popover': 179,
 		'.feature-example__gradient': 179,
 		'.global-notices': 179,
+		'.editor-preview': 179,
+		'.web-preview .editor-notice': 179,
+		'.app-banner': 180,
 		'.notices-list.is-pinned': 180,
 		'.notices-list.is-pinned .notice': 180,
 		'.masterbar': 180,
@@ -147,12 +159,14 @@ $z-layers: (
 		'.wplink__dialog.dialog.card': 100200,
 		'.web-preview': 100200,
 		'.design-menu.is-visible': 100201,
+		'.popover.gallery__order-popover': 100300,
 		'popover.is-dialog-visible': 100300,
 		'body .webui-popover': 100300,
 		'.fullscreen-fader': 200000,
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
+		'.webpack-build-monitor': 99999999,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),
 	'.ribbon': (
@@ -166,8 +180,8 @@ $z-layers: (
 	'.masterbar': (
 		'.masterbar__notifications-bubble': 99999,
 		'.reader-back': 99999,
-		'.reader-profile': 100000,
-		'.reader-visit-site': 99999
+		'.reader-visit-site': 99999,
+		'.reader-profile': 100000
 	),
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
@@ -197,20 +211,15 @@ $z-layers: (
 	'.dialog__backdrop': (
 		'.editor-media-modal .section-nav': 10,
 		'.editor-media-modal .notice': 10,
-		'.editor-media-modal-gallery__preview-toggle': 100,
-		'.editor-contact-form-modal .section-nav': 10
-	),
-	'.following-edit': ( //aka 'main'
-		'.following-edit__subscribe-form .gridicons-add-outline': 23,
-		'.following-edit__subscribe-form .card.is-search-result': 35,
-		'.following-edit__subscribe-form .search': 36
+		'.editor-contact-form-modal .section-nav': 10,
+		'.editor-media-modal-gallery__preview-toggle': 100
 	),
 	'.site-settings__taxonomies': (
 		'.card__link-indicator': 1
 	),
 	'.reader-feed-header': (
-		'.reader-feed-header__follow': 1,
-		'.reader-feed-header__site': 0
+		'.reader-feed-header__site': 0,
+		'.reader-feed-header__follow': 1
 	),
 	'.reader-feed-header__back-and-follow': (
 		'.card.header-cake': 1,

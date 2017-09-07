@@ -1,20 +1,23 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
+import { getSite } from 'state/sites/selectors';
 
-export default React.createClass( {
-	displayName: 'Site',
-
+const Site = React.createClass( {
 	getDefaultProps() {
 		return {
 			// onSelect callback
@@ -35,39 +38,40 @@ export default React.createClass( {
 			homeLink: false,
 			// if homeLink is enabled
 			showHomeIcon: true,
-			compact: false
+			compact: false,
 		};
 	},
 
 	propTypes: {
-		href: React.PropTypes.string,
-		externalLink: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		onSelect: React.PropTypes.func,
-		onMouseEnter: React.PropTypes.func,
-		onMouseLeave: React.PropTypes.func,
-		isSelected: React.PropTypes.bool,
-		isHighlighted: React.PropTypes.bool,
-		site: React.PropTypes.object,
-		homeLink: React.PropTypes.bool,
-		showHomeIcon: React.PropTypes.bool,
-		compact: React.PropTypes.bool
+		href: PropTypes.string,
+		externalLink: PropTypes.bool,
+		indicator: PropTypes.bool,
+		onSelect: PropTypes.func,
+		onMouseEnter: PropTypes.func,
+		onMouseLeave: PropTypes.func,
+		isSelected: PropTypes.bool,
+		isHighlighted: PropTypes.bool,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		homeLink: PropTypes.bool,
+		showHomeIcon: PropTypes.bool,
+		compact: PropTypes.bool,
 	},
 
 	onSelect( event ) {
-		this.props.onSelect( event, this.props.site.slug );
+		this.props.onSelect( event, this.props.site.ID );
 	},
 
 	onMouseEnter( event ) {
-		this.props.onMouseEnter( event, this.props.site.slug );
+		this.props.onMouseEnter( event, this.props.site.ID );
 	},
 
 	onMouseLeave( event ) {
-		this.props.onMouseLeave( event, this.props.site.slug );
+		this.props.onMouseLeave( event, this.props.site.ID );
 	},
 
 	render() {
-		const site = this.props.site;
+		const { site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -87,24 +91,31 @@ export default React.createClass( {
 
 		return (
 			<div className={ siteClass }>
-				<a className="site__content"
+				<a
+					className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
-					title={ this.props.homeLink
-						? this.translate( 'View this site' )
-						: this.translate( 'Select this site' )
+					title={
+						this.props.homeLink
+							? translate( 'View site %(domain)s', {
+									args: { domain: site.domain },
+								} )
+							: translate( 'Select site %(domain)s', {
+									args: { domain: site.domain },
+								} )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
-					aria-label={ this.props.homeLink && site.is_previewable
-						? this.translate( 'Open site %(domain)s in a preview', {
-							args: { domain: site.domain }
-						} )
-						: this.translate( 'Open site %(domain)s in new tab', {
-							args: { domain: site.domain }
-						} )
+					aria-label={
+						this.props.homeLink
+							? translate( 'View site %(domain)s', {
+									args: { domain: site.domain },
+								} )
+							: translate( 'Select site %(domain)s', {
+									args: { domain: site.domain },
+								} )
 					}
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
@@ -114,34 +125,36 @@ export default React.createClass( {
 							{ this.props.site.is_private &&
 								<span className="site__badge">
 									<Gridicon icon="lock" size={ 14 } />
-								</span>
-							}
-							{ site.options && site.options.is_redirect &&
+								</span> }
+							{ site.options &&
+								site.options.is_redirect &&
 								<span className="site__badge">
 									<Gridicon icon="block" size={ 14 } />
-								</span>
-							}
-							{ site.options && site.options.is_domain_only &&
+								</span> }
+							{ site.options &&
+								site.options.is_domain_only &&
 								<span className="site__badge">
 									<Gridicon icon="domains" size={ 14 } />
-								</span>
-							}
+								</span> }
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
-						<div className="site__domain">{ site.domain }</div>
+						<div className="site__domain">
+							{ site.domain }
+						</div>
 					</div>
-					{ this.props.homeLink && this.props.showHomeIcon &&
+					{ this.props.homeLink &&
+						this.props.showHomeIcon &&
 						<span className="site__home">
 							<Gridicon icon="house" size={ 18 } />
-						</span>
-					}
+						</span> }
 				</a>
-				{ this.props.indicator
-					? <SiteIndicator site={ site } />
-					: null
-				}
+				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>
 		);
-	}
+	},
 } );
+
+export default connect( ( state, { siteId, site } ) => ( {
+	site: siteId ? getSite( state, siteId ) : site,
+} ) )( localize( Site ) );

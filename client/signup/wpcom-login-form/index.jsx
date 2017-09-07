@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
 
 /**
@@ -9,17 +9,18 @@ const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
  */
 import config from 'config';
 
-module.exports = React.createClass( {
-	displayName: 'WpcomLoginForm',
+export default class WpcomLoginForm extends Component {
 
-	componentDidMount: function() {
+	form = null;
+
+	componentDidMount() {
 		debug( 'submit form' );
-		this.refs.wpcomLoginForm.submit();
-	},
+		this.form.submit();
+	}
 
-	action: function() {
-		var subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/,
-			subdomain = '';
+	action() {
+		const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
+		let subdomain = '';
 
 		if ( subdomainRegExp.test( this.props.redirectTo ) &&
 			config( 'hostname' ) !== 'wpcalypso.wordpress.com' &&
@@ -27,10 +28,10 @@ module.exports = React.createClass( {
 			subdomain = this.props.redirectTo.match( subdomainRegExp )[ 1 ] + '.';
 		}
 
-		return 'https://' + subdomain + 'wordpress.com/wp-login.php';
-	},
+		return `https://${ subdomain }wordpress.com/wp-login.php`;
+	}
 
-	renderExtraFields: function() {
+	renderExtraFields() {
 		const { extraFields } = this.props;
 
 		if ( ! extraFields ) {
@@ -39,16 +40,20 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				{ Object.keys( extraFields ).map( function( field ) {
+				{ Object.keys( extraFields ).map( ( field ) => {
 					return <input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />;
 				} ) }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	storeFormRef = ( form ) => {
+		this.form = form;
+	}
+
+	render() {
 		return (
-			<form method="post" action={ this.action() } ref="wpcomLoginForm">
+			<form method="post" action={ this.action() } ref={ this.storeFormRef }>
 				<input type="hidden" name="log" value={ this.props.log } />
 				<input type="hidden" name="pwd" value={ this.props.pwd } />
 				<input type="hidden" name="authorization" value={ this.props.authorization } />
@@ -57,4 +62,4 @@ module.exports = React.createClass( {
 			</form>
 		);
 	}
-} );
+}

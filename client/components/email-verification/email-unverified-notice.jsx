@@ -86,7 +86,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 
 	renderEmailSendError() {
 		const noticeText = [
-			<strong>{ i18n.translate( 'The email could not be sent.' ) }</strong>,
+			<strong key="email-send-error">{ i18n.translate( 'The email could not be sent.' ) }</strong>,
 			' ',
 			this.state.error.message,
 		];

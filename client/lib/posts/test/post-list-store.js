@@ -185,9 +185,9 @@ describe( 'post-list-store', () => {
 		} );
 	} );
 
-	describe( '#getSiteID', () => {
+	describe( '#getSiteId', () => {
 		it( 'should the return site ID', () => {
-			assert.equal( defaultPostListStore.getSiteID(), defaultPostListStore.get().query.siteID );
+			assert.equal( defaultPostListStore.getSiteId(), defaultPostListStore.get().query.siteId );
 		} );
 	} );
 
@@ -334,7 +334,7 @@ describe( 'post-list-store', () => {
 			assert.notEqual( currentCacheId, defaultPostListStore.getID() );
 		} );
 
-		it( 'should set site_visibility if no siteID is present', () => {
+		it( 'should set site_visibility if no siteId is present', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
 			assert.equal( defaultPostListStore.getNextPageParams().site_visibility, 'visible' );
 		} );

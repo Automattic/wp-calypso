@@ -124,18 +124,23 @@ class SiteSettingsFormWriting extends Component {
 						</div>
 					)
 				}
+
+				{
+					this.renderSectionHeader( translate( 'Content types' ) )
+				}
+
+				<CustomContentTypes
+					handleAutosavingToggle={ handleAutosavingToggle }
+					onChangeField={ onChangeField }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
 							<QueryJetpackModules siteId={ this.props.siteId } />
-
-							<CustomContentTypes
-								onSubmitForm={ this.props.handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
 
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
@@ -196,7 +201,9 @@ const getFormSettings = settings => {
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',
+		'jetpack_testimonial_posts_per_page',
 		'jetpack_portfolio',
+		'jetpack_portfolio_posts_per_page',
 		'infinite-scroll',
 		'infinite_scroll',
 		'minileven',

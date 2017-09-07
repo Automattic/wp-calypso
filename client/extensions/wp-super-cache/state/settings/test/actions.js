@@ -13,16 +13,18 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../../action-types';
 import {
 	receiveSettings,
 	requestSettings,
+	restoreSettings,
 	saveSettings,
-	updateSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -103,18 +105,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateSettings()', () => {
-		it( 'should return an action object', () => {
-			const action = updateSettings( siteId, settings.data );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_UPDATE_SETTINGS,
-				settings: settings.data,
-				siteId,
-			} );
-		} );
-	} );
-
 	describe( 'saveSettings()', () => {
 		const updatedSettings = {
 			is_cache_enabled: false,
@@ -149,13 +139,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch update action when request completes', () => {
+		it( 'should dispatch receive action when request completes', () => {
 			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_UPDATE_SETTINGS,
-					settings: updatedSettings,
-					siteId,
-				} );
+				expect( spy ).to.have.been.calledWith(
+					receiveSettings( siteId, apiResponse.data )
+				);
 			} );
 		} );
 
@@ -174,6 +162,57 @@ describe( 'actions', () => {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 					siteId: failedSiteId,
 					error: sinon.match( { message: 'User cannot access this private blog.' } ),
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#restoreSettings()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/settings' } )
+				.reply( 200, settings )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/settings' } )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			restoreSettings( siteId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch receive action when request completes', () => {
+			return restoreSettings( siteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith(
+					receiveSettings( siteId, settings.data )
+				);
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return restoreSettings( siteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
+					siteId,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return restoreSettings( failedSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+					siteId: failedSiteId,
 				} );
 			} );
 		} );

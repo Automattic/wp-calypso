@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -14,8 +15,9 @@ import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { getReaderFollowForBlog } from 'state/selectors';
 import { buildBody } from '../utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestUpdatePostEmailSubscription( { dispatch, getState }, action, next ) {
+export function requestUpdatePostEmailSubscription( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
 			previousState: get( getReaderFollowForBlog( getState(), action.payload.blogId ), [
@@ -35,27 +37,25 @@ export function requestUpdatePostEmailSubscription( { dispatch, getState }, acti
 			onFailure: actionWithRevert,
 		} )
 	);
-	next( action );
 }
 
-export function receiveUpdatePostEmailSubscription( store, action, next, response ) {
+export function receiveUpdatePostEmailSubscription( store, action, response ) {
 	if ( ! ( response && response.success ) ) {
 		// revert
-		receiveUpdatePostEmailSubscriptionError( store, action, next );
+		receiveUpdatePostEmailSubscriptionError( store, action );
 	}
 }
 
 export function receiveUpdatePostEmailSubscriptionError(
 	{ dispatch },
-	{ payload: { blogId }, meta: { previousState } },
-	next
- ) {
+	{ payload: { blogId }, meta: { previousState } }
+) {
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, we had a problem updating that subscription. Please try again.' )
 		)
 	);
-	next( updateNewPostEmailSubscription( blogId, previousState ) );
+	dispatch( bypassDataLayer( updateNewPostEmailSubscription( blogId, previousState ) ) );
 }
 
 export default {

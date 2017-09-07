@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import LikeIcons from './icons';
 
 class LikeButton extends PureComponent {
-
 	static propTypes = {
 		liked: React.PropTypes.bool,
 		showZeroCount: React.PropTypes.bool,
@@ -25,7 +24,7 @@ class LikeButton extends PureComponent {
 		animateLike: React.PropTypes.bool,
 		postId: React.PropTypes.number,
 		slug: React.PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		liked: false,
@@ -35,8 +34,8 @@ class LikeButton extends PureComponent {
 		iconSize: 24,
 		animateLike: true,
 		postId: null,
-		slug: null
-	}
+		slug: null,
+	};
 
 	constructor( props ) {
 		super( props );
@@ -70,11 +69,11 @@ class LikeButton extends PureComponent {
 			'is-mini': this.props.isMini,
 			'is-animated': this.props.animateLike,
 			'has-count': showLikeCount,
-			'has-label': this.props.showLabel
+			'has-label': this.props.showLabel,
 		};
 		let likeLabel = translate( 'Like', {
 			context: 'verb: imperative',
-			comment: 'Label for a button to "like" a post.'
+			comment: 'Label for a button to "like" a post.',
 		} );
 
 		if ( this.props.liked ) {
@@ -92,25 +91,29 @@ class LikeButton extends PureComponent {
 			likeLabel = translate( 'Like', 'Likes', {
 				count: likeCount,
 				context: 'noun',
-				comment: 'Number of likes.'
+				comment: 'Number of likes.',
 			} );
 		}
 
-		const labelElement = ( <span className="like-button__label">
-			<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
-			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
-		</span> );
+		const labelElement = (
+			<span className="like-button__label">
+				<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
+				{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
+			</span>
+		);
 
-		return (
-			React.createElement(
-				containerTag,
-				omitBy( {
+		return React.createElement(
+			containerTag,
+			omitBy(
+				{
 					href: isLink && `/stats/post/${ postId }/${ slug }`,
 					className: classNames( containerClasses ),
-					onClick: ! isLink && this.toggleLiked
-				}, isNull ),
-				<LikeIcons size={ this.props.iconSize } />, labelElement
-			)
+					onClick: ! isLink && this.toggleLiked,
+				},
+				isNull
+			),
+			<LikeIcons size={ this.props.iconSize } />,
+			labelElement
 		);
 	}
 }

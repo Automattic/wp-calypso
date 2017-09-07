@@ -1,11 +1,25 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/data-layer/utils';
+import { mergeHandlers } from 'state/action-watchers/utils';
+import activity from './activity';
 import automatedTransfer from './automated-transfer';
+import blogStickers from './blog-stickers';
+import comments from './comments';
+import commentsTree from './comments-tree';
 import media from './media';
+import plugins from './plugins';
+import posts from './posts';
+import simplePayments from './simple-payments';
 
 export default mergeHandlers(
+	activity,
 	automatedTransfer,
-	media
+	blogStickers,
+	comments,
+	commentsTree,
+	media,
+	plugins,
+	posts,
+	simplePayments,
 );

@@ -10,8 +10,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	WPORG_PLUGIN_DATA_RECEIVE,
 	FETCH_WPORG_PLUGIN_DATA,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { items, fetchingItems } from '../reducer';
 
@@ -45,16 +43,6 @@ describe( 'wporg reducer', () => {
 					dolly: { wporg: false, fetched: false }
 				} );
 		} );
-		it( 'never persists state because this is not implemented', () => {
-			const plugins = { my: { plugin: { shape: {} } } };
-			const state = items( plugins, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
-		it( 'never loads persisted state because this is not implemented', () => {
-			const plugins = { my: { plugin: { shape: {} } } };
-			const state = items( plugins, { type: DESERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
 	} );
 	describe( 'fetchingItems', () => {
 		it( 'should track when fetches start', () => {
@@ -87,16 +75,6 @@ describe( 'wporg reducer', () => {
 				pluginSlug: 'dolly'
 			} );
 			expect( state ).to.deep.equal( { akismet: true, dolly: false } );
-		} );
-		it( 'never persists state', () => {
-			const plugins = { my: { plugin: { shape: {} } } };
-			const state = fetchingItems( plugins, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
-		it( 'never loads persisted state', () => {
-			const plugins = { my: { plugin: { shape: {} } } };
-			const state = fetchingItems( plugins, { type: DESERIALIZE } );
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

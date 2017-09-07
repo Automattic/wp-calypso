@@ -15,12 +15,16 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
+import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
+import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
+import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -39,49 +43,65 @@ const SiteSettingsTraffic = ( {
 	trackEvent,
 	translate,
 	updateFields,
-} ) => (
-	<Main className="settings-traffic__main site-settings">
-		<DocumentHead title={ translate( 'Site Settings' ) } />
-		<SidebarNavigation />
-		<SiteSettingsNavigation site={ site } section="traffic" />
+} ) => {
+	if ( ! site ) {
+		return <Placeholder />;
+	}
 
-		{ jetpackSettingsUiSupported &&
-			<JetpackSiteStats
+	return (
+		<Main className="settings-traffic site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<JetpackDevModeNotice />
+			<SidebarNavigation />
+			<SiteSettingsNavigation site={ site } section="traffic" />
+
+			{ jetpackSettingsUiSupported &&
+				<JetpackSiteStats
+					handleAutosavingToggle={ handleAutosavingToggle }
+					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			}
+			{ jetpackSettingsUiSupported &&
+				<JetpackAds
+					handleAutosavingToggle={ handleAutosavingToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			}
+			<RelatedPosts
+				onSubmitForm={ handleSubmitForm }
 				handleAutosavingToggle={ handleAutosavingToggle }
-				setFieldValue={ setFieldValue }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-		}
-		<RelatedPosts
-			onSubmitForm={ handleSubmitForm }
-			handleAutosavingToggle={ handleAutosavingToggle }
-			isSavingSettings={ isSavingSettings }
-			isRequestingSettings={ isRequestingSettings }
-			fields={ fields }
-		/>
-		{ isJetpack
-			? <AmpJetpack />
-			: <AmpWpcom
-				submitForm={ submitForm }
-				trackEvent={ trackEvent }
-				updateFields={ updateFields }
+			{ isJetpack
+				? <AmpJetpack />
+				: <AmpWpcom
+					submitForm={ submitForm }
+					trackEvent={ trackEvent }
+					updateFields={ updateFields }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			}
+			<SeoSettingsHelpCard />
+			<SeoSettingsMain />
+			<AnalyticsSettings />
+			<Sitemaps
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-		}
-		<AnalyticsSettings />
-		<SeoSettingsHelpCard />
-		<SeoSettingsMain />
-		<Sitemaps
-			isSavingSettings={ isSavingSettings }
-			isRequestingSettings={ isRequestingSettings }
-			fields={ fields }
-		/>
-	</Main>
-);
+			{ site && <SiteVerification /> }
+		</Main>
+	);
+};
 
 const connectComponent = connect(
 	( state ) => {
@@ -104,6 +124,7 @@ const getFormSettings = partialRight( pick, [
 	'hide_smile',
 	'count_roles',
 	'roles',
+	'enable_header_ad',
 	'jetpack_relatedposts_allowed',
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',

@@ -7,29 +7,28 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import PaymentMethodList from './payment-method-list';
 
-class SettingsPaymentsOffSite extends Component {
+class SettingsPaymentsOnSite extends Component {
 
 	render() {
 		const { translate } = this.props;
+
 		return (
-			<div>
+			<div className="payments__type-container">
 				<ExtendedHeader
-					label={ translate( 'Off-site credit card payment methods' ) }
+					label={ translate( 'Off-site' ) }
 					description={
 						translate(
-							'Off-site payment methods involve sending the customer to a ' +
-							'third party web site to complete payment, like PayPal. More ' +
-							'information'
+							'Take payments through a third-party site, like PayPal. ' +
+							'Customers will leave your store to pay.'
 						)
 					} />
-				<Card></Card>
+					<PaymentMethodList methodType="off-site" />
 			</div>
 		);
 	}
-
 }
 
-export default localize( SettingsPaymentsOffSite );
+export default localize( SettingsPaymentsOnSite );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -9,22 +10,27 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-const AllSites = require( 'my-sites/all-sites' ),
-	analytics = require( 'lib/analytics' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' ),
-	Site = require( 'blocks/site' ),
-	Gridicon = require( 'gridicons' ),
-	UpgradesActions = require( 'lib/upgrades/actions' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
-
+import AllSites from 'my-sites/all-sites';
+import analytics from 'lib/analytics';
+import Button from 'components/button';
+import Card from 'components/card';
+import Site from 'blocks/site';
+import Gridicon from 'gridicons';
+import UpgradesActions from 'lib/upgrades/actions';
+import DomainsStore from 'lib/domains/store';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import config from 'config';
 import SiteNotice from './notice';
+import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedOrAllSites } from 'state/selectors';
+import { infoNotice, removeNotice } from 'state/notices/actions';
+import { getNoticeLastTimeShown } from 'state/notices/selectors';
+import { getSectionName } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -49,10 +55,12 @@ class CurrentSite extends Component {
 		}
 
 		DomainsStore.on( 'change', this.handleStoreChange );
+		CartStore.on( 'change', this.showStaleCartItemsNotice );
 	}
 
 	componentWillUnmount() {
 		DomainsStore.off( 'change', this.handleStoreChange );
+		CartStore.off( 'change', this.showStaleCartItemsNotice );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -64,6 +72,39 @@ class CurrentSite extends Component {
 
 	handleStoreChange = () => {
 		this.setState( { domainsStore: DomainsStore } );
+	}
+
+	showStaleCartItemsNotice = () => {
+		const { selectedSite } = this.props,
+			cartItems = require( 'lib/cart-values' ).cartItems,
+			staleCartItemNoticeId = 'stale-cart-item-notice';
+
+		// Remove any existing stale cart notice
+		this.props.removeNotice( staleCartItemNoticeId );
+
+		// Don't show on the checkout page?
+		if ( this.props.sectionName === 'upgrades' ) {
+			return null;
+		}
+
+		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
+		if ( cartItems.hasStaleItem( CartStore.get() ) && this.props.staleCartItemNoticeLastTimeShown < Date.now() - ( 10 * 60 * 1000 ) ) {
+			this.props.infoNotice(
+				this.props.translate( 'Your site deserves a boost!' ),
+				{
+					id: staleCartItemNoticeId,
+					isPersistent: false,
+					duration: 10000,
+					button: this.props.translate( 'Complete your purchase' ),
+					href: '/checkout/' + selectedSite.slug,
+					onClick: this.clickStaleCartItemsNotice
+				}
+			);
+		}
+	}
+
+	clickStaleCartItemsNotice = () => {
+		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
 	}
 
 	switchSites = ( event ) => {
@@ -89,6 +130,7 @@ class CurrentSite extends Component {
 				isCompact
 				selectedSite={ site }
 				domains={ domains }
+				position="site-sidebar"
 				ruleWhiteList={ [
 					'unverifiedDomainsCanManage',
 					'unverifiedDomainsCannotManage',
@@ -104,6 +146,43 @@ class CurrentSite extends Component {
 	}
 
 	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
+
+	renderSiteViewLink() {
+		if ( config.isEnabled( 'standalone-site-preview' ) ) {
+			return;
+		}
+
+		const {
+			isPreviewShowing,
+			selectedSite,
+			translate,
+		} = this.props;
+
+		const viewText = selectedSite.is_previewable
+			? translate( 'Site Preview' )
+			: translate( 'View site' );
+
+		const viewIcon = selectedSite.is_previewable
+			? 'computer'
+			: 'external';
+
+		return (
+			<a
+				href={ selectedSite.URL }
+				onClick={ this.previewSite }
+				className={ classNames( 'current-site__view-site', {
+					selected: isPreviewShowing,
+				} ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<span className="current-site__view-site-text">
+					{ viewText }
+				</span>
+				<Gridicon icon={ viewIcon } />
+			</a>
+		);
+	}
 
 	render() {
 		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
@@ -139,21 +218,12 @@ class CurrentSite extends Component {
 				{ selectedSite
 					? <div>
 						<Site site={ selectedSite } />
-						<a
-							href={ selectedSite.URL }
-							onClick={ this.previewSite }
-							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
-						>
-							<span className="current-site__view-site-text">
-								{ translate( 'Site Preview' ) }
-							</span>
-							<Gridicon icon="computer" />
-						</a>
+						{ this.renderSiteViewLink() }
 					</div>
 					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }
-				<SiteNotice site={ selectedSite } />
+				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
 			</Card>
 		);
 	}
@@ -170,7 +240,9 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			anySiteSelected: getSelectedOrAllSites( state ),
 			siteCount: get( user, 'visible_site_count', 0 ),
+			staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
+			sectionName: getSectionName( state ),
 		};
 	},
-	{ setLayoutFocus },
+	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent },
 )( localize( CurrentSite ) );

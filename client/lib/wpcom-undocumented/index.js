@@ -3,7 +3,7 @@
  */
 import wpcomFactory from 'wpcom';
 import inherits from 'inherits';
-import assign from 'lodash/assign';
+import { assign } from 'lodash';
 import debugFactory from 'debug';
 
 /**

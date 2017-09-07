@@ -12,11 +12,11 @@ const LikeIcons = ( { size } ) => (
 );
 
 LikeIcons.propTypes = {
-	size: React.PropTypes.number
+	size: React.PropTypes.number,
 };
 
 LikeIcons.defaultProps = {
-	size: 24
+	size: 24,
 };
 
 export default LikeIcons;

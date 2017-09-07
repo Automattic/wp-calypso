@@ -193,6 +193,7 @@ export class AddLinkDialog extends Component {
 						showTypeLabels
 						siteId={ siteId }
 						type="any"
+						excludePrivateTypes={ true }
 					/>
 				</FormFieldset>
 			</Dialog>

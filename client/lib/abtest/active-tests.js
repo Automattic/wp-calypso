@@ -4,17 +4,9 @@ module.exports = {
 		variations: {
 			singlePurchaseFlow: 10,
 			popupCart: 45,
-			keepSearchingInGapps: 45
+			keepSearchingInGapps: 45,
 		},
-		defaultVariation: 'singlePurchaseFlow'
-	},
-	signupPlansCallToAction: {
-		datestamp: '20170403',
-		variations: {
-			original: 0,
-			modified: 100, // Setting to 100% until strings are translated
-		},
-		defaultVariation: 'original',
+		defaultVariation: 'singlePurchaseFlow',
 	},
 	signupSurveyStep: {
 		datestamp: '20170329',
@@ -24,36 +16,36 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
-	signupPlansReorderTest: {
-		datestamp: '20170410',
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
 		variations: {
 			original: 50,
-			modified: 50,
+			pluginsAndThemes: 50,
 		},
 		defaultVariation: 'original',
-	},
-	conciergeOfferOnCancel: {
-		datestamp: '20170410',
-		variations: {
-			showConciergeOffer: 50,
-			hideConciergeOffer: 50,
-		},
-		defaultVariation: 'showConciergeOffer',
 	},
 	presaleChatButton: {
 		datestamp: '20170328',
 		variations: {
 			showChatButton: 20,
-			original: 80
+			original: 80,
 		},
 		defaultVariation: 'original',
-		allowAnyLocale: true,
+		localeTargets: 'any',
+	},
+	jetpackConnectHideFreePlan: {
+		datestamp: '20170905',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
 	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
-			showNewJetpackSite: 10,
-			onlyDotComSites: 90,
+			showNewJetpackSite: 50,
+			onlyDotComSites: 50,
 		},
 		defaultVariation: 'onlyDotComSites',
 	},
@@ -66,22 +58,68 @@ module.exports = {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 	},
-	domainToPaidPlanUpsellNudge: {
-		datestamp: '20170429',
+	ATPromptOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	jetpackConnectPlansCopyChanges: {
+		datestamp: '20170728',
+		variations: {
+			original: 0,
+			modified: 100,
+		},
+		defaultVariation: 'modified',
+	},
+	readerIntroIllustration: {
+		datestamp: '20170718',
+		variations: {
+			blue: 33,
+			lightBlue: 33,
+			white: 34,
+		},
+		defaultVariation: 'white',
+		assignmentMethod: 'userId',
+	},
+	postSignupUpgradeScreen: {
+		datestamp: '20170810',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	privacyNoPopup: {
+		datestamp: '20170830',
+		variations: {
+			original: 50,
+			nopopup: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	skipThemesSelectionModal: {
+		datestamp: '20170904',
 		variations: {
 			skip: 50,
 			show: 50,
 		},
-		defaultVariation: 'skip',
-	},
-	jetpackPlansHeadlines: {
-		datestamp: '20170508',
-		variations: {
-			headlineA: 25,
-			headlineB: 25,
-			headlineC: 25,
-			headlineD: 25
-		},
-		defaultVariation: 'headlineA',
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

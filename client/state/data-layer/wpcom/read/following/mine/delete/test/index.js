@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,64 +12,84 @@ import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-describe( 'requestUnfollow', () => {
-	it( 'should dispatch a http request', () => {
-		const dispatch = spy();
-		const next = spy();
-		const action = unfollow( 'http://example.com' );
-		requestUnfollow( { dispatch }, action, next );
-		expect( dispatch ).to.have.been.calledWith(
-			http( {
-				method: 'POST',
-				path: '/read/following/mine/delete',
-				apiVersion: '1.1',
-				body: {
-					url: 'http://example.com',
-					source: 'calypso',
+describe( 'following/mine/delete', () => {
+	describe( 'requestUnfollow', () => {
+		it( 'should dispatch a http request', () => {
+			const dispatch = spy();
+			const action = unfollow( 'http://example.com' );
+			const getState = () => ( {
+				reader: {
+					sites: {
+						items: {},
+					},
+					feeds: {
+						items: {},
+					},
 				},
-				onSuccess: action,
-				onFailure: action,
-			} )
-		);
-		expect( next ).to.have.been.calledWith( action );
+			} );
+			requestUnfollow( { dispatch, getState }, action );
+			expect( dispatch ).to.have.been.calledWith(
+				http( {
+					method: 'POST',
+					path: '/read/following/mine/delete',
+					apiVersion: '1.1',
+					body: {
+						url: 'http://example.com',
+						source: 'calypso',
+					},
+					onSuccess: action,
+					onFailure: action,
+				} )
+			);
+
+			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE, notice: { status: null } } );
+		} );
 	} );
-} );
 
-describe( 'receiveUnfollow', () => {
-	it( 'should next the original action', () => {
-		const dispatch = spy();
-		const next = spy();
-		const action = unfollow( 'http://example.com' );
-		const response = {
-			subscribed: false,
-		};
-		receiveUnfollow( { dispatch }, action, next, response );
-		expect( next ).to.be.calledWith( action );
+	describe( 'receiveUnfollow', () => {
+		it( 'should dispatch an error notice and refollow when subscribed is true', () => {
+			const dispatch = spy();
+			const action = unfollow( 'http://example.com' );
+			const getState = () => ( {
+				reader: {
+					sites: {
+						items: {},
+					},
+					feeds: {
+						items: {},
+					},
+				},
+			} );
+			const response = {
+				subscribed: true,
+			};
+
+			receiveUnfollow( { dispatch, getState }, action, response );
+			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
+			expect( dispatch ).to.be.calledWith( bypassDataLayer( follow( 'http://example.com' ) ) );
+		} );
 	} );
 
-	it( 'should dispatch an error notice and refollow when subscribed is true', () => {
-		const dispatch = spy();
-		const next = spy();
-		const action = unfollow( 'http://example.com' );
-		const response = {
-			subscribed: true,
-		};
+	describe( 'followError', () => {
+		it( 'should dispatch an error notice', () => {
+			const dispatch = spy();
+			const action = unfollow( 'http://example.com' );
+			const getState = () => ( {
+				reader: {
+					sites: {
+						items: {},
+					},
+					feeds: {
+						items: {},
+					},
+				},
+			} );
 
-		receiveUnfollow( { dispatch }, action, next, response );
-		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
-	} );
-} );
-
-describe( 'followError', () => {
-	it( 'should dispatch an error notice', () => {
-		const dispatch = spy();
-		const next = spy();
-		const action = unfollow( 'http://example.com' );
-
-		unfollowError( { dispatch }, action, next );
-		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
+			unfollowError( { dispatch, getState }, action );
+			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
+			expect( dispatch ).to.be.calledWith( bypassDataLayer( follow( 'http://example.com' ) ) );
+		} );
 	} );
 } );

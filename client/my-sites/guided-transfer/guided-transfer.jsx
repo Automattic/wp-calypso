@@ -3,18 +3,20 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
 import TransferUnavailableCard from './transfer-unavailable-card';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
 const guidedTransferHosts = {
 	bluehost: {
@@ -64,6 +66,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const { siteId, siteSlug } = this.props;
+		if ( ! siteId ) {
+			return <Placeholder />;
+		}
+
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
 		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
 			return {
@@ -72,10 +79,8 @@ export default React.createClass( {
 			};
 		} );
 
-		const { siteId, siteSlug } = this.props;
-
 		return (
-			<div className="guided-transfer">
+			<Main className="guided-transfer__main site-settings">
 				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
@@ -100,7 +105,7 @@ export default React.createClass( {
 					</div>
 					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
 				}
-			</div>
+			</Main>
 		);
 	}
 } );

@@ -12,22 +12,22 @@ import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
-import { prependFilterKeys } from './theme-filters.js';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
+	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
-	isPremiumThemeAvailable,
 	isThemeActive,
 	isInstallingTheme
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
+import { prependThemeFilterKeys } from 'state/selectors';
 
 class ThemesSelection extends Component {
 	static propTypes = {
@@ -48,7 +48,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
-		isThemePurchased: PropTypes.func,
+		getPremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number
 	}
@@ -59,8 +59,8 @@ class ThemesSelection extends Component {
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
-		const { query, themes } = this.props;
-		const search_taxonomies = prependFilterKeys( query.filter );
+		const { query, themes, filterString } = this.props;
+		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
@@ -118,6 +118,9 @@ class ThemesSelection extends Component {
 					defaultOption = options.customize;
 				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
+				} else if ( options.upgradePlan ) {
+					defaultOption = options.upgradePlan;
+					secondaryOption = null;
 				} else {
 					defaultOption = options.activate;
 				}
@@ -145,7 +148,8 @@ class ThemesSelection extends Component {
 					label={ listLabel }
 					count={ themesCount }
 				/>
-				<ThemesList themes={ this.props.themes }
+				<ThemesList
+					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -153,7 +157,7 @@ class ThemesSelection extends Component {
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
-					isPurchased={ this.props.isThemePurchased }
+					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
@@ -202,7 +206,8 @@ const ConnectedThemesSelection = connect(
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
+			getPremiumThemePrice: themeId => getPremiumThemePrice( state, themeId, siteId ),
+			filterString: prependThemeFilterKeys( state, query.filter ),
 		};
 	},
 	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }

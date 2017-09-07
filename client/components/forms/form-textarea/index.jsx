@@ -1,19 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
+import React from 'react';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+const FormTextarea = ( { className, isError, isValid, children, ...otherProps } ) =>
+	<textarea
+		{ ...otherProps }
+		className={ classnames( className, 'form-textarea', {
+			'is-error': isError,
+			'is-valid': isValid,
+		} ) }
+	>
+		{ children }
+	</textarea>;
 
-	displayName: 'FormTextarea',
-
-	render: function() {
-		return (
-			<textarea { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-textarea' ) } >
-				{ this.props.children }
-			</textarea>
-		);
-	}
-} );
+export default FormTextarea;

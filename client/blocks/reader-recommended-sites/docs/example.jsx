@@ -10,11 +10,10 @@ import { map } from 'lodash';
 import ReaderRecommendedSites from '../';
 import Card from 'components/card';
 
-
 const sites = {
-	'longreads': { siteId: 70135762 },
-	'wordpress': { siteId: 3584907 },
-}
+	longreads: { siteId: 70135762 },
+	wordpress: { siteId: 3584907 },
+};
 
 export default class ReaderRecommendedSitesExample extends PureComponent {
 	static displayName = 'ReaderRecommendedSitesExample';
@@ -22,10 +21,8 @@ export default class ReaderRecommendedSitesExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				<ReaderRecommendedSites
-					sites={ [ sites.longreads, sites.wordpress ] }
-				/>
+				<ReaderRecommendedSites sites={ [ sites.longreads, sites.wordpress ] } />
 			</Card>
 		);
 	}
-};
+}

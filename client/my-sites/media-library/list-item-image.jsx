@@ -9,6 +9,8 @@ var React = require( 'react' );
 var MediaUtils = require( 'lib/media/utils' ),
 	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
 
+import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
@@ -16,13 +18,13 @@ module.exports = React.createClass( {
 		media: React.PropTypes.object,
 		scale: React.PropTypes.number,
 		maxImageWidth: React.PropTypes.number,
-		photon: React.PropTypes.bool
+		thumbnailType: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
 			maxImageWidth: 450,
-			photon: true
+			thumbnailType: MEDIA_IMAGE_PHOTON,
 		};
 	},
 
@@ -76,8 +78,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var url = MediaUtils.url( this.props.media, {
-			photon: this.props.photon,
-			maxWidth: this.props.maxImageWidth
+			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
+			maxWidth: this.props.maxImageWidth,
+			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
 		if ( ! url ) {

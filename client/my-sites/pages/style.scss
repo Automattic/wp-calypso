@@ -20,7 +20,7 @@
 	}
 }
 
-.page-list__header {
+.pages__page-list-header {
 	background: $gray-light;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 	color: $gray;
@@ -28,9 +28,10 @@
 	padding: 6px 11px;
 	text-transform: uppercase;
 
-	.noticon-time:before {
+	.gridicons-time {
 		color: $gray;
 		margin-right: 4px;
+		vertical-align: text-top;
 	}
 }
 

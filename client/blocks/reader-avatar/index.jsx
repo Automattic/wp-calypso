@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -93,8 +94,12 @@ const ReaderAvatar = ( {
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
-		<div className={ classes } onClick={ onClick }>
-			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
+		<div className={ classes } onClick={ onClick } aria-hidden="true">
+			{ siteUrl
+				? <a href={ siteUrl }>
+						{ iconElements }
+					</a>
+				: iconElements }
 		</div>
 	);
 };

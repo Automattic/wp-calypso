@@ -18,6 +18,7 @@ import {
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
+	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
 import isTracking from 'state/selectors/is-tracking';
 import config from 'config';
@@ -36,10 +37,10 @@ const pageViewServices = {
 
 const loadTrackingTool = ( trackingTool, state ) => {
 	const trackUser = ! navigator.doNotTrack;
-	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
+	const hotJarEnabled = config( 'hotjar_enabled' );
 
-	if ( trackingTool === 'Lucky Orange' && ! isTracking( state, 'Lucky Orange' ) && luckyOrangeEnabled && trackUser ) {
-		analytics.luckyOrange.addLuckyOrangeScript();
+	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) && hotJarEnabled && trackUser ) {
+		analytics.hotjar.addHotJarScript();
 	}
 };
 
@@ -55,6 +56,9 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 
 			case ANALYTICS_PAGE_VIEW_RECORD:
 				return invoke( pageViewServices, service, payload );
+
+			case ANALYTICS_TRACKS_ANONID_SET:
+				return analytics.tracks.setAnonymousUserId( payload );
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );

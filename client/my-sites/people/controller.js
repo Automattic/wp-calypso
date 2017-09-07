@@ -19,10 +19,7 @@ import InvitePeople from './invite-people';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import config from 'config';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export default {
 	redirectToTeam,
@@ -76,18 +73,7 @@ function renderPeopleList( filter, context ) {
 
 function renderInvitePeople( context ) {
 	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-
-	if ( isJetpack && ! config.isEnabled( 'jetpack/invites' ) && ! isAutomatedTransfer ) {
-		const currentLayoutFocus = getCurrentLayoutFocus( state );
-		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-		page.redirect( '/people/team/' + siteSlug );
-		analytics.tracks.recordEvent( 'calypso_invite_people_controller_redirect_to_team' );
-	}
 
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 

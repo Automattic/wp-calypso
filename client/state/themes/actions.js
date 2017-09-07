@@ -10,7 +10,6 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
-import { prependFilterKeys } from 'my-sites/themes/theme-filters';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -69,7 +68,7 @@ import {
 	normalizeWporgTheme
 } from './utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
@@ -152,7 +151,7 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
  * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		const startTime = new Date().getTime();
 
 		dispatch( {
@@ -186,7 +185,7 @@ export function requestThemes( siteId, query = {} ) {
 
 			if ( ( query.search || query.filter ) && query.page === 1 ) {
 				const responseTime = ( new Date().getTime() ) - startTime;
-				const search_taxonomies = prependFilterKeys( query.filter );
+				const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 				const search_term = search_taxonomies + ( query.search || '' );
 				const trackShowcaseSearch = recordTracksEvent(
 					'calypso_themeshowcase_search',
@@ -410,7 +409,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
-		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',

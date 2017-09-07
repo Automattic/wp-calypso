@@ -28,3 +28,13 @@ export const forgotUsername = ( context, next ) => {
 	);
 	next();
 };
+
+export const validateResetCode = ( context, next ) => {
+	context.primary = (
+		<AccountRecoveryRoot
+			basePath={ context.path }
+			firstStep={ STEPS.VALIDATE_RESET_CODE }
+		/>
+	);
+	next();
+};

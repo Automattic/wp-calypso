@@ -21,7 +21,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'name':
 			return isValidName( value, type, domainName );
 		case 'target':
-			return isValidDomain( value, type );
+			return isValidDomain( value );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':

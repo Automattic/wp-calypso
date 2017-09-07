@@ -1,70 +1,174 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	DatePicker = require( 'components/date-picker' );
+import Card from 'components/card';
+import DatePicker from 'components/date-picker';
+import EventsTooltip from 'components/date-picker/events-tooltip';
 
-/**
- * Date Picker Demo
- */
-var datePicker = React.createClass( {
-	mixins: [ PureRenderMixin ],
-	displayName: 'DatePicker',
-
-	getInitialState: function() {
-		var date = new Date();
-		date.setDate( date.getDate() + 3 );
-		date.setMilliseconds( 0 );
-		date.setSeconds( 0 );
-		date.setMinutes( 0 );
-		date.setHours( 0 );
-
-		return {
-			events: [
-				{
-					title: '1 other post scheduled',
-					date: new Date( '2015-07-15 10:30' ),
-					type: 'scheduled'
-				},
-				{
-					title: 'Happy birthday Damian',
-					date: new Date( '2015-07-18 15:00' ),
-					type: 'birthday'
-				},
-				{
-					title: 'Do not rest',
-					date: new Date( '2015-07-18 8:00' )
-				}
-			],
-			selectedDay: this.moment( date )
-		};
+const events = [
+	{
+		title: 'Today',
+		date: new Date(),
+		type: 'scheduled'
 	},
 
-	selectDay: function( date, modifiers ) {
+	{
+		title: 'Social Media - Facebook',
+		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		socialIcon: 'facebook',
+	},
+
+	{
+		title: 'Social Media - Twitter',
+		date: new Date(),
+		socialIcon: 'twitter',
+		socialIconColor: false,
+	},
+
+	{
+		title: 'Social Media - Google Plus',
+		date: new Date(),
+		socialIcon: 'google-plus',
+	},
+
+	{
+		title: 'Social Media - LinkedIn',
+		date: new Date(),
+		socialIcon: 'linkedin',
+	},
+
+	{
+		title: 'Social Media - Tumblr',
+		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		socialIcon: 'tumblr',
+	},
+
+	{
+		title: 'Social Media - Path',
+		date: new Date(),
+		socialIcon: 'path',
+		socialIconColor: false,
+	},
+
+	{
+		title: 'Social Media - Eventbrite',
+		date: new Date(),
+		socialIcon: 'eventbrite',
+		socialIconColor: false,
+	},
+
+	{
+		title: 'Gridicon - Time',
+		date: new Date(),
+		icon: 'time',
+	},
+
+	{
+		title: 'Gridicon - Offline',
+		date: new Date(),
+		icon: 'offline',
+	},
+
+	{
+		title: 'Gridicon - Shipping',
+		date: new Date(),
+		icon: 'shipping',
+	},
+
+	{
+		title: 'Tomorrow is tomorrow',
+		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		type: 'future',
+	},
+	{
+		title: 'Yesterday',
+		date: new Date( +new Date() - 60 * 60 * 24 * 1000 ),
+		type: 'past',
+	},
+	{
+		title: 'Retro birthday',
+		date: new Date( '1977-07-18' ),
+		type: 'birthday',
+		icon: 'offline',
+	}
+];
+
+/*
+ * Date Picker Demo
+ */
+class DatePickerExample extends Component {
+	state = {
+		eventsByDay: [],
+		selectedDay: null,
+		showTooltip: false,
+		tooltipContext: null,
+	};
+
+	selectDay = ( date, modifiers ) => {
 		this.setState( { selectedDay: date } );
 
 		if ( date ) {
-			console.log( date.toDate(), modifiers );
+			console.log( date.toDate(), modifiers ); // eslint-disable-line no-console
 		}
-	},
+	};
 
-	render: function() {
+	handleDayMouseEnter = ( date, modifiers, event, eventsByDay ) => {
+		this.setState( {
+			eventsByDay,
+			tooltipContext: event.target,
+			showTooltip: true,
+		} );
+	};
+
+	handleDayMouseLeave = () => {
+		this.setState( {
+			eventsByDay: [],
+			tooltipContext: null,
+			showTooltip: false,
+		} );
+	};
+
+	render() {
+		// custom tooltip title
+		const tooltipTitle = this.props.translate(
+			'%d Event',
+			'%d Events', {
+				count: this.state.eventsByDay.length,
+				args: this.state.eventsByDay.length,
+			}
+		);
+
 		return (
 			<Card style={ { width: '300px', margin: 0 } }>
 				<DatePicker
-					events={ this.state.events }
+					disabledDays={ [ { before: new Date() } ] }
+					events={ events }
 					onSelectDay={ this.selectDay }
-					selectedDay={ this.state.selectedDay }>
-				</DatePicker>
+					onDayMouseEnter={ this.handleDayMouseEnter }
+					onDayMouseLeave={ this.handleDayMouseLeave }
+					selectedDay={ this.state.selectedDay } />
+
+				<EventsTooltip
+					events={ this.state.eventsByDay }
+					context={ this.state.tooltipContext }
+					isVisible={ this.state.showTooltip }
+					title={ tooltipTitle }
+					maxEvents={ 5 }
+				/>
 			</Card>
 		);
 	}
-} );
+}
 
-module.exports = datePicker;
+const localizedDatePickerExample = localize( DatePickerExample );
+
+localizedDatePickerExample.displayName = 'DatePicker';
+
+export default localizedDatePickerExample;
+

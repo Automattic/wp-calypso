@@ -1,10 +1,12 @@
 scroll-to
-=======
+=========
+
 A utility module to smoothly scroll to a window position.
 
 ## Usage
+
 ```es6
-import scrollTo from 'lib/scroll-to'; 
+import scrollTo from 'lib/scroll-to';
 
 scrollTo( {
 	x: 400,

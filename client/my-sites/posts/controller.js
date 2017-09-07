@@ -32,6 +32,8 @@ module.exports = {
 			author = ( context.params.author === 'my' ) ? getCurrentUserId( state ) : null,
 			statusSlug = ( author ) ? context.params.status : context.params.author,
 			search = context.query.s,
+			category = context.query.category,
+			tag = context.query.tag,
 			basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;
@@ -83,11 +85,12 @@ module.exports = {
 
 		renderWithReduxStore(
 			React.createElement( Posts, {
-				context: context,
-				siteID: siteID,
-				author: author,
-				statusSlug: statusSlug,
-				search: search,
+				context,
+				author,
+				statusSlug,
+				search,
+				category,
+				tag,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					baseAnalyticsPath,

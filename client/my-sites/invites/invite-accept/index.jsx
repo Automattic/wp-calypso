@@ -25,7 +25,7 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'signup/locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 
 /**
  * Module variables
@@ -97,7 +97,7 @@ let InviteAccept = React.createClass( {
 
 	signInLink() {
 		const invite = this.state.invite;
-		let loginUrl = login( { legacy: true, redirectTo: window.location.href } );
+		let loginUrl = login( { redirectTo: window.location.href } );
 
 		if ( invite && invite.sentTo ) {
 			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
@@ -155,7 +155,7 @@ let InviteAccept = React.createClass( {
 				"We weren't able to verify that invitation.",
 				{ context: 'Message that is displayed to users when an invitation is invalid.' }
 			),
-			illustration: '/calypso/images/drake/drake-whoops.svg'
+			illustration: '/calypso/images/illustrations/whoops.svg'
 		};
 
 		if ( error.error && error.message ) {
@@ -166,14 +166,14 @@ let InviteAccept = React.createClass( {
 						title: error.message, // "You are already a (follower|member) of this site"
 						line: this.translate( 'Would you like to accept the invite with a different account?' ),
 						action: this.translate( 'Switch Accounts' ),
-						actionURL: login( { legacy: true, redirectTo: window.location.href } ),
+						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
 						action: this.translate( 'Switch Accounts' ),
-						actionURL: login( { legacy: true, redirectTo: window.location.href } ),
+						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				default:

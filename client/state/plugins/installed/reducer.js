@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import {
-	uniqBy,
 	omit,
 	findIndex,
 } from 'lodash';
@@ -11,6 +9,7 @@ import {
  * Internal dependencies
  */
 import status from './status/reducer';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -23,11 +22,8 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { pluginsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
@@ -36,11 +32,9 @@ export function isRequesting( state = {}, action ) {
 	switch ( action.type ) {
 		case PLUGINS_REQUEST:
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case PLUGINS_RECEIVE:
+		case PLUGINS_REQUEST_FAILURE:
+		case PLUGINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}
@@ -63,11 +57,8 @@ const updatePlugin = function( state, action ) {
  * Tracks all known installed plugin objects indexed by site ID.
  */
 export const plugins = createReducer( {}, {
-	[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: uniqBy( action.data, 'slug' ) };
-	},
-	[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: [] };
+	[ PLUGINS_RECEIVE ]: ( state, action ) => {
+		return { ...state, [ action.siteId ]: action.data };
 	},
 	[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
 	[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,

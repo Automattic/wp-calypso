@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import partial from 'lodash/partial';
-import isFunction from 'lodash/isFunction';
+import { isFunction, partial } from 'lodash';
 
 function wrapFnWithWarning( fn, name ) {
 	const consoleFn = ( console.error || console.log ).bind( console );
@@ -22,7 +21,7 @@ function wrapObjectFn( obj, objectName, key ) {
 }
 
 export default function() {
-	[ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ]
+	[ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find', 'includes' ]
 		.map( partial( wrapObjectFn, Array.prototype, 'Array#' ) );
 
 	[ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ]

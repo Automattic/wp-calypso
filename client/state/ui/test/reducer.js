@@ -12,30 +12,37 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import reducer, { selectedSiteId, isNotificationsOpen } from '../reducer';
+import reducer, {
+	isNotificationsOpen,
+	selectedSiteId,
+	siteSelectionInitialized,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'section',
-			'isLoading',
-			'layoutFocus',
-			'hasSidebar',
-			'isPreviewShowing',
-			'queryArguments',
-			'selectedSiteId',
-			'guidedTour',
-			'editor',
-			'dropZone',
-			'reader',
-			'olark',
-			'preview',
 			'actionLog',
+			'dropZone',
+			'editor',
+			'guidedTour',
 			'happychat',
-			'mediaModal',
-			'themeSetup',
-			'npsSurveyNotice',
+			'hasSidebar',
+			'isLoading',
 			'isNotificationsOpen',
+			'isPreviewShowing',
+			'layoutFocus',
+			'mediaModal',
+			'npsSurveyNotice',
+			'oauth2Clients',
+			'olark',
+			'postTypeList',
+			'preview',
+			'queryArguments',
+			'reader',
+			'section',
+			'selectedSiteId',
+			'siteSelectionInitialized',
+			'themeSetup',
 		] );
 	} );
 
@@ -99,6 +106,41 @@ describe( 'reducer', () => {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
 			} );
 			expect( state ).to.equal( false );
+		} );
+	} );
+
+	describe( '#siteSelectionInitialized()', () => {
+		it( 'should default to false', () => {
+			const state = siteSelectionInitialized( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be true when a site is selected', () => {
+			const state = siteSelectionInitialized( null, {
+				type: SELECTED_SITE_SET,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should be true if siteId is undefined', () => {
+			const state = siteSelectionInitialized( null, {
+				type: SELECTED_SITE_SET,
+				siteId: undefined,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should be true if siteId is null', () => {
+			const state = siteSelectionInitialized( null, {
+				type: SELECTED_SITE_SET,
+				siteId: null,
+			} );
+
+			expect( state ).to.be.true;
 		} );
 	} );
 } );

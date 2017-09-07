@@ -161,7 +161,6 @@ class StatsPostDetail extends Component {
 					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
 					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
-					loadingMessage="Beep beep boop…"
 				>
 					<Button href={ `/post/${ siteSlug }/${ postId }` }>
 						{ translate( 'Edit' ) }

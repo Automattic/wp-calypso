@@ -17,6 +17,7 @@ var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	EmptyContent = require( 'components/empty-content' ),
 	analytics = require( 'lib/analytics' ),
 	accept = require( 'lib/accept' );
+import ListEnd from 'components/list-end';
 
 let Viewers = React.createClass( {
 
@@ -158,7 +159,7 @@ let Viewers = React.createClass( {
 				<Card className={ listClass }>
 					{ viewers }
 				</Card>
-				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
+				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
 	}

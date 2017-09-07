@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="NuxWelcomeMessage__primary-content">
-				<img src="/calypso/images/drake/drake-new.svg" />
+				<img src="/calypso/images/illustrations/illustration-write.svg" />
 				<h3 className="NuxWelcomeMessage__title">{ this.translate( 'Welcome to WordPress.com!' ) }</h3>
 				<p className="NuxWelcomeMessage__intro">
 					{ this.translate(

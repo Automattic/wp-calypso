@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies

@@ -19,6 +19,8 @@ describe( 'EditGravatar', function() {
 		FilePicker,
 		Gravatar,
 		ImageEditor,
+		VerifyEmailDialog,
+		DropZone,
 		sandbox;
 	const user = {
 		email_verified: false
@@ -45,6 +47,8 @@ describe( 'EditGravatar', function() {
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;
 		ImageEditor = require( 'blocks/image-editor' );
+		VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' );
+		DropZone = require( 'components/drop-zone' ).default;
 	} );
 
 	describe( 'component rendering', () => {
@@ -79,6 +83,32 @@ describe( 'EditGravatar', function() {
 			);
 			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
 		} );
+
+		describe( 'drag and drop', () => {
+			it( 'does not contain a drop zone for unverified users', () => {
+				const wrapper = shallow(
+					<EditGravatar
+						translate={ noop }
+						user={ {
+							email_verified: false
+						} }
+					/>
+				);
+				expect( wrapper.find( DropZone ) ).to.have.length( 0 );
+			} );
+
+			it( 'contains a drop zone for verified users', () => {
+				const wrapper = shallow(
+					<EditGravatar
+						translate={ noop }
+						user={ {
+							email_verified: true
+						} }
+					/>
+				);
+				expect( wrapper.find( DropZone ) ).to.have.length( 1 );
+			} );
+		} );
 	} );
 
 	describe( 'getting a file from user', () => {
@@ -88,6 +118,7 @@ describe( 'EditGravatar', function() {
 					<EditGravatar
 						translate={ noop }
 						user={ user }
+						recordReceiveImageEvent={ noop }
 					/>
 				);
 				const files = [ {
@@ -112,6 +143,7 @@ describe( 'EditGravatar', function() {
 						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
 						translate={ noop }
 						user={ user }
+						recordReceiveImageEvent={ noop }
 					/>
 				);
 				const files = [ {
@@ -144,6 +176,7 @@ describe( 'EditGravatar', function() {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
+					recordReceiveImageEvent={ noop }
 				/>
 			);
 
@@ -166,6 +199,7 @@ describe( 'EditGravatar', function() {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
+					recordReceiveImageEvent={ noop }
 				/>
 			);
 
@@ -175,6 +209,24 @@ describe( 'EditGravatar', function() {
 			expect( wrapper.update().find( ImageEditor ).length ).to.equal( 0 );
 			expect( receiveGravatarImageFailedSpy ).to.have.been.calledOnce;
 			expect( uploadGravatarSpy.callCount ).to.equal( 0 );
+		} );
+	} );
+
+	describe( 'unverified user', () => {
+		it( 'shows email verification dialog when clicked', () => {
+			const wrapper = shallow(
+				<EditGravatar
+					translate={ noop }
+					user={ user }
+					recordClickButtonEvent={ noop }
+				/>
+			);
+			// Enzyme requires simulate() to be called directly on the element with the click handler
+			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();
+
+			clickableWrapper.simulate( 'click' );
+			wrapper.update(); // make sure the state has been updated
+			expect( wrapper.find( VerifyEmailDialog ) ).to.have.length( 1 );
 		} );
 	} );
 } );

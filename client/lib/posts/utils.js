@@ -4,7 +4,7 @@
 var url = require( 'url' ),
 	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,11 @@ import includes from 'lodash/includes';
 var postNormalizer = require( 'lib/post-normalizer' ),
 	sites = require( 'lib/sites-list' )();
 
+import { getFeaturedImageId } from './utils-ssr-ready';
+
 var utils = {
+
+	getFeaturedImageId,
 
 	getEditURL: function( post, site ) {
 		let basePath = '';
@@ -44,10 +48,14 @@ var utils = {
 
 		if ( post.site_ID ) {
 			site = sites.getSite( post.site_ID );
+			if ( ! ( site && site.options ) ) {
+				// site info is still loading, just use what we already have until it does
+				return previewUrl;
+			}
 			if ( site.options.is_mapped_domain ) {
 				previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
 			}
-			if ( site.options && site.options.frame_nonce ) {
+			if ( site.options.frame_nonce ) {
 				parsed = url.parse( previewUrl, true );
 				parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
 				delete parsed.search;
@@ -206,34 +214,6 @@ var utils = {
 		pathParts[ pathParts.length - 1 ] = '';
 
 		return pathParts.join( '/' );
-	},
-
-	/**
-	 * Returns the ID of the featured image assigned to the specified post, or
-	 * `undefined` otherwise. A utility function is useful because the format
-	 * of a post varies between the retrieve and update endpoints. When
-	 * retrieving a post, the thumbnail ID is assigned in `post_thumbnail`, but
-	 * in creating a post, the thumbnail ID is assigned to `featured_image`.
-	 *
-	 * @param  {Object} post Post object
-	 * @return {Number}      The featured image ID
-	 */
-	getFeaturedImageId: function( post ) {
-		if ( ! post ) {
-			return;
-		}
-
-		if ( 'featured_image' in post && ! /^https?:\/\//.test( post.featured_image ) ) {
-			// Return the `featured_image` property if it does not appear to be
-			// formatted as a URL
-			return post.featured_image;
-		}
-
-		if ( post.post_thumbnail ) {
-			// After the initial load from the REST API, pull the numeric ID
-			// from the thumbnail object if one exists
-			return post.post_thumbnail.ID;
-		}
 	},
 
 	/**

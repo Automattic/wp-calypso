@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +12,6 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
 import { items, requesting } from '../reducer';
 
@@ -25,9 +24,7 @@ describe( 'reducer', () => {
 
 		it( 'should insert a new image for a new tag', () => {
 			const original = {
-				banana: [
-					{ url: 'http://example.com/banana1.png' }
-				]
+				banana: [ { url: 'http://example.com/banana1.png' } ],
 			};
 			const newImage = {
 				url: 'http://example.com/apple1.png',
@@ -35,7 +32,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_TAG_IMAGES_RECEIVE,
 				images: [ newImage ],
-				tag: 'apple'
+				tag: 'apple',
 			} );
 
 			expect( state.apple[ 0 ] ).to.eql( newImage );
@@ -43,9 +40,7 @@ describe( 'reducer', () => {
 
 		it( 'should insert a new image for an existing tag', () => {
 			const original = {
-				banana: [
-					{ url: 'http://example.com/banana1.png' }
-				]
+				banana: [ { url: 'http://example.com/banana1.png' } ],
 			};
 			const newImage = {
 				url: 'http://example.com/banana2.png',
@@ -53,7 +48,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_TAG_IMAGES_RECEIVE,
 				images: [ newImage ],
-				tag: 'banana'
+				tag: 'banana',
 			} );
 
 			expect( state.banana[ 1 ] ).to.eql( newImage );
@@ -70,60 +65,40 @@ describe( 'reducer', () => {
 			const tag = 'banana';
 			const state = requesting( undefined, {
 				type: READER_TAG_IMAGES_REQUEST,
-				tag
+				tag,
 			} );
 			expect( state ).to.eql( {
-				banana: true
+				banana: true,
 			} );
 		} );
 
 		it( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
-				pineapple: false
+				pineapple: false,
 			} );
 			const state = requesting( original, {
 				type: READER_TAG_IMAGES_REQUEST,
-				tag: 'pen'
+				tag: 'pen',
 			} );
 			expect( state ).to.eql( {
 				pineapple: false,
-				pen: true
+				pen: true,
 			} );
 		} );
 
 		it( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				pineapple: false,
-				pen: true
+				pen: true,
 			} );
 			const state = requesting( original, {
 				type: READER_TAG_IMAGES_REQUEST_SUCCESS,
-				tag: 'pen'
+				tag: 'pen',
 			} );
 
 			expect( state ).to.eql( {
 				pineapple: false,
-				pen: false
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					pineapple: false,
-					pen: true
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					pineapple: false,
-					pen: true
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+				pen: false,
 			} );
 		} );
 	} );

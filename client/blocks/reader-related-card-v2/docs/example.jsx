@@ -20,18 +20,16 @@ class RelatedPostCardv2Example extends React.Component {
 			<div className="design-assets__group">
 				<Card>
 					<div className="reader-related-card-v2__blocks is-same-site">
-						<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">Longreads</a></h1>
-							<RelatedPostsFromSameSite
-								siteId={ LONGREADS_SITE_ID }
-								postId={ LONGREADS_POST_ID }
-							/>
+						<h1 className="reader-related-card-v2__heading">
+							More in <a className="reader-related-card-v2__link">Longreads</a>
+						</h1>
+						<RelatedPostsFromSameSite siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />
 					</div>
 					<div className="reader-related-card-v2__blocks is-other-site">
-						<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">WordPress.com</a></h1>
-							<RelatedPostsFromOtherSites
-								siteId={ LONGREADS_SITE_ID}
-								postId={ LONGREADS_POST_ID }
-							/>
+						<h1 className="reader-related-card-v2__heading">
+							More in <a className="reader-related-card-v2__link">WordPress.com</a>
+						</h1>
+						<RelatedPostsFromOtherSites siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />
 					</div>
 				</Card>
 			</div>

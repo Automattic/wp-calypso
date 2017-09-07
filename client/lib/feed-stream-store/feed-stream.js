@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -9,30 +10,28 @@ import {
 	get,
 	map,
 	noop,
+	some,
 	defer,
+	uniqBy,
 } from 'lodash';
 import moment from 'moment';
-import url from 'url';
 import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
-import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
-import XPostHelper from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
+import { keyToString, keysAreEqual } from './post-key';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
 export default class FeedStream {
-
 	constructor( spec ) {
 		if ( ! spec ) {
 			throw new Error( 'must supply a feed stream spec' );
@@ -76,9 +75,9 @@ export default class FeedStream {
 			poller: PollerPool.add( this, 'pollForUpdates', {
 				interval: 60 * 1000,
 				leading: false,
-				pauseWhenHidden: false
+				pauseWhenHidden: false,
 			} ),
-			startDate: spec.startDate
+			startDate: spec.startDate,
 		} );
 	}
 
@@ -97,10 +96,7 @@ export default class FeedStream {
 			return;
 		}
 
-		Dispatcher.waitFor( [ FeedPostStore.dispatchToken ] );
-
 		switch ( action.type ) {
-
 			case ActionTypes.RECEIVE_PAGE:
 				this.receivePage( action.id, action.error, action.data );
 				break;
@@ -177,8 +173,9 @@ export default class FeedStream {
 			return true;
 		}
 		const post = FeedPostStore.get( postKey );
-		return post && post._state !== 'error' && post._state !== 'pending' &&
-			post._state !== 'minimal';
+		return (
+			post && post._state !== 'error' && post._state !== 'pending' && post._state !== 'minimal'
+		);
 	}
 
 	selectNextItem() {
@@ -206,7 +203,8 @@ export default class FeedStream {
 	}
 
 	selectPrevItem() {
-		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
+		if ( this.selectedIndex < 1 ) {
+			// this also captures a selectedIndex of 0, and that's intentional
 			return;
 		}
 		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
@@ -225,7 +223,10 @@ export default class FeedStream {
 
 	selectItem( postKey, id ) {
 		const selectedIndex = findIndex( this.postKeys, postKey );
-		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
+		if (
+			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) &&
+			selectedIndex !== this.selectedIndex
+		) {
 			this.selectedIndex = selectedIndex;
 			setLastStoreId( id );
 			this.emitChange();
@@ -246,7 +247,7 @@ export default class FeedStream {
 		do {
 			const key = this.postKeys[ i ];
 			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+				date = key[ this.dateProperty ];
 			}
 			--i;
 		} while ( ! date && i !== -1 );
@@ -265,7 +266,7 @@ export default class FeedStream {
 		do {
 			const key = this.postKeys[ i ];
 			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+				date = key[ this.dateProperty ];
 			}
 			++i;
 		} while ( ! date && i < this.postKeys.length );
@@ -280,9 +281,13 @@ export default class FeedStream {
 	 * @returns {bool} true if we have a recent error
 	 */
 	hasRecentError( errorType ) {
-		const aMinuteAgo = Date.now() - ( 60 * 1000 );
+		const aMinuteAgo = Date.now() - 60 * 1000;
 		return this.errors.some( function( error ) {
-			return ( error.timestamp && error.timestamp > aMinuteAgo ) && ( ! errorType || errorType === error.error );
+			return (
+				error.timestamp &&
+				error.timestamp > aMinuteAgo &&
+				( ! errorType || errorType === error.error )
+			);
 		} );
 	}
 
@@ -315,7 +320,7 @@ export default class FeedStream {
 			orderBy: this.orderBy,
 			number: this.maxUpdates,
 			before: moment().toISOString(),
-			after: mostRecentDate
+			after: moment( mostRecentDate ).toISOString(),
 		};
 
 		this.onUpdateFetch( params );
@@ -374,45 +379,47 @@ export default class FeedStream {
 	 * @returns {array} posts - a filtered list of posts
 	 */
 	filterFollowedXPosts( posts ) {
-		return posts.filter( ( postWrapper ) => {
-			const post = this.getPostFromMetadata( postWrapper );
-			//note that the post hasn't been normalized yet.
-			if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
-				const xPostMetadata = XPostHelper.getXPostMetadata( post );
-				if ( ! xPostMetadata.postURL ) {
-					// we don't have the information to render this x-post
-					return false;
-				}
-				const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
-				// x-post sites are tagged with `+subdomain`
-				const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
-				// keep track of where we cross-posted to, so we can add
-				// this info to the original post.
-				const xPostedBy = {
-					siteURL: post.site_URL,
-					siteName: siteName
-				};
-				this.addXPost( xPostMetadata.postURL, xPostedBy );
-				// also keep track of origin comment urls, so we can roll up
-				// multiple x-posts from a single origin comment.
-				if ( xPostMetadata.commentURL ) {
-					this.addXPost( xPostMetadata.commentURL, xPostedBy );
-					return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
-				}
-				if ( ! isFollowing ) {
-					//only leave the topmost as a notice
-					return this.xPostedByURL[ xPostMetadata.postURL ].length === 1;
-				}
-				return false;
-			}
-			return true;
-		} );
+		// 		// TODO: this is broken for now -- reduxifying streams should fix this.
+		return posts;
+		// return posts.filter( postWrapper => {
+		// 	const post = this.getPostFromMetadata( postWrapper );
+		// 	//note that the post hasn't been normalized yet.
+		// 	if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
+		// 		const xPostMetadata = XPostHelper.getXPostMetadata( post );
+		// 		if ( ! xPostMetadata.postURL ) {
+		// 			// we don't have the information to render this x-post
+		// 			return false;
+		// 		}
+		// 		const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
+		// 		// x-post sites are tagged with `+subdomain`
+		// 		const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
+		// 		// keep track of where we cross-posted to, so we can add
+		// 		// this info to the original post.
+		// 		const xPostedBy = {
+		// 			siteURL: post.site_URL,
+		// 			siteName: siteName,
+		// 		};
+		// 		this.addXPost( xPostMetadata.postURL, xPostedBy );
+		// 		// also keep track of origin comment urls, so we can roll up
+		// 		// multiple x-posts from a single origin comment.
+		// 		if ( xPostMetadata.commentURL ) {
+		// 			this.addXPost( xPostMetadata.commentURL, xPostedBy );
+		// 			return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
+		// 		}
+		// 		if ( ! isFollowing ) {
+		// 			//only leave the topmost as a notice
+		// 			return this.xPostedByURL[ xPostMetadata.postURL ].length === 1;
+		// 		}
+		// 		return false;
+		// 	}
+		// 	return true;
+		// } );
 	}
 
 	filterNewPosts( posts ) {
 		const postById = this.postById;
-		posts = filter( posts, function( post ) {
-			return ! ( postById.has( post.ID ) );
+		posts = filter( posts, post => {
+			return ! postById.has( keyToString( this.keyMaker( post ) ) );
 		} );
 		posts = this.filterFollowedXPosts( posts );
 		return map( posts, this.keyMaker );
@@ -427,6 +434,7 @@ export default class FeedStream {
 
 		this._isFetchingNextPage = false;
 		this.oldestPostDate = get( data, [ 'date_range', 'after' ] );
+		this.lastPageHandle = get( data, [ 'meta', 'next_page' ], null );
 
 		if ( error ) {
 			debug( 'Error fetching posts from API:', error );
@@ -454,13 +462,13 @@ export default class FeedStream {
 		if ( postKeys.length ) {
 			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				postById.add( postKey.postId );
+				postById.add( keyToString( postKey ) );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 		}
 
 		this.page++;
-		this.emitChange( );
+		this.emitChange();
 	}
 
 	receiveUpdates( id, error, data ) {
@@ -478,9 +486,7 @@ export default class FeedStream {
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
 				this.pendingDateAfter = moment(
-					FeedPostStore.get(
-						this.keyMaker( data.posts[ data.posts.length - 1 ] )
-					)[ this.dateProperty ]
+					this.keyMaker( data.posts[ data.posts.length - 1 ] )[ this.dateProperty ]
 				);
 				this.emitChange();
 			}
@@ -494,19 +500,28 @@ export default class FeedStream {
 
 		const postById = this.postById;
 		forEach( this.pendingPostKeys, function( postKey ) {
-			postById.add( postKey.postId );
+			postById.add( keyToString( postKey ) );
 		} );
 
-		const mostRecentPostDate = moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] );
+		const mostRecentPostDate = moment( this.postKeys[ 0 ][ this.dateProperty ] );
 
-		if ( this.pendingDateAfter > mostRecentPostDate ) {
+		// if the first element in the current postKeys isn't also in the pending set,
+		// we have a possible gap
+		const firstKey = this.postKeys[ 0 ];
+		if (
+			! some( this.pendingPostKeys, pendingKey => keysAreEqual( pendingKey, firstKey ) ) &&
+			this.pendingDateAfter > mostRecentPostDate
+		) {
 			this.pendingPostKeys.push( {
 				isGap: true,
 				from: mostRecentPostDate,
-				to: this.pendingDateAfter
+				to: this.pendingDateAfter,
 			} );
 		}
-		this.postKeys = this.pendingPostKeys.concat( this.postKeys );
+
+		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey =>
+			keyToString( postKey )
+		);
 		if ( this.selectedIndex > -1 ) {
 			//we already scroll to top of content, so deselect so we don't
 			//try to scroll down again.
@@ -540,7 +555,7 @@ export default class FeedStream {
 		const beforeGap = this.postKeys.slice( 0, indexOfGap ),
 			afterGap = this.postKeys.slice( indexOfGap + 1 ),
 			gapItems = this.filterNewPosts( posts ),
-			afterGapDate = moment( FeedPostStore.get( afterGap[ 0 ] )[ this.dateProperty ] );
+			afterGapDate = moment( afterGap[ 0 ][ this.dateProperty ] );
 
 		if ( posts.length === this.gapFillCount ) {
 			if ( moment( posts[ posts.length - 1 ][ this.dateProperty ] ) > afterGapDate ) {
@@ -548,7 +563,7 @@ export default class FeedStream {
 				gapItems.push( {
 					isGap: true,
 					from: afterGapDate,
-					to: moment( posts[ posts.length - 1 ][ this.dateProperty ] )
+					to: moment( posts[ posts.length - 1 ][ this.dateProperty ] ),
 				} );
 			}
 		}

@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import noop from 'lodash/noop';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
@@ -10,7 +11,10 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { abtest } from 'lib/abtest';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlanClass, isMonthly } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
 	canPurchase,
@@ -26,14 +30,17 @@ const PlanFeaturesActions = ( {
 	translate,
 	manageHref,
 	isLandingPage,
-	planName
+	planName,
+	currentSitePlan,
+	planType,
+	recordTracksEvent: trackTracksEvent,
 } ) => {
 	let upgradeButton;
 	const classes = classNames(
 		'plan-features__actions-button',
 		{
 			'is-current': current,
-			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || ( isPopular && abtest( 'signupPlansCallToAction' ) === 'modified' )
+			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || ( isPopular )
 		},
 		className
 	);
@@ -51,14 +58,35 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
-		if ( isInSignup && ( abtest( 'signupPlansCallToAction' ) === 'modified' ) ) {
-			buttonText = 'Start with ' + planName;
+		if ( isInSignup ) {
+			buttonText = translate( 'Start with %(plan)s', {
+				args: {
+					plan: planName
+				}
+			} );
 		}
+		const isCurrentPlanMonthly = currentSitePlan && isMonthly( currentSitePlan.productSlug );
+		if ( isCurrentPlanMonthly && getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug ) ) {
+			buttonText = translate( 'Upgrade to Yearly' );
+		}
+
+		const handleUpgradeButtonClick = () => {
+			if ( isPlaceholder ) {
+				return noop();
+			}
+
+			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
+				current_plan: currentSitePlan && currentSitePlan.productSlug,
+				upgrading_to: planType,
+			} );
+
+			onUpgradeClick();
+		};
 
 		upgradeButton = (
 			<Button
 				className={ classes }
-				onClick={ isPlaceholder ? noop : onUpgradeClick }
+				onClick={ handleUpgradeButtonClick }
 				disabled={ isPlaceholder }
 			>
 				{ buttonText }
@@ -84,7 +112,20 @@ PlanFeaturesActions.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	isLandingPage: PropTypes.bool
+	isLandingPage: PropTypes.bool,
+	planType: PropTypes.string,
 };
 
-export default localize( PlanFeaturesActions );
+export default connect(
+	( state, ownProps ) => {
+		const { isInSignup } = ownProps;
+		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+		return {
+			currentSitePlan,
+		};
+	},
+	{
+		recordTracksEvent
+	}
+)( localize( PlanFeaturesActions ) );

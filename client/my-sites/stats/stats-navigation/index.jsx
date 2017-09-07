@@ -1,8 +1,12 @@
+/** @format */
 /**
  * External Dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,45 +17,56 @@ import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive, isSiteOnPaidPlan } from 'state/selectors';
 import config from 'config';
 
-const StatsNavigation = ( props ) => {
-	const { translate, section, slug, siteId, isJetpack, isWooConnect } = props;
+const StatsNavigation = props => {
+	const { translate, section, slug, siteId, isJetpack, isStore, hasPaidPlan } = props;
 	const siteFragment = slug ? '/' + slug : '';
 	const sectionTitles = {
 		insights: translate( 'Insights' ),
 		day: translate( 'Days' ),
 		week: translate( 'Weeks' ),
 		month: translate( 'Months' ),
-		year: translate( 'Years' )
+		year: translate( 'Years' ),
+		activity: translate( 'Activity' ),
 	};
+
 	let statsControl;
 
-	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		if ( isWooConnect ) {
-			statsControl = (
-				<SegmentedControl
-					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-					className="stats-navigation__control"
-					initialSelected="site"
-					options={ [
-						{
-							value: 'site',
-							label: translate( 'Site' )
-						},
-						{
-							value: 'store',
-							label: translate( 'Store' ),
-							path: `/store/stats/orders/${ section }/${ slug }` }
-					] }
-				/>
-			);
-		}
+	if ( isStore ) {
+		const validSection = includes( [ 'day', 'week', 'month', 'year' ], section ) ? section : 'day';
+		statsControl = (
+			<SegmentedControl
+				primary
+				className="stats-navigation__control is-store"
+				initialSelected="site"
+				options={ [
+					{
+						value: 'site',
+						label: translate( 'Site' ),
+					},
+					{
+						value: 'store',
+						label: translate( 'Store' ),
+						path: `/store/stats/orders/${ validSection }/${ slug }`,
+					},
+				] }
+			/>
+		);
 	}
+
+	const ActivityTab =
+		config.isEnabled( 'jetpack/activity-log' ) && isJetpack && hasPaidPlan
+			? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+					{ sectionTitles.activity }
+				</NavItem>
+			: null;
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
-			{ isJetpack && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+			{ isJetpack && siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<NavTabs label={ translate( 'Stats' ) }>
 				<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
 					{ sectionTitles.insights }
@@ -68,6 +83,7 @@ const StatsNavigation = ( props ) => {
 				<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
 					{ sectionTitles.year }
 				</NavItem>
+				{ ActivityTab }
 			</NavTabs>
 			{ statsControl }
 			<FollowersCount />
@@ -77,10 +93,20 @@ const StatsNavigation = ( props ) => {
 
 StatsNavigation.propTypes = {
 	isJetpack: PropTypes.bool,
-	isWooConnect: PropTypes.bool,
+	isStore: PropTypes.bool,
 	section: PropTypes.string.isRequired,
 	slug: PropTypes.string,
 	siteId: PropTypes.number,
 };
 
-export default localize( StatsNavigation );
+const localized = localize( StatsNavigation );
+
+export default connect( ( state, { siteId } ) => {
+	const isJetpack = isJetpackSite( state, siteId );
+	return {
+		hasPaidPlan: isSiteOnPaidPlan( state, siteId ),
+		isJetpack,
+		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+		siteId,
+	};
+} )( localized );

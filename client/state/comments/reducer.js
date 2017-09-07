@@ -1,8 +1,21 @@
+/** @format */
 /**
  * External dependencies
  */
-import Immutable from 'immutable';
-import { combineReducers } from 'redux';
+import {
+	isUndefined,
+	orderBy,
+	has,
+	map,
+	unionBy,
+	reject,
+	isEqual,
+	get,
+	zipObject,
+	includes,
+	isArray,
+	values,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,189 +24,307 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_ERROR,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
-	COMMENTS_REQUEST,
-	COMMENTS_REQUEST_SUCCESS,
-	COMMENTS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
+	COMMENTS_TREE_SITE_ADD,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
-	getCommentParentKey,
-	updateExistingIn
-} from './utils';
-import {
-	PLACEHOLDER_STATE
+	PLACEHOLDER_STATE,
+	NUMBER_OF_COMMENTS_PER_FETCH,
+	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
+import trees from './trees/reducer';
 
-/***
- * Creates a function that updates like count
- * @param {Boolean} like true to like, false to unlike
- * @returns {Function} function that updates like count for comment
- */
-function getLikeSetter( { like = true, likeCount } ) {
-	return ( comment ) => comment.set( 'i_like', like )
-								.update( 'like_count', ( count ) => {
-									if ( typeof likeCount !== 'undefined' ) {
-										return likeCount;
-									}
+const getCommentDate = ( { date } ) => new Date( date );
 
-									return like ? count + 1 : count - 1;
-								} );
-}
+export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
 
-/***
- * Updates a specific state in the general state
- * @param {Immutable.Map} state general state for all commentTargetId
- * @param {Object} action action object
- * @param {Number} action.siteId site identifier
- * @param {Number} action.postId post identifier
- * @param {Function|Object} updaterOrValue an updater function or a value
- * @returns {Immutable.Map} new state
- */
-function updateSpecificState( state, action, updaterOrValue ) {
-	const id = getCommentParentKey( action.siteId, action.postId );
+export const deconstructStateKey = key => {
+	const [ siteId, postId ] = key.split( '-' );
+	return { siteId: +siteId, postId: +postId };
+};
 
-	if ( typeof updaterOrValue === 'function' ) {
-		return state.update( id, ( value ) => updaterOrValue( value ) );
+const isCommentManagementEdit = newProperties =>
+	has( newProperties, 'commentContent' ) &&
+	has( newProperties, 'authorDisplayName' ) &&
+	has( newProperties, 'authorUrl' );
+
+const updateComment = ( commentId, newProperties ) => comment => {
+	if ( comment.ID !== commentId ) {
+		return comment;
 	}
+	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
 
-	return state.set( id, updaterOrValue );
-}
+	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
+	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
+	// This ternary matches and formats the updated fields sent by Comment Management's Edit form,
+	// in order to optimistically update the state without temporary loss of information.
+	const newComment = isCommentManagementEdit( newProperties )
+		? {
+				...comment,
+				author: {
+					...comment.author,
+					name: newProperties.authorDisplayName,
+					url: newProperties.authorUrl,
+				},
+				content: newProperties.commentContent,
+			}
+		: { ...comment, ...newProperties };
+
+	return {
+		...newComment,
+		...( updateLikeCount && {
+			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1,
+		} ),
+	};
+};
 
 /***
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
- * @param {Immutable.Map} state redux state
+ * @param {Object} state redux state
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function items( state = Immutable.Map(), action ) {
-	switch ( action.type ) {
+export function items( state = {}, action ) {
+	const { type, siteId, postId, commentId, like_count } = action;
+
+	// cannot construct stateKey without both
+	if ( ! siteId || ! postId ) {
+		return state;
+	}
+
+	const stateKey = getStateKey( siteId, postId );
+
+	switch ( type ) {
 		case COMMENTS_CHANGE_STATUS:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
-				updateExistingIn(
-					comments,
-					comment => comment.get( 'ID' ) === action.commentId,
-					comment => comment.set( 'status', action.status )
-				);
-			} );
+			const { status } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
+			};
 		case COMMENTS_EDIT:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
-				updateExistingIn(
-					comments,
-					comment => comment.get( 'ID' ) === action.commentId,
-					comment => comment.set( 'content', action.content )
-				);
-			} );
+			const { comment } = action;
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
+			};
 		case COMMENTS_RECEIVE:
-			// create set of ids for faster lookup for filter later
-			const newIds = Immutable.Set( action.comments.map( comment => comment.ID ) );
-
-			// we prefer freshly retrieved data, so throw away old data
-			return updateSpecificState( state, action, function( comments = Immutable.List() ) {
-				let newComments = comments.filter( ( comment ) => ! newIds.has( comment.get( 'ID' ) ) )
-											.concat( Immutable.fromJS( action.comments ) );
-
-				if ( ! action.skipSort ) {
-					newComments = newComments.sort( ( a, b ) => new Date( b.get( 'date' ) ) - new Date( a.get( 'date' ) ) );
-				}
-
-				return newComments;
-			} );
-
-		case COMMENTS_REMOVE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				comments.filter( ( comment ) => comment.get( 'ID' ) !== action.commentId )
-			);
+			const { skipSort, comments } = action;
+			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
+			};
+		case COMMENTS_DELETE:
+			return {
+				...state,
+				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } ),
+			};
 		case COMMENTS_LIKE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: true } )
-				)
-			);
-		case COMMENTS_LIKE_UPDATE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: action.iLike, likeCount: action.likeCount } )
-				)
-			);
+			return {
+				...state,
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, { i_like: true, like_count } )
+				),
+			};
 		case COMMENTS_UNLIKE:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					getLikeSetter( { like: false } )
-				)
-			);
+			return {
+				...state,
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, { i_like: false, like_count } )
+				),
+			};
 		case COMMENTS_ERROR:
-			return updateSpecificState( state, action, ( comments = Immutable.List() ) =>
-				updateExistingIn( comments,
-					( comment ) => comment.get( 'ID' ) === action.commentId,
-					( comment ) => comment.set( 'placeholderState', PLACEHOLDER_STATE.ERROR )
-										.set( 'placeholderError', action.error )
-				)
-			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
+			const { error } = action;
+			return {
+				...state,
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, {
+						placeholderState: PLACEHOLDER_STATE.ERROR,
+						placeholderError: error,
+					} )
+				),
+			};
 	}
 
 	return state;
 }
+
+export const fetchStatusInitialState = {
+	before: true,
+	after: true,
+	hasReceivedBefore: false,
+	hasReceivedAfter: false,
+};
+
+const isValidExpansionsAction = action => {
+	const { siteId, postId, commentIds, displayType } = action.payload;
+	return (
+		siteId &&
+		postId &&
+		isArray( commentIds ) &&
+		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+	);
+};
+
+const expansionValue = type => {
+	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
+	switch ( type ) {
+		case full:
+			return 3;
+		case excerpt:
+			return 2;
+		case singleLine:
+			return 1;
+	}
+};
+
+export const expansions = createReducer(
+	{},
+	{
+		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId, commentIds, displayType } = action.payload;
+
+			if ( ! isValidExpansionsAction( action ) ) {
+				return state;
+			}
+
+			const stateKey = getStateKey( siteId, postId );
+			const currentExpansions = state[ stateKey ] || {};
+
+			const newDisplayTypes = map( commentIds, id => {
+				if (
+					! has( currentExpansions, id ) ||
+					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
+				) {
+					return displayType;
+				}
+				return currentExpansions[ id ];
+			} );
+			// generate object of { [ commentId ]: displayType }
+			const newVal = zipObject( commentIds, newDisplayTypes );
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
+			};
+		},
+	}
+);
 
 /***
- * Stores information regarding requests status per requestId
- * @param {Immutable.Map} state redux state
+ * Stores whether or not there are more comments, and in which directions, for a particular post.
+ * Also includes whether or not a before/after has ever been queried
+ * Example state:
+ *  {
+ *     [ siteId-postId ]: {
+ *       before: bool,
+ *       after: bool,
+ *       hasReceivedBefore: bool,
+ *       hasReceivedAfter: bool,
+ *     }
+ *  }
+ *
+ * @param {Object} state redux state
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function requests( state = Immutable.Map(), action ) {
-	switch ( action.type ) {
-		case COMMENTS_REQUEST:
-		case COMMENTS_REQUEST_SUCCESS:
-		case COMMENTS_REQUEST_FAILURE:
-			return updateSpecificState(
-				state,
-				action,
-				( requestStatuses = Immutable.Map() ) => requestStatuses.set( action.requestId, action.type )
-			);
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
-	}
+export const fetchStatus = createReducer(
+	{},
+	{
+		[ COMMENTS_RECEIVE ]: ( state, action ) => {
+			const { siteId, postId, direction, commentById } = action;
+			const stateKey = getStateKey( siteId, postId );
 
-	return state;
-}
+			// we can't deduce anything from a commentById fetch.
+			if ( commentById ) {
+				return state;
+			}
+
+			const hasReceivedDirection =
+				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
+
+			const nextState = {
+				...get( state, stateKey, fetchStatusInitialState ),
+				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
+				[ hasReceivedDirection ]: true,
+			};
+
+			return isEqual( state[ stateKey ], nextState )
+				? state
+				: { ...state, [ stateKey ]: nextState };
+		},
+	}
+);
 
 /***
  * Stores latest comments count for post we've seen from the server
- * @param {Immutable.Map} state redux state, prev totalCommentsCount
+ * @param {Object} state redux state, prev totalCommentsCount
  * @param {Object} action redux action
- * @returns {Immutable.Map} new redux state
+ * @returns {Object} new redux state
  */
-export function totalCommentsCount( state = Immutable.Map(), action ) {
-	switch ( action.type ) {
-		case COMMENTS_COUNT_RECEIVE:
-			return updateSpecificState( state, action, action.totalCommentsCount );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return Immutable.Map();
+export const totalCommentsCount = createReducer(
+	{},
+	{
+		[ COMMENTS_COUNT_RECEIVE ]: ( state, action ) => {
+			const key = getStateKey( action.siteId, action.postId );
+			return { ...state, [ key ]: action.totalCommentsCount };
+		},
+		[ COMMENTS_COUNT_INCREMENT ]: ( state, action ) => {
+			const key = getStateKey( action.siteId, action.postId );
+			return { ...state, [ key ]: state[ key ] + 1 };
+		},
 	}
+);
 
+/**
+ * Houses errors by `siteId-commentId`
+ */
+export const errors = createReducer(
+	{},
+	{
+		[ COMMENTS_ERROR ]: ( state, action ) => {
+			const key = `${ action.siteId }-${ action.commentId }`;
+
+			if ( state[ key ] ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ key ]: { error: true },
+			};
+		},
+	}
+);
+
+export const treesInitializedReducer = ( state = {}, action ) => {
+	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
+		return true;
+	}
 	return state;
-}
+};
+
+export const treesInitialized = keyedReducer(
+	'siteId',
+	keyedReducer( 'status', treesInitializedReducer )
+);
 
 export default combineReducers( {
 	items,
-	requests,
-	totalCommentsCount
+	fetchStatus,
+	errors,
+	expansions,
+	totalCommentsCount,
+	trees,
+	treesInitialized,
 } );

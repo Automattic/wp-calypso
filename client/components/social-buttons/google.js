@@ -1,32 +1,59 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import GoogleIcon from 'components/social-icons/google';
+import Popover from 'components/popover';
+import { preventWidows } from 'lib/formatting';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { isFormDisabled } from 'state/login/selectors';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
+		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
 		responseHandler: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired,
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/plus.login',
+		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
+		onClick: noop,
+	};
+
+	state = {
+		error: '',
+		showError: false,
+		errorRef: null,
+		isDisabled: true,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.initialized = null;
+
 		this.handleClick = this.handleClick.bind( this );
+		this.showError = this.showError.bind( this );
+		this.hideError = this.hideError.bind( this );
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.initialize();
 	}
 
@@ -45,6 +72,10 @@ class GoogleLoginButton extends Component {
 			return this.initialized;
 		}
 
+		this.setState( { error: '' } );
+
+		const { translate } = this.props;
+
 		this.initialized = this.loadDependency()
 			.then( gapi => new Promise( resolve => gapi.load( 'client:auth2', resolve ) ).then( () => gapi ) )
 			.then( gapi => gapi.client.init( {
@@ -52,9 +83,17 @@ class GoogleLoginButton extends Component {
 				scope: this.props.scope,
 				fetch_basic_profile: this.props.fetchBasicProfile,
 			} )
-			.then( () => gapi ) // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+			.then( () => {
+				this.setState( { isDisabled: false } );
+				return gapi; // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+			} )
 			).catch( error => {
 				this.initialized = null;
+
+				if ( 'idpiframe_initialization_failed' === error.error ) {
+					// This error is caused by 3rd party cookies being blocked.
+					this.setState( { error: translate( 'Please enable "third-party cookies" to connect your Google account.' ) } );
+				}
 
 				return Promise.reject( error );
 			} );
@@ -65,36 +104,110 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
+		this.props.onClick( event );
+
+		if ( this.state.error ) {
+			this.setState( {
+				showError: ! this.state.showError,
+				errorRef: event.currentTarget,
+			} );
+
+			return;
+		}
+
 		const { responseHandler } = this.props;
 
-		// Handle click async if the library is not loaded yet
-		// the popup might be blocked by the browser in that case
-		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn().then( responseHandler ) );
+		// Options are documented here:
+		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
+		window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } )
+			.then(
+				responseHandler,
+				error => {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: error.error
+					} );
+				}
+			);
+	}
+
+	showError( event ) {
+		if ( ! this.state.error ) {
+			return;
+		}
+
+		this.setState( {
+			showError: true,
+			errorRef: event.currentTarget,
+		} );
+	}
+
+	hideError() {
+		this.setState( { showError: false } );
 	}
 
 	render() {
-		return (
-			<button className="button" onClick={ this.handleClick }>
-				<svg className="social-buttons__logo" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-					{ /* eslint-disable max-len */ }
-					<g fill="none" fillRule="evenodd">
-						<path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 0 1-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#4285F4" />
-						<path d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.595-4.123H1.064v2.59A9.996 9.996 0 0 0 10 20z" fill="#34A853" />
-						<path d="M4.405 11.9c-.2-.6-.314-1.24-.314-1.9 0-.66.114-1.3.314-1.9V5.51H1.064A9.996 9.996 0 0 0 0 10c0 1.614.386 3.14 1.064 4.49l3.34-2.59z" fill="#FBBC05" />
-						<path d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.192 5.736 7.396 3.977 10 3.977z" fill="#EA4335" />
-					{ /* eslint-enable max-len */ }
-					</g>
-				</svg>
+		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled || this.state.error );
 
-				<span className="social-buttons__service-name">
-					{ this.props.translate( 'Continue with %(service)s', {
-						args: { service: 'Google' },
-						comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
-					} ) }
-				</span>
-			</button>
+		const { children } = this.props;
+		let customButton = null;
+
+		if ( children ) {
+			const childProps = {
+				className: classNames( { disabled: isDisabled } ),
+				onClick: this.handleClick,
+				onMouseOver: this.showError,
+				onMouseOut: this.hideError,
+			};
+
+			customButton = React.cloneElement( children, childProps );
+		}
+
+		return (
+			<div className="social-buttons__button-container">
+				{
+					customButton
+						? customButton
+						: <button
+							className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+							onMouseOver={ this.showError }
+							onMouseOut={ this.hideError }
+							onClick={ this.handleClick }
+						>
+							<GoogleIcon isDisabled={ isDisabled } />
+
+							<span className="social-buttons__service-name">
+								{ this.props.translate( 'Continue with %(service)s', {
+									args: { service: 'Google' },
+									comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
+								} ) }
+							</span>
+						</button>
+				}
+				<Popover
+					id="social-buttons__error"
+					className="social-buttons__error"
+					isVisible={ this.state.showError }
+					onClose={ this.hideError }
+					position="top"
+					context={ this.state.errorRef }
+				>
+					{ preventWidows( this.state.error ) }
+				</Popover>
+			</div>
 		);
 	}
 }
 
-export default localize( GoogleLoginButton );
+export default connect(
+	( state ) => ( {
+		isFormDisabled: isFormDisabled( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( GoogleLoginButton ) );

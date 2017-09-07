@@ -90,7 +90,9 @@
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented {
+	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
+	.indented-form-field,
+	.indented-form-field + p.form-setting-explanation.is-indented {
 		margin-left: 36px;
 	}
 
@@ -127,7 +129,7 @@
 	}
 
 	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
-		min-width: 60px;
+		min-width: 80px;
 		text-align: center;
 	}
 
@@ -192,12 +194,27 @@
 			margin-bottom: 8px;
 		}
 	}
+
+	.card {
+		&.is-placeholder div {
+			@include placeholder;
+		}
+	}
+
+	.site.is-compact .site__content {
+		padding: 0;
+	}
+
+	.composing__publish-confirmation .form-toggle__label-content {
+		font-weight: 600;
+	}
 }
 
 .site-settings__general-settings,
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
-.site-settings__security-settings {
+.site-settings__security-settings,
+.manage-connection {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -282,12 +299,16 @@
 .site-settings__footer-credit-change {
 	width: 175px;
 	text-align:center;
+	margin-left: 24px;
 }
 
 .site-settings__footer-credit-explanation {
 	display:flex;
 	flex-direction: row;
 	justify-content: space-between;
+}
+.site-settings__footer-credit-explanation p {
+	margin: 0
 }
 
 
@@ -316,8 +337,13 @@
 	border-width: 1px 0;
 
 	&.is-top-only {
-		border-bottom: 0px;
-		padding-bottom: 0px;
+		border-bottom: 0;
+		padding-bottom: 0;
+	}
+
+	&.is-bottom-only {
+		border-top: 0;
+		padding-top: 0;
 	}
 }
 
@@ -334,10 +360,17 @@
 	.foldable-card__header {
 		padding: 24px;
 
-		.gridicons-checkmark {
+		.gridicons-checkmark, .gridicons-notice-outline {
 			margin-right: 4px;
 			vertical-align: bottom;
+		}
+
+		.gridicons-checkmark {
 			color: $alert-green;
+		}
+
+		.gridicons-notice-outline {
+			color: $alert-red;
 		}
 	}
 
@@ -355,7 +388,8 @@
 	}
 
 	.composing__module-settings .site-settings__info-link-container,
-	.protect__module-settings .site-settings__info-link-container {
+	.protect__module-settings .site-settings__info-link-container,
+	.spam-filtering__settings .site-settings__info-link-container {
 		margin-right: -36px;
 		height: 0;
 	}
@@ -386,11 +420,39 @@
 	margin-top: 3px;
 }
 
-.site-settings__foldable-card + .card.is-compact:last-child {
+.site-settings__foldable-card + .card.is-compact:last-child,
+.site-settings__card + .card.is-compact:last-child {
 	margin-top: -16px;
 	margin-bottom: 16px;
 }
 
 .site-settings__media-settings > .banner {
 	margin-top: -16px;
+}
+
+.site-settings__general-jetpack {
+	margin-bottom: 16px;
+}
+
+.site-settings__placeholder-item {
+	@include placeholder;
+
+	& + & {
+		margin-top: 24px;
+	}
+}
+
+.site-settings__jetpack-dev-mode-notice .notice {
+	animation: none;
+}
+
+.site-settings__videopress-storage {
+	.plan-storage__bar {
+		margin-top: 24px;
+	}
+
+	// Necessary additional specificity
+	.site-settings__videopress-storage-used.form-setting-explanation {
+		margin-left: 36px;
+	}
 }

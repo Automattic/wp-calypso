@@ -10,6 +10,10 @@ import {
 	JETPACK_DISCONNECT_REQUEST,
 	JETPACK_DISCONNECT_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_REQUEST_SUCCESS,
+	JETPACK_USER_CONNECTION_DATA_RECEIVE,
+	JETPACK_USER_CONNECTION_DATA_REQUEST,
+	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
+	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 } from 'state/action-types';
 import wp from 'lib/wp';
 
@@ -34,6 +38,34 @@ export const requestJetpackConnectionStatus = ( siteId ) => {
 			} ).catch( error => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
+					siteId,
+					error: error.message
+				} );
+			} );
+	};
+};
+
+export const requestJetpackUserConnectionData = ( siteId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_USER_CONNECTION_DATA_REQUEST,
+			siteId
+		} );
+
+		return wp.undocumented().getJetpackUserConnectionData( siteId )
+			.then( ( response ) => {
+				dispatch( {
+					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
+					siteId,
+					data: response.data.currentUser
+				} );
+				dispatch( {
+					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
+					siteId
+				} );
+			} ).catch( error => {
+				dispatch( {
+					type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 					siteId,
 					error: error.message
 				} );

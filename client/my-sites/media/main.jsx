@@ -13,24 +13,29 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Dialog from 'components/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
+import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
+import searchUrl from 'lib/search-url';
 
 class Media extends Component {
 
 	static propTypes = {
 		selectedSite: PropTypes.object,
 		filter: PropTypes.string,
-		search: PropTypes.string
+		search: PropTypes.string,
+		source: PropTypes.string,
 	};
 
 	state = {
-		editedItem: null,
 		currentDetail: null,
-		selectedImages: [],
+		editedImageItem: null,
+		editedVideoItem: null,
+		selectedItems: [],
+		source: '',
 	};
 
 	componentDidMount() {
@@ -56,7 +61,7 @@ class Media extends Component {
 	openDetailsModalForASingleImage = ( image ) => {
 		this.setState( {
 			currentDetail: 0,
-			selectedImages: [ image ],
+			selectedItems: [ image ],
 		} );
 	};
 
@@ -66,21 +71,25 @@ class Media extends Component {
 
 		this.setState( {
 			currentDetail: 0,
-			selectedImages: selected
+			selectedItems: selected
 		} );
 	};
 
 	closeDetailsModal = () => {
-		this.setState( { editedItem: null, currentDetail: null, selectedImages: [] } );
+		this.setState( { editedImageItem: null, editedVideoItem: null, currentDetail: null, selectedItems: [] } );
 	};
 
 	editImage = () => {
-		this.setState( { currentDetail: null, editedItem: this.state.currentDetail } );
+		this.setState( { currentDetail: null, editedImageItem: this.state.currentDetail } );
+	};
+
+	editVideo = () => {
+		this.setState( { currentDetail: null, editedVideoItem: this.state.currentDetail } );
 	};
 
 	onImageEditorCancel = ( imageEditorProps ) => {
 		const {	resetAllImageEditorState } = imageEditorProps;
-		this.setState( { currentDetail: this.state.editedItem, editedItem: null } );
+		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
 		resetAllImageEditorState();
 	};
@@ -112,12 +121,12 @@ class Media extends Component {
 
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
-		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 	};
 
 	getModalButtons() {
-		// do not render buttons if the media image editor is opened
-		if ( this.state.editedItem !== null ) {
+		// do not render buttons if the media image or video editor is opened
+		if ( ( this.state.editedImageItem !== null ) || ( this.state.editedVideoItem !== null ) ) {
 			return null;
 		}
 
@@ -142,12 +151,36 @@ class Media extends Component {
 		];
 	}
 
+	onVideoEditorCancel = () => {
+		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
+	};
+
+	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
+		const site = this.props.selectedSite;
+
+		// Photon does not support URLs with a querystring component.
+		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
+
+		if ( site ) {
+			MediaActions.edit( site.ID, {
+				ID,
+				thumbnails: {
+					fmt_hd: urlBeforeQuery,
+					fmt_dvd: urlBeforeQuery,
+					fmt_std: urlBeforeQuery,
+				}
+			} );
+		}
+
+		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+	};
+
 	restoreOriginalMedia = ( siteId, item ) => {
 		if ( ! siteId || ! item ) {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
-		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 	};
 
 	setDetailSelectedIndex = ( index ) => {
@@ -162,12 +195,16 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const site = this.props.selectedSite;
-		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const { selectedSite, translate } = this.props;
+		const selected = MediaLibrarySelectedStore.getAll( selectedSite.ID );
 		const selectedCount = selected.length;
-		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+		const confirmMessage = translate(
+			'Are you sure you want to delete this item? ' +
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.',
+			'Are you sure you want to delete these items? ' +
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.',
 			{ count: selectedCount }
 		);
 
@@ -180,11 +217,23 @@ class Media extends Component {
 			if ( callback ) {
 				callback();
 			}
+		}, translate( 'Delete' ), null, {
+			isScary: true
 		} );
 	}
 
 	handleDeleteMediaEvent = () => {
 		this.deleteMedia();
+	};
+
+	handleSourceChange = ( source, cb ) => {
+		if ( this.props.search ) {
+			// Before we change the source reset the search value - it is confusing to jump between sources while searching
+			searchUrl( '', this.props.search );
+		}
+
+		MediaActions.sourceChanged( this.props.selectedSite.ID );
+		this.setState( { source }, cb );
 	};
 
 	deleteMediaByItemDetail = () => {
@@ -198,8 +247,8 @@ class Media extends Component {
 			return;
 		}
 
-		const selected = this.state.selectedImages && this.state.selectedImages.length
-			? this.state.selectedImages
+		const selected = this.state.selectedItems && this.state.selectedItems.length
+			? this.state.selectedItems
 			: MediaLibrarySelectedStore.getAll( site.ID );
 
 		MediaActions.delete( site.ID, selected );
@@ -210,7 +259,7 @@ class Media extends Component {
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ ( this.state.editedItem !== null || this.state.currentDetail !== null ) &&
+				{ ( this.state.editedImageItem !== null || this.state.editedVideoItem !== null || this.state.currentDetail !== null ) &&
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal media__item-dialog"
@@ -220,20 +269,28 @@ class Media extends Component {
 					{ this.state.currentDetail !== null &&
 						<EditorMediaModalDetail
 							site={ site }
-							items={ this.state.selectedImages }
+							items={ this.state.selectedItems }
 							selectedIndex={ this.state.currentDetail }
 							onReturnToList={ this.closeDetailsModal }
-							onEditItem={ this.editImage }
+							onEditImageItem={ this.editImage }
+							onEditVideoItem={ this.editVideo }
 							onRestoreItem={ this.restoreOriginalMedia }
 							onSelectedIndexChange={ this.setDetailSelectedIndex }
 						/>
 					}
-					{ this.state.editedItem !== null &&
+					{ this.state.editedImageItem !== null &&
 						<ImageEditor
 							siteId={ site && site.ID }
-							media={ this.state.selectedImages[ this.state.editedItem ] }
+							media={ this.state.selectedItems[ this.state.editedImageItem ] }
 							onDone={ this.onImageEditorDone }
 							onCancel={ this.onImageEditorCancel }
+						/>
+					}
+					{ this.state.editedVideoItem !== null &&
+						<VideoEditor
+							media={ this.state.selectedItems[ this.state.editedVideoItem ] }
+							onCancel={ this.onVideoEditorCancel }
+							onUpdatePoster={ this.onVideoEditorUpdatePoster }
 						/>
 					}
 					</Dialog>
@@ -247,9 +304,11 @@ class Media extends Component {
 							site={ site }
 							single={ false }
 							filter={ this.props.filter }
+							source={ this.state.source }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.handleDeleteMediaEvent }
+							onSourceChange={ this.handleSourceChange }
 							modal={ false }
 							containerWidth={ this.state.containerWidth } />
 					</MediaLibrarySelectedData>

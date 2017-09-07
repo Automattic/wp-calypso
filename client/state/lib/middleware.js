@@ -16,6 +16,8 @@ import {
 	SITES_RECEIVE,
 	SITES_UPDATE,
 	SITES_ONCE_CHANGED,
+	SELECTED_SITE_SUBSCRIBE,
+	SELECTED_SITE_UNSUBSCRIBE
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
@@ -47,6 +49,43 @@ if ( desktopEnabled ) {
 }
 
 /*
+ * Object holding functions that will be called once selected site changes.
+ */
+let selectedSiteChangeListeners = [];
+
+/**
+ * Calls the listeners to selected site.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {number} siteId     - the selected site id
+ */
+const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
+	selectedSiteChangeListeners.forEach( listener => listener( siteId ) );
+};
+
+/**
+ * Registers a listener function to be fired once selected site changes.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ */
+const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
+	debug( 'receiveSelectedSitesChangeListener' );
+	selectedSiteChangeListeners.push( action.listener );
+};
+
+/**
+ * Removes a selectedSite listener.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ */
+const removeSelectedSitesChangeListener = ( dispatch, action ) => {
+	debug( 'removeSelectedSitesChangeListener' );
+	selectedSiteChangeListeners = selectedSiteChangeListeners.filter( listener => listener !== action.listener );
+};
+
+/*
  * Queue of functions waiting to be called once (and only once) when sites data
  * arrives (SITES_RECEIVE). Aims to reduce dependencies on ´lib/sites-list` by
  * providing an alternative to `sites.once()`.
@@ -60,7 +99,11 @@ let sitesListeners = [];
  * @param {number} siteId     - the selected site id
  */
 const updateSelectedSiteIdForSitesList = ( dispatch, { siteId } ) => {
-	sites.select( siteId );
+	if ( siteId ) {
+		sites.select( siteId );
+	} else {
+		sites.selectAll();
+	}
 };
 
 /**
@@ -163,6 +206,7 @@ const handler = ( dispatch, action, getState ) => {
 			//let this fall through
 			updateSelectedSiteIdForSitesList( dispatch, action );
 			updateSelectedSiteForCart( dispatch, action );
+			updateSelectedSiteIdForSubscribers( dispatch, action );
 
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
@@ -183,6 +227,12 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SITES_ONCE_CHANGED:
 			receiveSitesChangeListener( dispatch, action );
+			return;
+		case SELECTED_SITE_SUBSCRIBE:
+			receiveSelectedSitesChangeListener( dispatch, action );
+			return;
+		case SELECTED_SITE_UNSUBSCRIBE:
+			removeSelectedSitesChangeListener( dispatch, action );
 			return;
 	}
 };

@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import noop from 'lodash/noop';
+import { noop, uniq } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -13,7 +13,6 @@ import page from 'page';
 import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
-import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
 module.exports = React.createClass( {

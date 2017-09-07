@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { stubTrue, stubFalse } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
@@ -21,6 +21,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
 const options = combineReducers( {
@@ -83,6 +86,24 @@ const validate = combineReducers( {
 	} ),
 } );
 
+const resetPassword = combineReducers( {
+	isRequesting: createReducer( false, {
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: stubTrue,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS ]: stubFalse,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR ]: stubFalse,
+	} ),
+	succeeded: createReducer( false, {
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: stubFalse,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS ]: stubTrue,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR ]: stubFalse,
+	} ),
+	error: createReducer( null, {
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: () => null,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS ]: () => null,
+		[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR ]: ( state, { error } ) => error,
+	} ),
+} );
+
 export default combineReducers( {
 	options,
 	userData,
@@ -90,4 +111,5 @@ export default combineReducers( {
 	requestReset,
 	key,
 	validate,
+	resetPassword,
 } );

@@ -179,6 +179,13 @@
 		}
 	}
 
+	&[ disabled ] {
+		color: lighten( $gray, 30% );
+		.gridicon {
+			color: lighten( $gray, 30% );
+		}
+	}
+
 	&[ disabled ]:hover,
 	&[ disabled ]:focus {
 		background: transparent;

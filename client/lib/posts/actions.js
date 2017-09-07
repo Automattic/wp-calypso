@@ -197,7 +197,7 @@ PostActions = {
 				callback( error, data );
 			} );
 		} else {
-			PostActions.saveEdited( null, callback, { recordSaveEvent: false } );
+			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false } );
 		}
 	},
 
@@ -281,10 +281,11 @@ PostActions = {
 	 * Calls out to API to save a Post object
 	 *
 	 * @param {object} attributes post attributes to change before saving
+	 * @param {object} context additional properties for recording the save event
 	 * @param {function} callback receives ( err, post ) arguments
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
-	saveEdited: function( attributes, callback, options ) {
+	saveEdited: function( attributes, context, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
 		Dispatcher.handleViewAction( {
@@ -334,7 +335,7 @@ PostActions = {
 		};
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			stats.recordSaveEvent(); // do this before changing status from 'future'
+			stats.recordSaveEvent( context ); // do this before changing status from 'future'
 		}
 
 		if ( ( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||
@@ -429,9 +430,7 @@ PostActions = {
 	* @api public
 	*/
 	fetchNextPage: function( postListStoreId = 'default' ) {
-		var params, id, siteID, postListStore;
-
-		postListStore = postListStoreFactory( postListStoreId );
+		const postListStore = postListStoreFactory( postListStoreId );
 
 		if ( postListStore.isLastPage() || postListStore.isFetchingNextPage() ) {
 			return;
@@ -442,13 +441,13 @@ PostActions = {
 			postListStoreId: postListStoreId
 		} );
 
-		id = postListStore.getID();
-		params = postListStore.getNextPageParams();
-		siteID = postListStore.getSiteID();
+		const id = postListStore.getID();
+		const params = postListStore.getNextPageParams();
+		const siteId = postListStore.getSiteId();
 
-		if ( siteID ) {
+		if ( siteId ) {
 			wpcom
-				.site( siteID )
+				.site( siteId )
 				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		} else {
 			wpcom
@@ -468,9 +467,7 @@ PostActions = {
 	},
 
 	fetchUpdated: function( postListStoreId = 'default' ) {
-		var id, params, siteID, postListStore;
-
-		postListStore = postListStoreFactory( postListStoreId );
+		const postListStore = postListStoreFactory( postListStoreId );
 
 		if ( postListStore.isFetchingNextPage() ) {
 			return;
@@ -481,14 +478,14 @@ PostActions = {
 			postListStoreId: postListStoreId
 		} );
 
-		id = postListStore.getID();
-		params = postListStore.getUpdatesParams();
-		siteID = postListStore.getSiteID();
+		const id = postListStore.getID();
+		const params = postListStore.getUpdatesParams();
+		const siteId = postListStore.getSiteId();
 
-		if ( siteID ) {
-			debug( 'Fetching posts that have been updated for %s since %s %o', siteID, params.modified_after, params );
+		if ( siteId ) {
+			debug( 'Fetching posts that have been updated for %s since %s %o', siteId, params.modified_after, params );
 			wpcom
-				.site( siteID )
+				.site( siteId )
 				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		} else {
 			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );

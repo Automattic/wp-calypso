@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import isEmpty from 'lodash/isEmpty';
-import includes from 'lodash/includes';
-import map from 'lodash/map';
+import { includes, isEmpty, map } from 'lodash';
 const debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
  */
+import config from 'config';
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
@@ -186,7 +185,7 @@ module.exports = React.createClass( {
 	},
 
 	getErrorMessagesWithLogin( fieldName ) {
-		const link = login( { redirectTo: window.location.href } ),
+		const link = login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo: window.location.href } ),
 			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {

@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
@@ -13,6 +14,9 @@ export const itemsSchema = {
 				feed_URL: { type: [ 'string', 'null' ] },
 				is_following: { type: [ 'boolean', 'null' ] },
 				subscribers_count: { type: [ 'integer', 'null' ] },
+				description: { type: [ 'string', 'null' ] },
+				last_update: { type: [ 'string', 'null' ] },
+				image: { type: [ 'string', null ] },
 			},
 		},
 	},

@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -11,13 +12,14 @@ import Gridicon from 'gridicons';
 import SidebarHeading from 'layout/sidebar/heading';
 import Count from 'components/count';
 
-const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
+const ExpandableSidebarHeading = ( { title, count, onClick } ) =>
 	<SidebarHeading onClick={ onClick }>
 		<Gridicon icon="chevron-down" />
-		<span>{ title }</span>
+		<span>
+			{ title }
+		</span>
 		<Count count={ count } />
-	</SidebarHeading>
-);
+	</SidebarHeading>;
 
 ExpandableSidebarHeading.propTypes = {
 	title: React.PropTypes.string.isRequired,

@@ -1,0 +1,51 @@
+.email-verification-dialog__confirmation-dialog.is-narrow {
+	max-width: 100%;
+	border-radius: 0;
+
+	@include breakpoint( ">660px" ) {
+		max-width: 550px;
+		border-radius: 3px;
+	}
+}
+
+.email-verification-dialog__confirmation-dialog-heading {
+	font-size: 22px;
+	line-height: 1.2;
+	margin: 0 0 4px 0;
+}
+
+.email-verification-dialog__confirmation-dialog-heading.is-variable-height {
+	height: auto;
+}
+
+.email-verification-dialog__confirmation-dialog-email,
+.email-verification-dialog__confirmation-dialog-explanation,
+.email-verification-dialog__confirmation-dialog-reasoning {
+	color: darken( $gray, 30 );
+	margin: 0 0 8px 0;
+}
+
+.email-verification-dialog__confirmation-dialog-email {
+	margin-bottom: 16px;
+	color: darken( $gray, 10 );
+}
+
+.email-verification-dialog__confirmation-dialog-email-wrapper {
+	display: inline-block;
+	max-width: 70%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-right: 5px;
+	vertical-align: bottom;
+}
+
+.email-verification-dialog__confirmation-dialog-reasoning {
+	color: darken( $gray, 10 );
+	font-size: 14px;
+	margin-bottom: 24px;
+}
+
+.email-verification-dialog__confirmation-dialog-spinner {
+	display: inline-block;
+	vertical-align: -25%;
+}

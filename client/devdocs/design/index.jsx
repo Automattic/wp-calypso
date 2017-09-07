@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -71,6 +71,14 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
+import FormattedHeader from 'components/formatted-header/docs/example';
+import EmptyContent from 'components/empty-content/docs/example';
+import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import PaginationExample from 'components/pagination/docs/example';
+import ListEnd from 'components/list-end/docs/example';
+import Wizard from 'components/wizard/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
+import HeaderButton from 'components/header-button/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -102,20 +110,16 @@ let DesignAssets = React.createClass( {
 			<Main className="design">
 				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
-
+							{ slugToCamelCase( component ) }
+						</HeaderCake>
 					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+						/> }
 
-				<Collection
-					component={ component }
-					filter={ filter }
-				>
+				<Collection component={ component } filter={ filter }>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
 					<Banner />
 					<BulkSelect />
@@ -130,29 +134,35 @@ let DesignAssets = React.createClass( {
 					<DropZones searchKeywords="drag" />
 					<EllipsisMenu />
 					<EmojifyExample />
+					<EmptyContent />
 					<ExternalLink />
 					<FAQ />
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
+					<FormattedHeader />
 					<FormFields searchKeywords="input textbox textarea radio" />
 					<Gauge />
 					<GlobalNotices />
 					<Gravatar />
 					<Gridicons />
 					<Headers />
+					<HeaderButton />
 					<ImagePreloader />
 					<InfoPopover />
 					<Tooltip />
 					<InputChrono />
 					<LanguagePicker />
+					<ListEnd />
 					<Notices />
+					<PaginationExample />
 					<PaymentLogo />
 					<Popovers />
 					<ProgressBar />
 					<Ranges />
 					<Rating />
 					<Ribbon />
+					<ScreenReaderTextExample />
 					<SearchDemo />
 					<SectionHeader />
 					<SectionNav />
@@ -162,39 +172,41 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<Suggestions />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
+					<Wizard />
 				</Collection>
 			</Main>
 		);
-	}
+	},
 } );
 
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
+	const mapStateToProps = state => {
 		const { componentsUsageStats } = state;
 
 		return componentsUsageStats;
 	};
 
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
+	const mapDispatchToProps = dispatch => {
+		return bindActionCreators(
+			{
+				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
+			},
+			dispatch
+		);
 	};
 
 	DesignAssets.propTypes = {
 		componentsUsageStats: PropTypes.object,
 		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
+		dispatchFetchComponentsUsageStats: PropTypes.func,
 	};
 
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+	DesignAssets = connect( mapStateToProps, mapDispatchToProps )( DesignAssets );
 }
 
 export default DesignAssets;

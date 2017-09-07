@@ -21,6 +21,10 @@ import GridImage from './grid-image';
 import StoreImage from './store-image';
 import { abtest } from 'lib/abtest';
 
+import { setDesignType } from 'state/signup/steps/design-type/actions';
+
+import { getThemeForDesignType } from 'signup/utils';
+
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
 		super( props );
@@ -84,7 +88,9 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	handleNextStep = ( designType ) => {
-		this.props.recordNextStep( designType );
+		this.props.setDesignType( designType );
+
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		if ( designType === 'store' ) {
 			this.scrollUp();
@@ -98,7 +104,10 @@ class DesignTypeWithStoreStep extends Component {
 			return;
 		}
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		const themeSlugWithRepo = getThemeForDesignType( designType );
+
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType, themeSlugWithRepo } );
+
 		this.props.goToNextStep();
 	};
 
@@ -206,9 +215,11 @@ class DesignTypeWithStoreStep extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	recordNextStep: designType => dispatch( recordTracksEvent( 'calypso_triforce_select_design',
-		{ category: designType } ) )
-} );
 
-export default connect( null, mapDispatchToProps )( localize( DesignTypeWithStoreStep ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeWithStoreStep ) );

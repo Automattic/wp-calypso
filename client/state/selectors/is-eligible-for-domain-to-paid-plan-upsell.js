@@ -5,7 +5,8 @@ import {
 	canCurrentUser,
 	isMappedDomainSite,
 	isSiteOnFreePlan,
-} from 'state/selectors/';
+	isVipSite,
+} from 'state/selectors';
 
 /**
  * Returns true if the current user is eligible for a domain to paid plan upsell for the site
@@ -18,8 +19,9 @@ const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
+	const siteIsVipSite = isVipSite( state, siteId );
 
-	return userCanManageOptions && siteHasMappedDomain && siteIsOnFreePlan;
+	return userCanManageOptions && siteHasMappedDomain && ! siteIsVipSite && siteIsOnFreePlan;
 };
 
 export default isEligibleForDomainToPaidPlanUpsell;

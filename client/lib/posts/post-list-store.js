@@ -2,14 +2,8 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import clone from 'lodash/clone';
-import assign from 'lodash/assign';
-import transform from 'lodash/transform';
-import difference from 'lodash/difference';
-import last from 'lodash/last';
-import maxBy from 'lodash/maxBy';
+import { assign, clone, difference, last, maxBy, some, transform } from 'lodash';
 import { EventEmitter } from 'events/';
-import some from 'lodash/some';
 
 /**
  * Internal dependencies
@@ -29,13 +23,15 @@ import PostListCacheStore,
  * Module Variables
  */
 const _defaultQuery = {
-	siteID: false,
+	siteId: false,
 	type: 'post',
 	status: 'publish',
 	orderBy: 'date',
 	order: 'DESC',
 	author: false,
 	search: false,
+	category: false,
+	tag: false,
 	perPage: 20
 };
 
@@ -90,10 +86,6 @@ export default function( id ) {
 
 	function queryPosts( options ) {
 		let query = assign( {}, _defaultQuery, options );
-
-		if ( query.siteID && typeof query.siteID === 'string' ) {
-			query.siteID = query.siteID.replace( /::/g, '/' );
-		}
 
 		if ( query.status === 'draft,pending' ) {
 			query.orderBy = 'modified';
@@ -261,7 +253,7 @@ export default function( id ) {
 		}
 	}
 
-	return new class extends EventEmitter {
+	return new ( class extends EventEmitter {
 		constructor() {
 			super();
 			this.id = id;
@@ -276,8 +268,8 @@ export default function( id ) {
 			return _activeList.id;
 		}
 
-		getSiteID() {
-			return _activeList.query.siteID;
+		getSiteId() {
+			return _activeList.query.siteId;
 		}
 
 		// Get list of posts from current object
@@ -352,7 +344,15 @@ export default function( id ) {
 				params.search = query.search;
 			}
 
-			if ( ! params.siteID ) {
+			if ( query.category ) {
+				params.category = query.category;
+			}
+
+			if ( query.tag ) {
+				params.tag = query.tag;
+			}
+
+			if ( ! params.siteId ) {
 				// Only query from visible sites
 				params.site_visibility = 'visible';
 			}
@@ -376,7 +376,15 @@ export default function( id ) {
 				params.search = query.search;
 			}
 
-			if ( ! params.siteID ) {
+			if ( query.category ) {
+				params.category = query.category;
+			}
+
+			if ( query.tag ) {
+				params.tag = query.tag;
+			}
+
+			if ( ! params.siteId ) {
 				// Only query from visible sites
 				params.site_visibility = 'visible';
 			}
@@ -444,5 +452,5 @@ export default function( id ) {
 					break;
 			}
 		}
-	}();
-};
+	} )();
+}

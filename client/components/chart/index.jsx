@@ -77,7 +77,7 @@ module.exports = React.createClass( {
 
 	getYAxisMax: function( values ) {
 		const max = Math.max.apply( null, values ),
-			operand = Math.pow( 10, ( max.toString().length - 1 ) );
+			operand = Math.pow( 10, ( Math.floor( max ).toString().length - 1 ) );
 		let rounded = ( Math.ceil( ( max + 1 ) / operand ) * operand );
 
 		if ( rounded < 10 ) {

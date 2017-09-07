@@ -28,8 +28,6 @@ export default function searchSites( WrappedComponent ) {
 		WrappedComponent.name || '';
 
 	class Searcher extends Component {
-		static displayName = `SearchSites(${ componentName })`;
-
 		state = { term: null };
 
 		setSearchTerm = ( term ) => this.setState( { term } );
@@ -50,5 +48,7 @@ export default function searchSites( WrappedComponent ) {
 		}
 	}
 
-	return connect( mapState )( Searcher );
+	const Connected = connect( mapState )( Searcher );
+	Connected.displayName = `SearchSites(${ componentName })`;
+	return Connected;
 }

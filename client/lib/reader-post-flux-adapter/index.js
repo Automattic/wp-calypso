@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { map } from 'lodash';
 import { connect } from 'react-redux';
 
@@ -23,36 +24,33 @@ const fluxPostAdapter = Component => {
 			selectedPost: PropTypes.string,
 			feed: PropTypes.object,
 			site: PropTypes.object,
-		}
+		};
 
 		getStateFromStores = ( props = this.props ) => {
 			const { postKey } = props;
-			const posts = map(
-				postKey.postIds,
-				postId => {
-					const postKeyForPost = {};
-					if ( postKey.feedId ) {
-						postKeyForPost.feedId = postKey.feedId;
-					} else {
-						postKeyForPost.blogId = postKey.blogId;
-					}
-					postKeyForPost.postId = postId;
-					const post = FeedPostStore.get( postKeyForPost );
-					if ( ! post || post._state === 'minimal' ) {
-						fetchPost( postKeyForPost );
-					}
-					return post;
+			const posts = map( postKey.postIds, postId => {
+				const postKeyForPost = {};
+				if ( postKey.feedId ) {
+					postKeyForPost.feedId = postKey.feedId;
+				} else {
+					postKeyForPost.blogId = postKey.blogId;
 				}
-			);
+				postKeyForPost.postId = postId;
+				const post = FeedPostStore.get( postKeyForPost );
+				if ( ! post || post._state === 'minimal' ) {
+					fetchPost( postKeyForPost );
+				}
+				return post;
+			} );
 
 			return { posts };
-		}
+		};
 
 		state = this.getStateFromStores( this.props );
 
 		updateState = ( newState = this.getStateFromStores() ) => {
 			this.setState( newState );
-		}
+		};
 
 		componentWillMount() {
 			FeedPostStore.on( 'change', this.updateState );
@@ -75,23 +73,21 @@ const fluxPostAdapter = Component => {
 		}
 	}
 
-	return connect(
-		( state, ownProps ) => {
-			const { feedId, blogId } = ownProps.postKey;
-			let feed, site;
-			if ( feedId ) {
-				feed = getFeed( state, feedId );
-				site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
-			} else {
-				site = getSite( state, blogId );
-				feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
-			}
-			return {
-				feed,
-				site
-			};
+	return connect( ( state, ownProps ) => {
+		const { feedId, blogId } = ownProps.postKey;
+		let feed, site;
+		if ( feedId ) {
+			feed = getFeed( state, feedId );
+			site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+		} else {
+			site = getSite( state, blogId );
+			feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
 		}
-	)( ReaderPostFluxAdapter );
+		return {
+			feed,
+			site,
+		};
+	} )( ReaderPostFluxAdapter );
 };
 
 export default fluxPostAdapter;

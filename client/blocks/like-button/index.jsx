@@ -13,18 +13,17 @@ import LikeButton from './button';
 import LikeStore from 'lib/like-store/like-store';
 
 class LikeButtonContainer extends PureComponent {
-
 	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
 		postId: React.PropTypes.number.isRequired,
 		showZeroCount: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
-		onLikeToggle: React.PropTypes.func
-	}
+		onLikeToggle: React.PropTypes.func,
+	};
 
 	static defaultProps = {
-		onLikeToggle: noop
-	}
+		onLikeToggle: noop,
+	};
 
 	constructor( props ) {
 		super( props );
@@ -39,13 +38,13 @@ class LikeButtonContainer extends PureComponent {
 		return {
 			likeCount: LikeStore.getLikeCountForPost( props.siteId, props.postId ) || 0,
 			iLike: LikeStore.isPostLikedByCurrentUser( props.siteId, props.postId ),
-			animateLike: animateLike
+			animateLike: animateLike,
 		};
 	}
 
 	updateState = ( newState = this.getStateFromStores() ) => {
 		this.smartSetState( newState );
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		this.updateState( this.getStateFromStores( nextProps ) );
@@ -65,11 +64,15 @@ class LikeButtonContainer extends PureComponent {
 
 	render() {
 		const props = omit( this.props, [ 'siteId' ] );
-		return <LikeButton { ...props }
+		return (
+			<LikeButton
+				{ ...props }
 				likeCount={ this.state.likeCount }
 				liked={ this.state.iLike }
 				animateLike={ this.state.animateLike }
-				onLikeToggle={ this.handleLikeToggle } />;
+				onLikeToggle={ this.handleLikeToggle }
+			/>
+		);
 	}
 }
 

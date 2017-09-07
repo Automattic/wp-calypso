@@ -4,8 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import some from 'lodash/some';
-import capitalize from 'lodash/capitalize';
+import { capitalize, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -19,9 +18,10 @@ import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
+import PluginUpload from './plugin-upload';
 
 /**
  * Module variables
@@ -110,7 +110,7 @@ function renderPluginList( context, basePath ) {
 			: ''
 		);
 
-	let baseAnalyticsPath = 'plugins';
+	let baseAnalyticsPath = 'plugins/manage';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
 	}
@@ -212,12 +212,13 @@ const controller = {
 	plugin( context ) {
 		const siteUrl = route.getSiteFragment( context.path );
 
+		// If the "plugin" part of the route is actually a site, browse the plugins for that site instead.
 		if (
 			siteUrl &&
 			context.params.plugin &&
 			context.params.plugin === siteUrl.toString()
 		) {
-			controller.plugins( 'all', context );
+			controller.browsePlugins( context );
 			return;
 		}
 
@@ -227,6 +228,10 @@ const controller = {
 
 	browsePlugins( context ) {
 		renderPluginsBrowser( context );
+	},
+
+	upload( context ) {
+		renderPage( context, <PluginUpload /> );
 	},
 
 	jetpackCanUpdate( filter, context, next ) {
@@ -240,10 +245,10 @@ const controller = {
 
 			if ( redirectToPlugins ) {
 				if ( context.params && context.params.site_id ) {
-					page.redirect( `/plugins/${ context.params.site_id }` );
+					page.redirect( `/plugins/manage/${ context.params.site_id }` );
 					return;
 				}
-				page.redirect( '/plugins' );
+				page.redirect( '/plugins/manage' );
 				return;
 			}
 		}

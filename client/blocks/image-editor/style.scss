@@ -4,6 +4,10 @@
 	height: 100%;
 }
 
+.image-editor .notice.image-editor__notice {
+	margin-top: 0;
+}
+
 .image-editor__content {
 	display: flex;
 	flex-direction: column;
@@ -32,6 +36,9 @@
 	color: $white;
 	margin: 0 10px;
 	cursor: pointer;
+	&.is-disabled {
+		opacity: 0.3;
+	}
 }
 
 .image-editor__toolbar-button .gridicon {
@@ -55,7 +62,6 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-
 	&.is-placeholder {
 		@include placeholder-dark();
 	}
@@ -65,6 +71,7 @@
 	position: absolute;
 	border: 1px solid $white;
 	cursor: move;
+	box-sizing: border-box;
 }
 
 .image-editor__crop-background {

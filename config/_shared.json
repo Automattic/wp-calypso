@@ -2,6 +2,7 @@
 	"env": "shared",
 	"env_id": "shared",
 	"boom_analytics_enabled": false,
+	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"discover_blog_id": 53424024,
@@ -18,7 +19,8 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": false,
 	"google_adwords_conversion_id": false,
-	"lucky_orange_enabled": false,
+	"google_adwords_conversion_id_jetpack": false,
+	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
 	"jetpack_min_version": false,
@@ -29,7 +31,8 @@
 	"olark": {},
 	"port": false,
 	"happychat_url": "https://happychat.io/customer",
-	"google_oauth_client_id": "543610697398-l287fumouns096o4os9l9fs1svh5esjc.apps.googleusercontent.com",
+	"happychat_support_blog": "en.support.wordpress.com",
+	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"languages": [
@@ -68,6 +71,7 @@
 		{ "value": 18, "langSlug": "eo", "name": "Esperanto", "wpLocale": "eo" },
 		{ "value": 19, "langSlug": "es", "name": "Español", "wpLocale": "es_ES", "popular": 2 },
 		{ "value": 484, "langSlug": "es-cl", "name": "Español de Chile", "wpLocale": "es_CL" },
+		{ "value": 902, "langSlug": "es-mx", "name": "Español de México", "wpLocale": "es_MX" },
 		{ "value": 20, "langSlug": "et", "name": "Eesti", "wpLocale": "et" },
 		{ "value": 429, "langSlug": "eu", "name": "Euskara", "wpLocale": "eu" },
 		{ "value": 21, "langSlug": "fa", "name": "فارسی", "wpLocale": "fa_IR", "rtl": true },
@@ -176,8 +180,10 @@
 	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
+	"signup/social-management": false,
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
+	"woocommerce_blog_id": 113771570,
 	"wpcom_signup_id": false,
 	"wpcom_signup_key": false,
-	"wpcom_user_bootstrap": false
+	"statsd_analytics_response_time_max_logs_per_second": 50
 }

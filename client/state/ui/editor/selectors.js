@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import { getPreference } from 'state/preferences/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -27,6 +28,19 @@ export function getEditorPostId( state ) {
  */
 export function isEditorNewPost( state ) {
 	return ! getEditorPostId( state );
+}
+
+/**
+ * Returns the editor URL for duplicating a given site ID, post ID pair.
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number} siteId      Site ID
+ * @param  {Number} postId      Post ID
+ * @param  {String} type        Post type
+ */
+export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
+	const editorNewPostPath = getEditorNewPostPath( state, siteId, type );
+	return `${ editorNewPostPath }?copy=${ postId }`;
 }
 
 /**
@@ -73,4 +87,15 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	}
 
 	return path;
+}
+
+/**
+ * Returns whether the confirmation sidebar is enabled for the given siteId
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId      Site ID
+ * @return {Boolean}             Whether or not the sidebar is enabled
+ */
+export function isConfirmationSidebarEnabled( state, siteId ) {
+	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
 }

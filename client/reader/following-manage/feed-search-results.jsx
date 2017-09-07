@@ -1,78 +1,114 @@
+/** @format */
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { take, map } from 'lodash';
+import { take, times } from 'lodash';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-import ConnectedSubscriptionListItem from './connected-subscription-list-item';
-import SitesWindowScroller from './sites-window-scroller';
 import Button from 'components/button';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
+import InfiniteStream from 'components/reader-infinite-stream';
+import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
-const FollowingManageSearchFeedsResults = ( {
-	showMoreResults,
-	showMoreResultsClicked,
-	searchResults,
-	translate,
-	width,
-	fetchNextPage,
-	forceRefresh,
-	searchResultsCount,
-} ) => {
-	if ( ! searchResults ) {
-		return null; // todo: add placeholder
-	} else if ( searchResults.length === 0 ) {
+class FollowingManageSearchFeedsResults extends React.Component {
+	static propTypes = {
+		query: PropTypes.string.isRequired,
+		showMoreResults: PropTypes.bool,
+		onShowMoreResultsClicked: PropTypes.func,
+		searchResults: PropTypes.array,
+		searchResultsCount: PropTypes.number,
+		translate: PropTypes.func,
+		width: PropTypes.number,
+	};
+
+	hasNextPage = offset => {
+		if ( this.props.showMoreResults ) {
+			return offset < this.props.searchResultsCount;
+		}
+		return false;
+	};
+
+	fetchNextPage = offset =>
+		this.props.requestFeedSearch( {
+			query: this.props.query,
+			offset,
+			excludeFollowed: true,
+		} );
+
+	render() {
+		const {
+			showMoreResults,
+			onShowMoreResultsClicked,
+			searchResults,
+			translate,
+			width,
+			searchResultsCount,
+			query,
+		} = this.props;
+		const isEmpty = !! ( query && query.length > 0 && searchResults && searchResults.length === 0 );
+		const classNames = classnames( 'following-manage__search-results', {
+			'is-empty': isEmpty,
+		} );
+
+		if ( ! searchResults ) {
+			return (
+				<div className={ classNames }>
+					{ times( 10, i =>
+						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
+					) }
+				</div>
+			);
+		} else if ( isEmpty ) {
+			return (
+				<div className={ classNames }>
+					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+						components: { italic: <i /> },
+						args: query,
+					} ) }
+				</div>
+			);
+		}
+
 		return (
-			<p>
-				{ translate( 'There were no site results for your query.' ) }
-			</p>
-		);
-	}
-
-	if ( ! showMoreResults ) {
-		const resultsToShow = map( take( searchResults, 10 ), site => (
-			<ConnectedSubscriptionListItem
-				url={ site.feed_URL || site.URL }
-				feedId={ +site.feed_ID }
-				siteId={ +site.blog_ID }
-				key={ `search-result-site-id-${ site.feed_ID || 0 }-${ site.blog_ID || 0 }` }
-			/>
-		) );
-
-		return (
-			<div className="following-manage__search-results">
-				{ resultsToShow }
-				<div className="following-manage__show-more">
-					{ searchResultsCount > 3 &&
+			<div className={ classNames }>
+				<InfiniteStream
+					extraRenderItemProps={ {
+						showLastUpdatedDate: false,
+						followSource: READER_FOLLOWING_MANAGE_SEARCH_RESULT,
+					} }
+					items={ showMoreResults ? searchResults : take( searchResults, 10 ) }
+					width={ width }
+					fetchNextPage={ this.fetchNextPage }
+					hasNextPage={ showMoreResults ? this.hasNextPage : undefined }
+					rowRenderer={ siteRowRenderer }
+				/>
+				{ ! showMoreResults &&
+					searchResultsCount > 10 &&
+					<div className="following-manage__show-more">
 						<Button
 							compact
 							icon
-							onClick={ showMoreResultsClicked }
+							onClick={ onShowMoreResultsClicked }
 							className="following-manage__show-more-button button"
 						>
 							<Gridicon icon="chevron-down" />
 							{ translate( 'Show more' ) }
-						</Button> }
-				</div>
+						</Button>
+					</div> }
 			</div>
 		);
 	}
+}
 
-	return (
-		<div className="following-manage__search-results">
-			<SitesWindowScroller
-				sites={ searchResults }
-				width={ width }
-				fetchNextPage={ fetchNextPage }
-				remoteTotalCount={ searchResultsCount }
-				forceRefresh={ forceRefresh }
-			/>
-		</div>
-	);
-};
-
-export default localize( FollowingManageSearchFeedsResults );
+export default connect( null, { requestFeedSearch } )(
+	localize( FollowingManageSearchFeedsResults )
+);

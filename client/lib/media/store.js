@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var values = require( 'lodash/values' );
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isItemBeingUploaded } from 'lib/media/utils';
 var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	MediaValidationStore = require( './validation-store' );
-
-import { isItemBeingUploaded } from 'lib/media/utils';
 
 /**
  * Module variables
@@ -53,13 +52,21 @@ function removeSingle( siteId, item ) {
 		return;
 	}
 
-	delete MediaStore._media[ siteId ][ item.ID ];
+	// This mimics the behavior we get from the server.
+	// Deleted items return with only an ID.
+	// Status is also added to let any listeners distinguish deleted items.
+	MediaStore._media[ siteId ][ item.ID ] = { ID: item.ID, status: item.status };
 }
 
 function receivePage( siteId, items ) {
 	items.forEach( function( item ) {
 		receiveSingle( siteId, item );
 	} );
+}
+
+function clearPointers( siteId ) {
+	MediaStore._pointers[ siteId ] = {};
+	MediaStore._media[ siteId ] = {};
 }
 
 MediaStore.get = function( siteId, postId ) {
@@ -88,6 +95,11 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'CHANGE_MEDIA_SOURCE':
+			clearPointers( action.siteId );
+			MediaStore.emit( 'change' );
+			break;
+
 		case 'CREATE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEMS':

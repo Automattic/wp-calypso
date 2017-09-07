@@ -38,22 +38,18 @@ const getMe = {
 
 describe( '#queueRequest', () => {
 	let dispatch;
-	let next;
 
 	useNock();
 
 	beforeEach( () => {
 		dispatch = spy();
-		next = spy();
 	} );
 
 	it( 'should call `onSuccess` when a response returns with data', done => {
 		const data = { value: 1 };
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).reply( 200, data );
 
-		http( { dispatch }, getMe, next );
-
-		expect( next ).to.have.been.calledWith( getMe );
+		http( { dispatch }, getMe );
 
 		setTimeout( () => {
 			expect( dispatch ).to.have.been.calledOnce;
@@ -66,9 +62,7 @@ describe( '#queueRequest', () => {
 		const error = { error: 'bad' };
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
 
-		http( { dispatch }, getMe, next );
-
-		expect( next ).to.have.been.calledWith( getMe );
+		http( { dispatch }, getMe );
 
 		setTimeout( () => {
 			expect( dispatch ).to.have.been.calledOnce;

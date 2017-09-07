@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CustomDomainPurchaseDetail from 'my-sites/upgrades/checkout-thank-you/custom-domain-purchase-detail';
+import CustomDomainPurchaseDetail from 'my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
 export default ( props ) => {
 	return (

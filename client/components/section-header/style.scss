@@ -9,6 +9,10 @@
 	&:after {
 		content: '';
 	}
+
+	&.is-empty .section-header__label:after {
+		content: '\00a0';
+	}
 }
 
 .section-header__label {

@@ -298,7 +298,7 @@ export function checkPermissionsState() {
 					} )
 					.catch( err => {
 						debug( 'Error checking permission state', err );
-						dispatch( receivePermissionState( 'denied', err ) );
+						dispatch( receivePermissionState( 'denied' ) );
 					} )
 				;
 			} )

@@ -16,7 +16,7 @@ import viewport from 'lib/viewport';
 import {
 	hasUnreadMessages,
 	isHappychatAvailable,
-	isHappychatChatActive,
+	hasActiveHappychatSession,
 } from 'state/happychat/selectors';
 import { connectChat } from 'state/happychat/actions';
 import { openChat } from 'state/ui/happychat/actions';
@@ -89,7 +89,7 @@ export default connect(
 	state => ( {
 		hasUnread: hasUnreadMessages( state ),
 		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: isHappychatChatActive( state ),
+		isChatActive: hasActiveHappychatSession( state ),
 	} ),
 	{
 		openChat,

@@ -12,7 +12,7 @@ import { requestConnectionStatus } from 'state/sites/connection/actions';
 
 class QuerySiteConnectionStatus extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingSiteConnectionStatus: PropTypes.bool,
 		requestConnectionStatus: PropTypes.func
 	};
@@ -28,7 +28,7 @@ class QuerySiteConnectionStatus extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingSiteConnectionStatus ) {
+		if ( props.requestingSiteConnectionStatus || ! props.siteId ) {
 			return;
 		}
 

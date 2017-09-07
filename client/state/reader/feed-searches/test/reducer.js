@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,10 +8,10 @@ import freeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { receiveFeedSearch, } from '../actions';
+import { receiveFeedSearch } from '../actions';
 import { items } from '../reducer';
 
-const query = 'macrumor';
+const queryKey = 'macrumor-F-ASC';
 const feeds = freeze( [
 	{
 		URL: 'http://www.macrumors.com/macrumors.xml',
@@ -18,7 +19,7 @@ const feeds = freeze( [
 		subscribe_URL: 'http://www.macrumors.com/macrumors.xml',
 		feed_ID: '8850855',
 		title: null,
-		railcar: {}
+		railcar: {},
 	},
 	{
 		URL: 'http://feeds.macrumors.com/MacRumors-All',
@@ -26,7 +27,7 @@ const feeds = freeze( [
 		subscribe_URL: 'http://feeds.macrumors.com/MacRumors-All',
 		feed_ID: '4210277',
 		title: null,
-		railcar: {}
+		railcar: {},
 	},
 ] );
 
@@ -39,11 +40,11 @@ describe( 'reducer', () => {
 
 		it( 'should add query results to an empty object', () => {
 			const prevState = {};
-			const action = receiveFeedSearch( query, feeds );
+			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
 
 			expect( nextState ).to.eql( {
-				[ query ]: feeds,
+				[ queryKey ]: feeds,
 			} );
 		} );
 
@@ -51,11 +52,11 @@ describe( 'reducer', () => {
 			const prevState = {
 				chickens: [ { blogName: 'chickens R us' } ],
 			};
-			const action = receiveFeedSearch( query, feeds );
+			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
 			expect( nextState ).to.eql( {
 				...prevState,
-				[ query ]: feeds,
+				[ queryKey ]: feeds,
 			} );
 		} );
 	} );

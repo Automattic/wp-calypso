@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { mapValues, merge } from 'lodash';
 
 /**
@@ -22,7 +21,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { normalizeSettings } from './utils';
 
 const createRequestsReducer = ( data ) => {

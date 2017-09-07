@@ -1,13 +1,14 @@
+/** @format */
 /**
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, map, omitBy, isArray, isUndefined } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/data-layer/utils';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import followingNew from './new';
 import followingDelete from './delete';
 import {
@@ -19,7 +20,7 @@ import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/read
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { toValidId } from 'reader/id-helpers';
+import { isValidApiResponse, subscriptionsFromApi } from './utils';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -29,41 +30,12 @@ export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' 
 	payload: { page, meta, number },
 } );
 
-export const isValidApiResponse = apiResponse => {
-	const hasSubscriptions =
-		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
-	return hasSubscriptions;
-};
-
-export const subscriptionFromApi = subscription =>
-	subscription &&
-	omitBy(
-		{
-			ID: Number( subscription.ID ),
-			URL: subscription.URL,
-			feed_URL: subscription.URL,
-			blog_ID: toValidId( subscription.blog_ID ),
-			feed_ID: toValidId( subscription.feed_ID ),
-			date_subscribed: Date.parse( subscription.date_subscribed ),
-			delivery_methods: subscription.delivery_methods,
-			is_owner: subscription.is_owner,
-		},
-		isUndefined
-	);
-
-export const subscriptionsFromApi = apiResponse => {
-	if ( ! isValidApiResponse( apiResponse ) ) {
-		return [];
-	}
-	return map( apiResponse.subscriptions, subscriptionFromApi );
-};
-
 let syncingFollows = false;
 let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
-export const resetSyncingFollows = () => syncingFollows = false;
+export const resetSyncingFollows = () => ( syncingFollows = false );
 
-export function syncReaderFollows( store, action, next ) {
+export function syncReaderFollows( store ) {
 	if ( isSyncingFollows() ) {
 		return;
 	}
@@ -72,11 +44,9 @@ export function syncReaderFollows( store, action, next ) {
 	seenSubscriptions = new Set();
 
 	store.dispatch( requestPageAction( 1 ) );
-
-	next( action );
 }
 
-export function requestPage( store, action, next ) {
+export function requestPage( store, action ) {
 	store.dispatch(
 		http( {
 			method: 'GET',
@@ -91,15 +61,13 @@ export function requestPage( store, action, next ) {
 			onError: action,
 		} )
 	);
-
-	next( action );
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
-export function receivePage( store, action, next, apiResponse ) {
-	if ( ! isValidApiResponse( apiResponse, action ) ) {
-		receiveError( store, action, next, apiResponse );
+export function receivePage( store, action, apiResponse ) {
+	if ( ! isValidApiResponse( apiResponse ) ) {
+		receiveError( store );
 		return;
 	}
 
@@ -128,11 +96,10 @@ export function receivePage( store, action, next, apiResponse ) {
 	syncingFollows = false;
 }
 
-export function updateSeenOnFollow( store, action, next ) {
+export function updateSeenOnFollow( store, action ) {
 	if ( seenSubscriptions ) {
 		seenSubscriptions.add( action.payload.feedUrl );
 	}
-	next( action );
 }
 
 export function receiveError( store ) {

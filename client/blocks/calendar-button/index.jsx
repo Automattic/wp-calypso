@@ -21,6 +21,7 @@ class CalendarButton extends Component {
 		// calendar-popover properties
 		autoPosition: PropTypes.bool,
 		closeOnEsc: PropTypes.bool,
+		disabledDays: PropTypes.array,
 		events: PropTypes.array,
 		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
 		isVisible: PropTypes.bool,
@@ -31,6 +32,8 @@ class CalendarButton extends Component {
 
 		onClose: PropTypes.func,
 		onDateChange: PropTypes.func,
+		onDayMouseEnter: PropTypes.func,
+		onDayMouseLeave: PropTypes.func,
 		onMonthChange: PropTypes.func,
 		onShow: PropTypes.func,
 	};
@@ -40,6 +43,9 @@ class CalendarButton extends Component {
 		type: 'button',
 		popoverPosition: 'bottom',
 		onDateChange: noop,
+		onDayMouseEnter: noop,
+		onDayMouseLeave: noop,
+		onClose: noop,
 	};
 
 	state = { showPopover: false };
@@ -49,9 +55,18 @@ class CalendarButton extends Component {
 		this.props.onDateChange( date );
 	};
 
-	closePopover = () => this.setState( { showPopover: false } );
+	closePopover = () => {
+		this.setState( { showPopover: false } );
+		this.props.onClose();
+	};
 
-	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
+	togglePopover = () => {
+		if ( this.props.disabled ) {
+			return null;
+		}
+
+		return this.setState( { showPopover: ! this.state.showPopover } );
+	};
 
 	setPopoverReference = calendarButtonRef => ( this.reference = calendarButtonRef );
 
@@ -65,16 +80,22 @@ class CalendarButton extends Component {
 		const calendarProperties = Object.assign( {}, pick( this.props, [
 			'autoPosition',
 			'closeOnEsc',
+			'disabledDays',
 			'events',
+			'enableOutsideDays',
 			'ignoreContext',
 			'isVisible',
+			'modifiers',
 			'rootClassName',
 			'selectedDay',
 			'showDelay',
 			'siteId',
 			'onDateChange',
 			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
 			'onShow',
+			'onClose',
 		] ) );
 
 		return (
@@ -98,6 +119,7 @@ class CalendarButton extends Component {
 	render() {
 		const buttonsProperties = Object.assign( {}, pick( this.props, [
 			'compact',
+			'disabled',
 			'primary',
 			'scary',
 			'busy',

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,10 +31,14 @@ class RecommendedPostsEmptyContent extends React.Component {
 
 	render() {
 		var action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
-				{ this.props.translate( 'Back to Following' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/"
+				>
+					{ this.props.translate( 'Back to Following' ) }
+				</a>
+			),
 			secondaryAction = isDiscoverEnabled()
 				? <a
 						className="empty-content__action button"
@@ -52,7 +57,7 @@ class RecommendedPostsEmptyContent extends React.Component {
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 500 }
 			/>
 		);

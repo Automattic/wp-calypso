@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,52 +18,49 @@ import {
 } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
+import { TAG_PAGE } from 'reader/follow-button/follow-sources';
 
 const analyticsPageTitle = 'Reader';
 
-const exported = {
-	tagListing( context ) {
-		var basePath = '/tag/:slug',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag,
-			tagSlug = trim( context.params.tag )
-				.toLowerCase()
-				.replace( /\s+/g, '-' )
-				.replace( /-{2,}/g, '-' ),
-			encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
-			tagStore = feedStreamFactory( 'tag:' + tagSlug ),
-			mcKey = 'topic';
+export const tagListing = context => {
+	const basePath = '/tag/:slug';
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
+	const tagSlug = trim( context.params.tag )
+		.toLowerCase()
+		.replace( /\s+/g, '-' )
+		.replace( /-{2,}/g, '-' );
+	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
+	const tagStore = feedStreamFactory( 'tag:' + tagSlug );
+	const mcKey = 'topic';
 
-		ensureStoreLoading( tagStore, context );
+	ensureStoreLoading( tagStore, context );
 
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_tag_loaded', {
-			tag: tagSlug,
-		} );
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_tag_loaded', {
+		tag: tagSlug,
+	} );
 
-		renderWithReduxStore(
-			<AsyncLoad
-				require="reader/tag-stream/main"
-				key={ 'tag-' + encodedTag }
-				postsStore={ tagStore }
-				encodedTagSlug={ encodedTag }
-				decodedTagSlug={ tagSlug }
-				trackScrollPage={ trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				showBack={ !! context.lastRoute }
-				showPrimaryFollowButtonOnCards={ true }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+	renderWithReduxStore(
+		<AsyncLoad
+			require="reader/tag-stream/main"
+			key={ 'tag-' + encodedTag }
+			postsStore={ tagStore }
+			encodedTagSlug={ encodedTag }
+			decodedTagSlug={ tagSlug }
+			trackScrollPage={ trackScrollPage.bind(
+				// eslint-disable-line
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
+			showBack={ !! context.lastRoute }
+			showPrimaryFollowButtonOnCards={ true }
+			followSource={ TAG_PAGE }
+		/>,
+		document.getElementById( 'primary' ),
+		context.store
+	);
 };
-
-export default exported;
-
-export const { tagListing } = exported;

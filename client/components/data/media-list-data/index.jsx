@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	isEqual = require( 'lodash/isEqual' );
+import { assign, isEqual } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -26,6 +25,8 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
+		source: React.PropTypes.string,
+		postId: React.PropTypes.number,
 		filter: React.PropTypes.string,
 		search: React.PropTypes.string
 	},
@@ -54,7 +55,7 @@ module.exports = React.createClass( {
 	},
 
 	getQuery: function( props ) {
-		var query = {};
+		const query = {};
 
 		props = props || this.props;
 
@@ -63,7 +64,18 @@ module.exports = React.createClass( {
 		}
 
 		if ( props.filter ) {
-			query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+			if ( props.filter === 'this-post' ) {
+				if ( props.postId ) {
+					query.post_ID = props.postId;
+				}
+			} else {
+				query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+			}
+		}
+
+		if ( props.source ) {
+			query.source = props.source;
+			query.path = 'recent';
 		}
 
 		return query;

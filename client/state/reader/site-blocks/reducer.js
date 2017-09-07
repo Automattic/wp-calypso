@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
+/** @format */
 /**
  * Internal dependencies
  */
@@ -14,7 +10,8 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Tracks all known site block statuses, indexed by site ID.

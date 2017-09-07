@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
+import { assign } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CountrySelect from 'my-sites/upgrades/components/form/country-select';
+import CountrySelect from 'my-sites/domains/components/form/country-select';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import Input from 'my-sites/upgrades/components/form/input';
+import Input from 'my-sites/domains/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
 
 const CreditCardFormFields = React.createClass( {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -51,17 +52,26 @@ class TagEmptyContent extends React.Component {
 
 		const message = this.props.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
-			{ components: { tagName: <em>{ this.props.decodedTagSlug }</em> } }
+			{
+				components: {
+					tagName: (
+						<em>
+							{ this.props.decodedTagSlug }
+						</em>
+					),
+				},
+			}
 		);
 
 		return (
 			<EmptyContent
+				className="tag-stream__empty-content"
 				title={ this.props.translate( 'No recent posts' ) }
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 400 }
 			/>
 		);
 	}

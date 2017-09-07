@@ -18,17 +18,16 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/upgrades/navigation';
+import PlansNavigation from 'my-sites/domains/navigation';
 import ProductPurchaseFeatures from 'blocks/product-purchase-features';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/product-purchase-features-list';
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
@@ -43,6 +42,7 @@ class CurrentPlan extends Component {
 		isExpiring: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
+		isAutomatedTransfer: PropTypes.bool,
 	};
 
 	isLoading() {
@@ -61,12 +61,9 @@ class CurrentPlan extends Component {
 				}
 			} );
 
-		let tagLine = translate( 'Unlock the full potential of your site with all the features included in your plan.' );
-
-		if ( plan === PLAN_BUSINESS ) {
-			tagLine = translate( 'Learn more about everything included with Business and take advantage of' +
-				' its professional features.' );
-		}
+		const tagLine = planConstObj.getTagline
+			? planConstObj.getTagline()
+			: translate( 'Unlock the full potential of your site with all the features included in your plan.' );
 
 		return {
 			title: title,
@@ -85,6 +82,7 @@ class CurrentPlan extends Component {
 			shouldShowDomainWarnings,
 			hasDomainsLoaded,
 			translate,
+			isAutomatedTransfer,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -110,6 +108,7 @@ class CurrentPlan extends Component {
 
 				{ showDomainWarnings && <DomainWarnings
 						domains={ domains }
+						position="current-plan"
 						selectedSite={ selectedSite }
 						ruleWhiteList={ [
 							'newDomainsWithPrimary',
@@ -130,6 +129,7 @@ class CurrentPlan extends Component {
 						currentPlanSlug={ currentPlanSlug }
 						currentPlan={ currentPlan }
 						isExpiring={ isExpiring }
+						isAutomatedTransfer={ isAutomatedTransfer }
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
@@ -156,6 +156,7 @@ export default connect(
 			selectedSite,
 			selectedSiteId,
 			domains,
+			isAutomatedTransfer,
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),

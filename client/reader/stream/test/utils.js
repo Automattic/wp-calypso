@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,31 +24,31 @@ describe( 'reader stream', () => {
 		injectRecommendations = utils.injectRecommendations;
 	} );
 
-	const postKey1 = { feedId: 'feed1', postId: 'postId1' };
-	const postKey2 = { feedId: 'feed1', postId: 'postId2' };
+	const today = moment().toDate();
+	const postKey1 = { feedId: 'feed1', postId: 'postId1', date: today };
+	const postKey2 = { feedId: 'feed1', postId: 'postId2', date: today };
 	const postIds34 = [ 'postId3', 'postId4' ];
 	const postIds57 = [ 'postId5', 'postId6', 'postId7' ];
 	const combinedCardPostKey1 = {
 		feedId: postKey1.feedId,
 		postIds: postIds34,
-		localMoment: undefined,
+		date: today,
 		isCombination: true,
 	};
 	const combinedCardPostKey2 = {
 		feedId: postKey1.feedId,
 		postIds: postIds57,
-		localMoment: undefined,
+		date: today,
 		isCombination: true,
 	};
 
 	describe( '#sameDay', () => {
-		const momentPostKey = localMoment => ( { localMoment } );
-		const today = moment();
-		const todayPostKey = momentPostKey( today );
-		const todayPostKey2 = momentPostKey( moment() );
-		const oneYearAgoPostKey = momentPostKey( moment().year( today.year() - 1 ) );
-		const oneYearInTheFuturePostKey = momentPostKey( moment().year( today.year() + 1 ) );
-		const oneMonthAgoPostKey = momentPostKey( moment().month( today.month() - 1 ) );
+		const datePostKey = date => ( { date } );
+		const todayPostKey = datePostKey( today );
+		const todayPostKey2 = datePostKey( new Date() );
+		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );
+		const oneYearInTheFuturePostKey = datePostKey( moment( today ).add( 1, 'year' ).toDate() );
+		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
 
 		it( 'should return true when two days are the same day', () => {
 			assert( sameDay( todayPostKey, todayPostKey2 ) );
@@ -103,7 +104,7 @@ describe( 'reader stream', () => {
 				feedId: postKey1.feedId,
 				postIds: [ postKey1.postId, postKey2.postId ],
 				isCombination: true,
-				localMoment: undefined,
+				date: today,
 			} );
 		} );
 
@@ -130,13 +131,13 @@ describe( 'reader stream', () => {
 	} );
 
 	describe( '#combineCards', () => {
-		const localMoment = moment();
-		const site1Key1 = { blogId: '1', postId: '11', localMoment };
-		const site1Key2 = { blogId: '1', postId: '12', localMoment };
-		const site1Key3 = { blogId: '1', postId: '13', localMoment };
-		const site2Key2 = { blogId: '2', postId: '22', localMoment };
-		const site3Key1 = { blogId: '3', postId: '31', localMoment };
-		const site4Key1 = { blogId: '4', postId: '41', localMoment };
+		const date = new Date();
+		const site1Key1 = { blogId: '1', postId: '11', date };
+		const site1Key2 = { blogId: '1', postId: '12', date };
+		const site1Key3 = { blogId: '1', postId: '13', date };
+		const site2Key2 = { blogId: '2', postId: '22', date };
+		const site3Key1 = { blogId: '3', postId: '31', date };
+		const site4Key1 = { blogId: '4', postId: '41', date };
 
 		it( 'should combine series with 2 in a rows', () => {
 			const postKeysSet1 = [ site1Key1, site1Key2 ];
@@ -170,12 +171,12 @@ describe( 'reader stream', () => {
 			const discoverFeedId = 41325786;
 			const discoverSiteId = 53424024;
 			const discoverFeedPostKeys = [
-				{ feedId: discoverFeedId, postId: '1', localMoment: moment() },
-				{ feedId: discoverFeedId, postId: '2', localMoment: moment() },
+				{ feedId: discoverFeedId, postId: '1', date },
+				{ feedId: discoverFeedId, postId: '2', date },
 			];
 			const discoverSitePostKeys = [
-				{ blogId: discoverSiteId, postId: '1', localMoment: moment() },
-				{ blogId: discoverSiteId, postId: '2', localMoment: moment() },
+				{ blogId: discoverSiteId, postId: '1', date },
+				{ blogId: discoverSiteId, postId: '2', date },
 			];
 			const combinedFeedItems = combineCards( discoverFeedPostKeys );
 			const combinedSiteItems = combineCards( discoverSitePostKeys );
@@ -185,8 +186,8 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should not combine cards that are greater than a day apart', () => {
-			const theDistantPast = moment().year( -1 );
-			const postKeys = [ site1Key1, { ...site1Key2, localMoment: theDistantPast } ];
+			const theDistantPast = moment().year( -1 ).toDate();
+			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );
 		} );

@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,9 +16,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import UpgradesNavigation from 'my-sites/domains/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
 const Plans = React.createClass( {
 	propTypes: {
@@ -36,9 +38,27 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.redirectIfNonJetpackMonthly();
+
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
+		}
+	},
+
+	componentDidUpdate() {
+		this.redirectIfNonJetpackMonthly();
+	},
+
+	redirectIfNonJetpackMonthly() {
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedSite,
+		} = this.props;
+
+		if ( selectedSite && ! displayJetpackPlans && intervalType === 'monthly' ) {
+			page.redirect( '/plans/' + selectedSite.slug );
 		}
 	},
 
@@ -71,6 +91,7 @@ const Plans = React.createClass( {
 			<div>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
+				<QueryContactDetailsCache />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />

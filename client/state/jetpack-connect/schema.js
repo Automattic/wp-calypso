@@ -57,3 +57,24 @@ export const jetpackConnectAuthorizeSchema = {
 		}
 	}
 };
+
+export const jetpackAuthAttemptsSchema = {
+	type: 'object',
+	additionalProperties: false,
+	patternProperties: {
+		'^.+$': {
+			type: 'object',
+			required: [ 'attempt', 'timestamp' ],
+			attempt: { type: 'number' },
+			timestamp: { type: 'number' }
+		}
+	}
+};
+
+export const jetpackConnectSelectedPlansSchema = {
+	type: 'object',
+	additionalProperties: false,
+	patternProperties: {
+		'^.+$': { type: [ 'string', 'null' ] }
+	}
+};

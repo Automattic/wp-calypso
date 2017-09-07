@@ -9,6 +9,7 @@ import page from 'page';
 import controller from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const nonJetpackRedirectTo = path => ( context, next ) => {
@@ -35,6 +36,16 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
+		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
+			page.redirect( '/plugins/' + context.params.site );
+		} );
+
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
+			page.redirect( '/plugins/browse/' + context.params.site );
+		} );
+
 		page( '/plugins/browse/:category/:site',
 			controller.siteSelection,
 			controller.navigation,
@@ -50,11 +61,26 @@ module.exports = function() {
 		page( '/plugins/category/:category/:site_id',
 			controller.siteSelection,
 			controller.navigation,
-			nonJetpackRedirectTo( '/plugins' ),
+			nonJetpackRedirectTo( '/plugins/manage' ),
 			pluginsController.plugins.bind( null, 'all' ),
 		);
 
+		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
+			page( '/plugins/upload', controller.sites );
+			page( '/plugins/upload/:site_id',
+				controller.siteSelection,
+				controller.navigation,
+				pluginsController.upload
+			);
+		}
+
 		page( '/plugins',
+			controller.siteSelection,
+			controller.navigation,
+			pluginsController.browsePlugins
+		);
+
+		page( '/plugins/manage/:site?',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.plugins.bind( null, 'all' ),
@@ -66,7 +92,8 @@ module.exports = function() {
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
-				pluginsController.plugins.bind( null, filter )
+				pluginsController.plugins.bind( null, filter ),
+				controller.sites
 			)
 		) );
 

@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -48,9 +49,8 @@ describe( 'unfollow tag request', () => {
 		it( 'should dispatch HTTP request to unfollow tag endpoint', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			requestUnfollow( { dispatch }, action, next );
+			requestUnfollow( { dispatch }, action );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
@@ -63,25 +63,14 @@ describe( 'unfollow tag request', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestUnfollow( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receiveUnfollowSuccess', () => {
 		it( 'should dispatch the id of the unfollowed tag', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, next, successfulUnfollowResponse );
+			receiveUnfollowTag( { dispatch }, action, successfulUnfollowResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
@@ -94,9 +83,8 @@ describe( 'unfollow tag request', () => {
 		it( 'if api reports error then should create an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, next, unsuccessfulResponse );
+			receiveUnfollowTag( { dispatch }, action, unsuccessfulResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -109,10 +97,9 @@ describe( 'unfollow tag request', () => {
 		it( 'should dispatch an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 			const error = 'could not find tag';
 
-			receiveError( { dispatch }, action, next, error );
+			receiveError( { dispatch }, action, error );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {

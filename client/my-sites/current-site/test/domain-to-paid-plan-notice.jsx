@@ -9,24 +9,13 @@ import { stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { DomainToPaidPlanNotice } from '../domain-to-paid-plan-notice';
 
 describe( 'DomainToPaidPlanNotice', function() {
 	const translate = stub();
 	const site = { ID: 12345, slug: 'site_slug' };
-	const abtests = [];
-	let DomainToPaidPlanNotice;
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/abtest', { abtest: ( test ) => abtests[ test ] } );
-	} );
-
-	before( () => {
-		DomainToPaidPlanNotice = require( '../domain-to-paid-plan-notice' ).DomainToPaidPlanNotice;
-	} );
 
 	beforeEach( () => {
-		abtests.domainToPaidPlanUpsellNudge = 'show';
 		translate.returns( 'translated content' );
 	} );
 
@@ -42,14 +31,7 @@ describe( 'DomainToPaidPlanNotice', function() {
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
-	it( 'should render null when a/b test variant is skip', function() {
-		abtests.domainToPaidPlanUpsellNudge = 'skip';
-		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
-
-		expect( wrapper.type() ).to.equal( null );
-	} );
-
-	it( 'should render component when a/b test variant is show', function() {
+	it( 'should render component when site information is available and the site is eligible', function() {
 		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
 		expect( wrapper.type().displayName ).to.equal( 'Localized(Notice)' );
 	} );

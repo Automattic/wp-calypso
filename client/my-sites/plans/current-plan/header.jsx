@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import invoke from 'lodash/invoke';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +47,13 @@ class CurrentPlanHeader extends Component {
 		] ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isAutomatedTransfer: PropTypes.bool,
+	};
+
+	isEligibleForLiveChat = () => {
+		const { currentPlanSlug: planSlug } = this.props;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
 	};
 
 	renderPurchaseInfo() {
@@ -93,6 +99,7 @@ class CurrentPlanHeader extends Component {
 	render() {
 		const {
 			currentPlanSlug,
+			isAutomatedTransfer,
 			isPlaceholder,
 			title,
 			tagLine,
@@ -133,8 +140,10 @@ class CurrentPlanHeader extends Component {
 				<div className="current-plan__header-item">
 					<div className="current-plan__header-item-content">
 						<HappinessSupport
-							isJetpack={ !! selectedSite.jetpack }
+							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 							isPlaceholder={ isPlaceholder }
+							showLiveChatButton={ this.isEligibleForLiveChat() }
+							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"
 						/>
 					</div>
 				</div>

@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,

@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
+import {
+	assign,
+	compact,
+	defer,
+	difference,
+	every,
+	filter,
+	find,
+	flatten,
+	get,
+	isEmpty,
+	keys,
+	map,
+	pick,
+	reject
+} from 'lodash';
+const debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
 	store = require( 'store' ),
-	assign = require( 'lodash/assign' ),
-	defer = require( 'lodash/defer' ),
-	difference = require( 'lodash/difference' ),
-	every = require( 'lodash/every' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	compact = require( 'lodash/compact' ),
-	flatten = require( 'lodash/flatten' ),
-	map = require( 'lodash/map' ),
-	reject = require( 'lodash/reject' ),
-	filter = require( 'lodash/filter' ),
-	find = require( 'lodash/find' ),
-	pick = require( 'lodash/pick' ),
-	keys = require( 'lodash/keys' ),
 	page = require( 'page' );
 
 /**
@@ -65,6 +68,11 @@ function SignupFlowController( options ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 
 		SignupActions.provideDependencies( options.providedDependencies );
+	} else {
+		const storedDependencies = this._getStoredDependencies();
+		if ( ! isEmpty( storedDependencies ) ) {
+			SignupActions.provideDependencies( storedDependencies );
+		}
 	}
 
 	store.set( STORAGE_KEY, options.flowName );
@@ -219,6 +227,18 @@ assign( SignupFlowController.prototype, {
 		}
 
 		return this._flow.destination;
+	},
+
+	_getStoredDependencies() {
+		const requiredDependencies = this._flow.steps.reduce( ( current, stepName ) => {
+			const providesDependencies = get( steps, [ stepName, 'providesDependencies' ] );
+			return providesDependencies ? current.concat( providesDependencies ) : current;
+		}, [] );
+
+		return SignupProgressStore.get().reduce(
+			( current, step ) => ( { ...current, ...pick( step.providedDependencies, requiredDependencies ) } ),
+			{}
+		);
 	},
 
 	shouldAutoContinue: function() {

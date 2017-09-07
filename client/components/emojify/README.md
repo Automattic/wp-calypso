@@ -13,7 +13,7 @@ var Emojify = require( 'components/emojify' ),
 
 	// more component stuff
 	// ...
-	render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
+	render( <div><p>This text will be unaffected</p><Emojify>{ textToEmojify }</Emojify></div> );
 
 ```
 
@@ -29,7 +29,7 @@ var Emojify = require( 'components/emojify' ),
 
 Typically a string that you want to search for UTF emoji
 
-### `className`
+### `imgClassName`
 
 <table>
 	<tr><th>Type</th><td>String</td></tr>

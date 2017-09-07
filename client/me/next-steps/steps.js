@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	Gridicon = require( 'gridicons' ),
 	i18n = require( 'i18n-calypso' );
 
 /**
@@ -36,7 +37,7 @@ module.exports = {
 					components: {
 						p1: <p />,
 						p2: <p />,
-						pencil: <span className="noticon noticon-edit" />,
+						pencil: <Gridicon icon="create" size={ 18 } />,
 					}
 				} ),
 				buttonText: i18n.translate( 'Start a Post' ),

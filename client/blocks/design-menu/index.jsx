@@ -5,8 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
-import get from 'lodash/get';
-import includes from 'lodash/includes';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies

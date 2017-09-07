@@ -22,6 +22,7 @@ import {
 	getThemeCustomizeUrl,
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
+	getJetpackUpgradeUrlIfPremiumTheme,
 	getThemeHelpUrl,
 	isThemeActive,
 	isThemePremium,
@@ -32,10 +33,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite
 } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -49,9 +48,31 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		getUrl: getThemePurchaseUrl,
 		hideForTheme: ( state, themeId, siteId ) => (
+			isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
+			! getCurrentUser( state ) || // Not logged in
+			! isThemePremium( state, themeId ) || // Not a premium theme
+			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			isThemeActive( state, themeId, siteId ) // Already active
+		)
+	}
+	: {};
+
+const upgradePlan = config.isEnabled( 'upgrades/checkout' )
+	? {
+		label: i18n.translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+		} ),
+		extendedLabel: i18n.translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme'
+		} ),
+		header: i18n.translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan'
+		} ),
+		getUrl: ( state, themeId, siteId ) => getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) => (
+			! isJetpackSite( state, siteId ) ||
 			! getCurrentUser( state ) ||
-			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-			isJetpackSite( state, siteId ) ||
 			! isThemePremium( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId )
@@ -66,7 +87,7 @@ const activate = {
 	action: activateAction,
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
-		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ||
+		isJetpackSiteMultiSite( state, siteId ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
@@ -107,12 +128,8 @@ const tryandcustomize = {
 		! getCurrentUser( state ) ||
 		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-		isThemeActive( state, themeId, siteId ) || (
-			isThemePremium( state, themeId ) &&
-			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
-			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
-			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
-		) ||
+		isThemeActive( state, themeId, siteId ) ||
+		( isThemePremium( state, themeId ) && isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
@@ -163,6 +180,7 @@ const ALL_THEME_OPTIONS = {
 	customize,
 	preview,
 	purchase,
+	upgradePlan,
 	activate,
 	tryandcustomize,
 	deleteTheme,

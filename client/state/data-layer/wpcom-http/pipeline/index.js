@@ -10,6 +10,7 @@ import {
  * Internal dependencies
  */
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
+import { retryOnFailure } from './retry-on-failure';
 
 /**
  * @typedef {Object} InboundData
@@ -17,8 +18,10 @@ import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate
  * @property {ReduxStore} store Redux store
  * @property {*} originalData response data from returned network request
  * @property {*} originalError response error from returned network request
+ * @property {*} originalHeaders response headers from returned network request
  * @property {*} nextData transformed response data
  * @property {*} nextError transformed response error
+ * @property {*} nextHeaders transformed repsonse headers
  * @property {Object[]} failures list of `onFailure` actions to dispatch
  * @property {Object[]} successes list of `onSuccess` actions to dispatch
  * @property {Boolean} [shouldAbort] whether or not no further processing should occur for request
@@ -45,6 +48,7 @@ import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate
 
 /** @type {InboundProcessor[]} */
 const inboundChain = [
+	retryOnFailure(),
 	applyDuplicatesHandlers,
 ];
 
@@ -63,19 +67,21 @@ const applyOutboundProcessor = ( outboundData, nextProcessor ) =>
 		? nextProcessor( outboundData )
 		: outboundData;
 
-export const processInboundChain = chain => ( originalRequest, store, originalData, originalError ) =>
+export const processInboundChain = chain => ( originalRequest, store, originalData, originalError, originalHeaders ) =>
 	pick(
 		chain.reduce( applyInboundProcessor, {
 			originalRequest,
 			store,
 			originalData,
 			originalError,
+			originalHeaders,
 			nextData: originalData,
 			nextError: originalError,
+			nextHeaders: originalHeaders,
 			failures: compact( [ originalRequest.onFailure ] ),
 			successes: compact( [ originalRequest.onSuccess ] ),
 		} ),
-		[ 'failures', 'nextData', 'nextError', 'successes', 'shouldAbort' ],
+		[ 'failures', 'nextData', 'nextError', 'nextHeaders', 'successes', 'shouldAbort' ],
 	);
 
 export const processOutboundChain = chain => ( originalRequest, store ) =>
@@ -83,6 +89,6 @@ export const processOutboundChain = chain => ( originalRequest, store ) =>
 		.reduce( applyOutboundProcessor, { originalRequest, store, nextRequest: originalRequest } )
 		.nextRequest;
 
-export const processInbound = processInboundChain( outboundChain );
+export const processInbound = processInboundChain( inboundChain );
 
-export const processOutbound = processOutboundChain( inboundChain );
+export const processOutbound = processOutboundChain( outboundChain );

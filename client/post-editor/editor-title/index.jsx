@@ -81,10 +81,6 @@ class EditorTitle extends Component {
 		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
 	};
 
-	onBlur = event => {
-		this.onChange( event );
-	};
-
 	render() {
 		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 

@@ -1,0 +1,16 @@
+.post-type-site-info {
+	display: flex;
+}
+
+.post-type-site-info .site-icon {
+	margin-right: 6px;
+}
+
+.post-type-site-info__title {
+	display: inline;
+	margin-right: 15px;
+	line-height: 16px;
+	vertical-align: middle;
+	font-size: 13px;
+	color: $gray-dark;
+}

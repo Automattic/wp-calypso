@@ -44,3 +44,32 @@ export const recordRemoveDomainButtonClick = ( domainName ) => composeAnalytics(
 		domain_name: domainName,
 	} ),
 );
+
+export const recordFormSubmitInMapDomain = ( searchBoxValue ) => recordGoogleEvent(
+	'Domain Search',
+	'Submitted Form in Map Domain Step',
+	'Search Box Value',
+	searchBoxValue
+);
+
+export const recordInputFocusInMapDomain = ( searchBoxValue ) => recordGoogleEvent(
+	'Domain Search',
+	'Focused On Search Box Input in Map Domain Step',
+	'Search Box Value',
+	searchBoxValue
+);
+
+export const recordGoButtonClickInMapDomain = ( searchBoxValue, section ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Go" Button in Map Domain Step',
+		'Search Box Value',
+		searchBoxValue
+	),
+	recordTracksEvent(
+		'calypso_map_domain_step_go_click', {
+			search_box_value: searchBoxValue,
+			section
+		}
+	),
+);

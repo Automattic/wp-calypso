@@ -347,6 +347,17 @@
 	}
 }
 
+.section-nav-tab__title {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 15px;
+	width: 100%;
+	font-size: 14px;
+	line-height: 18px;
+	color: $gray-dark;
+}
+
 // -------- Nav Tabs - dropdowns --------
 .section-nav-tabs__dropdown {
 	position: relative;

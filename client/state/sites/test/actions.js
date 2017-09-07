@@ -36,6 +36,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
+	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 	let sandbox, spy;
 	const getState = () => ( {
 		jetpackConnect: {
@@ -107,7 +108,8 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
+					.filteringPath( () => mySitesPath )
+					.get( mySitesPath )
 					.reply( 200, {
 						sites: [
 							{ ID: 2916284, name: 'WordPress.com Example Blog' },
@@ -145,7 +147,8 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
+					.filteringPath( () => mySitesPath )
+					.get( mySitesPath )
 					.reply( 403, {
 						error: 'authorization_required',
 						message: 'An active access token must be used to access sites.'

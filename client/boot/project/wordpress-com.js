@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
+import { includes, startsWith } from 'lodash';
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
-	startsWith = require( 'lodash/startsWith' ),
 	debug = require( 'debug' )( 'calypso' ),
-	page = require( 'page' ),
-	includes = require( 'lodash/includes' );
+	page = require( 'page' );
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ const config = require( 'config' ),
 	getSavedVariations = abtestModule.getSavedVariations, // used by logger
 	initializeHappychat = require( 'state/happychat/actions' ).initialize,
 	analytics = require( 'lib/analytics' ),
+	reduxBridge = require( 'lib/redux-bridge' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
 	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
@@ -60,6 +60,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
 	supportUser.setReduxStore( reduxStore );
+	reduxBridge.setReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {
@@ -240,7 +241,8 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
-		const singleTreeSections = [ 'account-recovery', 'login', 'posts-custom', 'theme', 'themes' ];
+		const singleTreeSections = [ 'account-recovery', 'login', 'posts-custom', 'theme', 'themes', 'preview',
+			'domain-connect-authorize' ];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
 

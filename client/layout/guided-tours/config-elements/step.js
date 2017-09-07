@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
 	debounce,
@@ -181,7 +182,7 @@ export default class Step extends Component {
 		this.setAnalyticsTimestamp( context );
 
 		if ( when && ! isValid( when ) ) {
-			const nextStepName = anyFrom( branching[ step ] );
+			const nextStepName = props.next || anyFrom( branching[ step ] );
 			const skipping = this.shouldSkipAnalytics();
 			next( { tour, tourVersion, step, nextStepName, skipping } );
 		}

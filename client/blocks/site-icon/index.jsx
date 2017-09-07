@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Image from 'components/image';
 import Spinner from 'components/spinner';
 import QuerySites from 'components/data/query-sites';
 import { getSite } from 'state/sites/selectors';
@@ -21,23 +22,22 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 
 	const classes = classNames( 'site-icon', {
 		'is-blank': ! iconSrc,
-		'is-transient': isTransientIcon
+		'is-transient': isTransientIcon,
 	} );
 
 	const style = {
 		height: size,
 		width: size,
 		lineHeight: size + 'px',
-		fontSize: size + 'px'
+		fontSize: size + 'px',
 	};
 
 	return (
 		<div className={ classes } style={ style }>
 			{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc
-				? <img className="site-icon__img" src={ iconSrc } />
-				: <Gridicon icon="globe" size={ Math.round( size / 1.3 ) } />
-			}
+				? <Image className="site-icon__img" src={ iconSrc } alt="" />
+				: <Gridicon icon="globe" size={ Math.round( size / 1.3 ) } /> }
 			{ isTransientIcon && <Spinner /> }
 		</div>
 	);
@@ -49,14 +49,14 @@ SiteIcon.propTypes = {
 	iconUrl: PropTypes.string,
 	size: PropTypes.number,
 	imgSize: PropTypes.number,
-	isTransientIcon: PropTypes.bool
+	isTransientIcon: PropTypes.bool,
 };
 
 SiteIcon.defaultProps = {
 	// Cache a larger image so there's no need to download different assets to
 	// display the site icons in different contexts.
 	imgSize: 120,
-	size: 32
+	size: 32,
 };
 
 export default connect( ( state, { site, siteId, imgSize } ) => {
@@ -69,7 +69,7 @@ export default connect( ( state, { site, siteId, imgSize } ) => {
 	// since only the selected site is currently received into state.
 	if ( ! stateSite ) {
 		return {
-			iconUrl: get( site, 'icon.img' )
+			iconUrl: get( site, 'icon.img' ),
 		};
 	}
 
@@ -78,6 +78,6 @@ export default connect( ( state, { site, siteId, imgSize } ) => {
 	return {
 		site: stateSite,
 		iconUrl: getSiteIconUrl( state, stateSite.ID, imgSize ),
-		isTransientIcon: isTransientMedia( state, stateSite.ID, iconId )
+		isTransientIcon: isTransientMedia( state, stateSite.ID, iconId ),
 	};
 } )( SiteIcon );

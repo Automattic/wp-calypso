@@ -9,17 +9,16 @@ import React from 'react';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
 export default React.createClass( {
-
 	displayName: 'ReaderPostOptionsMenu',
 
 	render() {
 		const post = {
-			site_URL: 'http://discover.wordpress.com'
+			site_URL: 'http://discover.wordpress.com',
 		};
 
 		// Narrow container so popover appears in a reasonable spot
 		const wrapperStyles = {
-			width: '30px'
+			width: '30px',
 		};
 
 		return (
@@ -32,5 +31,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

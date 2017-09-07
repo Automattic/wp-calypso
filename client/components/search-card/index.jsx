@@ -11,7 +11,6 @@ import Card from 'components/card';
 import Search from 'components/search';
 
 class SearchCard extends React.Component {
-
 	static propTypes = {
 		additionalClasses: React.PropTypes.string,
 		initialValue: React.PropTypes.string,
@@ -25,7 +24,8 @@ class SearchCard extends React.Component {
 		dir: React.PropTypes.string,
 		maxLength: React.PropTypes.number,
 		hideOpenIcon: React.PropTypes.bool,
-	}
+		disableAutocorrect: React.PropTypes.bool,
+	};
 
 	render() {
 		const cardClasses = classnames( 'search-card', this.props.className );
@@ -39,11 +39,11 @@ class SearchCard extends React.Component {
 
 	focus = () => {
 		this.refs.search.focus();
-	}
+	};
 
 	clear = () => {
 		this.refs.search.clear();
-	}
+	};
 }
 
 export default SearchCard;

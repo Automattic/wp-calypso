@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:viewers:store' ),
-	assign = require( 'lodash/assign' ),
-	values = require( 'lodash/values' );
+import { assign, values } from 'lodash';
+const debug = require( 'debug' )( 'calypso:viewers:store' );
 
 /**
  * Internal dependencies

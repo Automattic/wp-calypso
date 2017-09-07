@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import values from 'lodash/values';
-import every from 'lodash/every';
-import isEmpty from 'lodash/isEmpty';
+import { every, isEmpty, values } from 'lodash';
 
 /**
  * Internal dependencies

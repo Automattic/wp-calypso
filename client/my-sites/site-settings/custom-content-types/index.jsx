@@ -8,13 +8,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -25,8 +26,13 @@ class CustomContentTypes extends Component {
 			activatingCustomContentTypesModule,
 			customContentTypesModuleActive,
 			fields,
-			siteId
+			siteId,
+			siteIsJetpack,
 		} = this.props;
+
+		if ( ! siteIsJetpack ) {
+			return;
+		}
 
 		if ( customContentTypesModuleActive !== false ) {
 			return;
@@ -52,21 +58,71 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label, description ) {
+	renderPostsPerPageField( fieldName, postTypeLabel ) {
+		const {
+			fields,
+			onChangeField,
+			translate,
+		} = this.props;
+		const numberFieldName = fieldName === 'post'
+			? 'posts_per_page'
+			: fieldName + '_posts_per_page';
+		const isDisabled = this.isFormPending() || ( ! fields[ fieldName ] && fieldName !== 'post' );
+
+		return (
+			<div className="custom-content-types__indented-form-field indented-form-field">
+				{ translate(
+					'Display {{field /}} %s per page',
+					{
+						args: postTypeLabel.toLowerCase(),
+						components: {
+							field: (
+								<FormTextInput
+									name={ numberFieldName }
+									type="number"
+									step="1"
+									min="0"
+									id={ numberFieldName }
+									value={ 'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ] }
+									onChange={ onChangeField( numberFieldName ) }
+									disabled={ isDisabled }
+								/>
+							)
+						}
+					}
+				) }
+			</div>
+		);
+	}
+
+	renderContentTypeSettings( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
 			handleAutosavingToggle
 		} = this.props;
 		return (
-			<div>
-				<CompactFormToggle
-					checked={ !! fields[ name ] }
-					disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-					onChange={ handleAutosavingToggle( name ) }
-				>
-					{ label }
-				</CompactFormToggle>
+			<div className="custom-content-types__module-settings">
+				{
+					name !== 'post'
+						? (
+							<CompactFormToggle
+								checked={ !! fields[ name ] }
+								disabled={ this.isFormPending() || activatingCustomContentTypesModule }
+								onChange={ handleAutosavingToggle( name ) }
+							>
+								{ label }
+							</CompactFormToggle>
+						)
+						: (
+							<div className="custom-content-types__label">
+								{ label }
+							</div>
+						)
+				}
+
+				{ this.renderPostsPerPageField( name, label ) }
+
 				<FormSettingExplanation isIndented>
 					{ description }
 				</FormSettingExplanation>
@@ -74,10 +130,14 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
+	renderBlogPostSettings() {
+		const { translate } = this.props;
+		const fieldLabel = translate( 'Blog posts' );
+		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
+
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
+				{ this.renderContentTypeSettings( 'post', fieldLabel, fieldDescription ) }
 			</div>
 		);
 	}
@@ -87,7 +147,7 @@ class CustomContentTypes extends Component {
 		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-			'you can display them using the shortcode ( [testimonials] ).',
+			'you can display them using the shortcode [testimonials].',
 			{
 				components: {
 					link: <a href="https://support.wordpress.com/testimonials/" />
@@ -100,10 +160,10 @@ class CustomContentTypes extends Component {
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolios' );
+		const fieldLabel = translate( 'Portfolio Projects' );
 		const fieldDescription = translate(
-			'Add, organize, and display {{link}}portfolios{{/link}}. If your theme doesn’t support portfolios yet, ' +
-			'you can display them using the shortcode ( [portfolios] ).',
+			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
+			'you can display them using the shortcode [portfolio].',
 			{
 				components: {
 					link: <a href="https://support.wordpress.com/portfolios/" />
@@ -117,24 +177,21 @@ class CustomContentTypes extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div>
-				<SectionHeader label={ translate( 'Custom content types' ) } />
+			<Card className="custom-content-types site-settings">
+				<FormFieldset>
+					<div className="custom-content-types__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
+								{ translate( 'Learn more about Custom Content Types.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 
-				<Card className="custom-content-types__card site-settings">
-					<FormFieldset>
-						<div className="custom-content-types__info-link-container site-settings__info-link-container">
-							<InfoPopover position="left">
-								<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
-									{ translate( 'Learn more about Custom Content Types.' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
-						{ this.renderTestimonialSettings() }
-						{ this.renderPortfolioSettings() }
-					</FormFieldset>
-				</Card>
-			</div>
+					{ this.renderBlogPostSettings() }
+					{ this.renderTestimonialSettings() }
+					{ this.renderPortfolioSettings() }
+				</FormFieldset>
+			</Card>
 		);
 	}
 }
@@ -146,8 +203,8 @@ CustomContentTypes.defaultProps = {
 };
 
 CustomContentTypes.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
 	handleAutosavingToggle: PropTypes.func.isRequired,
+	onChangeField: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
@@ -159,6 +216,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteIsJetpack: isJetpackSite( state, siteId ),
 			customContentTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			activatingCustomContentTypesModule: isActivatingJetpackModule( state, siteId, 'custom-content-types' ),
 		};

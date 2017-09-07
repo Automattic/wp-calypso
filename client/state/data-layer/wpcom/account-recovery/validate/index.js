@@ -9,7 +9,7 @@ import {
 	setValidationKey,
 } from 'state/account-recovery/reset/actions';
 
-export const handleValidateRequest = ( { dispatch }, action, next ) => {
+export const handleValidateRequest = ( { dispatch }, action ) => {
 	const { userData, method, key } = action;
 	wpcom.req.post( {
 		body: {
@@ -24,8 +24,6 @@ export const handleValidateRequest = ( { dispatch }, action, next ) => {
 		dispatch( setValidationKey( key ) );
 	} )
 	.catch( ( error ) => dispatch( validateRequestError( error ) ) );
-
-	return next( action );
 };
 
 export default {

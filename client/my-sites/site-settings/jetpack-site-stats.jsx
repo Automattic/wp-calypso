@@ -4,12 +4,15 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Banner from 'components/banner';
 import FoldableCard from 'components/foldable-card';
+import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -23,7 +26,9 @@ import QuerySiteRoles from 'components/data/query-site-roles';
 import { getStatsPathForTab } from 'lib/route/path';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
 import {
+	isActivatingJetpackModule,
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode
@@ -49,7 +54,7 @@ class JetpackSiteStats extends Component {
 			const { setFieldValue } = this.props;
 			let groupFields = this.getCurrentGroupFields( groupName );
 
-			if ( groupFields.includes( fieldName ) ) {
+			if ( includes( groupFields, fieldName ) ) {
 				groupFields = groupFields.filter( field => field !== fieldName );
 			} else {
 				groupFields.push( fieldName );
@@ -57,6 +62,14 @@ class JetpackSiteStats extends Component {
 
 			setFieldValue( groupName, groupFields, true );
 		};
+	};
+
+	handleStatsActivationButton = ( event ) => {
+		const { siteId } = this.props;
+
+		this.props.activateModule( siteId, 'stats' );
+
+		event.preventDefault();
 	};
 
 	getCurrentGroupFields( groupName ) {
@@ -98,9 +111,25 @@ class JetpackSiteStats extends Component {
 		);
 	}
 
-	render() {
+	renderModuleEnableBanner() {
+		const { translate } = this.props;
+
+		return (
+			<Banner
+				title={ translate( 'Site Stats module is disabled' ) }
+				description={
+					translate( 'Enable this to see detailed information about your traffic, likes, comments, and subscribers.' )
+				}
+				callToAction={ translate( 'Enable' ) }
+				onClick={ this.handleStatsActivationButton }
+				event={ 'site_stats_module_enable_banner' }
+				icon="stats"
+			/>
+		);
+	}
+
+	renderCardSettings() {
 		const {
-			siteId,
 			siteRoles,
 			siteSlug,
 			translate
@@ -108,17 +137,12 @@ class JetpackSiteStats extends Component {
 		const header = (
 			<div>
 				<Gridicon icon="checkmark" />
-				{ translate( 'Collecting valuable traffic stats and insights' ) }
+				{ translate( 'Enabled! You\'re collecting valuable data and insights.' ) }
 			</div>
 		);
 
 		return (
-			<div className="site-settings__traffic-settings">
-				<QueryJetpackConnection siteId={ siteId } />
-				<QuerySiteRoles siteId={ siteId } />
-
-				<SectionHeader label={ translate( 'Site stats' ) } />
-
+			<div>
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
 					header={ header }
@@ -150,7 +174,7 @@ class JetpackSiteStats extends Component {
 								role => this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
-									this.getCurrentGroupFields( 'count_roles' ).includes( role.name ),
+									includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
 									this.onChangeToggleGroup( 'count_roles', role.name )
 								)
 							)
@@ -167,7 +191,7 @@ class JetpackSiteStats extends Component {
 								role => this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
-									this.getCurrentGroupFields( 'roles' ).includes( role.name ),
+									includes( this.getCurrentGroupFields( 'roles' ), role.name ),
 									this.onChangeToggleGroup( 'roles', role.name )
 								)
 							)
@@ -178,6 +202,50 @@ class JetpackSiteStats extends Component {
 				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
 				</CompactCard>
+			</div>
+		);
+	}
+
+	renderPlaceholder() {
+		return (
+			<Card className="site-settings__card is-placeholder">
+				<div />
+			</Card>
+		);
+	}
+
+	renderCardContent() {
+		const {
+			activatingStatsModule,
+			statsModuleActive
+		} = this.props;
+
+		if ( activatingStatsModule ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( statsModuleActive === true ) {
+			return this.renderCardSettings();
+		} else if ( statsModuleActive === false ) {
+			return this.renderModuleEnableBanner();
+		}
+		return this.renderPlaceholder();
+	}
+
+	render() {
+		const {
+			siteId,
+			translate
+		} = this.props;
+
+		return (
+			<div className="site-settings__traffic-settings">
+				<QueryJetpackConnection siteId={ siteId } />
+				<QuerySiteRoles siteId={ siteId } />
+
+				<SectionHeader label={ translate( 'Site stats' ) } />
+
+				{ this.renderCardContent() }
 			</div>
 		);
 	}
@@ -192,9 +260,13 @@ export default connect(
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state, siteId ),
-			statsModuleActive: !! isJetpackModuleActive( state, siteId, 'stats' ),
+			activatingStatsModule: isActivatingJetpackModule( state, siteId, 'stats' ),
+			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			siteRoles: getSiteRoles( state, siteId ),
 		};
+	},
+	{
+		activateModule
 	}
 )( localize( JetpackSiteStats ) );

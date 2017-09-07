@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	clone = require( 'lodash/clone' ),
-	noop = require( 'lodash/noop' ),
-	filter = require( 'lodash/filter' ),
-	findIndex = require( 'lodash/findIndex' );
-
 import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
+import { clone, filter, findIndex, noop } from 'lodash';
+const ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -24,6 +21,8 @@ var MediaActions = require( 'lib/media/actions' ),
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 
+const GOOGLE_MAX_RESULTS = 1000;
+
 export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
 
@@ -37,7 +36,7 @@ export const MediaLibraryList = React.createClass( {
 		containerWidth: React.PropTypes.number,
 		rowPadding: React.PropTypes.number,
 		mediaScale: React.PropTypes.number.isRequired,
-		photon: React.PropTypes.bool,
+		thumbnailType: React.PropTypes.string,
 		mediaHasNextPage: React.PropTypes.bool,
 		mediaFetchingNextPage: React.PropTypes.bool,
 		mediaOnFetchNextPage: React.PropTypes.func,
@@ -174,7 +173,7 @@ export const MediaLibraryList = React.createClass( {
 				style={ this.getMediaItemStyle( index ) }
 				media={ item }
 				scale={ this.props.mediaScale }
-				photon={ this.props.photon }
+				thumbnailType={ this.props.thumbnailType }
 				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
@@ -198,6 +197,19 @@ export const MediaLibraryList = React.createClass( {
 		}, this );
 	},
 
+	renderTrailingItems() {
+		const { media, source } = this.props;
+
+		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
+			// Google Photos won't return more than 1000 photos - suggest ways round this to the user
+			const message = translate( 'Use the search button to access more photos. You can search for dates, locations, and things.' );
+
+			return <p><em>{ message }</em></p>;
+		}
+
+		return null;
+	},
+
 	render: function() {
 		var onFetchNextPage;
 
@@ -209,7 +221,8 @@ export const MediaLibraryList = React.createClass( {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
-				search: this.props.search
+				search: this.props.search,
+				source: this.props.source,
 			} );
 		}
 
@@ -232,6 +245,7 @@ export const MediaLibraryList = React.createClass( {
 				getItemRef={ this.getItemRef }
 				renderItem={ this.renderItem }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+				renderTrailingItems={ this.renderTrailingItems }
 				className="media-library__list" />
 		);
 	}

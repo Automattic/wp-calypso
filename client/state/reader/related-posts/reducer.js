@@ -1,15 +1,14 @@
+/** @format */
 /**
  * External Dependencies
  */
-import { combineReducers } from 'redux';
-import assign from 'lodash/assign';
-import partial from 'lodash/partial';
-import map from 'lodash/map';
+import { assign, map, partial } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,

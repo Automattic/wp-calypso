@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { noop, throttle, startsWith } from 'lodash';
+import { noop, startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -22,8 +22,9 @@ import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded
 } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
-class ImageEditorCanvas extends Component {
+export class ImageEditorCanvas extends Component {
 	static propTypes = {
 		src: PropTypes.string,
 		mimeType: PropTypes.string,
@@ -41,7 +42,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: PropTypes.func,
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
-		isImageLoaded: PropTypes.bool
+		isImageLoaded: PropTypes.bool,
+		showCrop: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -59,17 +61,23 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: noop,
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
-		isImageLoaded: false
+		isImageLoaded: false,
+		showCrop: true
+	};
+
+	// throttle the frame rate of window.resize() to circa 30fps
+	frameRateInterval = 1000 / 30;
+	requestAnimationFrameId = null;
+	lastTimestamp = null;
+
+	onWindowResize = () => {
+		this.requestAnimationFrameId = window.requestAnimationFrame( this.updateCanvasPosition );
 	};
 
 	constructor( props ) {
 		super( props );
-
-		this.onWindowResize = null;
-
 		this.onLoadComplete = this.onLoadComplete.bind( this );
 		this.updateCanvasPosition = this.updateCanvasPosition.bind( this );
-
 		this.isVisible = false;
 	}
 
@@ -126,8 +134,9 @@ class ImageEditorCanvas extends Component {
 
 		this.drawImage();
 		this.updateCanvasPosition();
-		this.onWindowResize = throttle( this.updateCanvasPosition, 200 );
+
 		if ( typeof window !== 'undefined' ) {
+			this.lastTimestamp = window.performance.now();
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
@@ -137,7 +146,7 @@ class ImageEditorCanvas extends Component {
 	componentWillUnmount() {
 		if ( typeof window !== 'undefined' && this.onWindowResize ) {
 			window.removeEventListener( 'resize', this.onWindowResize );
-			this.onWindowResize = null;
+			window.cancelAnimationFrame( this.requestAnimationFrameId );
 		}
 
 		this.isVisible = false;
@@ -221,7 +230,18 @@ class ImageEditorCanvas extends Component {
 		context.restore();
 	}
 
-	updateCanvasPosition() {
+	updateCanvasPosition( timestamp ) {
+		const now = timestamp,
+			elapsedTime = now - this.lastTimestamp;
+
+		if ( elapsedTime < this.frameRateInterval ) {
+			return;
+		}
+
+		// if enough time has passed to call the next frame
+		// reset lastTimeStamp minus 1 frame in ms ( to adjust for frame rates other than 60fps )
+		this.lastTimestamp = now - ( elapsedTime % this.frameRateInterval );
+
 		const {
 			leftRatio,
 			topRatio,
@@ -233,11 +253,13 @@ class ImageEditorCanvas extends Component {
 			canvasX = -50 * widthRatio - 100 * leftRatio,
 			canvasY = -50 * heightRatio - 100 * topRatio;
 
+		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = canvas;
+
 		this.props.setImageEditorCropBounds(
-			canvas.offsetTop - canvas.offsetHeight * -canvasY / 100,
-			canvas.offsetLeft - canvas.offsetWidth * -canvasX / 100,
-			canvas.offsetTop + canvas.offsetHeight * ( 1 + canvasY / 100 ),
-			canvas.offsetLeft + canvas.offsetWidth * ( 1 + canvasX / 100 )
+			offsetTop - offsetHeight * -canvasY / 100,
+			offsetLeft - offsetWidth * -canvasX / 100,
+			offsetTop + offsetHeight * ( 1 + canvasY / 100 ),
+			offsetLeft + offsetWidth * ( 1 + canvasX / 100 )
 		);
 	}
 
@@ -255,6 +277,11 @@ class ImageEditorCanvas extends Component {
 			heightRatio
 		} = this.props.crop;
 
+		const {
+			isImageLoaded,
+			showCrop
+		} = this.props;
+
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
 		const canvasY = -50 * heightRatio - 100 * topRatio;
 
@@ -263,8 +290,6 @@ class ImageEditorCanvas extends Component {
 			maxWidth: ( 85 / widthRatio ) + '%',
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
-
-		const { isImageLoaded } = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded
@@ -278,7 +303,7 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && <ImageEditorCrop /> }
+				{ showCrop && <ImageEditorCrop /> }
 			</div>
 		);
 	}
@@ -290,13 +315,15 @@ export default connect(
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
 			crop,
-			isImageLoaded
+			isImageLoaded,
+			showCrop: !! ( isImageLoaded && isGreaterThanMinimumDimensions )
 		};
 	},
 	{

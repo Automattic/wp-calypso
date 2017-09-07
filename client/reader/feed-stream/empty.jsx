@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -26,14 +27,14 @@ class FeedEmptyContent extends React.PureComponent {
 	render() {
 		const translate = this.props.translate;
 		const action = (
-			<a
-				className="empty-content__action button is-primary" //eslint-disable-line
-				onClick={ this.recordAction }
-				href="/read/search"
-			>
-				{ translate( 'Find Sites to Follow' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary" //eslint-disable-line
+					onClick={ this.recordAction }
+					href="/read/search"
+				>
+					{ translate( 'Find Sites to Follow' ) }
+				</a>
+			),
 			secondaryAction = (
 				<a
 					className="empty-content__action button" //eslint-disable-line
@@ -50,7 +51,7 @@ class FeedEmptyContent extends React.PureComponent {
 				line={ translate( 'This site has not posted anything recently.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 500 }
 			/>
 		);

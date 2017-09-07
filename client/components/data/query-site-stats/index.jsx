@@ -38,7 +38,7 @@ class QuerySiteStats extends Component {
 
 		this.props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
-		if ( heartbeat, isAutoRefreshAllowedForQuery( query ) ) {
+		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
 			this.interval = setInterval( () => {
 				if ( ! this.props.requesting ) {
 					this.props.requestSiteStats( siteId, statType, query );

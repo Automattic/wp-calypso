@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
-import cloneDeep from 'lodash/cloneDeep';
-import range from 'lodash/range';
-import includes from 'lodash/includes';
+import { cloneDeep, includes, omit, range } from 'lodash';
 
 /**
  * Internal dependencies

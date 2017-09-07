@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import map from 'lodash/map';
+import { map } from 'lodash';
 import i18n from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );

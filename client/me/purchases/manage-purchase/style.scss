@@ -15,7 +15,7 @@
 		.manage-purchase__detail-label,
 		.manage-purchase__detail,
 		.manage-purchase__detail .user {
-			opacity: .6;
+			opacity: .7;
 		}
 	}
 
@@ -257,6 +257,10 @@
 		display: block;
 		cursor: pointer;
 	}
+}
+
+.manage-purchase__detail .user__name {
+	margin-right: 0;
 }
 
 .manage-purchase__expiring-credit-card-notice.notice,

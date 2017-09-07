@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,7 +23,6 @@ import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
-import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -33,21 +32,28 @@ import HappychatConnection from 'components/happychat/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { sendChatMessage as sendHappychatMessage, sendBrowserInfo } from 'state/happychat/actions';
+import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
 import {
+	getCurrentUser,
+	getCurrentUserLocale,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
+import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
+import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+import {
+	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
 } from 'state/selectors';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import { getHelpSelectedSiteId } from 'state/help/selectors';
 
 /**
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();
-const sites = siteList();
 let savedContactForm = null;
 
 const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
@@ -55,6 +61,9 @@ const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
+
+const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
+const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
 const HelpContact = React.createClass( {
 
@@ -67,8 +76,6 @@ const HelpContact = React.createClass( {
 		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 		olarkEvents.on( 'api.chat.onMessageToVisitor', this.onMessageToVisitor );
 		olarkEvents.on( 'api.chat.onMessageToOperator', this.onMessageToOperator );
-
-		sites.on( 'change', this.onSitesChanged );
 
 		olarkActions.updateDetails();
 
@@ -99,8 +106,6 @@ const HelpContact = React.createClass( {
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
 		}
-
-		sites.removeListener( 'change', this.onSitesChanged );
 	},
 
 	getInitialState: function() {
@@ -109,16 +114,11 @@ const HelpContact = React.createClass( {
 			isSubmitting: false,
 			confirmation: null,
 			isChatEnded: false,
-			sitesInitialized: sites.initialized
 		};
 	},
 
 	updateOlarkState: function() {
 		this.setState( { olark: olarkStore.get() } );
-	},
-
-	onSitesChanged: function() {
-		this.setState( { sitesInitialized: sites.initialized } );
 	},
 
 	backToHelp: function() {
@@ -131,22 +131,21 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, siteId } = contactForm;
-		const site = sites.getSite( siteId );
+		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendBrowserInfo( site.URL );
+		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
 		this.props.sendHappychatMessage( message );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
-			site_plan_product_id: ( site ? site.plan.product_id : null )
+			site_plan_product_id: ( site ? site.plan.product_id : null ),
+			is_automated_transfer: ( site ? site.options.is_automated_transfer : null )
 		} );
 
 		page( '/help' );
 	},
 
 	startChat: function( contactForm ) {
-		const { message, howCanWeHelp, howYouFeel, siteId } = contactForm;
-		const site = sites.getSite( siteId );
+		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
 		const notifications = [
@@ -158,7 +157,8 @@ const HelpContact = React.createClass( {
 		notifications.forEach( olarkActions.sendNotificationToOperator );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
-			site_plan_product_id: ( site ? site.plan.product_id : null )
+			site_plan_product_id: ( site ? site.plan.product_id : null ),
+			is_automated_transfer: ( site ? site.options.is_automated_transfer : null )
 		} );
 
 		this.sendMessageToOperator( message );
@@ -191,9 +191,8 @@ const HelpContact = React.createClass( {
 	},
 
 	submitKayakoTicket: function( contactForm ) {
-		const { subject, message, howCanWeHelp, howYouFeel, siteId } = contactForm;
+		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
 		const { currentUserLocale } = this.props;
-		const site = sites.getSite( siteId );
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
@@ -227,7 +226,8 @@ const HelpContact = React.createClass( {
 
 			analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
 				ticket_type: 'kayako',
-				site_plan_product_id: ( site ? site.plan.product_id : null )
+				site_plan_product_id: ( site ? site.plan.product_id : null ),
+				is_automated_transfer: ( site ? site.options.is_automated_transfer : null )
 			} );
 		} );
 
@@ -408,7 +408,8 @@ const HelpContact = React.createClass( {
 		}
 
 		// if the happychat connection is able to accept chats, use it
-		return this.props.isHappychatAvailable && olark.isUserEligible;
+		return ( this.props.isHappychatAvailable && olark.isUserEligible &&
+			this.props.isSelectedHelpSiteOnPaidPlan );
 	},
 
 	shouldUseDirectly: function() {
@@ -449,8 +450,7 @@ const HelpContact = React.createClass( {
 
 	getContactFormPropsVariation: function( variationSlug ) {
 		const { isSubmitting } = this.state;
-		const { translate } = this.props;
-		const hasMoreThanOneSite = sites.get().length > 1;
+		const { translate, hasMoreThanOneSite } = this.props;
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
@@ -489,13 +489,16 @@ const HelpContact = React.createClass( {
 					onSubmit: this.submitDirectlyQuestion,
 					buttonLabel: translate( 'Ask an Expert' ),
 					formDescription: translate(
-						'Chat with an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
-						'These are other users, like yourself, that have been selected ' +
-						'because of their knowledge to help answer your questions. ' +
-						'{{strong}}Please do not{{/strong}} provide financial or ' +
-						'contact information when submitting this form.',
+						'Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
+						'These are other users, like yourself, who have been selected because ' +
+						'of their knowledge to help answer your questions.' +
+						'{{br/}}{{br/}}' +
+						'{{strong}}Please do not{{/strong}} provide financial or contact ' +
+						'information when submitting this form.',
 						{
 							components: {
+								// Need to use linebreaks since the entire text is wrapped in a <p>...</p>
+								br: <br />,
 								strong: <strong />
 							}
 						} ),
@@ -572,10 +575,9 @@ const HelpContact = React.createClass( {
 	},
 
 	shouldShowPreloadForm: function() {
-		const { sitesInitialized } = this.state;
 		const waitingOnDirectly = this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
 
-		return ! sitesInitialized || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
+		return this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
 	},
 
 	/**
@@ -583,14 +585,11 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation } = this.state;
+		const { confirmation } = this.state;
+		const { translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
-		}
-
-		if ( olark.isSupportClosed ) {
-			return <HelpContactClosed />;
 		}
 
 		if ( this.shouldShowPreloadForm() ) {
@@ -617,17 +616,50 @@ const HelpContact = React.createClass( {
 
 		const supportVariation = this.getSupportVariation();
 
+		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
+			// We're taking the Directly confirmation outside the standard `confirmation` state object
+			// that other variations use, because we need this to persist even if the component is
+			// removed and re-mounted. Using `confirmation` in component state would mean you could
+			// ask a new Directy question every time you left the help section and came back.
+			const directlyConfirmation = {
+				title: translate( "We're on it!" ),
+				message: translate(
+					'We sent your question to our {{strong}}Expert Users{{/strong}}. ' +
+					'You will hear back via email as soon as an Expert has responded ' +
+					'(usually within an hour). For now you can close this window or ' +
+					'continue using WordPress.com.',
+					{
+						components: {
+							strong: <strong />
+						}
+					} )
+			};
+			return <HelpContactConfirmation { ...directlyConfirmation } />;
+		}
+
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
 			this.getContactFormPropsVariation( supportVariation ),
 		);
 
+		const currentDate = Date.now();
+
+		// Customers sent to Directly and Forum are not affected by the GM closures
+		const isUserAffectedByGM17Closure = ( supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM );
+
+		const shouldShowClosureNotice = (
+			isUserAffectedByGM17Closure &&
+			currentDate > startShowingGM17ClosureNoticeAt &&
+			currentDate < stopShowingGM17ClosureNoticeAt
+		);
+
 		return (
 			<div>
+				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
-						text={ this.props.translate( 'We had trouble loading the support information for your account. ' +
+						text={ translate( 'We had trouble loading the support information for your account. ' +
 							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
 					/>
@@ -648,6 +680,7 @@ const HelpContact = React.createClass( {
 				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
+				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 			</Main>
 		);
 	}
@@ -655,9 +688,12 @@ const HelpContact = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+		const selectedSitePlan = getSitePlan( state, helpSelectedSiteId );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
+			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
@@ -667,12 +703,16 @@ export default connect(
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
+			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			isRequestingSites: isRequestingSites( state ),
+			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
+			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
 		};
 	},
 	{
 		openHappychat,
 		sendHappychatMessage,
-		sendBrowserInfo,
+		sendUserInfo,
 		askDirectlyQuestion,
 		initializeDirectly,
 	}

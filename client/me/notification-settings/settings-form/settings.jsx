@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PropTypes, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import Immutable from 'immutable';
 
 /**
@@ -11,6 +11,7 @@ import Immutable from 'immutable';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
+import { getUserDevices } from 'state/selectors';
 
 /**
  * Module variables
@@ -21,29 +22,21 @@ const streams = {
 	DEVICES: 'devices'
 };
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsForm',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class NotificationSettingsForm extends PureComponent {
+	static propTypes = {
 		blogId: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.number
 		] ).isRequired,
-		devices: PropTypes.object,
+		devices: PropTypes.array,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
 		onToggle: PropTypes.func.isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			selectedStream: streams.TIMELINE
-		};
-	},
+	state = { selectedStream: streams.TIMELINE };
 
-	getSelectedStreamSettings() {
+	getSelectedStreamSettings = () => {
 		if ( isNaN( this.state.selectedStream ) ) {
 			return this.props.settings.get( this.state.selectedStream );
 		}
@@ -51,7 +44,7 @@ export default React.createClass( {
 		return this.props.settings
 			.get( 'devices' )
 			.find( device => device.get( 'device_id' ) === parseInt( this.state.selectedStream, 10 ) );
-	},
+	};
 
 	render() {
 		const selectedStreamSettings = this.getSelectedStreamSettings();
@@ -59,7 +52,6 @@ export default React.createClass( {
 		return (
 			<div className="notification-settings-form">
 				<StreamSelector
-					devices={ this.props.devices }
 					selectedStream={ this.state.selectedStream }
 					onChange={ selectedStream => this.setState( { selectedStream } ) }
 					settings={ selectedStreamSettings } />
@@ -79,17 +71,15 @@ export default React.createClass( {
 						settingKeys={ this.props.settingKeys }
 						settings={ this.props.settings.get( streams.EMAIL ) }
 						onToggle={ this.props.onToggle } />
-					{ ( () => {
-						if ( this.props.devices && this.props.devices.initialized && this.props.devices.get().length > 0 ) {
-							return <Stream
-								key={ streams.DEVICES }
-								blogId={ this.props.blogId }
-								devices={ this.props.devices }
-								settingKeys={ this.props.settingKeys }
-								settings={ this.props.settings.get( streams.DEVICES ) }
-								onToggle={ this.props.onToggle } />
-						}
-					} )() }
+					{ this.props.devices && this.props.devices.length > 0 &&
+						<Stream
+							key={ streams.DEVICES }
+							blogId={ this.props.blogId }
+							devices={ this.props.devices }
+							settingKeys={ this.props.settingKeys }
+							settings={ this.props.settings.get( streams.DEVICES ) }
+							onToggle={ this.props.onToggle } />
+					}
 					<Stream
 						key={ 'selected-stream' }
 						className={ 'selected-stream' }
@@ -102,4 +92,10 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		devices: getUserDevices( state )
+	} )
+)( NotificationSettingsForm );

@@ -174,7 +174,6 @@ AtDCore.prototype.processXML = function( responseXML ) {
 			errorString = errors[ i ].getElementsByTagName( 'string' ).item( 0 ).firstChild.data;
 			errorType = errors[ i ].getElementsByTagName( 'type' ).item( 0 ).firstChild.data;
 			errorDescription = errors[ i ].getElementsByTagName( 'description' ).item( 0 ).firstChild.data;
-			errorContext;
 
 			if ( errors[ i ].getElementsByTagName( 'precontext' ).item( 0 ).firstChild !== null ) {
 				errorContext = errors[ i ].getElementsByTagName( 'precontext' ).item( 0 ).firstChild.data;

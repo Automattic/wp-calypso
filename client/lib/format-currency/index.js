@@ -3,50 +3,10 @@
  */
 import { numberFormat } from 'i18n-calypso';
 
-const CURRENCIES = {
-	USD: {
-		symbol: '$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2
-	},
-	AUD: {
-		symbol: 'A$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2
-	},
-	CAD: {
-		symbol: 'C$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2
-	},
-	EUR: {
-		symbol: '€',
-		grouping: '.',
-		decimal: ',',
-		precision: 2
-	},
-	GBP: {
-		symbol: '£',
-		grouping: ',',
-		decimal: '.',
-		precision: 2
-	},
-	JPY: {
-		symbol: '¥',
-		grouping: ',',
-		decimal: '.',
-		precision: 0
-	},
-	BRL: {
-		symbol: 'R$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2
-	}
-};
+/**
+ * Internal dependencies
+ */
+import { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code
@@ -130,5 +90,12 @@ export function getCurrencyObject( number, code, options = {} ) {
  * @returns {?Object}          currency defaults
  */
 export function getCurrencyDefaults( code ) {
-	return CURRENCIES[ code ] || null;
+	const defaultCurrency = {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
+	};
+
+	return CURRENCIES[ code ] || defaultCurrency;
 }

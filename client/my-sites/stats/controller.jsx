@@ -15,9 +15,10 @@ import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 const analyticsPageTitle = 'Stats';
@@ -164,8 +165,6 @@ module.exports = {
 		let date;
 		let chartTab;
 		let period;
-		let siteOffset = 0;
-		let momentSiteZone = i18n.moment();
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
@@ -188,15 +187,13 @@ module.exports = {
 				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 			}
 
-			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {
-				siteOffset = currentSite.options.gmt_offset;
-			}
-			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
+			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
+			const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).startOf;
+				date = rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 			}
 
 			numPeriodAgo = parseInt( numPeriodAgo, 10 );
@@ -268,10 +265,11 @@ module.exports = {
 		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
-			if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
-				momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
+			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
+			if ( Number.isFinite( gmtOffset ) ) {
+				momentSiteZone = i18n.moment().utcOffset( gmtOffset );
 			}
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
+			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
 				date = i18n.moment( queryOptions.startDate );
 			} else {
 				date = momentSiteZone.endOf( activeFilter.period );
@@ -375,6 +373,33 @@ module.exports = {
 			};
 			renderWithReduxStore(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/comment-follows" { ...props } />,
+				document.getElementById( 'primary' ),
+				context.store
+			);
+		}
+	},
+
+	activityLog: function( context ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
+			? context.query.startDate
+			: undefined;
+
+		if ( siteId && ! isJetpack ) {
+			page.redirect( '/stats' );
+		} else {
+			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
+
+			const props = {
+				path: context.path,
+				siteId,
+				context,
+				startDate,
+			};
+			renderWithReduxStore(
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/activity-log" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);

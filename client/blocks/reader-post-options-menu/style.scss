@@ -24,11 +24,17 @@
 .reader-post-options-menu__popover {
 
 	.popover__menu .follow-button {
+		color: $blue-medium;
+		padding: 9px 16px;
 
 		.gridicon {
 			position: absolute;
-				left: 14px;
-				top: 11px;
+				left: 17px;
+				top: 12px;
+
+			&:hover {
+				fill: $white;
+			}
 		}
 
 		&:hover,
@@ -39,23 +45,48 @@
 			.gridicon {
 				fill: $white;
 			}
-		}
 
-		&.is-following {
-
-			&:hover,
-			&:focus {
+			.follow-button__label {
 				color: $white;
-				background: $alert-green;
-
-				.gridicon {
-					fill: $white;
-				}
 			}
 		}
 	}
 
-	.popover__menu .follow-button__label {
+	.follow-button__label {
 		display: inline-block;
+		margin-left: 26px;
+	}
+}
+
+.popover__menu-item.reader-post-options-menu__blog-sticker-menu-item {
+	padding: 6px 16px 9px;
+	width: 100%;
+
+	.gridicon {
+		position: relative;
+			left: -1px;
+			top: 1px;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	&.has-sticker {
+		color: $alert-red;
+
+		.gridicon {
+			fill: $alert-red;
+		}
+
+		&:hover,
+		&:focus {
+			color: $white;
+			background: $alert-red;
+
+			.gridicon {
+				fill: $white;
+			}
+		}
 	}
 }

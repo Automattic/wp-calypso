@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/upgrades/paths';
+import paths from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import {
 	canCurrentUser,
@@ -26,17 +27,14 @@ import {
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
-const SiteNotice = React.createClass( {
-	propTypes: {
-		site: React.PropTypes.object
-	},
+class SiteNotice extends React.Component {
+	static propTypes = {
+		site: PropTypes.object
+	};
 
-	getDefaultProps() {
-		return {
-		};
-	},
+	static defaultProps = {};
 
-	getSiteRedirectNotice: function( site ) {
+	getSiteRedirectNotice( site ) {
 		if ( ! site ) {
 			return null;
 		}
@@ -44,22 +42,24 @@ const SiteNotice = React.createClass( {
 			return null;
 		}
 		const { hostname } = url.parse( site.URL );
+		const { translate } = this.props;
+
 		return (
 			<Notice
-				showDismiss={ false }
 				icon="info-outline"
 				isCompact
-			>
-				{ this.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
+				showDismiss={ false }
+				text={ translate( 'Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
-					components: { a: <a href={ site.URL }/> }
+					components: { a: <a href={ site.URL } /> }
 				} ) }
+			>
 				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
-					{ this.translate( 'Edit' ) }
+					{ translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	domainCreditNotice() {
 		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
@@ -68,57 +68,66 @@ const SiteNotice = React.createClass( {
 
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
+		const { translate } = this.props;
+
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Free domain available' ) }
+			<Notice isCompact status="is-success" icon="info-outline" text={ translate( 'Free domain available' ) }>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
 					href={ `/domains/add/${ this.props.site.slug }` }
 				>
-					{ this.translate( 'Claim' ) }
+					{ translate( 'Claim' ) }
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
 			return null;
 		}
+
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
+		const { translate } = this.props;
+
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Free domain with a plan' ) }
+			<Notice isCompact status="is-success" icon="info-outline" text={ translate( 'Free domain with a plan' ) }>
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
 				>
-					{ this.translate( 'Upgrade' ) }
+					{ translate( 'Upgrade' ) }
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	jetpackPluginsSetupNotice() {
 		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
 			return null;
 		}
 
+		const { translate } = this.props;
+
 		return (
-			<Notice isCompact status="is-info" icon="plugins">
-				{ this.translate(
+			<Notice
+				icon="plugins"
+				isCompact
+				status="is-info"
+				text={ translate(
 					'Your %(plan)s plan needs setting up!',
 					{ args: { plan: this.props.site.plan.product_name_short } }
 				) }
+			>
 				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` } >
-					{ this.translate( 'Finish' ) }
+					{ translate( 'Finish' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	render() {
 		const { site } = this.props;
@@ -136,12 +145,12 @@ const SiteNotice = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
+		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
@@ -159,4 +168,4 @@ export default connect( ( state, ownProps ) => {
 			}
 		) ),
 	};
-} )( SiteNotice );
+} )( localize( SiteNotice ) );

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-const assign = require( 'lodash/assign' ),
-	expect = require( 'chai' ).expect;
+import { assign } from 'lodash';
+const expect = require( 'chai' ).expect;
 
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ describe( 'assembler', () => {
 		redirectDomainObject = {
 			autoRenewalMoment: undefined,
 			currentUserCanManage: undefined,
+			domainLockingAvailable: undefined,
 			expirationMoment: undefined,
 			expired: undefined,
 			expirySoon: undefined,
@@ -41,15 +42,20 @@ describe( 'assembler', () => {
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
 			isPendingIcannVerification: undefined,
+			isPendingWhoisUpdate: undefined,
 			isPrimary: false,
 			name: DOMAIN_NAME,
 			manualTransferRequired: undefined,
 			owner: undefined,
 			privateDomain: undefined,
+			privacyAvailable: undefined,
 			pendingTransfer: undefined,
 			registrar: undefined,
 			registrationMoment: undefined,
+			subscriptionId: undefined,
 			type: domainTypes.SITE_REDIRECT,
+			transferLockOnWhoisUpdateOptional: undefined,
+			whoisUpdateUnmodifiableFields: undefined,
 			hasZone: undefined,
 			pointsToWpcom: undefined
 		},

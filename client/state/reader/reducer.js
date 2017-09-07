@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
+/** @format */
 /**
  * Internal dependencies
  */
 import lists from './lists/reducer';
+import { combineReducers } from 'state/utils';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
 import sites from './sites/reducer';

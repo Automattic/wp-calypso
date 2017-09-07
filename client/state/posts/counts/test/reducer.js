@@ -156,36 +156,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'should never persist state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					post: false,
-					page: false
-				},
-				77203074: {
-					post: true
-				}
-			} );
-			const state = requesting( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should never load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					post: false,
-					page: false
-				},
-				77203074: {
-					post: true
-				}
-			} );
-			const state = requesting( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#counts()', () => {

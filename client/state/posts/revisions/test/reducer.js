@@ -12,8 +12,6 @@ import {
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
 } from 'state/action-types';
 import reducer, {
 	requesting,
@@ -123,30 +121,6 @@ describe( 'reducer', () => {
 					10: true,
 				},
 			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

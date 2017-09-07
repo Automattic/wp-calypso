@@ -60,6 +60,7 @@
 }
 
 .plan-compare-card-item {
+	display: flex;
 	list-style-type: none;
 }
 
@@ -73,10 +74,10 @@
 	margin-left: 24px;
 }
 
-.plan-compare-card-item__checkmark {
+.plan-compare-card__item-checkmark {
 	margin-right: 6px;
 	vertical-align: middle;
-	margin-top: -4px;
+	line-height: 16px;
 }
 
 .plan-compare-card__button-checkmark {

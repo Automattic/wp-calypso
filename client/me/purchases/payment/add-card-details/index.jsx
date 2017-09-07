@@ -12,7 +12,7 @@ import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import HeaderCake from 'components/header-cake' ;
+import HeaderCake from 'components/header-cake';
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -29,10 +29,7 @@ class AddCardDetails extends PurchaseCardDetails {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] )
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	componentWillMount() {
@@ -66,7 +63,8 @@ class AddCardDetails extends PurchaseCardDetails {
 					apiParams={ this.getApiParams() }
 					createPaygateToken={ this.createPaygateToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					successCallback={ this.successCallback } />
+					successCallback={ this.successCallback }
+				/>
 			</Main>
 		);
 	}
@@ -77,12 +75,12 @@ const mapStateToProps = ( state, { purchaseId } ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
+		selectedSite: getSelectedSiteSelector( state ),
 	};
 };
 
 const mapDispatchToProps = {
-	clearPurchases
+	clearPurchases,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( AddCardDetails );

@@ -36,9 +36,14 @@ const getAuthorizationRemoteSite = ( state ) => {
 };
 
 const isRemoteSiteOnSitesList = ( state ) => {
-	const remoteUrl = getAuthorizationRemoteSite( state );
+	const remoteUrl = getAuthorizationRemoteSite( state ),
+		authorizationData = getAuthorizationData( state );
 
 	if ( ! remoteUrl ) {
+		return false;
+	}
+
+	if ( authorizationData.clientNotResponding ) {
 		return false;
 	}
 
@@ -47,10 +52,6 @@ const isRemoteSiteOnSitesList = ( state ) => {
 
 const getSessions = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
-};
-
-const getSSOSessions = ( state ) => {
-	return get( state, [ 'jetpackConnect', 'jetpackSSOSessions' ] );
 };
 
 const getSSO = ( state ) => {
@@ -92,6 +93,10 @@ const getAuthAttempts = ( state, slug ) => {
 		return 0;
 	}
 	return attemptsData ? attemptsData.attempt || 0 : 0;
+};
+
+const getUserAlreadyConnected = ( state ) => {
+	return get( state, 'jetpackConnectAuthorize.userAlreadyConnected' );
 };
 
 /**
@@ -168,7 +173,6 @@ export default {
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
 	getSessions,
-	getSSOSessions,
 	getSSO,
 	hasNewlyConnectedSite,
 	isCalypsoStartedConnection,
@@ -182,5 +186,6 @@ export default {
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
 	getAuthAttempts,
-	getSiteIdFromQueryObject
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected
 };

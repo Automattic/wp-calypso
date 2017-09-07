@@ -1,29 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Theme = require( '../' );
+import Theme from 'components/theme';
 
-/**
- * Component
- */
-var ThemeExample = React.createClass( {
-	displayName: 'Theme',
+const ThemeExample = () => {
+	const theme = {
+		id: 'twentyfifteen',
+		name: 'Twenty Fifteen',
+		screenshot: '//i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
+	};
 
-	render: function() {
-		const theme = {
-			id: 'twentyfifteen',
-			name: 'Twenty Fifteen',
-			screenshot: '//i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
-		};
-
-		return (
-			<div>
-				<Theme
+	return (
+		<div>
+			<Theme
 				theme={ theme }
 				buttonContents={ {
 					action1: {
@@ -37,9 +31,10 @@ var ThemeExample = React.createClass( {
 				} }
 				actionLabel="Click Action"
 				onScreenshotClick={ function() { console.log( 'onScreenshotClick triggered' ); } } />
-			</div>
-		);
-	}
-} );
+		</div>
+	);
+};
 
-module.exports = ThemeExample;
+ThemeExample.displayName = 'Theme';
+
+export default ThemeExample;

@@ -23,7 +23,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList } from 'my-sites/upgrades/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import { getSite } from 'state/sites/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 
@@ -73,7 +73,7 @@ const MasterbarLoggedIn = React.createClass( {
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
 					tooltip={ translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
-					preloadSection={ () => preload( domainOnlySite ? 'upgrades' : 'stats' ) }
+					preloadSection={ () => preload( domainOnlySite ? 'domains' : 'stats' ) }
 				>
 					{ this.props.user.get().site_count > 1
 						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )

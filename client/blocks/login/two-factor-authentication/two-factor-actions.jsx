@@ -11,46 +11,52 @@ import page from 'page';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import {
-	getTwoFactorUserId,
-	getTwoFactorAuthNonce,
 	isTwoFactorAuthTypeSupported,
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import { login } from 'lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
-		isAuthenticatorSupported: PropTypes.bool,
-		isSmsSupported: PropTypes.bool,
-		successNotice: PropTypes.func.isRequired,
+		isAuthenticatorSupported: PropTypes.bool.isRequired,
+		isSmsSupported: PropTypes.bool.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		sendSmsCode: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
-		twoStepNonce: PropTypes.string.isRequired,
 	};
 
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
-			page( login( { twoFactorAuthType: 'sms' } ) );
-		} ).catch( ( errorMesssage ) => {
-			this.props.errorNotice( errorMesssage );
-		} );
+		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
+
+		this.props.sendSmsCode();
+	};
+
+	recordAuthenticatorLinkClick = ( event ) => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
+
+		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
 	};
 
 	render() {
 		const {
 			isAuthenticatorSupported,
-			isPushSupported,
 			isSmsSupported,
 			translate,
 			twoFactorAuthType,
 		} = this.props;
 
-		if ( twoFactorAuthType === 'sms' && ! isAuthenticatorSupported && ! isPushSupported ) {
+		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
+		const isAuthenticatorAvailable = isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
 			return null;
 		}
 
@@ -60,21 +66,19 @@ class TwoFactorActions extends Component {
 					{ translate( 'Or continue to your account using:' ) }
 				</p>
 
-				{ isSmsSupported && twoFactorAuthType !== 'sms' && (
+				{ isSmsAvailable && (
 					<p>
-						<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Code via text message' ) }</a>
+						<a href="#" onClick={ this.sendSmsCode }>
+							{ translate( 'Code via text message' ) }
+						</a>
 					</p>
 				) }
 
-				{ isAuthenticatorSupported && twoFactorAuthType !== 'authenticator' && (
+				{ isAuthenticatorAvailable && (
 					<p>
-						<a href={ login( { twoFactorAuthType: 'authenticator' } ) }>{ translate( 'An Authenticator application' ) }</a>
-					</p>
-				) }
-
-				{ isPushSupported && twoFactorAuthType !== 'push' && (
-					<p>
-						<a href={ login( { twoFactorAuthType: 'push' } ) }>{ translate( 'The WordPress mobile app' ) }</a>
+						<a href="#" onClick={ this.recordAuthenticatorLinkClick }>
+							{ translate( 'Your authenticator app' ) }
+						</a>
 					</p>
 				) }
 			</Card>
@@ -84,15 +88,11 @@ class TwoFactorActions extends Component {
 
 export default connect(
 	( state ) => ( {
-		twoStepNonce: getTwoFactorAuthNonce( state ),
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isPushSupported: isTwoFactorAuthTypeSupported( state, 'push' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		userId: getTwoFactorUserId( state ),
 	} ),
 	{
+		recordTracksEvent,
 		sendSmsCode,
-		errorNotice,
-		successNotice,
 	}
 )( localize( TwoFactorActions ) );

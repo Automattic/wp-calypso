@@ -41,6 +41,10 @@ export default function( router ) {
 				makeLayout
 			);
 		} else {
+			// No uploads when logged-out, so redirect to main showcase page
+			router( '/themes/upload', '/themes' );
+			router( '/themes/upload/*', '/themes' );
+
 			const loggedOutRoutes = [
 				'/themes/:tier(free|premium)?',
 				'/themes/:tier(free|premium)?/filter/:filter',

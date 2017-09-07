@@ -4,10 +4,8 @@
 import {
 	WPORG_PLUGIN_DATA_RECEIVE,
 	FETCH_WPORG_PLUGIN_DATA,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
-import { combineReducers } from 'redux';
+import { combineReducers } from 'state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -22,10 +20,6 @@ export function fetchingItems( state = {}, action ) {
 			return Object.assign( {}, state, { [ action.pluginSlug ]: true } );
 		case WPORG_PLUGIN_DATA_RECEIVE:
 			return Object.assign( {}, state, { [ action.pluginSlug ]: false } );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }
@@ -38,11 +32,6 @@ export function items( state = {}, action ) {
 				return updatePluginState( state, pluginSlug, Object.assign( { fetched: true, wporg: true }, action.data ) );
 			}
 			return updatePluginState( state, pluginSlug, Object.assign( { fetched: false, wporg: false } ) );
-
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
 		default:
 			return state;
 	}

@@ -6,7 +6,8 @@ import {
 	isMappedDomainSite,
 	isSiteOnFreePlan,
 	isUserRegistrationDaysWithinRange,
-} from 'state/selectors/';
+	isVipSite,
+} from 'state/selectors';
 
 /**
  * Returns true if the current user is eligible to participate in the free to paid plan upsell for the site
@@ -21,8 +22,9 @@ const isEligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const registrationDaysIsWithinRange = isUserRegistrationDaysWithinRange( state, moment, 0, 180 );
+	const siteIsVipSite = isVipSite( state, siteId );
 
-	return userCanManageOptions && ! siteHasMappedDomain && siteIsOnFreePlan && registrationDaysIsWithinRange;
+	return userCanManageOptions && ! siteHasMappedDomain && siteIsOnFreePlan && ! siteIsVipSite && registrationDaysIsWithinRange;
 };
 
 export default isEligibleForFreeToPaidUpsell;

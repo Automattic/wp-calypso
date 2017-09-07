@@ -1,9 +1,11 @@
+/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,12 +20,12 @@ import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
-import { find } from 'lodash';
 
 class TagStream extends React.Component {
 	static propTypes = {
 		encodedTagSlug: React.PropTypes.string,
 		decodedTagSlug: React.PropTypes.string,
+		followSource: React.PropTypes.string.isRequired,
 	};
 
 	state = {

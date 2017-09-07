@@ -257,6 +257,25 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
 };
 
 /**
+ * Upload an external media item to the WordPress media library
+ *
+ * @param {string} service - external media service name (i.e 'google_photos')
+ * @param {array} files - array of external media file IDs
+ *
+ * @return {Object} promise - resolves on completion of the GET request
+ */
+UndocumentedSite.prototype.uploadExternalMedia = function( service, files ) {
+	debug( '/sites/:site_id:/external-media-upload query' );
+
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/external-media-upload',
+	}, {
+		external_ids: files,
+		service
+	} );
+};
+
+/**
  * Runs Theme Setup (Headstart).
  *
  * @return {Promise} A Promise to resolve when complete.
@@ -266,6 +285,71 @@ UndocumentedSite.prototype.runThemeSetup = function() {
 		path: '/sites/' + this._id + '/theme-setup',
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+/**
+ * Requests Store orders stats
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsOrders = function( query ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ this._id }/stats/orders`,
+		apiNamespace: 'wpcom/v2',
+	}, query );
+};
+
+/**
+ * Requests Store top-sellers stats
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsTopSellers = function( query ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ this._id }/stats/top-sellers`,
+		apiNamespace: 'wpcom/v2',
+	}, query );
+};
+
+/**
+ * Requests Store top earners
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsTopEarners = function( query ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ this._id }/stats/top-earners`,
+		apiNamespace: 'wpcom/v2',
+	}, query );
+};
+
+/**
+ * Requests Store top categories
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsTopCategories = function( query ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ this._id }/stats/top-product-categories-by-usage`,
+		apiNamespace: 'wpcom/v2',
+	}, query );
+};
+
+/**
+ * Requests Store top-* lists
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsTopCoupons = function( query ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ this._id }/stats/top-coupons-by-usage`,
+		apiNamespace: 'wpcom/v2',
+	}, query );
 };
 
 /**

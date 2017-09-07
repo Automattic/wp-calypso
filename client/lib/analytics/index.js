@@ -1,18 +1,11 @@
 /**
  * External dependencies
  */
+import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import cookie from 'cookie';
 const debug = require( 'debug' ),
-	assign = require( 'lodash/assign' ),
-	isObjectLike = require( 'lodash/isObjectLike' ),
-	times = require( 'lodash/times' ),
-	omit = require( 'lodash/omit' ),
-	pickBy = require( 'lodash/pickBy' ),
-	startsWith = require( 'lodash/startsWith' ),
-	isUndefined = require( 'lodash/isUndefined' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );
-
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -24,7 +17,8 @@ let _superProps,
 	_user,
 	_selectedSite,
 	_siteCount,
-	_dispatch;
+	_dispatch,
+	_loadTracksError;
 
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
 import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
@@ -35,6 +29,8 @@ const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 import emitter from 'lib/mixins/emitter';
 
+import { statsdTimingUrl } from 'lib/analytics/statsd';
+
 // Load tracking scripts
 window._tkq = window._tkq || [];
 window.ga = window.ga || function() {
@@ -42,7 +38,63 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?56' ); // W_JS_VER
+function getUrlParameter( name ) {
+	name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
+	const results = regex.exec( location.search );
+	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
+}
+
+function newAnonId() {
+	const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+	let randomBytes = [];
+
+	if ( window.crypto && window.crypto.getRandomValues ) {
+		randomBytes = new Uint8Array( randomBytesLength );
+		window.crypto.getRandomValues( randomBytes );
+	} else {
+		for ( let i = 0; i < randomBytesLength; ++i ) {
+			randomBytes[ i ] = Math.floor( Math.random() * 256 );
+		}
+	}
+
+	return btoa( String.fromCharCode.apply( String, randomBytes ) );
+}
+
+function checkForBlockedTracks() {
+	if ( ! _loadTracksError ) {
+		return;
+	}
+
+	let _ut, _ui;
+
+	// detect stats blocking, and include identity from URL, user or cookie if possible
+	if ( _user && _user.get() ) {
+		_ut = 'wpcom:user_id';
+		_ui = _user.get().ID;
+	} else {
+		_ut = getUrlParameter( '_ut' ) || 'anon';
+		_ui = getUrlParameter( '_ui' );
+
+		if ( ! _ui ) {
+			const cookies = cookie.parse( document.cookie );
+			if ( cookies.tk_ai ) {
+				_ui = cookies.tk_ai;
+			} else {
+				_ui = newAnonId();
+				document.cookie = cookie.serialize( 'tk_ai', _ui );
+			}
+		}
+	}
+
+	loadScript( '/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
+}
+
+loadScript( '//stats.wp.com/w.js?56', function( error ) {
+	if ( error ) {
+		_loadTracksError = true;
+	}
+} ); // W_JS_VER
 
 // Google Analytics
 
@@ -119,6 +171,8 @@ const analytics = {
 	},
 
 	setSuperProps: function( superProps ) {
+		// this is called both for anonymous and logged-in users
+		checkForBlockedTracks();
 		_superProps = superProps;
 	},
 
@@ -166,10 +220,14 @@ const analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
-			mostRecentUrlPath = urlPath;
-			analytics.tracks.recordPageView( urlPath );
-			analytics.ga.recordPageView( urlPath, pageTitle );
-			analytics.emit( 'page-view', urlPath, pageTitle );
+			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
+			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
+			setTimeout( () => {
+				mostRecentUrlPath = urlPath;
+				analytics.tracks.recordPageView( urlPath );
+				analytics.ga.recordPageView( urlPath, pageTitle );
+				analytics.emit( 'page-view', urlPath, pageTitle );
+			}, 0 );
 		}
 	},
 
@@ -275,6 +333,10 @@ const analytics = {
 			const cookies = cookie.parse( document.cookie );
 
 			return cookies.tk_ai;
+		},
+
+		setAnonymousUserId: function( anonId ) {
+			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		}
 	},
 
@@ -310,15 +372,8 @@ const analytics = {
 					featureSlug = `start_${ matched[ 1 ] }`;
 				}
 
-				const type = eventType.replace( '-', '_' );
-				const json = JSON.stringify( {
-					beacons: [
-						`calypso.${ config( 'boom_analytics_key' ) }.${ featureSlug }.${ type }:${ duration }|ms`
-					]
-				} );
-
-				const [ encodedUrl, jsonData ] = [ pageUrl, json ].map( encodeURIComponent );
-				new Image().src = `https://pixel.wp.com/boom.gif?v=calypso&u=${ encodedUrl }&json=${ jsonData }`;
+				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
+				new Image().src = imgUrl;
 			}
 		}
 	},
@@ -398,17 +453,20 @@ const analytics = {
 		}
 	},
 
-	// Lucky Orange tracking
-	luckyOrange: {
-		addLuckyOrangeScript: function() {
-			const wa = document.createElement( 'script' );
-			const s = document.getElementsByTagName( 'script' )[ 0 ];
-
-			window.__lo_site_id = 77942;
-			wa.type = 'text/javascript';
-			wa.async = true;
-			wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
-			s.parentNode.insertBefore( wa, s );
+	// HotJar tracking
+	hotjar: {
+		addHotJarScript: function() {
+			( function( h, o, t, j, a, r ) {
+				h.hj = h.hj || function() {
+					( h.hj.q = h.hj.q || [] ).push( arguments );
+				};
+				h._hjSettings = { hjid: 227769, hjsv: 5 };
+				a = o.getElementsByTagName( 'head' )[ 0 ];
+				r = o.createElement( 'script' );
+				r.async = 1;
+				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+				a.appendChild( r );
+			} )( window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=' );
 		}
 	},
 

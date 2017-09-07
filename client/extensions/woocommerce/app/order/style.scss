@@ -1,0 +1,101 @@
+.order__container,
+.order-create__container {
+	padding-bottom: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	@include breakpoint( ">960px" ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		.order-details {
+			flex: 1 1 100%;
+		}
+
+		.order-notes {
+			flex: 2;
+			margin-right: 16px;
+		}
+
+		.order-customer {
+			flex: 1;
+		}
+	}
+
+	.section-header__label {
+		font-size: 16px;
+	}
+
+	thead {
+		.table-row:hover {
+			background: transparent;
+		}
+	}
+}
+
+.order-details__card {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.order-created,
+.order-payment,
+.order-fulfillment {
+	margin: 0 -16px;
+	padding: 16px;
+	border-top: 1px solid lighten( $gray, 30% );
+	display: flex;
+	align-items: center;
+
+	@include breakpoint( ">960px" ) {
+		margin: 0 -24px;
+		padding: 24px;
+	}
+
+	.order-created__label,
+	.order-payment__label,
+	.order-fulfillment__label {
+		display: flex;
+		align-items: center;
+		flex-grow: 1;
+	}
+
+	.order-created__label .gridicon,
+	.order-fulfillment__label .gridicon {
+		color: $gray;
+	}
+
+	.order-payment__label .gridicon {
+		color: $alert-green;
+	}
+
+	.order-payment__action,
+	.order-fulfillment__action {
+		flex-grow: 0;
+
+		.button {
+			float: left;
+			margin-right: 8px;
+			white-space: nowrap;
+			margin-left: 12px;
+		}
+
+		& > .button:last-child {
+			margin-right: 0;
+		}
+	}
+
+	.gridicon {
+		margin-right: 8px;
+	}
+}
+
+&.dialog__content {
+	.form-text-input,
+	.form-text-input-with-affixes input {
+		text-align: right;
+	}
+}

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { forEach, get, merge, pickBy } from 'lodash';
 
 /**
@@ -21,7 +20,7 @@ import {
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 
 const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {

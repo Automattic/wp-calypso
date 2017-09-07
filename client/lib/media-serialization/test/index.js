@@ -63,10 +63,16 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.appearance.align ).to.equal( 'right' );
 		} );
 
-		it( 'should detect transient images', function() {
-			const parsed = deserialize( '<img src="blob:http%3A//wordpress.com/75205e1a-0f78-4a0b-b0e2-5f47a3471769" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />' );
+		it( 'should parse images with the data-istransient attribute as transient images', function() {
+			const parsed = deserialize( '<img data-istransient="istransient" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />' ); // eslint-disable-line max-len
 
 			expect( parsed.media.transient ).to.be.true;
+		} );
+
+		it( 'should parse images without the data-istransient attribute as not transient images', function() {
+			const parsed = deserialize( '<img src="blob:http%3A//wordpress.com/75205e1a-0f78-4a0b-b0e2-5f47a3471769" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />' ); // eslint-disable-line max-len
+
+			expect( parsed.media.transient ).to.be.false;
 		} );
 
 		it( 'should favor natural dimensions over inferred', function() {

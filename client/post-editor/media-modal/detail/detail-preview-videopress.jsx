@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { get, invoke, noop } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 
@@ -21,19 +22,34 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		className: PropTypes.string,
 		isPlaying: PropTypes.bool,
 		item: PropTypes.object.isRequired,
+		onPause: PropTypes.func,
+		onScriptLoadError: PropTypes.func,
+		onVideoLoaded: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isPlaying: false,
+		onPause: noop,
+		onScriptLoadError: noop,
+		onVideoLoaded: noop,
 	};
 
 	componentDidMount() {
 		this.loadInitializeScript();
+		window.addEventListener( 'message', this.receiveMessage, false );
 	}
 
 	componentWillUnmount() {
 		removeScriptCallback( videoPressUrl, this.onScriptLoaded );
 		this.destroy();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
+			this.pause();
+		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {
+			this.play();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -58,36 +74,91 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	onScriptLoaded = ( error ) => {
+		const {
+			isPlaying,
+			item,
+			onScriptLoadError,
+		} = this.props;
+
 		if ( error ) {
-			log( `Script${ error.src } failed to load.` );
+			log( `Script${ get( error, 'src', '' ) } failed to load.` );
+			onScriptLoadError();
+
 			return;
 		}
 
 		const {
-			isPlaying,
-			item,
-		} = this.props;
+			height = 480,
+			videopress_guid,
+			width = 854,
+		} = item;
+
+		if ( ! videopress_guid ) {
+			return;
+		}
 
 		if ( typeof window !== 'undefined' && window.videopress ) {
-			this.player = window.videopress( item.videopress_guid, this.video, {
-				autoPlay: isPlaying,
-				height: item.height,
-				width: item.width,
-			} );
+			this.player = window.videopress( videopress_guid, this.video, { autoPlay: isPlaying, height, width } );
 		}
 	};
 
+	receiveMessage = ( event ) => {
+		if ( event.origin && event.origin !== location.origin ) {
+			return;
+		}
+
+		const { data } = event;
+
+		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) || ! ( 'converting' in data ) ) {
+			return;
+		}
+
+		if ( ( 'loaded' === data.state ) && ! data.converting ) {
+			this.props.onVideoLoaded();
+		}
+	}
+
 	destroy() {
+		window.removeEventListener( 'message', this.receiveMessage );
+
 		if ( ! this.player ) {
 			return;
 		}
 
-		this.player.destroy();
+		invoke( this, 'player.destroy' );
 
 		// Remove DOM created outside of React.
 		while ( this.video.firstChild ) {
 			this.video.removeChild( this.video.firstChild );
 		}
+	}
+
+	play() {
+		const playerState = get( this, 'player.state' );
+
+		if ( ! playerState ) {
+			return;
+		}
+
+		invoke( this, 'player.state.play' );
+	}
+
+	pause() {
+		const playerState = get( this, 'player.state' );
+
+		if ( ! playerState ) {
+			return;
+		}
+
+		invoke( this, 'player.state.pause' );
+
+		const currentTime = invoke( this, 'player.state.videoAt' );
+
+		if ( ! currentTime ) {
+			return;
+		}
+
+		this.props.onPause( currentTime );
 	}
 
 	render() {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,13 +12,9 @@ import { connect } from 'react-redux';
 import { requestSiteUnblock } from 'state/reader/site-blocks/actions';
 import Card from 'components/card';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
-import {
-	bumpStat,
-	recordGoogleEvent,
-} from 'state/analytics/actions';
+import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
 class PostBlocked extends React.Component {
-
 	static propTypes = {
 		post: React.PropTypes.object,
 	};
@@ -29,7 +26,7 @@ class PostBlocked extends React.Component {
 			blog_id: this.props.post.site_ID,
 		} );
 		this.props.requestSiteUnblock( this.props.post.site_ID );
-	}
+	};
 
 	render() {
 		const { post, translate } = this.props;
@@ -37,19 +34,20 @@ class PostBlocked extends React.Component {
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
-					{ translate( 'You have blocked %(site_name)s.', { args: { site_name: post.site_name } } ) }
-					<a onClick={ this.unblock } className="reader-post-card__blocked-undo">{ translate( 'Undo?' ) }</a>
+					{ translate( 'You have blocked %(site_name)s.', {
+						args: { site_name: post.site_name },
+					} ) }
+					<a onClick={ this.unblock } className="reader-post-card__blocked-undo">
+						{ translate( 'Undo?' ) }
+					</a>
 				</p>
 			</Card>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		bumpStat,
-		requestSiteUnblock,
-	}
-)( localize( PostBlocked ) );
+export default connect( null, {
+	recordGoogleEvent,
+	bumpStat,
+	requestSiteUnblock,
+} )( localize( PostBlocked ) );

@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, isEmpty, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,11 +17,13 @@ import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
-import { serverRouter } from 'isomorphic-routing';
+import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
+import { login } from 'lib/paths';
+import { logSectionResponseTime } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -36,6 +38,18 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' }
+];
+
+// List of browser languages to show pride styling for.
+// Add a '*' element to show the styling for all visitors.
+const prideLanguages = [
+	'en-au',
+];
+
+// List of geolocated locations to show pride styling for.
+// Geolocation may not be 100% accurate.
+const prideLocations = [
+	'au',
 ];
 
 const sections = sectionsModule.get();
@@ -96,7 +110,7 @@ function generateStaticUrls( request ) {
 		const name = asset.name;
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
 		}
 	} );
 
@@ -119,13 +133,53 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
+/**
+ * Given the content of an 'Accept-Language' request header, returns an array of the languages.
+ *
+ * This differs slightly from other language functions, as it doesn't try to validate the language codes,
+ * or merge similar language codes.
+ *
+ * @param  {string} header - The content of the AcceptedLanguages header.
+ * @return {Array} An array of language codes in the header, all in lowercase.
+ */
+function getAcceptedLanguagesFromHeader( header ) {
+	if ( ! header ) {
+		return [];
+	}
+
+	return header.split( ',' ).map( lang => {
+		const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
+		if ( ! match ) {
+			return false;
+		}
+
+		return match[ 0 ].toLowerCase();
+	} ).filter( lang => lang );
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
-	// We don't cache routes with query params
-	if ( isEmpty( request.query ) ) {
-		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
-		const serializeCachedServerState = stateCache.get( request.path ) || {};
+	const bodyClasses = [];
+	const cacheKey = getCacheKey( request );
+	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
+
+	if ( cacheKey ) {
+		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
 		initialServerState = getInitialServerState( serializeCachedServerState );
+	}
+
+	// Note: The x-geoip-country-code header should *not* be considered 100% accurate.
+	// It should only be used for guestimating the visitor's location.
+	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
+	if ( prideLanguages.indexOf( '*' ) > -1 ||
+		intersection( prideLanguages, acceptedLanguages ).length > 0 ||
+		prideLocations.indexOf( '*' ) > -1 ||
+		prideLocations.indexOf( geoLocation ) > -1 ) {
+		bodyClasses.push( 'pride' );
+	}
+
+	if ( config( 'rtl' ) ) {
+		bodyClasses.push( 'rtl' );
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -143,7 +197,8 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState )
+		store: createReduxStore( initialServerState ),
+		bodyClasses,
 	} );
 
 	context.app = {
@@ -203,13 +258,14 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const context = getDefaultContext( req );
 
-	if ( config( 'wpcom_user_bootstrap' ) ) {
+	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
 
 		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
-		redirectUrl = config( 'login_url' ) + '?' + qs.stringify( {
-			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
+		redirectUrl = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl
 		} );
 
 		// if we don't have a wordpress cookie, we know the user needs to
@@ -228,6 +284,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
+					res.clearCookie( 'wordpress_logged_in', { path: '/', httpOnly: true, domain: '.wordpress.com' } );
 					res.redirect( redirectUrl );
 				} else {
 					if ( error.error ) {
@@ -303,6 +360,7 @@ module.exports = function() {
 
 	app.set( 'views', __dirname );
 
+	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
 
 	// redirect homepage if the Reader is disabled
@@ -369,8 +427,10 @@ module.exports = function() {
 				const pathRegex = utils.pathToRegExp( path );
 
 				app.get( pathRegex, function( req, res, next ) {
+					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context = Object.assign( {}, req.context, { chunk: section.name } );
+						req.context.chunk = section.name;
 					}
 
 					if ( section.secondary && req.context ) {

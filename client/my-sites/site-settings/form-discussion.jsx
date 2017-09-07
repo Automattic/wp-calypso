@@ -181,6 +181,12 @@ class SiteSettingsFormDiscussion extends Component {
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
 				/>
+				<JetpackModuleToggle
+					disabled={ isRequestingSettings || isSavingSettings }
+					label={ translate( 'Enable comment likes' ) }
+					moduleSlug="comment-likes"
+					siteId={ siteId }
+				/>
 			</FormFieldset>
 		);
 	}

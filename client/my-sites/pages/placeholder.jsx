@@ -28,7 +28,7 @@ module.exports = {
 
 		render: function() {
 			return (
-				<div className="page-list__header is-placeholder">
+				<div className="pages__page-list-header is-placeholder">
 					<span>&nbsp;</span>
 				</div>
 			);

@@ -3,6 +3,7 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +35,7 @@ describe( 'Theme', function() {
 		MockMoreButton.prototype.togglePopover = togglePopoverStub;
 		mockery.registerMock( './more-button', MockMoreButton );
 
-		Theme = require( '../' );
+		Theme = require( '../' ).Theme;
 	} );
 
 	beforeEach( function() {
@@ -44,7 +45,8 @@ describe( 'Theme', function() {
 				name: 'Theme name',
 				screenshot: '/theme/screenshot.png',
 			},
-			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } } // TODO: test if called when clicked
+			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
+			translate: identity
 		};
 	} );
 
@@ -107,7 +109,11 @@ describe( 'Theme', function() {
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
 			let themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, { theme: { id: 'placeholder-1', name: 'Loading' }, isPlaceholder: true } )
+				React.createElement( Theme, {
+					theme: { id: 'placeholder-1', name: 'Loading' },
+					isPlaceholder: true,
+					translate: identity
+				} )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
@@ -120,7 +126,7 @@ describe( 'Theme', function() {
 
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
-			this.props.theme.price = '$50';
+			this.props.price = '$50';
 			let themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, this.props )
 			);

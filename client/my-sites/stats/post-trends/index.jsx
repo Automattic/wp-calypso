@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

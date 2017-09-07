@@ -9,7 +9,6 @@ import {
 	includes,
 	isArray,
 	isEqual,
-	isString,
 	mapValues,
 	omit,
 	overSome,
@@ -24,15 +23,12 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import { protectForm } from 'lib/protect-form';
-import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
@@ -46,11 +42,14 @@ import {
 } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
-	getSiteSettings,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isHiddenSite,
+	isPrivateSite,
+} from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
@@ -62,20 +61,15 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {
 	requestSiteSettings,
 	saveSiteSettings
 } from 'state/site-settings/actions';
-
-const serviceIds = {
-	google: 'google-site-verification',
-	bing: 'msvalidate.01',
-	pinterest: 'p:domain_verify',
-	yandex: 'yandex-verification'
-};
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -94,35 +88,8 @@ function getJetpackPluginUrl( slug ) {
 function stateForSite( site ) {
 	return {
 		frontPageMetaDescription: get( site, 'options.advanced_seo_front_page_description', '' ),
-		googleCode: get( site, 'options.verification_services_codes.google', '' ),
-		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
-		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
-		yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
 		isFetchingSettings: get( site, 'fetchingSettings', false )
 	};
-}
-
-function getMetaTag( serviceName = '', content = '' ) {
-	if ( ! content ) {
-		return '';
-	}
-
-	if ( includes( content, '<meta' ) ) {
-		// We were passed a meta tag already!
-		return content;
-	}
-
-	return `<meta name="${ get( serviceIds, serviceName, '' ) }" content="${ content }" />`;
-}
-
-function isValidCode( serviceName = '', content = '' ) {
-	if ( ! content.length ) {
-		return true;
-	}
-
-	content = getMetaTag( serviceName, content );
-
-	return includes( content, serviceIds[ serviceName ] );
 }
 
 export const SeoForm = React.createClass( {
@@ -139,13 +106,6 @@ export const SeoForm = React.createClass( {
 			dirtyFields: Set(),
 			invalidatedSiteObject: this.props.selectedSite,
 		};
-	},
-
-	componentWillMount() {
-		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
-		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
-		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
-		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
 	},
 
 	componentDidMount() {
@@ -219,32 +179,6 @@ export const SeoForm = React.createClass( {
 		) );
 	},
 
-	handleVerificationCodeChange( serviceCode ) {
-		return event => {
-			const { dirtyFields } = this.state;
-
-			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
-				return;
-			}
-
-			// Show an error if the user types into the field
-			if ( event.target.value.length === 1 ) {
-				this.setState( {
-					showPasteError: true,
-					invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
-				} );
-				return;
-			}
-
-			this.setState( {
-				invalidCodes: [],
-				showPasteError: false,
-				[ serviceCode ]: event.target.value,
-				dirtyFields: dirtyFields.add( serviceCode )
-			} );
-		};
-	},
-
 	updateTitleFormats( seoTitleFormats ) {
 		const { dirtyFields } = this.state;
 
@@ -260,7 +194,6 @@ export const SeoForm = React.createClass( {
 			storedTitleFormats,
 			showAdvancedSeo,
 			showWebsiteMeta,
-			translate,
 		} = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -268,27 +201,6 @@ export const SeoForm = React.createClass( {
 		}
 
 		notices.clearNotices( 'notices' );
-
-		const verificationCodes = {
-			google: this.state.googleCode,
-			bing: this.state.bingCode,
-			pinterest: this.state.pinterestCode,
-			yandex: this.state.yandexCode
-		};
-
-		const filteredCodes = pickBy( verificationCodes, isString );
-		const invalidCodes = Object.keys(
-			pickBy(
-				filteredCodes,
-				( name, content ) => ! isValidCode( content, name )
-			)
-		);
-
-		this.setState( { invalidCodes } );
-		if ( invalidCodes.length > 0 ) {
-			notices.error( translate( 'Invalid site verification tag entered.' ) );
-			return;
-		}
 
 		this.setState( {
 			isSubmittingForm: true
@@ -307,7 +219,6 @@ export const SeoForm = React.createClass( {
 			advanced_seo_title_formats: seoTitleToApi(
 				pickBy( this.state.seoTitleFormats, hasChanges )
 			),
-			verification_services_codes: filteredCodes
 		};
 
 		// Update this option only if advanced SEO is enabled or grandfathered in order to
@@ -335,7 +246,7 @@ export const SeoForm = React.createClass( {
 		const {
 			trackFormSubmitted,
 			trackTitleFormatsUpdated,
-			trackFrontPageMetaUpdated
+			trackFrontPageMetaUpdated,
 		} = this.props;
 
 		trackFormSubmitted();
@@ -362,23 +273,25 @@ export const SeoForm = React.createClass( {
 		}
 	},
 
-	getVerificationError( isPasteError ) {
-		const { translate } = this.props;
-		return (
-			<FormInputValidation isError={ true } text={
-				isPasteError
-					? translate( 'Verification code should be copied and pasted into this field.' )
-					: translate( 'Invalid site verification tag.' )
-			} />
-		);
-	},
-
 	showPreview() {
 		this.setState( { showPreview: true } );
 	},
 
 	hidePreview() {
 		this.setState( { showPreview: false } );
+	},
+
+	getConflictingSeoPlugins( activePlugins ) {
+		const conflictingSeoPlugins = [
+			'Yoast SEO',
+			'Yoast SEO Premium',
+			'All In One SEO Pack',
+			'All in One SEO Pack Pro',
+		];
+
+		return activePlugins
+			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
+			.map( ( { name, slug } ) => ( { name, slug } ) );
 	},
 
 	render() {
@@ -389,10 +302,11 @@ export const SeoForm = React.createClass( {
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
-			siteSettings,
 			isFetchingSite,
 			isSeoToolsActive,
-			isVerificationToolsActive,
+			isSitePrivate,
+			isSiteHidden,
+			activePlugins,
 			translate,
 		} = this.props;
 		const {
@@ -410,30 +324,14 @@ export const SeoForm = React.createClass( {
 			showPreview = false
 		} = this.state;
 
-		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
-
 		const activateSeoTools = () => this.props.activateModule( siteId, 'seo-tools' );
-		const activateVerificationServices = () => this.props.activateModule( siteId, 'verification-tools' );
-		const isSitePrivate = siteSettings && parseInt( siteSettings.blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
-		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
-		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
-		const placeholderTagContent = '1234';
-
-		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
-		googleCode = getMetaTag( 'google', googleCode || '' );
-		bingCode = getMetaTag( 'bing', bingCode || '' );
-		pinterestCode = getMetaTag( 'pinterest', pinterestCode || '' );
-		yandexCode = getMetaTag( 'yandex', yandexCode || '' );
-
-		const hasError = function( service ) {
-			return includes( invalidCodes, service );
-		};
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
@@ -454,10 +352,16 @@ export const SeoForm = React.createClass( {
 			</Button>
 		);
 
+		const conflictedSeoPlugin = siteIsJetpack
+			// Let's just pick the first one to keep the notice short.
+			? this.getConflictingSeoPlugins( activePlugins )[ 0 ]
+			: null;
+
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{
 					siteIsJetpack &&
 					<QueryJetpackModules siteId={ siteId } />
@@ -466,17 +370,32 @@ export const SeoForm = React.createClass( {
 					path="/settings/seo/:site"
 					title="Site Settings > SEO"
 				/>
-				{ isSitePrivate && hasBusinessPlan( site.plan ) &&
+				{ ( isSitePrivate || isSiteHidden ) && hasBusinessPlan( site.plan ) &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ isSitePrivate
+							? translate( "SEO settings aren't recognized by search engines while your site is Private." )
+							: translate( "SEO settings aren't recognized by search engines while your site is Hidden." )
+						}
+					>
+						<NoticeAction href={ generalTabUrl }>
+							{ translate( 'Privacy Settings' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
+				{ conflictedSeoPlugin &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
-							'SEO settings are disabled because the ' +
-							'site visibility is not set to Public.'
+							'Your SEO settings are managed by the following plugin: %(pluginName)s',
+							{ args: { pluginName: conflictedSeoPlugin.name } }
 						) }
 					>
-						<NoticeAction href={ generalTabUrl }>
-							{ translate( 'View Settings' ) }
+						<NoticeAction href={ `/plugins/${ conflictedSeoPlugin.slug }/${ slug }` }>
+							{ translate( 'View Plugin' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -520,7 +439,7 @@ export const SeoForm = React.createClass( {
 				}
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo &&
+					{ showAdvancedSeo && ! conflictedSeoPlugin &&
 						<div>
 							<SectionHeader label={ translate( 'Page Title Structure' ) }>
 								{ seoSubmitButton }
@@ -545,7 +464,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
+					{ ! conflictedSeoPlugin && ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ translate( 'Website Meta' ) }>
 								{ seoSubmitButton }
@@ -592,138 +511,8 @@ export const SeoForm = React.createClass( {
 							</Card>
 						</div>
 					}
-
-					{ siteIsJetpack && isVerificationToolsActive === false &&
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate(
-								'Site Verification Services are disabled in Jetpack.'
-							) }
-						>
-							<NoticeAction onClick={ activateVerificationServices }>
-								{ translate( 'Enable' ) }
-							</NoticeAction>
-						</Notice>
-					}
-
-					<SectionHeader label={ translate( 'Site Verification Services' ) }>
-						<Button
-							compact
-							primary
-							onClick={ this.submitSeoForm }
-							type="submit"
-							disabled={ isSaveDisabled || isVerificationDisabled }
-						>
-							{ isSubmittingForm
-								? translate( 'Saving…' )
-								: translate( 'Save Settings' )
-							}
-						</Button>
-					</SectionHeader>
-					<Card>
-						<p>
-							{ translate(
-								'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
-								' for your site to be indexed by search engines. To use these advanced search engine tools' +
-								' and verify your site with a service, paste the HTML Tag code below. Read the' +
-								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
-								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
-								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
-								{
-									components: {
-										b: <strong />,
-										support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
-										google: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="https://www.google.com/webmasters/tools/"
-											/>
-										),
-										bing: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="https://www.bing.com/webmaster/"
-											/>
-										),
-										pinterest: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="https://pinterest.com/website/verify/"
-											/>
-										),
-										yandex: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="https://webmaster.yandex.com/sites/"
-											/>
-										),
-									}
-								}
-							) }
-						</p>
-						<FormFieldset>
-							<FormInput
-								prefix={ translate( 'Google' ) }
-								name="verification_code_google"
-								type="text"
-								value={ googleCode }
-								id="verification_code_google"
-								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ hasError( 'google' ) }
-								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
-								onChange={ this.changeGoogleCode } />
-							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
-						</FormFieldset>
-						<FormFieldset>
-							<FormInput
-								prefix={ translate( 'Bing' ) }
-								name="verification_code_bing"
-								type="text"
-								value={ bingCode }
-								id="verification_code_bing"
-								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ hasError( 'bing' ) }
-								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-								onChange={ this.changeBingCode } />
-							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
-						</FormFieldset>
-						<FormFieldset>
-							<FormInput
-								prefix={ translate( 'Pinterest' ) }
-								name="verification_code_pinterest"
-								type="text"
-								value={ pinterestCode }
-								id="verification_code_pinterest"
-								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ hasError( 'pinterest' ) }
-								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-								onChange={ this.changePinterestCode } />
-							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
-						</FormFieldset>
-						<FormFieldset>
-							<FormInput
-								prefix={ translate( 'Yandex' ) }
-								name="verification_code_yandex"
-								type="text"
-								value={ yandexCode }
-								id="verification_code_yandex"
-								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ hasError( 'yandex' ) }
-								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-								onChange={ this.changeYandexCode } />
-							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
-						</FormFieldset>
-					</Card>
 				</form>
+
 				<WebPreview
 					showPreview={ showPreview }
 					onClose={ this.hidePreview }
@@ -731,6 +520,7 @@ export const SeoForm = React.createClass( {
 					showDeviceSwitcher={ false }
 					showExternal={ false }
 					defaultViewportDevice="seo"
+					frontPageMetaDescription={ this.state.frontPageMetaDescription || null }
 				/>
 			</div>
 		);
@@ -752,13 +542,14 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		siteSettings: getSiteSettings( state, siteId ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 		isFetchingSite: isRequestingSite( state, siteId ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
+		isSiteHidden: isHiddenSite( state, siteId ),
+		isSitePrivate: isPrivateSite( state, siteId ),
+		activePlugins: getPlugins( state, [ siteId ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),

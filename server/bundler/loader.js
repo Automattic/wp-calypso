@@ -14,6 +14,7 @@ function getSectionsModule( sections ) {
 			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tcontroller = require( 'controller' ),",
+			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
@@ -93,17 +94,11 @@ function splitTemplate( path, section ) {
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		return next();',
 		'	}',
+		'	if ( config.isEnabled( "restore-last-location" ) && restoreLastSession( context.path ) ) {',
+		'		return;',
+		'	}',
 		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
 		'	require.ensure([], function( require ) {',
-		'		if ( window.__chunkErrors && window.__chunkErrors[ ' + JSON.stringify( section.name ) + '] ) {',
-		'			if ( ! LoadingError.isRetry() ) {',
-		'				LoadingError.retry( ' + JSON.stringify( section.name ) + ' );',
-		'			} else {',
-		'				context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
-		'				LoadingError.show( ' + JSON.stringify( section.name ) + ' );',
-		'			}',
-		'			return;',
-		'		}',
 		'		context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
@@ -112,7 +107,17 @@ function splitTemplate( path, section ) {
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		next();',
-		'	}, ' + JSON.stringify( section.name ) + ' );',
+		'	}, function onError( error ) {',
+		'		if ( ! LoadingError.isRetry() ) {',
+		'			LoadingError.retry( ' + JSON.stringify( section.name ) + ' );',
+		'		} else {',
+		'			console.error(error);',
+		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
+		'			LoadingError.show( ' + JSON.stringify( section.name ) + ' );',
+		'		}',
+		'		return;',
+		'	},',
+		JSON.stringify( section.name ) + ' );',
 		'} );\n'
 	];
 
@@ -162,8 +167,6 @@ function singleEnsure( chunkName ) {
 
 module.exports = function( content ) {
 	var sections;
-
-	this.cacheable && this.cacheable();
 
 	sections = require( this.resourcePath );
 

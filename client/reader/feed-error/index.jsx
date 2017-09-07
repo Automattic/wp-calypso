@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,14 +32,14 @@ class FeedError extends React.Component {
 
 	render() {
 		const action = (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/read/search"
-			>
-				{ this.props.translate( 'Find Sites to Follow' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/read/search"
+				>
+					{ this.props.translate( 'Find Sites to Follow' ) }
+				</a>
+			),
 			secondaryAction = (
 				<a
 					className="empty-content__action button"
@@ -52,14 +53,16 @@ class FeedError extends React.Component {
 		return (
 			<ReaderMain>
 				<MobileBackToSidebar>
-					<h1>{ this.props.sidebarTitle }</h1>
+					<h1>
+						{ this.props.sidebarTitle }
+					</h1>
 				</MobileBackToSidebar>
 
 				<EmptyContent
 					action={ action }
 					secondaryAction={ secondaryAction }
 					title={ this.props.message }
-					illustration={ '/calypso/images/drake/drake-404.svg' }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

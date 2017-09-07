@@ -3,12 +3,14 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { isEqual, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isRequestingPostTypes } from 'state/post-types/selectors';
 import { getSiteOption } from 'state/sites/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 
 class QueryPostTypes extends Component {
@@ -16,6 +18,7 @@ class QueryPostTypes extends Component {
 		siteId: PropTypes.number.isRequired,
 		requestingPostTypes: PropTypes.bool,
 		themeSlug: PropTypes.string,
+		postTypeSettings: PropTypes.object,
 		requestPostTypes: PropTypes.func
 	};
 
@@ -24,10 +27,20 @@ class QueryPostTypes extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, themeSlug } = this.props;
-		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
+		const {
+			postTypeSettings,
+			siteId,
+			themeSlug
+		} = this.props;
+		const {
+			postTypeSettings: nextPostTypeSettings,
+			siteId: nextSiteId,
+			themeSlug: nextThemeSlug
+		} = nextProps;
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
-		if ( siteId !== nextSiteId || hasThemeChanged ) {
+		const hasPostTypeSettingChanged = ! isEqual( postTypeSettings, nextPostTypeSettings );
+
+		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
 			this.request( nextProps );
 		}
 	}
@@ -47,7 +60,10 @@ class QueryPostTypes extends Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const settings = getSiteSettings( state, ownProps.siteId );
+
 		return {
+			postTypeSettings: pick( settings, [ 'jetpack_portfolio', 'jetpack_testimonial' ] ),
 			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId ),
 			themeSlug: getSiteOption( state, ownProps.siteId, 'theme_slug' )
 		};

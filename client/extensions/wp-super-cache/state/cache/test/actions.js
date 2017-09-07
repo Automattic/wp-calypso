@@ -11,14 +11,17 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+	WP_SUPER_CACHE_PRELOAD_CACHE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import {
+	cancelPreloadCache,
 	deleteCache,
-	receiveResults,
+	preloadCache,
 	testCache,
 } from '../actions';
 
@@ -38,18 +41,6 @@ describe( 'actions', () => {
 			}
 		}
 	};
-
-	describe( '#receiveResults()', () => {
-		it( 'should return an action object', () => {
-			const action = receiveResults( siteId, results.data );
-
-			expect( action ).to.eql( {
-				type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
-				results: results.data,
-				siteId,
-			} );
-		} );
-	} );
 
 	describe( '#testCache()', () => {
 		useNock( nock => {
@@ -75,18 +66,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
-			return testCache( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveResults( siteId, results.data )
-				);
-			} );
-		} );
-
 		it( 'should dispatch request success action when request completes', () => {
 			return testCache( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
+					data: results.data,
 					siteId,
 				} );
 			} );
@@ -124,9 +108,10 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request success action when request completes', () => {
-			return deleteCache( siteId, false )( spy ).then( () => {
+			return deleteCache( siteId, false, true )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					deleteExpired: true,
 					siteId,
 				} );
 			} );
@@ -136,6 +121,94 @@ describe( 'actions', () => {
 			return deleteCache( failedSiteId, false )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
+					siteId: failedSiteId,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#preloadCache()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/preload' } )
+				.reply( 200, { enabled: true } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/preload' } )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch preload cache action when thunk triggered', () => {
+			preloadCache( siteId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return preloadCache( siteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
+					siteId,
+					preloading: true,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return preloadCache( failedSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+					siteId: failedSiteId,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#cancelPreloadCache()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/preload' } )
+				.reply( 200, { enabled: false } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/preload' } )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch preload cache action when thunk triggered', () => {
+			cancelPreloadCache( siteId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_PRELOAD_CACHE,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return cancelPreloadCache( siteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
+					siteId,
+					preloading: false,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return cancelPreloadCache( failedSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
 					siteId: failedSiteId,
 				} );
 			} );

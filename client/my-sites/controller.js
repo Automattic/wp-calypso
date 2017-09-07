@@ -55,10 +55,11 @@ import {
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferOut,
-	domainManagementTransferToAnotherUser
-} from 'my-sites/upgrades/paths';
+	domainManagementTransferToOtherSite,
+} from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
+import { errorNotice } from 'state/notices/actions';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -146,7 +147,7 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const DomainOnly = require( 'my-sites/upgrades/domain-management/list/domain-only' );
+	const DomainOnly = require( 'my-sites/domains/domain-management/list/domain-only' );
 	const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (
@@ -178,7 +179,7 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 		domainManagementRedirectSettings,
 		domainManagementTransfer,
 		domainManagementTransferOut,
-		domainManagementTransferToAnotherUser
+		domainManagementTransferToOtherSite
 	].map( pathFactory => pathFactory( domainName, domainName ) );
 
 	const otherPaths = [
@@ -222,7 +223,7 @@ function onSelectedSiteAvailable( context ) {
 			context.store.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
 				...recentSites
-			] ).slice( 0, 3 ) ) );
+			] ).slice( 0, 5 ) ) );
 		}
 	}
 
@@ -267,10 +268,10 @@ module.exports = {
 	siteSelection( context, next ) {
 		const { getState, dispatch } = getStore( context );
 		const siteFragment = context.params.site || route.getSiteFragment( context.path );
-		const basePath = route.sectionify( context.path );
+		const basePath = route.sectionify( context.path, siteFragment );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
-		const allSitesPath = route.sectionify( context.path );
+		const allSitesPath = route.sectionify( context.path, siteFragment );
 		const primaryId = getPrimarySiteId( getState() );
 		const primary = getSite( getState(), primaryId ) || '';
 
@@ -304,15 +305,23 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteFragment ) {
-			const hasInitialized = getSites( getState() ).length;
-			if ( hasInitialized ) {
-				redirectToPrimary();
-				return;
+			if ( primary ) {
+				const hasInitialized = getSites( getState() ).length;
+				if ( hasInitialized ) {
+					redirectToPrimary();
+					return;
+				}
+				dispatch( {
+					type: SITES_ONCE_CHANGED,
+					listener: redirectToPrimary,
+				} );
+			} else {
+				// If the primary site does not exist, skip redirect and display a useful error notification
+				dispatch( errorNotice( i18n.translate( 'Please set your Primary Site to valid site' ), {
+					button: 'Settings',
+					href: '/me/account',
+				} ) );
 			}
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectToPrimary,
-			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible

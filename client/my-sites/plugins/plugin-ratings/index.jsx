@@ -15,7 +15,7 @@ export default React.createClass( {
 
 	propTypes: {
 		rating: React.PropTypes.number,
-		ratings: React.PropTypes.object,
+		ratings: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.array ] ),
 		downloaded: React.PropTypes.number,
 		slug: React.PropTypes.string,
 		numRatings: React.PropTypes.number

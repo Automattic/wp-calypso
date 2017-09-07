@@ -136,8 +136,15 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'jetpack-connect',
+		paths: [ '/jetpack' ],
+		module: 'jetpack-connect',
+		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'signup',
-		paths: [ '/start', '/jetpack' ],
+		paths: [ '/start' ],
 		module: 'signup',
 		secondary: false,
 		enableLoggedOut: true,
@@ -173,9 +180,16 @@ const sections = [
 		title: 'Themes'
 	},
 	{
-		name: 'upgrades',
-		paths: [ '/domains', '/checkout' ],
-		module: 'my-sites/upgrades',
+		name: 'domains',
+		paths: [ '/domains' ],
+		module: 'my-sites/domains',
+		secondary: true,
+		group: 'sites'
+	},
+	{
+		name: 'checkout',
+		paths: [ '/checkout' ],
+		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites'
 	},
@@ -305,6 +319,14 @@ sections.push( {
 } );
 
 sections.push( {
+	name: 'reader',
+	paths: [ '/read/conversations' ],
+	module: 'reader/conversations',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
 	name: 'help',
 	paths: [ '/help' ],
 	module: 'me/help',
@@ -315,7 +337,7 @@ sections.push( {
 
 sections.push( {
 	name: 'login',
-	paths: [ '/login' ],
+	paths: [ '/log-in' ],
 	module: 'login',
 	enableLoggedOut: true,
 	secondary: false,
@@ -352,6 +374,23 @@ sections.push( {
 	module: 'my-sites/comments',
 	group: 'sites',
 	secondary: true
+} );
+
+sections.push( {
+	name: 'preview',
+	paths: [ '/view' ],
+	module: 'my-sites/preview',
+	group: 'sites',
+	secondary: true
+} );
+
+sections.push( {
+	name: 'domain-connect-authorize',
+	paths: [ '/domain-connect' ],
+	module: 'my-sites/domains/domain-management/domain-connect',
+	enableLoggedOut: false,
+	secondary: false,
+	isomorphic: false
 } );
 
 module.exports = sections;

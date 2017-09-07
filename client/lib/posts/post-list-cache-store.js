@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import intersection from 'lodash/intersection';
+import { intersection } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -75,7 +75,7 @@ function markDirty( post, oldStatus ) {
 			continue;
 		}
 
-		if ( -1 === affectedSites.indexOf( list.query.siteID ) ) {
+		if ( -1 === affectedSites.indexOf( list.query.siteId ) ) {
 			continue;
 		}
 

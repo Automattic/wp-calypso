@@ -1,18 +1,70 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	map = require( 'lodash/map' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+import { expect } from 'chai';
+import { map } from 'lodash';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var JetpackSite = require( 'lib/site/jetpack' ),
-	MediaUtils = require( '../utils' );
+import JetpackSite from 'lib/site/jetpack';
+import useMockery from 'test/helpers/use-mockery';
+
+const UNIQUEID = 'media-13';
+const DUMMY_FILENAME = 'test.jpg';
+const DUMMY_FILE_BLOB = {
+	fileContents: {
+		size: 1,
+	},
+	fileName: DUMMY_FILENAME,
+};
+const DUMMY_FILE_OBJECT = {
+	thumbnails: true,
+	URL: DUMMY_FILENAME,
+	name: DUMMY_FILENAME,
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+};
+const EXPECTED = {
+	'transient': true,
+	ID: UNIQUEID,
+	file: DUMMY_FILENAME,
+	title: 'test.jpg',
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+};
+const EXPECTED_FILE_OBJECT = {
+	'transient': true,
+	ID: UNIQUEID,
+	file: DUMMY_FILENAME,
+	title: 'test.jpg',
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+	guid: DUMMY_FILENAME,
+	URL: DUMMY_FILENAME,
+	external: true,
+};
 
 describe( 'MediaUtils', function() {
+	let MediaUtils;
+
 	useFakeDom();
+	useMockery();
+
+	before( () => {
+		mockery.registerMock( 'lib/impure-lodash', {
+			uniqueId: () => UNIQUEID,
+		} );
+
+		MediaUtils = require( '../utils' );
+	} );
+
+	after( function() {
+		mockery.deregisterAll();
+		mockery.disable();
+	} );
 
 	describe( '#url()', function() {
 		var media;
@@ -261,30 +313,6 @@ describe( 'MediaUtils', function() {
 		} );
 	} );
 
-	describe( '#isSiteAllowedFileTypesToBeTrusted()', function() {
-		it( 'should return false for versions of Jetpack where option is not synced', function() {
-			var site = new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.0'
-				}
-			} );
-
-			expect( MediaUtils.isSiteAllowedFileTypesToBeTrusted( site ) ).to.be.false;
-		} );
-
-		it( 'should return true for versions of Jetpack where option is synced', function() {
-			var site = new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.1'
-				}
-			} );
-
-			expect( MediaUtils.isSiteAllowedFileTypesToBeTrusted( site ) ).to.be.true;
-		} );
-	} );
-
 	describe( '#getAllowedFileTypesForSite()', function() {
 		it( 'should return an empty array for a falsey site', function() {
 			var extensions = MediaUtils.getAllowedFileTypesForSite();
@@ -336,18 +364,6 @@ describe( 'MediaUtils', function() {
 			} ) );
 
 			expect( isSupported ).to.be.true;
-		} );
-
-		it( 'should return false for versions of Jetpack where option is synced and extension is not supported', function() {
-			var isSupported = MediaUtils.isSupportedFileTypeForSite( { extension: 'exe' }, new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.1',
-					allowed_file_types: [ 'pdf', 'gif' ]
-				}
-			} ) );
-
-			expect( isSupported ).to.be.false;
 		} );
 
 		it( 'should return true if the site supports the item\'s extension', function() {
@@ -627,6 +643,39 @@ describe( 'MediaUtils', function() {
 			const item = {};
 
 			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#createTransientMedia()', () => {
+		const GUID = 'URL';
+
+		beforeEach( () => {
+			window.URL = { createObjectURL: () => {
+				return GUID;
+			} };
+		} );
+
+		it( 'should return a transient for a file blob', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_BLOB );
+			const expected = Object.assign( {}, EXPECTED, {
+				URL: GUID,
+				guid: GUID,
+				size: 1,
+			} );
+
+			expect( actual ).to.eql( expected );
+		} );
+
+		it( 'should return a transient for a filename', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILENAME );
+
+			expect( actual ).to.eql( EXPECTED );
+		} );
+
+		it( 'should return a transient for a file object', () => {
+			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
+
+			expect( actual ).to.eql( EXPECTED_FILE_OBJECT );
 		} );
 	} );
 } );

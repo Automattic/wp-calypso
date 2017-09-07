@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,36 +14,27 @@ import { translate } from 'i18n-calypso';
 import AutoDirection from 'components/auto-direction';
 import Notice from 'components/notice';
 import { editComment } from 'state/comments/actions';
-import {
-	recordAction,
-	recordGaEvent
-} from 'reader/stats';
+import { recordAction, recordGaEvent } from 'reader/stats';
 
-class PostCommentForm extends React.Component {
+class PostCommentForm extends Component {
 	constructor( props ) {
 		super();
 
 		this.state = {
 			commentText: props.commentText || '',
-			haveFocus: false
+			haveFocus: false,
 		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( {
-			commentText: nextProps.commentText || ''
+			commentText: nextProps.commentText || '',
 		} );
 	}
 
 	componentDidMount() {
 		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentID && this._textareaNode ) {
+		if ( this.props.parentCommentId && this._textareaNode ) {
 			this._textareaNode.focus();
 		}
 	}
@@ -57,19 +48,21 @@ class PostCommentForm extends React.Component {
 
 		const commentText = this.getCommentText();
 		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
+		commentTextNode.style.height = commentText.length
+			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
+			: null;
 	}
 
-	handleTextAreaNode( textareaNode ) {
+	handleTextAreaNode = textareaNode => {
 		this._textareaNode = textareaNode;
-	}
+	};
 
-	handleSubmit( event ) {
+	handleSubmit = event => {
 		event.preventDefault();
 		this.submit();
-	}
+	};
 
-	handleKeyDown( event ) {
+	handleKeyDown = event => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -80,28 +73,30 @@ class PostCommentForm extends React.Component {
 		if ( event.keyCode === 27 ) {
 			if ( this.props.placeholderId ) {
 				// remove the comment
-				this.props.removeComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
+				this.props.deleteComment(
+					this.props.post.site_ID,
+					this.props.post.ID,
+					this.props.placeholderId,
+				);
 			}
 		}
-	}
+	};
 
-	handleFocus() {
-		this.setState( { haveFocus: true } );
-	}
+	handleFocus = () => this.setState( { haveFocus: true } );
 
-	handleTextChange( event ) {
+	handleTextChange = event => {
 		const commentText = event.target.value;
 
 		this.setState( { commentText } );
-	}
+	};
 
-	resetCommentText() {
+	resetCommentText = () => {
 		this.setState( { commentText: '' } );
-	}
+	};
 
-	hasCommentText() {
+	hasCommentText = () => {
 		return this.state.commentText.trim().length > 0;
-	}
+	};
 
 	submit() {
 		const post = this.props.post;
@@ -112,7 +107,7 @@ class PostCommentForm extends React.Component {
 			return false;
 		}
 
-		this.props.editComment( post.site_ID, post.ID, this.props.commentId, commentText );
+		this.props.editComment( post.site_ID, post.ID, this.props.commentId, { content: commentText } );
 
 		recordAction( 'edited_comment' );
 		recordGaEvent( 'Clicked Edit Comment Button' );
@@ -135,7 +130,9 @@ class PostCommentForm extends React.Component {
 
 		switch ( error.error ) {
 			case 'comment_duplicate':
-				message = translate( "Duplicate comment detected. It looks like you've already said that!" );
+				message = translate(
+					"Duplicate comment detected. It looks like you've already said that!",
+				);
 				break;
 
 			default:
@@ -143,18 +140,25 @@ class PostCommentForm extends React.Component {
 				break;
 		}
 
-		return <Notice text={ message } className="comments__notice" showDismiss={ false } status="is-error" />;
+		return (
+			<Notice
+				text={ message }
+				className="comments__notice"
+				showDismiss={ false }
+				status="is-error"
+			/>
+		);
 	}
 
 	render() {
 		const buttonClasses = classNames( {
 			'is-active': this.hasCommentText(),
-			'is-visible': this.state.haveFocus || this.hasCommentText()
+			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
 		const expandingAreaClasses = classNames( {
 			focused: this.state.haveFocus,
-			'expanding-area': true
+			'expanding-area': true,
 		} );
 
 		// How auto expand works for the textarea is covered in this article:
@@ -164,7 +168,12 @@ class PostCommentForm extends React.Component {
 				<fieldset>
 					<label>
 						<div className={ expandingAreaClasses }>
-							<pre><span>{ this.state.commentText }</span><br /></pre>
+							<pre>
+								<span>
+									{ this.state.commentText }
+								</span>
+								<br />
+							</pre>
 							<AutoDirection>
 								<textarea
 									value={ this.state.commentText }
@@ -181,7 +190,8 @@ class PostCommentForm extends React.Component {
 							ref="commentButton"
 							className={ buttonClasses }
 							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }>
+							onClick={ this.handleSubmit }
+						>
 							{ translate( 'Send' ) }
 						</button>
 						{ this.renderError() }
@@ -190,7 +200,6 @@ class PostCommentForm extends React.Component {
 			</form>
 		);
 	}
-
 }
 
 PostCommentForm.propTypes = {
@@ -200,11 +209,11 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: React.PropTypes.func,
 
 	// connect()ed props:
-	editComment: React.PropTypes.func.isRequired
+	editComment: React.PropTypes.func.isRequired,
 };
 
 PostCommentForm.defaultProps = {
-	onCommentSubmit: noop
+	onCommentSubmit: noop,
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );

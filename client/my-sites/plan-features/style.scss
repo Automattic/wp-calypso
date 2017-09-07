@@ -38,7 +38,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.foldable-card.card.is-expanded { //original rule has this specificity
-		margin-bottom: 0;
+		margin: 0;
 	}
 
 	.foldable-card.is-expanded .foldable-card__content { //original rule has this specificity
@@ -427,3 +427,116 @@ $plan-features-sidebar-width: 272px;
 	display: inline-block;
 	margin-left: 10px;
  }
+
+
+/*= Plans in Signup 
+========================================*/
+
+.price-toggle {
+	width: 250px;
+	margin: 0 auto 20px;
+
+	& + .plans-features-main__group {
+		padding-top: 8px;
+	}
+}
+
+.plans-wrapper {
+	margin: 0 auto;
+	overflow-y: auto;
+	padding: 20px 0;
+    transform: translateY(-20px);
+}
+
+.plan-features--signup {
+	margin: 0 auto;
+
+	.jetpack-connect__plans & {
+		width: 1000px;
+	}
+
+	.signup__steps & {
+		width: 1100px;
+	}
+
+	.plan-features__table {
+		display: table !important;
+		border-spacing: 15px 0 !important;
+		width: 100%;
+		margin: 0;
+	}
+
+	.plan-features__content {
+		margin: -16px 0 0 0;
+	}
+
+	.plan-features__header {
+		padding-bottom: 12px;
+	}
+
+	.plan-features__header-title {
+		color: $gray-dark;
+		margin-bottom: 5px;
+	}
+
+	.plan-features__table-item {
+		text-align: center;
+	}
+
+	.plan-features__table-item.has-border-bottom {
+		border-bottom: 0;
+	}
+
+	.plan-features__graphic {
+		width: 100px;
+    	margin: 20px auto;
+	}
+
+	.plan-features__pricing,
+	.plan-price.is-discounted {
+		color: $gray-dark;
+	}
+
+	.is-placeholder {
+		width: 60%;
+		margin: 5px auto;
+	}
+
+	.plan-features__item {
+		margin: 0 15px;
+	}
+
+	.plan-features__item-title {
+		margin: 0;
+	}
+
+	.plan-features__actions {
+		padding: 0 15px 15px;
+	}
+
+	.plan-features__actions-button {
+		margin-top: 8px;
+	}
+
+	.plan-price.is-original:before {
+		border-color: $alert-green;
+	}
+
+	.plan-price,
+	.plan-price.is-original {
+		font-size: 1em;
+	}
+
+	.plan-features__header-price-group {
+		display: inline;
+	}
+
+	.plan-features__item-checkmark,
+	.plan-features__item-tip-info {
+		display: none;
+	}
+
+	.plan-features__row:last-of-type .plan-features__table-item {
+		border-bottom: solid 1px lighten( $gray, 27% );
+	}
+}

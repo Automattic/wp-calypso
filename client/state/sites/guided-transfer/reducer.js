@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -15,8 +10,8 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { guidedTransferStatusSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 // Stores the status of guided transfers per site
 export const status = createReducer( {}, {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -7,6 +8,7 @@ import page from 'page';
 import qs from 'qs';
 import { get, defer } from 'lodash';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -16,24 +18,23 @@ import { preload } from 'sections-preload';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
-
-import getSitesList from 'lib/sites-list';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
-
-const sitesList = getSitesList();
+import { getPrimarySiteId } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 function getPingbackAttributes( post ) {
 	const typeTitles = {
 		prompt: translate( 'Daily Prompt: ' ),
 		photo: translate( 'Photo Challenge: ' ),
-		discover: translate( 'Discover Challenge: ' )
+		discover: translate( 'Discover Challenge: ' ),
 	};
 	const title = typeTitles[ getDailyPostType( post ) ] + post.title;
 
 	return {
 		title,
-		url: post.URL
+		url: post.URL,
 	};
 }
 
@@ -41,15 +42,11 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
-function onlyOneSite() {
-	return sitesList.data.length === 1;
-}
-
-class DailyPostButton extends React.Component {
+export class DailyPostButton extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			showingMenu: false
+			showingMenu: false,
 		};
 
 		this._closeTimerId = null;
@@ -61,12 +58,15 @@ class DailyPostButton extends React.Component {
 		site: React.PropTypes.object.isRequired,
 		position: React.PropTypes.string,
 		tagName: React.PropTypes.string,
-	}
+		canParticipate: React.PropTypes.bool.isRequired,
+		primarySiteSlug: React.PropTypes.string,
+		onlyOneSite: React.PropTypes.bool.isRequired,
+	};
 
 	static defaultProps = {
 		position: 'top',
-		tagName: 'li'
-	}
+		tagName: 'span',
+	};
 
 	componentDidMount() {
 		this._isMounted = true;
@@ -90,7 +90,7 @@ class DailyPostButton extends React.Component {
 		} );
 	}
 
-	openEditorWithSite = ( siteSlug ) => {
+	openEditorWithSite = siteSlug => {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -101,22 +101,21 @@ class DailyPostButton extends React.Component {
 
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
-	}
+	};
 
-	toggle = ( event ) => {
+	toggle = event => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			recordAction( 'open_daily_post_challenge' );
 			recordGaEvent( 'Opened Daily Post Challenge' );
 			recordTrackForPost( 'calypso_reader_daily_post_challenge_opened', this.props.post );
 
-			if ( onlyOneSite() ) {
-				const primarySlug = get( sitesList.getPrimary(), 'slug' );
-				return this.openEditorWithSite( primarySlug );
+			if ( this.props.onlyOneSite ) {
+				return this.openEditorWithSite( this.props.primarySiteSlug );
 			}
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
-	}
+	};
 
 	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
@@ -125,49 +124,69 @@ class DailyPostButton extends React.Component {
 		if ( this._isMounted ) {
 			this.deferMenuChange( false );
 		}
-	}
+	};
 
 	renderSitesPopover = () => {
 		return (
 			<SitesPopover
 				key="menu"
-				header={ <div> { translate( 'Post on' ) } </div> }
-				sites={ sitesList }
+				header={
+					<div>
+						{' '}
+						{ translate( 'Post on' ) }{' '}
+					</div>
+				}
 				context={ this.refs && this.refs.dailyPostButton }
 				visible={ this.state.showingMenu }
 				groups={ true }
 				onSiteSelect={ this.openEditorWithSite }
 				onClose={ this.closeMenu }
 				position="top"
-				className="is-reader" />
+				className="is-reader"
+			/>
 		);
-	}
+	};
 
 	render() {
-		const canParticipate = !! sitesList.getPrimary();
 		const title = get( this.props, 'post.title' );
 		const buttonClasses = classnames( {
 			'daily-post-button__button': true,
 			'ignore-click': true,
-			'is-active': this.state.showingMenu
+			'is-active': this.state.showingMenu,
 		} );
 
-		if ( ! canParticipate ) {
+		if ( ! this.props.canParticipate ) {
 			return null;
 		}
 
-		return React.createElement( this.props.tagName, {
-			className: 'daily-post-button',
-			onClick: this.toggle,
-			onTouchStart: preloadEditor,
-			onMouseEnter: preloadEditor
-		}, [
-			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
-					<Gridicon icon="create" /><span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
-				</Button> ),
-			( this.state.showingMenu ? this.renderSitesPopover() : null )
-		] );
+		return React.createElement(
+			this.props.tagName,
+			{
+				className: 'daily-post-button',
+				onClick: this.toggle,
+				onTouchStart: preloadEditor,
+				onMouseEnter: preloadEditor,
+			},
+			[
+				<Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
+					<Gridicon icon="create" />
+					<span>
+						{ translate( 'Post about %(title)s', { args: { title } } ) }{' '}
+					</span>
+				</Button>,
+				this.state.showingMenu ? this.renderSitesPopover() : null,
+			]
+		);
 	}
 }
 
-export default DailyPostButton;
+export default connect( state => {
+	const primarySiteId = getPrimarySiteId( state );
+	const user = getCurrentUser( state );
+	const visibleSiteCount = get( user, 'visible_site_count', 0 );
+	return {
+		canParticipate: !! primarySiteId,
+		primarySiteSlug: getSiteSlug( state, primarySiteId ),
+		onlyOneSite: visibleSiteCount === 1,
+	};
+} )( DailyPostButton );

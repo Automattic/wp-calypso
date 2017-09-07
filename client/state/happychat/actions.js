@@ -18,13 +18,14 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
+	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
 
 export const setHappychatChatStatus = status => ( {
@@ -53,6 +54,35 @@ export const clearChatMessage = () => setChatMessage( '' );
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
-export const sendBrowserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl } );
+/**
+ * Returns an action object that sends information about the customer to happychat
+ *
+ * @param  { String } howCanWeHelp Selected value of `How can we help?` form input
+ * @param  { String } howYouFeel Selected value of `Mind sharing how you feel?` form input
+ * @param  { Object } site Selected site info
+ * @return { Object } Action object
+ */
+export const sendUserInfo = ( howCanWeHelp, howYouFeel, site ) => {
+	return {
+		type: HAPPYCHAT_SEND_USER_INFO,
+		howCanWeHelp,
+		howYouFeel,
+		site
+	};
+};
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
+
+/**
+ * Returns an action object to be used in signalling that the current user geo location
+ * has been set.
+ *
+ * @param  {Object} geoLocation Geo location information based on ip
+ * @return {Object}        Action object
+ */
+export function setGeoLocation( geoLocation ) {
+	return {
+		type: HAPPYCHAT_SET_GEO_LOCATION,
+		geoLocation
+	};
+}

@@ -17,8 +17,6 @@ import {
 } from 'state/action-types';
 
 describe( 'handleResetPasswordRequest()', () => {
-	const dispatch = sinon.spy();
-
 	const apiBaseUrl = 'https://public-api.wordpress.com:443';
 	const endpoint = '/wpcom/v2/account-recovery/reset';
 
@@ -38,12 +36,16 @@ describe( 'handleResetPasswordRequest()', () => {
 				.reply( 200, { success: true } )
 		) );
 
-		it( 'should dispatch SUCCESS action on success', () => {
-			return handleResetPasswordRequest( { dispatch }, params ).then( () =>
+		it( 'should dispatch SUCCESS action on success', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
-				} ) )
-			);
+				} ) );
+
+				done();
+			} );
+
+			handleResetPasswordRequest( { dispatch }, params );
 		} );
 	} );
 
@@ -59,13 +61,17 @@ describe( 'handleResetPasswordRequest()', () => {
 				.reply( errorResponse.status, errorResponse )
 		) );
 
-		it( 'should dispatch ERROR action on failure', () => {
-			return handleResetPasswordRequest( { dispatch }, params ).then( () =>
+		it( 'should dispatch ERROR action on failure', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWithMatch( {
 					type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 					error: errorResponse,
 				} ) )
-			);
+
+				done();
+			} );
+
+			handleResetPasswordRequest( { dispatch }, params );
 		} );
 	} );
 } );

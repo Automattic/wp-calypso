@@ -70,6 +70,7 @@ function wpEditImage( editor ) {
 			'wpcom_img_size_increase',
 			'wp_img_caption', // See plugins/media
 			'wp_img_advanced', // See plugins/media/advanced
+			'wp_img_edit', // See plugins/media
 			'wp_img_remove'
 		] );
 	} );
@@ -602,6 +603,13 @@ function wpEditImage( editor ) {
 				p = dom.create( 'p' );
 				dom.insertAfter( p, captionParent );
 				editor.selection.setCursorLocation( p, 0 );
+
+				// If we were pasting into an img, remove it so it's replaced
+				// with the new one.
+				if ( node.nodeName === 'IMG' || node.nodeName === 'DT' ) {
+					editor.$( captionParent ).remove();
+				}
+
 				editor.nodeChanged();
 			}
 		} else if ( cmd === 'JustifyLeft' || cmd === 'JustifyRight' || cmd === 'JustifyCenter' || cmd === 'wpAlignNone' ) {

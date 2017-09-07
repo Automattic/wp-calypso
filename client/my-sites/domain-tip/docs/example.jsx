@@ -2,26 +2,25 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DomainTip from '../index';
-import sitesList from 'lib/sites-list';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-const sites = sitesList();
+const DomainTipExample = ( { siteId } ) => (
+	<DomainTip siteId={ siteId } event="domain_app_example" />
+);
 
-export default React.createClass( {
+const ConnectedDomainTipExample = connect(
+	( state ) => ( {
+		siteId: get( getCurrentUser( state ), 'primary_blog', null )
+	} )
+)( DomainTipExample );
 
-	displayName: 'DomainTip',
+ConnectedDomainTipExample.displayName = 'DomainTip';
 
-	mixins: [ PureRenderMixin ],
-
-	render() {
-		const primarySite = sites.initialized && sites.getPrimary();
-		const siteId = primarySite ? primarySite.ID : 0;
-
-		return <DomainTip siteId={ siteId } event="domain_app_example" />;
-	}
-} );
+export default ConnectedDomainTipExample;

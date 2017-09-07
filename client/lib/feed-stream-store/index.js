@@ -1,9 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { forEach, startsWith, random } from 'lodash';
-import moment from 'moment';
-
+import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -14,6 +13,7 @@ import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -21,7 +21,7 @@ function feedKeyMaker( post ) {
 	return {
 		feedId: post.feed_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ),
+		date: new Date( post.date ),
 	};
 }
 
@@ -29,7 +29,7 @@ function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ),
+		date: new Date( post.date ),
 	};
 }
 
@@ -38,11 +38,59 @@ function mixedKeyMaker( post ) {
 		return {
 			feedId: post.feed_ID,
 			postId: post.feed_item_ID,
-			localMoment: moment( post.date ),
+			date: new Date( post.date ),
 		};
 	}
 
 	return siteKeyMaker( post );
+}
+
+function buildNamedKeyMaker( property ) {
+	return function keyMaker( post ) {
+		const siteKey = siteKeyMaker( post );
+		return {
+			...siteKey,
+			[ property ]: post[ property ],
+		};
+	};
+}
+
+const conversationsKeyMaker = ( function() {
+	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
+	return function keyMaker( post ) {
+		const key = baseMaker( post );
+		key.comments = map( post.comments, 'ID' ).reverse();
+		return key;
+	};
+} )();
+
+function conversationsPager( params ) {
+	delete params.meta;
+	delete params.orderBy;
+	delete params.before;
+	delete params.after;
+	params.page_handle = this.lastPageHandle;
+}
+
+function filterConversationsPosts( posts ) {
+	// turn the new ones into post keys
+	const newPosts = map( posts, this.keyMaker );
+	return filter( newPosts, post => {
+		// only keep things that we don't have or things that have new comments
+		if ( ! this.postById.has( keyToString( post ) ) ) {
+			return true; // new new
+		}
+		const existingPost = find( this.postKeys, postKey => keysAreEqual( postKey, post ) );
+		if ( ! existingPost ) {
+			// this should never happen
+			return true;
+		}
+
+		if ( isEqual( existingPost.comments, post.comments ) ) {
+			return false;
+		}
+		return true;
+	} );
 }
 
 function addMetaToNextPageFetch( params ) {
@@ -63,13 +111,18 @@ function limitSiteParamsForTags( params ) {
 	params.fields += ',tagged_on';
 }
 
+function limitSiteParamsForConversations( params ) {
+	limitSiteParams( params );
+	params.fields += ',last_comment_date_gmt,comments';
+}
+
 function trainTracksProxyForStream( stream, callback ) {
 	return function( err, response ) {
 		const eventName = 'calypso_traintracks_render';
 		if ( response && response.algorithm ) {
 			stream.algorithm = response.algorithm;
 		}
-		forEach( response && response.posts, ( post ) => {
+		forEach( response && response.posts, post => {
 			if ( post.railcar ) {
 				if ( stream.isQuerySuggestion ) {
 					post.railcar.rec_result = 'suggestion';
@@ -91,7 +144,7 @@ function getStoreForFeed( storeId ) {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: feedKeyMaker,
-		onNextPageFetch: addMetaToNextPageFetch
+		onNextPageFetch: addMetaToNextPageFetch,
 	} );
 }
 
@@ -107,16 +160,16 @@ function getStoreForTag( storeId ) {
 			id: storeId,
 			fetcher: fetcher,
 			keyMaker: siteKeyMaker,
-			perPage: 5
+			perPage: 5,
 		} );
 	}
 	return new FeedStream( {
 		id: storeId,
 		fetcher: fetcher,
-		keyMaker: mixedKeyMaker,
+		keyMaker: buildNamedKeyMaker( 'tagged_on' ),
 		onGapFetch: limitSiteParamsForTags,
 		onUpdateFetch: limitSiteParamsForTags,
-		dateProperty: 'tagged_on'
+		dateProperty: 'tagged_on',
 	} );
 }
 
@@ -133,20 +186,25 @@ function getStoreForSearch( storeId ) {
 	const slug = idParts.slice( 2 ).join( ':' );
 	// We can use a feed stream when it's a strict date sort.
 	// This lets us go deeper than 20 pages and let's the results auto-update
-	const stream = sort === 'date' ? new FeedStream( {
-		id: storeId,
-		fetcher: fetcher,
-		keyMaker: siteKeyMaker,
-		perPage: 5,
-		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams,
-		maxUpdates: 20,
-	} ) : new PagedStream( {
-		id: storeId,
-		fetcher: fetcher,
-		keyMaker: siteKeyMaker,
-		perPage: 5
-	} );
+	let stream;
+	if ( sort === 'date' ) {
+		stream = new FeedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: siteKeyMaker,
+			perPage: 5,
+			onGapFetch: limitSiteParams,
+			onUpdateFetch: limitSiteParams,
+			maxUpdates: 20,
+		} );
+	} else {
+		stream = new PagedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: siteKeyMaker,
+			perPage: 5,
+		} );
+	}
 	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
@@ -173,7 +231,7 @@ function getStoreForList( storeId ) {
 		fetcher: fetcher,
 		keyMaker: mixedKeyMaker,
 		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams
+		onUpdateFetch: limitSiteParams,
 	} );
 }
 
@@ -189,7 +247,7 @@ function getStoreForSite( storeId ) {
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams
+		onUpdateFetch: limitSiteParams,
 	} );
 }
 
@@ -204,7 +262,7 @@ function getStoreForFeatured( storeId ) {
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams
+		onUpdateFetch: limitSiteParams,
 	} );
 }
 
@@ -279,23 +337,48 @@ export default function feedStoreFactory( storeId ) {
 			id: storeId,
 			fetcher: wpcomUndoc.readFollowing.bind( wpcomUndoc ),
 			keyMaker: feedKeyMaker,
-			onNextPageFetch: addMetaToNextPageFetch
+			onNextPageFetch: addMetaToNextPageFetch,
 		} );
+	} else if ( storeId === 'conversations' ) {
+		store = new FeedStream( {
+			id: storeId,
+			fetcher: wpcomUndoc.readConversations.bind( wpcomUndoc ),
+			keyMaker: conversationsKeyMaker,
+			onNextPageFetch: conversationsPager,
+			onUpdateFetch: limitSiteParamsForConversations,
+			onGapFetch: limitSiteParamsForConversations,
+			dateProperty: 'last_comment_date_gmt',
+		} );
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
+	} else if ( storeId === 'conversations-a8c' ) {
+		store = new FeedStream( {
+			id: storeId,
+			fetcher: wpcomUndoc.readA8cConversations.bind( wpcomUndoc ),
+			keyMaker: conversationsKeyMaker,
+			onNextPageFetch: conversationsPager,
+			onUpdateFetch: limitSiteParamsForConversations,
+			onGapFetch: limitSiteParamsForConversations,
+			dateProperty: 'last_comment_date_gmt',
+		} );
+
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
 			fetcher: wpcomUndoc.readA8C.bind( wpcomUndoc ),
 			keyMaker: feedKeyMaker,
-			onNextPageFetch: addMetaToNextPageFetch
+			onNextPageFetch: addMetaToNextPageFetch,
 		} );
 	} else if ( storeId === 'likes' ) {
 		store = new FeedStream( {
 			id: storeId,
 			fetcher: wpcomUndoc.readLiked.bind( wpcomUndoc ),
-			keyMaker: siteKeyMaker,
+			keyMaker: buildNamedKeyMaker( 'date_liked' ),
 			onGapFetch: limitSiteParamsForLikes,
 			onUpdateFetch: limitSiteParamsForLikes,
-			dateProperty: 'date_liked'
+			dateProperty: 'date_liked',
 		} );
 	} else if ( storeId === 'recommendations_posts' ) {
 		store = getStoreForRecommendedPosts( storeId );
@@ -303,17 +386,17 @@ export default function feedStoreFactory( storeId ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( startsWith( storeId, 'custom_recs' ) ) {
 		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'feed:' ) ) {
 		store = getStoreForFeed( storeId );
-	} else if ( storeId.indexOf( 'tag:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'tag:' ) ) {
 		store = getStoreForTag( storeId );
-	} else if ( storeId.indexOf( 'list:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'list:' ) ) {
 		store = getStoreForList( storeId );
-	} else if ( storeId.indexOf( 'site:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'site:' ) ) {
 		store = getStoreForSite( storeId );
-	} else if ( storeId.indexOf( 'featured:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'featured:' ) ) {
 		store = getStoreForFeatured( storeId );
-	} else if ( storeId.indexOf( 'search:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'search:' ) ) {
 		store = getStoreForSearch( storeId );
 	} else {
 		throw new Error( 'Unknown feed store ID' );

@@ -1,10 +1,16 @@
 /*rtl:ignore*/
-.signup-form__input {
-	direction: ltr;
+.signup-form .signup-form__input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error,
+	&[type="password"] {
+		margin-bottom: 0;
+	}
 }
 
 .signup-form .logged-out-form__footer {
-	margin-top: 10px;
+	margin-top: 20px;
 }
 
 .signup-form__terms-of-service-link {
@@ -20,13 +26,7 @@
 }
 
 .signup-form__social {
-	background-color: #f6f9fa;
-	border-top: 1px solid #e9eff3;
-	margin: 24px -24px -24px -24px;
-	padding: 24px;
-
-	p {
-		font-size: 11px;
+	p {;
 		margin: 0 0 20px 0;
 		text-align: center;
 
@@ -41,12 +41,15 @@
 		margin: 0 0 10px;
 		width: 100%;
 	}
-
-	svg {
-		margin-top: -2px;
-	}
 }
 
+.social-buttons__button-container + .social-buttons__button-container {
+	margin-top: 10px;
+}
+
+.signup-form__social,
 .signup-form__notice.notice {
-	margin-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 400px;
 }

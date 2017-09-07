@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import { flatMap, last } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -33,7 +35,7 @@ export function sameSite( postKey1, postKey2 ) {
 }
 
 export function sameDay( postKey1, postKey2 ) {
-	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
+	return moment( postKey1.date ).isSame( postKey2.date, 'day' );
 }
 
 /**
@@ -51,9 +53,10 @@ export function combine( postKey1, postKey2 ) {
 
 	const combined = {
 		isCombination: true,
-		localMoment: postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
-			? postKey1.localMoment
-			: postKey2.localMoment,
+		date:
+			postKey1.date && postKey1.date < postKey2.date // keep the earliest moment
+				? postKey1.date
+				: postKey2.date,
 		postIds: [
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),

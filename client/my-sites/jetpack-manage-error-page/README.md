@@ -56,6 +56,6 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
     actionURL="../../settings/general/"
     title={ this.translate( 'No security configuration is required.' ) }
     line={ this.translate( 'Security management is automatic for WordPress.com sites.' ) }
-    illustration="/calypso/images/drake/drake-jetpack.svg"
+    illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 />
 ```

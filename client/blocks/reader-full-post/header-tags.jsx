@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,9 @@ const ReaderFullPostHeaderTags = ( { tags } ) => {
 	const listItems = map( tagsToDisplay, tag => {
 		return (
 			<li key={ `post-tag-${ tag.slug }` } className="reader-full-post__header-tag-list-item">
-				<a href={ `/tag/${ tag.slug }` } className="reader-full-post__header-tag-list-item-link">{ tag.name }</a>
+				<a href={ `/tag/${ tag.slug }` } className="reader-full-post__header-tag-list-item-link">
+					{ tag.name }
+				</a>
 			</li>
 		);
 	} );
@@ -23,7 +26,7 @@ const ReaderFullPostHeaderTags = ( { tags } ) => {
 };
 
 ReaderFullPostHeaderTags.propTypes = {
-	tags: React.PropTypes.object.isRequired
+	tags: React.PropTypes.object.isRequired,
 };
 
 export default ReaderFullPostHeaderTags;

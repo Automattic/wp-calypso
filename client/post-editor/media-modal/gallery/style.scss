@@ -22,6 +22,12 @@
 	overflow: hidden;
 }
 
+.editor-media-modal-gallery__preview .ellipsis-menu {
+	display: flex;
+	flex-direction: row-reverse;
+	margin-top: -12px;
+}
+
 .editor-media-modal-gallery__preview-toggle {
 	position: absolute;
 		top: -28px;
@@ -122,6 +128,10 @@ input.editor-media-modal-gallery__caption[type="text"] {
 	&:focus {
 		box-shadow: none;
 	}
+}
+
+.popover.gallery__order-popover {
+	z-index: z-index( 'root', '.popover.gallery__order-popover' );
 }
 
 .editor-media-modal-gallery__sidebar {

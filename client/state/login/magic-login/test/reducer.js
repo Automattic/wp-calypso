@@ -17,22 +17,21 @@ import {
 	DESERIALIZE,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
-	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-	MAGIC_LOGIN_SHOW_REQUEST_FORM,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 	MAGIC_LOGIN_REQUEST_AUTH_FETCH,
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	SERIALIZE,
 } from 'state/action-types';
 
 import reducer, {
-	emailAddressFormInput,
+	isFetchingAuth,
 	isFetchingEmail,
 	currentView,
 	requestAuthError,
@@ -45,7 +44,7 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'currentView',
-			'emailAddressFormInput',
+			'isFetchingAuth',
 			'isFetchingEmail',
 			'requestAuthError',
 			'requestAuthSuccess',
@@ -54,45 +53,47 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	describe( 'emailAddressFormInput', () => {
-		it( 'should default to an empty string', () => {
-			const state = emailAddressFormInput( undefined, {} );
-
-			expect( state ).to.equal( '' );
+	describe( 'isFetchingAuth', () => {
+		it( 'should default to false', () => {
+			const state = isFetchingAuth( undefined, {} );
+			expect( state ).to.be.false;
 		} );
 
-		it( 'should be an empty string on DESERIALIZE', () => {
-			const state = emailAddressFormInput( undefined, {
+		it( 'should be false on DESERIALIZE', () => {
+			const state = isFetchingAuth( undefined, {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.equal( '' );
+			expect( state ).to.be.false;
 		} );
 
-		it( 'should be an empty string on SERIALIZE', () => {
-			const state = emailAddressFormInput( undefined, {
+		it( 'should be false on SERIALIZE', () => {
+			const state = isFetchingAuth( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.equal( '' );
+			expect( state ).to.be.false;
 		} );
 
-		it( 'should set emailAddressFormInput to string value on action', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: 'claudemonet@example.com',
+		it( 'should be true on fetch', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_FETCH,
 			} );
-
-			expect( state ).to.equal( 'claudemonet@example.com' );
+			expect( state ).to.be.true;
 		} );
 
-		it( 'should set emailAddressFormInput to empty string when clearing', () => {
-			const state = emailAddressFormInput( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: '',
+		it( 'should be false on error', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 			} );
+			expect( state ).to.be.false;
+		} );
 
-			expect( state ).to.equal( '' );
+		it( 'should be false on success', () => {
+			const state = isFetchingAuth( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+			} );
+			expect( state ).to.be.false;
 		} );
 	} );
 
@@ -376,9 +377,9 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( LINK_EXPIRED_PAGE );
 		} );
 
-		it( 'should be request form on show request form', () => {
+		it( 'should be request form on reset request form', () => {
 			const state = currentView( undefined, {
-				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
+				type: MAGIC_LOGIN_RESET_REQUEST_FORM,
 			} );
 			expect( state ).to.equal( REQUEST_FORM );
 		} );

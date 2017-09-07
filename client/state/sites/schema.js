@@ -8,12 +8,8 @@ export const sitesSchema = {
 			properties: {
 				ID: { type: 'number' },
 				name: { type: 'string' },
-				description: { type: 'string' },
 				URL: { type: 'string' },
 				jetpack: { type: 'boolean' },
-				post_count: { type: 'number' },
-				subscribers_count: { type: 'number' },
-				lang: { type: 'string' },
 				icon: {
 					type: 'object',
 					properties: {
@@ -22,21 +18,11 @@ export const sitesSchema = {
 						media_id: { type: 'number' }
 					}
 				},
-				logo: {
-					type: 'object',
-					properties: {
-						id: { type: 'number' },
-						sizes: { type: [ 'array', 'object' ] },
-						url: { type: 'string' }
-					}
-				},
 				visible: { type: 'boolean' },
 				is_private: { type: 'boolean' },
-				is_following: { type: 'boolean' },
+				is_vip: { type: 'boolean' },
 				options: { type: 'object' },
 				meta: { type: 'object' },
-				user_can_manage: { type: 'boolean' },
-				is_vip: { type: 'boolean' },
 				is_multisite: { type: 'boolean' },
 				capabilities: {
 					type: 'object',
@@ -58,7 +44,6 @@ export const sitesSchema = {
 					}
 				},
 				single_user_site: { type: 'boolean' },
-				updates: { type: 'object' },
 			}
 		}
 	},

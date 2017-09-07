@@ -1,20 +1,26 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isNumber } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
+import FormTextInput from 'components/forms/form-text-input';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 
 class ProductFormVariationsTable extends React.Component {
 
 	static propTypes = {
+		siteId: PropTypes.number,
 		variations: PropTypes.array,
 		product: PropTypes.object,
 		editProductVariation: PropTypes.func.isRequired,
@@ -26,10 +32,43 @@ class ProductFormVariationsTable extends React.Component {
 		this.state = {
 			showDialog: false,
 			selectedVariation: null,
+			regular_price: '',
+			weight: '',
+			dimensions: {},
+			stock_quantity: '',
+			manage_stock: false,
 		};
 
 		this.onShowDialog = this.onShowDialog.bind( this );
 		this.onCloseDialog = this.onCloseDialog.bind( this );
+	}
+
+	editAllVariations( field, value ) {
+		const { siteId, product, variations, editProductVariation } = this.props;
+		this.setState( { [ field ]: value } );
+		variations.map( function( variation ) {
+			editProductVariation( siteId, product, variation, { [ field ]: value } );
+		} );
+	}
+
+	setPrice = ( e ) => {
+		this.editAllVariations( 'regular_price', e.target.value );
+	}
+
+	setWeight = ( e ) => {
+		this.editAllVariations( 'weight', e.target.value );
+	}
+
+	setStockQuantity = ( e ) => {
+		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const manage_stock = stock_quantity !== '';
+		this.editAllVariations( 'stock_quantity', stock_quantity );
+		this.editAllVariations( 'manage_stock', manage_stock );
+	}
+
+	setDimension = ( e ) => {
+		const dimensions = { ...this.state.dimensions, [ e.target.name ]: e.target.value };
+		this.editAllVariations( 'dimensions', dimensions );
 	}
 
 	onShowDialog( selectedVariation ) {
@@ -47,7 +86,7 @@ class ProductFormVariationsTable extends React.Component {
 	}
 
 	renderModal() {
-		const { variations, product, editProductVariation, translate } = this.props;
+		const { siteId, variations, product, editProductVariation, translate } = this.props;
 		const { showDialog, selectedVariation } = this.state;
 
 		const buttons = [
@@ -63,6 +102,7 @@ class ProductFormVariationsTable extends React.Component {
 				additionalClassNames="woocommerce products__product-form-variation-dialog"
 			>
 				<ProductFormVariationsModal
+					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					selectedVariation={ selectedVariation }
@@ -73,14 +113,13 @@ class ProductFormVariationsTable extends React.Component {
 		);
 	}
 
-	renderVariationRow( variation ) {
-		const { product, variations, editProductVariation } = this.props;
-		const id = isNumber( variation.id ) && variation.id || 'index_' + variation.id.index;
-		const manageStock = variations && variations[ 0 ].manage_stock || false;
-
+	renderVariationRow = ( variation, index ) => {
+		const { siteId, product, variations, editProductVariation } = this.props;
+		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
 		return (
 			<ProductFormVariationsRow
-				key={ id }
+				siteId={ siteId }
+				key={ index }
 				product={ product }
 				variation={ variation }
 				manageStock={ manageStock }
@@ -90,25 +129,84 @@ class ProductFormVariationsTable extends React.Component {
 		);
 	}
 
+	renderBulkRow() {
+		const { translate } = this.props;
+		const { regular_price, dimensions, weight, stock_quantity } = this.state;
+
+		return (
+			<tr className="products__product-form-variation-all-row">
+				<td className="products__product-id">
+					<div className="products__product-name">
+						{ translate( 'All variations' ) }
+					</div>
+				</td>
+				<td>
+					<div className="products__product-manage-stock">
+						<FormTextInput
+							name="stock_quantity"
+							value={ stock_quantity }
+							type="number"
+							onChange={ this.setStockQuantity }
+							placeholder={ translate( 'Quantity' ) }
+						/>
+					</div>
+				</td>
+				<td>
+					<PriceInput noWrap
+						value={ regular_price }
+						name="price"
+						placeholder="0.00"
+						onChange={ this.setPrice }
+						size="4"
+					/>
+				</td>
+				<td>
+					<div className="products__product-dimensions-weight">
+						<FormDimensionsInput
+							className="products__product-dimensions-input"
+							noWrap
+							dimensions={ dimensions }
+							onChange={ this.setDimension }
+						/>
+						<div className="products__product-weight-input">
+							<FormWeightInput
+								value={ weight }
+								onChange={ this.setWeight }
+								noWrap
+							/>
+						</div>
+					</div>
+				</td>
+			</tr>
+		);
+	}
+
 	render() {
 		const { variations, translate } = this.props;
+
+		if ( ! variations || variations.length === 0 ) {
+			return null;
+		}
+
 		return (
-			<div className="products__product-form-variation-table-wrapper">
-				<table className="products__product-form-variation-table">
-					<thead>
-						<tr>
-							<th></th>
-							<th></th>
-							<th className="products__product-price">{ translate( 'Price' ) }</th>
-							<th>{ translate( 'Dimensions & weight' ) }</th>
-							<th>{ translate( 'Manage stock' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ variations && variations.map( ( v ) => this.renderVariationRow( v ) ) }
-					</tbody>
-				</table>
-				{ this.renderModal() }
+			<div className="products__product-form-variation-table-shadow">
+				<div className="products__product-form-variation-table-wrapper">
+					<table className="products__product-form-variation-table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>{ translate( 'Inventory' ) }</th>
+								<th className="products__product-price">{ translate( 'Price' ) }</th>
+								<th>{ translate( 'Dimensions & weight' ) }</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ this.renderBulkRow() }
+							{ variations.map( this.renderVariationRow ) }
+						</tbody>
+					</table>
+					{ this.renderModal() }
+				</div>
 			</div>
 		);
 	}

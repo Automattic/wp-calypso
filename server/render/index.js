@@ -4,28 +4,30 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
-	getDocumentHeadLink
+	getDocumentHeadLink,
 } from 'state/document-head/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
+import { getCacheKey } from 'isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
 const markupCache = new Lru( {
 	max: 3000,
-	maxAge: HOUR_IN_MS
+	maxAge: HOUR_IN_MS,
 } );
 
 function bumpStat( group, name ) {
@@ -75,19 +77,24 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
-	let title, metas = [], links = [];
+	let title, metas = [], links = [], cacheKey = false;
 
-	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
+	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
+		cacheKey = getCacheKey( context );
+	}
+
+	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
-		// context.pathname doesn't include querystring, so it's a suitable cache key.
-		let key = context.pathname;
-		if ( req.error ) {
-			key = req.error.message;
-		}
-		context.renderedLayout = render( context.layout, key );
+	if (
+		config.isEnabled( 'server-side-rendering' ) &&
+		context.layout &&
+		! context.user &&
+		cacheKey &&
+		isDefaultLocale( context.lang )
+	) {
+		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
 
 	if ( context.store ) {
@@ -96,6 +103,7 @@ export function serverRender( req, res ) {
 		links = getDocumentHeadLink( context.store.getState() );
 
 		let reduxSubtrees = [ 'documentHead' ];
+
 		// Send redux state only in logged-out scenario
 		if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
@@ -104,10 +112,9 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( isEmpty( context.query ) ) {
-			// Don't cache if we have query params
+		if ( cacheKey ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-			stateCache.set( context.pathname, serverState );
+			stateCache.set( cacheKey, serverState );
 		}
 	}
 
@@ -119,4 +126,18 @@ export function serverRender( req, res ) {
 	} else {
 		res.render( 'index.jade', context );
 	}
+}
+
+export function serverRenderError( err, req, res, next ) {
+	if ( err ) {
+		if ( config( 'env' ) !== 'production' ) {
+			console.error( err );
+		}
+		req.error = err;
+		res.status( err.status || 500 );
+		res.render( '500.jade', req.context );
+		return;
+	}
+
+	next();
 }

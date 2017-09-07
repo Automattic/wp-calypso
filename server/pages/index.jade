@@ -55,7 +55,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
-	body(class=isRTL ? 'rtl' : '')
+	body( class=bodyClasses )
 		if renderedLayout
 			#wpcom.wpcom-site!= renderedLayout
 		else
@@ -85,7 +85,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script.
 			(function() {
 				function isSupported() {
-					var ios, version, ua;
+					var ios, version, ua, android, matches;
 
 					ua = window.navigator.userAgent;
 
@@ -110,11 +110,35 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 						//return false;
 					}
 
+					android = getFirstMatch( /android (\d+)/i );
+					if ( android && android < 3 ) {
+						return false;
+					}
+
 					return true;
 				}
 
 				if ( ! isSupported() ) {
-					window.location = 'https://wordpress.com/browsehappy?url=' + encodeURIComponent( window.location );
+					if ( matches = window.location.pathname.match( /^\/log-in(?:\/([a-z]{2}))?\/?$/ ) ) {
+						var login = 'https://'
+
+						if ( matches[1] ) {
+							login += matches[1] + '.';
+						}
+
+						login += 'wordpress.com/wp-login.php';
+
+						if ( window.location.search ) {
+							login += window.location.search + '&';
+						} else {
+							login += '?';
+						}
+						login += 'no_calypso=1';
+
+						window.location = login;
+					} else {
+						window.location = 'https://wordpress.com/browsehappy?url=' + encodeURIComponent( window.location );
+					}
 				}
 			})();
 

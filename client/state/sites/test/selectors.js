@@ -58,6 +58,7 @@ import {
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items => deepFreeze( {
@@ -71,6 +72,7 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSite.memoizedSelector.cache.clear();
 		getSiteCollisions.memoizedSelector.cache.clear();
+		getSiteBySlug.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getRawSite()', () => {
@@ -108,6 +110,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known', () => {
 			const site = getSite( {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -118,6 +121,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a normalized site with computed attributes', () => {
 			const site = getSite( {
+				...userState,
 				sites: {
 					items: {
 						2916284: {
@@ -143,6 +147,54 @@ describe( 'selectors', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
+				is_customizable: false,
+				is_previewable: true,
+				options: {
+					default_post_format: 'standard',
+					unmapped_url: 'https://example.wordpress.com'
+				}
+			} );
+		} );
+
+		it( 'should return a normalized site with correct slug when sites with collisions are passed in attributes', () => {
+			const site = getSite( {
+				...userState,
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com',
+							jetpack: false,
+							options: {
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						},
+						3916284: {
+							ID: 3916284,
+							name: 'Jetpack Example Blog',
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								unmapped_url: 'https://example.com'
+							}
+						}
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			}, 2916284 );
+
+			expect( site ).to.eql( {
+				ID: 2916284,
+				name: 'WordPress.com Example Blog',
+				URL: 'https://example.wordpress.com',
+				title: 'WordPress.com Example Blog',
+				domain: 'example.wordpress.com',
+				slug: 'example.wordpress.com',
+				hasConflict: true,
+				jetpack: false,
 				is_customizable: false,
 				is_previewable: true,
 				options: {
@@ -225,6 +277,7 @@ describe( 'selectors', () => {
 	describe( '#isSingleUserSite()', () => {
 		it( 'should return null if the site is not known', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -235,6 +288,7 @@ describe( 'selectors', () => {
 
 		it( 'it should return true if the site is a single user site', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: true }
@@ -250,6 +304,7 @@ describe( 'selectors', () => {
 
 		it( 'it should return false if the site is not a single user site', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: false }
@@ -1437,6 +1492,7 @@ describe( 'selectors', () => {
 					items: {
 						77203199: {
 							ID: 77203199,
+
 							URL: 'https://testtwosites2014.wordpress.com/path/to/site'
 						}
 					}
@@ -1445,6 +1501,31 @@ describe( 'selectors', () => {
 			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com::path::to::site' );
 
 			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+		} );
+
+		it( 'should return a matched site jetpack site when the sites conflict', () => {
+			const state = {
+				sites: {
+					items: {
+						1: {
+							ID: 1,
+							URL: 'https://example.com',
+							jetpack: false,
+							option: {
+								unmapped_url: 'https://abc.wordpress.com',
+								is_redirect: false,
+							}
+						},
+						2: {
+							ID: 2,
+							jetpack: true,
+							URL: 'https://example.com'
+						},
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'example.com' );
+			expect( site ).to.equal( state.sites.items[ 2 ] );
 		} );
 	} );
 
@@ -1584,7 +1665,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSitePlanSlug()', () => {
+	describe( '#getSitePlanSlug()', () => {
 		it( 'should return undefined if the plan slug is not known', () => {
 			const planSlug = getSitePlanSlug( {
 				sites: {
@@ -3276,6 +3357,14 @@ describe( 'selectors', () => {
 	describe( 'getJetpackComputedAttributes()', () => {
 		it( 'should return undefined attributes if a site is not Jetpack', () => {
 			const state = {
+				currentUser: {
+					id: 73705554,
+					capabilities: {
+						77203074: {
+							manage_options: false
+						}
+					}
+				},
 				sites: {
 					items: {
 						77203074: {
@@ -3293,10 +3382,19 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.canManage ).to.equal( undefined );
 			expect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
+			expect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
 		} );
 
 		it( 'should return exists for attributes if a site is Jetpack', () => {
 			const state = {
+				currentUser: {
+					id: 73705554,
+					capabilities: {
+						77203074: {
+							manage_options: false
+						}
+					}
+				},
 				sites: {
 					items: {
 						77203074: {
@@ -3313,6 +3411,7 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.canManage ).to.have.property;
 			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
+			expect( noNewAttributes.isSiteUpgradeable ).to.have.property;
 		} );
 	} );
 } );

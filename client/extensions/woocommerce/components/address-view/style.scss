@@ -1,5 +1,13 @@
 .address-view__address {
-	margin-bottom: 24px;
+	margin-bottom: 8px;
+
+ .address-view__city {
+		margin-right: 8px;
+	}
+
+	.address-view__state {
+		margin-right: 8px;
+	}
 
 	p {
 		margin-bottom: 0;
@@ -7,5 +15,53 @@
 		&.address-view__address-name {
 			font-weight: bold;
 		}
+	}
+}
+
+.form-label {
+	color: $gray-dark;
+}
+
+.address-view__editable-city-state-postcode {
+	display: flex;
+
+	@include breakpoint( ">960px" ) {
+		align-items: flex-end;
+	}
+
+	.form-fieldset {
+		flex: 1;
+		margin-right: 16px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+
+	@include breakpoint( "<960px" ) {
+		flex-direction: column;
+
+		label + select {
+			width: 100%;
+		}
+
+		.form-fieldset {
+			margin-right: 0;
+			width: 100%;
+		}
+	}
+
+	.form-select {
+		@include breakpoint( ">960px" ) {
+			max-width: 200px;
+		}
+	}
+}
+
+.address-view__country {
+	margin-bottom: 32px;
+
+	.form-select {
+		width: 100%;
 	}
 }

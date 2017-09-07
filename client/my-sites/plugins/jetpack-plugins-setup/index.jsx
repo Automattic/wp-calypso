@@ -5,9 +5,7 @@ import React from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import filter from 'lodash/filter';
-import range from 'lodash/range';
-import get from 'lodash/get';
+import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,6 +30,7 @@ import utils from 'lib/site/utils';
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
+import { hasInitializedSites } from 'state/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -178,7 +177,9 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderNoJetpackSiteSelected() {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
+			referrer: document.referrer
+		} );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
@@ -242,26 +243,30 @@ const PlansSetup = React.createClass( {
 		return plugins.map( ( item, i ) => {
 			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
 
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<CompactCard className="plugin-item" key={ i }>
 					<span className="plugin-item__link">
 						<PluginIcon image={ plugin.icon } />
-						<div className="plugin-item__title">
-							{ plugin.name }
+						<div className="plugin-item__info">
+							<div className="plugin-item__title">
+								{ plugin.name }
+							</div>
+							{ hidden
+								? <Notice
+									key={ 0 }
+									isCompact={ true }
+									showDismiss={ false }
+									icon="plugins"
+									text={ this.props.translate( 'Waiting to install' ) } />
+								: this.renderStatus( plugin )
+							}
 						</div>
-						{ hidden
-							? <Notice
-								key={ 0 }
-								isCompact={ true }
-								showDismiss={ false }
-								icon="plugins"
-								text={ this.props.translate( 'Waiting to install' ) } />
-							: this.renderStatus( plugin )
-						}
 					</span>
 					{ this.renderActions( plugin ) }
 				</CompactCard>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		} );
 	},
 
@@ -473,10 +478,13 @@ const PlansSetup = React.createClass( {
 	},
 
 	render() {
-		const { translate } = this.props;
+		const {
+			sitesInitialized,
+			translate
+		} = this.props;
 		const site = this.props.selectedSite;
 
-		if ( ! site && this.props.isRequestingSites ) {
+		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -560,6 +568,7 @@ export default connect(
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
+			sitesInitialized: hasInitializedSites( state ),
 			siteId
 		};
 	},

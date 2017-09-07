@@ -4,7 +4,7 @@
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import superagent from 'superagent';
-import find from 'lodash/find';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,7 +86,7 @@ module.exports = {
 			'&request[fields][requires]=0&request[fields][sections]=0';
 
 		if ( options.search ) {
-			payload += '&request[search]=' + options.search + '*';
+			payload += '&request[search]=' + options.search;
 		} else {
 			payload += '&request[browse]=' + options.category;
 		}

@@ -43,9 +43,18 @@ export function addLocaleQueryParam( params ) {
 		return params;
 	}
 
+	let localeQueryParam;
 	const query = qs.parse( params.query );
+
+	if ( params.apiNamespace ) {
+		// v2 api request
+		localeQueryParam = { _locale: locale };
+	} else {
+		localeQueryParam = { locale };
+	}
+
 	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, { locale } ) )
+		query: qs.stringify( Object.assign( query, localeQueryParam ) )
 	} );
 }
 

@@ -7,24 +7,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from '../../../components/extended-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import PaymentMethodList from './payment-method-list';
 
 class SettingsPaymentsOffline extends Component {
 
 	render() {
 		const { translate } = this.props;
 		return (
-			<div>
+			<div className="payments__type-container">
 				<ExtendedHeader
-					label={ translate( 'Offline payment methods' ) }
+					label={ translate( 'Offline' ) }
 					description={
 						translate(
-							'Allow customers to pay you manually using methods like bank ' +
-							'transfer, check or cash on delivery.'
+							'Take payments in-person.'
 						)
 					} />
-				<Card></Card>
+				<PaymentMethodList methodType="offline" />
 			</div>
 		);
 	}

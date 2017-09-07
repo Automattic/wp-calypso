@@ -16,12 +16,16 @@ import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
+import Banner from 'components/banner';
+import {
+	PLAN_JETPACK_PREMIUM
+} from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import {
 	canJetpackSiteManage,
@@ -39,7 +43,8 @@ const ConnectedThemesSelection = connectOptions(
 					return pickBy(
 						addTracking( props.options ),
 						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
-					); } }
+					);
+				} }
 			/>
 		);
 	}
@@ -59,7 +64,10 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			search,
 			siteId,
 			vertical,
-			wpcomTier
+			tier,
+			translate,
+			hasUnlimitedPremiumThemes,
+			requestingSitePlans
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -86,6 +94,16 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
+				{
+					( ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
+						plan={ PLAN_JETPACK_PREMIUM }
+						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
+						description={
+							translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
+						}
+						event="themes_plans_free_personal_premium"
+					/>
+				}
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
 					emptyContent={ showWpcomThemesList ? <div /> : null } >
@@ -99,7 +117,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								defaultOption={ 'activate' }
 								secondaryOption={ 'tryandcustomize' }
 								search={ search }
-								tier={ wpcomTier }
+								tier={ tier }
 								filter={ filter }
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }
@@ -146,10 +164,12 @@ export default connect(
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
-			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
+			tier,
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			requestingSitePlans: isRequestingSitePlans( state, siteId )
 		};
 	}
 )( ConnectedSingleSiteJetpack );

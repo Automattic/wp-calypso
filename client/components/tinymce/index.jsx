@@ -1,12 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { assign, forEach } from 'lodash';
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	autosize = require( 'autosize' ),
-	forEach = require( 'lodash/forEach' ),
-	assign = require( 'lodash/assign' ),
 	tinymce = require( 'tinymce/tinymce' );
 
 require( 'tinymce/themes/modern/theme.js' );
@@ -38,6 +37,7 @@ import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
+import simplePaymentsPlugin from './plugins/simple-payments/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
@@ -46,6 +46,7 @@ import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
 import markdownPlugin from './plugins/markdown/plugin';
+import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
 [
 	wpcomPlugin,
@@ -70,6 +71,8 @@ import markdownPlugin from './plugins/markdown/plugin';
 	toolbarPinPlugin,
 	embedReversalPlugin,
 	markdownPlugin,
+	wpEmojiPlugin,
+	simplePaymentsPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -98,6 +101,7 @@ const EVENTS = {
 	focus: 'onFocus',
 	hide: 'onHide',
 	init: 'onInit',
+	mouseUp: 'onMouseUp',
 	redo: 'onRedo',
 	remove: 'onRemove',
 	reset: 'onReset',
@@ -121,6 +125,7 @@ const PLUGINS = [
 	'wplink',
 	'AtD',
 	'directionality',
+	'wpemoji',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
@@ -139,6 +144,7 @@ const PLUGINS = [
 	'wpcom/trackpaste',
 	'wpcom/insertmenu',
 	'wpcom/markdown',
+	'wpcom/simplepayments',
 ];
 
 mentionsPlugin();
@@ -189,7 +195,8 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			content: ''
+			content: '',
+			selection: null,
 		};
 	},
 
@@ -225,10 +232,7 @@ module.exports = React.createClass( {
 
 			this.bindEditorEvents();
 			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
-
-			if ( ! viewport.isMobile() ) {
-				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
-			}
+			editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
 		}.bind( this );
 
 		this.localize();
@@ -279,6 +283,7 @@ module.exports = React.createClass( {
 			relative_urls: false,
 			remove_script_host: false,
 			convert_urls: false,
+			branding: false,
 			browser_spellcheck: true,
 			fix_list_elements: true,
 			entities: '38,amp,60,lt,62,gt',
@@ -386,7 +391,11 @@ module.exports = React.createClass( {
 			const textNode = ReactDom.findDOMNode( this.refs.text );
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
-			textNode.setSelectionRange( 0, 0 );
+			if ( this.state.selection ) {
+				this.selectTextInTextArea( this.state.selection );
+			} else {
+				textNode.setSelectionRange( 0, 0 );
+			}
 
 			// Browser is not Internet Explorer 11
 			if ( 11 !== tinymce.Env.ie ) {
@@ -442,6 +451,29 @@ module.exports = React.createClass( {
 		}
 
 		this.setTextAreaContent( content );
+	},
+
+	setSelection: function( selection ) {
+		this.setState( {
+			selection
+		} );
+	},
+
+	selectTextInTextArea: function( selection ) {
+		// only valid in the text area mode and if we have selection
+		if ( ! selection ) {
+			return;
+		}
+
+		const textNode = ReactDom.findDOMNode( this.refs.text );
+
+		const start = selection.start;
+		const end = selection.end || selection.start;
+		// Collapse selection to avoid scrolling to the bottom of the textarea
+		textNode.setSelectionRange( start, end );
+
+		// clear out the selection from the state
+		this.setState( { selection: null } );
 	},
 
 	onTextAreaChange: function( event ) {

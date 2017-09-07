@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -10,12 +9,14 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'FoldableCard',
+export default class FoldableCardExample extends PureComponent {
+	static displayName = 'FoldableCardExample';
 
-	mixins: [ PureRenderMixin ],
+	handleClick = () => console.log( 'Clicked!' );
+	handleClose = () => console.log( 'Closed!' );
+	handleOpen = () => console.log( 'Opened!' );
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<div>
@@ -70,7 +71,17 @@ export default React.createClass( {
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
+				<div>
+					<FoldableCard
+						header="This card includes click, open and close actions. Check your console!"
+						onClick={ this.handleClick }
+						onClose={ this.handleClose }
+						onOpen={ this.handleOpen }
+					>
+						Nothing to see here. Keep walking!
+					</FoldableCard>
+				</div>
 			</div>
 		);
 	}
-} );
+}

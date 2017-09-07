@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import config from 'config';
 import HappychatButton from 'components/happychat/button';
-import { isHappychatChatActive } from 'state/happychat/selectors';
+import { hasActiveHappychatSession } from 'state/happychat/selectors';
 
 const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 	<div className="sidebar__footer">
@@ -32,6 +32,6 @@ const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 	</div>
 );
 
-const mapState = ( state ) => ( { isHappychatButtonVisible: isHappychatChatActive( state ) } );
+const mapState = ( state ) => ( { isHappychatButtonVisible: hasActiveHappychatSession( state ) } );
 
 export default connect( mapState )( localize( SidebarFooter ) );

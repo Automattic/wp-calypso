@@ -17,9 +17,13 @@ import BlogImage from '../design-type-with-store/blog-image';
 import PageImage from '../design-type-with-store/page-image';
 import GridImage from '../design-type-with-store/grid-image';
 
+import { setDesignType } from 'state/signup/steps/design-type/actions';
+
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class DesignTypeStep extends Component {
+import { getThemeForDesignType } from 'signup/utils';
+
+export class DesignTypeStep extends Component {
 	static propTypes = {
 		translate: PropTypes.func
 	};
@@ -38,36 +42,63 @@ class DesignTypeStep extends Component {
 		const { translate } = this.props;
 
 		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+			{
+				type: 'blog',
+				label: translate( 'Start with a blog' ),
+				description: translate( 'To share your ideas, stories, and photographs with your followers.' ),
+				image: <BlogImage />,
+			},
+			{
+				type: 'page',
+				label: translate( 'Start with a website' ),
+				description: translate( 'To promote your business, organization, or brand and connect with your audience.' ),
+				image: <PageImage />,
+			},
+			{
+				type: 'grid',
+				label: translate( 'Start with a portfolio' ),
+				description: translate( 'To present your creative projects in a visual showcase.' ),
+				image: <GridImage />,
+			},
 		];
 	}
 
-	renderChoices() {
+	renderChoice = ( choice ) => {
 		const choiceHandlers = this.getChoiceHandlers();
 
 		return (
+			<Card
+				key={ choice.type }
+				href={ `#${ choice.type }` }
+				className="design-type__choice"
+				onClick={ choiceHandlers[ choice.type ] }
+			>
+				<div className="design-type__choice-image">
+					{ choice.image }
+				</div>
+				<div className="design-type__choice-copy">
+					<span className="button is-compact design-type__cta">{ choice.label }</span>
+					<p className="design-type__choice-description">{ choice.description }</p>
+				</div>
+			</Card>
+		);
+	}
+
+	renderChoices() {
+		return (
 			<div className="design-type__list">
-				{ this.getChoices().map( ( choice ) => (
-						<Card className="design-type__choice" key={ choice.type }>
-							<a
-								className="design-type__choice-link"
-								onClick={ choiceHandlers[ choice.type ] }
-							>
-								{ choice.image }
-								<h2>{ choice.label }</h2>
-							</a>
-						</Card>
-					)
-				) }
+				{ this.getChoices().map( this.renderChoice ) }
 				<div className="design-type__choice is-spacergif" />
+				<p className="design-type__disclaimer">
+					{ this.props.translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }
+				</p>
 			</div>
 		);
 	}
 
 	render() {
 		const { translate } = this.props;
+
 		return (
 			<div className="design-type">
 				<StepWrapper
@@ -76,7 +107,8 @@ class DesignTypeStep extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ translate( 'What would you like your homepage to look like?' ) }
 					fallbackSubHeaderText={ translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					subHeaderText={ translate( 'First up, what would you like your homepage to look like?' ) }
+					headerText={ translate( 'Hello! Let\'s create your new site.' ) }
+					subHeaderText={ translate( 'What kind of site do you need? Choose an option below:' ) }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderChoices() } />
 			</div>
@@ -90,9 +122,13 @@ class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
+		const themeSlugWithRepo = getThemeForDesignType( designType );
+
+		this.props.setDesignType( designType );
+
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType, themeSlugWithRepo } );
 		this.props.goToNextStep();
 	}
 }
@@ -100,6 +136,7 @@ class DesignTypeStep extends Component {
 export default connect(
 	null,
 	{
-		recordTracksEvent
+		recordTracksEvent,
+		setDesignType,
 	}
 )( localize( DesignTypeStep ) );

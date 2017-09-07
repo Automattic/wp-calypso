@@ -19,7 +19,7 @@ describe( 'MySitesSidebar', () => {
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/products-values', {} );
 		mockery.registerMock( 'my-sites/current-site', EmptyComponent );
-		mockery.registerMock( './publish-menu', EmptyComponent );
+		mockery.registerMock( './manage-menu', EmptyComponent );
 		mockery.registerMock( 'layout/sidebar', EmptyComponent );
 		mockery.registerMock( 'components/tooltip', EmptyComponent );
 

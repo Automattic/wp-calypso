@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,6 +32,13 @@ function renderPostNotFound() {
 	);
 }
 
+const scrollTopIfNoHash = () =>
+	defer( () => {
+		if ( typeof window !== 'undefined' && ! window.location.hash ) {
+			window.scrollTo( 0, 0 );
+		}
+	} );
+
 export function blogPost( context ) {
 	const blogId = context.params.blog,
 		postId = context.params.post,
@@ -57,11 +65,7 @@ export function blogPost( context ) {
 		document.getElementById( 'primary' ),
 		context.store
 	);
-	defer( function() {
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
-		}
-	} );
+	scrollTopIfNoHash();
 }
 
 export function feedPost( context ) {
@@ -87,9 +91,5 @@ export function feedPost( context ) {
 		document.getElementById( 'primary' ),
 		context.store
 	);
-	defer( function() {
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
-		}
-	} );
+	scrollTopIfNoHash();
 }

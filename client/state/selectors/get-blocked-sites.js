@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { map, pickBy } from 'lodash';
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns a list of site IDs blocked by the user
@@ -9,6 +10,7 @@ import { map, pickBy } from 'lodash';
  * @param  {Object}  state  Global state tree
  * @return {Array}        Blocked site IDs
  */
-export default function getBlockedSites( state ) {
-	return map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number );
-}
+export default createSelector(
+	state => map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number ),
+	state => [ state.reader.siteBlocks.items ],
+);

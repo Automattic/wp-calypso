@@ -10,9 +10,3 @@
 		vertical-align: baseline;
 	}
 }
-
-@include breakpoint( "<480px" ) {
-	.editor-post-type {
-		display: none;
-	}
-}

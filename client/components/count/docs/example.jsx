@@ -8,7 +8,10 @@ import React from 'react';
 import Count from 'components/count';
 
 const count = () => (
-	<Count count={ 65365 } />
+	<div>
+		<Count count={ 65365 } />
+		<Count primary count={ 65366 } />
+	</div>
 )
 
 count.displayName = 'Count';

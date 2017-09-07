@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import GoogleLoginButton from 'components/social-buttons/google';
-import FacebookLoginButton from 'components/social-buttons/facebook';
 import { localize } from 'i18n-calypso';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
+import Card from 'components/card';
 import config from 'config';
+import { preventWidows } from 'lib/formatting';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -17,51 +18,27 @@ class SocialSignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor() {
-		super();
-
-		this.handleGoogleResponse = this.handleGoogleResponse.bind( this );
-		this.handleFacebookResponse = this.handleFacebookResponse.bind( this );
-	}
-
-	handleGoogleResponse( response ) {
-		if ( ! response.Zi || ! response.Zi.id_token ) {
+	handleGoogleResponse = ( response ) => {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.handleResponse( 'google', response.Zi.id_token );
-	}
-
-	handleFacebookResponse( response ) {
-		if ( ! response.email ) {
-			return;
-		}
-		// TODO: post response to the new wpcom endpoint to login
-	}
+		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
+	};
 
 	render() {
 		return (
-			<div className="signup-form__social">
+			<Card className="signup-form__social">
 				<p>
-					{ this.props.translate( 'Or create account using social profile:' ) }
+					{ preventWidows( this.props.translate( 'Or connect your existing profile to get started faster.' ) ) }
 				</p>
 
 				<div className="signup-form__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse } />
-
-					<FacebookLoginButton
-						appId={ config( 'facebook_app_id' ) }
-						responseHandler={ this.handleFacebookResponse } />
 				</div>
-
-				<p>
-					{ this.props.translate(
-						"Connect to your existing social profile to get started faster. We'll never post without your permission."
-					) }
-				</p>
-			</div>
+			</Card>
 		);
 	}
 }

@@ -13,9 +13,9 @@ import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
-		100: { ID: 100, title: 'Image' },
-		'media-1': { ID: 100, title: 'Image' },
-		200: { ID: 200, title: 'Video' }
+		100: { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
+		'media-1': { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
+		200: { ID: 200, title: 'Video', guid: 'https://example.files.wordpress.com/2017/05/g1002.mov' }
 	},
 	DUMMY_MEDIA_OBJECT = DUMMY_OBJECTS[ 100 ],
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
@@ -141,6 +141,19 @@ describe( 'MediaLibrarySelectedStore', function() {
 		it( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', function() {
 			dispatchSetLibrarySelectedItems();
 			dispatchRemoveMediaItem();
+
+			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
+		} );
+
+		it( 'should clear selected items when CHANGE_MEDIA_SOURCE is dispatched', function() {
+			dispatchSetLibrarySelectedItems();
+
+			handler( {
+				action: {
+					type: 'CHANGE_MEDIA_SOURCE',
+					siteId: DUMMY_SITE_ID,
+				}
+			} );
 
 			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
 		} );

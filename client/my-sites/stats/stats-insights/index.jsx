@@ -1,7 +1,8 @@
 /**
 * External dependencies
 */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -25,6 +26,7 @@ import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
+import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -48,7 +50,11 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<StatsFirstView />
 			<SidebarNavigation />
-			<StatsNavigation section="insights" slug={ siteSlug } />
+			<StatsNavigation
+				siteId={ siteId }
+				section="insights"
+				slug={ siteSlug }
+			/>
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
@@ -81,6 +87,7 @@ const StatsInsights = ( props ) => {
 					</div>
 				</div>
 			</div>
+			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -10,7 +11,7 @@ export default class FormTextInput extends PureComponent {
 		isError: PropTypes.bool,
 		isValid: PropTypes.bool,
 		selectOnFocus: PropTypes.bool,
-		className: PropTypes.string
+		className: PropTypes.string,
 	};
 
 	constructor() {
@@ -30,19 +31,22 @@ export default class FormTextInput extends PureComponent {
 	}
 
 	render() {
-		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus' );
+		const { inputRef } = this.props;
+		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
+
 		const classes = classNames( 'form-text-input', this.props.className, {
 			'is-error': this.props.isError,
-			'is-valid': this.props.isValid
+			'is-valid': this.props.isValid,
 		} );
 
 		return (
 			<input
 				type="text"
 				{ ...props }
-				ref="textField"
+				ref={ inputRef || 'textField' }
 				className={ classes }
-				onClick={ this.selectOnFocus } />
+				onClick={ this.selectOnFocus }
+			/>
 		);
 	}
 }

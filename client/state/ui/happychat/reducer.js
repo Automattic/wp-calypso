@@ -1,5 +1,7 @@
-import { combineReducers } from 'redux';
-
+/**
+ * Internal dependencies
+ */
+import { combineReducers } from 'state/utils';
 import {
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING

@@ -25,9 +25,9 @@ describe( 'formatCurrency', () => {
 		const money = formatCurrency( -1234.56789, 'USD' );
 		expect( money ).to.equal( '-$1,234.57' );
 	} );
-	it( 'unknown currency codes return null', () => {
+	it( 'unknown currency codes return default', () => {
 		const money = formatCurrency( 9800900.32, {} );
-		expect( money ).to.equal( null );
+		expect( money ).to.equal( '$9,800,900.32' );
 	} );
 
 	describe( 'supported currencies', () => {

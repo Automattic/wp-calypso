@@ -13,8 +13,6 @@ import {
 	TIMEZONES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-import { requestTimezones } from 'state/timezones/actions';
-
 const WP_REST_API = {
 	hostname: 'https://public-api.wordpress.com',
 	namespace: '/wpcom/v2',
@@ -27,8 +25,6 @@ const WP_REST_API = {
 import { fetchTimezones } from '../';
 
 describe( 'request', () => {
-	const nextSpy = sinon.spy();
-
 	describe( 'successful requests', () => {
 		useNock( ( nock ) => {
 			nock( WP_REST_API.hostname )
@@ -71,7 +67,7 @@ describe( 'request', () => {
 				}
 			} );
 
-			fetchTimezones( { dispatch }, requestTimezones(), nextSpy, );
+			fetchTimezones( { dispatch } );
 		} );
 
 		it( 'should dispatch RECEIVE action when request completes', done => {
@@ -111,7 +107,7 @@ describe( 'request', () => {
 				}
 			} );
 
-			fetchTimezones( { dispatch }, requestTimezones(), nextSpy, );
+			fetchTimezones( { dispatch } );
 		} );
 	} );
 } );

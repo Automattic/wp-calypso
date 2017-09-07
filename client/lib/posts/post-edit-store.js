@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/isEqual' ),
-	filter = require( 'lodash/filter' ),
-	without = require( 'lodash/without' ),
-	pickBy = require( 'lodash/pickBy' );
+import { assign, filter, isEqual, pickBy, without } from 'lodash';
+const debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
+	emitter = require( 'lib/mixins/emitter' );
 
 /**
  * Internal dependencies

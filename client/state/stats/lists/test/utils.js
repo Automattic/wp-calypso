@@ -1,21 +1,193 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import {
+	getPeriodFormat,
 	getSerializedStatsQuery,
 	normalizers,
+	parseOrderDeltas,
+	parseOrdersChartData,
 	rangeOfPeriod,
 	buildExportArray,
 	isAutoRefreshAllowedForQuery,
 } from '../utils';
 
 describe( 'utils', () => {
+
+	const orderPayload = {
+		date: '2017',
+		unit: 'year',
+		quantity: '10',
+		fields: [ 'period', 'orders', 'currency' ],
+		data: [
+			[ 2016, 0, 'NZD' ],
+			[ 2017, 14, 'NZD' ]
+		],
+		delta_fields: [ 'period', 'delta', 'percentage_change', 'reference_period', 'favorable', 'direction', 'currency' ],
+		deltas: [
+			{
+				period: 2016,
+				orders: [ 2016, 0, 0, 2015, '', 'is-neutral', 'NZD' ]
+			},
+			{
+				period: 2017,
+				orders: [ 2017, 14, 0, 2016, 'is-favorable', 'is-undefined-increase', 'NZD' ]
+			}
+		],
+		total_orders: 14,
+	};
+
+	describe( 'parseOrderDeltas', () => {
+		const expectedDeltas = [
+			{
+				period: '2016-12-31',
+				orders: {
+					period: 2016,
+					delta: 0,
+					percentage_change: 0,
+					reference_period: 2015,
+					favorable: '',
+					direction: 'is-neutral',
+					currency: 'NZD'
+				}
+			},
+			{
+				period: '2017-12-31',
+				orders: {
+					period: 2017,
+					delta: 14,
+					percentage_change: 0,
+					reference_period: 2016,
+					favorable: 'is-favorable',
+					direction: 'is-undefined-increase',
+					currency: 'NZD'
+				}
+			}
+		];
+
+		it( 'should return empty array if payload is null', () => {
+			const actualDeltas = parseOrderDeltas( null );
+			assert.isArray( actualDeltas );
+			assert.isTrue( actualDeltas.length === 0 );
+		} );
+
+		it( 'should return empty array if payload.deltas has no keys', () => {
+			const actualDeltas = parseOrderDeltas( {
+				date: '2017',
+				deltas: {},
+				delta_fields: [ 'period' ],
+			} );
+			assert.isArray( actualDeltas );
+			assert.isTrue( actualDeltas.length === 0 );
+		} );
+
+		it( 'should return empty array if payload.deltas or delta_fields are missing', () => {
+			const actualDeltas = parseOrderDeltas( { date: '2017' } );
+			assert.isArray( actualDeltas );
+			assert.isTrue( actualDeltas.length === 0 );
+		} );
+
+		it( 'should return a well formed array of delta objects', () => {
+			const actualDeltas = parseOrderDeltas( orderPayload );
+			assert.isArray( actualDeltas );
+			assert.isObject( actualDeltas[ 0 ] );
+			assert.isObject( actualDeltas[ 0 ].orders );
+		} );
+
+		it( 'should return an array of delta objects as expected', () => {
+			const actualDeltas = parseOrderDeltas( orderPayload );
+			assert.deepEqual( actualDeltas, expectedDeltas );
+		} );
+	} );
+	describe( 'parseOrdersChartData', () => {
+		const expectedOrders = [
+			{
+				period: '2016-12-31',
+				orders: 0,
+				currency: 'NZD',
+				labelDay: 'Dec 31',
+				labelWeek: 'Dec 31',
+				labelMonth: 'Dec',
+				labelYear: '2016',
+				classNames: []
+			},
+			{
+				period: '2017-12-31',
+				orders: 14,
+				currency: 'NZD',
+				labelDay: 'Dec 31',
+				labelWeek: 'Dec 31',
+				labelMonth: 'Dec',
+				labelYear: '2017',
+				classNames: []
+			}
+		];
+
+		it( 'should return empty array if payload.data is missing', () => {
+			const actualOrders = parseOrdersChartData( { date: '2017' } );
+			assert.isArray( actualOrders );
+			assert.isTrue( actualOrders.length === 0 );
+		} );
+
+		it( 'should return a well formed array of objects', () => {
+			const actualOrders = parseOrdersChartData( orderPayload );
+			assert.isArray( actualOrders );
+			assert.isObject( actualOrders[ 0 ] );
+		} );
+
+		it( 'should return an array of objects as expected', () => {
+			const actualOrders = parseOrdersChartData( orderPayload );
+			assert.deepEqual( actualOrders, expectedOrders );
+		} );
+	} );
+	describe( 'getPeriodFormat', () => {
+		it( 'should return correctly day format for long formats', () => {
+			const response = getPeriodFormat( 'day', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly week format for long formats', () => {
+			const response = getPeriodFormat( 'week', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly month format for long formats', () => {
+			const response = getPeriodFormat( 'month', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly year format for long formats', () => {
+			const response = getPeriodFormat( 'year', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly day format for short (new) formats', () => {
+			const response = getPeriodFormat( 'day', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly week format for short (new) formats', () => {
+			const response = getPeriodFormat( 'week', '2017-W27' );
+			assert.strictEqual( response, 'YYYY-[W]WW' );
+		} );
+
+		it( 'should return correctly month format for short (new) formats', () => {
+			const response = getPeriodFormat( 'month', '2017-07' );
+			assert.strictEqual( response, 'YYYY-MM' );
+		} );
+
+		it( 'should return correctly year format for short (new) formats', () => {
+			const response = getPeriodFormat( 'year', '2017' );
+			assert.strictEqual( response, 'YYYY' );
+		} );
+	} );
+
 	describe( 'buildExportArray()', () => {
 		it( 'should an empty array if data not supplied', () => {
 			const data = buildExportArray( {} );
@@ -522,6 +694,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 1,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -558,6 +731,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 10,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -593,6 +767,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -629,6 +804,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -665,6 +841,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'US\'A',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'
@@ -704,6 +881,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [
 					{
 						label: 'United States',
+						countryCode: 'US',
 						value: 100,
 						region: '021',
 						backgroundImage: '/calypso/images/flags/us.svg'

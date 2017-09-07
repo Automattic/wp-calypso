@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,8 +12,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestCommentEmailSubscription( { dispatch }, action, next ) {
+export function requestCommentEmailSubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
@@ -23,21 +25,20 @@ export function requestCommentEmailSubscription( { dispatch }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
-export function receiveCommentEmailSubscription( store, action, next, response ) {
+export function receiveCommentEmailSubscription( store, action, response ) {
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
-		receiveCommentEmailSubscriptionError( store, action, next );
+		receiveCommentEmailSubscriptionError( store, action );
 		return;
 	}
 }
 
-export function receiveCommentEmailSubscriptionError( { dispatch }, action, next ) {
+export function receiveCommentEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	next( unsubscribeToNewCommentEmail( action.payload.blogId ) );
+	dispatch( bypassDataLayer( unsubscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
 export default {

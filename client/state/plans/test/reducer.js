@@ -8,10 +8,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+import { withSchemaValidation } from 'state/utils';
 
 // Reducers
 import plansReducer, {
-	items as itemsReducer,
+	items,
 	requesting as requestReducer,
 	error as errorReducer
 } from '../reducer';
@@ -30,6 +31,8 @@ import {
  * Fixture data
  */
 import { WPCOM_RESPONSE } from './fixture';
+
+const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;

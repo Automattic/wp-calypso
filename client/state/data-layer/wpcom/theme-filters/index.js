@@ -22,7 +22,7 @@ const fetchFilters = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const storeFilters = ( { dispatch }, action, next, data ) =>
+const storeFilters = ( { dispatch }, action, data ) =>
 	dispatch( { type: THEME_FILTERS_ADD, filters: data } );
 
 const reportError = ( { dispatch } ) =>

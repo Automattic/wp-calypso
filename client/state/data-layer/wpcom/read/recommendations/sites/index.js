@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
-import { map } from 'lodash';
+import { map, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
 import { decodeEntities } from 'lib/formatting';
 
-export const requestRecommendedSites = ( { dispatch }, action, next ) => {
+export const requestRecommendedSites = ( { dispatch }, action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
 	dispatch(
 		http( {
@@ -24,7 +25,6 @@ export const requestRecommendedSites = ( { dispatch }, action, next ) => {
 			onFailure: action,
 		} )
 	);
-	next( action );
 };
 
 export const fromApi = response => {
@@ -42,7 +42,7 @@ export const fromApi = response => {
 	} ) );
 };
 
-export const receiveRecommendedSitesResponse = ( store, action, next, response ) => {
+export const receiveRecommendedSitesResponse = ( store, action, response ) => {
 	if ( ! response.sites ) {
 		return;
 	}
@@ -51,17 +51,13 @@ export const receiveRecommendedSitesResponse = ( store, action, next, response )
 		receiveRecommendedSites( {
 			sites: fromApi( response ),
 			seed: action.payload.seed,
+			offset: action.payload.offset,
 		} )
 	);
 };
 
-export const receiveError = ( store, action, next ) => {
-	// no-op
-	next( action );
-};
-
 export default {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
-		dispatchRequest( requestRecommendedSites, receiveRecommendedSitesResponse, receiveError ),
+		dispatchRequest( requestRecommendedSites, receiveRecommendedSitesResponse, noop ),
 	],
 };

@@ -52,8 +52,6 @@
 
 	@include breakpoint( '>480px' ) {
 		font-size: 24px;
-		font-weight: 700;
-		font-family: $serif;
 	}
 
 	.is-placeholder & {
@@ -70,10 +68,6 @@
 
 .plugin-meta__upgrade_nudge .upgrade-nudge.card {
 	margin-top: 0;
-}
-
-.plugin-meta .card {
-	margin: 0;
 }
 
 .plugin-meta__meta {
@@ -136,6 +130,10 @@
 	}
 }
 
+.plugin-meta__actions .plugin-activate-toggle__icon .gridicons-cog {
+	transform: translate(-3px, -1px);
+}
+
 .plugin-meta__version-notice {
 	margin-top: -9px;
 
@@ -145,42 +143,19 @@
 }
 
 .plugin-meta__actions .plugin-item__count {
+	justify-content: space-between;
 	padding: 0;
+
+	@include breakpoint( '>480px' ) {
+		justify-content: flex-end;
+	}
 }
 
 .plugin-meta__actions .plugin-meta__active {
 	color: $alert-green;
 }
 
-.plugin-meta__action-links {
-	display: flex;
-	flex-wrap: wrap;
-	clear: both;
-	padding-top: 12px;
-
-	.button {
-		margin-top: 12px;
-		flex-shrink: 0;
-		margin-right: 10px;
-	}
-}
-
-a.plugin-meta__settings-link {
-	color: $gray;
-	display: block;
-	font-size: 11px;
-	line-height: 16px;
-	margin: 16px 9px 0 0;
-	text-transform: uppercase;
-
-	@include breakpoint( '>480px' ) {
-		display: inline-block;
-	}
-
-	.gridicon {
-		float: right;
-		position: relative;
-			left: 7px;
-			top: -3px;
-	}
+.card.plugin-meta__settings-link {
+	margin-top: -16px;
+	margin-bottom: 16px;
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -42,7 +43,7 @@ import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-
 export const READER_CONTENT_WIDTH = 800,
 	PHOTO_ONLY_MIN_WIDTH = 440,
 	GALLERY_MIN_IMAGES = 4,
-	GALLERY_MIN_IMAGE_WIDTH = 350;
+	GALLERY_MIN_IMAGE_WIDTH = 100;
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {
@@ -66,7 +67,8 @@ const hasShortContent = post => getCharacterCount( post ) <= 100;
 export function classifyPost( post ) {
 	const canonicalImage = post.canonical_image;
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
-	let displayType = DISPLAY_TYPES.UNCLASSIFIED, canonicalAspect;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
+		canonicalAspect;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;

@@ -2,43 +2,49 @@
  * External dependencies
  */
 import React from 'react';
-import { isArray } from 'lodash';
+import { connect } from 'react-redux';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import QueryThemeFilters from 'components/data/query-theme-filters';
 import SectionHeader from 'components/section-header';
-import { isValidTerm } from 'my-sites/themes/theme-filters';
+import { isValidThemeFilterTerm } from 'state/selectors';
 
-const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, taxonomies, translate } ) => {
-	if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
+const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) => {
+	if ( isEmpty( features ) ) {
 		return null;
 	}
 
-	const themeFeatures = taxonomies.theme_feature.map( function( item ) {
-		const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
-		return (
-			<li key={ 'theme-features-item-' + item.slug }>
-				{ ! isWpcomTheme
-					? <a>{ item.name }</a>
-					: <a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
-			}
-			</li>
-		);
-	} );
-
 	return (
 		<div>
+			<QueryThemeFilters />
 			<SectionHeader label={ translate( 'Features' ) } />
 			<Card>
 				<ul className="theme__sheet-features-list">
-					{ themeFeatures }
+					{ features.map( ( { name, slug, term } ) => (
+						<li key={ 'theme-features-item-' + slug }>
+							{ ! isWpcomTheme
+								? <a>{ name }</a>
+								: <a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
+						}
+						</li>
+					) ) }
 				</ul>
 			</Card>
 		</div>
 	);
 };
 
-export default localize( ThemeFeaturesCard );
+export default connect(
+	( state, { taxonomies } ) => {
+		const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
+			const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
+			return { name, slug, term };
+		} );
+		return { features };
+	}
+)( localize( ThemeFeaturesCard ) );

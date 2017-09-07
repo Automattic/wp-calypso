@@ -17,6 +17,7 @@ import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
 import PushNotificationSettings from './push-notification-settings';
 import store from 'lib/notification-settings-store';
+import QueryUserDevices from 'components/data/query-user-devices';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 
 class NotificationSettings extends Component {
@@ -27,7 +28,6 @@ class NotificationSettings extends Component {
 
 	componentDidMount() {
 		store.on( 'change', this.onChange );
-		this.props.devices.get();
 		fetchSettings();
 	}
 
@@ -56,12 +56,12 @@ class NotificationSettings extends Component {
 
 		return (
 			<Main className="notification-settings">
+				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings
-					devices={ this.props.devices }
 					settings={ this.state.settings }
 					hasUnsavedChanges={ this.state.hasUnsavedChanges }
 					onToggle={ toggle }

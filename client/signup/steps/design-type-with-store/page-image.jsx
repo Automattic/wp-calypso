@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-export default () => (
+const PageImage = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230">
 		<rect fill="#E8F0F5" width="310" height="110" />
 		<rect x="114" y="205" fill="#E8F0F5" width="82" height="25" />
@@ -15,3 +15,5 @@ export default () => (
 		<rect x="15" y="125" fill="#C3EF96" width="280" height="65" />
 	</svg>
 );
+
+export default PageImage;

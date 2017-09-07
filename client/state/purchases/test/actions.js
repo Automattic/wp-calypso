@@ -12,6 +12,7 @@ import {
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
+	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
@@ -128,7 +129,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removePurchase', () => {
+	describe( '#removePurchase success', () => {
 		const response = { purchases };
 
 		useNock( ( nock ) => {
@@ -147,4 +148,26 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
+
+	describe( '#removePurchase failure', () => {
+		const errorMessage = 'Unable to delete the purchase because of internal error';
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
+				.reply( 400, {
+					error: 'server_error',
+					message: errorMessage
+				} );
+		} );
+
+		it( 'should dispatch fetch/remove actions', () => {
+			return removePurchase( purchaseId, userId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PURCHASE_REMOVE_FAILED,
+					error: errorMessage
+				} );
+			} );
+		} );
+	} );
+
 } );

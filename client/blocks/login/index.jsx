@@ -1,94 +1,248 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
+import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { getTwoFactorAuthNonce, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import {
+	getRedirectTo,
+	getRequestNotice,
+	getTwoFactorNotificationSent,
+	isTwoFactorEnabled,
+	getSocialAccountIsLinking,
+	getSocialAccountLinkService,
+} from 'state/login/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
+import Notice from 'components/notice';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import userFactory from 'lib/user';
+import SocialConnectPrompt from './social-connect-prompt';
+
+const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
-		redirectLocation: PropTypes.string,
+		oauth2Client: PropTypes.object,
+		privateSite: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
+		redirectTo: PropTypes.string,
+		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		twoStepNonce: PropTypes.string,
+		socialConnect: PropTypes.bool,
+		isLinking: PropTypes.bool,
+		linkingSocialService: PropTypes.string,
 	};
 
-	state = {
-		rememberMe: false,
+	componentDidMount = () => {
+		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
+			// Disallow access to the 2FA pages unless the user has 2FA enabled
+			page( login( { isNative: true } ) );
+		}
+
+		window.scrollTo( 0, 0 );
 	};
 
-	componentWillMount = () => {
-		if ( ! this.props.twoStepNonce && this.props.twoFactorAuthType && typeof window !== 'undefined' ) {
-			// Disallow access to the 2FA pages unless the user has received a nonce
-			page( login() );
+	componentWillReceiveProps = ( nextProps ) => {
+		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
+		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
+
+		if ( isNewPage || hasNotice ) {
+			window.scrollTo( 0, 0 );
 		}
 	};
 
-	handleValidUsernamePassword = () => {
-		if ( ! this.props.twoFactorEnabled ) {
-			this.rebootAfterLogin();
-		} else {
+	handleValidLogin = () => {
+		if ( this.props.twoFactorEnabled ) {
 			page( login( {
+				isNative: true,
 				// If no notification is sent, the user is using the authenticator for 2FA by default
 				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
 			} ) );
+		} else if ( this.props.isLinking ) {
+			page( login( {
+				isNative: true,
+				socialConnect: true,
+			} ) );
+		} else {
+			this.rebootAfterLogin();
+		}
+	};
+
+	handleValid2FACode = () => {
+		if ( this.props.isLinking ) {
+			page( login( {
+				isNative: true,
+				socialConnect: true,
+			} ) );
+		} else {
+			this.rebootAfterLogin();
 		}
 	};
 
 	rebootAfterLogin = () => {
-		window.location.href = this.props.redirectLocation || window.location.origin;
+		const { redirectTo } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_login_success', {
+			two_factor_enabled: this.props.twoFactorEnabled,
+			social_service_connected: this.props.socialConnect,
+		} );
+
+		// Redirects to / if no redirect url is available
+		const url = redirectTo ? redirectTo : window.location.origin;
+
+		// user data is persisted in localstorage at `lib/user/user` line 157
+		// therefor we need to reset it before we redirect, otherwise we'll get
+		// mixed data from old and new user
+		user.clear();
+
+		window.location.href = url;
 	};
+
+	renderHeader() {
+		const {
+			oauth2Client,
+			privateSite,
+			socialConnect,
+			translate,
+			twoStepNonce,
+			linkingSocialService,
+		} = this.props;
+
+		let headerText = translate( 'Log in to your account.' ),
+			preHeader = null,
+			postHeader = null;
+
+		if ( twoStepNonce ) {
+			headerText = translate( 'Two-Step Authentication' );
+		} else if ( socialConnect ) {
+			headerText = translate( 'Connect your %(service)s account.', {
+				args: {
+					service: capitalize( linkingSocialService ),
+				}
+			} );
+		} else if ( privateSite ) {
+			headerText = translate( 'This is a private WordPress.com site.' );
+		} else if ( oauth2Client ) {
+			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
+				args: {
+					clientTitle: oauth2Client.title
+				},
+				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
+			} );
+
+			if ( isWooOAuth2Client( oauth2Client ) ) {
+				preHeader = (
+					<Gridicon icon="my-sites" size={ 72 } />
+				);
+				postHeader = (
+					<p>
+						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
+							components: {
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+									target="_blank" rel="noopener noreferrer" />,
+								br: <br />,
+							}
+						} ) }
+					</p>
+				);
+			}
+		}
+
+		return (
+			<div className="login__form-header-wrapper">
+				{ preHeader }
+				<div className="login__form-header">
+					{ headerText }
+				</div>
+				{ postHeader }
+			</div>
+		);
+	}
+
+	renderNotice() {
+		const { requestNotice } = this.props;
+
+		if ( ! requestNotice ) {
+			return null;
+		}
+
+		return (
+			<Notice status={ requestNotice.status } showDismiss={ false }>
+				{ requestNotice.message }
+			</Notice>
+		);
+	}
 
 	renderContent() {
 		const {
+			privateSite,
 			twoFactorAuthType,
-			twoStepNonce,
+			twoFactorEnabled,
+			twoFactorNotificationSent,
+			socialConnect,
 		} = this.props;
 
-		const {
-			rememberMe,
-		} = this.state;
+		let poller;
+		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
+			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
+		}
 
-		if ( twoStepNonce && [ 'authenticator', 'sms' ].includes( twoFactorAuthType ) ) {
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
-				<VerificationCodeForm
-					rememberMe={ rememberMe }
-					onSuccess={ this.rebootAfterLogin }
-					twoFactorAuthType={ twoFactorAuthType }
-				/>
+				<div>
+					{ poller }
+					<VerificationCodeForm
+						onSuccess={ this.handleValid2FACode }
+						twoFactorAuthType={ twoFactorAuthType } />
+				</div>
 			);
 		}
 
-		if ( twoStepNonce && twoFactorAuthType === 'push' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
 			return (
-				<WaitingTwoFactorNotificationApproval onSuccess={ this.rebootAfterLogin } />
+				<div>
+					{ poller }
+					<WaitingTwoFactorNotificationApproval />
+				</div>
+			);
+		}
+
+		if ( socialConnect ) {
+			return (
+				<SocialConnectPrompt onSuccess={ this.handleValidLogin } />
 			);
 		}
 
 		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidLogin } privateSite={ privateSite } />
 		);
 	}
 
 	render() {
-		const { translate, twoStepNonce } = this.props;
-
 		return (
 			<div>
-				<div className="login__form-header">
-					{ twoStepNonce ? translate( '2-Step Verification' ) : translate( 'Log in to your account.' ) }
-				</div>
+				{ this.renderHeader() }
+
+				<ErrorNotice />
+
+				{ this.renderNotice() }
 
 				{ this.renderContent() }
 			</div>
@@ -98,8 +252,14 @@ class Login extends Component {
 
 export default connect(
 	( state ) => ( {
+		redirectTo: getRedirectTo( state ),
+		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		isLinking: getSocialAccountIsLinking( state ),
+		linkingSocialService: getSocialAccountLinkService( state ),
+	} ), {
+		recordTracksEvent,
+	}
 )( localize( Login ) );

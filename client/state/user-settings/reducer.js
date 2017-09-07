@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +12,7 @@ import {
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 export const settings = ( state = null, { type, settingValues } ) =>
 	USER_SETTINGS_UPDATE === type

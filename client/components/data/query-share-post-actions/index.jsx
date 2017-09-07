@@ -26,6 +26,7 @@ class QuerySharePostActions extends Component {
 	componentDidMount() {
 		this.request( this.props );
 	}
+
 	shouldComponentUpdate( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
@@ -43,7 +44,8 @@ class QuerySharePostActions extends Component {
 		if ( props.status === 'scheduled' && ! props.isRequestingScheduled ) {
 			props.fetchPostShareActionsScheduled( props.siteId, props.postId );
 		}
-		if ( props.status === 'published' && ! props.fetchPostShareActionsPublished ) {
+
+		if ( props.status === 'published' && ! props.isRequestingPublished ) {
 			props.fetchPostShareActionsPublished( props.siteId, props.postId );
 		}
 	}

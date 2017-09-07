@@ -9,10 +9,14 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
@@ -21,7 +25,10 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import reducer from '../reducer';
+import reducer, {
+	items,
+	restoring,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -206,6 +213,79 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( 'restoring()', () => {
+		const previousState = deepFreeze( {
+			[ primarySiteId ]: true,
+		} );
+
+		it( 'should default to an empty object', () => {
+			const state = restoring( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set request to true if request in progress', () => {
+			const state = restoring( undefined, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state ).to.eql( {
+				[ primarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should accumulate restoring values', () => {
+			const state = restoring( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
+				siteId: secondarySiteId,
+			} );
+
+			expect( state ).to.eql( {
+				[ primarySiteId ]: true,
+				[ secondarySiteId ]: true,
+			} );
+		} );
+
+		it( 'should set request to false if request finishes successfully', () => {
+			const state = restoring( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
+				siteId: primarySiteId,
+			} );
+
+			expect( state ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should set request to false if request finishes with failure', () => {
+			const state = restoring( previousState, {
+				type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+				siteId: primarySiteId,
+			} );
+
+			expect( state ).to.eql( {
+				[ primarySiteId ]: false,
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = restoring( previousState, {
+				type: SERIALIZE,
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = restoring( previousState, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
 	describe( 'items()', () => {
 		const primarySettings = { is_cache_enabled: true };
 		const secondarySettings = { is_cache_enabled: false };
@@ -302,6 +382,40 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state.items ).to.eql( {} );
+		} );
+
+		it( 'should set is_preloading to true after switching preloading on', () => {
+			const state = items(
+				{
+					[ primarySiteId ]: {
+						is_preloading: false
+					}
+				},
+				{
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
+					siteId: primarySiteId,
+					preloading: true,
+				}
+			);
+
+			expect( state[ primarySiteId ].is_preloading ).to.be.true;
+		} );
+
+		it( 'should set is_preloading to false after switching preloading off', () => {
+			const state = items(
+				{
+					[ primarySiteId ]: {
+						is_preloading: true
+					}
+				},
+				{
+					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
+					siteId: primarySiteId,
+					preloading: false,
+				}
+			);
+
+			expect( state[ primarySiteId ].is_preloading ).to.be.false;
 		} );
 	} );
 } );

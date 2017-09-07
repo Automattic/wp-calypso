@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { siteRolesSchema } from './schema';
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,

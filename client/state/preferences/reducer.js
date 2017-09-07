@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit } from 'lodash';
 
 /**
@@ -15,8 +14,8 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { remoteValuesSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated local values state after an action has been dispatched.

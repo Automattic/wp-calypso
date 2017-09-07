@@ -6,7 +6,7 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
-import { debounce, isEmpty, isEqual, omit } from 'lodash';
+import { debounce, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,9 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
+import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 var GUESSED_POST_HEIGHT = 250;
@@ -33,21 +35,26 @@ var PostList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
+		category: React.PropTypes.string,
+		tag: React.PropTypes.string,
 		hasSites: React.PropTypes.bool,
 		statusSlug: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteId: React.PropTypes.number,
 		author: React.PropTypes.number
 	},
 
 	render: function() {
 		return (
 			<PostListFetcher
-				siteID={ this.props.siteID }
+				siteId={ this.props.siteId }
 				status={ mapStatus( this.props.statusSlug ) }
 				author={ this.props.author }
 				withImages={ true }
 				withCounts={ true }
-				search={ this.props.search }>
+				search={ this.props.search }
+				category={ this.props.category }
+				tag={ this.props.tag }
+			>
 				<Posts
 					{ ...omit( this.props, 'children' ) }
 				/>
@@ -68,7 +75,7 @@ var Posts = React.createClass( {
 		postImages: React.PropTypes.object.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteId: React.PropTypes.number,
 		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
@@ -155,7 +162,7 @@ var Posts = React.createClass( {
 					} )	}
 			/>;
 		} else {
-			newPostLink = this.props.siteID ? '/post/' + this.props.siteID : '/post';
+			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
@@ -177,7 +184,7 @@ var Posts = React.createClass( {
 							title: this.translate( 'You don\'t have any scheduled posts.' ),
 							line: this.translate( 'Would you like to schedule a draft to publish?' ),
 							action: this.translate( 'Edit Drafts' ),
-							actionURL: ( this.props.siteID ) ? '/posts/drafts/' + this.props.siteID : '/posts/drafts'
+							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
 						};
 						break;
 					case 'trashed':
@@ -258,7 +265,7 @@ var Posts = React.createClass( {
 			i;
 
 		// posts have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( posts.length ) {
+		if ( posts.length && this.props.hasSites ) {
 			postList = (
 				<InfiniteList
 					key={ 'list-' + this.props.listId } // to reset scroll for new list
@@ -292,7 +299,7 @@ var Posts = React.createClass( {
 		return (
 			<div>
 				{ postList }
-				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
+				{ this.props.lastPage && posts.length ? <ListEnd /> : null }
 			</div>
 		);
 	}
@@ -301,6 +308,6 @@ var Posts = React.createClass( {
 export default connect(
 	( state ) => ( {
 		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: ! isEmpty( state.sites.items )
+		hasSites: hasInitializedSites( state )
 	} )
 )( PostList );

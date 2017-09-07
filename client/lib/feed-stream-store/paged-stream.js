@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 /**
  * Internal Dependencies
  */
-import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
 import { action as ActionTypes } from './constants';
@@ -64,8 +63,6 @@ export default class PagedStream {
 		if ( action.id !== this.id ) {
 			return;
 		}
-
-		Dispatcher.waitFor( [ FeedPostStore.dispatchToken ] );
 
 		switch ( action.type ) {
 

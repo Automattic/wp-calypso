@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 export default React.createClass( {
 	displayName: 'LoggedOutFormLinks',

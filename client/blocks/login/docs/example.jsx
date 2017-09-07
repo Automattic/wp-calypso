@@ -8,8 +8,10 @@ import React from 'react';
  */
 import LoginBlock from 'blocks/login';
 
-export default function Login() {
-	return (
-		<LoginBlock title={ 'Sign in to connect to WordPress.com' } />
-	)
-}
+const LoginExample = () => (
+	<LoginBlock title={ 'Sign in to connect to WordPress.com' } />
+);
+
+LoginExample.displayName = 'Login';
+
+export default LoginExample;

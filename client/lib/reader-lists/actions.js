@@ -10,7 +10,6 @@ import { action as actionTypes } from './constants';
 var fetchingLists = {};
 
 const ReaderListActions = {
-
 	fetchSubscriptions: function() {
 		if ( ReaderListsSubscriptionsStore.isFetching() ) {
 			return;
@@ -24,7 +23,7 @@ const ReaderListActions = {
 			Dispatcher.handleServerAction( {
 				type: actionTypes.RECEIVE_READER_LISTS,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -34,7 +33,7 @@ const ReaderListActions = {
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.FOLLOW_LIST,
-			data: query
+			data: query,
 		} );
 
 		wpcom.undocumented().followList( query, function( error, data ) {
@@ -45,8 +44,8 @@ const ReaderListActions = {
 						owner: query.owner,
 						slug: query.slug,
 						error: error,
-						following: ( data && data.following )
-					}
+						following: data && data.following,
+					},
 				} );
 				return;
 			}
@@ -56,9 +55,9 @@ const ReaderListActions = {
 				data: {
 					owner: query.owner,
 					slug: query.slug,
-					title: data.title
+					title: data.title,
 				},
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -68,7 +67,7 @@ const ReaderListActions = {
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.UNFOLLOW_LIST,
-			data: query
+			data: query,
 		} );
 
 		wpcom.undocumented().unfollowList( query, function( error, data ) {
@@ -79,8 +78,8 @@ const ReaderListActions = {
 						owner: query.owner,
 						slug: query.slug,
 						error: error,
-						following: ( data && data.following )
-					}
+						following: data && data.following,
+					},
 				} );
 				return;
 			}
@@ -90,9 +89,9 @@ const ReaderListActions = {
 				data: {
 					owner: query.owner,
 					slug: query.slug,
-					title: data.title
+					title: data.title,
 				},
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -108,7 +107,7 @@ const ReaderListActions = {
 
 		wpcom.undocumented().readList( {
 			owner: owner,
-			slug: slug
+			slug: slug,
 		}, function( error, data ) {
 			delete fetchingLists[ key ];
 			ReaderListsStore.setIsFetching( false );
@@ -116,7 +115,7 @@ const ReaderListActions = {
 			Dispatcher.handleServerAction( {
 				type: actionTypes.RECEIVE_READER_LIST,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -128,14 +127,14 @@ const ReaderListActions = {
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.CREATE_READER_LIST,
-			data: { title: title }
+			data: { title: title },
 		} );
 
 		wpcom.undocumented().readListsNew( title, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: actionTypes.RECEIVE_CREATE_READER_LIST,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -147,14 +146,14 @@ const ReaderListActions = {
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.UPDATE_READER_LIST,
-			data: params
+			data: params,
 		} );
 
 		wpcom.undocumented().readListsUpdate( params, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: actionTypes.RECEIVE_UPDATE_READER_LIST,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -166,7 +165,7 @@ const ReaderListActions = {
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.DISMISS_READER_LIST_NOTICE,
-			listId: listId
+			listId: listId,
 		} );
 	},
 };

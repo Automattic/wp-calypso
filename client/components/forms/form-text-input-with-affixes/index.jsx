@@ -1,41 +1,42 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { keys, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'FormTextInputWithAffixes',
+export default class extends React.Component {
+	static displayName = 'FormTextInputWithAffixes';
 
-	propTypes: {
-		noWrap: React.PropTypes.bool,
-		prefix: React.PropTypes.string,
-		suffix: React.PropTypes.string
-	},
+	static propTypes = {
+		noWrap: PropTypes.bool,
+		prefix: PropTypes.node,
+		suffix: PropTypes.node,
+	};
 
 	render() {
+		const { noWrap, prefix, suffix, ...rest } = this.props;
+
 		return (
-			<div className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': this.props.noWrap } ) }>
-				{ this.props.prefix && (
+			<div className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': noWrap } ) }>
+				{ prefix &&
 					<span className="form-text-input-with-affixes__prefix">
-						{ this.props.prefix }
-					</span>
-				) }
+						{ prefix }
+					</span> }
 
-				<FormTextInput { ...omit( this.props, keys( this.constructor.propTypes ) ) } />
+				<FormTextInput { ...rest } />
 
-				{ this.props.suffix && (
+				{ suffix &&
 					<span className="form-text-input-with-affixes__suffix">
-						{ this.props.suffix }
-					</span>
-				) }
+						{ suffix }
+					</span> }
 			</div>
 		);
 	}
-} );
+}

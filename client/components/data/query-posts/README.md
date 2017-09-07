@@ -42,6 +42,16 @@ export default function MyPostsList( { posts } ) {
 
 The site ID for which posts should be queried.
 
+### `postId`
+
+<table>
+	<tr><th>Type</th><td>Number</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>null</code></td></tr>
+</table>
+
+The post ID to query for. If provided a single post query will be performed
+
 ### `query`
 
 <table>

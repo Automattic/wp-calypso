@@ -4,7 +4,11 @@ After learning a bit about the values of the project, let’s get a taste of the
 
 First [get setup with Calypso locally](../install.md) if you haven't already.
 
-Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. All good? Cool, now let’s build our _Hello, World!_.
+Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. 
+
+For this example to work, you need to have signed into WordPress **and** have already set up at least one site.
+
+All good? Cool, now let’s build our _Hello, World!_.
 
 ## Adding a new section
 
@@ -113,7 +117,7 @@ This checks for our feature in the current environment to figure out whether it 
 
 Restart the server doing:
 
-* `make run`
+* `npm start`
 
 We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world)! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
@@ -250,6 +254,6 @@ In the `Main` constant we are getting our main jsx file for our section. We then
 
 ### Ok, ready?
 
-Run `make run` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `controller.siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
+Run `npm start` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `controller.siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
 
 Previous: [Values](0-values.md) Next: [The Technology Behind Calypso](tech-behind-calypso.md)

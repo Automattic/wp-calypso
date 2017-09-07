@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { THEME_BACK_PATH_SET } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 // Destination for 'back' button on theme sheet
 function backPath( state = '/themes', action ) {

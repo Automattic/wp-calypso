@@ -1,22 +1,21 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+
 import { itemsSchema } from './schema';
 import {
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 
 /**
@@ -69,25 +68,40 @@ const saveStatus = createReducer( {}, {
 } );
 
 /**
+ * Returns the updated restoring state after an action has been dispatched.
+ * Restoring state tracks whether a settings restore request is in progress for a site.
+ *
+ * @param  {Object} state Current restoring state
+ * @param  {Object} action Action object
+ * @return {Object} Updated restoring state
+ */
+export const restoring = createReducer( {}, {
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+} );
+
+/**
  * Tracks the settings for a particular site.
  *
  * @param  {Object} state Current settings
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-const items = createReducer( {}, {
+export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
-	[ WP_SUPER_CACHE_UPDATE_SETTINGS ]: ( state, { siteId, settings } ) => ( {
+	[ WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS ]: ( state, { siteId, preloading } ) => ( {
 		...state,
 		[ siteId ]: {
 			...state[ siteId ],
-			...settings,
+			is_preloading: preloading
 		}
-	} ),
+	} )
 }, itemsSchema );
 
 export default combineReducers( {
 	items,
 	requesting,
+	restoring,
 	saveStatus,
 } );

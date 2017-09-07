@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var map = require( 'lodash/map' );
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,9 +84,13 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 		return [];
 	}
 
-	return MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
-		return MediaStore.get( siteId, itemId );
-	} );
+	// Avoid keeping invalid items in the selected list.
+	return (
+		MediaLibrarySelectedStore
+			._media[ siteId ]
+			.map( itemId => MediaStore.get( siteId, itemId ) )
+			.filter( ( item ) => ( item && ( item.guid || item.transient ) ) )
+	);
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -95,6 +99,11 @@ MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'CHANGE_MEDIA_SOURCE':
+			setSelectedItems( action.siteId, [] );
+			MediaLibrarySelectedStore.emit( 'change' );
+			break;
+
 		case 'SET_MEDIA_LIBRARY_SELECTED_ITEMS':
 			if ( action.error || ! action.siteId || ! action.data || ! Array.isArray( action.data ) ) {
 				break;

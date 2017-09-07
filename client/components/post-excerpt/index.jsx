@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 
 const PostExcerpt = React.createClass( {
 
@@ -29,10 +30,12 @@ const PostExcerpt = React.createClass( {
 
 		return (
 			<AutoDirection>
-				<div className={ classes }
+				<Emojify>
+				<div
+					className={ classes }
 					dangerouslySetInnerHTML={ { __html: this.props.content } } // eslint-disable-line react/no-danger
-				>
-				</div>
+				/>
+				</Emojify>
 			</AutoDirection>
 		);
 	}

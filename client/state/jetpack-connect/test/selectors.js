@@ -12,7 +12,6 @@ import {
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
 	getSessions,
-	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
@@ -159,6 +158,30 @@ describe( 'selectors', () => {
 
 			expect( isRemoteSiteOnSitesList( state ) ).to.be.true;
 		} );
+
+		it( 'should return false if the site is in the sites list, but is not responding', () => {
+			const state = {
+				sites: {
+					items: {
+						12345678: {
+							ID: 12345678,
+							jetpack: true,
+							URL: 'https://wordpress.com/'
+						}
+					}
+				},
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {
+							client_id: '12345678',
+						},
+						clientNotResponding: true
+					}
+				}
+			};
+
+			expect( isRemoteSiteOnSitesList( state ) ).to.be.false;
+		} );
 	} );
 
 	describe( '#getAuthorizationRemoteSite()', () => {
@@ -218,36 +241,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getSessions( state ) ).to.eql( jetpackConnectSessions );
-		} );
-	} );
-
-	describe( '#getSSOSessions()', () => {
-		it( 'should return undefined if user has not started any single sign-on sessions', () => {
-			const state = {
-				jetpackConnect: {}
-			};
-
-			expect( getSSOSessions( state ) ).to.be.undefined;
-		} );
-
-		it( 'should return all of the user\'s single sign-on sessions', () => {
-			const jetpackSSOSessions = {
-				'wordpress.com': {
-					timestamp: 1234567890,
-					flowType: 'premium'
-				},
-				'jetpack.me': {
-					timestamp: 2345678901,
-					flowType: 'pro'
-				}
-			};
-			const state = {
-				jetpackConnect: {
-					jetpackSSOSessions
-				}
-			};
-
-			expect( getSSOSessions( state ) ).to.eql( jetpackSSOSessions );
 		} );
 	} );
 
@@ -679,7 +672,7 @@ describe( 'selectors', () => {
 			expect( getSiteIdFromQueryObject( state ) ).to.equals( 123 );
 		} );
 
-		it( 'should return false if there is no query object', () => {
+		it( 'should return null if there is no query object', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {}
@@ -688,7 +681,7 @@ describe( 'selectors', () => {
 			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
 		} );
 
-		it( 'should return false if there is no client id', () => {
+		it( 'should return null if there is no client id', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {

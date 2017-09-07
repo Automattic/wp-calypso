@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import React from 'react';
 import classNames from 'classnames';
 import {
+	endsWith,
 	includes,
 	times
 } from 'lodash';
@@ -23,39 +25,41 @@ import Notice from 'components/notice';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 
-var DomainSearchResults = React.createClass( {
-	propTypes: {
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		lastDomainStatus: React.PropTypes.string,
-		lastDomainSearched: React.PropTypes.string,
-		cart: React.PropTypes.object,
-		products: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object,
-		availableDomain: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+class DomainSearchResults extends React.Component {
+	static propTypes = {
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		lastDomainStatus: PropTypes.string,
+		lastDomainSearched: PropTypes.string,
+		cart: PropTypes.object,
+		products: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
+		availableDomain: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ),
-		suggestions: React.PropTypes.array,
-		placeholderQuantity: React.PropTypes.number.isRequired,
-		buttonLabel: React.PropTypes.string,
-		mappingSuggestionLabel: React.PropTypes.string,
-		offerMappingOption: React.PropTypes.bool,
-		onClickResult: React.PropTypes.func.isRequired,
-		onAddMapping: React.PropTypes.func,
-		onClickMapping: React.PropTypes.func
-	},
+		suggestions: PropTypes.array,
+		placeholderQuantity: PropTypes.number.isRequired,
+		buttonLabel: PropTypes.string,
+		mappingSuggestionLabel: PropTypes.string,
+		offerMappingOption: PropTypes.bool,
+		onClickResult: PropTypes.func.isRequired,
+		onAddMapping: PropTypes.func,
+		onClickMapping: PropTypes.func,
+		isSignupStep: PropTypes.bool,
+		railcarSeed: PropTypes.string,
+		fetchAlgo: PropTypes.string
+	};
 
-	renderDomainAvailability: function() {
-		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props,
-			availabilityElementClasses = classNames( {
-				'domain-search-results__domain-is-available': availableDomain,
-				'domain-search-results__domain-not-available': ! availableDomain
-			} ),
-			suggestions = this.props.suggestions || [],
-			{ MAPPABLE, UNKNOWN } = domainAvailability;
-		let availabilityElement,
-			domainSuggestionElement,
-			mappingOffer;
+	renderDomainAvailability() {
+		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props;
+		const availabilityElementClasses = classNames( {
+			'domain-search-results__domain-is-available': availableDomain,
+			'domain-search-results__domain-not-available': ! availableDomain
+		} );
+		const suggestions = this.props.suggestions || [];
+		const { MAPPABLE, UNKNOWN } = domainAvailability;
+
+		let availabilityElement, domainSuggestionElement, mappingOffer;
 
 		if ( availableDomain ) {
 			// should use real notice component or custom class
@@ -75,20 +79,26 @@ var DomainSearchResults = React.createClass( {
 					buttonContent={ this.props.buttonContent }
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
-					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
+					isSignupStep={ this.props.isSignupStep }
+					onButtonClick={ this.props.onClickResult } />
 				);
 		} else if ( suggestions.length !== 0 && includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) && this.props.products.domain_map ) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'free.{{/small}}', { args: { domain }, components } );
+				mappingOffer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+					{ args: { domain }, components }
+				);
 			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
+				mappingOffer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
+					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+				);
 			} else {
-				mappingOffer = translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
-					' with WordPress.com Premium.{{/small}}', { args: { domain }, components }
+				mappingOffer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+					{ args: { domain }, components }
 				);
 			}
 
@@ -115,33 +125,36 @@ var DomainSearchResults = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	handleAddMapping: function( event ) {
-		event.preventDefault();
+	handleAddMapping = () => {
 		this.props.onAddMapping( this.props.lastDomainSearched );
-	},
+	};
 
-	renderPlaceholders: function() {
+	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
-	},
+	}
 
-	renderDomainSuggestions: function() {
-		var suggestionElements,
-			mappingOffer;
+	renderDomainSuggestions() {
+		let suggestionElements, mappingOffer;
 
 		if ( this.props.suggestions.length ) {
-			suggestionElements = this.props.suggestions.map( function( suggestion ) {
+			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
 				return (
 					<DomainRegistrationSuggestion
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						onButtonClick={ this.props.onClickResult.bind( null, suggestion ) } />
+						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i }` }
+						uiPosition={ i }
+						fetchAlgo={ endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo }
+						query={ this.props.lastDomainSearched }
+						onButtonClick={ this.props.onClickResult } />
 				);
 			}, this );
 
@@ -152,7 +165,9 @@ var DomainSearchResults = React.createClass( {
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						cart={ this.props.cart } />
+						isSignupStep={ this.props.isSignupStep }
+						cart={ this.props.cart }
+					/>
 				);
 			}
 		} else {
@@ -165,9 +180,9 @@ var DomainSearchResults = React.createClass( {
 				{ mappingOffer }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="domain-search-results">
 				{ this.renderDomainAvailability() }
@@ -175,7 +190,7 @@ var DomainSearchResults = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
@@ -184,4 +199,6 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( DomainSearchResults ) );
+export default connect(
+	mapStateToProps
+)( localize( DomainSearchResults ) );

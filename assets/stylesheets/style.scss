@@ -6,7 +6,6 @@
 @import 'shared/functions';                    // functions that we've used from Compass, ported over
 @import 'shared/functions/functions';          // sass functions for z-index, etc.
 @import 'shared/colors';                       // import all of our wpcom colors
-@import 'shared/utilities';                    // Helper classes
 @import 'shared/typography';                   // all the typographic rules, variables, etc.
 @import 'shared/mixins/mixins';                // sass mixins for gradients, bordius radii, etc.
 @import 'shared/extends';                      // sass extends for commonly used styles
@@ -15,7 +14,6 @@
 @import 'shared/dropdowns';                    // dropdown styling
 @import 'shared/livechat';                     // styles for the popup livechat box
 @import 'shared/welcome';                      // welcome messages
-@import 'shared/infinite-scroll-end';          // Last page marker once infinite scroll has reached end
 
 // Main
 @import 'main';                                // global layout and responsive styles
@@ -30,7 +28,9 @@
 
 // Extensions
 @import 'extensions/woocommerce/style';
+@import 'extensions/wp-job-manager/style';
 @import 'extensions/wp-super-cache/style';
+@import 'extensions/zoninator/style';
 
 // Devdocs
 @import 'devdocs/design/style';

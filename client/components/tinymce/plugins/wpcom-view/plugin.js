@@ -10,10 +10,10 @@
 /**
  * External dependencies
  */
+import { debounce } from 'lodash';
 var tinymce = require( 'tinymce/tinymce' ),
-	debounce = require( 'lodash/debounce' ),
 	ReactDom = require( 'react-dom' ),
-	React = require( 'react'),
+	React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 
 /**
@@ -463,7 +463,7 @@ function wpview( editor ) {
 
 	editor.on( 'preinit show', function() {
 		views.emitters.forEach( function( emitter ) {
-			emitter.addListener( 'change', setMarkers );
+			emitter.addListener( 'change', setMarkers, editor.getParam( 'redux_store' ) );
 		} );
 
 		setMarkers();

@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Site = require( 'lib/site' ),
+const Site = require( 'lib/site' ),
 	inherits = require( 'inherits' ),
 	versionCompare = require( 'lib/version-compare' ),
 	SiteUtils = require( 'lib/site/utils' ),
@@ -67,46 +66,6 @@ JetpackSite.prototype.isModuleActive = function( moduleId ) {
 JetpackSite.prototype.getRemoteManagementURL = function() {
 	var configure = versionCompare( this.options.jetpack_version, 3.4, '>=' ) ? 'manage' : 'json-api';
 	return this.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
-};
-
-JetpackSite.prototype.updateWordPress = function( onError, onSuccess ) {
-	this.updating = true;
-	wpcom.undocumented().updateWordPressCore( this.ID, function( error, data ) {
-		delete this.updating;
-
-		if ( error ) {
-			if ( onError ) {
-				onError( error );
-			}
-			this.emit( 'change' );
-			return;
-		}
-
-		if ( onSuccess ) {
-			onSuccess( data );
-		}
-
-		// Decrease count
-		this.updates.wordpress--;
-		this.updates.total--;
-
-		this.emit( 'change' );
-	}.bind( this ) );
-	this.emit( 'change' );
-};
-
-JetpackSite.prototype.callHome = function() {
-	this.callingHome = true;
-	// try to grab some posts since this feature should be available since Jetpack 1.9
-	wpcom.undocumented().testConnectionJetpack( this.ID, function( error, data ) {
-		if ( error ) {
-			this.unreachable = true;
-		} else {
-			this.unreachable = ! data.connected;
-		}
-		this.callingHome = false;
-		this.emit( 'change' );
-	}.bind( this ) );
 };
 
 module.exports = JetpackSite;

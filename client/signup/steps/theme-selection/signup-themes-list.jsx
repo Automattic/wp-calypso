@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +32,7 @@ class SignupThemesList extends Component {
 	}
 
 	getComputedThemes() {
-		return getThemes( this.props.surveyQuestion, this.props.designType );
+		return getThemes( this.props.surveyQuestion, this.props.designType, 3 );
 	}
 
 	getScreenshotUrl( theme ) {

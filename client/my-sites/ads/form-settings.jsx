@@ -438,7 +438,6 @@ class AdsFormSettings extends Component {
 					</FormButtonsBar>
 
 					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
-					{ ! this.props.siteIsJetpack ? this.additionalAdsOption() : null }
 
 					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }

@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import PulsingDot from 'components/pulsing-dot';
 /**
  * Component
  */
-const Theme = React.createClass( {
+export const Theme = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.shape( {
@@ -27,8 +27,6 @@ const Theme = React.createClass( {
 			name: React.PropTypes.string.isRequired,
 			// Theme screenshot URL
 			screenshot: React.PropTypes.string,
-			// Theme price (pre-formatted string) -- empty string indicates free theme
-			price: React.PropTypes.string,
 			author: React.PropTypes.string,
 			author_uri: React.PropTypes.string,
 			demo_uri: React.PropTypes.string,
@@ -36,8 +34,8 @@ const Theme = React.createClass( {
 		} ),
 		// If true, highlight this theme as active
 		active: React.PropTypes.bool,
-		// If true, the user has 'purchased' the theme
-		purchased: React.PropTypes.bool,
+		// Theme price (pre-formatted string) -- empty string indicates free theme
+		price: React.PropTypes.string,
 		// If true, the theme is being installed
 		installing: React.PropTypes.bool,
 		// If true, render a placeholder
@@ -60,13 +58,15 @@ const Theme = React.createClass( {
 		// Index of theme in results list
 		index: React.PropTypes.number,
 		// Label to show on screenshot hover.
-		actionLabel: React.PropTypes.string
+		actionLabel: React.PropTypes.string,
+		// Translate function,
+		translate: React.PropTypes.func,
 	},
 
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
-			( nextProps.purchased !== this.props.purchased ) ||
+			( nextProps.price !== this.props.price ) ||
 			( nextProps.installing !== this.props.installing ) ||
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
@@ -123,16 +123,20 @@ const Theme = React.createClass( {
 	render() {
 		const {
 			name,
-			price,
 			screenshot
 		} = this.props.theme;
 		const {
 			active,
-			purchased
+			price,
+			translate
 		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
+		} );
+
+		const priceClass = classNames( 'theme-badge__price', {
+			'theme-badge__price-upgrade': ! /\d/g.test( price )
 		} );
 
 		// for performance testing
@@ -168,13 +172,11 @@ const Theme = React.createClass( {
 					<div className="theme__info" >
 						<h2 className="theme__info-title">{ name }</h2>
 						{ active &&
-							<span className="theme-badge__active">{ this.translate( 'Active', {
+							<span className="theme-badge__active">{ translate( 'Active', {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
-						{ price && ! purchased &&
-							<span className="theme-badge__price">{ price }</span>
-						}
+						<span className={ priceClass }>{ price }</span>
 						{ ! isEmpty( this.props.buttonContents )
 							? <ThemeMoreButton
 								index={ this.props.index }
@@ -192,4 +194,4 @@ const Theme = React.createClass( {
 	}
 } );
 
-export default Theme;
+export default localize( Theme );

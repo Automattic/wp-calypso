@@ -7,18 +7,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import page from 'page';
-import startsWith from 'lodash/startsWith';
-import last from 'lodash/last';
-import find from 'lodash/find';
-import filter from 'lodash/filter';
-import some from 'lodash/some';
-import defer from 'lodash/defer';
-import delay from 'lodash/delay';
-import assign from 'lodash/assign';
-import matchesProperty from 'lodash/matchesProperty';
-import indexOf from 'lodash/indexOf';
+import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
 import { setSurvey } from 'state/signup/steps/survey/actions';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +18,7 @@ import SignupDependencyStore from 'lib/signup/dependency-store';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import SignupProgressStore from 'lib/signup/progress-store';
 import SignupFlowController from 'lib/signup/flow-controller';
-import LocaleSuggestions from './locale-suggestions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import FlowProgressIndicator from './flow-progress-indicator';
 import steps from './config/steps';
 import stepComponents from './config/step-components';
@@ -232,8 +222,12 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, event ) {
 		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
+		}
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
@@ -242,9 +236,10 @@ const Signup = React.createClass( {
 			}.bind( this ) );
 		}
 
-		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
+			return;
 		}
 
 		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
@@ -259,7 +254,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.loadTrackingTool( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'HotJar' );
 	},
 
 	componentWillUnmount() {
@@ -430,6 +425,8 @@ const Signup = React.createClass( {
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
+						flowSteps = { flow.steps }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }
@@ -458,6 +455,8 @@ const Signup = React.createClass( {
 			return null;
 		}
 
+		const flow = flows.getFlow( this.props.flowName );
+
 		return (
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
@@ -465,6 +464,7 @@ const Signup = React.createClass( {
 					! this.state.loadingScreenStartTime &&
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
+						flowLength={ flow.steps.length }
 						flowName={ this.props.flowName } />
 				}
 				<ReactCSSTransitionGroup

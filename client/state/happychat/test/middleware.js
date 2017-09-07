@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import moment from 'moment';
 import { spy, stub } from 'sinon';
 import { noop } from 'lodash';
 
@@ -19,7 +20,7 @@ import {
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
@@ -34,6 +35,8 @@ import middleware, {
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
+	updateChatPreferences,
+	sendInfo,
 } from '../middleware';
 import * as selectors from '../selectors';
 import {
@@ -48,9 +51,18 @@ describe( 'middleware', () => {
 		let connection;
 		let dispatch, getState;
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
-			users: { items: { 1: {} } }
+			users: { items: { 1: {} } },
+			help: { selectedSiteId: 2647731 },
+			sites: {
+				items: {
+					2647731: {
+						ID: 2647731,
+						name: 'Manual Automattic Updates',
+					}
+				}
+			}
 		} );
 
 		useSandbox( sandbox => {
@@ -125,14 +137,73 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	describe( 'HAPPYCHAT_SET_MESSAGE action', () => {
-		it( 'should send relevant browser information to the connection', () => {
-			const action = { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl: 'http://butt.holdings/' };
-			const connection = { info: spy() };
-			middleware( connection )( { getState: noop } )( noop )( action );
+	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
+		const state = {
+			happychat: {
+				geoLocation: {
+					city: 'Timisoara'
+				}
+			}
+		};
 
-			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( action.siteUrl );
+		const previousWindow = global.window;
+		const previousScreen = global.screen;
+		const previousNavigator = global.navigator;
+
+		before( () => {
+			global.window = {
+				innerWidth: 'windowInnerWidth',
+				innerHeight: 'windowInnerHeight',
+			};
+			global.screen = {
+				width: 'screenWidth',
+				height: 'screenHeight',
+			};
+			global.navigator = {
+				userAgent: 'navigatorUserAgent'
+			};
+		} );
+
+		after( () => {
+			global.window = previousWindow;
+			global.screen = previousScreen;
+			global.navigator = previousNavigator;
+		} );
+
+		it( 'should send relevant browser information to the connection', () => {
+			const expectedInfo = {
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+				siteId: 'siteId',
+				siteUrl: 'siteUrl',
+				localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
+				screenSize: {
+					width: 'screenWidth',
+					height: 'screenHeight',
+				},
+				browserSize: {
+					width: 'windowInnerWidth',
+					height: 'windowInnerHeight',
+				},
+				userAgent: 'navigatorUserAgent',
+				geoLocation: state.happychat.geoLocation
+			};
+
+			const getState = () => state;
+			const connection = { sendInfo: spy() };
+			const action = {
+				type: HAPPYCHAT_SEND_USER_INFO,
+				site: {
+					ID: 'siteId',
+					URL: 'siteUrl'
+				},
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+			};
+			sendInfo( connection, { getState }, action );
+
+			expect( connection.sendInfo ).to.have.been.calledOnce;
+			expect( connection.sendInfo ).to.have.been.calledWithMatch( expectedInfo );
 		} );
 	} );
 
@@ -143,9 +214,18 @@ describe( 'middleware', () => {
 		// without errors. It may be worth pulling each of these helpers out into their
 		// own modules, so that we can stub them and simplify our tests.
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
-			users: { items: { 1: {} } }
+			users: { items: { 1: {} } },
+			help: { selectedSiteId: 2647731 },
+			sites: {
+				items: {
+					2647731: {
+						ID: 2647731,
+						name: 'Manual Automattic Updates',
+					}
+				}
+			}
 		} );
 		let connection, store;
 
@@ -234,6 +314,51 @@ describe( 'middleware', () => {
 		} );
 	} );
 
+	describe( 'HELP_CONTACT_FORM_SITE_SELECT action', () => {
+		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
+			const state = {
+				happychat: {
+					connectionStatus: 'connected'
+				},
+				currentUser: {
+					locale: 'en',
+					capabilities: {}
+				},
+				sites: {
+					items: {
+						1: { ID: 1 }
+					}
+				}
+			};
+			const getState = () => state;
+			const connection = {
+				setPreferences: stub(),
+			};
+			updateChatPreferences( connection, { getState }, 1 );
+			expect( connection.setPreferences ).to.have.been.called;
+		} );
+
+		it( 'should not send the locale and groups if there is no happychat connection', () => {
+			const state = {
+				currentUser: {
+					locale: 'en',
+					capabilities: {}
+				},
+				sites: {
+					items: {
+						1: { ID: 1 }
+					}
+				}
+			};
+			const getState = () => state;
+			const connection = {
+				setPreferences: stub(),
+			};
+			updateChatPreferences( connection, { getState }, 1 );
+			expect( connection.setPreferences ).to.have.not.been.called;
+		} );
+	} );
+
 	describe( 'ROUTE_SET action', () => {
 		let connection;
 		const action = { path: '/me' };
@@ -286,7 +411,7 @@ describe( 'middleware', () => {
 		useSandbox( sandbox => {
 			connection = {
 				sendLog: sandbox.stub(),
-				sendStagingEvent: sandbox.stub(),
+				sendEvent: sandbox.stub(),
 			};
 		} );
 
@@ -299,7 +424,7 @@ describe( 'middleware', () => {
 			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should send log events for all listed tracks events', () => {
@@ -327,7 +452,7 @@ describe( 'middleware', () => {
 			];
 			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
 
-			expect( connection.sendStagingEvent.callCount ).to.equal( 2 );
+			expect( connection.sendEvent.callCount ).to.equal( 2 );
 		} );
 	} );
 
@@ -356,7 +481,7 @@ describe( 'middleware', () => {
 		useSandbox( sandbox => {
 			connection = {
 				sendLog: sandbox.stub(),
-				sendStagingEvent: sandbox.stub(),
+				sendEvent: sandbox.stub(),
 			};
 
 			getState = sandbox.stub();
@@ -379,7 +504,7 @@ describe( 'middleware', () => {
 			sendActionLogsAndEvents( connection, { getState }, action );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should not send log events if the Happychat connection is unassigned', () => {
@@ -395,7 +520,7 @@ describe( 'middleware', () => {
 			sendActionLogsAndEvents( connection, { getState }, action );
 
 			expect( connection.sendLog ).not.to.have.been.called;
-			expect( connection.sendStagingEvent ).not.to.have.been.called;
+			expect( connection.sendEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should send matching events when Happychat is connected and assigned', () => {
@@ -419,7 +544,7 @@ describe( 'middleware', () => {
 			expect( connection.sendLog.callCount ).to.equal( 4 );
 			// The two whitelisted analytics events and the HAPPYCHAT_BLUR action itself
 			// will be sent as customer events
-			expect( connection.sendStagingEvent.callCount ).to.equal( 3 );
+			expect( connection.sendEvent.callCount ).to.equal( 3 );
 		} );
 	} );
 } );

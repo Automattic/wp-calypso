@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
+import { assign, isEqual, noop, omit } from 'lodash';
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
-	assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	isEqual = require( 'lodash/isEqual' );
+	classNames = require( 'classnames' );
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 var Spinner = require( 'components/spinner' ),
 	Gridicon = require( 'gridicons' ),
@@ -20,6 +17,7 @@ var Spinner = require( 'components/spinner' ),
 	MediaUtils = require( 'lib/media/utils' );
 
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryListItem',
@@ -28,7 +26,7 @@ export default React.createClass( {
 		media: React.PropTypes.object,
 		scale: React.PropTypes.number.isRequired,
 		maxImageWidth: React.PropTypes.number,
-		photon: React.PropTypes.bool,
+		thumbnailType: React.PropTypes.string,
 		showGalleryHelp: React.PropTypes.bool,
 		selectedIndex: React.PropTypes.number,
 		onToggle: React.PropTypes.func,
@@ -39,10 +37,10 @@ export default React.createClass( {
 	getDefaultProps: function() {
 		return {
 			maxImageWidth: 450,
-			photon: true,
+			thumbnailType: MEDIA_IMAGE_PHOTON,
 			selectedIndex: -1,
 			onToggle: noop,
-			onEditItem: noop
+			onEditItem: noop,
 		};
 	},
 
@@ -50,7 +48,7 @@ export default React.createClass( {
 		return ! ( nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
-			nextProps.photon === this.props.photon &&
+			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
 			isEqual( nextProps.style, this.props.style ) );
 	},
@@ -122,4 +120,3 @@ export default React.createClass( {
 		);
 	}
 } );
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,14 +14,6 @@ import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
 
 class DiscoverSiteAttribution extends React.Component {
-	constructor( props ) {
-		super( props );
-
-		[ 'recordSiteClick', 'recordFollowToggle' ].forEach( method => {
-			this[ method ] = this[ method ].bind( this );
-		} );
-	}
-
 	static propTypes = {
 		attribution: React.PropTypes.shape( {
 			blog_name: React.PropTypes.string.isRequired,
@@ -31,13 +24,9 @@ class DiscoverSiteAttribution extends React.Component {
 		followUrl: React.PropTypes.string.isRequired,
 	};
 
-	recordSiteClick() {
-		recordSiteClick( this.props.siteUrl );
-	}
+	onSiteClick = () => recordSiteClick( this.props.siteUrl );
 
-	recordFollowToggle( isFollowing ) {
-		recordFollowToggle( isFollowing, this.props.siteUrl );
-	}
+	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
 
 	render() {
 		const attribution = this.props.attribution;
@@ -63,7 +52,7 @@ class DiscoverSiteAttribution extends React.Component {
 						{ ...siteLinkProps }
 						className={ siteClasses }
 						href={ encodeURI( this.props.siteUrl ) }
-						onClick={ this.recordSiteClick }
+						onClick={ this.onSiteClick }
 					>
 						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
@@ -72,7 +61,7 @@ class DiscoverSiteAttribution extends React.Component {
 					? <FollowButton
 							siteUrl={ this.props.followUrl }
 							iconSize={ 20 }
-							onFollowToggle={ this.recordFollowToggle }
+							onFollowToggle={ this.onFollowToggle }
 						/>
 					: null }
 			</div>

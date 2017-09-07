@@ -9,16 +9,29 @@ import { get, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostImage } from './utils';
+import { getPostImage, getExcerptForPost } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
+import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
+import LinkedinSharePreview from 'components/share/linkedin-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
+import TumblrSharePreview from 'components/share/tumblr-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle } from 'state/sites/selectors';
+import { getSeoTitle, getSiteSlug } from 'state/sites/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+
+const serviceNames = {
+	facebook: 'Facebook',
+	twitter: 'Twitter',
+	google_plus: 'Google Plus',
+	linkedin: 'LinkedIn',
+	tumblr: 'Tumblr'
+};
 
 class SharingPreviewPane extends PureComponent {
 
@@ -31,29 +44,42 @@ class SharingPreviewPane extends PureComponent {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		seoTitle: PropTypes.string,
+		selectedService: PropTypes.string,
 	};
 
 	static defaultProps = {
-		services: [ 'facebook', 'twitter' ]
+		services: Object.keys( serviceNames )
 	};
 
-	state = {
-		selectedService: 'facebook'
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedService: props.selectedService || props.services[ 0 ]
+		};
+	}
 
 	selectPreview = ( selectedService ) => {
 		this.setState( { selectedService } );
 	};
 
 	renderPreview() {
-		const { post, message, connections } = this.props;
+		const { post, site, message, connections, translate, siteSlug } = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
-			return null;
+			return <Notice
+				text={ translate( 'Connect to %s to see the preview', { args: serviceNames[ selectedService ] } ) }
+				status="is-info"
+				showDismiss={ false }
+			>
+				<NoticeAction href={ '/sharing/' + siteSlug } >{ translate( 'Settings' ) }</NoticeAction>
+			</Notice>;
 		}
 
 		const articleUrl = get( post, 'URL', '' );
+		const articleTitle = get( post, 'title', '' );
+		const articleContent = getExcerptForPost( post );
+		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
 		const {
 			external_name: externalName,
@@ -64,16 +90,26 @@ class SharingPreviewPane extends PureComponent {
 
 		const previewProps = {
 			articleUrl,
+			articleTitle,
+			articleContent,
+			externalDisplay,
 			externalName,
 			externalProfileURL,
 			externalProfilePicture,
 			message,
 			imageUrl,
+			siteDomain,
 		};
 
 		switch ( selectedService ) {
 			case 'facebook':
 				return <FacebookSharePreview { ...previewProps } />;
+			case 'google_plus':
+				return <GooglePlusSharePreview { ...previewProps } />;
+			case 'tumblr':
+				return <TumblrSharePreview { ...previewProps } />;
+			case 'linkedin':
+				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
 				return <TwitterSharePreview
 					{ ...previewProps }
@@ -85,6 +121,7 @@ class SharingPreviewPane extends PureComponent {
 
 	render() {
 		const { translate, services } = this.props;
+		const initialMenuItemIndex = services.indexOf( this.state.selectedService );
 
 		return (
 			<div className="sharing-preview-pane">
@@ -100,7 +137,7 @@ class SharingPreviewPane extends PureComponent {
 								'the networks below' ) }
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview }>
+					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex } >
 						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
@@ -121,12 +158,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
+	const siteSlug = getSiteSlug( state, siteId );
 
 	return {
 		site,
 		post,
 		seoTitle,
 		connections,
+		siteSlug,
 	};
 };
 

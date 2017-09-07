@@ -107,6 +107,20 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Instagram when no accounts are connected'
 				} );
 			},
+			google_photos: function() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Access photos stored in your connected Google account.', {
+						comment: 'Description for Google Photos when one or more accounts are connected'
+					} );
+				}
+
+				return this.props.translate( 'Access photos stored in your Google account{{sup}}*{{/sup}}', {
+					components: {
+						sup: <sup />,
+					},
+					comment: 'Description for Google Photos when no accounts are connected'
+				} );
+			}
 		} ),
 		numberOfConnections: 0,
 		translate: identity,

@@ -2,12 +2,9 @@
  * External dependencies
  */
 import async from 'async';
-import noop from 'lodash/noop';
-import some from 'lodash/some';
-import assign from 'lodash/assign';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
 
@@ -27,6 +24,15 @@ const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
 
+// Retargeting events are fired once every `retargetingPeriod` seconds.
+const retargetingPeriod = 60 * 60 * 24;
+
+// Last time the retarget() function effectively fired (Unix time in seconds).
+let lastRetargetTime = 0;
+
+// Last time the recordPageViewInFloodlight() function effectively fired (Unix time in seconds).
+let lastFloodlightPageViewTime = 0;
+
 /**
  * Constants
  */
@@ -36,6 +42,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
+	GOOGLE_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
 	ONE_BY_AOL_CONVERSION_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb' +
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
@@ -46,6 +53,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
+	QUORA_URL = 'https://a.quora.com/qevents.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -58,7 +66,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		yahooPixelId: '10014088',
 		twitterPixelId: 'nvzbs',
 		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '36622'
+		linkedInPartnerId: '36622',
+		quoraPixelId: '420845cb70e444938cf0728887a74ca1'
 	},
 
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -104,6 +113,10 @@ if ( ! window._linkedin_data_partner_id ) {
 	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
 }
 
+if ( ! window.qp ) {
+	setupQuoraGlobal();
+}
+
 /**
  * Initializes Media Wallah tracking.
  * This is a rework of the obfuscated tracking code provided by Media Wallah.
@@ -132,6 +145,17 @@ function initMediaWallah() {
 	};
 
 	window.addEventListener ? window.addEventListener( 'load', init, false ) : window.attachEvent( 'onload', init );
+}
+
+/**
+ * Initializes Quora tracking.
+ * This is a rework of the obfuscated tracking code provided by Quora.
+ */
+function setupQuoraGlobal() {
+	const quoraPixel = window.qp = function() {
+		quoraPixel.qp ? quoraPixel.qp.apply( quoraPixel, arguments ) : quoraPixel.queue.push( arguments );
+	};
+	quoraPixel.queue = [];
 }
 
 /**
@@ -199,6 +223,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( QUORA_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -216,6 +243,9 @@ function loadTrackingScripts( callback ) {
 
 			// init Media Wallah tracking
 			initMediaWallah();
+
+			// init Quora tracking
+			window.qp( 'init', TRACKING_IDS.quoraPixelId );
 
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
@@ -270,6 +300,12 @@ function retarget() {
 		return;
 	}
 
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
+		return;
+	}
+	lastRetargetTime = nowTimestamp;
+
 	debug( 'Retargeting' );
 
 	// Facebook
@@ -294,6 +330,9 @@ function retarget() {
 
 	// One by AOL
 	new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
+
+	// Quora
+	window.qp( 'track', 'ViewContent' );
 }
 
 /**
@@ -409,6 +448,7 @@ function recordOrder( cart, orderId ) {
 	// 3. Fire a single tracking event without any details about what was purchased
 	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+	window.qp( 'track', 'Generic' );
 }
 
 /**
@@ -484,7 +524,9 @@ function recordProduct( product, orderId ) {
 		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
-				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_conversion_id: isJetpackPlan
+					? GOOGLE_CONVERSION_ID_JETPACK
+					: GOOGLE_CONVERSION_ID,
 				google_conversion_label: isJetpackPlan
 					? TRACKING_IDS.googleConversionLabelJetpack
 					: TRACKING_IDS.googleConversionLabel,
@@ -675,6 +717,12 @@ function recordPageViewInFloodlight( urlPath ) {
 		return;
 	}
 
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastFloodlightPageViewTime + retargetingPeriod ) {
+		return;
+	}
+	lastFloodlightPageViewTime = nowTimestamp;
+
 	const sessionId = floodlightSessionId();
 
 	debug( 'Floodlight: Recording page view for session ' + sessionId );
@@ -770,7 +818,14 @@ function recordParamsInFloodlight( params ) {
 
 	// The ord is only set for purchases; the rest of the time it should be a random string
 	if ( params.ord === undefined ) {
+		// From the docs:
+		// "For unique user tags, use a constant value."
+		// TODO: Should we use a constant value if it's a unique user? How do we determine a unique user?
 		params.ord = floodlightCacheBuster();
+
+		// From the docs:
+		// "Unique user tags also require a random number as the value of the num= parameter."
+		params.num = floodlightCacheBuster();
 	}
 
 	debug( 'recordParamsInFloodlight:', params );

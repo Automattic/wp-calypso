@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,7 @@ const ReaderSubscriptionListItemPlaceholder = () => {
 				<ReaderAvatar showPlaceholder={ true } isCompact={ true } />
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title is-placeholder">
-					Site title
-				</span>
+				<span className="reader-subscription-list-item__site-title is-placeholder">Site title</span>
 				<div className="reader-subscription-list-item__site-excerpt is-placeholder">
 					Description of the site
 				</div>

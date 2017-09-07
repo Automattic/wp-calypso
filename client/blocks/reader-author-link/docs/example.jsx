@@ -10,7 +10,6 @@ import ReaderAuthorLink from 'blocks/reader-author-link';
 import Card from 'components/card';
 
 const ReaderAuthorLinkExample = () => {
-
 	const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
 
 	return (

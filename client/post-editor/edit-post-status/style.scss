@@ -3,16 +3,13 @@
 	align-content: center;
 	display: flex;
 	justify-content: space-between;
+	margin: 8px 0px;
 
 	.gridicon {
 		margin-top: 2px;
 		margin-left: 4px;
 		vertical-align: top;
 	}
-}
-
-.edit-post-status__pending-review {
-	margin-top: 8px;
 }
 
 .edit-post-status__label-text {
@@ -38,15 +35,15 @@
 
 .edit-post-status__revert-to-draft {
 	display: block;
-	margin: 16px 0 0;
+	margin: 16px 0 8px;
 	width: 100%;
 }
 
 .edit-post-status__full-date {
 	color: $gray-text;
 	font-size: 13px;
-	display: inline-block;
-	margin-bottom: 12px;
+	display: flex;
+	margin-bottom: 4px;
 	padding-right: 5px;
 	cursor: pointer;
 
@@ -64,7 +61,7 @@
 	color: $white;
 	display: inline-block;
 	font-size: 10px;
-	margin: -3px 4px 0 0;
+	margin-right: 4px;
 	overflow: hidden;
 	padding: 2px 6px 2px 6px;
 	text-overflow: ellipsis;

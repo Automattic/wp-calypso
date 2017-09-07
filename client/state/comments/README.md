@@ -36,7 +36,6 @@ getPostCommentsTree - returns a memoized comments tree of the form:
 
 ### Simple selectors:
 getPostCommentItems - gets items of siteId, postId;
-getPostCommentRequests - gets requests of siteId, postId
 getPostTotalCommentsCount - gets totalCommentsCount of siteId, postId
 
 ### Compute selectors:

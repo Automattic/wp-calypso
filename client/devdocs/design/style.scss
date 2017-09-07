@@ -55,12 +55,16 @@
 
 .docs__design-button-row,
 .design__button-row {
-	&:first-child {
-		margin-top: -16px;
-	}
+	margin-bottom: 20px;
 	.button {
-		margin-top: 16px !important;
 		margin-right: 16px !important;
+	}
+}
+
+.docs__design-button-group-row {
+	margin-bottom: 20px;
+	.button-group {
+		margin-right: 16px;
 	}
 }
 
@@ -142,5 +146,15 @@
 		.select-dropdown__container {
 			max-width: 220px;
 		}
+	}
+}
+
+.docs__suggestions-container {
+	.search-card {
+		margin-bottom: 4px;
+	}
+
+	.search.has-focus {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
 	}
 }

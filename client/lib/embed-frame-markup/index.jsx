@@ -7,7 +7,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import createFragment from 'react-addons-create-fragment';
-import mapValues from 'lodash/mapValues';
+import { mapValues } from 'lodash';
 
 /**
  * Constants

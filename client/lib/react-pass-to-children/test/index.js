@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { assign } from 'lodash';
 var React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	assign = require( 'lodash/assign' ),
 	expect = require( 'chai' ).expect;
 
 /**
@@ -80,24 +80,24 @@ describe( 'index', function() {
 	it( 'should preserve props passed to the children', function() {
 		var result;
 
-		renderer.render( <PassThrough><div preserve /></PassThrough> );
+		renderer.render( <PassThrough><div data-preserve /></PassThrough> );
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
 		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			preserve: true
+			'data-preserve': true
 		} ) );
 	} );
 
 	it( 'should preserve props passed to the instance itself', function() {
 		var result;
 
-		renderer.render( <PassThrough preserve><div /></PassThrough> );
+		renderer.render( <PassThrough data-preserve><div /></PassThrough> );
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
 		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			preserve: true
+			'data-preserve': true
 		} ) );
 	} );
 } );

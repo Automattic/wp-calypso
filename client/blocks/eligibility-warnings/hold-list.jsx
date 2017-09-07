@@ -51,27 +51,38 @@ function getHoldMessages( siteSlug, translate ) {
 			supportUrl: 'https://support.wordpress.com/domains/',
 		},
 		NO_WPCOM_NAMESERVERS: {
-			title: translate( 'No WordPress.com name servers' ),
-			description: translate( 'Use WordPress.com name servers on your custom domain to resolve.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/',
+			title: translate( 'Domain not using WordPress.com name servers' ),
+			description: translate( 'Your domain must use WordPress.com name servers to support custom code. ' +
+			'Ask your domain provider to update your DNS settings.' ),
+			supportUrl: 'https://en.support.wordpress.com/domains/map-existing-domain/' +
+			'#2-ask-your-domain-provider-to-update-your-dns-settings',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
-			title: translate( 'Primary domain not pointing to WordPress.com servers' ),
-			description: translate( 'Point your primary domain to WordPress.com servers to resolve.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/',
+			title: translate( 'Domain not pointing to WordPress.com servers' ),
+			description: translate( 'We cannot manage your site because your domain does not point to WordPress.com servers. ' +
+			'Follow the instructions to reset your domain\'s A records to resolve this.' ),
+			supportUrl: 'https://support.wordpress.com/move-domain/setting-custom-a-records/',
 		},
 		NO_SSL_CERTIFICATE: {
-			title: translate( "Primary domain doesn't have a valid SSL certificate" ),
+			title: translate( 'Security certificate required' ),
 			description: translate(
-				'Please try again in a few minutes: you will be able to proceed once we finish setting up your security settings.'
+				'We are setting up a security certificate for your domain now. Please try again in a few minutes.'
 			),
 		},
 		EMAIL_UNVERIFIED: {
 			title: translate( 'Unconfirmed email' ),
 			description: translate(
+				'You must have verified your email address with WordPress.com to install custom code. ' +
 				'Please check your email to confirm your address.'
 			),
-		}
+		},
+		EXCESSIVE_DISK_SPACE: {
+			title: translate( 'We can\'t proceed with this upload' ),
+			description: translate(
+				'This site is not currently eligible for installing themes and plugins. Please contact support to straighten things out.'
+			),
+			supportUrl: 'https://support.wordpress.com/help-support-options/',
+		},
 	};
 }
 

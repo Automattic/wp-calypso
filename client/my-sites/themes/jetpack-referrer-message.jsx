@@ -25,7 +25,7 @@ const JetpackReferrerMessage = ( { siteId, translate, adminUrl, analyticsPath, a
 			action={ translate( 'Open Site Theme Browser' ) }
 			actionURL={ adminUrl }
 			actionTarget="_blank"
-			illustration="/calypso/images/drake/drake-jetpack.svg" />
+			illustration="/calypso/images/illustrations/illustration-jetpack.svg" />
 	</Main>
 );
 

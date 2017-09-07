@@ -72,7 +72,7 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  */
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
-		const { gmtOffset = 0 } = query;
+		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
 		// ensure streakData.data exists and it is not an array
@@ -177,7 +177,6 @@ export const getSiteStatsNormalizedData = createSelector(
 			const site = getSite( state, siteId );
 			return normalizers[ statType ].call( this, data, query, siteId, site );
 		}
-
 		return data;
 	},
 	( state, siteId, statType, query ) => getSiteStatsForQuery( state, siteId, statType, query ),

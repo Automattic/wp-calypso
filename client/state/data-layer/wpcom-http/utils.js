@@ -20,6 +20,14 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
 export const getError = action => get( action, 'meta.dataLayer.error', null );
 
 /**
+ * Returns (response) headers data from an HTTP request action if available
+ *
+ * @param {Object} action may contain HTTP response headers data
+ * @returns {?*} headers data if available
+ */
+export const getHeaders = action => get( action, 'meta.dataLayer.headers', null );
+
+/**
  * @typedef {Object} ProgressData
  * @property {number} loaded number of bytes already transferred
  * @property {number} total total number of bytes to transfer
@@ -33,6 +41,14 @@ export const getError = action => get( action, 'meta.dataLayer.error', null );
  * @returns {ProgressData}
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
+
+/**
+ * @type Object default dispatchRequest options
+ * @property {Function} onProgress called on progress events
+ */
+const defaultOptions = {
+	onProgress: noop,
+};
 
 /**
  * Dispatches to appropriate function based on HTTP request meta
@@ -61,25 +77,28 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
- * @param {Function} [onProgress] called on progress events when uploading. The default
- *                                behavior of this optional handler is to do nothing.
+ * @param {Object} options configures additional dispatching behaviors
+ + @param {Function} [options.middleware] runs before the dispatch itself
+ + @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action, next ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( store, action ) => {
+	const { onProgress } = Object.assign( defaultOptions, options );
+
 	const error = getError( action );
 	if ( error ) {
-		return onError( store, action, next, error );
+		return onError( store, action, error );
 	}
 
 	const data = getData( action );
 	if ( data ) {
-		return onSuccess( store, action, next, data );
+		return onSuccess( store, action, data );
 	}
 
 	const progress = getProgress( action );
 	if ( progress ) {
-		return onProgress( store, action, next, progress );
+		return onProgress( store, action, progress );
 	}
 
-	return initiator( store, action, next );
+	return initiator( store, action );
 };

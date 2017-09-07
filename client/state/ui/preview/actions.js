@@ -43,9 +43,9 @@ export function closePreview() {
 	return ( dispatch, getState ) => {
 		const selectedSiteId = getSelectedSiteId( getState() );
 		dispatch( clearCustomizations( selectedSiteId ) );
-		dispatch( clearPreviewUrl( selectedSiteId ) );
+		dispatch( clearPreviewUrl() );
 		dispatch( resetPreviewType() );
-		dispatch( setLayoutFocus( 'sidebar' ) );
+		dispatch( setLayoutFocus( 'content' ) );
 	};
 }
 

@@ -13,7 +13,7 @@ import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isPaidWithCreditCard
+	isPaidWithCreditCard,
 } from 'lib/purchases';
 
 // TODO: Remove these property-masking functions in favor of accessing the props directly
@@ -26,8 +26,7 @@ function getSelectedSite( props ) {
 }
 
 function goToCancelPurchase( props ) {
-	const { id } = getPurchase( props ),
-		{ slug } = getSelectedSite( props );
+	const { id } = getPurchase( props ), { slug } = getSelectedSite( props );
 
 	page( paths.cancelPurchase( slug, id ) );
 }
@@ -37,8 +36,7 @@ function goToList() {
 }
 
 function goToManagePurchase( props ) {
-	const { id } = getPurchase( props ),
-		{ slug } = getSelectedSite( props );
+	const { id } = getPurchase( props ), { slug } = getSelectedSite( props );
 
 	page( paths.managePurchase( slug, id ) );
 }
@@ -52,8 +50,10 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 		return null;
 	}
 
-	if ( nextProps &&
-		( props.hasLoadedUserPurchasesFromServer || ! nextProps.hasLoadedUserPurchasesFromServer ) ) {
+	if (
+		nextProps &&
+		( props.hasLoadedUserPurchasesFromServer || ! nextProps.hasLoadedUserPurchasesFromServer )
+	) {
 		// only record the page view the first time the purchase loads from the server
 		return null;
 	}
@@ -66,14 +66,18 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 
 	const { productSlug } = purchase;
 
-	analytics.tracks.recordEvent( `calypso_${ trackingSlug }_purchase_view`, { product_slug: productSlug } );
+	analytics.tracks.recordEvent( `calypso_${ trackingSlug }_purchase_view`, {
+		product_slug: productSlug,
+	} );
 }
 
 function canEditPaymentDetails( purchase ) {
 	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
 		return false;
 	}
-	return ! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase );
+	return (
+		! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase )
+	);
 }
 
 function getEditCardDetailsPath( site, purchase ) {

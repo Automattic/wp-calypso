@@ -21,8 +21,11 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
  * Variables
  */
 var start = new Date().getTime(),
-	bundleEnv = config( 'env' ),
 	outputOptions;
+
+if ( 'development' === config( 'env' ) ) {
+	process.exit( 0 );
+}
 
 outputOptions = {
 	colors: true,
@@ -50,11 +53,14 @@ function minify( files ) {
 				file,
 				'-m',
 				'-c',
-				'-o', file.replace( '.js', '.m.js' )
+				'-o', file.replace( '.js', '.min.js' )
 			],
 			// have to pipe stderr to parent, otherwise large bundles will never finish
 			// see https://github.com/nodejs/node-v0.x-archive/issues/6764
-			{ stdio: ['ignore', 'pipe', 'ignore'] }
+			{
+				stdio: ['ignore', 'pipe', 'ignore'],
+				shell: true,
+			}
 		);
 
 		child.on( 'exit', function( code ) {
@@ -99,7 +105,7 @@ webpack( webpackConfig, function( error, stats ) {
 	if ( process.env.WEBPACK_OUTPUT_JSON ) {
 		fs.writeFile(
 			path.join( process.cwd(), 'stats.json' ),
-			JSON.stringify( stats.toJson() )
+			JSON.stringify( stats.toJson(), null, '\t' )
 		);
 	}
 

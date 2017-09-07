@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,6 +26,7 @@ import {
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
+import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
@@ -33,10 +36,9 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
-import config from 'config';
+import { getReaderFollows } from 'state/selectors';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
@@ -48,13 +50,12 @@ const HEADER_OFFSET_TOP = 46;
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
 const MAX_DISTANCE_BETWEEN_RECS = 30;
 
-function getDistanceBetweenRecs() {
+function getDistanceBetweenRecs( totalSubs ) {
 	// the distance between recs changes based on how many subscriptions the user has.
 	// We cap it at MAX_DISTANCE_BETWEEN_RECS.
 	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
 	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
 	// become a common user of the reader.
-	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
 	if ( totalSubs <= 0 ) {
 		// 0 means either we don't know yet, or the user actually has zero subs.
 		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
@@ -87,7 +88,9 @@ class ReaderStream extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
+		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
+		isMain: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -100,18 +103,23 @@ class ReaderStream extends React.Component {
 		showPrimaryFollowButtonOnCards: true,
 		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
-		shouldCombineCards: config.isEnabled( 'reader/combined-cards' ),
+		shouldCombineCards: true,
 		transformStreamItems: identity,
+		isMain: true,
+		useCompactCards: false,
 	};
 
 	getStateFromStores( props = this.props ) {
-		const { postsStore: store, recommendationsStore } = props;
+		const { postsStore: store, recommendationsStore, totalSubs } = props;
 
 		const posts = map( store.get(), props.transformStreamItems );
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
-			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs() ) ) {
+			if (
+				! recs ||
+				recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs( totalSubs ) )
+			) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
 					defer( () => fetchNextPage( recommendationsStore.id ) );
 				}
@@ -120,7 +128,7 @@ class ReaderStream extends React.Component {
 
 		let items = this.state && this.state.items;
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs, getDistanceBetweenRecs() );
+			items = injectRecommendations( posts, recs, getDistanceBetweenRecs( totalSubs ) );
 		}
 
 		if ( props.shouldCombineCards ) {
@@ -397,9 +405,11 @@ class ReaderStream extends React.Component {
 	renderPost = ( postKey, index ) => {
 		const recStoreId = this.props.recommendationsStore && this.props.recommendationsStore.id;
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
-		const isSelected = !! ( selectedPostKey &&
+		const isSelected = !! (
+			selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
-			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId ) );
+			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId )
+		);
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = args =>
@@ -428,6 +438,7 @@ class ReaderStream extends React.Component {
 				index={ index }
 				selectedPostKey={ selectedPostKey }
 				recStoreId={ recStoreId }
+				compact={ this.props.useCompactCards }
 			/>
 		);
 	};
@@ -446,7 +457,7 @@ class ReaderStream extends React.Component {
 		} else {
 			body = (
 				<InfiniteList
-					ref={ c => this._list = c }
+					ref={ c => ( this._list = c ) }
 					className="reader__content"
 					items={ this.state.items }
 					lastPage={ this.state.isLastPage }
@@ -460,28 +471,32 @@ class ReaderStream extends React.Component {
 			);
 			showingStream = true;
 		}
-
+		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<ReaderMain className={ classnames( 'following', this.props.className ) }>
-				{ this.props.showMobileBackToSidebar &&
+			<TopLevel className={ classnames( 'following', this.props.className ) }>
+				{ this.props.isMain &&
+					this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>
-						<h1>{ this.props.listName }</h1>
+						<h1>
+							{ this.props.translate( 'Streams' ) }
+						</h1>
 					</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
-				{ showingStream && store.isLastPage() && this.state.posts.length
-					? <div className="infinite-scroll-end" />
-					: null }
-			</ReaderMain>
+				{ showingStream && store.isLastPage() && this.state.posts.length ? <ListEnd /> : null }
+			</TopLevel>
 		);
 	}
 }
 
-export default connect(
-	state => ( {
-		blockedSites: getBlockedSites( state ),
-	} ),
-	{ resetCardExpansions }
-)( ReaderStream );
+export default localize(
+	connect(
+		state => ( {
+			blockedSites: getBlockedSites( state ),
+			totalSubs: getReaderFollows( state ).length,
+		} ),
+		{ resetCardExpansions }
+	)( ReaderStream )
+);

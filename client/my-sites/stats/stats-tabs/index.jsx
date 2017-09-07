@@ -27,7 +27,7 @@ export default React.createClass( {
 		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } = this.props;
 		let statsTabs;
 
-		if ( data ) {
+		if ( data && ! children ) {
 			const activeData = find( data, { [ activeKey ]: activeIndex } );
 
 			statsTabs = tabs.map( ( tab ) => {

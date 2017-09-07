@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import Immutable from 'immutable';
 
 /**
@@ -10,15 +10,12 @@ import Immutable from 'immutable';
 import Settings from './settings';
 import Actions from './actions';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsForm',
-
-	propTypes: {
+class NotificationSettingsForm extends Component {
+	static propTypes = {
 		sourceId: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.number
 		] ).isRequired,
-		devices: PropTypes.object,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ),
 		isApplyAllVisible: PropTypes.bool,
@@ -26,14 +23,13 @@ export default React.createClass( {
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func
-	},
+	};
 
 	render() {
 		return (
 			<div>
 				<Settings
 					blogId={ this.props.sourceId }
-					devices={ this.props.devices }
 					settingKeys={ this.props.settingKeys }
 					settings={ this.props.settings }
 					onToggle={ this.props.onToggle } />
@@ -47,4 +43,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default NotificationSettingsForm;

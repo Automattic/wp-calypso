@@ -17,7 +17,8 @@ import { Env } from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
@@ -38,6 +39,8 @@ import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
+import config from 'config';
+import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 
 /**
  * Module constant
@@ -70,6 +73,9 @@ export class EditorHtmlToolbar extends Component {
 		showInsertContentMenu: false,
 		showLinkDialog: false,
 		showMediaModal: false,
+		source: '',
+		showSimplePaymentsDialog: false,
+		simplePaymentsDialogTab: 'addNew'
 	};
 
 	componentDidMount() {
@@ -362,7 +368,7 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onInsertContactForm = () => {
-		this.insertCustomContent( serialize( this.props.contactForm ), { paragraph: true } );
+		this.insertCustomContent( serializeContactForm( this.props.contactForm ), { paragraph: true } );
 		this.closeContactFormDialog();
 	}
 
@@ -414,12 +420,44 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( {
 			showInsertContentMenu: false,
 			showMediaModal: true,
+			source: '',
+		} );
+	}
+
+	openGoogleModal = () => {
+		this.setState( {
+			showInsertContentMenu: false,
+			showMediaModal: true,
+			source: 'google_photos',
 		} );
 	}
 
 	closeMediaModal = () => {
 		this.setState( { showMediaModal: false } );
 	}
+
+	openSimplePaymentsDialog = () => {
+		this.setState( {
+			simplePaymentsDialogTab: 'addNew',
+			showSimplePaymentsDialog: true,
+			showInsertContentMenu: false,
+		} );
+	};
+
+	closeSimplePaymentsDialog = () => {
+		this.setState( { showSimplePaymentsDialog: false } );
+	};
+
+	changeSimplePaymentsDialogTab = ( tab ) => {
+		this.setState( {
+			simplePaymentsDialogTab: tab,
+		} );
+	};
+
+	insertSimplePayment = ( productData ) => {
+		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
+		this.closeSimplePaymentsDialog();
+	};
 
 	onFilesDrop = () => {
 		const { site } = this.props;
@@ -444,6 +482,42 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+
+	renderExternal() {
+		const { translate } = this.props;
+
+		if ( ! config.isEnabled( 'external-media' ) ) {
+			return null;
+		}
+
+		return (
+			<div
+				className="editor-html-toolbar__insert-content-dropdown-item"
+				onClick={ this.openGoogleModal }
+			>
+				<Gridicon icon="add-image" />
+				<span data-e2e-insert-type="google-media">{ translate( 'Add from Google' ) }</span>
+			</div>
+		);
+	}
+
+	renderSimplePaymentsButton() {
+		const { translate } = this.props;
+
+		if ( ! config.isEnabled( 'simple-payments' ) ) {
+			return null;
+		}
+
+		return (
+			<div
+				className="editor-html-toolbar__insert-content-dropdown-item"
+				onClick={ this.openSimplePaymentsDialog }
+			>
+				<Gridicon icon="money" />
+				<span data-e2e-insert-type="payment-button">{ translate( 'Add Payment Button' ) }</span>
+			</div>
+		);
+	}
 
 	render() {
 		const {
@@ -554,15 +628,20 @@ export class EditorHtmlToolbar extends Component {
 								onClick={ this.openMediaModal }
 							>
 								<Gridicon icon="add-image" />
-								<span>{ translate( 'Add Media' ) }</span>
+								<span data-e2e-insert-type="media">{ translate( 'Add Media' ) }</span>
 							</div>
+
+							{ this.renderExternal() }
+
 							<div
 								className="editor-html-toolbar__insert-content-dropdown-item"
 								onClick={ this.openContactFormDialog }
 							>
 								<Gridicon icon="mention" />
-								<span>{ translate( 'Add Contact Form' ) }</span>
+								<span data-e2e-insert-type="contact-form">{ translate( 'Add Contact Form' ) }</span>
 							</div>
+
+							{ this.renderSimplePaymentsButton() }
 						</div>
 					</div>
 				</div>
@@ -597,11 +676,21 @@ export class EditorHtmlToolbar extends Component {
 					onClose={ this.closeMediaModal }
 					onInsertMedia={ this.onInsertMedia }
 					visible={ this.state.showMediaModal }
+					source={ this.state.source }
 				/>
 
 				<MediaLibraryDropZone
 					onAddMedia={ this.onFilesDrop }
 					site={ site }
+				/>
+
+				<SimplePaymentsDialog
+					showDialog={ this.state.showSimplePaymentsDialog }
+					activeTab={ this.state.simplePaymentsDialogTab }
+					isEdit={ false }
+					onClose={ this.closeSimplePaymentsDialog }
+					onChangeTabs={ this.changeSimplePaymentsDialogTab }
+					onInsert={ this.insertSimplePayment }
 				/>
 			</div>
 		);

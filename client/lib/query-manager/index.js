@@ -1,14 +1,7 @@
 /**
  * External dependencies
  */
-import isEqual from 'lodash/isEqual';
-import reduce from 'lodash/reduce';
-import values from 'lodash/values';
-import omit from 'lodash/omit';
-import map from 'lodash/map';
-import cloneDeep from 'lodash/cloneDeep';
-import difference from 'lodash/difference';
-import get from 'lodash/get';
+import { cloneDeep, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,7 +74,7 @@ export default class QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query
 	 */
-	matches( query, item ) {
+	static matches( query, item ) {
 		return !! item;
 	}
 
@@ -333,7 +326,7 @@ export default class QueryManager {
 				if ( -1 !== index ) {
 					// Item already exists in query, check to see whether the
 					// updated item is being removed or no longer matches
-					if ( ! updatedItem || ! this.matches( query, updatedItem ) ) {
+					if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
 						// Create a copy of the original details to avoid mutating
 						if ( memo[ queryKey ] === queryDetails ) {
 							memo[ queryKey ] = cloneDeep( queryDetails );
@@ -350,7 +343,7 @@ export default class QueryManager {
 							memo[ queryKey ].found--;
 						}
 					}
-				} else if ( updatedItem && this.matches( query, updatedItem ) ) {
+				} else if ( updatedItem && this.constructor.matches( query, updatedItem ) ) {
 					// Item doesn't currently exist in query but is a match, so
 					// insert item into set
 

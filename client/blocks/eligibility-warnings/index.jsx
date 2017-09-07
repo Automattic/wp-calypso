@@ -13,11 +13,10 @@ import Gridicon from 'gridicons';
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
-import { isBusiness, isEnterprise } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -65,6 +64,10 @@ export const EligibilityWarnings = ( {
 						? FEATURE_UPLOAD_PLUGINS
 						: FEATURE_UPLOAD_THEMES
 					}
+					event={ 'plugins' === context
+						? 'calypso-plugin-eligibility-upgrade-nudge'
+						: 'calypso-theme-eligibility-upgrade-nudge'
+					}
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Business plan required' ) }
 				/>
@@ -105,7 +108,7 @@ export const EligibilityWarnings = ( {
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
 					{ ! isEligible && translate(
-						'You must resolve the errors above before proceeding. '
+						'The errors above must be resolved before proceeding. '
 					) }
 					{ isEligible && warnings.length > 0 && translate(
 						'If you proceed you will no longer be able to use these features. '
@@ -143,14 +146,12 @@ EligibilityWarnings.defaultProps = {
 };
 
 const mapStateToProps = state => {
-	const {
-		ID: siteId,
-		plan,
-		slug: siteSlug,
-	} = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
+	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
+	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
 

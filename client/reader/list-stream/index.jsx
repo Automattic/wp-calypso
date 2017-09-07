@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -55,7 +56,8 @@ class ListStream extends React.Component {
 			shouldShowEdit = ! shouldShowFollow,
 			emptyContent = <EmptyContent />;
 
-		let editUrl = null, title = this.props.translate( 'Loading list' );
+		let editUrl = null,
+			title = this.props.translate( 'Loading list' );
 
 		if ( list ) {
 			title = list.title;

@@ -1,116 +1,157 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/omit' );
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Page = require( './page' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	EmptyContent = require( 'components/empty-content' ),
-	NoResults = require( 'my-sites/no-results' ),
-	actions = require( 'lib/posts/actions' ),
-	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus,
-	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
-
+import ListEnd from 'components/list-end';
+import QueryPosts from 'components/data/query-posts';
+import Page from './page';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import EmptyContent from 'components/empty-content';
+import NoResults from 'my-sites/no-results';
+import Placeholder from './placeholder';
+import { mapPostStatus as mapStatus } from 'lib/route';
+import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
+import {
+	hasInitializedSites,
+} from 'state/selectors';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQuery,
+	isSitePostsLastPageForQuery,
+ } from 'state/posts/selectors';
+import {
+	getSite
+} from 'state/sites/selectors';
 
-var PageList = React.createClass( {
+export default class PageList extends Component {
+	static propTypes = {
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+	}
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		page: 1,
+	}
 
-	propTypes: {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		siteID: React.PropTypes.any
-	},
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.search !== this.props.search ||
+			nextProps.siteId !== this.props.siteId ||
+			nextProps.status !== this.props.status ) {
+			this.resetPage();
+		}
+	}
 
-	render: function() {
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	}
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
+	}
+
+	render() {
+		const {
+			search,
+			siteId,
+			status,
+		} = this.props;
+
+		const query = {
+			page: this.state.page,
+			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			search,
+			status: mapStatus( status ),
+			type: 'page'
+		};
+
 		return (
-			<PostListFetcher
-				type="page"
-				number={ 100 }
-				siteID={ this.props.siteID }
-				status={ mapStatus( this.props.status ) }
-				search={ this.props.search }>
-				<Pages
-					{ ...omit( this.props, 'children' ) }
-				/>
-			</PostListFetcher>
+			<div>
+				<QueryPosts siteId={ siteId }
+					query={ query } />
+				<ConnectedPages
+					incrementPage={ this.incrementPage }
+					query={ query }
+					siteId={ siteId } />
+			</div>
 		);
 	}
-} );
+}
 
-var Pages = React.createClass( {
+const Pages = localize( React.createClass( {
 
 	displayName: 'Pages',
 
-	mixins: [ infiniteScroll( 'fetchPages' ), observe( 'sites' ) ],
+	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
-		trackScrollPage: React.PropTypes.func.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired
+		incrementPage: PropTypes.func.isRequired,
+		lastPage: PropTypes.bool,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		pages: PropTypes.array.isRequired,
+		search: PropTypes.string,
+		site: PropTypes.object,
+		siteId: PropTypes.any,
+		hasSites: PropTypes.bool.isRequired,
+		trackScrollPage: PropTypes.func.isRequired,
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			perPage: 100,
 			loading: false,
-			hasRecentError: false,
 			lastPage: false,
 			page: 0,
-			posts: [],
+			pages: [],
 			trackScrollPage: function() {}
 		};
 	},
 
-	fetchPages: function( options ) {
-		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
+	fetchPages( options ) {
+		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
-		actions.fetchNextPage();
+		this.props.incrementPage();
 	},
 
-	_insertTimeMarkers: function( pages ) {
-		var markedPages = [],
-			now = this.moment(),
-			lastMarker, buildMarker;
+	_insertTimeMarkers( pages ) {
+		const markedPages = [],
+			now = this.moment();
+		let lastMarker;
 
-		buildMarker = function( pageDate ) {
+		const buildMarker = function( pageDate ) {
 			pageDate = this.moment( pageDate );
-			var days = now.diff( pageDate, 'days' );
+			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
-				return this.translate( 'Today' );
+				return this.props.translate( 'Today' );
 			}
 			if ( days === 1 ) {
-				return this.translate( 'Yesterday' );
+				return this.props.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
 		}.bind( this );
 
 		pages.forEach( function( page ) {
-			var date = this.moment( page.date ),
+			const date = this.moment( page.date ),
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
-				markedPages.push( <div key={ 'marker-' + date.unix() } className="page-list__header"><span className="noticon noticon-time" /> { marker } </div> );
+				markedPages.push(
+					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
+						<Gridicon icon="time" size={ 12 } /> { marker }
+					</div>
+				);
 			}
 			lastMarker = marker;
 			markedPages.push( page );
@@ -119,61 +160,58 @@ var Pages = React.createClass( {
 		return markedPages;
 	},
 
-	getNoContentMessage: function() {
-		var attributes, newPageLink;
+	getNoContentMessage() {
+		const { search, translate } = this.props;
 
-		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/pages/illustration-pages.svg"
-				text={
-					this.translate( 'No pages match your search for {{searchTerm/}}.', {
-						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} ) }
-			/>;
-		} else {
-			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
+		if ( search ) {
+			return (
+				<NoResults
+					image="/calypso/images/pages/illustration-pages.svg"
+					text={
+						translate( 'No pages match your search for {{searchTerm/}}.', {
+							components: {
+								searchTerm: <em>{ search }</em>
+							}
+						} ) }
+				/>
+			);
+		}
 
-			if ( this.props.hasRecentError ) {
+		const { site, siteId, status = 'published' } = this.props;
+		const sitePart = site && site.slug || siteId;
+		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		let attributes;
+
+		switch ( status ) {
+			case 'drafts':
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: translate( 'You don\'t have any drafts.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
 				};
-			} else {
-				const status = this.props.status || 'published';
-				switch ( status ) {
-					case 'drafts':
-						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-						break;
-					case 'scheduled':
-						attributes = {
-							title: this.translate( 'You don\'t have any scheduled pages yet.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-						break;
-					case 'trashed':
-						attributes = {
-							title: this.translate( 'You don\'t have any pages in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
-						};
-						break;
-					default:
-						attributes = {
-							title: this.translate( 'You haven\'t published any pages yet.' ),
-							line: this.translate( 'Would you like to publish your first page?' ),
-							action: this.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-				}
-			}
+				break;
+			case 'scheduled':
+				attributes = {
+					title: translate( 'You don\'t have any scheduled pages yet.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
+				};
+				break;
+			case 'trashed':
+				attributes = {
+					title: translate( 'You don\'t have any pages in your trash folder.' ),
+					line: translate( 'Everything you write is solid gold.' )
+				};
+				break;
+			default:
+				attributes = {
+					title: translate( 'You haven\'t published any pages yet.' ),
+					line: translate( 'Would you like to publish your first page?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
+				};
 		}
 
 		attributes.illustration = '/calypso/images/pages/illustration-pages.svg';
@@ -189,17 +227,16 @@ var Pages = React.createClass( {
 		/>;
 	},
 
-	addLoadingRows: function( rows, count ) {
-		var i;
-		for ( i = 0; i < count; i++ ) {
+	addLoadingRows( rows, count ) {
+		for ( let i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
 				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
-			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
+			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ ! this.props.site } /> );
 		}
 	},
 
-	renderLoading: function() {
+	renderLoading() {
 		const rows = [];
 		this.addLoadingRows( rows, 1 );
 
@@ -210,8 +247,8 @@ var Pages = React.createClass( {
 		);
 	},
 
-	renderPagesList: function( { pages } ) {
-		const site = this.props.sites.getSelectedSite();
+	renderPagesList( { pages } ) {
+		const { site } = this.props;
 		const status = this.props.status || 'published';
 
 		// Pages only display hierarchically for published pages on single-sites when
@@ -226,7 +263,7 @@ var Pages = React.createClass( {
 		return this.renderChronological( { pages, site } );
 	},
 
-	renderHierarchical: function( { pages, site } ) {
+	renderHierarchical( { pages, site } ) {
 		pages = sortPagesHierarchically( pages );
 		const rows = pages.map( function( page ) {
 			return (
@@ -243,7 +280,7 @@ var Pages = React.createClass( {
 		);
 	},
 
-	renderChronological: function( { pages, site } ) {
+	renderChronological( { pages, site } ) {
 		if ( ! this.props.search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
@@ -252,12 +289,10 @@ var Pages = React.createClass( {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
-			// Get the site the page belongs to
-			const _site = this.props.sites.getSite( page.site_ID );
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } site={ _site } multisite={ this.props.siteID === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === null } />
 			);
 		}, this );
 
@@ -273,12 +308,12 @@ var Pages = React.createClass( {
 			<div id="pages" className="pages__page-list">
 				{ blogPostsPage }
 				{ rows }
-				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
+				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
 		);
 	},
 
-	renderNoContent: function() {
+	renderNoContent() {
 		return (
 			<div id="pages" className="pages__page-list">
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
@@ -286,20 +321,32 @@ var Pages = React.createClass( {
 		);
 	},
 
-	render: function() {
-		const pages = this.props.posts;
+	render() {
+		const {
+			hasSites,
+			loading,
+			pages,
+		} = this.props;
 
-		if ( pages.length && this.props.sites.initialized ) {
+		if ( pages.length && hasSites ) {
 			return this.renderPagesList( { pages } );
 		}
 
-		if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
+		if ( ( ! loading ) && hasSites ) {
 			return this.renderNoContent();
 		}
 
 		return this.renderLoading();
 	},
 
+} ) );
+
+const mapState = ( state, { query, siteId } ) => ( {
+	hasSites: hasInitializedSites( state ),
+	loading: isRequestingSitePostsForQuery( state, siteId, query ),
+	lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
+	pages: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+	site: getSite( state, siteId ),
 } );
 
-module.exports = PageList;
+const ConnectedPages = connect( mapState )( Pages );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -15,6 +15,10 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
+import { abtest } from 'lib/abtest';
+
+const abtestVariant = abtest( 'readerIntroIllustration' );
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {
@@ -34,34 +38,50 @@ class FollowingIntro extends React.Component {
 	};
 
 	render() {
-		const { isNewReader, translate, dismiss } = this.props;
-		const linkElement = config.isEnabled( 'reader/following-manage-refresh' )
-			? <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />
-			: <a onClick={ this.props.handleManageLinkClick } href="/following/edit" />;
+		const { isNewReader, translate, dismiss, isNewUser } = this.props;
 
-		if ( ! isNewReader ) {
+		if ( ! isNewReader || ! isNewUser ) {
+			return null;
+		}
+
+		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
+
+		// A/B test three variants of the new illustration
+		let variantClassname = null;
+		if ( abtestVariant === 'blue' ) {
+			variantClassname = 'following__intro-blue';
+		} else if ( abtestVariant === 'lightBlue' ) {
+			variantClassname = 'following__intro-light-blue';
+		} else if ( abtestVariant === 'white' ) {
+			variantClassname = 'following__intro-white';
+		}
+
+		if ( ! variantClassname ) {
 			return null;
 		}
 
 		return (
-			<header className="following__intro">
+			<header className={ variantClassname }>
 				<QueryPreferences />
 				<div className="following__intro-header">
 					<div className="following__intro-copy">
-						{ translate(
-							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
-								'{{link}}Follow your favorite sites{{/link}} and their latest ' +
-								'posts will appear here. {{span}}Read, like, and comment in a ' +
-								'distraction-free environment.{{/span}}',
-							{
-								components: {
-									link: linkElement,
-									strong: <strong />,
-									span: <span className="following__intro-copy-hidden" />,
-								},
-							}
-						) }
+						<span>
+							{ translate(
+								'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
+									'{{link}}Follow your favorite sites{{/link}} and their latest ' +
+									'posts will appear here. {{span}}Read, like, and comment in a ' +
+									'distraction-free environment.{{/span}}',
+								{
+									components: {
+										link: linkElement,
+										strong: <strong />,
+										span: <span className="following__intro-copy-hidden" />,
+									},
+								}
+							) }
+						</span>
 					</div>
+					<div className="following__intro-character" />
 
 					<div
 						className="following__intro-close"
@@ -87,6 +107,7 @@ export default connect(
 	state => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
+			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
 	dispatch =>

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import FollowButton from 'reader/follow-button';
 import { recordFollowToggle } from './stats';
+import { DISCOVER_POST } from 'reader/follow-button/follow-sources';
 
 class DiscoverFollowButton extends React.Component {
 	static propTypes = {
@@ -44,6 +46,7 @@ class DiscoverFollowButton extends React.Component {
 				onFollowToggle={ this.recordFollowToggle }
 				followLabel={ followLabel }
 				followingLabel={ followingLabel }
+				followSource={ DISCOVER_POST }
 			/>
 		);
 	}

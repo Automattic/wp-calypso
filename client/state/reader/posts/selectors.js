@@ -1,5 +1,8 @@
-import keyBy from 'lodash/keyBy';
-import filter from 'lodash/filter';
+/** @format */
+/**
+ * External dependencies
+ */
+import { filter, keyBy } from 'lodash';
 
 /**
  * Returns a single post.
@@ -12,7 +15,8 @@ export function getPost( state, postGlobalId ) {
 	return state.reader.posts.items[ postGlobalId ];
 }
 
-let previousItems = null, postMapBySiteAndPost = {};
+let previousItems = null,
+	postMapBySiteAndPost = {};
 /**
  * Get a single post by site ID and post ID
  * @param  {Object} state  Global state tree

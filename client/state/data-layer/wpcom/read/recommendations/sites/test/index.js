@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -23,21 +24,21 @@ const response = {
 			blog_id: 19096129,
 			feed_id: 185124,
 			blog_title: 'Bente Haarstad Photography&amp;',
-			blog_url: 'http:\/\/bentehaarstad.wordpress.com',
+			blog_url: 'http://bentehaarstad.wordpress.com',
 			railcar: {},
 		},
 		{
 			blog_id: 38492359,
 			feed_id: 42081376,
 			blog_title: 'The Renegade Press',
-			blog_url: 'http:\/\/chrisnicholaswrites.wordpress.com',
+			blog_url: 'http://chrisnicholaswrites.wordpress.com',
 			railcar: {},
 		},
 		{
 			blog_id: 30436600,
 			feed_id: 1098976,
 			blog_title: 'Make Something Mondays!',
-			blog_url: 'http:\/\/makesomethingmondays.wordpress.com',
+			blog_url: 'http://makesomethingmondays.wordpress.com',
 			railcar: {},
 		},
 	],
@@ -47,9 +48,8 @@ describe( 'recommended sites', () => {
 	describe( '#requestRecommendedSites', () => {
 		it( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			requestRecommendedSites( { dispatch }, action, next );
+			requestRecommendedSites( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
 				http( {
 					method: 'GET',
@@ -60,8 +60,6 @@ describe( 'recommended sites', () => {
 					onFailure: action,
 				} )
 			);
-
-			expect( next ).to.have.been.calledWith( action );
 		} );
 	} );
 
@@ -69,14 +67,13 @@ describe( 'recommended sites', () => {
 		it( 'should dispatch action with sites if successful', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			const next = spy();
 
-			receiveRecommendedSitesResponse( { dispatch }, action, next, response );
-			expect( next ).to.not.have.been.called;
+			receiveRecommendedSitesResponse( { dispatch }, action, response );
 			expect( dispatch ).calledWith(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),
 					seed,
+					offset: 0,
 				} )
 			);
 		} );
@@ -97,7 +94,7 @@ describe( 'recommended sites', () => {
 					blogId: 19096129,
 					feedId: 185124,
 					title: 'Bente Haarstad Photography&',
-					url: 'http:\/\/bentehaarstad.wordpress.com',
+					url: 'http://bentehaarstad.wordpress.com',
 				},
 				{
 					algorithm,
@@ -105,7 +102,7 @@ describe( 'recommended sites', () => {
 					blogId: 38492359,
 					feedId: 42081376,
 					title: 'The Renegade Press',
-					url: 'http:\/\/chrisnicholaswrites.wordpress.com',
+					url: 'http://chrisnicholaswrites.wordpress.com',
 				},
 				{
 					algorithm,
@@ -113,7 +110,7 @@ describe( 'recommended sites', () => {
 					blogId: 30436600,
 					feedId: 1098976,
 					title: 'Make Something Mondays!',
-					url: 'http:\/\/makesomethingmondays.wordpress.com',
+					url: 'http://makesomethingmondays.wordpress.com',
 				},
 			];
 

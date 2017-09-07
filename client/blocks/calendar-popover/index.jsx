@@ -18,7 +18,7 @@ import PostSchedule from 'components/post-schedule';
 class CalendarPopover extends Component {
 	static propTypes = {
 		children: PropTypes.element,
-		
+
 		// connect props
 		gmtOffset: PropTypes.number,
 		timezoneValue: PropTypes.string,
@@ -40,11 +40,15 @@ class CalendarPopover extends Component {
 		siteId: PropTypes.number,
 		onDateChange: PropTypes.func,
 		onMonthChange: PropTypes.func,
+		onDayMouseEnter: PropTypes.func,
+		onDayMouseLeave: PropTypes.func,
 	};
 
 	static defaultProps = {
 		timezoneValue: '',
 		onDateChange: noop,
+		onDayMouseEnter: noop,
+		onDayMouseLeave: noop,
 	};
 
 	state = { date: null };
@@ -65,8 +69,13 @@ class CalendarPopover extends Component {
 			'events',
 			'posts',
 			'site',
+			'disabledDays',
+			'enableOutsideDays',
+			'modifiers',
 			'onDateChange',
 			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
 		] ) );
 
 		return (

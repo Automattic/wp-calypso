@@ -1,0 +1,71 @@
+// Activity Log
+.activity-log-day {
+	position: relative;
+	z-index: 2;
+
+	.card {
+		background: transparent;
+
+		.foldable-card__content {
+			padding: 0 0 24px;
+			background: transparent;
+		}
+	}
+
+	&.is-empty {
+		.card {
+			box-shadow: none;
+		}
+
+		.foldable-card__header {
+			background: $gray-light;
+			min-height: initial;
+			padding-bottom: 4px;
+			padding-top: 4px;
+		}
+	}
+
+	.foldable-card__header {
+		background: $white;
+
+		.foldable-card__secondary {
+			flex: 2;
+		}
+	}
+
+	.foldable-card.card.is-expanded {
+		box-shadow: none;
+
+		.foldable-card__header {
+			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+		}
+	}
+}
+
+.activity-log-day__day {
+	font-weight: 600;
+}
+
+.activity-log-day__events {
+	font-size: 12px;
+	color: $gray;
+}
+
+.activity-log-day__placeholder {
+	@extend .activity-log-day;
+
+	.activity-log-day__day,
+	.activity-log-day__events {
+		@include placeholder();
+	}
+
+	.activity-log-day__day {
+		width: 12em;
+	}
+
+	.activity-log-day__events {
+		width: 10em;
+		margin-top: .2em;
+	}
+}

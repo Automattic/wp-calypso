@@ -126,34 +126,6 @@ describe( 'reducer', () => {
 				}
 			} );
 		} );
-
-		it( 'should never persist state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					category: {
-						'{"search":"ribs"}': false
-					}
-				}
-			} );
-
-			const state = queryRequests( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should never load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					category: {
-						'{"search":"ribs"}': false
-					}
-				}
-			} );
-
-			const state = queryRequests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'queries()', () => {

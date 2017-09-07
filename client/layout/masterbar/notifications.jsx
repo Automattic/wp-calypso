@@ -123,7 +123,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<div ref="notificationLink">
+			<div className="masterbar__notifications" ref="notificationLink">
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"

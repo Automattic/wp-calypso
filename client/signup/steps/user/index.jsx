@@ -1,25 +1,29 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, omit, get } from 'lodash';
+import { identity, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-
 import { recordTracksEvent } from 'state/analytics/actions';
+import support from 'lib/url/support';
 
 export class UserStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
+		oauth2Client: PropTypes.object,
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
@@ -51,14 +55,30 @@ export class UserStep extends Component {
 	}
 
 	setSubHeaderText( props ) {
+		const { flowName, oauth2Client, translate } = props;
+
 		let subHeaderText = props.subHeaderText;
 
-		if ( props.flowName === 'social' ) {
-			// Hides sub header for this particular flow
-			subHeaderText = '';
-		} else if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
+		if ( flowName === 'wpcc' && oauth2Client ) {
+			if ( isWooOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
+					components: {
+						a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+							target="_blank" rel="noopener noreferrer" />,
+					},
+					comment: 'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com'
+				} );
+			} else {
+				subHeaderText = translate( 'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}', {
+					components: {
+						a: <a href={ support.WPCC } target="_blank" />,
+					},
+					comment: 'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com'
+				} );
+			}
+		} else if ( 1 === signupUtils.getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
-			subHeaderText = this.props.translate( 'Welcome to the wonderful WordPress.com community' );
+			subHeaderText = translate( 'Welcome to the wonderful WordPress.com community' );
 		}
 
 		this.setState( { subHeaderText } );
@@ -72,21 +92,26 @@ export class UserStep extends Component {
 	};
 
 	submit = ( data ) => {
+		const { flowName, stepName, oauth2Signup, translate } = this.props;
+		const dependencies = {};
+
+		if ( oauth2Signup ) {
+			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
+			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+		}
+
 		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Creating your account' ),
-			flowName: this.props.flowName,
-			stepName: this.props.stepName,
+			processingMessage: translate( 'Creating your account' ),
+			flowName,
+			stepName,
+			oauth2Signup,
 			...data
-		} );
+		}, null, dependencies );
 
 		this.props.goToNextStep();
 	};
 
 	submitForm = ( form, userData, analyticsData ) => {
-		const queryArgs = {
-			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
-		};
-
 		const formWithoutPassword = {
 			...form,
 			password: {
@@ -100,12 +125,20 @@ export class UserStep extends Component {
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
-			queryArgs
+			queryArgs: this.props.queryObject || {},
 		} );
 	};
 
-	handleSocialResponse = ( service, token ) => {
-		this.submit( { service, token } );
+	/**
+	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
+	 *
+	 * @param {String} service      The name of the social service
+	 * @param {String} access_token An OAuth2 acccess token
+	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
+	 *                              So our server doesn't have to request the user profile on its end.
+	 */
+	handleSocialResponse = ( service, access_token, id_token = null ) => {
+		this.submit( { service, access_token, id_token } );
 	};
 
 	userCreationComplete() {
@@ -120,7 +153,24 @@ export class UserStep extends Component {
 		return this.userCreationPending() || this.userCreationComplete();
 	}
 
+	getHeaderText() {
+		const { flowName, headerText, oauth2Client, translate } = this.props;
+
+		if ( flowName === 'wpcc' && oauth2Client ) {
+			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
+				args: { clientTitle: oauth2Client.title },
+				comment: "'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')"
+			} );
+		}
+
+		return headerText;
+	}
+
 	getRedirectToAfterLoginUrl() {
+		if ( this.props.oauth2Signup && this.props.queryObject.oauth2_redirect ) {
+			return this.props.queryObject.oauth2_redirect;
+		}
+
 		const stepAfterRedirect = signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
 			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
 		return this.originUrl() + signupUtils.getStepUrl(
@@ -145,14 +195,14 @@ export class UserStep extends Component {
 			return translate( 'Account created - Go to next step' );
 		}
 
-		return translate( 'Create My Account' );
+		return translate( 'Continue' );
 	}
 
 	renderSignupForm() {
 		return (
 			<SignupForm
 				{ ...omit( this.props, [ 'translate' ] ) }
-				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+				redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 				disabled={ this.userCreationStarted() }
 				submitting={ this.userCreationStarted() }
 				save={ this.save }
@@ -170,7 +220,7 @@ export class UserStep extends Component {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
-				headerText={ this.props.headerText }
+				headerText={ this.getHeaderText() }
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
@@ -183,7 +233,8 @@ export class UserStep extends Component {
 
 export default connect(
 	( state ) => ( {
-		suggestedUsername: getSuggestedUsername( state )
+		oauth2Client: getCurrentOAuth2Client( state ),
+		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
 		recordTracksEvent

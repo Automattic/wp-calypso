@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
-import merge from 'lodash/merge';
-import pick from 'lodash/pick';
-import omit from 'lodash/omit';
-import get from 'lodash/get';
+import { get, merge, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,11 +16,9 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 import { countsSchema } from './schema';
-import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated post types requesting state after an action has been
@@ -45,10 +39,6 @@ export function requesting( state = {}, action ) {
 					[ action.postType ]: POST_COUNTS_REQUEST === action.type
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;

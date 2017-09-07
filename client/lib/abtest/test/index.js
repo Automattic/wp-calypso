@@ -33,6 +33,42 @@ describe( 'abtest', () => {
 				defaultVariation: 'hide',
 				allowExistingUsers: false
 			},
+			mockedTestAllowAnyLocale: {
+				datestamp: '20160627',
+				variations: {
+					hide: 50,
+					show: 50
+				},
+				defaultVariation: 'hide',
+				localeTargets: 'any',
+			},
+			multipeLocaleNotEn: {
+				datestamp: '20160627',
+				variations: {
+					hide: 50,
+					show: 50
+				},
+				defaultVariation: 'hide',
+				localeTargets: [ 'fr', 'de' ],
+			},
+			mockedTestFrLocale: {
+				datestamp: '20160627',
+				variations: {
+					hide: 50,
+					show: 50
+				},
+				defaultVariation: 'hide',
+				localeTargets: [ 'fr' ],
+			},
+			mockedTestIlCountryCodeTarget: {
+				datestamp: '20160627',
+				variations: {
+					hide: 50,
+					show: 50
+				},
+				defaultVariation: 'hide',
+				countryCodeTarget: 'IL',
+			},
 			mockedTestAllowExisting: {
 				datestamp: '20160627',
 				variations: {
@@ -119,17 +155,95 @@ describe( 'abtest', () => {
 					date: DATE_AFTER
 				};
 			} );
-			it( 'should call store.set for new users with English settings', () => {
+			describe( 'English only users allowed (default)', () => {
+				it( 'should call store.set for new users with English settings', () => {
+					abtest( 'mockedTest' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+				it( 'should call store.set for new users with English-Canada settings', () => {
+					mockedUser.localeSlug = 'en-ca';
+					abtest( 'mockedTest' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+				it( 'should return default and skip store.set for new users with non-English settings', () => {
+					mockedUser.localeSlug = 'de';
+					expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
+					expect( setSpy ).not.to.have.been.called;
+				} );
+			} );
+			describe( 'all locales allowed', () => {
+				it( 'should call store.set for new users with English settings', () => {
+					abtest( 'mockedTestAllowAnyLocale' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+				it( 'should call store.set for new users with non-English settings', () => {
+					mockedUser.localeSlug = 'de';
+					abtest( 'mockedTestAllowAnyLocale' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+			} );
+			describe( 'specific locales only', () => {
+				it( 'should return default and skip store.set for new users with English settings', () => {
+					expect( abtest( 'multipeLocaleNotEn' ) ).to.equal( 'hide' );
+					expect( setSpy ).not.to.have.been.called;
+				} );
+				it( 'should call store.set for new users with non-English settings', () => {
+					mockedUser.localeSlug = 'de';
+					abtest( 'multipeLocaleNotEn' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+			} );
+			describe( 'fr locale only', () => {
+				it( 'should return default and skip store.set for new users with non-french settings', () => {
+					mockedUser.localeSlug = 'de';
+					expect( abtest( 'mockedTestFrLocale' ) ).to.equal( 'hide' );
+					expect( setSpy ).not.to.have.been.called;
+				} );
+				it( 'should call store.set for new users with fr settings', () => {
+					mockedUser.localeSlug = 'fr';
+					abtest( 'mockedTestFrLocale' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+			} );
+			describe( 'IL countryCodeTarget only', () => {
+				it( 'should return default and skip store.set for new users with no GeoLocation value', () => {
+					abtest( 'mockedTestIlCountryCodeTarget', null );
+					expect( setSpy ).not.to.have.been.called;
+				} );
+				it( 'should throw error if countryCodeTarget is set but geoLocation is not passed', () => {
+					expect( () => abtest( 'mockedTestIlCountryCodeTarget' ) ).to.throw(
+						'Test config has geoTarget, but no geoLocation passed to abtest function'
+						);
+				} );
+				it( 'should return default and skip store.set for new users not from Israel', () => {
+					const geoLocation = 'US';
+					expect( abtest( 'mockedTestIlCountryCodeTarget', geoLocation ) ).to.equal( 'hide' );
+					expect( setSpy ).not.to.have.been.called;
+				} );
+				it( 'should call store.set for new users with from Israel', () => {
+					const geoLocation = 'IL';
+					abtest( 'mockedTestIlCountryCodeTarget', geoLocation );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+			} );
+		} );
+		describe( 'new-user-no-locale', () => {
+			beforeEach( () => {
+				mockedUser = {
+					localeSlug: false,
+					date: DATE_AFTER
+				};
+			} );
+			it( 'should call store.set for new users with no locale for en only test', () => {
 				abtest( 'mockedTest' );
 				expect( setSpy ).to.have.been.calledOnce;
 			} );
-			it( 'should return default and skip store.set for new users with non-English settings', () => {
-				mockedUser.localeSlug = 'de';
-				expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );
+			it( 'show return default and skip store.set for new users with no locale for fr test', () => {
+				navigator.language = 'de';
+				expect( abtest( 'mockedTestFrLocale' ) ).to.equal( 'hide' );
 				expect( setSpy ).not.to.have.been.called;
 			} );
 		} );
-
 		describe( 'logged-out users', () => {
 			beforeEach( () => {
 				mockedUser = false;

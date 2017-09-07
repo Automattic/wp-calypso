@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -8,7 +9,6 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import { mc, ga, tracks } from 'lib/analytics';
-import SubscriptionStore from 'lib/reader-feed-subscriptions';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -72,6 +72,9 @@ function getLocation() {
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}
+	if ( path.indexOf( '/following/manage' ) === 0 ) {
+		return 'following_manage';
+	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
 		return 'discover';
 	}
@@ -86,7 +89,7 @@ function getLocation() {
 
 export function recordTrack( eventName, eventProperties ) {
 	debug( 'reader track', ...arguments );
-	const subCount = SubscriptionStore.getTotalSubscriptions();
+	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
 	// Add location as ui_algo prop
 	const location = getLocation();
@@ -94,11 +97,6 @@ export function recordTrack( eventName, eventProperties ) {
 
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
-	}
-
-	if ( location === 'topic_page' && ! eventProperties.hasOwnProperty( 'tag' ) ) {
-		const tag = decodeURIComponent( window.location.pathname.split( '/tag/' ).pop() );
-		eventProperties = Object.assign( { tag: tag }, eventProperties );
 	}
 
 	if ( process.env.NODE_ENV !== 'production' ) {
@@ -134,9 +132,7 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 	recordTrack(
 		action,
 		Object.assign(
-			{
-				action: eventName.replace( 'calypso_reader_', '' ),
-			},
+			eventName ? { action: eventName.replace( 'calypso_reader_', '' ) } : {},
 			railcar,
 			overrides
 		)
@@ -178,6 +174,15 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	}
 }
 
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
+	recordTracksRailcarInteract(
+		eventName,
+		railcar,
+		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
+	);
+}
+
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 	const params = {
 		ref: 'http://wordpress.com/',
@@ -194,7 +199,7 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = getLocation();
+	const source = additionalProps.source || getLocation();
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );

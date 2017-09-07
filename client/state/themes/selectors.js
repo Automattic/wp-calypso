@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -417,10 +418,9 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
  * @return {?String}         Theme purchase URL
  */
 export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
+	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
 		return null;
 	}
-
 	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
 }
 
@@ -599,11 +599,10 @@ export function isThemePremium( state, themeId ) {
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check availability
  * @param  {Number}  siteId  Site ID
- * @return {Boolean}        True if the premium theme is available for the given site
+ * @return {Boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES );
+	return isThemePurchased( state, themeId, siteId ) || hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES );
 }
 
 /**
@@ -617,8 +616,8 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
 	return !! getTheme( state, siteId, themeId ) || ( // The theme is already available or...
 		isWpcomTheme( state, themeId ) && (  // ...it's a WP.com theme and...
-			config.isEnabled( 'manage/themes/upload' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) // ...the site supports theme installation from WP.com.
+		config.isEnabled( 'manage/themes/upload' ) &&
+		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) // ...the site supports theme installation from WP.com.
 		)
 	);
 }
@@ -694,4 +693,47 @@ export function shouldFilterWpcomThemes( state, siteId ) {
 		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
 		! isJetpackSiteMultiSite( state, siteId )
 	);
+}
+
+/**
+ * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {string}  themeId Theme to check whether it's premium.¡
+ * @param  {Number}  siteId  Site ID for which to purchase the plan
+ * @return {?String}         Plan purchase URL
+ */
+export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
+	if (
+		isJetpackSite( state, siteId ) &&
+		isThemePremium( state, themeId ) &&
+		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+	) {
+		return `/checkout/${ getSiteSlug( state, siteId ) }/professional`;
+	}
+	return null;
+}
+
+/**
+ * Returns the price string to display for a given theme on a given site:
+ * @TODO Add tests!
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {string}  themeId Theme ID
+ * @param  {Number}  siteId  Site ID
+ * @return {String}          Price
+ */
+export function getPremiumThemePrice( state, themeId, siteId ) {
+	if ( ! isThemePremium( state, themeId ) || isPremiumThemeAvailable( state, themeId, siteId ) ) {
+		return '';
+	}
+
+	if ( isJetpackSite( state, siteId ) ) {
+		return i18n.translate( 'Upgrade', {
+			comment: 'Used to indicate a premium theme is available to the user once they upgrade their plan'
+		} );
+	}
+
+	const theme = getTheme( state, 'wpcom', themeId );
+	return get( theme, 'price' );
 }

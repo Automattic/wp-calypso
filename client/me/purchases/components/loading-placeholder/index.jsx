@@ -13,7 +13,7 @@ import Main from 'components/main';
 const LoadingPlaceholder = React.createClass( {
 	propTypes: {
 		path: React.PropTypes.string,
-		title: React.PropTypes.string.isRequired
+		title: React.PropTypes.string.isRequired,
 	},
 
 	goBack() {
@@ -30,7 +30,7 @@ const LoadingPlaceholder = React.createClass( {
 				{ this.props.children }
 			</Main>
 		);
-	}
+	},
 } );
 
 export default LoadingPlaceholder;

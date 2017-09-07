@@ -39,7 +39,6 @@ class BlogSettings extends Component {
 			site: { ID: sourceId },
 			settings,
 			disableToggle,
-			devices,
 			hasUnsavedChanges,
 			onToggle,
 			onSave,
@@ -63,7 +62,6 @@ class BlogSettings extends Component {
 						return <SettingsForm
 							{ ...{
 								sourceId,
-								devices,
 								settings,
 								hasUnsavedChanges,
 								isApplyAllVisible: ! disableToggle,
@@ -71,7 +69,15 @@ class BlogSettings extends Component {
 								onSave,
 								onSaveToAll
 							} }
-							settingKeys={ [ 'new_comment', 'comment_like', 'post_like', 'follow', 'achievement', 'mentions' ] } />;
+							settingKeys={ [
+								'new_comment',
+								'comment_like',
+								'post_like',
+								'follow',
+								'achievement',
+								'mentions',
+								'scheduled_publicize',
+							] } />;
 					}
 				} )() }
 			</Card>

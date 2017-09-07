@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -10,18 +11,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-import {
-	isSyncingFollows,
-	requestPage,
-	requestPageAction,
-	receivePage,
-	receiveError,
-	subscriptionsFromApi,
-	isValidApiResponse,
-	syncReaderFollows,
-	resetSyncingFollows,
-	updateSeenOnFollow,
-} from '../';
+
 import {
 	receiveFollows as receiveFollowsAction,
 	follow,
@@ -29,6 +19,18 @@ import {
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
+import { subscriptionsFromApi } from '../utils';
+
+import {
+	isSyncingFollows,
+	requestPage,
+	requestPageAction,
+	receivePage,
+	receiveError,
+	syncReaderFollows,
+	resetSyncingFollows,
+	updateSeenOnFollow,
+} from '../';
 
 const successfulApiResponse = freeze( {
 	number: 2,
@@ -59,9 +61,8 @@ describe( 'get follow subscriptions', () => {
 		it( 'should request first page + set syncing to true', () => {
 			const action = { type: READER_FOLLOWS_SYNC_START };
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			syncReaderFollows( { dispatch }, action, next );
+			syncReaderFollows( { dispatch }, action );
 
 			expect( isSyncingFollows() ).ok;
 			expect( dispatch ).calledWith( requestPageAction() );
@@ -72,9 +73,8 @@ describe( 'get follow subscriptions', () => {
 		it( 'should dispatch HTTP request to following/mine endpoint', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			requestPage( { dispatch }, action, next );
+			requestPage( { dispatch }, action );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
@@ -88,16 +88,6 @@ describe( 'get follow subscriptions', () => {
 				} )
 			);
 		} );
-
-		it( 'should pass the original action along the middleware chain', () => {
-			const action = requestPageAction();
-			const dispatch = sinon.spy();
-			const next = sinon.spy();
-
-			requestPage( { dispatch }, action, next );
-
-			expect( next ).to.have.been.calledWith( action );
-		} );
 	} );
 
 	describe( '#receivePageSuccess', () => {
@@ -105,10 +95,9 @@ describe( 'get follow subscriptions', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			syncReaderFollows( { dispatch }, startSyncAction, next );
-			receivePage( { dispatch }, action, next, successfulApiResponse );
+			syncReaderFollows( { dispatch }, startSyncAction );
+			receivePage( { dispatch }, action, successfulApiResponse );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 1 ) );
@@ -126,7 +115,6 @@ describe( 'get follow subscriptions', () => {
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
 			const getState = () => ( {
 				reader: {
@@ -142,9 +130,9 @@ describe( 'get follow subscriptions', () => {
 				},
 			} );
 
-			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
-			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
-			receivePage( { dispatch, getState }, action, next, {
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
+			receivePage( { dispatch: ignoredDispatch }, action, successfulApiResponse );
+			receivePage( { dispatch, getState }, action, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -168,7 +156,6 @@ describe( 'get follow subscriptions', () => {
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
 			const getState = () => ( {
 				reader: {
@@ -184,16 +171,12 @@ describe( 'get follow subscriptions', () => {
 				},
 			} );
 
-			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction, next );
-			receivePage( { dispatch: ignoredDispatch }, action, next, successfulApiResponse );
+			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
+			receivePage( { dispatch: ignoredDispatch }, action, successfulApiResponse );
 
-			updateSeenOnFollow(
-				{ dispatch: ignoredDispatch },
-				follow( 'http://feed.example.com' ),
-				next
-			);
+			updateSeenOnFollow( { dispatch: ignoredDispatch }, follow( 'http://feed.example.com' ) );
 
-			receivePage( { dispatch, getState }, action, next, {
+			receivePage( { dispatch, getState }, action, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -222,55 +205,14 @@ describe( 'get follow subscriptions', () => {
 		it( 'should dispatch an error notice', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
-			const next = sinon.spy();
 
-			receiveError( { dispatch }, action, next );
+			receiveError( { dispatch }, action );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 			} );
 			expect( isSyncingFollows() ).not.ok;
-		} );
-	} );
-
-	describe( '#isValidApiResponse', () => {
-		it( 'should return false for invalid responses', () => {
-			expect( isValidApiResponse( {} ) ).not.ok;
-			expect( isValidApiResponse( { notExpected: 'true' } ) ).not.ok;
-			expect( isValidApiResponse( { subscriptions: 'notAnArray' } ) ).not.ok;
-		} );
-
-		it( 'should return true for happy cases', () => {
-			expect( isValidApiResponse( { subscriptions: [] } ) ).ok;
-			expect( isValidApiResponse( successfulApiResponse ) ).ok;
-		} );
-	} );
-
-	describe( '#subscriptionsFromApi', () => {
-		it( 'should return subscriptions from the apiResponse', () => {
-			const transformedSubs = [
-				{
-					ID: 12345,
-					blog_ID: 122463145,
-					URL: 'http://readerpostcards.wordpress.com',
-					feed_URL: 'http://readerpostcards.wordpress.com',
-					date_subscribed: Date.parse( '2017-01-12T03:55:45+00:00' ),
-				},
-				{
-					ID: 123456,
-					blog_ID: 64146350,
-					URL: 'https://fivethirtyeight.com/',
-					feed_URL: 'https://fivethirtyeight.com/',
-					date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
-				},
-			];
-			expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
-		} );
-
-		it( 'should return an empty list from invalid apiResponse', () => {
-			expect( subscriptionsFromApi( { notExpected: 'true' } ) ).eql( [] );
-			expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).eql( [] );
 		} );
 	} );
 } );

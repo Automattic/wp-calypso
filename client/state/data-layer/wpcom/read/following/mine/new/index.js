@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -10,11 +11,15 @@ import config from 'config';
 import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
-import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
+import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
+import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
+import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
+import { getSiteName } from 'reader/get-helpers';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestFollow( { dispatch }, action, next ) {
+export function requestFollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
 
 	dispatch(
@@ -30,27 +35,42 @@ export function requestFollow( { dispatch }, action, next ) {
 			onFailure: action,
 		} )
 	);
-	next( action );
+
+	// build up a notice to show
+	const site = getSiteByFeedUrl( getState(), feedUrl );
+	const feed = getFeedByFeedUrl( getState(), feedUrl );
+	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
+	dispatch(
+		successNotice( translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ), {
+			duration: 5000,
+		} )
+	);
 }
 
-export function receiveFollow( store, action, next, response ) {
+export function receiveFollow( store, action, response ) {
 	if ( response && response.subscribed ) {
-		next( follow( action.payload.feedUrl, subscriptionFromApi( response.subscription ) ) );
+		const subscription = subscriptionFromApi( response.subscription );
+		store.dispatch( bypassDataLayer( follow( action.payload.feedUrl, subscription ) ) );
 	} else {
-		followError( store, action, next, response );
+		followError( store, action, response );
 	}
 }
 
-export function followError( { dispatch }, action, next, response ) {
+export function followError( { dispatch }, action, response ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, there was a problem following that site. Please try again.' ) )
+		errorNotice(
+			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {
+				args: { url: action.payload.feedUrl },
+			} ),
+			{ duration: 5000 }
+		)
 	);
 
 	if ( response && response.info ) {
 		dispatch( recordFollowError( action.payload.feedUrl, response.info ) );
 	}
 
-	next( unfollow( action.payload.feedUrl ) );
+	dispatch( bypassDataLayer( unfollow( action.payload.feedUrl ) ) );
 }
 
 export default {

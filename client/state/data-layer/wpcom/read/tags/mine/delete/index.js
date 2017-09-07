@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
-export function requestUnfollow( store, action, next ) {
+export function requestUnfollow( store, action ) {
 	store.dispatch(
 		http( {
 			path: `/read/tags/${ action.payload.slug }/mine/delete`,
@@ -23,8 +24,6 @@ export function requestUnfollow( store, action, next ) {
 			onFailure: action,
 		} )
 	);
-
-	next( action );
 }
 
 /**
@@ -35,9 +34,9 @@ export function requestUnfollow( store, action, next ) {
  */
 export const fromApi = apiResponse => apiResponse.removed_tag;
 
-export function receiveUnfollowTag( store, action, next, apiResponse ) {
+export function receiveUnfollowTag( store, action, apiResponse ) {
 	if ( apiResponse.subscribed ) {
-		receiveError( store, action, next );
+		receiveError( store, action );
 		return;
 	}
 
@@ -48,7 +47,7 @@ export function receiveUnfollowTag( store, action, next, apiResponse ) {
 	);
 }
 
-export function receiveError( store, action, next, error ) {
+export function receiveError( store, action, error ) {
 	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
 		args: { tag: action.payload.slug },
 	} );

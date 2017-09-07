@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -54,7 +55,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+			illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 			illustrationWidth={ 500 }
 		/>
 	);

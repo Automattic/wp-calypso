@@ -1,12 +1,25 @@
 /**
  * External dependencies
  */
+import config from 'config';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Count from 'components/count';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -14,50 +27,39 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarSeparator from 'layout/sidebar/separator';
 import StoreGroundControl from './store-ground-control';
 
-export default class StoreSidebar extends Component {
+class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
-		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
-			icon: PropTypes.string.isRequired,
-			isPrimary: PropTypes.bool.isRequired,
-			label: PropTypes.string.isRequired,
-			path: PropTypes.string.isRequired,
-			slug: PropTypes.string.isRequired,
-		} ) ),
-		sidebarItemButtons: PropTypes.arrayOf( PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			parentSlug: PropTypes.string.isRequired,
-			path: PropTypes.string.isRequired,
-			slug: PropTypes.string.isRequired,
-		} ) ),
 		site: PropTypes.object,
 	}
 
-	onNavigate = () => {
-		window.scrollTo( 0, 0 );
-	}
+	componentDidMount = () => {
+		const { productsLoaded, site } = this.props;
 
-	itemLink = ( path ) => {
-		const link = path.replace( ':site', this.props.site.slug );
-		return link;
-	}
+		if ( site && site.ID ) {
+			this.props.fetchSetupChoices( site.ID );
+			this.props.fetchOrders( site.ID );
 
-	itemLinkClass = ( path, existingClasses ) => {
-		const classSet = {};
-
-		if ( typeof existingClasses !== 'undefined' ) {
-			if ( ! Array.isArray( existingClasses ) ) {
-				existingClasses = [ existingClasses ];
+			if ( ! productsLoaded ) {
+				this.props.fetchProducts( site.ID, 1 );
 			}
-
-			existingClasses.forEach( function( className ) {
-				classSet[ className ] = true;
-			} );
 		}
+	}
 
-		classSet.selected = this.isItemLinkSelected( path );
+	componentWillReceiveProps = ( newProps ) => {
+		const { productsLoaded, site } = this.props;
 
-		return classNames( classSet );
+		const newSiteId = newProps.site ? newProps.site.ID : null;
+		const oldSiteId = site ? site.ID : null;
+
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
+			this.props.fetchSetupChoices( newSiteId );
+			this.props.fetchOrders( newSiteId );
+
+			if ( ! productsLoaded ) {
+				this.props.fetchProducts( newSiteId, 1 );
+			}
+		}
 	}
 
 	isItemLinkSelected = ( paths ) => {
@@ -70,51 +72,220 @@ export default class StoreSidebar extends Component {
 		}, this );
 	}
 
-	renderSidebarMenuItems = ( items, buttons ) => {
-		return items.map( function( item, index ) {
-			const itemLink = this.itemLink( item.path );
-			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
-				return (
-					<SidebarButton href={ this.itemLink( button.path ) } key={ button.slug } >
-						{ button.label }
-					</SidebarButton>
-				);
-			} );
-			return (
-				<SidebarItem
-					className={ this.itemLinkClass( itemLink, item.slug ) }
-					icon={ item.icon }
-					key={ index }
-					label={ item.label }
-					link={ itemLink }
-					onNavigate={ this.onNavigate }
-					preloadSectionName={ item.slug }
-				>
-				{ itemButton }
-				</SidebarItem>
-			);
-		}, this );
+	dashboard = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store' + siteSuffix;
+		const selected = this.isItemLinkSelected( link );
+		const classes = classNames( {
+			dashboard: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="house"
+				label={ translate( 'Dashboard' ) }
+				link={ link }
+			/>
+		);
+	}
+
+	products = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/products' + siteSuffix;
+		const addLink = '/store/product' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const classes = classNames( {
+			products: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="product"
+				label={ translate( 'Products' ) }
+				link={ link }
+			>
+				<SidebarButton disabled={ ! site } href={ addLink } >
+					{ translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
+		);
+	}
+
+	reviews = () => {
+		if ( ! config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/reviews' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link ] );
+		const classes = classNames( {
+			reviews: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		// TODO Add bubble containing count of unapproved reviews.
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Reviews' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
+	orders = () => {
+		const { orders, site, siteSuffix, translate } = this.props;
+		const link = '/store/orders' + siteSuffix;
+		const childLinks = [
+			'/store/order',
+			'/store/orders',
+		];
+		const selected = this.isItemLinkSelected( childLinks );
+		const classes = classNames( {
+			orders: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="pages"
+				label={ translate( 'Orders' ) }
+				link={ link }
+			>
+				{ orders.length
+					? <Count count={ orders.length } />
+					: null
+				}
+			</SidebarItem>
+		);
+	}
+
+	promotions = () => {
+		// TODO: Remove this check when ready to release to production.
+		if ( ! config.isEnabled( 'woocommerce/extension-promotions' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/promotions' + siteSuffix;
+		const validLinks = [
+			'/store/promotions',
+			'/store/promotion',
+		];
+
+		const selected = this.isItemLinkSelected( validLinks );
+		const classes = classNames( {
+			promotions: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Promotions' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
+	settings = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/settings' + siteSuffix;
+		const childLinks = [
+			'/store/settings/payments',
+			'/store/settings/shipping',
+			'/store/settings/taxes',
+		];
+		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		const classes = classNames( {
+			settings: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="cog"
+				label={ translate( 'Settings' ) }
+				link={ link }
+			/>
+		);
 	}
 
 	render = () => {
-		const { sidebarItems, sidebarItemButtons, site } = this.props;
+		const {
+			finishedAddressSetup,
+			hasProducts,
+			path,
+			site,
+			siteSuffix,
+		} = this.props;
 
-		// The store sidebar only makes sense in the context of a site
-		if ( ! site ) {
-			return null;
-		}
+		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
+		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
+		const showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
 				<SidebarMenu>
 					<ul>
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => item.isPrimary ), sidebarItemButtons ) }
-						<SidebarSeparator />
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => ! item.isPrimary ), sidebarItemButtons ) }
+						{ this.dashboard() }
+						{ showAllSidebarItems && this.products() }
+						{ showAllSidebarItems && this.orders() }
+						{ showAllSidebarItems && this.promotions() }
+						{ showAllSidebarItems && this.reviews() }
+						{ showAllSidebarItems && <SidebarSeparator /> }
+						{ showAllSidebarItems && this.settings() }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
 		);
 	}
 }
+
+function mapStateToProps( state ) {
+	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
+	const hasProducts = getTotalProducts( state ) > 0;
+	const orders = getNewOrders( state );
+	const productsLoaded = areProductsLoaded( state );
+	const site = getSelectedSiteWithFallback( state );
+
+	return {
+		finishedAddressSetup,
+		hasProducts,
+		orders,
+		productsLoaded,
+		site,
+		siteSuffix: site ? '/' + site.slug : '',
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchOrders,
+			fetchProducts,
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -106,7 +107,8 @@ class TagStreamHeader extends React.Component {
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />{ title }
+						<Gridicon icon="tag" size={ 24 } />
+						{ title }
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">

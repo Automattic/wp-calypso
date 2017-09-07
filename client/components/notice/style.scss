@@ -252,7 +252,16 @@ a.notice__action {
 	}
 
 	.notice__dismiss {
-		display: none;
+		position: relative;
+		align-self: center;
+		flex: none;
+		margin: 0 8px 0 0;
+		padding: 0;
+
+		.gridicon {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	a.notice__action {

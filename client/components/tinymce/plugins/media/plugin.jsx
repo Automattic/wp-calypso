@@ -145,6 +145,7 @@ function mediaButton( editor ) {
 	} )();
 
 	updateMedia = debounce( function() {
+		const originalSelectedNode = editor.selection.getNode();
 		let isTransientDetected = false,
 			transients = 0,
 			content, images;
@@ -184,6 +185,14 @@ function mediaButton( editor ) {
 			let mediaHasCaption = false;
 			let captionNode = null;
 
+			// If image is deleted in image editor, we delete it in the post/page editor.
+			if ( media && media.status === 'deleted' ) {
+				captionNode = editor.dom.getParent( img, 'div.mceTemp' );
+				editor.$( captionNode || img ).remove();
+				editor.nodeChanged();
+				return;
+			}
+
 			// If image is edited in image editor, we mark it as dirty and update it in post/page editor.
 			if ( media && media.isDirty ) {
 				if (
@@ -217,6 +226,12 @@ function mediaButton( editor ) {
 			if ( current.media.transient ) {
 				transients++;
 				isTransientDetected = true;
+
+				// Mark the image as a transient in upload
+				editor.dom.$( img ).toggleClass( 'is-transient', true );
+			} else {
+				// Remove the transient flag if present
+				editor.dom.$( img ).toggleClass( 'is-transient', false );
 			}
 
 			if (
@@ -303,7 +318,7 @@ function mediaButton( editor ) {
 
 			// To avoid an undesirable flicker after the image uploads but
 			// hasn't yet been loaded, we preload the image before rendering.
-			const imageUrl = media.URL;
+			const imageUrl = event.resizedImageUrl || media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
 				const preloadImage = new Image();
 				preloadImage.src = imageUrl;
@@ -369,6 +384,12 @@ function mediaButton( editor ) {
 				editor.fire( 'SetTextAreaContent', { content } );
 			}
 
+			// We have just replaced some image nodes, potentially losing selection/focus.
+			// So if an image node was selected and one isn't now, re-select it.
+			if ( 'IMG' === originalSelectedNode.nodeName ) {
+				reselectImage();
+			}
+
 			// Trigger an editor change so that dirty detection and
 			// autosave take effect
 			editor.fire( 'change' );
@@ -385,18 +406,44 @@ function mediaButton( editor ) {
 		}
 	} );
 
+	function reselectImage() {
+		// Re-select image node
+		let replacement = editor.selection.getStart();
+		if ( 'IMG' !== replacement.nodeName ) {
+			replacement = replacement.querySelector( 'img' );
+		}
+
+		if ( replacement ) {
+			editor.selection.select( replacement );
+			editor.selection.controlSelection.showResizeRect( replacement );
+		}
+	}
+
 	function hideDropZoneOnDrag( event ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
 	}
 
-	editor.addCommand( 'wpcomAddMedia', () => {
+	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
 			MediaActions.clearValidationErrors( selectedSite.ID );
 		}
+	}
+
+	editor.addCommand( 'wpcomAddMedia', () => {
+		initMediaModal();
 
 		renderModal( {
 			visible: true
+		} );
+	} );
+
+	editor.addCommand( 'googleAddMedia', () => {
+		initMediaModal();
+
+		renderModal( {
+			visible: true,
+			source: 'google_photos',
 		} );
 	} );
 
@@ -412,6 +459,41 @@ function mediaButton( editor ) {
 					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 				</button>
 			) );
+		}
+	} );
+
+	editor.addButton( 'wp_img_edit', {
+		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		classes: 'toolbar-segment-start',
+		icon: 'dashicon dashicons-edit',
+		onclick: function() {
+			const selectedSite = getSelectedSiteFromState();
+			if ( ! selectedSite ) {
+				return;
+			}
+
+			const siteId = selectedSite.ID;
+			const node = editor.selection.getNode();
+			const m = node.className.match( /wp-image-(\d+)/ );
+			const imageId = m && parseInt( m[ 1 ], 10 );
+			if ( ! imageId ) {
+				return;
+			}
+			const image = MediaStore.get( siteId, imageId );
+
+			MediaActions.clearValidationErrors( siteId );
+			renderModal(
+				{
+					visible: true,
+					labels: {
+						confirm: i18n.translate( 'Update', { context: 'verb' } )
+					}
+				},
+				{
+					view: ModalViews.DETAIL
+				}
+			);
+			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
 		}
 	} );
 
@@ -550,16 +632,7 @@ function mediaButton( editor ) {
 		// Replace selected content
 		editor.selection.setContent( markup );
 
-		// Re-select image node
-		let replacement = editor.selection.getStart();
-		if ( 'IMG' !== replacement.nodeName ) {
-			replacement = replacement.querySelector( 'img' );
-		}
-
-		if ( replacement ) {
-			editor.selection.select( replacement );
-			editor.selection.controlSelection.showResizeRect( replacement );
-		}
+		reselectImage();
 
 		editor.nodeChanged();
 	}
@@ -777,8 +850,8 @@ function mediaButton( editor ) {
 	// send contextmenu event up to desktop app
 	if ( config.isEnabled( 'desktop' ) ) {
 		const ipc = require( 'electron' ).ipcRenderer; // From Electron
-		editor.on( 'contextmenu', function( ev ) {
-			ipc.send( 'mce-contextmenu', ev );
+		editor.on( 'contextmenu', function() {
+			ipc.send( 'mce-contextmenu', { sender: true } );
 		} );
 	}
 

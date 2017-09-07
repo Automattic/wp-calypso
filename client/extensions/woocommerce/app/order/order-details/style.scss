@@ -1,0 +1,98 @@
+.order-details__table {
+	margin: 0 -24px;
+	box-shadow: none;
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	.order-details__item-cost,
+	.order-details__item-quantity,
+	.order-details__item-tax,
+	.order-details__item-total {
+		text-align: right;
+		width: 70px;
+
+		input {
+			width: 70px;
+		}
+	}
+
+	.order-details__item-sku {
+		display: block;
+		margin-top: 6px;
+		color: $gray-text-min;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+
+	thead .table-heading {
+		border-bottom: 1px solid lighten( $gray, 30% );
+	}
+
+	.table-row {
+		&:hover {
+			background: transparent;
+		}
+	}
+}
+
+.order-details__totals {
+	padding: 24px 0;
+	text-align: right;
+	font-size: 14px;
+
+	.order-details__total-discount,
+	.order-details__total-shipping,
+	.order-details__total-shipping-refund,
+	.order-details__total-refund,
+	.order-details__total {
+		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
+
+		.order-details__totals-label {
+			flex: 1 0 calc( 100% - 104px );
+		}
+
+		.order-details__totals-tax,
+		.order-details__totals-value {
+			flex: 1 0 92px;
+		}
+	}
+
+	&.is-refund-modal,
+	&.has-taxes {
+		.order-details__total-discount,
+		.order-details__total-refund,
+		.order-details__total-shipping,
+		.order-details__total-shipping-refund,
+		.order-details__total {
+			.order-details__totals-label {
+				flex: 1 0 calc( 100% - 204px );
+			}
+		}
+	}
+
+	&.has-taxes {
+		.order-details__total-shipping-refund .order-details__totals-value {
+			flex: 1 0 192px;
+		}
+	}
+
+	.order-details__total-shipping-refund {
+		.form-text-input-with-affixes {
+			width: 130px;
+		}
+	}
+
+	.order-details__total-refund {
+		color: $alert-red;
+	}
+
+	& > div:last-child {
+		margin-bottom: 0;
+	}
+
+	.order-details__total .order-details__totals-label,
+	.order-details__total .order-details__totals-value {
+		font-weight: 600;
+	}
+}

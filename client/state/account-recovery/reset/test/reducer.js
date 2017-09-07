@@ -20,6 +20,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
 import reducer from '../reducer';
@@ -249,5 +252,105 @@ describe( '#account-recovery/reset reducer', () => {
 		} );
 
 		assert.isNull( state.validate.error );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST action should set the requesting status flag as true.', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
+		} );
+
+		assert.isTrue( state.resetPassword.isRequesting );
+	} );
+
+	const requestingResetPasswordState = deepFreeze( {
+		resetPassword: {
+			isRequesting: true,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS action should set the requesting flag as false.', () => {
+		const state = reducer( requestingResetPasswordState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+		} );
+
+		assert.isFalse( state.resetPassword.isRequesting );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR action should set the requesting flag as false.', () => {
+		const state = reducer( requestingResetPasswordState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
+			error: {},
+		} );
+
+		assert.isFalse( state.resetPassword.isRequesting );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS action should set the succeeded flag as true.', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+		} );
+
+		assert.isTrue( state.resetPassword.succeeded );
+	} );
+
+	const resetPasswordSucceededState = deepFreeze( {
+		resetPassword: {
+			succeeded: true,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR action should set the succeeded flag as false.', () => {
+		const state = reducer( resetPasswordSucceededState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
+			error: {},
+		} );
+
+		assert.isFalse( state.resetPassword.succeeded );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST action should set the succeeded flag as false.', () => {
+		const state = reducer( resetPasswordSucceededState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
+		} );
+
+		assert.isFalse( state.resetPassword.succeeded );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR action should populate the error field.', () => {
+		const error = {
+			status: 400,
+			message: 'something wrong.',
+		};
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
+			error,
+		} );
+
+		assert.deepEqual( state.resetPassword.error, error );
+	} );
+
+	const resetPasswordErrorState = deepFreeze( {
+		resetPassword: {
+			error: {
+				status: 400,
+				message: 'something wrong.',
+			},
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST action should clear the error field.', () => {
+		const state = reducer( resetPasswordErrorState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
+		} );
+
+		assert.isNull( state.resetPassword.error );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS action should clear the error field.', () => {
+		const state = reducer( resetPasswordErrorState, {
+			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+		} );
+
+		assert.isNull( state.resetPassword.error );
 	} );
 } );

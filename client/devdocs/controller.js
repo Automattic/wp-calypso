@@ -4,13 +4,14 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import qs from 'qs';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import page from 'page';
 import url from 'url';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DocsComponent from './main';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
@@ -22,6 +23,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import WizardComponent from './wizard-component';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
@@ -46,8 +48,7 @@ const devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			let query = context.query,
-				url = context.pathname;
+			const query = context.query;
 
 			if ( searchTerm ) {
 				query.term = searchTerm;
@@ -57,11 +58,13 @@ const devdocs = {
 
 			const queryString = qs.stringify( query ).replace( /%20/g, '+' ).trim();
 
+			let newUrl = context.pathname;
+
 			if ( queryString ) {
-				url += '?' + queryString;
+				newUrl += '?' + queryString;
 			}
 
-			page.replace( url,
+			page.replace( newUrl,
 				context.state,
 				false,
 				false );
@@ -98,6 +101,14 @@ const devdocs = {
 			React.createElement( DesignAssetsComponent, {
 				component: context.params.component
 			} ),
+			'primary',
+			context.store
+		);
+	},
+
+	wizard: function( context ) {
+		renderWithReduxStore(
+			<WizardComponent stepName={ context.params.stepName } />,
 			'primary',
 			context.store
 		);
@@ -154,10 +165,10 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( { redirectTo } ),
+				actionURL: login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
-				illustration: '/calypso/images/drake/drake-nosites.svg'
+				illustration: '/calypso/images/illustrations/illustration-nosites.svg'
 			} ),
 			document.getElementById( 'primary' )
 		);

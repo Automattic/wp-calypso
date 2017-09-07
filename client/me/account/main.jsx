@@ -11,6 +11,7 @@ import {
 	flowRight as compose,
 	map,
 	size,
+	update,
 } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -18,7 +19,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import LanguageSelector from 'components/forms/language-selector';
+import LanguagePicker from 'components/language-picker';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
@@ -43,13 +44,13 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
+import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
+import { isRequestingMissingSites } from 'state/selectors';
 
-import _sites from 'lib/sites-list';
 import _user from 'lib/user';
 
-const sites = _sites();
 const user = _user();
 
 /**
@@ -113,6 +114,18 @@ const Account = React.createClass( {
 		this.setState( { redirect } );
 	},
 
+	updateColorScheme( colorScheme ) {
+		const settingName = 'calypso_preferences.colorScheme';
+
+		// Set a fallback color scheme if no default value is provided by the API.
+		// This is a workaround that allows us to use userSettings.updateSetting() without an
+		// existing value. Without this workaround the save button wouldn't become active.
+		// TODO: the API should provide a default value, which would make this line obsolete
+		update( this.props.userSettings.settings, settingName, value => value || 'default' );
+
+		this.updateUserSetting( settingName, colorScheme );
+	},
+
 	getEmailAddress() {
 		return this.hasPendingEmailChange()
 			? this.getUserSetting( 'new_user_email' )
@@ -148,7 +161,7 @@ const Account = React.createClass( {
 		const { translate } = this.props;
 		const userLocale = this.getUserSetting( 'language' );
 		const showTranslator = userLocale && userLocale !== 'en';
-		if ( config.isEnabled( 'community-translator' ) && showTranslator ) {
+		if ( showTranslator ) {
 			return (
 				<FormFieldset>
 					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
@@ -270,10 +283,9 @@ const Account = React.createClass( {
 		} );
 	},
 
-	onSiteSelect( siteSlug ) {
-		const selectedSite = sites.getSite( siteSlug );
-		if ( selectedSite ) {
-			this.updateUserSetting( 'primary_site_ID', selectedSite.ID );
+	onSiteSelect( siteId ) {
+		if ( siteId ) {
+			this.updateUserSetting( 'primary_site_ID', siteId );
 		}
 	},
 
@@ -413,7 +425,7 @@ const Account = React.createClass( {
 	},
 
 	renderPrimarySite() {
-		const { translate } = this.props;
+		const { requestingMissingSites, translate } = this.props;
 
 		if ( ! user.get().visible_site_count ) {
 			return (
@@ -432,7 +444,7 @@ const Account = React.createClass( {
 		return (
 			<SitesDropdown
 				key={ primarySiteId }
-				isPlaceholder={ ! primarySiteId }
+				isPlaceholder={ ! primarySiteId || requestingMissingSites }
 				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
 			/>
@@ -517,20 +529,29 @@ const Account = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
-					<LanguageSelector
+					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						id="language"
 						languages={ config( 'languages' ) }
-						name="language"
-						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
+						onClick={ this.recordClickEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={ this.getUserSetting( 'language' ) || '' }
 						onChange={ this.updateLanguage }
 					/>
+					<FormSettingExplanation>
+						{ translate( 'This is the language of the interface you see across WordPress.com as a whole.' ) }
+					</FormSettingExplanation>
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
 				{ this.communityTranslator() }
+
+				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+					<FormFieldset>
+						<FormLabel htmlFor="color_scheme">
+							{ translate( 'Admin Color Scheme' ) }
+						</FormLabel>
+						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+					</FormFieldset> }
 
 				{ this.renderHolidaySnow() }
 
@@ -711,7 +732,9 @@ const Account = React.createClass( {
 
 export default compose(
 	connect(
-		null,
+		( state ) => ( {
+			requestingMissingSites: isRequestingMissingSites( state ),
+		} ),
 		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ),
 	),
 	localize,

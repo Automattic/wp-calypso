@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import moment from 'moment';
 import {
 	has,
 	isEmpty,
@@ -15,13 +16,14 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_INITIALIZE,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
+	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 
-	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_CHANGE_STATUS,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
@@ -48,18 +50,21 @@ import {
 	setHappychatAvailable,
 	setHappychatChatStatus,
 	setReconnecting,
+	setGeoLocation,
 } from './actions';
 import {
-	getHappychatTranscriptTimestamp,
 	isHappychatConnectionUninitialized,
 	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
-	isHappychatChatAssigned
+	isHappychatChatAssigned,
+	getGeoLocation,
+	getGroups,
 } from './selectors';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
+import { getHelpSelectedSite } from 'state/help/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -88,6 +93,17 @@ const startSession = () => request( {
 	path: '/happychat/session'
 } );
 
+export const updateChatPreferences = ( connection, { getState }, siteId ) => {
+	const state = getState();
+
+	if ( isHappychatClientConnected( state ) ) {
+		const locale = getCurrentUserLocale( state );
+		const groups = getGroups( state, siteId );
+
+		connection.setPreferences( locale, groups );
+	}
+};
+
 export const connectChat = ( connection, { getState, dispatch } ) => {
 	const state = getState();
 	if ( ! isHappychatConnectionUninitialized( state ) ) {
@@ -97,6 +113,13 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
+	let groups = getGroups( state );
+
+	// update the chat locale and groups when happychat is initialized
+	const selectedSite = getHelpSelectedSite( state );
+	if ( selectedSite && selectedSite.ID ) {
+		groups = getGroups( state, selectedSite.ID );
+	}
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -120,15 +143,22 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	// create new session id and get signed identity data for authenticating
 	return startSession()
-		.then( ( { session_id } ) => sign( { user, session_id } ) )
-		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
+		.then( ( { session_id, geo_location } ) => {
+			if ( geo_location && geo_location.country_long && geo_location.city ) {
+				dispatch( setGeoLocation( geo_location ) );
+			}
+
+			return sign( { user, session_id } );
+		} )
+		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale, groups ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
 };
 
-export const requestTranscript = ( connection, { getState, dispatch } ) => {
-	const timestamp = getHappychatTranscriptTimestamp( getState() );
-	debug( 'requesting transcript', timestamp );
-	return connection.transcript( timestamp ).then(
+export const requestTranscript = ( connection, { dispatch } ) => {
+	debug( 'requesting current session transcript' );
+
+	// passing a null timestamp will request the latest session's transcript
+	return connection.transcript( null ).then(
 		result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
 		e => debug( 'failed to get transcript', e )
 	);
@@ -148,17 +178,46 @@ const sendMessage = ( connection, message ) => {
 	connection.notTyping();
 };
 
-const sendBrowserInfo = ( connection, siteUrl ) => {
-	const siteHelp = `Site I need help with: ${ siteUrl }\n`;
-	const screenRes = ( typeof screen === 'object' ) && `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
-	const browserSize = ( typeof window === 'object' ) && `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
-	const userAgent = ( typeof navigator === 'object' ) && `User Agent: ${ navigator.userAgent }`;
-	const msg = {
-		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+export const sendInfo = ( connection, { getState }, action ) => {
+	const { howCanWeHelp, howYouFeel, site } = action;
+	const info = {
+		howCanWeHelp,
+		howYouFeel,
+		siteId: site.ID,
+		siteUrl: site.URL,
+		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
 	};
 
-	debug( 'sending info message', msg );
-	connection.info( msg );
+	// add screen size
+	if ( 'object' === typeof ( screen ) ) {
+		info.screenSize = {
+			width: screen.width,
+			height: screen.height
+		};
+	}
+
+	// add browser size
+	if ( 'object' === typeof ( window ) ) {
+		info.browserSize = {
+			width: window.innerWidth,
+			height: window.innerHeight
+		};
+	}
+
+	// add user agent
+	if ( 'object' === typeof ( navigator ) ) {
+		info.userAgent = navigator.userAgent;
+	}
+
+	//  add geo location
+	const state = getState();
+	const geoLocation = getGeoLocation( state );
+	if ( geoLocation ) {
+		info.geoLocation = geoLocation;
+	}
+
+	debug( 'sending info message', info );
+	connection.sendInfo( info );
 };
 
 export const connectIfRecentlyActive = ( connection, store ) => {
@@ -180,7 +239,7 @@ export const getEventMessageFromActionData = ( action ) => {
 	// Below we've stubbed in the actions we think we'll care about, so that we can
 	// start incrementally adding messages for them.
 	switch ( action.type ) {
-		case COMMENTS_CHANGE_STATUS_SUCESS:
+		case COMMENTS_CHANGE_STATUS:
 			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
 			return 'Export completed';
@@ -244,7 +303,7 @@ export const sendAnalyticsLogEvent = ( connection, { meta: { analytics: analytic
 			const eventMessage = getEventMessageFromTracksData( { name, properties } );
 			if ( eventMessage ) {
 				// Once we want these events to appear in production we should change this to sendEvent
-				connection.sendStagingEvent( eventMessage );
+				connection.sendEvent( eventMessage );
 			}
 
 			// Always send a log for every tracks event
@@ -270,7 +329,7 @@ export const sendActionLogsAndEvents = ( connection, { getState }, action ) => {
 	const eventMessage = getEventMessageFromActionData( action );
 	if ( eventMessage ) {
 		// Once we want these events to appear in production we should change this to sendEvent
-		connection.sendStagingEvent( eventMessage );
+		connection.sendEvent( eventMessage );
 	}
 };
 
@@ -294,8 +353,12 @@ export default function( connection = null ) {
 				connectIfRecentlyActive( connection, store );
 				break;
 
-			case HAPPYCHAT_SEND_BROWSER_INFO:
-				sendBrowserInfo( connection, action.siteUrl );
+			case HELP_CONTACT_FORM_SITE_SELECT:
+				updateChatPreferences( connection, store, action.siteId );
+				break;
+
+			case HAPPYCHAT_SEND_USER_INFO:
+				sendInfo( connection, store, action );
 				break;
 
 			case HAPPYCHAT_SEND_MESSAGE:

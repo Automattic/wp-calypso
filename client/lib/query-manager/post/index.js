@@ -22,7 +22,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @param  {Object}  post  Item to consider
 	 * @return {Boolean}       Whether post matches query
 	 */
-	matches( query, post ) {
+	static matches( query, post ) {
 		const queryWithDefaults = Object.assign( {}, DEFAULT_POST_QUERY, query );
 		return every( queryWithDefaults, ( value, key ) => {
 			switch ( key ) {

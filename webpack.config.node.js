@@ -3,15 +3,20 @@
 /**
  * External dependencies
  */
-const webpack = require( 'webpack' ),
-	path = require( 'path' ),
-	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
-	fs = require( 'fs' );
+const fs = require( 'fs' );
+const HappyPack = require( 'happypack' );
+const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+const os = require( 'os' );
+const path = require( 'path' );
+const webpack = require( 'webpack' );
+const _ = require( 'lodash' );
 
 /**
  * Internal dependencies
  */
+const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
+const isWindows = os.type() === 'Windows_NT';
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -53,48 +58,57 @@ function getExternals() {
 	return externals;
 }
 
+const babelLoader = {
+	loader: 'babel-loader',
+	options: {
+		plugins: [ [
+			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+			{ async: false }
+		] ],
+		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
+		cacheIdentifier: cacheIdentifier,
+	}
+}
+
+// happypack is not compatible with windows: https://github.com/amireh/happypack/blob/caaed26eec1795d464ac4b66abd29e60343e6252/README.md#does-it-work-under-windows
+const jsLoader = isWindows ? babelLoader : 'happypack/loader';
+
 const webpackConfig = {
 	devtool: 'source-map',
-	entry: 'index.js',
+	entry: './index.js',
 	target: 'node',
 	output: {
 		path: path.join( __dirname, 'build' ),
 		filename: 'bundle.js',
 	},
 	module: {
-		loaders: [
+		rules: [
 			{
-				test: /extensions\/index/,
-				exclude: 'node_modules',
+				test: /extensions[\/\\]index/,
+				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
 			},
 			{
 				test: /sections.js$/,
-				exclude: 'node_modules',
+				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
 				test: /\.jsx?$/,
-				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel',
-				query: {
-					plugins: [ [
-						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-						{ async: false }
-					] ]
-				}
+				exclude: /(node_modules|devdocs[\/\\]search-index)/,
+				loader: [ jsLoader ]
 			},
-			{
-				test: /\.json$/,
-				exclude: /(devdocs\/components-usage-stats.json)/,
-				loader: 'json-loader'
-			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
-		modulesDirectories: [ 'node_modules' ]
+		modules: [
+			__dirname,
+			path.join( __dirname, 'server' ),
+			path.join( __dirname, 'client' ),
+			path.join( __dirname, 'client', 'extensions' ),
+			'node_modules',
+		],
+		extensions: [ '.json', '.js', '.jsx' ],
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
@@ -102,28 +116,29 @@ const webpackConfig = {
 		__filename: true,
 		__dirname: true
 	},
-	plugins: [
+	plugins: _.compact( [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
+		new webpack.BannerPlugin( { banner: 'require( "source-map-support" ).install();', raw: true, entryOnly: false } ),
 		new webpack.DefinePlugin( {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
-		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/sites-list$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Depends on DOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/user$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/post-normalizer\/rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/reader-preview$/, 'components/empty-component' ), // Conflicts with component-closest module
-		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/null-component' ), // Depends on BOM and interactions don't work without JS
-		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/theme-upload$/, 'components/empty-component' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ), // should never be required server side
-		new webpack.NormalModuleReplacementPlugin( /^components\/site-selector$/, 'components/null-component' ), // Depends on BOM
-	],
+		! isWindows && new HappyPack( { loaders: [ babelLoader ] } ),
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]seo[\/\\]reader-preview$/, 'components/empty-component' ), // Conflicts with component-closest module
+		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]popover$/, 'components/null-component' ), // Depends on BOM and interactions don't work without JS
+		new webpack.NormalModuleReplacementPlugin( /^my-sites[\/\\]themes[\/\\]theme-upload$/, 'components/empty-component' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/, 'components/empty-component' ), // should never be required server side
+		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]site-selector$/, 'components/null-component' ), // Depends on BOM
+	] ),
 	externals: getExternals()
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib\/desktop$/, 'lodash/noop' ) );
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' ) );
 }
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {

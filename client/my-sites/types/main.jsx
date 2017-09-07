@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,15 +26,20 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker
 				path={ siteId ? '/types/:site' : '/types' }
-				title="Custom Post Type" />
+				title="Custom Post Type"
+			/>
 			<SidebarNavigation />
 			{ false !== userCanEdit && false !== postTypeSupported && [
 				<PostTypeFilter
 					key="filter"
-					query={ userCanEdit ? query : null } />,
+					query={ userCanEdit ? query : null }
+				/>,
 				<PostTypeList
 					key="list"
-					query={ userCanEdit ? query : null } />
+					query={ userCanEdit ? query : null }
+					largeTitles={ true }
+					wrapTitles={ true }
+				/>,
 			] }
 			{ false === postTypeSupported && (
 				<PostTypeUnsupported type={ query.type } />

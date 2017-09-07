@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isDefaultLocale } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -22,7 +22,7 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	if ( localeSlug === config( 'i18n_default_locale_slug' ) ) {
+	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		return;
 	}

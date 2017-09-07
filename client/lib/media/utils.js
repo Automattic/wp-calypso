@@ -4,7 +4,7 @@
 import url from 'url';
 import path from 'path';
 import photon from 'photon';
-import { includes, omitBy, startsWith, uniqueId } from 'lodash';
+import { includes, omitBy, startsWith } from 'lodash';
 import { isUri } from 'valid-url';
 
 /**
@@ -20,7 +20,7 @@ import {
 	GalleryDefaultAttrs
 } from './constants';
 import Shortcode from 'lib/shortcode';
-import versionCompare from 'lib/version-compare';
+import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Module variables
@@ -228,14 +228,14 @@ const MediaUtils = {
 	 * Returns true if the site can be trusted to accurately report its allowed
 	 * file types. Returns false otherwise.
 	 *
-	 * Jetpack versions 3.8.0 and earlier do not sync the allowed file types
+	 * Jetpack currently does not sync the allowed file types
 	 * option, so we must assume that all file types are supported.
 	 *
 	 * @param  {Object}  site Site object
 	 * @return {Boolean}      Site allowed file types are accurate
 	 */
 	isSiteAllowedFileTypesToBeTrusted: function( site ) {
-		return ! site || ! site.jetpack || versionCompare( site.options.jetpack_version, '3.8.1', '>=' );
+		return ! site || ! site.jetpack;
 	},
 
 	/**
@@ -534,6 +534,17 @@ const MediaUtils = {
 				title: path.basename( file ),
 				extension: MediaUtils.getFileExtension( file ),
 				mime_type: MediaUtils.getMimeType( file )
+			} );
+		} else if ( file.thumbnails ) {
+			// Generate from a file data object
+			Object.assign( transientMedia, {
+				file: file.URL,
+				title: file.name,
+				extension: file.extension,
+				mime_type: file.mime_type,
+				guid: file.URL,
+				URL: file.URL,
+				external: true,
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

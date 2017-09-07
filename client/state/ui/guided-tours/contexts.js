@@ -10,6 +10,7 @@ import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
 import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { getAll as getAllMedia } from 'lib/media/store';
 import {
 	getSectionName,
 	getSelectedSite,
@@ -23,7 +24,7 @@ import {
 	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 
-const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the current user is in a given section
@@ -56,14 +57,34 @@ const timeSinceUserRegistration = state => {
 };
 
 /**
+ * Returns a selector that tests if the user is newer than a given time
+ *
+ * @param {Number} age Number of milliseconds
+ * @return {Function} Selector function
+ */
+export const isUserNewerThan = age => state => {
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge <= age : false;
+};
+
+/**
  * Returns true if the user is considered "new" (less than a week since registration)
  *
  * @param {Object} state Global state tree
  * @return {Boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
-	const userAge = timeSinceUserRegistration( state );
-	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
+	return isUserNewerThan( WEEK_IN_MILLISECONDS )( state );
+};
+
+/**
+ * Returns true if the user is NOT considered "new" (less than a week since registration)
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if user is NOT new, false otherwise
+ */
+export const isNotNewUser = state => {
+	return ! isNewUser( state );
 };
 
 /**
@@ -128,6 +149,21 @@ export const isSelectedSitePreviewable = state =>
  */
 export const isSelectedSiteCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+
+/**
+ * Returns true if the selected site has any media files.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if site has any media files, false otherwise.
+*/
+export const doesSelectedSiteHaveMediaFiles = state => {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		return false;
+	}
+	const media = getAllMedia( siteId );
+	return media && media.length && media.length > 0;
+};
 
 /**
  * Returns a selector that tests whether an A/B test is in a given variant.

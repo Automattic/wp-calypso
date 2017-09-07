@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
-import mapValues from 'lodash/mapValues';
-import merge from 'lodash/merge';
+import { mapValues, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +15,8 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE
 } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
-import { isValidStateWithSchema, createReducer } from 'state/utils';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
 
@@ -44,10 +42,6 @@ export function queryRequests( state = {}, action ) {
 					}
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;

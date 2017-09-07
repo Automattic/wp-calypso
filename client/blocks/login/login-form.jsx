@@ -2,9 +2,12 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { Component, PropTypes } from 'react';
+import { defer } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -16,29 +19,86 @@ import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { loginUser } from 'state/login/actions';
+import { getCurrentQueryArguments } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { fetchOAuth2SignupUrl } from 'state/oauth2-clients/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { loginUser, formUpdate } from 'state/login/actions';
+import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
-import { errorNotice } from 'state/notices/actions';
+import {
+	getRequestError,
+	isFormDisabled,
+	getSocialAccountIsLinking,
+	getSocialAccountLinkEmail,
+	getSocialAccountLinkService,
+} from 'state/login/selectors';
+import Notice from 'components/notice';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		errorNotice: PropTypes.func.isRequired,
-		isRequesting: PropTypes.bool.isRequired,
-		loginError: PropTypes.string,
+		fetchOAuth2SignupUrl: PropTypes.func.isRequired,
+		formUpdate: PropTypes.func.isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		privateSite: PropTypes.bool,
+		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
+		socialAccountIsLinking: PropTypes.bool,
+		socialAccountLinkEmail: PropTypes.string,
+		socialAccountLinkService: PropTypes.string,
+		userEmail: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		isFormDisabled: PropTypes.bool,
+		oauth2Client: PropTypes.object,
 	};
 
 	state = {
-		usernameOrEmail: '',
+		isDisabledWhileLoading: true,
+		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		password: '',
 		rememberMe: false,
 	};
 
+	componentDidMount() {
+		if ( this.props.redirectTo ) {
+			this.props.fetchOAuth2SignupUrl( this.props.redirectTo );
+		}
+
+		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+			this.usernameOrEmail.focus();
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { requestError } = this.props;
+
+		if ( prevProps.requestError || ! requestError ) {
+			return;
+		}
+
+		if ( requestError.field === 'password' ) {
+			defer( () => this.password.focus() );
+		}
+
+		if ( requestError.field === 'usernameOrEmail' ) {
+			defer( () => this.usernameOrEmail.focus() );
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
+			nextProps.socialAccountIsLinking ) {
+			if ( ! this.state.usernameOrEmail ) {
+				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
+			}
+		}
+	}
+
 	onChangeField = ( event ) => {
+		this.props.formUpdate();
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
@@ -47,7 +107,7 @@ export class LoginForm extends Component {
 	onChangeRememberMe = ( event ) => {
 		const { name, checked } = event.target;
 
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
+		this.props.recordTracksEvent( 'calypso_login_block_remember_me_click', { new_value: checked } );
 
 		this.setState( { [ name ]: checked } );
 	};
@@ -55,56 +115,94 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
+		const { usernameOrEmail, password } = this.state;
+		const { onSuccess, redirectTo } = this.props;
 
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
-			this.props.onSuccess( this.state );
+		const rememberMe = this.props.socialAccountIsLinking ? true : this.state.rememberMe;
+
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+
+		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+
+			onSuccess();
 		} ).catch( error => {
-			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+				error_code: error.code,
 				error_message: error.message
 			} );
-
-			if ( error.field === 'global' ) {
-				if ( error.message === 'proxy_required' ) {
-					// TODO: Remove once the proxy requirement is removed from the API
-
-					let redirectTo = '';
-
-					if ( typeof window !== 'undefined' && window.location.search.indexOf( '?redirect_to=' ) === 0 ) {
-						redirectTo = window.location.search;
-					}
-
-					this.props.errorNotice(
-						<p>
-							{ 'This endpoint is restricted to proxied Automatticians for now. Please use ' }
-							<a href={ config( 'login_url' ) + redirectTo }>the old login page</a>.
-						</p>
-					);
-				} else {
-					this.props.errorNotice( error.message );
-				}
-			}
 		} );
 	};
 
+	savePasswordRef = ( input ) => {
+		this.password = input;
+	};
+
+	saveUsernameOrEmailRef = ( input ) => {
+		this.usernameOrEmail = input;
+	};
+
+	renderPrivateSiteNotice() {
+		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
+			return (
+				<Notice status="is-info" showDismiss={ false } icon="lock">
+					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
+					"If you are not a member of this site, we'll send " +
+					'your username to the site owner for approval.' ) }
+				</Notice>
+			);
+		}
+	}
+
 	render() {
 		const isDisabled = {};
-		if ( this.props.isRequesting ) {
+
+		if ( this.state.isDisabledWhileLoading || this.props.isFormDisabled ) {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError } = this.props;
+		const { requestError, redirectTo, oauth2Client } = this.props;
+		const linkingSocialUser = this.props.socialAccountIsLinking;
+		const isOauthLogin = !! oauth2Client;
+		let signupUrl = config( 'signup_url' );
+
+		if ( isOauthLogin ) {
+			if ( config.isEnabled( 'signup/wpcc' ) ) {
+				signupUrl = '/start/wpcc?' + qs.stringify( {
+					oauth2_client_id: oauth2Client.id,
+					oauth2_redirect: redirectTo
+				} );
+			} else {
+				signupUrl = oauth2Client.signupUrl;
+			}
+		}
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.renderPrivateSiteNotice() }
+
 				<Card className="login__form">
 					<div className="login__form-userdata">
+						{ linkingSocialUser && (
+							<div className="login__form-link-social-notice">
+								<p>
+									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s". ' +
+										'Log in to this account to connect it to your %(service)s profile.', {
+											args: {
+												email: this.props.socialAccountLinkEmail,
+												service: this.props.socialAccountLinkService,
+											}
+										}
+									) }
+								</p>
+							</div>
+						) }
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
 							{ this.props.translate( 'Username or Email Address' ) }
 						</label>
 
 						<FormTextInput
+							autoCapitalize="off"
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
@@ -113,6 +211,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
+							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
 							{ ...isDisabled } />
 
@@ -125,6 +224,8 @@ export class LoginForm extends Component {
 						</label>
 
 						<FormPasswordInput
+							autoCapitalize="off"
+							autoComplete="off"
 							className={
 								classNames( 'login__form-userdata-username-password', {
 									'is-error': requestError && requestError.field === 'password'
@@ -133,6 +234,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="password"
 							name="password"
+							ref={ this.savePasswordRef }
 							value={ this.state.password }
 							{ ...isDisabled } />
 
@@ -141,23 +243,66 @@ export class LoginForm extends Component {
 						) }
 					</div>
 
-					<div className="login__form-remember-me">
-						<label>
-							<FormCheckbox
-								name="rememberMe"
-								checked={ this.state.rememberMe }
-								onChange={ this.onChangeRememberMe }
-								{ ...isDisabled } />
-							<span>{ this.props.translate( 'Stay logged in' ) }</span>
-						</label>
-					</div>
+					{ ! linkingSocialUser && (
+						<div className="login__form-remember-me">
+							<label>
+								<FormCheckbox
+									name="rememberMe"
+									checked={ this.state.rememberMe }
+									onChange={ this.onChangeRememberMe }
+									{ ...isDisabled } />
+								<span>{ this.props.translate( 'Keep me logged in' ) }</span>
+							</label>
+						</div>
+					) }
+
+					{ config.isEnabled( 'signup/social' ) && (
+					<p className="login__form-terms">
+						{
+							preventWidows( this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+									}
+								}
+							), 5 )
+
+						}
+					</p>
+					) }
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
+
+					{ isOauthLogin && (
+						<div className={ classNames( 'login__form-signup-link', {
+							disabled: ! oauth2Client.signupUrl
+						} ) }>
+							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
+								{
+									components: {
+										signupLink: <a href={ signupUrl } />,
+									}
+								}
+							) }
+						</div>
+					) }
 				</Card>
+				{ config.isEnabled( 'signup/social' ) && (
+					<Card className="login__form-social">
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							linkingSocialService={ this.props.socialAccountIsLinking
+								? this.props.socialAccountLinkService
+								: null
+							} />
+					</Card>
+				) }
 			</form>
 		);
 	}
@@ -165,12 +310,20 @@ export class LoginForm extends Component {
 
 export default connect(
 	( state ) => ( {
-		isRequesting: isRequesting( state ),
+		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+		userEmail: getCurrentQueryArguments( state ).email_address,
 		requestError: getRequestError( state ),
+		isFormDisabled: isFormDisabled( state ),
+		socialAccountIsLinking: getSocialAccountIsLinking( state ),
+		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
+		socialAccountLinkService: getSocialAccountLinkService( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-		errorNotice,
+		formUpdate,
 		loginUser,
 		recordTracksEvent,
+		fetchOAuth2SignupUrl,
 	}
 )( localize( LoginForm ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,8 +12,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function requestCommentEmailUnsubscription( { dispatch }, action, next ) {
+export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
@@ -23,25 +25,24 @@ export function requestCommentEmailUnsubscription( { dispatch }, action, next ) 
 			onFailure: action,
 		} )
 	);
-	next( action );
 }
 
-export function receiveCommentEmailUnsubscription( store, action, next, response ) {
+export function receiveCommentEmailUnsubscription( store, action, response ) {
 	// validate that it worked
 	// if it did, just swallow this response, as we don't need to pass it along.
 	const subscribed = !! ( response && response.subscribed );
 	if ( subscribed ) {
 		// shoot. something went wrong.
-		receiveCommentEmailUnsubscriptionError( store, action, next );
+		receiveCommentEmailUnsubscriptionError( store, action );
 		return;
 	}
 }
 
-export function receiveCommentEmailUnsubscriptionError( { dispatch }, action, next ) {
+export function receiveCommentEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
 		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
 	);
-	next( subscribeToNewCommentEmail( action.payload.blogId ) );
+	dispatch( bypassDataLayer( subscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
 export default {

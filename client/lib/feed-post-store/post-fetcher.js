@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, noop, omit } from 'lodash';
+import { assign, noop, pick } from 'lodash';
 import Immutable from 'immutable';
 
 /**
@@ -23,7 +23,7 @@ function PostFetcher( options ) {
 assign( PostFetcher.prototype, {
 
 	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
+		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 
 		if ( ! this.batchQueued ) {
 			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
@@ -31,7 +31,7 @@ assign( PostFetcher.prototype, {
 	},
 
 	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
+		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 	},
 
 	run: function() {

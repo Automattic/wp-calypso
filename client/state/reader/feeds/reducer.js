@@ -1,7 +1,7 @@
+/** @format */
 /**
  * External Dependencies
  */
-import { combineReducers } from 'redux';
 import { assign, keyBy, map, omit, omitBy, reduce } from 'lodash';
 
 /**
@@ -15,10 +15,8 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import { decodeEntities } from 'lib/formatting';
-
-import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
 const actionMap = {
@@ -67,6 +65,9 @@ function adaptFeed( feed ) {
 		feed_URL: feed.feed_URL,
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,
+		description: feed.description && decodeEntities( feed.description ),
+		last_update: feed.last_update,
+		image: feed.image,
 	};
 }
 
@@ -97,9 +98,6 @@ export function queuedRequests( state = {}, action ) {
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
 			return omit( state, action.payload.feed_ID );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 	return state;
 }

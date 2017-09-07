@@ -18,8 +18,8 @@ const child_process = require( 'child_process' );
 /**
  * Internal dependencies
  */
-const config = require( './config' );
-const helpers = require( './helpers' );
+const config = require( './src/config' );
+const helpers = require( './src/helpers' );
 
 const args = process.argv.slice( 2 );
 if ( args.length === 0 ) {
@@ -36,7 +36,7 @@ const binArgs = [
 	...config.recastArgs,
 
 	// Transform target
-	args[ 0 ],
+	...args,
 ];
 const binPath = path.join( '.', 'node_modules', '.bin', 'jscodeshift' );
 const jscodeshift = child_process.spawn( binPath, binArgs );

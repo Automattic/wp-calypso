@@ -91,8 +91,6 @@
 }
 
 .language-picker__modal {
-	padding: 0;
-
 	&.dialog.card {
 		position: absolute;
 		top: 0;
@@ -123,6 +121,8 @@
 		display: flex;
 		flex-direction: column;
 		flex: auto;
+		min-height: 0; // permits the .language-picker__modal-list to shrink below its min height
+		padding: 0;
 	}
 
 	.dialog__action-buttons {

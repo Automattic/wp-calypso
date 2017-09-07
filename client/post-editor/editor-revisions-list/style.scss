@@ -1,0 +1,68 @@
+.editor-revisions-list__button {
+	// NOTE: this is imitating the style of an accordion (with subtitle), with
+	// support for being "selected" and no right arrow
+	background-color: $accordion-background-collapsed;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	color: $gray-dark;
+	cursor: pointer;
+	display: block;
+	font-size: 13px;
+	margin: 0;
+	padding: ( $accordion-padding - $accordion-subtitle-height / 2 ) $accordion-padding;
+	text-align: left;
+	width: 100%;
+
+	&:hover {
+		background: $accordion-background-hover;
+		color: $blue-medium;
+	}
+
+	.editor-revisions-list__revision.is-selected > &,
+	.editor-revisions-list__revision.is-selected > &:hover {
+		background: $blue-medium;
+
+		// NOTE: force with a heavy specificity white text, see discussion on
+		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
+		* {
+			color: $white;
+		}
+	}
+}
+
+.editor-revisions-list__date {
+	font-weight: bold;
+}
+
+.editor-revisions-list__changes {
+	padding-top: 5px;
+	font-size: 11px;
+}
+
+.editor-revisions-list__additions {
+	color: $blue-medium;
+}
+
+.editor-revisions-list__deletions {
+	color: $alert-red;
+}
+
+.editor-revisions-list__minor-changes {
+	color: $gray-text-min;
+}
+
+.editor-revisions-list__list,
+.editor-revisions-list__header {
+	background: $white;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	font-size: 13px;
+}
+
+.editor-revisions-list__header {
+	margin-bottom: 10px;
+	padding: 1rem;
+}
+
+.editor-revisions-list__load-revision {
+	width: 100%;
+}

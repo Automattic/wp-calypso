@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wp from 'lib/wp';
@@ -6,49 +11,45 @@ import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
+	WP_SUPER_CACHE_PRELOAD_CACHE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
-
-/**
- * Returns an action object to be used in signalling that cache test results have been received.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} results Cache test results object
- * @return {Object} Action object
- */
-export const receiveResults = ( siteId, results ) => ( { type: WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS, siteId, results } );
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { getSiteTitle } from 'state/sites/selectors';
 
 /*
  * Tests the cache for a site.
  *
  * @param  {Number} siteId Site ID
- * @returns {Function} Action thunk that tests the cache ror a given site
+ * @param  {String} siteTitle Site title
+ * @param  {Boolean} httpOnly Whether to send a non-secure request for the homepage
+ * @returns {Function} Action thunk that tests the cache for a given site
  */
-export const testCache = ( siteId, httpOnly ) => {
+export const testCache = ( siteId, siteTitle, httpOnly ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: WP_SUPER_CACHE_TEST_CACHE,
-			siteId,
-		} );
+		dispatch( removeNotice( 'wpsc-test-cache' ) );
+		dispatch( { type: WP_SUPER_CACHE_TEST_CACHE, siteId } );
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/cache/test', body: JSON.stringify( { httponly: httpOnly } ), json: true } )
 			.then( ( { data } ) => {
-				dispatch( receiveResults( siteId, data ) );
-				dispatch( {
-					type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-					siteId,
-				} );
+				dispatch( successNotice(
+					translate( 'Cache test completed successfully on %(siteTitle)s.', { args: { siteTitle } } ),
+					{ id: 'wpsc-test-cache' }
+				) );
+				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_SUCCESS, siteId, data } );
 			} )
 			.catch( () => {
-				dispatch( {
-					type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-					siteId,
-				} );
+				dispatch( errorNotice(
+					translate( 'There was a problem testing the cache. Please try again.' ),
+					{ id: 'wpsc-test-cache' }
+				) );
+				dispatch( { type: WP_SUPER_CACHE_TEST_CACHE_FAILURE, siteId } );
 			} );
 	};
 };
@@ -74,6 +75,7 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 			.then( () => {
 				dispatch( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					deleteExpired,
 					siteId,
 				} );
 			} )
@@ -82,6 +84,72 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId,
 				} );
+			} );
+	};
+};
+
+/*
+ * Preloads the cache for a site.
+ *
+ * @param  {Number} siteId Site ID
+ * @returns {Function} Action thunk that preloads the cache for a given site
+ */
+export const preloadCache = ( siteId ) => {
+	return ( dispatch, getState ) => {
+		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
+		dispatch( removeNotice( 'wpsc-preload-cache' ) );
+
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: true } ), json: true } )
+			.then( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId, preloading: true } );
+				dispatch( successNotice(
+					translate( 'Cache preload started successfully on %(siteTitle)s.',
+						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
+					),
+					{ id: 'wpsc-preload-cache' }
+				) );
+			} )
+			.catch( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, siteId } );
+				dispatch( errorNotice(
+					translate( 'There was a problem preloading the cache. Please try again.' ),
+					{ id: 'wpsc-preload-cache' }
+				) );
+			} );
+	};
+};
+
+/*
+ * Cancels preloading the cache for a site.
+ *
+ * @param  {Number} siteId Site ID
+ * @returns {Function} Action thunk that cancels preloading the cache for a given site
+ */
+export const cancelPreloadCache = ( siteId ) => {
+	return ( dispatch, getState ) => {
+		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
+		dispatch( removeNotice( 'wpsc-cancel-preload' ) );
+
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: false } ), json: true } )
+			.then( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId, preloading: false } );
+				dispatch( successNotice(
+					translate( 'Cache preload cancelled successfully on %(siteTitle)s.',
+						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
+					),
+					{ id: 'wpsc-cancel-preload' }
+				) );
+			} )
+			.catch( () => {
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, siteId } );
+				dispatch( errorNotice(
+					translate( 'There was a problem cancelling the preload. Please try again.' ),
+					{ id: 'wpsc-cancel-preload' }
+				) );
 			} );
 	};
 };

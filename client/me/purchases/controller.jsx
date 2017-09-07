@@ -29,141 +29,86 @@ const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
-	context.store.dispatch( setDocumentHeadTitle(
-		concatTitle( titles.purchases, ...title )
-	) );
+	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
 }
 
 export default {
 	addCardDetails( context ) {
-		setTitle(
-			context,
-			titles.addCardDetails
-		);
+		setTitle( context, titles.addCardDetails );
 
-		recordPurchasesPageView(
-			paths.addCardDetails(),
-			'Add Card Details'
-		);
+		recordPurchasesPageView( paths.addCardDetails(), 'Add Card Details' );
 
 		renderPage(
 			context,
-			<AddCardDetails
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+			<AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
 	},
 
 	addCreditCard( context ) {
-		recordPurchasesPageView(
-			paths.addCreditCard(),
-			'Add Credit Card'
-		);
+		recordPurchasesPageView( paths.addCreditCard(), 'Add Credit Card' );
 
-		renderPage(
-			context,
-			<AddCreditCard />
-		);
+		renderPage( context, <AddCreditCard /> );
 	},
 
 	cancelPrivacyProtection( context ) {
-		setTitle(
-			context,
-			titles.cancelPrivacyProtection
-		);
+		setTitle( context, titles.cancelPrivacyProtection );
 
-		recordPurchasesPageView(
-			paths.cancelPrivacyProtection(),
-			'Cancel Privacy Protection'
-		);
+		recordPurchasesPageView( paths.cancelPrivacyProtection(), 'Cancel Privacy Protection' );
 
 		renderPage(
 			context,
-			<CancelPrivacyProtection
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
 	},
 
 	cancelPurchase( context ) {
-		setTitle(
-			context,
-			titles.cancelPurchase
-		);
+		setTitle( context, titles.cancelPurchase );
 
-		recordPurchasesPageView(
-			paths.cancelPurchase(),
-			'Cancel Purchase'
-		);
+		recordPurchasesPageView( paths.cancelPurchase(), 'Cancel Purchase' );
 
 		renderPage(
 			context,
-			<CancelPurchase
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			<CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
 	},
 
 	confirmCancelDomain( context ) {
-		setTitle(
-			context,
-			titles.confirmCancelDomain
-		);
+		setTitle( context, titles.confirmCancelDomain );
 
-		recordPurchasesPageView(
-			paths.confirmCancelDomain(),
-			'Confirm Cancel Domain'
-		);
+		recordPurchasesPageView( paths.confirmCancelDomain(), 'Confirm Cancel Domain' );
 
 		renderPage(
 			context,
-			<ConfirmCancelDomain
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
 	},
 
 	editCardDetails( context ) {
-		setTitle(
-			context,
-			titles.editCardDetails
-		);
+		setTitle( context, titles.editCardDetails );
 
-		recordPurchasesPageView(
-			paths.editCardDetails(),
-			'Edit Card Details'
-		);
+		recordPurchasesPageView( paths.editCardDetails(), 'Edit Card Details' );
 
 		renderPage(
 			context,
 			<EditCardDetails
 				cardId={ context.params.cardId }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			/>
 		);
 	},
 
 	list( context ) {
 		setTitle( context );
 
-		recordPurchasesPageView(
-			paths.purchasesRoot()
-		);
+		recordPurchasesPageView( paths.purchasesRoot() );
 
-		renderPage(
-			context,
-			<PurchasesList noticeType={ context.params.noticeType } />
-		);
+		renderPage( context, <PurchasesList noticeType={ context.params.noticeType } /> );
 	},
 
 	managePurchase( context ) {
-		setTitle(
-			context,
-			titles.managePurchase
-		);
+		setTitle( context, titles.managePurchase );
 
-		recordPurchasesPageView(
-			paths.managePurchase(),
-			'Manage Purchase'
-		);
+		recordPurchasesPageView( paths.managePurchase(), 'Manage Purchase' );
 
 		renderPage(
 			context,
@@ -181,10 +126,7 @@ export default {
 
 		setTitle( context );
 
-		recordPurchasesPageView(
-			context.path,
-			'No Sites'
-		);
+		recordPurchasesPageView( context.path, 'No Sites' );
 
 		renderPage(
 			context,
@@ -193,5 +135,5 @@ export default {
 				<NoSitesMessage />
 			</Main>
 		);
-	}
+	},
 };

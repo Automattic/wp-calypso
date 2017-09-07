@@ -3,17 +3,10 @@
  */
 import React from 'react';
 import page from 'page';
-import get from 'lodash/get';
+import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
 import debugModule from 'debug';
-import includes from 'lodash/includes';
-import some from 'lodash/some';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import uniqueId from 'lodash/uniqueId';
-import groupBy from 'lodash/groupBy';
-import filter from 'lodash/filter';
-import pickBy from 'lodash/pickBy';
-import isEmpty from 'lodash/isEmpty';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -443,7 +436,7 @@ const InvitePeople = React.createClass( {
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					/>
 				</Main>
 			);

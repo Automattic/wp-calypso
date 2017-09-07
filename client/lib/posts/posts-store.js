@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/isEqual' ),
-	debug = require( 'debug' )( 'calypso:posts' );
+import { isEqual } from 'lodash';
+const debug = require( 'debug' )( 'calypso:posts' );
 
 /**
  * Internal dependencies

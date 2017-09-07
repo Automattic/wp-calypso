@@ -13,8 +13,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import reducer, {
 	requesting,
@@ -75,26 +73,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: false,
 				77203074: false
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					2916284: false,
-					77203074: true
-				} );
-				const state = requesting( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					2916284: false,
-					77203074: true
-				} );
-				const state = requesting( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );
@@ -174,26 +152,6 @@ describe( 'reducer', () => {
 				77203074: 'something else went wrong'
 			} );
 		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					2916284: 'so many requestErrors',
-					77203074: null
-				} );
-				const state = requestErrors( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					2916284: null,
-					77203074: 'something went wrong'
-				} );
-				const state = requestErrors( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-		} );
 	} );
 
 	describe( '#requestSuccess()', () => {
@@ -266,26 +224,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: true,
 				77203074: true
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			it( 'never persists state', () => {
-				const original = deepFreeze( {
-					2916284: true,
-					77203074: null
-				} );
-				const state = requestSuccess( original, { type: SERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-
-			it( 'never loads persisted state', () => {
-				const original = deepFreeze( {
-					2916284: null,
-					77203074: true
-				} );
-				const state = requestSuccess( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

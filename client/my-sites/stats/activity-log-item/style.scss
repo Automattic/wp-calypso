@@ -1,0 +1,156 @@
+.activity-log-item {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: center;
+	position: relative;
+
+	// TODO: Remove when foldable cards become "expandable"
+	.foldable-card__header.is-clickable {
+		cursor: default;
+	}
+
+	&:first-of-type {
+		margin-top: 24px;
+	}
+
+	.card {
+		flex: 1;
+		margin-bottom: 16px;
+		background: $white;
+	}
+
+	.activity-log-item__card .foldable-card__content {
+		padding: 16px;
+		font-size: 14px;
+		color: darken( $gray, 20% );
+	}
+
+	.foldable-card {
+
+		.foldable-card__expand .gridicon {
+			transform: none;
+		}
+
+		&.is-expanded {
+			margin-bottom: 24px;
+
+			.foldable-card__expand .gridicon {
+				transform: rotate( 180deg );
+			}
+		}
+	}
+
+	.foldable-card__main {
+		flex: 5 1;
+	}
+}
+
+.activity-log-item__type {
+	align-self: flex-start;
+	background: $gray-light;
+	text-align: center;
+	margin: -2px 22px 0 10px;
+	padding: 4px 0 6px;
+
+	@include breakpoint( "<480px" ) {
+		margin: -2px 14px 0 4px;
+	}
+}
+
+.activity-log-item__time {
+	font-size: 11px;
+	color: $gray;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.activity-log-item__activity-icon {
+	// General notice
+	background: $gray;
+	color: $white;
+	display: flex;
+	border-radius: 50%;
+	padding: 12px;
+	margin-top: 2px;
+
+	@include breakpoint( "<480px" ) {
+		padding: 10px;
+	}
+
+	// Success
+	&.is-success {
+		background: $alert-green;
+	}
+
+	// Warning
+	&.is-warning {
+		background: $alert-yellow;
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		background: $alert-red;
+	}
+}
+
+.activity-log-item__card-header {
+	display: flex;
+	flex: 1;
+	align-items: center;
+
+	@include breakpoint( "<960px" ) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.activity-log-item__actor {
+	display: flex;
+	flex: 3 1;
+	align-items: center;
+	margin-right: 32px;
+
+	@include breakpoint( "<960px" ) {
+		margin-bottom: 16px;
+	}
+
+	.gravatar,
+	.jetpack-logo {
+		float: left;
+		margin-right: 16px;
+	}
+
+	.jetpack-logo path {
+		fill: $green-jetpack;
+	}
+}
+
+.activity-log-item__actor-role {
+	text-transform: capitalize;
+	font-size: 12px;
+	color: $gray;
+}
+
+.activity-log-item__title {
+	flex: 4 1;
+	font-size: 14px;
+
+	@include breakpoint( "<960px" ) {
+		margin-left: 54px;
+	}
+}
+
+.activity-log-item__action {
+	flex-basis: 25%;
+	text-align:right;
+}
+
+.activity-log-item__id {
+	margin-top: 8px;
+	font-size: 11px;
+	font-style: italic;
+	color: lighten( $gray, 20% );
+}

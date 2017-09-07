@@ -21,32 +21,32 @@ module.exports = React.createClass( {
 			URL: 'http://wordpress.com',
 			date: '2016-07-25T00:00:00+02:00',
 			tags: {
-				'banana': {
+				banana: {
 					name: 'Banana',
 					slug: 'banana',
-					display_name: 'banana'
+					display_name: 'banana',
 				},
-				'pineapple': {
+				pineapple: {
 					name: 'Pineapple',
 					slug: 'pineapple',
-					display_name: 'pineapple'
+					display_name: 'pineapple',
 				},
-				'mango': {
+				mango: {
 					name: 'Mango',
 					slug: 'mango',
-					display_name: 'mango'
+					display_name: 'mango',
 				},
-				'feijoa': {
+				feijoa: {
 					name: 'Feijoa',
 					slug: 'feijoa',
-					display_name: 'feijoa'
+					display_name: 'feijoa',
 				},
-				'pear': {
+				pear: {
 					name: 'Pear',
 					slug: 'pear',
-					display_name: 'pear'
+					display_name: 'pear',
 				},
-			}
+			},
 		};
 
 		return (
@@ -54,5 +54,5 @@ module.exports = React.createClass( {
 				<ReaderFullPostHeader post={ post } />
 			</Card>
 		);
-	}
+	},
 } );

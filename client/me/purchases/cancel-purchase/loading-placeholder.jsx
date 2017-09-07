@@ -21,9 +21,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 	}
 
 	return (
-		<LoadingPlaceholder
-			title={ titles.cancelPurchase }
-			path={ path }>
+		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path }>
 			<Card className="cancel-purchase-loading-placeholder__card">
 				<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
 				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
@@ -40,10 +38,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
 	purchaseId: React.PropTypes.number.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] )
+	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
 };
 
 export default CancelPurchaseLoadingPlaceholder;

@@ -7,7 +7,7 @@
 .site-or-domain__choice {
 	margin: 10px;
 	min-width: 230px;
-	max-width: 330px;
+	max-width: 300px;
 	flex-grow: 1;
 	transition: box-shadow 100ms ease-in-out;
 	cursor: pointer;
@@ -27,6 +27,10 @@
 	}
 }
 
+.site-or-domain__choice-is-placeholder {
+	cursor: default;
+}
+
 .site-or-domain__button {
 	text-align: center;
 }
@@ -36,6 +40,10 @@
 
 	.button {
 		text-transform: uppercase;
+
+		&.site-or-domain__is-placeholder {
+			width: 90%;
+		}
 	}
 }
 
@@ -59,7 +67,7 @@
 	}
 
 	.site-or-domain__choice-text {
-		min-height: 185px;
+		min-height: 205px;
 	}
 }
 
@@ -68,4 +76,8 @@
 		display: flex;
 		flex-direction: column-reverse;
 	}
+}
+
+.site-or-domain__is-placeholder {
+	@include placeholder(23%);
 }

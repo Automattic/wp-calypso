@@ -3,14 +3,15 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import ActionRemove from 'me/action-remove';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import eventRecorder from 'me/event-recorder';
 import { withoutHttp } from 'lib/url';
+import Button from 'components/button';
 
 export default React.createClass( {
 
@@ -37,10 +38,10 @@ export default React.createClass( {
 
 	renderRemove() {
 		return (
-			<ActionRemove
-				className="profile-link__remove"
+			<Button borderless icon className="profile-link__remove"
 				onClick={ this.recordClickEvent( 'Remove Link Next to Site', this.props.onRemoveLink ) }
-			/>
+			>
+			<Gridicon icon="cross" /></Button>
 		);
 	},
 

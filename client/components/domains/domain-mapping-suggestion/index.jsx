@@ -1,49 +1,55 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	{ shouldBundleDomainWithPlan, getDomainPriceRule } = require( 'lib/cart-values/cart-items' );
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'lib/cart-values/cart-items';
 
-var DomainMappingSuggestion = React.createClass( {
-	propTypes: {
-		cart: React.PropTypes.object,
-		products: React.PropTypes.object.isRequired,
-		onButtonClick: React.PropTypes.func.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
-	},
-	render: function() {
+class DomainMappingSuggestion extends React.Component {
+	static propTypes = {
+		isSignupStep: PropTypes.bool,
+		cart: PropTypes.object,
+		products: PropTypes.object.isRequired,
+		onButtonClick: PropTypes.func.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] )
+	};
+
+	render() {
 		const suggestion = {
-				product_slug: this.props.products.domain_map.product_slug,
-				cost: this.props.products.domain_map.cost_display
-			},
-			buttonContent = shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
-				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
-				: this.translate( 'Map it', { context: 'Domain mapping suggestion button' } );
+			product_slug: this.props.products.domain_map.product_slug,
+			cost: this.props.products.domain_map.cost_display
+		};
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
+		const buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+			? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
+			: translate( 'Map it', { context: 'Domain mapping suggestion button' } );
+
 		return (
-				<DomainSuggestion
-					priceRule={ getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
-					price={ this.props.products.domain_map && this.props.products.domain_map.cost_display }
-					extraClasses="is-visible domain-mapping-suggestion"
-					buttonClasses="map"
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					buttonContent={ buttonContent }
-					cart={ this.props.cart }
-					onButtonClick={ this.props.onButtonClick }>
+			<DomainSuggestion
+				priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
+				price={ this.props.products.domain_map && this.props.products.domain_map.cost_display }
+				extraClasses="is-visible domain-mapping-suggestion"
+				buttonClasses="map"
+				domainsWithPlansOnly={ domainsWithPlansOnly }
+				buttonContent={ buttonContent }
+				cart={ cart }
+				onButtonClick={ this.props.onButtonClick }>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>
-						{ this.translate( 'Already own a domain?', {
+						{ translate( 'Already own a domain?', {
 							context: 'Upgrades: Register domain header',
 							comment: 'Asks if you want to own a new domain (not if you want to map an existing domain).'
 						} ) }
 					</h3>
 					<p>
-						{ this.translate( 'Map this domain to use it as your site\'s address.', {
+						{ translate( 'Map this domain to use it as your site\'s address.', {
 							context: 'Upgrades: Register domain description',
 							comment: 'Explains how you could use a new domain name for your site\'s address.'
 						} ) }
@@ -52,6 +58,6 @@ var DomainMappingSuggestion = React.createClass( {
 			</DomainSuggestion>
 		);
 	}
-} );
+}
 
-module.exports = DomainMappingSuggestion;
+export default localize( DomainMappingSuggestion );

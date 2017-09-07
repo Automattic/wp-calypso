@@ -42,6 +42,14 @@
 	}
 }
 
+.jetpack-plugins-setup .plugin-item {
+	width: 100%;
+
+	&:nth-last-child( n + 2 ) {
+		border-bottom-width: 1px;
+	}
+}
+
 .jetpack-plugins-setup .plugin-item__finished {
 	color: $gray;
 	font-size: 12px;

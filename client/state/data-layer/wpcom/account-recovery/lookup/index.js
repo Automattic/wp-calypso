@@ -33,7 +33,7 @@ export const validate = ( { primary_email, primary_sms, secondary_email, seconda
 	}
 };
 
-export const handleRequestResetOptions = ( { dispatch }, action, next ) => {
+export const handleRequestResetOptions = ( { dispatch }, action ) => {
 	const { userData } = action;
 
 	wpcom.req.get( {
@@ -45,8 +45,6 @@ export const handleRequestResetOptions = ( { dispatch }, action, next ) => {
 		dispatch( updatePasswordResetUserData( userData ) );
 	} )
 	.catch( error => dispatch( fetchResetOptionsError( error ) ) );
-
-	return next( action );
 };
 
 export default {

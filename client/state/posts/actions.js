@@ -80,7 +80,7 @@ export function requestSitePosts( siteId, query = {} ) {
 			source = source.me();
 		}
 
-		return source.postsList( query ).then( ( { found, posts } ) => {
+		return source.postsList( { ...query } ).then( ( { found, posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,

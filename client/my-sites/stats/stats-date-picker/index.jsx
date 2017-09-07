@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { connect } from 'react-redux';
@@ -12,7 +13,6 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/tooltip';
 import { getSiteStatsQueryDate } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
@@ -26,12 +26,13 @@ class StatsDatePicker extends Component {
 		summary: PropTypes.bool,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		showQueryDate: PropTypes.bool,
-		userLocale: PropTypes.string,
+		isActivity: PropTypes.bool,
+		showQueryDate: PropTypes.bool
 	};
 
 	static defaultProps = {
-		showQueryDate: false
+		showQueryDate: false,
+		isActivity: false
 	};
 
 	state = {
@@ -47,8 +48,8 @@ class StatsDatePicker extends Component {
 	};
 
 	dateForSummarize() {
-		const { query, moment, translate, userLocale } = this.props;
-		const localizedDate = moment().locale( userLocale );
+		const { query, moment, translate } = this.props;
+		const localizedDate = moment();
 
 		switch ( query.num ) {
 			case '-1':
@@ -70,8 +71,11 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay() {
-		const { date, moment, period, translate, userLocale } = this.props;
-		const localizedDate = moment( date ).locale( userLocale );
+		const { date, moment, period, translate } = this.props;
+
+		// Ensure we have a moment instance here to work with.
+		const momentDate = moment.isMoment( date ) ? date : moment( date );
+		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
 		switch ( period ) {
@@ -114,30 +118,46 @@ class StatsDatePicker extends Component {
 		const today = moment();
 		const date = moment( queryDate );
 		const isToday = today.isSame( date, 'day' );
-		return translate( 'Last update: %(time)s', {
-			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
-		} );
+		return (
+			<span>
+				{ translate( 'Last update: %(time)s', {
+					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
+				} ) }
+				<Gridicon icon="info-outline" size={ 18 } />
+			</span>
+		);
 	}
 
-	bindPulsingDot = ( ref ) => {
-		this.pulsingDot = ref;
+	bindStatusIndicator = ( ref ) => {
+		this.statusIndicator = ref;
 	}
 
 	render() {
-		const { summary, translate, query, showQueryDate } = this.props;
+		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
-		const sectionTitle = translate( 'Stats for {{period/}}', {
-			components: {
-				period: (
-					<span className="period">
-						<span className="date">{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }</span>
-					</span>
-				)
-			},
-			context: 'Stats: Main stats page heading',
-			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
-		} );
+		const sectionTitle = isActivity
+			? translate( 'Activity for {{period/}}', {
+				components: {
+					period: (
+						<span className="period">
+							<span className="date">{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }</span>
+						</span>
+					)
+				},
+				comment: 'Example: "Activity for December 2017"'
+			} )
+			: translate( 'Stats for {{period/}}', {
+				components: {
+					period: (
+						<span className="period">
+							<span className="date">{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }</span>
+						</span>
+					)
+				},
+				context: 'Stats: Main stats page heading',
+				comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
+			} );
 
 		return (
 			<div>
@@ -146,25 +166,23 @@ class StatsDatePicker extends Component {
 					: <div className="stats-section-title">
 							<h3>{ sectionTitle }</h3>
 							{ showQueryDate && isAutoRefreshAllowedForQuery( query ) &&
-								<div className="stats-date-picker__refresh-status">
+								<div
+									className="stats-date-picker__refresh-status"
+									ref={ this.bindStatusIndicator }
+									onMouseEnter={ this.showTooltip }
+									onMouseLeave={ this.hideTooltip }
+								>
 									<span className="stats-date-picker__update-date">
 										{ this.renderQueryDate() }
-									</span>
-									<div className="stats-date-picker__pulsing-dot-wrapper"
-										ref={ this.bindPulsingDot }
-										onMouseEnter={ this.showTooltip }
-										onMouseLeave={ this.hideTooltip }
-									>
-										<div className="stats-date-picker__pulsing-dot" />
 										<Tooltip
 											isVisible={ this.state.isTooltipVisible }
 											onClose={ this.hideTooltip }
 											position="bottom"
-											context={ this.pulsingDot }
+											context={ this.statusIndicator }
 										>
 											{ translate( 'Auto-refreshing every 3 minutes' )}
 										</Tooltip>
-									</div>
+									</span>
 								</div>
 							}
 						</div>
@@ -178,7 +196,6 @@ const connectComponent = connect(
 	( state, { query, statsType, showQueryDate } ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
-			userLocale: getCurrentUserLocale( state ),
 			queryDate: showQueryDate ? getSiteStatsQueryDate( state, siteId, statsType, query ) : null,
 			requesting: showQueryDate ? isRequestingSiteStatsForQuery( state, siteId, statsType, query ) : false,
 		};

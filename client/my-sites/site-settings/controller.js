@@ -1,47 +1,40 @@
 /**
  * External Dependencies
  */
-import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import route from 'lib/route';
-import { sectionify } from 'lib/route/path';
-import SiteSettingsComponent from 'my-sites/site-settings/main';
-import sitesFactory from 'lib/sites-list';
+import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import ManageConnection from './manage-connection';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isVipSite } from 'state/selectors';
+import { SITES_ONCE_CHANGED } from 'state/action-types';
 
-/**
- * Module vars
- */
-const sites = sitesFactory();
+function canDeleteSite( state, siteId ) {
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
-function canDeleteSite( site ) {
-	if ( ! site.capabilities || ! site.capabilities.manage_options ) {
+	if ( ! siteId || ! canManageOptions ) {
 		// Current user doesn't have manage options to delete the site
 		return false;
 	}
 
-	// Current user can't delete a jetpack site
-	if ( site.jetpack ) {
+	if ( isJetpackSite( state, siteId ) ) {
+		// Current user can't delete a jetpack site
 		return false;
 	}
 
-	if ( site.is_vip ) {
+	if ( isVipSite( state, siteId ) ) {
 		// Current user can't delete a VIP site
 		return false;
 	}
@@ -57,93 +50,82 @@ function renderPage( context, component ) {
 	);
 }
 
-module.exports = {
+const controller = {
 	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},
 
-	siteSettings( context ) {
-		let analyticsPageTitle = 'Site Settings';
-		const basePath = route.sectionify( context.path );
-		const siteId = getSelectedSiteId( context.store.getState() );
-		const section = sectionify( context.path ).split( '/' )[ 2 ];
+	redirectIfCantDeleteSite( context ) {
 		const state = context.store.getState();
+		const dispatch = context.store.dispatch;
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
-
-		// if site loaded, but user cannot manage site, redirect
-		if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
-			page.redirect( '/stats' );
-			return;
+		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+			return page.redirect( '/settings/general/' + siteSlug );
 		}
 
-		// if user went directly to jetpack settings page, redirect
-		if ( isJetpackSite( state, siteId ) && ! config.isEnabled( 'manage/jetpack' ) ) {
-			window.location.href = '//wordpress.com/manage/' + siteId;
-			return;
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: () => {
+					const updatedState = context.store.getState();
+					const updatedSiteId = getSelectedSiteId( updatedState );
+					const updatedSiteSlug = getSelectedSiteSlug( updatedState );
+					if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
+						return page.redirect( '/settings/general/' + updatedSiteSlug );
+					}
+				}
+			} );
 		}
+	},
 
+	general( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section={ section } />
+			<SiteSettingsMain />
 		);
-
-		// analytics tracking
-		if ( 'undefined' !== typeof section ) {
-			analyticsPageTitle += ' > ' + titlecase( section );
-		}
-		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 	},
 
 	importSite( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section="import" />
+			<AsyncLoad require="my-sites/site-settings/section-import" />
 		);
 	},
 
 	exportSite( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section="export" />
+			<AsyncLoad require="my-sites/site-settings/section-export" />
 		);
 	},
 
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
+			<AsyncLoad
+				require="my-sites/guided-transfer"
+				hostSlug={ context.params.host_slug }
+			/>
 		);
 	},
 
 	deleteSite( context ) {
-		let site = sites.getSelectedSite();
+		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
 
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
-		}
+		redirectIfCantDeleteSite( context );
 
 		renderPage(
 			context,
-			<DeleteSite sites={ sites } path={ context.path } />
+			<DeleteSite path={ context.path } />
 		);
 	},
 
 	startOver( context ) {
-		const site = getSelectedSite( context.store.getState() );
-		if ( site && ! canDeleteSite( site ) ) {
-			return page( '/settings/general/' + site.slug );
-		}
+		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
+
+		redirectIfCantDeleteSite( context );
 
 		renderPage(
 			context,
@@ -154,16 +136,23 @@ module.exports = {
 	themeSetup( context ) {
 		const site = getSelectedSite( context.store.getState() );
 		if ( site && site.jetpack ) {
-			return page( '/settings/general/' + site.slug );
+			return page.redirect( '/settings/general/' + site.slug );
 		}
 
 		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
-			return page( '/settings/general/' + site.slug );
+			return page.redirect( '/settings/general/' + site.slug );
 		}
 
 		renderPage(
 			context,
-			<ThemeSetup activeSiteDomain={ context.params.site_id } />
+			<ThemeSetup />
+		);
+	},
+
+	manageConnection( context ) {
+		renderPage(
+			context,
+			<ManageConnection />
 		);
 	},
 
@@ -188,10 +177,6 @@ module.exports = {
 		}
 		next();
 	},
-
-	setScroll( context, next ) {
-		window.scroll( 0, 0 );
-		next();
-	}
-
 };
+
+export default controller;

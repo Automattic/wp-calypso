@@ -1,7 +1,7 @@
+/** @format */
 /**
  * External Dependencies
  */
-import { combineReducers } from 'redux';
 import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
@@ -15,10 +15,10 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-
-import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'lib/formatting';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
@@ -67,6 +67,10 @@ function adaptSite( attributes ) {
 	}
 	attributes.title = trim( attributes.name ) || attributes.domain;
 
+	if ( attributes.description ) {
+		attributes.description = decodeEntities( attributes.description );
+	}
+
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
 	if ( attributes.options && attributes.options.is_mapped_domain && ! attributes.is_jetpack ) {
@@ -99,6 +103,7 @@ export function items( state = {}, action ) {
 	const handler = actionMap[ action.type ] || defaultHandler;
 	return handler( state, action );
 }
+items.hasCustomPersistence = true;
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -109,9 +114,6 @@ export function queuedRequests( state = {}, action ) {
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
-		case SERIALIZE: // do not serialize in flight data
-		case DESERIALIZE:
-			return {};
 		// we intentionally don't update state on READER_SITE_UPDATE because those can't affect inflight requests
 	}
 	return state;

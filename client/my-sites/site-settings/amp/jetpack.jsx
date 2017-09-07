@@ -11,20 +11,22 @@ import { connect } from 'react-redux';
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { addQueryArgs } from 'lib/url';
+import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
 
 const AmpJetpack = ( {
 	ampPluginInstalled,
+	customizerAmpPanelUrl,
 	requestingPlugins,
-	site,
 	siteId,
 	siteSlug,
 	translate
 } ) => {
 	let linkUrl, linkText;
 	if ( ampPluginInstalled && ampPluginInstalled.active ) {
-		linkUrl = site.URL + '/wp-admin/customize.php?autofocus%5Bpanel%5D=amp_panel&customize_amp=1';
+		linkUrl = customizerAmpPanelUrl;
 		linkText = translate( 'Edit the design of your Accelerated Mobile Pages' );
 	} else {
 		linkUrl = '/plugins/amp/' + siteSlug;
@@ -62,15 +64,19 @@ const AmpJetpack = ( {
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
+		const customizerUrl = getCustomizerUrl( state, siteId );
+		const customizerAmpPanelUrl = addQueryArgs( {
+			'autofocus[panel]': 'amp_panel',
+			customize_amp: 1,
+		}, customizerUrl );
 
 		return {
-			site,
 			siteId,
-			ampPluginInstalled: getPluginOnSite( state, site, 'amp' ),
+			ampPluginInstalled: getPluginOnSite( state, siteId, 'amp' ),
+			customizerAmpPanelUrl,
 			requestingPlugins: isRequesting( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	}
 )( localize( AmpJetpack ) );

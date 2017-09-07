@@ -14,6 +14,10 @@
 	margin-right: 8px;
 }
 
+.wp-super-cache__main .form-fieldset:last-child {
+	margin-bottom: 0;
+}
+
 // Easy Tab
 .wp-super-cache__notice-hug-card {
 	margin-top: -15px;
@@ -71,9 +75,18 @@
 	margin: 10px 0 0 24px;
 }
 
+.wp-super-cache__nested-page-types {
+	margin-left: 36px;
+}
+
 .wp-super-cache__directly-cached-files .form-text-input,
 .wp-super-cache__directly-cached-files .form-text-input-with-action {
 	width: 300px;
+}
+
+.wp-super-cache__directly-cached-files-delete {
+	margin-left: 8px;
+	vertical-align: middle;
 }
 
 // Contents Tab
@@ -90,11 +103,6 @@
 
 .wp-super-cache__cache-stat-item {
 	display: block;
-}
-
-.wp-super-cache__cache-stat-refresh {
-	font-style: italic;
-	font-size: 13px;
 }
 
 .wp-super-cache__foldable-card.is-compact .foldable-card__header {
@@ -188,7 +196,7 @@
 	margin-top: -10px;
 }
 
-.wp-super-cache__miscellaneous-304-notice.is-compact {
+.wp-super-cache__toggle-notice.is-compact {
 	margin-left: 36px;
 	margin-bottom: 5px;
 }
@@ -220,4 +228,22 @@
 .wp-super-cache__main  .wp-super-cache__lock-down-code-block-button {
 	margin-right: 0;
 	float: right;
+}
+
+.wp-super-cache__main  .wp-super-cache__debug-cache-comment-snippet {
+	font-family: monospace, serif;
+	font-style: normal;
+	display: block;
+	white-space: pre;
+}
+
+// Debug Tab
+
+.wp-super-cache__debug-fieldsets,
+.wp-super-cache__debug-tab .form-fieldset .form-setting-explanation.is-indented {
+	margin-left: 36px;
+}
+
+.wp-super-cache__debug-log-button {
+	margin-top: 12px;
 }

@@ -76,7 +76,7 @@ class ThemeSelectionStep extends Component {
 		const { translate } = this.props;
 		const headerText = translate( 'Choose a theme.' );
 		const subHeaderText = translate(
-			'No need to overthink it. You can always switch to a different theme later.',
+			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
 			{ context: 'Themes step subheader in Signup' }
 		);
 

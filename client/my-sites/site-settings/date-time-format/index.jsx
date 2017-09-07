@@ -146,7 +146,7 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<FoldableCard
-				className="date-time-format"
+				className="date-time-format site-settings__foldable-card"
 				clickableHeader
 				header={ this.getCardHeader() }
 			>

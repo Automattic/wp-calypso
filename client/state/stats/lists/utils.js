@@ -9,6 +9,34 @@ import { moment, translate } from 'i18n-calypso';
  */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+
+/**
+ * Returns a string of the moment format for the period. Supports store stats
+ * isoWeek and shortened formats.
+ *
+ * @param  {String} period Stats query
+ * @param  {String} date   Stats date
+ * @return {Object}        Period range
+ */
+export function getPeriodFormat( period, date ) {
+	const strDate = date.toString();
+	switch ( period ) {
+		case 'week':
+			return ( strDate.length === 8 && strDate.substr( 4, 2 ) === '-W' )
+				? 'YYYY-[W]WW'
+				:	'YYYY-MM-DD';
+		case 'month':
+			return ( strDate.length === 7 && strDate.substr( 4, 1 ) === '-' )
+				? 'YYYY-MM'
+				: 'YYYY-MM-DD';
+		case 'year':
+			return ( strDate.length === 4 ) ? 'YYYY' : 'YYYY-MM-DD';
+		case 'day':
+		default:
+			return 'YYYY-MM-DD';
+	}
+}
+
 /**
  * Returns an object with the startOf and endOf dates
  * for the given stats period and date
@@ -18,7 +46,8 @@ import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
  * @return {Object}        Period range
  */
 export function rangeOfPeriod( period, date ) {
-	const momentDate = moment( date ).locale( 'en' );
+	const format = getPeriodFormat( period, date );
+	const momentDate = moment( date, format ).locale( 'en' );
 	const startOf = momentDate.clone().startOf( period );
 	const endOf = momentDate.clone().endOf( period );
 
@@ -102,6 +131,155 @@ export function buildExportArray( data, parent = null ) {
  */
 export function getSerializedStatsQuery( query = {} ) {
 	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
+}
+
+/**
+ * Return delta data in a format used by 'extensions/woocommerce/app/store-stats`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @return {array} - Array of data objects
+ */
+export function parseOrderDeltas( payload ) {
+	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
+		return [];
+	}
+	return payload.deltas.map( row => { // will be renamed to deltas
+		const notPeriodKeys = Object.keys( row ).filter( key => key !== 'period' );
+		const newRow = { period: parseUnitPeriods( payload.unit, row.period ).format( 'YYYY-MM-DD' ) };
+		notPeriodKeys.forEach( key => {
+			newRow[ key ] = row[ key ].reduce( ( acc, curr, i ) => {
+				acc[ payload.delta_fields[ i ] ] = curr;
+				return acc;
+			}, {} );
+		} );
+		return newRow;
+	} );
+}
+
+/**
+ * Return data in a format used by 'components/chart`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @param {array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @return {array} - Array of data objects
+ */
+export function parseOrdersChartData( payload ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function( record ) {
+		// Initialize data
+		const dataRecord = {};
+
+		// Fill Field Values
+		record.forEach( function( value, i ) {
+			dataRecord[ payload.fields[ i ] ] = value;
+		} );
+
+		dataRecord.labelDay = '';
+		dataRecord.labelWeek = '';
+		dataRecord.labelMonth = '';
+		dataRecord.labelYear = '';
+		dataRecord.classNames = [];
+
+		if ( dataRecord.period ) {
+			const date = parseUnitPeriods( payload.unit, dataRecord.period ).locale( 'en' );
+			const localizedDate = parseUnitPeriods( payload.unit, dataRecord.period );
+			if ( date.isValid() ) {
+				const dayOfWeek = date.toDate().getDay();
+				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+					dataRecord.classNames.push( 'is-weekend' );
+				}
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
+			}
+		}
+
+		dataRecord.period = parseUnitPeriods( payload.unit, dataRecord.period ).format( 'YYYY-MM-DD' );
+		return dataRecord;
+	} );
+}
+
+/**
+ * Return data in a format used by 'components/chart`. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Object} payload - response
+ * @param {array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @return {array} - Array of data objects
+ */
+function parseChartData( payload, nullAttributes = [] ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function( record ) {
+		// Initialize data
+		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
+			memo[ attribute ] = null;
+			return memo;
+		}, {} );
+
+		// Fill Field Values
+		record.forEach( function( value, i ) {
+			// Remove W from weeks
+			if ( 'period' === payload.fields[ i ] ) {
+				value = value.replace( /W/g, '-' );
+			}
+			dataRecord[ payload.fields[ i ] ] = value;
+		} );
+
+		dataRecord.labelDay = '';
+		dataRecord.labelWeek = '';
+		dataRecord.labelMonth = '';
+		dataRecord.labelYear = '';
+		dataRecord.classNames = [];
+
+		if ( dataRecord.period ) {
+			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
+			if ( date.isValid() ) {
+				const dayOfWeek = date.toDate().getDay();
+				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+					dataRecord.classNames.push( 'is-weekend' );
+				}
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
+			}
+		}
+		return dataRecord;
+	} );
+}
+
+/**
+ * Return moment date object for the day or last day of the period.
+ *
+ * @param {string} unit - day, week, month or year
+ * @param {string} period - period in shortened store sting format, eg '2017-W26'
+ * @return {Object} - moment date object
+ */
+export function parseUnitPeriods( unit, period ) {
+	switch ( unit ) {
+		case 'week':
+			const splitYearWeek = period.split( '-W' );
+			return moment().isoWeekYear( splitYearWeek[ 0 ] ).isoWeek( splitYearWeek[ 1 ] ).endOf( 'isoWeek' );
+		case 'month':
+			return moment( period, 'YYYY-MM' ).endOf( 'month' );
+		case 'year':
+			return moment( period, 'YYYY' ).endOf( 'year' );
+		case 'day':
+		default:
+			return moment( period, 'YYYY-MM-DD' );
+	}
 }
 
 export const normalizers = {
@@ -232,6 +410,7 @@ export const normalizers = {
 			// ’ in country names causes google's geo viz to break
 			return {
 				label: country.country_full.replace( /’/, "'" ),
+				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
 				backgroundImage: icon
@@ -620,51 +799,42 @@ export const normalizers = {
 	},
 
 	statsVisits( payload ) {
+		return parseChartData( payload, [ 'visits', 'likes', 'visitors', 'comments', 'posts' ] );
+	},
+
+	statsOrders( payload ) {
+		return {
+			data: parseOrdersChartData( payload ),
+			deltas: parseOrderDeltas( payload ),
+		};
+	},
+
+	statsTopSellers( payload ) {
 		if ( ! payload || ! payload.data ) {
 			return [];
 		}
+		return payload.data;
+	},
 
-		const attributes = [ 'visits', 'likes', 'visitors', 'comments', 'posts' ];
+	statsTopCategories( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
+	},
 
-		return payload.data.map( function( record ) {
-			// Initialize data
-			const dataRecord = attributes.reduce( ( memo, attribute ) => {
-				memo[ attribute ] = null;
-				return memo;
-			}, {} );
+	statsTopCoupons( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
+	},
 
-			// Fill Field Values
-			record.forEach( function( value, i ) {
-				// Remove W from weeks
-				if ( 'period' === payload.fields[ i ] ) {
-					value = value.replace( /W/g, '-' );
-				}
-				dataRecord[ payload.fields[ i ] ] = value;
-			} );
-
-			dataRecord.labelDay = '';
-			dataRecord.labelWeek = '';
-			dataRecord.labelMonth = '';
-			dataRecord.labelYear = '';
-			dataRecord.classNames = [];
-
-			if ( dataRecord.period ) {
-				const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
-				const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
-				if ( date.isValid() ) {
-					const dayOfWeek = date.toDate().getDay();
-					if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
-						dataRecord.classNames.push( 'is-weekend' );
-					}
-					dataRecord.labelDay = localizedDate.format( 'MMM D' );
-					dataRecord.labelWeek = localizedDate.format( 'MMM D' );
-					dataRecord.labelMonth = localizedDate.format( 'MMM' );
-					dataRecord.labelYear = localizedDate.format( 'YYYY' );
-				}
-			}
-
-			return dataRecord;
-		} );
+	statsTopEarners( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+		return payload.data;
 	},
 
 	/*

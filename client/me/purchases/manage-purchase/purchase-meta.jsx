@@ -38,61 +38,65 @@ import {
 	isDataLoading,
 	getEditCardDetailsPath,
 	getPurchase,
-	getSelectedSite
+	getSelectedSite,
 } from '../utils';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		purchaseId: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.bool
-		] ).isRequired,
+		purchaseId: React.PropTypes.oneOfType( [ React.PropTypes.number, React.PropTypes.bool ] )
+			.isRequired,
 		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool,
-			React.PropTypes.undefined
-		] )
-	}
+		selectedSite: React.PropTypes.oneOfType(
+			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		),
+	};
 
 	static defaultProps = {
 		hasLoadedSites: false,
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
-	}
+	};
 
 	renderPrice() {
 		const { translate } = this.props;
 		const purchase = getPurchase( this.props );
 		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
-		const period = productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
+		const period = productSlug && isMonthly( productSlug )
+			? translate( 'month' )
+			: translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}', {
-				args: { amount, currencyCode, currencySymbol },
-				components: {
-					period: <span className="manage-purchase__time-period" />
+			return translate(
+				'%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}',
+				{
+					args: { amount, currencyCode, currencySymbol },
+					components: {
+						period: <span className="manage-purchase__time-period" />,
+					},
 				}
-			} );
+			);
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Free with Plan' );
 		}
 
-		return translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-			args: {
-				amount,
-				currencyCode,
-				currencySymbol,
-				period
-			},
-			components: {
-				period: <span className="manage-purchase__time-period" />
+		return translate(
+			'%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}',
+			{
+				args: {
+					amount,
+					currencyCode,
+					currencySymbol,
+					period,
+				},
+				components: {
+					period: <span className="manage-purchase__time-period" />,
+				},
 			}
-		} );
+		);
 	}
 
 	renderRenewsOrExpiresOnLabel() {
@@ -161,7 +165,11 @@ class PurchaseMeta extends Component {
 			);
 		}
 
-		if ( isExpiring( purchase ) || isExpired( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
+		if (
+			isExpiring( purchase ) ||
+			isExpired( purchase ) ||
+			creditCardExpiresBeforeSubscription( purchase )
+		) {
 			return moment( purchase.expiryDate ).format( 'LL' );
 		}
 
@@ -194,7 +202,7 @@ class PurchaseMeta extends Component {
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
 				paymentInfo = translate( 'expiring %(cardExpiry)s', {
 					args: {
-						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' )
+						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' ),
 					},
 				} );
 			}
@@ -229,7 +237,11 @@ class PurchaseMeta extends Component {
 			</span>
 		);
 
-		if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! getSelectedSite( this.props ) ) {
+		if (
+			! canEditPaymentDetails( purchase ) ||
+			! isPaidWithCreditCard( purchase ) ||
+			! getSelectedSite( this.props )
+		) {
 			return (
 				<li>
 					{ paymentDetails }
@@ -256,18 +268,20 @@ class PurchaseMeta extends Component {
 
 		return (
 			<div className="manage-purchase__contact-support">
-				{ translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
-				'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
-				'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
+				{ translate(
+					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
+						'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							siteSlug: this.props.selectedPurchase.domain
+							siteSlug: this.props.selectedPurchase.domain,
 						},
 						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
-						}
-					} ) }
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+						},
+					}
+				) }
 			</div>
 		);
 	}
@@ -291,14 +305,12 @@ class PurchaseMeta extends Component {
 	renderPlaceholder() {
 		return (
 			<ul className="manage-purchase__meta">
-				{
-					times( 4, ( i ) => (
-						<li key={ i }>
-							<em className="manage-purchase__detail-label" />
-							<span className="manage-purchase__detail" />
-						</li>
-					) )
-				}
+				{ times( 4, i => (
+					<li key={ i }>
+						<em className="manage-purchase__detail-label" />
+						<span className="manage-purchase__detail" />
+					</li>
+				) ) }
 			</ul>
 		);
 	}
@@ -319,7 +331,9 @@ class PurchaseMeta extends Component {
 						<span className="manage-purchase__detail">{ this.renderPrice() }</span>
 					</li>
 					<li>
-						<em className="manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
+						<em className="manage-purchase__detail-label">
+							{ this.renderRenewsOrExpiresOnLabel() }
+						</em>
 						<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
 					</li>
 					{ this.renderPaymentDetails() }
@@ -330,16 +344,14 @@ class PurchaseMeta extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect( ( state, props ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
 
-		return {
-			hasLoadedSites: ! isRequestingSites( state ),
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			selectedPurchase: purchase,
-			selectedSite: getSelectedSiteSelector( state ),
-			owner: purchase ? getUser( state, purchase.userId ) : null,
-		};
-	}
-)( localize( PurchaseMeta ) );
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: purchase,
+		selectedSite: getSelectedSiteSelector( state ),
+		owner: purchase ? getUser( state, purchase.userId ) : null,
+	};
+} )( localize( PurchaseMeta ) );

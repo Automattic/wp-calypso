@@ -22,7 +22,8 @@ class ImageEditorButtons extends Component {
 		resetImageEditorState: PropTypes.func,
 		onDone: PropTypes.func,
 		onCancel: PropTypes.func,
-		onReset: PropTypes.func
+		onReset: PropTypes.func,
+		doneButtonText: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -31,7 +32,8 @@ class ImageEditorButtons extends Component {
 		resetImageEditorState: noop,
 		onDone: noop,
 		onCancel: noop,
-		onReset: noop
+		onReset: noop,
+		doneButtonText: '',
 	};
 
 	render() {
@@ -41,7 +43,8 @@ class ImageEditorButtons extends Component {
 			src,
 			onDone,
 			onReset,
-			translate
+			translate,
+			doneButtonText,
 		} = this.props;
 
 		return (
@@ -67,7 +70,7 @@ class ImageEditorButtons extends Component {
 					primary
 					onClick={ onDone }
 				>
-					{ translate( ' Done ' ) }
+					{ doneButtonText || translate( ' Done ' ) }
 				</Button>
 			</div>
 		);

@@ -20,7 +20,7 @@ class ExtendedHeader extends Component {
 		);
 
 		return (
-			<SectionHeader label={ labelContent }>
+			<SectionHeader className="extended-header" label={ labelContent }>
 				{ children }
 			</SectionHeader>
 		);

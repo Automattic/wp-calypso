@@ -1,21 +1,25 @@
+/** @format */
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+
 import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 
 /**
  * Tracks mappings between queries --> feed results
+ *
+ * A map of query to results, keyed by query key.
+ * The query key is supplied by the action, making it opaque to the reducer.
  * Here is what the state tree may look like:
  * feedSearches: {
 		items: {
-			'wordpress tavern': [ feed1, feed2, ],
+			'wordpress tavern-X': [ feed1, feed2, ],
 			...
 		},
 	}
@@ -24,27 +28,25 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => {
-			const current = state[ action.query ] || [];
-			return {
-				...state,
-				[ action.query ]: uniqBy( current.concat( action.payload.feeds ), 'feed_URL' ),
-			};
-		},
-	}
+export const items = keyedReducer(
+	'queryKey',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) =>
+			uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' ),
+	} )
 );
 
 /**
  * Tracks mappings between queries --> num results
+ *
+ * A of query counts to results, keyed by query key.
+ * The query key is supplied by the action, making it opaque to the reducer.
  * Here is what the state tree may look like:
  * feedSearches: {
 		total: {
-			'wordpress tavern': 4,
-			'thingsldkjflskjfsdf': 0,
-			'chickens': 4000,
+			'wordpress tavern-X': 4,
+			'thingsldkjflskjfsdf-A': 0,
+			'chickens-A': 4000,
 			...
 		},
 	}
@@ -53,14 +55,11 @@ export const items = createReducer(
  * @param  {Object} action Action payload
  * @return {Array}         Updated state
  */
-export const total = createReducer(
-	{},
-	{
-		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => ( {
-			...state,
-			[ action.query ]: action.payload.total,
-		} ),
-	}
+export const total = keyedReducer(
+	'queryKey',
+	createReducer( null, {
+		[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => action.payload.total,
+	} )
 );
 
 export default combineReducers( {

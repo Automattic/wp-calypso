@@ -22,7 +22,7 @@ The stores are singleton objects, which offer `get` and `getAll` methods to retr
 ```js
 var MediaStore = require( 'lib/media/store' )(),
 	allMedia = MediaStore.getAll( siteId ),
-	singleMedia = Mediatore.get( siteId, postId );
+	singleMedia = MediaStore.get( siteId, postId );
 ```
 
 To interact with the store, use the actions made available in `actions.js`.

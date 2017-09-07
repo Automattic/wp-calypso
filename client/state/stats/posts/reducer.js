@@ -1,17 +1,14 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
-	SERIALIZE,
-	DESERIALIZE,
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
@@ -38,10 +35,6 @@ export function requesting( state = {}, action ) {
 					}
 				}
 			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
 	}
 
 	return state;
@@ -68,17 +61,11 @@ export function items( state = {}, action ) {
 					}
 				}
 			};
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemSchemas ) ) {
-				return state;
-			}
-
-			return {};
 	}
 
 	return state;
 }
+items.schema = itemSchemas;
 
 export default combineReducers( {
 	requesting,

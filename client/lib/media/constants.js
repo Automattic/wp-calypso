@@ -16,7 +16,8 @@ export const ValidationErrors = keyMirror( {
 	UPLOAD_VIA_URL_404: null,
 	EXCEEDS_MAX_UPLOAD_SIZE: null,
 	EXCEEDS_PLAN_STORAGE_LIMIT: null,
-	NOT_ENOUGH_SPACE: null
+	NOT_ENOUGH_SPACE: null,
+	SERVICE_FAILED: null,
 } );
 
 export const ThumbnailSizeDimensions = {
@@ -195,3 +196,7 @@ export const MimeTypes = {
 	numbers: 'application/vnd.apple.numbers',
 	pages: 'application/vnd.apple.pages',
 };
+
+export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
+export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
+export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';

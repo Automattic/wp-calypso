@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -50,7 +51,13 @@ class SearchEmptyContent extends React.Component {
 			: null;
 
 		const message = this.props.translate( 'No posts found for {{query /}} for your language.', {
-			components: { query: <em>{ this.props.query }</em> },
+			components: {
+				query: (
+					<em>
+						{ this.props.query }
+					</em>
+				),
+			},
 		} );
 
 		return (
@@ -59,8 +66,8 @@ class SearchEmptyContent extends React.Component {
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 400 }
 			/>
 		);
 	}

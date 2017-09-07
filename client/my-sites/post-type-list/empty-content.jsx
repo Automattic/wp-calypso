@@ -12,7 +12,7 @@ import { getPostType } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import EmptyContent from 'components/empty-content/empty-content';
+import EmptyContent from 'components/empty-content';
 
 function PostTypeListEmptyContent( { siteId, translate, status, typeObject, editPath } ) {
 	let title, action;

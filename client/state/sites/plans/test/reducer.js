@@ -14,8 +14,6 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 import { plans } from '../reducer';
 
@@ -292,44 +290,6 @@ describe( 'reducer', () => {
 					isRequesting: false
 				}
 			} );
-		} );
-
-		it( 'never persists state because this is not implemented', () => {
-			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: 'Unable to fetch site plans',
-						hasLoadedFromServer: false,
-						isRequesting: false
-					}
-				} ),
-				state = plans( original, {
-					type: SERIALIZE
-				} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'never loads persisted state because this is not implemented', () => {
-			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: null,
-						hasLoadedFromServer: false,
-						isRequesting: false
-					},
-					22222222: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: false
-					}
-				} ),
-				state = plans( original, {
-					type: DESERIALIZE
-				} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

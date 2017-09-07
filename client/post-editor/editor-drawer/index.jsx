@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -32,11 +33,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import {
-	areSitePermalinksEditable,
-	isPrivateSite,
-	isHiddenSite
-} from 'state/selectors';
+import { areSitePermalinksEditable } from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
@@ -76,15 +73,19 @@ const POST_TYPE_SUPPORTS = {
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		post: React.PropTypes.object,
-		canJetpackUseTaxonomies: React.PropTypes.bool,
-		typeObject: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
-		onSave: React.PropTypes.func,
+		site: PropTypes.object,
+		savedPost: PropTypes.object,
+		post: PropTypes.object,
+		canJetpackUseTaxonomies: PropTypes.bool,
+		typeObject: PropTypes.object,
+		isNew: PropTypes.bool,
+		type: PropTypes.string,
+		setPostDate: PropTypes.func,
+		onSave: PropTypes.func,
+		isPostPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
+		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -259,9 +260,8 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		const { isPrivate, isHidden } = this.props;
 
-		if ( ! hasBusinessPlan || isPrivate || isHidden ) {
+		if ( ! hasBusinessPlan ) {
 			return;
 		}
 
@@ -333,6 +333,10 @@ const EditorDrawer = React.createClass( {
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
+					isPostPrivate={ this.props.isPostPrivate }
+					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
+					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);
@@ -374,8 +378,6 @@ export default connect(
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type ),
-			isPrivate: isPrivateSite( state, siteId ),
-			isHidden: isHiddenSite( state, siteId ),
 		};
 	},
 	null,

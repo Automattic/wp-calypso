@@ -21,7 +21,7 @@ class SyncReaderFollows extends Component {
 		this.check();
 	}
 
-	componentDidUpate() {
+	componentDidUpdate() {
 		this.check();
 	}
 

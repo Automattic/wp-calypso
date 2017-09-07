@@ -33,6 +33,7 @@ import {
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_RETRY_AUTH,
 	UPDATE_SITES,
+	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -317,28 +318,6 @@ describe( 'reducer', () => {
 			expect( state ).to.have.property( 'installConfirmedByUser' )
 				.to.be.true;
 		} );
-
-		it( 'should not persist state', () => {
-			const originalState = deepFreeze( {
-				url: 'https://example.wordpress.com'
-			} );
-			const state = jetpackConnectSite( originalState, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const originalState = deepFreeze( {
-				url: 'https://example.wordpress.com'
-			} );
-			const state = jetpackConnectSite( originalState, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
 	} );
 
 	describe( '#jetpackConnectAuthorize()', () => {
@@ -588,6 +567,50 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( {} );
 		} );
+		
+		it( 'should set clientNotResponding when a site request to current client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.have.property( 'clientNotResponding' )
+				.to.be.true;
+		} );
+
+		it( 'should return the given state when a site request fails on a different site', () => {
+			const originalState = { queryObject: { client_id: '123' } };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 234 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should return the given state when a site request fails and no client id is set', () => {
+			const originalState = { queryObject: { jetpack_version: '4.0' } };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should return the given state when a site request fails and no query object is set', () => {
+			const originalState = { isAuthorizing: false };
+			const state = jetpackConnectAuthorize(
+				originalState,
+				{ type: SITE_REQUEST_FAILURE, siteId: 123 }
+			);
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should persist state when a site request to a different client fails', () => {
+			const state = jetpackConnectAuthorize(
+				{ queryObject: { client_id: '123' } },
+				{ type: SITE_REQUEST_FAILURE, siteId: 456 }
+			);
+			expect( state ).to.eql( { queryObject: { client_id: '123' } } );
+		} );
 
 		it( 'should persist state', () => {
 			const originalState = deepFreeze( {
@@ -663,19 +686,6 @@ describe( 'reducer', () => {
 	describe( '#jetpackSSO()', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackSSO( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not persist state', () => {
-			const original = deepFreeze( {
-				isAuthorizing: false,
-				site_id: 0,
-				authorizationError: false,
-				ssoUrl: 'http://example.wordpress.com'
-			} );
-
-			const state = jetpackSSO( original, { type: SERIALIZE } );
-
 			expect( state ).to.eql( {} );
 		} );
 
@@ -768,30 +778,6 @@ describe( 'reducer', () => {
 			const state = jetpackSSO( undefined, action );
 
 			expect( state ).to.have.property( 'ssoUrl', action.ssoUrl );
-		} );
-
-		it( 'should not persist state', () => {
-			const originalState = deepFreeze( {
-				ssoUrl: 'http://example.wordpress.com',
-				siteUrl: 'http://example.wordpress.com'
-			} );
-			const state = jetpackSSO( originalState, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const originalState = deepFreeze( {
-				ssoUrl: 'http://example.wordpress.com',
-				siteUrl: 'http://example.wordpress.com'
-			} );
-			const state = jetpackSSO( originalState, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.eql( {} );
 		} );
 	} );
 

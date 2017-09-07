@@ -1,9 +1,7 @@
 .layout {
-	transition: all 0.4s ease-in-out;
-
-	.is-previewing & {
-		-webkit-filter: blur( 3px );
-		opacity: 0.2;
+	&.is-section-preview {
+		height: 100%;
+		overflow: hidden;
 	}
 }
 
@@ -26,6 +24,11 @@
 		margin: 0;
 	}
 
+	.is-section-preview & {
+		height: 100%;
+		padding: 47px 0 0 $sidebar-width-max;
+	}
+
 	@media print {
 		padding: 0;
 	}
@@ -45,6 +48,10 @@
 			padding: 0;
 			margin: 0;
 		}
+
+		.is-section-preview & {
+			padding: 47px 0px 0px 228px;
+		}
 	}
 }
 
@@ -58,11 +65,19 @@
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
+
+		.is-section-preview & {
+			padding: 47px 0 0 0;
+		}
 	}
 }
 
 .layout__primary {
 	transition: all 0.15s ease-in-out;
+
+	.is-section-preview & {
+		height: 100%;
+	}
 }
 
 .layout__content a {

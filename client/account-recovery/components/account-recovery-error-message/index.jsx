@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import config from 'config';
 
+/**
+ * Internal dependencies
+ */
+import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
+
 class AccountRecoveryErrorMessage extends Component {
 	getErrorMessage = () => {
 		const {
@@ -13,9 +18,13 @@ class AccountRecoveryErrorMessage extends Component {
 		} = this.props;
 
 		switch ( error.name ) {
-			case 'RestInvalidKeyError':
+			case ERROR_CODE.INVALID_KEY:
 				return translate( "We've failed to validate with the given code. " +
 					'Please double check if the code is correct.' );
+
+			case ERROR_CODE.BAD_PASSWORD:
+				return translate( "Sorry, you can't use this password either because " +
+						"it's not strong enough or you have used that as one of your previous passwords." );
 		}
 
 		return translate(

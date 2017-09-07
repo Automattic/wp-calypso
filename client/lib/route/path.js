@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -63,12 +63,19 @@ function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
-function sectionify( path ) {
+function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
-	const site = getSiteFragment( basePath );
 
-	if ( site ) {
-		basePath = trailingslashit( basePath ).replace( '/' + site + '/', '/' );
+	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
+	// For example, when the `:site` parameter is not the last or second-last part of the route
+	// and is retrieved from `context.params.site`. In that case, it can pass the `siteFragment`
+	// explicitly as the second parameter. We call `getSiteFragment` only as a fallback.
+	if ( ! siteFragment ) {
+		siteFragment = getSiteFragment( basePath );
+	}
+
+	if ( siteFragment ) {
+		basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
 	}
 	return untrailingslashit( basePath );
 }

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
 	JETPACK_SYNC_START_ERROR,
-	SERIALIZE,
 } from 'state/action-types';
 
 import reducer, {
@@ -174,17 +172,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not persist state', () => {
-			const original = deepFreeze( {
-				123456: {
-					isRequesting: true
-				}
-			} );
-
-			const state = syncStatus( original, { type: SERIALIZE } );
-			expect( state ).to.eql( {} );
-		} );
-
 		it( 'should add a property with key matching site ID', () => {
 			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
 			expect( state ).to.have.property( '123456' );
@@ -286,17 +273,6 @@ describe( 'reducer', () => {
 	describe( '#fullSyncRequest()', () => {
 		it( 'should default to an empty object', () => {
 			const state = fullSyncRequest( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should not persist state', () => {
-			const original = deepFreeze( {
-				123456: {
-					isRequesting: true
-				}
-			} );
-
-			const state = fullSyncRequest( original, { type: SERIALIZE } );
 			expect( state ).to.eql( {} );
 		} );
 

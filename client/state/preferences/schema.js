@@ -51,6 +51,14 @@ export const remoteValuesSchema = {
 		},
 		editorAdvancedVisible: {
 			type: 'boolean'
-		}
+		},
+		editorConfirmationDisabledSites: {
+			type: 'array',
+			items: { type: 'number' }
+		},
+		colorScheme: {
+			type: 'string',
+			'enum': [ 'default', 'light', 'dark' ],
+		},
 	}
 };

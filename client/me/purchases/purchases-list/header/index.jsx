@@ -35,7 +35,7 @@ const PurchasesHeader = ( { section } ) => {
 };
 
 PurchasesHeader.propTypes = {
-	section: React.PropTypes.string.isRequired
+	section: React.PropTypes.string.isRequired,
 };
 
 export default PurchasesHeader;

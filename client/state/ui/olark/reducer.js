@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -14,6 +9,7 @@ import {
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 import {
 	STATUS_READY,
 	STATUS_TIMEOUT,

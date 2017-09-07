@@ -1,49 +1,72 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PostEditStore from 'lib/posts/post-edit-store';
 import userModule from 'lib/user';
-import textUtils from 'lib/text-utils';
+import { countWords } from 'lib/text-utils';
 
 /**
  * Module variables
  */
 const user = userModule();
 
-export default React.createClass( {
-	displayName: 'EditorWordCount',
+export class EditorWordCount extends PureComponent {
+	static propTypes = {
+		selectedText: React.PropTypes.string
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			rawContent: ''
-		};
-	},
+	state = {
+		rawContent: ''
+	};
 
 	componentWillMount() {
 		PostEditStore.on( 'rawContentChange', this.onRawContentChange );
-	},
+	}
 
 	componentDidMount() {
 		this.onRawContentChange();
-	},
+	}
 
 	componentWillUnmount() {
 		PostEditStore.removeListener( 'rawContentChange', this.onRawContentChange );
-	},
+	}
 
-	onRawContentChange() {
+	onRawContentChange = () => {
 		this.setState( {
 			rawContent: PostEditStore.getRawContent()
 		} );
-	},
+	}
+
+	getSelectedTextCount = () => {
+		const selectedText = countWords( this.props.selectedText );
+
+		if ( ! selectedText ) {
+			return null;
+		}
+
+		return (
+			this.props.translate(
+				'%(selectedText)s word selected {{span}}%(separator)s{{/span}}',
+				'%(selectedText)s words selected {{span}}%(separator)s{{/span}}',
+				{
+					count: selectedText,
+					args: {
+						selectedText: selectedText,
+						separator: '/ ',
+					},
+					components: {
+						span: <span className="editor-word-count__separator" />
+					}
+				}
+			)
+		);
+	}
 
 	render() {
 		const currentUser = user.get();
@@ -64,11 +87,12 @@ export default React.createClass( {
 				return null;
 		}
 
-		const wordCount = textUtils.countWords( this.state.rawContent );
+		const wordCount = countWords( this.state.rawContent );
 
 		return (
 			<div className="editor-word-count">
-				{ this.translate(
+				<span className="editor-word-count__is-selected-text"><strong>{ this.getSelectedTextCount() }</strong></span>
+				{ this.props.translate(
 					'%d word',
 					'%d words',
 					{
@@ -79,4 +103,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( EditorWordCount );

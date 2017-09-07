@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Retrieve the user ID for the two factor authentication process.
@@ -18,11 +18,12 @@ export const getTwoFactorUserId = ( state ) => {
  * Retrieve the actual nonce for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
- * @param  {Object}   state  Global state tree
+ * @param	{Object}	state  Global state tree
+ * @param	{String}	nonceType nonce's type
  * @return {?String}         The nonce.
  */
-export const getTwoFactorAuthNonce = ( state ) => {
-	return get( state, 'login.twoFactorAuth.two_step_nonce', null );
+export const getTwoFactorAuthNonce = ( state, nonceType ) => {
+	return get( state, `login.twoFactorAuth.two_step_nonce_${ nonceType }`, null );
 };
 
 /**
@@ -45,14 +46,6 @@ export const getTwoFactorNotificationSent = ( state ) => {
 export const getTwoFactorPushToken = state => get( state, 'login.twoFactorAuth.push_web_token', null );
 
 /***
- * Retrieve the remember me flag that was set when logging in
- *
- * @param  {Object}   state  Global state tree
- * @return {Boolean}         Remember me flag for authentication
- */
-export const getTwoFactorRememberMe = state => get( state, 'login.twoFactorAuth.remember_me', false );
-
-/***
  * Retrieve the progress status of polling for push authentication
  *
  * @param  {Object}   state  Global state tree
@@ -69,22 +62,15 @@ export const getTwoFactorPushPollInProgress = state => get( state, 'login.twoFac
 export const getTwoFactorPushPollSuccess = state => get( state, 'login.twoFactorAuthPushPoll.success', false );
 
 /**
- * True if two factor authentication is enabled for the logging in user.
- * False if not, null if the information is not available yet.
+ * Determines whether two factor authentication is enabled for the logging in user.
  *
  * @param  {Object}   state  Global state tree
- * @return {?Boolean}        Whether 2FA is enabled
+ * @return {Boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = ( state ) => {
 	const twoFactorAuth = get( state, 'login.twoFactorAuth' );
-	if ( ! twoFactorAuth ) {
-		return null;
-	}
 
-	return (
-		twoFactorAuth.two_step_id !== '' &&
-		twoFactorAuth.two_step_nonce !== ''
-	);
+	return ! isEmpty( twoFactorAuth );
 };
 
 /**
@@ -150,3 +136,115 @@ export const isRequesting = ( state ) => {
 export const getRequestError = ( state ) => {
 	return get( state, 'login.requestError', null );
 };
+
+/**
+ * Returns the notice for a login request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Notice for the request.
+ */
+export const getRequestNotice = ( state ) => {
+	return get( state, 'login.requestNotice', null );
+};
+
+/***
+ * Retrieves the redirect url that was passed when logging in.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Url to redirect the user to upon successful login
+ */
+export const getRedirectTo = ( state ) => {
+	return get( state, 'login.redirectTo', null );
+};
+
+/***
+ * Retrieves the remember me flag that was set when logging in.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Remember me flag for authentication
+ */
+export const getRememberMe = ( state ) => {
+	return get( state, 'login.rememberMe', false );
+};
+
+/***
+ * Retrieves whether the login form should be disabled due to actions.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Login form disabled flag
+ */
+export const isFormDisabled = ( state ) => {
+	return get( state, 'login.isFormDisabled', false );
+};
+
+/***
+ * Tells us if we're in a process of creating a social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Error for the request.
+ */
+export const isSocialAccountCreating = ( state ) => get( state, 'login.socialAccount.isCreating', null );
+
+/***
+ * Gets Username of the created social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Username of the created social account
+ */
+export const getCreatedSocialAccountUsername = ( state ) => get( state, 'login.socialAccount.username', null );
+
+/***
+ * Gets Bearer token of the created social account
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Bearer token of the created social account
+ */
+export const getCreatedSocialAccountBearerToken = ( state ) => get( state, 'login.socialAccount.bearerToken', null );
+
+/***
+ * Gets error for the create social account request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Error for the create social account request.
+ */
+export const getCreateSocialAccountError = ( state ) => get( state, 'login.socialAccount.createError', null );
+
+/***
+ * Gets error for the get social account request.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         Error for the get social account request.
+ */
+export const getRequestSocialAccountError = ( state ) => get( state, 'login.socialAccount.requestError', null );
+
+/***
+ * Gets social account linking status
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Boolean describing social account linking status
+ */
+export const getSocialAccountIsLinking = ( state ) => get( state, 'login.socialAccountLink.isLinking', null );
+
+/***
+ * Gets social account linking email
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         wpcom email that is being linked
+ */
+export const getSocialAccountLinkEmail = ( state ) => get( state, 'login.socialAccountLink.email', null );
+
+/***
+ * Gets social account linking service
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         service name that is being linked
+ */
+export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.authInfo.service', null );
+
+/***
+ * Gets the auth information of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Email address of the social account.
+ */
+export const getSocialAccountLinkAuthInfo = ( state ) => get( state, 'login.socialAccountLink.authInfo', null );

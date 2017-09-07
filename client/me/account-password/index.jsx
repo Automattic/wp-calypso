@@ -18,7 +18,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
+import { ProtectFormGuard } from 'lib/protect-form';
 var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormPasswordInput = require( 'components/forms/form-password-input' ),
@@ -47,17 +47,18 @@ const AccountPassword = React.createClass( {
 	getInitialState: function() {
 		return {
 			pendingValidation: true,
-			savingPassword: false
+			savingPassword: false,
+			isUnsaved: false,
 		};
 	},
 
 	generateStrongPassword: function() {
 		this.setState( {
 			password: this.props.accountPasswordData.generate(),
-			pendingValidation: true
+			pendingValidation: true,
+			isUnsaved: true,
 		} );
 		this.debouncedPasswordValidate();
-		this.props.markChanged();
 	},
 
 	validatePassword: function() {
@@ -70,13 +71,11 @@ const AccountPassword = React.createClass( {
 	handlePasswordChange: function( newPassword ) {
 		debug( 'Handle password change has been called.' );
 		this.debouncedPasswordValidate();
-		this.setState( { password: newPassword, pendingValidation: true } );
-
-		if ( '' === newPassword ) {
-			this.props.markSaved();
-		} else {
-			this.props.markChanged();
-		}
+		this.setState( {
+			password: newPassword,
+			pendingValidation: true,
+			isUnsaved: '' !== newPassword,
+		} );
 	},
 
 	submitForm: function( event ) {
@@ -93,8 +92,10 @@ const AccountPassword = React.createClass( {
 
 		this.props.userSettings.saveSettings(
 			function( error, response ) {
-				this.setState( { savingPassword: false } );
-				this.props.markSaved();
+				this.setState( {
+					savingPassword: false,
+					isUnsaved: false,
+				} );
 
 				if ( error ) {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
@@ -141,6 +142,7 @@ const AccountPassword = React.createClass( {
 
 		return (
 			<form className="account-password" onSubmit={ this.submitForm }>
+				<ProtectFormGuard isChanged={ this.state.isUnsaved } />
 				<FormFieldset>
 					<FormLabel htmlFor="password">{ translate( 'New Password' ) }</FormLabel>
 					<FormPasswordInput
@@ -189,5 +191,4 @@ export default compose(
 		dispatch => bindActionCreators( { errorNotice }, dispatch ),
 	),
 	localize,
-	protectForm,
 )( AccountPassword );

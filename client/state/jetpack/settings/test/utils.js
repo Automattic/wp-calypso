@@ -128,7 +128,9 @@ describe( 'utils', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
+				jetpack_testimonial_posts_per_page: true,
 				jetpack_portfolio: true,
+				jetpack_portfolio_posts_per_page: true,
 				'custom-content-types': true,
 			};
 
@@ -153,6 +155,17 @@ describe( 'utils', () => {
 			const settings = {
 				some_other_setting: 123,
 				post_by_email_address: 'some-email@example.com'
+			};
+
+			expect( sanitizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+			} );
+		} );
+
+		it( 'should omit akismet from sanitized settings', () => {
+			const settings = {
+				some_other_setting: 123,
+				akismet: true
 			};
 
 			expect( sanitizeSettings( settings ) ).to.eql( {
@@ -210,7 +223,9 @@ describe( 'utils', () => {
 			const settings = {
 				some_other_setting: 123,
 				jetpack_testimonial: true,
+				jetpack_testimonial_posts_per_page: true,
 				jetpack_portfolio: true,
+				jetpack_portfolio_posts_per_page: true,
 				'custom-content-types': true,
 			};
 

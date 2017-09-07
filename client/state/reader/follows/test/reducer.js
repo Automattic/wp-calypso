@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -68,7 +69,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: READER_RECORD_UNFOLLOW,
-				payload: { url: 'http://discover.wordpress.com' }
+				payload: { url: 'http://discover.wordpress.com' },
 			} );
 			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );
 		} );
@@ -84,18 +85,22 @@ describe( 'reducer', () => {
 			];
 			const state = items( original, {
 				type: READER_FOLLOWS_RECEIVE,
-				payload: { follows: incomingFollows }
+				payload: { follows: incomingFollows },
 			} );
 
 			// Updated follow
-			expect( state[ 'dailypost.wordpress.com' ] ).to.eql(
-				{ is_following: true, blog_ID: 125, URL: 'http://dailypost.wordpress.com' }
-			);
+			expect( state[ 'dailypost.wordpress.com' ] ).to.eql( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'http://dailypost.wordpress.com',
+			} );
 
 			// Brand new follow
-			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
-				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
-			);
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql( {
+				is_following: true,
+				blog_ID: 126,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+			} );
 		} );
 
 		it( 'should only SERIALIZE followed items', () => {
@@ -104,7 +109,7 @@ describe( 'reducer', () => {
 					feed_URL: 'http://discover.wordpress.com',
 					URL: 'http://discover.wordpress.com',
 					is_following: false,
-					blog_ID: 123
+					blog_ID: 123,
 				},
 				'dailypost.wordpress.com': {
 					feed_URL: 'http://dailypost.wordpress.com',
@@ -156,10 +161,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: false
-						}
-					}
-				}
+							send_posts: false,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
 			expect( state ).to.eql( {
@@ -169,10 +174,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: true
-						}
-					}
-				}
+							send_posts: true,
+						},
+					},
+				},
 			} );
 		} );
 
@@ -184,10 +189,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: true
-						}
-					}
-				}
+							send_posts: true,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
 			expect( state ).to.equal( original );
@@ -201,10 +206,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: false
-						}
-					}
-				}
+							send_posts: false,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 456 ) );
 			expect( state ).to.equal( original );
@@ -218,10 +223,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: true
-						}
-					}
-				}
+							send_posts: true,
+						},
+					},
+				},
 			} );
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
@@ -235,9 +240,9 @@ describe( 'reducer', () => {
 							email: {
 								send_posts: true,
 								post_delivery_frequency: frequency,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 			} );
 		} );
@@ -253,9 +258,9 @@ describe( 'reducer', () => {
 							email: {
 								send_posts: true,
 								post_delivery_frequency: frequency,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
 				expect( state ).to.equal( original );
@@ -270,10 +275,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_posts: true
-						}
-					}
-				}
+							send_posts: true,
+						},
+					},
+				},
 			} );
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
@@ -292,9 +297,9 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: true,
 							post_delivery_frequency: 'instantly',
-						}
-					}
-				}
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
 			expect( state ).to.eql( {
@@ -306,9 +311,9 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: false,
 							post_delivery_frequency: 'instantly',
-						}
-					}
-				}
+						},
+					},
+				},
 			} );
 		} );
 
@@ -322,9 +327,9 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: false,
 							post_delivery_frequency: 'instantly',
-						}
-					}
-				}
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
 			expect( state ).to.equal( original );
@@ -340,9 +345,9 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: true,
 							post_delivery_frequency: 'instantly',
-						}
-					}
-				}
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 456 ) );
 			expect( state ).to.equal( original );
@@ -356,10 +361,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: false
-						}
-					}
-				}
+							send_comments: false,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
 			expect( state ).to.eql( {
@@ -369,10 +374,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: true
-						}
-					}
-				}
+							send_comments: true,
+						},
+					},
+				},
 			} );
 		} );
 
@@ -384,10 +389,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: true
-						}
-					}
-				}
+							send_comments: true,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
 			expect( state ).to.equal( original );
@@ -401,10 +406,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: true
-						}
-					}
-				}
+							send_comments: true,
+						},
+					},
+				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
@@ -418,10 +423,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: true
-						}
-					}
-				}
+							send_comments: true,
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
 			expect( state ).to.eql( {
@@ -431,10 +436,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: false
-						}
-					}
-				}
+							send_comments: false,
+						},
+					},
+				},
 			} );
 		} );
 
@@ -446,10 +451,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: false
-						}
-					}
-				}
+							send_comments: false,
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
 			expect( state ).to.equal( original );
@@ -463,10 +468,10 @@ describe( 'reducer', () => {
 					URL: 'http://example.com',
 					delivery_methods: {
 						email: {
-							send_comments: true
-						}
-					}
-				}
+							send_comments: true,
+						},
+					},
+				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
@@ -481,9 +486,10 @@ describe( 'reducer', () => {
 				type: READER_FOLLOW_ERROR,
 				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
 			} );
-			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql(
-				{ is_following: true, error: 'invalid_feed' }
-			);
+			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql( {
+				is_following: true,
+				error: 'invalid_feed',
+			} );
 		} );
 	} );
 
@@ -492,8 +498,8 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				'example.com': {
 					is_following: false,
-					blog_ID: 123
-				}
+					blog_ID: 123,
+				},
 			} );
 
 			const state = items( original, follow( 'http://example.com' ) );
@@ -501,8 +507,8 @@ describe( 'reducer', () => {
 				'example.com': {
 					is_following: true,
 					feed_URL: 'http://example.com',
-					blog_ID: 123
-				}
+					blog_ID: 123,
+				},
 			} );
 		} );
 
@@ -511,8 +517,8 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				'example.com': {
 					feed_URL: 'http://example.com',
-					is_following: true
-				}
+					is_following: true,
+				},
 			} );
 		} );
 
@@ -521,7 +527,7 @@ describe( 'reducer', () => {
 				'example.com': {
 					is_following: true,
 					feed_URL: 'http://example.com',
-				}
+				},
 			} );
 
 			const subscriptionInfo = {
@@ -531,8 +537,8 @@ describe( 'reducer', () => {
 				feed_URL: 'http://example.com',
 				delivery_methods: {
 					email: {
-						send_posts: true
-					}
+						send_posts: true,
+					},
 				},
 			};
 
@@ -541,7 +547,7 @@ describe( 'reducer', () => {
 				'example.com': {
 					...subscriptionInfo,
 					is_following: true,
-				}
+				},
 			} );
 		} );
 
@@ -582,8 +588,8 @@ describe( 'reducer', () => {
 				'example.com': {
 					is_following: true,
 					feed_URL: 'http://example.com',
-					blog_ID: 123
-				}
+					blog_ID: 123,
+				},
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
@@ -591,8 +597,8 @@ describe( 'reducer', () => {
 				'example.com': {
 					is_following: false,
 					feed_URL: 'http://example.com',
-					blog_ID: 123
-				}
+					blog_ID: 123,
+				},
 			} );
 		} );
 
@@ -601,8 +607,8 @@ describe( 'reducer', () => {
 				'example.com': {
 					is_following: false,
 					feed_URL: 'http://example.com',
-					blog_ID: 123
-				}
+					blog_ID: 123,
+				},
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
@@ -622,12 +628,12 @@ describe( 'reducer', () => {
 				'example.com': {
 					feed_URL: 'http://example.com',
 					ID: 1,
-					is_following: true
+					is_following: true,
 				},
 				'example2.com': {
 					feed_URL: 'http://example2.com',
 					ID: 2,
-					is_following: true
+					is_following: true,
 				},
 			} );
 			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
@@ -635,7 +641,7 @@ describe( 'reducer', () => {
 				'example2.com': {
 					feed_URL: 'http://example2.com',
 					ID: 2,
-					is_following: true
+					is_following: true,
 				},
 			} );
 		} );

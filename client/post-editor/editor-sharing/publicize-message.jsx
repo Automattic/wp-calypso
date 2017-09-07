@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const CountedTextarea = require( 'components/forms/counted-textarea' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	PostActions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	InfoPopover = require( 'components/info-popover' );
+import CountedTextarea from 'components/forms/counted-textarea';
+import FormTextarea from 'components/forms/form-textarea';
+import InfoPopover from 'components/info-popover';
+import TrackInputChanges from 'components/track-input-changes';
+import PostActions from 'lib/posts/actions';
+import stats from 'lib/posts/stats';
 
 export default React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
+		disabled: React.PropTypes.bool,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
@@ -26,6 +27,7 @@ export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			disabled: false,
 			message: '',
 			acceptableLength: 140,
 			requireCount: false,
@@ -66,6 +68,7 @@ export default React.createClass( {
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
+					disabled={ this.props.disabled }
 					value={ this.props.message }
 					placeholder={ this.props.preview }
 					countPlaceholderLength={ true }
@@ -80,10 +83,11 @@ export default React.createClass( {
 		} else {
 			return (
 				<FormTextarea
+					disabled={ this.props.disabled }
 					value={ this.props.message }
 					placeholder={ this.props.preview }
 					onChange={ this.onChange }
-					className="editor-sharing__message-input"/>
+					className="editor-sharing__message-input" />
 			);
 		}
 	},

@@ -123,6 +123,30 @@ state.users === {
 }
 ```
 
+**NOTE:** There may be some cases where you wish to respond to an action by removing a key. In those cases, you may return `undefined` from the reducer to explicitly indicate there is no longer state associated with the key, and `keyedReducer` will omit that key from the state.
+
+#### Example
+
+```javascript
+const deleteableUserReducer = ( state, action ) =>
+    DELETE === action.type
+        ? undefined
+        : userReducer( state, action );
+
+export default keyedReducer( 'username', deleteableUserReducer );
+
+state.users === {
+    hunter02: {
+        age: 1,
+        title: 'grunt',
+    }
+}
+
+dispatch( { type: DELETE, username: 'hunter02' } );
+
+state.users === {}
+```
+
 ### withSchemaValidation( schema, reducer )
 
 When Calypso boots up it loads the last-known state out of persistent storage in the browser.
