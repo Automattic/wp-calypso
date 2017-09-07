@@ -38,18 +38,39 @@ describe( 'comments-tree', () => {
 	describe( 'addCommentsTree', () => {
 		it( 'should dispatch comment tree updates', () => {
 			const dispatch = spy();
-			addCommentsTree( { dispatch }, action, { comments_tree: [ [ 2, 1, 0 ] ] } );
+			addCommentsTree( { dispatch }, action, {
+				comments_tree: [ [ 2, 1, 0 ] ],
+				pingbacks_tree: [ [ 3, 1, 0 ] ],
+				trackbacks_tree: [ [ 4, 1, 0 ] ],
+			} );
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: COMMENTS_TREE_SITE_ADD,
 				siteId: 77203074,
 				status: 'approved',
-				tree: [ {
-					commentId: 2,
-					postId: 1,
-					commentParentId: 0,
-					status: 'approved',
-				} ],
+				tree: [
+					{
+						commentId: 2,
+						postId: 1,
+						commentParentId: 0,
+						status: 'approved',
+						type: 'comment',
+					},
+					{
+						commentId: 3,
+						postId: 1,
+						commentParentId: 0,
+						status: 'approved',
+						type: 'pingback',
+					},
+					{
+						commentId: 4,
+						postId: 1,
+						commentParentId: 0,
+						status: 'approved',
+						type: 'trackback',
+					},
+				],
 			} );
 		} );
 	} );
