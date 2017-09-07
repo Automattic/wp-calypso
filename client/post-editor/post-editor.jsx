@@ -1159,7 +1159,6 @@ export const PostEditor = React.createClass( {
 			endNode.parentNode.removeChild( endNode );
 		}
 
-		// TODO: Scroll to cursor position?
 		startNode.parentNode.removeChild( startNode );
 
 		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
