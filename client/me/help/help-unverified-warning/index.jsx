@@ -59,11 +59,11 @@ class HelpUnverifiedWarning extends Component {
 					this.setState( { resendState: nextResendState } );
 					notices.success( resendStateToMessage( nextResendState ) );
 				} )
-				.catch( () => {
+				.catch( ( error ) => {
 					const nextResendState = RESEND_ERROR;
 
 					this.setState( { resendState: nextResendState } );
-					notices.error( resendStateToMessage( nextResendState ) );
+					notices.error( error.message );
 				} );
 		};
 
