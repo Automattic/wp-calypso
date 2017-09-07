@@ -30,6 +30,7 @@ let buildState = {
 	isBuildingCss: false,
 	isBuildingJs: false,
 	isConnected: true,
+	needsReload: false,
 };
 
 const interceptConsole = ( consoleObject, updater ) => {
@@ -41,11 +42,6 @@ const interceptConsole = ( consoleObject, updater ) => {
 
 			if ( stateUpdates ) {
 				buildState = { ...buildState, ...stateUpdates };
-
-				if ( buildState.needsReload ) {
-					window.location.reload( /* force refresh to load from server */ true );
-	}
-
 				updater( buildState );
 			}
 
@@ -85,7 +81,7 @@ class WebpackBuildMonitor extends React.PureComponent {
 
 	componentDidMount() {
 		if ( alreadyExists ) {
-			console.error(
+			return console.error(
 				'There should only be a single build monitor loaded. ' +
 					"Please make sure we're not trying to load more than one at a time."
 		);
@@ -96,10 +92,17 @@ class WebpackBuildMonitor extends React.PureComponent {
 	}
 
 	render() {
-		const { hasError, isBuildingCss, isBuildingJs, isConnected } = this.state;
+		const { hasError, isBuildingCss, isBuildingJs, isConnected, needsReload } = this.state;
 
-		// build is idle
-		if ( ! isBuildingCss && ! isBuildingJs ) {
+		const isBusy = isBuildingCss || isBuildingJs;
+
+		if ( ! isBusy && needsReload ) {
+			return <div className="webpack-build-monitor is-warning">Need to refresh</div>;
+		}
+
+		// if we're not doing anything
+		// then we don't need to show anything
+		if ( ! isBusy ) {
 			return null;
 		}
 
@@ -107,10 +110,10 @@ class WebpackBuildMonitor extends React.PureComponent {
 			<div
 				className={ classNames( 'webpack-build-monitor', {
 					'is-error': hasError || ! isConnected,
+					'is-warning': needsReload,
 				} ) }
 			>
-				{ ( isBuildingCss || isBuildingJs ) &&
-					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
+				{ isBusy && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
 				) }
 				{ getMessage( this.state ) }
 			</div>
