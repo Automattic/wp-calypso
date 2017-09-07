@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-import qs from 'qs';
-import urlModule from 'url';
-
-/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
