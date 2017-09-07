@@ -15,7 +15,7 @@ import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 
-const PostScheduleWithCurrentMonthPosts = connect(
+const PostScheduleWithOtherPostsIndicated = connect(
 	( state, { site, query } ) => ( {
 		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
 	} )
@@ -86,7 +86,7 @@ export default class PostScheduler extends PureComponent {
 				{ ! postUtils.isPage( post ) && <QueryPosts
 					siteId={ get( site, 'ID' ) }
 					query={ query } /> }
-				<PostScheduleWithCurrentMonthPosts
+				<PostScheduleWithOtherPostsIndicated
 					onDateChange={ setPostDate }
 					onMonthChange={ this.setCurrentMonth }
 					query={ query }
