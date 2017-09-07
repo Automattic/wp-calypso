@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJPOConnect } from '../selectors';
+import { getJPOConnect } from '../';
 
 describe( 'selectors', () => {
 	it( 'should return empty string as a default state', () => {
