@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { throttle } from 'lodash';
 
@@ -21,52 +22,62 @@ const HIDE_BACK_CRITERIA = {
 	characterLength: 8
 };
 
-export default React.createClass( {
-	displayName: 'HeaderCakeBack',
-
-	propTypes: {
+class HeaderCakeBack extends Component {
+	static propTypes = {
 		onClick: PropTypes.func,
 		href: PropTypes.string,
 		text: PropTypes.string,
-		spacer: PropTypes.bool
-	},
+		spacer: PropTypes.bool,
+	};
 
-	getDefaultProps() {
-		return {
-			spacer: false,
-			disabled: false
-		};
-	},
+	static defaultProps = {
+		spacer: false,
+		disabled: false,
+	};
+
+	state = {
+		windowWidth: viewport.getWindowInnerWidth(),
+	};
 
 	componentDidMount() {
 		this.resizeThrottled = throttle( this.handleWindowResize, 100 );
 		window.addEventListener( 'resize', this.resizeThrottled );
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeThrottled );
-	},
+	}
 
-	handleWindowResize() {
-		this.forceUpdate();
-	},
+	handleWindowResize = () => {
+		this.setState( {
+			windowWidth: viewport.getWindowInnerWidth(),
+		} );
+	}
 
 	hideText( text ) {
-		const windowWidth = viewport.getWindowInnerWidth();
-
 		if (
-			windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
+			this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
 			text.length >= HIDE_BACK_CRITERIA.characterLength ||
-			windowWidth <= 300
+			this.state.windowWidth <= 300
 		) {
 			return true;
 		}
 
 		return false;
-	},
+	}
 
 	render() {
-		const { text = i18n.translate( 'Back' ), href, onClick, spacer, icon } = this.props;
+		const {
+			href,
+			icon,
+			onClick,
+			spacer,
+			text,
+			translate,
+		} = this.props;
+		const backText = text === undefined
+			? translate( 'Back' )
+			: text;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
 			'is-spacer': spacer,
@@ -76,9 +87,10 @@ export default React.createClass( {
 		return (
 			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick } disabled={ spacer }>
 				<Gridicon icon={ icon || 'arrow-left' } size={ 18 } />
-				{ ! this.hideText( text ) && text }
+				{ ! this.hideText( backText ) && backText }
 			</Button>
 		);
 	}
+}
 
-} );
+export default localize( HeaderCakeBack );
