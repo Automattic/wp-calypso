@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -12,8 +13,9 @@ import { intersection } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import PostSchedule from 'components/post-schedule';
+import PostScheduler from './post-scheduler';
 import utils from 'lib/posts/utils';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export class EditorPublishDate extends React.Component {
 
@@ -148,11 +150,13 @@ export class EditorPublishDate extends React.Component {
 		return (
 			<div className="editor-publish-date__schedule">
 				{ this.renderCalendarHeader() }
-				<PostSchedule
-					displayInputChrono={ false }
-					onDateChange={ this.props.setPostDate }
+				<PostScheduler
+					post={ this.props.post }
+					site={ this.props.site }
+					initialDate={ this.props.moment() }
+					setPostDate={ this.props.setPostDate }
 					selectedDay={ selectedDay }
-					/>
+				/>
 			</div>
 		);
 	}
@@ -174,4 +178,10 @@ export class EditorPublishDate extends React.Component {
 
 }
 
-export default localize( EditorPublishDate );
+export default connect(
+	( state, props ) => {
+		return {
+			site: getSelectedSite( state ),
+		};
+	}
+)( localize( EditorPublishDate ) );
