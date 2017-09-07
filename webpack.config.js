@@ -19,7 +19,6 @@ const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified-files' );
 
 /**
  * Internal variables
@@ -235,7 +234,6 @@ if ( calypsoEnv === 'development' ) {
 		} );
 	}
 } else {
-	webpackConfig.plugins.push( new UseMinifiedFiles() );
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.devtool = false;
 }
