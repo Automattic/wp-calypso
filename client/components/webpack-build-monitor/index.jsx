@@ -17,6 +17,7 @@ const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': { isConnected: true },
 	'[WDS] Disconnected!': { isConnected: false },
 	'[HMR] bundle rebuilding': { isBuildingJs: true },
+	'[HMR] Cannot find update (Full reload needed)': { needsReload: true },
 	"[HMR] The following modules couldn't be hot updated": { needsReload: true },
 	'Building CSS…': { isBuildingCss: true },
 	'CSS build failed': { hasError: true },
