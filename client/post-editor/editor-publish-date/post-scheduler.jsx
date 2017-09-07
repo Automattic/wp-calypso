@@ -89,7 +89,7 @@ export default class PostScheduler extends PureComponent {
 		};
 
 		return (
-			<span className="editor-ground-control__schedule-post">
+			<span className="editor-publish-date__post-scheduler">
 				{ ! postUtils.isPage( post ) && <QueryPosts
 					siteId={ get( site, 'ID' ) }
 					query={ query } /> }
