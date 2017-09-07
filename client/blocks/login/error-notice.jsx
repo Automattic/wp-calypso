@@ -14,6 +14,7 @@ import {
 	getRequestSocialAccountError,
 } from 'state/login/selectors';
 import Notice from 'components/notice';
+import HelpUnverifiedWarning from 'me/help/help-unverified-warning';
 
 class ErrorNotice extends Component {
 	static propTypes = {
@@ -69,11 +70,20 @@ class ErrorNotice extends Component {
 			return null;
 		}
 
-		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ error.message }
-			</Notice>
-		);
+		let errorElement = <Notice status={ 'is-error' } showDismiss={ false }>
+			{ error.message }
+		</Notice>;
+
+		if ( error.code === 'account_unactivated' ) {
+			const { user_id: userId, nonce } = error.data;
+
+			errorElement = <div>
+				{ errorElement }
+				<HelpUnverifiedWarning userId={ userId } nonce={ nonce } />
+			</div>;
+		}
+
+		return errorElement;
 	}
 }
 

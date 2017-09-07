@@ -240,8 +240,12 @@ User.prototype.clear = function( onClear ) {
  * Sends the user an email with a link to verify their account if they
  * are unverified.
  */
-User.prototype.sendVerificationEmail = function( fn ) {
-	return wpcom.undocumented().me().sendVerificationEmail( fn );
+User.prototype.sendVerificationEmail = function( userId, nonce, fn ) {
+	if ( typeof userId === 'function' ) {
+		return wpcom.undocumented().me().sendVerificationEmail( userId );
+	}
+
+	return wpcom.undocumented().me().sendVerificationEmail( userId, nonce, fn );
 };
 
 User.prototype.set = function( attributes ) {

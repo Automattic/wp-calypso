@@ -98,7 +98,9 @@ function getErrorFromHTTPError( httpError ) {
 		message = get( httpError, 'response.body.data', httpError.message );
 	}
 
-	return { code, message, field };
+	const data = get( httpError, 'response.body.data.errors[0].data' );
+
+	return data ? { code, message, field, data } : { code, message, field };
 }
 
 /**
