@@ -9,6 +9,10 @@
 	min-width: 140px;
 	min-height: 46px;
 	padding: 0 16px;
+
+	&:hover {
+		background-color: $gray-light;
+	}
 }
 
 .header-button .gridicon.gridicons-cloud-upload {
