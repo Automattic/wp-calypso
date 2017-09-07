@@ -264,11 +264,16 @@
 	align-items: center;
 	display: flex;
 	margin-right: 8px;
+	width: 18px;
 }
 
 .checkout-thank-you__jetpack-feature-status-text {
 	font-size: 16px;
 	text-align: left;
+}
+
+.checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
+	color: $gray-text-min;
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .spinner,
@@ -320,4 +325,17 @@
 	font-size: 14px;
 	font-style: italic;
 	font-weight: 400;
+}
+
+.checkout-thank-you__jetpack-description-in-actions a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.checkout-thank-you__jetpack-action-buttons {
+	display:flex;
+}
+
+.checkout-thank-you__jetpack .thank-you-card__action .button {
+	max-width: 45%;
 }
