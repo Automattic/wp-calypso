@@ -81,6 +81,7 @@ import Wizard from 'components/wizard/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
+import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -151,6 +152,7 @@ class DesignAssets extends React.Component {
 					<InfoPopover />
 					<Tooltip />
 					<InputChrono />
+					<JetpackColophonExample />
 					<JetpackLogoExample />
 					<LanguagePicker />
 					<ListEnd />
