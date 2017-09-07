@@ -94,6 +94,7 @@
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
 		"signup/social": true,
+		"signup/social-management": true,
 		"simple-payments": true,
 		"support-user": true,
 		"sync-handler": true,
