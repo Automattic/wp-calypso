@@ -17,6 +17,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSite } from 'state/sites/selectors';
 import Dispatcher from 'dispatcher';
 
 export const uploadPlugin = ( { dispatch }, action ) => {
@@ -55,8 +56,10 @@ const showErrorNotice = ( dispatch, error ) => {
 	dispatch( errorNotice( translate( 'Problem installing the plugin.' ) ) );
 };
 
-export const uploadComplete = ( { dispatch }, { siteId }, data ) => {
+export const uploadComplete = ( { dispatch, getState }, { siteId }, data ) => {
 	const { slug: pluginId } = data;
+	const state = getState();
+	const site = getSite( state, siteId );
 
 	dispatch( recordTracksEvent( 'calypso_plugin_upload_complete', {
 		plugin_id: pluginId
@@ -71,7 +74,7 @@ export const uploadComplete = ( { dispatch }, { siteId }, data ) => {
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_INSTALLED_PLUGIN',
 		action: 'PLUGIN_UPLOAD',
-		site: { ID: siteId },
+		site,
 		plugin: data,
 		data,
 	} );
