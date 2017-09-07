@@ -60,3 +60,21 @@ export function isPiiUrl() {
 	debug( `Is PII URL: ${ result }` );
 	return result;
 }
+
+// For better load performance, these routes will skip loading ads.
+const noAdRoutes = [
+	'/log-in',
+];
+
+/**
+ * Should we skip loading ads for the given URL for better performance?
+ *
+ * @returns {Boolean} true if the current URL should skip loading ads.
+ */
+export function shouldSkipAdsForThisUrl() {
+	const { href } = document.location;
+	const result = noAdRoutes.some( pattern => href.indexOf( pattern ) !== -1 );
+
+	debug( `Is Skipping Ads For Performance: ${ result }` );
+	return result;
+}
