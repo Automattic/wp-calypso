@@ -75,7 +75,9 @@ class HeaderCakeBack extends Component {
 			text,
 			translate,
 		} = this.props;
-		const backText = text || translate( 'Back' );
+		const backText = text === undefined
+			? translate( 'Back' )
+			: text;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
 			'is-spacer': spacer,
