@@ -9,6 +9,14 @@ This module is used to manage state for the UI of the orders sections. This incl
 
 Update the query used to display the orders list - ex: set the search term, or change which page is being viewed.
 
+### `editOrder( siteId: number, order: object )`
+
+Track edits made to an order, or content added to a new order.
+
+### `clearOrder( siteId: number )`
+
+Clear the current order edit-tracking.
+
 ## Reducer
 
 This is saved on a per-site basis. 
