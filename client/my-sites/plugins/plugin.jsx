@@ -340,7 +340,7 @@ const SinglePlugin = React.createClass( {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		if ( false ) {
+		if ( selectedSite && this.props.isJetpackSite( selectedSite.ID ) && ! this.props.canJetpackSiteManage( selectedSite.ID ) ) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
