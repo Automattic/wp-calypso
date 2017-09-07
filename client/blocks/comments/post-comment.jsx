@@ -206,6 +206,7 @@ class PostComment extends React.PureComponent {
 						{ commentChildrenIds.map( childId =>
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
+								showReadMoreInActions={ this.props.showReadMoreInActions }
 								enableCaterpillar={ enableCaterpillar }
 								depth={ childDepth }
 								key={ childId }
@@ -213,6 +214,14 @@ class PostComment extends React.PureComponent {
 								commentsTree={ commentsTree }
 								commentsToShow={ commentsToShow }
 								post={ post }
+								onReplyClick={ this.props.onReplyClick }
+								onReplyCancel={ this.props.onReplyCancel }
+								activeReplyCommentId={ this.props.activeReplyCommentId }
+								onEditCommentClick={ this.props.onEditCommentClick }
+								onEditCommentCancel={ this.props.onEditCommentCancel }
+								activeEditCommentId={ this.props.activeEditCommentId }
+								onUpdateCommentText={ this.props.onUpdateCommentText }
+								onCommentSubmit={ this.props.resetActiveReplyComment }
 							/>
 						) }
 					</ol> }
