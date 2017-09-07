@@ -215,8 +215,8 @@ export class CommentDetail extends Component {
 			commentUrl,
 			editComment,
 			isBulkEdit,
+			isEditCommentSupported,
 			isLoading,
-			isRawContentSupported,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -304,11 +304,13 @@ export class CommentDetail extends Component {
 								authorDisplayName={ authorDisplayName }
 								authorUrl={ authorUrl }
 								closeEditMode={ this.toggleEditMode }
-								commentContent={ isRawContentSupported ? commentRawContent : commentContent }
+								commentContent={ isEditCommentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
 								editComment={ editComment }
 								isAuthorRegistered={ authorId !== 0 }
+								isEditCommentSupported={ isEditCommentSupported }
 								postId={ postId }
+								siteId={ siteId }
 							/>
 						}
 
@@ -379,8 +381,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
+		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isLoading,
-		isRawContentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,

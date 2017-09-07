@@ -3,7 +3,9 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +15,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import { getSiteSlug } from 'state/sites/selectors';
 
 export class CommentDetailEdit extends Component {
 	static propTypes = {
@@ -23,7 +26,10 @@ export class CommentDetailEdit extends Component {
 		commentId: PropTypes.number,
 		editComment: PropTypes.func,
 		isAuthorRegistered: PropTypes.bool,
+		isEditCommentSupported: PropTypes.bool,
 		postId: PropTypes.number,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 	};
 
 	state = {
@@ -52,6 +58,8 @@ export class CommentDetailEdit extends Component {
 		const {
 			closeEditMode,
 			isAuthorRegistered,
+			isEditCommentSupported,
+			siteSlug,
 			translate,
 		} = this.props;
 		const {
@@ -67,7 +75,7 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'Name' ) }
 					</FormLabel>
 					<FormTextInput
-						disabled={ isAuthorRegistered }
+						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
 						value={ authorDisplayName }
 					/>
@@ -78,20 +86,35 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'URL' ) }
 					</FormLabel>
 					<FormTextInput
-						disabled={ isAuthorRegistered }
+						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }
 						value={ authorUrl }
 					/>
 				</FormFieldset>
 
 				<FormTextarea
+					disabled={ ! isEditCommentSupported }
 					onChange={ this.setCommentContentValue }
 					value={ commentContent }
 				/>
 
+				{ ! isEditCommentSupported &&
+					<p className="comment-detail__edit-jetpack-update-notice">
+						<Gridicon icon="notice-outline" />
+						{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
+						<a
+							className="comment-detail__edit-jetpack-update-notice-link"
+							href={ `/plugins/jetpack/${ siteSlug }` }
+						>
+							{ translate( 'Update Now' ) }
+						</a>
+					</p>
+				}
+
 				<div className="comment-detail__edit-buttons">
 					<FormButton
 						compact
+						disabled={ ! isEditCommentSupported }
 						onClick={ this.editCommentAndCloseEditMode }
 					>
 						{ translate( 'Save' ) }
@@ -110,4 +133,8 @@ export class CommentDetailEdit extends Component {
 	}
 }
 
-export default localize( CommentDetailEdit );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	siteSlug: getSiteSlug( state, siteId ),
+} );
+
+export default connect( mapStateToProps )( localize( CommentDetailEdit ) );
