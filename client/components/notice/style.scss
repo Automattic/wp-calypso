@@ -14,28 +14,52 @@
 
 	// Success!
 	&.is-success {
-		background: $alert-green;
+		background: lighten( $alert-green, 25 );
+		color: darken( $alert-green, 30 );
+
+		.notice__text a {
+			color: darken( $alert-green, 30 );
+		}
+
+		.notice__dismiss {
+			color: darken( $alert-green, 30 );
+			overflow: hidden;
+		}
 	}
 
 	// Warning
 	&.is-warning {
-		background: $alert-yellow;
+		background: lighten( $alert-yellow, 15 );
+		color: darken( $alert-yellow, 40 );
+
+		.notice__text a {
+			color: darken( $alert-yellow, 40 );
+		}
+
+		.notice__dismiss {
+			color: darken( $alert-yellow, 40 );
+			overflow: hidden;
+		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
-		background: $alert-red;
+		background: lighten( $alert-red, 10 );
+		color: darken( $alert-red, 40 );
+
+		.notice__text a {
+			color: darken( $alert-red, 40 );
+		}
+
+		.notice__dismiss {
+			color: darken( $alert-red, 40 );
+			overflow: hidden;
+		}
 	}
 
 	// General notice
 	&.is-info {
 		background: $blue-wordpress;
-	}
-
-	&.is-success,
-	&.is-error,
-	&.is-warning,
-	&.is-info {
 		color: $white;
 
 		.notice__text a {
@@ -44,6 +68,15 @@
 
 		.notice__dismiss {
 			color: $white;
+			overflow: hidden;
+		}
+	}
+
+	&.is-success,
+	&.is-error,
+	&.is-warning,
+	&.is-info {
+		.notice__dismiss {
 			overflow: hidden;
 		}
 	}
@@ -192,10 +225,24 @@ a.notice__action {
 		color: $white;
 	}
 
-	.is-success & { background: darken( $alert-green, 15 ); }
-	.is-error & { background: darken( $alert-red, 15 ); }
-	.is-warning & { background: darken( $alert-yellow, 15 ); }
-	.is-info & { background: darken( $blue-wordpress, 15 ); }
+	.is-success & {
+		background: lighten( $alert-green, 20 );
+		color: darken( $alert-green, 30 );
+	}
+
+	.is-error & {
+		background: lighten( $alert-red, 5 );
+		color: darken( $alert-red, 40 );
+	}
+
+	.is-warning & {
+		background: lighten( $alert-yellow, 10 );
+		color: darken( $alert-yellow, 40 );
+	}
+
+	.is-info & {
+		background: darken( $blue-wordpress, 15 );
+	}
 
 	.gridicon {
 		margin-left: 8px;
