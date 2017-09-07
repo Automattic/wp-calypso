@@ -19,7 +19,7 @@ const PostScheduleWithCurrentMonthPosts = connect(
 	( state, { site, query } ) => ( {
 		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
 	} )
-) ( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
+)( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
 	return (
 		<PostSchedule
 			displayInputChrono={ false }
@@ -31,12 +31,6 @@ const PostScheduleWithCurrentMonthPosts = connect(
 		/>
 	);
 } );
-
-const ConnectedPostSchedule = connect(
-	( state, { site, query } ) => ( {
-		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
-	} )
-)( PostSchedule );
 
 export default class PostScheduler extends PureComponent {
 	static propTypes = {
