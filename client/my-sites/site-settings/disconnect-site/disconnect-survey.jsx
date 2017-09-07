@@ -10,8 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isFreeJetpackPlan } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class DisconnectSurvey extends Component {
 	state = {
@@ -32,23 +33,33 @@ class DisconnectSurvey extends Component {
 		} );
 	};
 
+	getOptions() {
+		const { site } = this.props;
+
+		const options = [
+			{ value: 'tooHard', label: 'It was too hard to configure Jetpack' },
+			{ value: 'didNotInclude', label: 'This plan didn’t include what I needed' },
+		];
+
+		if ( ! isFreeJetpackPlan( site.plan ) ) {
+			options.push( { value: 'onlyNeedFree', label: 'This plan is too expensive' } );
+		}
+		return options;
+	}
+
 	render() {
 		const { translate, siteSlug } = this.props;
 		const { reasonSelected, compactButtons, renderFull } = this.state;
 
-		const textShareWhy =
-			translate( 'Would you mind sharing why you want to' + ' disconnect ' ) +
-			`${ siteSlug }` +
-			translate( ' from WordPress.com ' );
-
-		const options = [
-			{ value: 'onlyNeedFree', label: 'This plan is too expensive' },
-			{ value: 'tooHard', label: 'It was too hard to configure Jetpack' },
+		const textShareWhy = translate(
+			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
 			{
-				value: 'didNotInclude',
-				label: 'This plan didn’t include what I needed',
-			},
-		];
+				textOnly: true,
+				args: { siteName: siteSlug },
+			}
+		);
+
+		const options = this.getOptions();
 
 		return (
 			<div className="disconnect-site__survey main">
@@ -65,6 +76,7 @@ class DisconnectSurvey extends Component {
 }
 
 export default connect( state => ( {
+	site: getSelectedSite( state ),
 	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( DisconnectSurvey ) );
