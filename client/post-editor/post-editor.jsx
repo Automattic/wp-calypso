@@ -1168,7 +1168,7 @@ export const PostEditor = React.createClass( {
 	/**
 	 * Finds the current selection position in the Visual editor.
 	 *
-	 * It uses some black magic raw JS magic. Not for the faint-hearted.
+	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
 	 *
 	 * @param {Object} editor The editor where we must find the selection
 	 * @returns {null | Object} The selection range position in the editor
