@@ -44,9 +44,21 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	handleOutsideClick = event => {
-		const targetClasses = event.target.className.split( /\s/ );
-		const hasDatePickerDayClass = intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
-		const isChildOfPublishDate = ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target );
+		// The `className` of a `svg` element is a `SVGAnimatedString`, which
+		// does not have a `split` method.  Since an `svg` element will not
+		// have any of the classes we're interested in, don't bother trying to
+		// handle this situation.
+		const targetClasses = typeof event.target.className === 'string'
+			? event.target.className.split( /\s/ )
+			: [];
+
+		const hasDatePickerDayClass = intersection( targetClasses, [
+			'DayPicker-Day', 'date-picker__day'
+		] ).length > 0;
+
+		const isChildOfPublishDate =
+			ReactDom.findDOMNode( this.refs.editorPublishDateWrapper )
+				.contains( event.target );
 
 		if ( ! hasDatePickerDayClass && ! isChildOfPublishDate ) {
 			this.setState( { isOpen: false } );
