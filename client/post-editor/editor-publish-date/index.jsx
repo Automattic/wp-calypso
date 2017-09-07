@@ -179,7 +179,7 @@ export class EditorPublishDate extends React.Component {
 }
 
 export default connect(
-	( state, props ) => {
+	state => {
 		return {
 			site: getSelectedSite( state ),
 		};
