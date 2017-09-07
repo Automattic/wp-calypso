@@ -22,7 +22,7 @@ export function currentPage( state = 1, action ) {
 }
 
 /**
- * Tracks the current page of orders displayed for the current site.
+ * Tracks the current search term used for the current site.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
