@@ -77,10 +77,16 @@ class SocialLogin extends Component {
 	};
 
 	renderContent() {
-		const { translate } = this.props;
+		const { translate, errorUpdatingSocialConnection } = this.props;
 
 		return (
 			<div>
+				{
+					errorUpdatingSocialConnection &&
+						<Notice status={ 'is-error' } showDismiss={ false }>
+							{ errorUpdatingSocialConnection.message }
+						</Notice>
+				}
 				<CompactCard>
 					{ translate( 'You’ll be able to log in faster by linking your WordPress.com account with your ' +
 						'social networks. We’ll never post without your permission.' ) }
@@ -108,16 +114,10 @@ class SocialLogin extends Component {
 	}
 
 	renderGoogleConnection() {
-		const { errorUpdatingSocialConnection, isUserConnectedToGoogle } = this.props;
+		const { isUserConnectedToGoogle } = this.props;
 
 		return (
 			<CompactCard>
-				{
-					errorUpdatingSocialConnection &&
-						<Notice status={ 'is-error' } showDismiss={ false }>
-							{ errorUpdatingSocialConnection.message }
-						</Notice>
-				}
 				<div className="social-login__header">
 					<div className="social-login__header-info">
 						<div className="social-login__header-icon">
