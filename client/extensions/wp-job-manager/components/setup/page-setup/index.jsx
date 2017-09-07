@@ -141,13 +141,7 @@ class PageSetup extends Component {
 
 const selector = formValueSelector( form );
 
-const mapStateToProps = state => {
-	return {
-		createDashboard: selector( state, 'createDashboard' ),
-		createJobs: selector( state, 'createJobs' ),
-		createPostJob: selector( state, 'createPostJob' ),
-	};
-};
+const mapStateToProps = state => selector( state, 'createDashboard', 'createJobs', 'createPostJob' );
 
 const createReduxForm = reduxForm( {
 	form,
