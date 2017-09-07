@@ -1080,7 +1080,7 @@ export const PostEditor = React.createClass( {
 		const tagType = type ? type : 'start';
 
 		return `<span
-				data-mce-type="bookmark"	
+				data-mce-type="bookmark"
 				id="mce_SELREST_${ tagType }"
 				data-mce-style="overflow:hidden;line-height:0"
 				style="overflow:hidden;line-height:0"
@@ -1190,12 +1190,18 @@ export const PostEditor = React.createClass( {
 		 */
 		const startElement = document.createElement( 'span' );
 		startElement.className = 'mce_SELRES_start';
-		startElement.style = 'display:inline-block;width:0;overflow:hidden;line-height:0px';
+		startElement.style.display = 'inline-block';
+		startElement.style.width = 0;
+		startElement.style.overflow = 'hidden';
+		startElement.style.lineHeight = '0px';
 		startElement.innerHTML = selectionID;
 
 		const endElement = document.createElement( 'span' );
 		endElement.className = 'mce_SELRES_end';
-		endElement.style = 'display:inline-block;width:0;overflow:hidden;line-height:0px';
+		endElement.style.display = 'inline-block';
+		endElement.style.width = 0;
+		endElement.style.overflow = 'hidden';
+		endElement.style.lineHeight = '0px';
 		endElement.innerHTML = selectionID;
 
 		/**
