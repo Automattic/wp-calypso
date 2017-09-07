@@ -20,9 +20,9 @@
 
 .conversation-caterpillar__show-all,
 .conversation-caterpillar__count {
-	display: flex;
-	color: #87a6bc;
+	color: $gray;
 	cursor: pointer;
+	display: flex;
 	font-size: 13px;
 	font-weight: 400;
 }
@@ -46,8 +46,12 @@
 		white-space: normal;
 	}
 
+	&:hover {
+		color: $blue-medium;
+	}
+
 	&::after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 35px );
 		height: 16px * 2;
 		width: 16px * 2;
 		z-index: 1;
@@ -79,4 +83,18 @@
 	font-weight: 400;
 	margin-left: 8px;
 	cursor: pointer;
+}
+
+.conversation-caterpillar__show-all {
+
+	&:hover {
+		color: $blue-medium;
+	}
+
+	.gridicon {
+
+		&:hover {
+			fill: $blue-medium;
+		}
+	}
 }

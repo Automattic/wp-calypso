@@ -343,6 +343,10 @@
 	margin-bottom: 0;
 }
 
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content blockquote {
+	margin: 10px 0 16px;
+}
+
 // Avoids long trackback links from wrapping
 // Using General Sibling Selector so this doesn't affect regular comment usernames
 .comments__comment-trackbackicon ~ .comments__comment-username {
@@ -402,11 +406,12 @@ a.comments__comment-username {
 	}
 
 	blockquote {
-		padding: 8px 16px;
-		margin: 8px 0 16px;
-		border-left: 2px solid $gray;
+		background: $gray-light;
+		border-left: 2px solid lighten( $gray, 30% );
+		border-radius: 0;
 		color: darken( $gray, 30% );
-		background: lighten( $gray, 30% );
+		margin: 8px 0 16px;
+		padding: 8px 16px;
 	}
 }
 
