@@ -30,6 +30,7 @@
 		"help/courses": true,
 		"jetpack/activity-log": true,
 		"jetpack/api-cache": false,
+		"login/native-login-links": true,
 		"login/wp-login": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
