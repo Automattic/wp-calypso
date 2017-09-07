@@ -1,5 +1,5 @@
 export const Steps = {
-	FINAL: 'final',
+	CONFIRMATION: 'confirmation',
 	INTRO: 'intro',
 	PAGE_SETUP: 'page-setup',
 };
