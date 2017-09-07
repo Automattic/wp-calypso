@@ -82,10 +82,13 @@ export default class PostScheduler extends PureComponent {
 		};
 
 		return (
-			<span className="editor-publish-date__post-scheduler">
-				{ ! postUtils.isPage( post ) && <QueryPosts
-					siteId={ get( site, 'ID' ) }
-					query={ query } /> }
+			<div>
+				{ ! postUtils.isPage( post ) && (
+					<QueryPosts
+						siteId={ get( site, 'ID' ) }
+						query={ query }
+					/>
+				) }
 				<PostScheduleWithOtherPostsIndicated
 					onDateChange={ setPostDate }
 					onMonthChange={ this.setCurrentMonth }
@@ -93,7 +96,7 @@ export default class PostScheduler extends PureComponent {
 					selectedDay={ get( post, 'date' ) }
 					site={ site }
 				/>
-			</span>
+			</div>
 		);
 	}
 }
