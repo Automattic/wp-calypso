@@ -77,7 +77,7 @@ export class PluginAutoUpdateToggle extends Component {
 			} );
 		}
 
-		if ( ! site.canAutoupdateFiles && site.options.file_mod_disabled ) {
+		if ( false ) {
 			const reasons = utils.getSiteFileModDisableReason( site, 'autoupdateFiles' );
 			const html = [];
 

@@ -166,6 +166,8 @@ export const PluginsList = React.createClass( {
 	},
 
 	hasNoSitesThatCanManage( plugin ) {
+		// TODO: I think 'manage' will be there since we prefill the newly created shadow with it.
+		// Remove this comment if true.
 		return ! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
 	},
 

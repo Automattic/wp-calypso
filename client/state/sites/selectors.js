@@ -34,6 +34,7 @@ import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
 import { isSiteUpgradeable } from 'state/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -203,6 +204,11 @@ export function isJetpackModuleActive( state, siteId, slug ) {
  * @return {?Boolean}         Whether running minimum version
  */
 export function isJetpackMinimumVersion( state, siteId, version ) {
+	// Skip the checks completely for Atomic sites.
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return true;
+	}
+
 	const isJetpack = isJetpackSite( state, siteId );
 	if ( ! isJetpack ) {
 		return null;
@@ -609,6 +615,11 @@ export function hasStaticFrontPage( state, siteId ) {
  * @return {?Boolean} if the site can be managed from calypso
  */
 export function canJetpackSiteManage( state, siteId ) {
+	// Skip the checks completely for Atomic sites.
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return true;
+	}
+
 	// for versions 3.4 and higher, canManage can be determined by the state of the Manage Module
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 
@@ -634,6 +645,11 @@ export function canJetpackSiteManage( state, siteId ) {
  * @return {?Boolean} true if the site can update its file
  */
 export function canJetpackSiteUpdateFiles( state, siteId ) {
+	// Skip the checks completely for Atomic sites.
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return true;
+	}
+
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
@@ -674,6 +690,11 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
  * @return {?Boolean} true if the site can auto update
  */
 export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
+	// Skip the checks completely for Atomic sites.
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return true;
+	}
+
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
@@ -940,6 +961,11 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
  * @return {?Boolean} true if the site has minimum jetpack version
  */
 export function siteHasMinimumJetpackVersion( state, siteId ) {
+	// Skip the checks completely for Atomic sites.
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return true;
+	}
+
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
