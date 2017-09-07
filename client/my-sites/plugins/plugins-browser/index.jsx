@@ -22,7 +22,7 @@ import PluginsActions from 'lib/plugins/wporg-data/actions';
 import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { canCurrentUser, hasJetpackSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -37,6 +37,7 @@ import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
+import { isEnabled } from 'config';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -287,7 +288,18 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getManageButton() {
+	shouldShowManageButton() {
+		if ( this.props.isJetpackSite ) {
+			return true;
+		}
+		return ( ! this.props.selectedSiteId && this.props.hasJetpackSites );
+	},
+
+	renderManageButton() {
+		if ( ! this.shouldShowManageButton() ) {
+			return null;
+		}
+
 		const site = this.props.site ? '/' + this.props.site : '';
 		return (
 			<HeaderButton
@@ -298,11 +310,27 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	shouldShowManageButton() {
-		if ( this.props.isJetpackSite ) {
-			return true;
+	handleUploadPluginButtonClick() {
+		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
+	},
+
+	renderUploadPluginButton() {
+		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
+			return null;
 		}
-		return ( ! this.props.selectedSiteId && this.props.hasJetpackSites );
+
+		const { site, translate } = this.props;
+		const uploadUrl = '/plugins/upload' + ( site ? '/' + site : '' );
+
+		return (
+			<HeaderButton
+				icon="cloud-upload"
+				label={ translate( 'Upload Plugin' ) }
+				aria-label={ translate( 'Upload Plugin' ) }
+				href={ uploadUrl }
+				onClick={ this.handleUploadPluginButtonClick }
+			/>
+		);
 	},
 
 	getPageHeaderView() {
@@ -311,14 +339,18 @@ const PluginsBrowser = React.createClass( {
 		}
 
 		const navigation = this.props.category ? this.getNavigationBar() : this.getSearchBar();
-		const manageButton = this.shouldShowManageButton() && this.getManageButton();
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugins-browser__main-header">
 				{ navigation }
-				{ manageButton }
+				<div className="plugins__header-buttons">
+					{ this.renderManageButton() }
+					{ this.renderUploadPluginButton() }
+				</div>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	},
 
 	getMockPluginItems() {
@@ -407,6 +439,7 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent
+		recordTracksEvent,
+		recordGoogleEvent,
 	}
 )( localize( PluginsBrowser ) );
