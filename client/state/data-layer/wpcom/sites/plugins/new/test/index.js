@@ -19,7 +19,7 @@ import {
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'state/plugins/upload/actions';
-import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
+import Dispatcher from 'dispatcher';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';
@@ -56,6 +56,17 @@ describe( 'uploadPlugin', () => {
 } );
 
 describe( 'uploadComplete', () => {
+	let sandbox;
+
+	beforeEach( () => {
+		sandbox = sinon.sandbox.create();
+		sandbox.stub( Dispatcher, 'handleServerAction' );
+	} );
+
+	afterEach( () => {
+		sandbox.restore();
+	} );
+
 	it( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
 		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
@@ -64,13 +75,16 @@ describe( 'uploadComplete', () => {
 		);
 	} );
 
-	it( 'should dispatch plugin install request success', () => {
+	it( 'should dispatch a receive installed plugin action', () => {
 		const dispatch = sinon.spy();
+
 		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith( {
-			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
-			siteId,
-			pluginId,
+
+		expect( Dispatcher.handleServerAction ).to.have.been.calledWith( {
+			type: 'RECEIVE_INSTALLED_PLUGIN',
+			action: 'PLUGIN_UPLOAD',
+			site: { ID: siteId },
+			plugin: SUCCESS_RESPONSE,
 			data: SUCCESS_RESPONSE,
 		} );
 	} );
