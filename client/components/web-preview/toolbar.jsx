@@ -141,7 +141,7 @@ class PreviewToolbar extends Component {
 							borderless
 							className="web-preview__external"
 							href={ externalUrl || previewUrl }
-							target="_blank"
+							target="_self"
 							rel="noopener noreferrer"
 						>
 							<Gridicon icon="external" />
