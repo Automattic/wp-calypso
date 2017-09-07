@@ -57,6 +57,17 @@ describe( 'uploadPlugin', () => {
 
 describe( 'uploadComplete', () => {
 	let sandbox;
+	const site = {
+		ID: siteId,
+		URL: 'https://wordpress.com',
+	};
+	const getState = () => ( {
+		sites: {
+			items: {
+				[ siteId ]: site,
+			}
+		}
+	} );
 
 	beforeEach( () => {
 		sandbox = sinon.sandbox.create();
@@ -69,7 +80,7 @@ describe( 'uploadComplete', () => {
 
 	it( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
-		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
+		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
 			completePluginUpload( siteId, pluginId )
 		);
@@ -78,12 +89,12 @@ describe( 'uploadComplete', () => {
 	it( 'should dispatch a receive installed plugin action', () => {
 		const dispatch = sinon.spy();
 
-		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
+		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
 
-		expect( Dispatcher.handleServerAction ).to.have.been.calledWith( {
+		expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 			type: 'RECEIVE_INSTALLED_PLUGIN',
 			action: 'PLUGIN_UPLOAD',
-			site: { ID: siteId },
+			site,
 			plugin: SUCCESS_RESPONSE,
 			data: SUCCESS_RESPONSE,
 		} );
