@@ -40,7 +40,9 @@ export default {
 
 		if ( client_id ) {
 			if ( ! redirect_to ) {
-				return next( new Error( 'The `redirect_to` query parameter is missing.' ) );
+				const error = new Error( 'The `redirect_to` query parameter is missing.' );
+				error.status = 401;
+				return next( error );
 			}
 
 			const parsedRedirectUrl = parseUrl( redirect_to );
@@ -49,7 +51,9 @@ export default {
 			if ( client_id !== redirectQueryString.client_id ) {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
 
-				return next( new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' ) );
+				const error = new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' );
+				error.status = 401;
+				return next( error );
 			}
 
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
