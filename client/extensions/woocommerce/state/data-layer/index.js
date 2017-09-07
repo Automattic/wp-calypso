@@ -14,7 +14,7 @@ import settingsGeneral from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
-import stripeConnect from '../sites/stripeConnect/handlers';
+import stripeConnectAccount from '../sites/settings/stripeConnectAccount/handlers';
 import ui from './ui';
 import debugFactory from 'debug';
 
@@ -32,7 +32,7 @@ const handlers = mergeHandlers(
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,
-	stripeConnect,
+	stripeConnectAccount,
 	ui,
 );
 
