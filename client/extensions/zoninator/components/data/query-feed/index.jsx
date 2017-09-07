@@ -13,8 +13,8 @@ import { requestFeed } from '../../../state/feeds/actions';
 class QueryFeed extends PureComponent {
 
 	static propTypes = {
-		siteId: PropTypes.number,
-		zoneId: PropTypes.number,
+		siteId: PropTypes.number.isRequired,
+		zoneId: PropTypes.number.isRequired,
 	};
 
 	componentWillMount() {
@@ -22,11 +22,7 @@ class QueryFeed extends PureComponent {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			! nextProps.siteId ||
-			! nextProps.zoneId ||
-			( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId )
-		) {
+		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
 			return;
 		}
 

@@ -6,5 +6,5 @@ export const fromApi = ( posts, siteId ) => posts.map( post => ( {
 } ) );
 
 export const toApi = posts => ( {
-	post_ids: posts.map( post => post.ID ),
+	post_ids: posts.map( post => post.id ),
 } );
