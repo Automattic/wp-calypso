@@ -1,7 +1,7 @@
 UI Orders
 =========
 
-This module is used to manage state for the UI of the orders sections. This includes which filters are in effect for the list view.
+This module is used to manage state for the UI of the orders sections. This includes which filters are in effect for the list view, and tracking any edits or new orders.
 
 ## Actions
 
@@ -17,6 +17,12 @@ This is saved on a per-site basis.
 {
 	"orders": {
 		[ siteId ] : {
+			edits: {
+				currentlyEditingId: {},
+				changes: {
+					... order data ...
+				},
+			},
 			list: {
 				currentPage: 1,
 				currentSearch: "Smith",
