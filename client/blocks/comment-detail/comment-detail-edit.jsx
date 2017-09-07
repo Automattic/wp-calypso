@@ -75,7 +75,7 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'Name' ) }
 					</FormLabel>
 					<FormTextInput
-						disabled={ isAuthorRegistered }
+						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
 						value={ authorDisplayName }
 					/>
@@ -86,7 +86,7 @@ export class CommentDetailEdit extends Component {
 						{ translate( 'URL' ) }
 					</FormLabel>
 					<FormTextInput
-						disabled={ isAuthorRegistered }
+						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }
 						value={ authorUrl }
 					/>
