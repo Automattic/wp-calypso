@@ -35,16 +35,22 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
+const mapTree = ( tree, status, type ) => map( tree, comment => ( {
+	commentId: comment[ 0 ],
+	commentParentId: comment[ 2 ],
+	postId: comment[ 1 ],
+	status,
+	type,
+} ) );
+
 export const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
-	const { comments_tree: commentsTree } = data;
 
-	const tree = map( commentsTree, comment => ( {
-		commentId: comment[ 0 ],
-		postId: comment[ 1 ],
-		commentParentId: comment[ 2 ],
-		status,
-	} ) );
+	const tree = [
+		...mapTree( data.comments_tree, status, 'comment' ),
+		...mapTree( data.pingbacks_tree, status, 'pingback' ),
+		...mapTree( data.trackbacks_tree, status, 'trackback' ),
+	];
 
 	dispatch( {
 		type: COMMENTS_TREE_SITE_ADD,
