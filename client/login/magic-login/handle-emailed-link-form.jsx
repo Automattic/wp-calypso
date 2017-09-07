@@ -64,12 +64,12 @@ class HandleEmailedLinkForm extends React.Component {
 		showMagicLoginLinkExpiredPage: PropTypes.func.isRequired,
 	};
 
+	state = {
+		hasSubmitted: false,
+	};
+
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			hasSubmitted: false,
-		};
 
 		if (
 			isEmpty( props.emailAddress ) ||

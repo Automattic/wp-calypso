@@ -86,14 +86,14 @@ export default {
 			return;
 		}
 
-		const magicLoginData = context.state || {};
+		const previousQuery = context.state || {};
 
 		const {
 			client_id,
 			email,
 			token,
 			tt,
-		} = magicLoginData;
+		} = previousQuery;
 
 		context.primary = (
 			<HandleEmailedLinkForm
