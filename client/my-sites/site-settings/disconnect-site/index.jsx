@@ -45,7 +45,7 @@ class DisconnectSite extends Component {
 					<FormattedHeader
 						headerText={ translate( 'Disconnect Site' ) }
 						subHeaderText={ translate(
-							'Tell us why you want to disconnect your site from WordPress.com.'
+							"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
 						) }
 					/>
 					<Card className="disconnect-site__card">
