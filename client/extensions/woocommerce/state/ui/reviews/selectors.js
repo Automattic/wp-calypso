@@ -20,17 +20,17 @@ export const getReviewsCurrentPage = ( state, siteId = getSelectedSiteId( state 
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current search term being viewed. Defaults to an empty string.
+ * @return {String} The current product being viewed. Defaults to null.
  */
-export const getReviewsCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviews', siteId, 'list', 'currentSearch' ], '' );
+export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviews', siteId, 'list', 'currentProduct' ], null );
 };
 
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current product being viewed. Defaults to null.
+ * @return {String} The current search term being viewed. Defaults to an empty string.
  */
-export const getReviewsCurrentProduct = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviews', siteId, 'list', 'currentProduct' ], null );
+export const getReviewsCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviews', siteId, 'list', 'currentSearch' ], '' );
 };

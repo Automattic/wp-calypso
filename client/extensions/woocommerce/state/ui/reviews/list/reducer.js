@@ -35,7 +35,7 @@ export function currentProduct( state = null, action ) {
 }
 
 /**
- * Tracks the current page of reviews displayed for the current site.
+ * Tracks the current search term being displayed for the current site.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload

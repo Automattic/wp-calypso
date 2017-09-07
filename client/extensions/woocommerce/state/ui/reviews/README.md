@@ -40,10 +40,10 @@ This is saved on a per-site basis. `currentPage` returns the current page being 
 
 The current page being viewed. Defaults to 1. Optional `siteId`, will default to the currently selected site.
 
-### `getReviewsCurrentSearch( state, [siteId] )`
-
-The current search term being viewed. Defaults to an empty string. Optional `siteId`, will default to the currently selected site.
-
 ### `getReviewsCurrentProduct( state, [siteId] )`
 
 The current product being viewed, if reviews are being filtered down to a specific product. Defaults to null. Optional `siteId`, will default to the currently selected site.
+
+### `getReviewsCurrentSearch( state, [siteId] )`
+
+The current search term being viewed. Defaults to an empty string. Optional `siteId`, will default to the currently selected site.
