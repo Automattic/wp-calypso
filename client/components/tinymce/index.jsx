@@ -471,7 +471,7 @@ module.exports = React.createClass( {
 		const textNode = ReactDom.findDOMNode( this.refs.text );
 
 		const start = selection.start;
-		const end = selection.end ? selection.end : selection.start;
+		const end = selection.end || selection.start;
 		// Collapse selection to avoid scrolling to the bottom of the textarea
 		textNode.setSelectionRange( start, end );
 

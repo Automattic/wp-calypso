@@ -1087,14 +1087,12 @@ export const PostEditor = React.createClass( {
 	getCursorMarkerSpan: function( type ) {
 		const tagType = type ? type : 'start';
 
-		return '<span ' +
-			'data-mce-type="bookmark"	' +
-			'id="mce_SELREST_' + tagType + '" ' +
-			'data-mce-style="overflow:hidden;line-height:0px" ' +
-			'style="overflow:hidden;line-height:0px"' +
-			'>' +
-			'&#65279;' +
-			'</span>';
+		return `<span
+				data-mce-type="bookmark"	
+				id="mce_SELREST_${ tagType }"
+				data-mce-style="overflow:hidden;line-height:0"
+				style="overflow:hidden;line-height:0"
+			>&#65279;</span>`;
 	},
 
 	addHTMLBookmarkInTextAreaContent: function() {
