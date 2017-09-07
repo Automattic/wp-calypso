@@ -9,13 +9,13 @@ import { expect } from 'chai';
 import {
 	productsDeleteSuccess,
 	productsRequest,
-	productsRequestSuccess,
+	productsReceive,
 } from '../list-reducer';
 
 import {
 	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_RECEIVE,
 } from 'woocommerce/state/action-types';
 
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
@@ -33,29 +33,29 @@ describe( 'reducer', () => {
 			expect( newState.requestedPage ).to.eql( 3 );
 		} );
 	} );
-	describe( 'productsRequestSuccess', () => {
+	describe( 'productsReceive', () => {
 		it( 'should store the current page', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 2,
 				totalPages: 3,
 				totalProducts: 30,
 				products,
 			};
-			const newState = productsRequestSuccess( undefined, action );
+			const newState = productsReceive( undefined, action );
 			expect( newState.currentPage ).to.eql( 2 );
 		} );
 		it( 'should store product ids for the current page', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 2,
 				totalPages: 3,
 				totalProducts: 30,
 				products,
 			};
-			const newState = productsRequestSuccess( undefined, action );
+			const newState = productsReceive( undefined, action );
 			expect( newState.productIds ).to.eql( [ 15, 389 ] );
 		} );
 	} );

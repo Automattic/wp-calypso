@@ -1,20 +1,29 @@
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
+import request from 'woocommerce/state/sites/http-request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productUpdated } from 'woocommerce/state/sites/products/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_REQUEST,
+	WOOCOMMERCE_PRODUCTS_REQUEST,
+	WOOCOMMERCE_PRODUCTS_RECEIVE,
 } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],
 	[ WOOCOMMERCE_PRODUCT_UPDATE ]: [ handleProductUpdate ],
 	[ WOOCOMMERCE_PRODUCT_REQUEST ]: [ handleProductRequest ],
+	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: [ dispatchRequest(
+		handleProductsRequest,
+		handleProductsRequestSuccess,
+		handleProductsRequestError
+	) ],
 };
 
 /**
@@ -74,4 +83,47 @@ export function handleProductRequest( { dispatch }, action ) {
 
 	const updatedSuccessAction = updatedAction( siteId, action, successAction );
 	dispatch( get( siteId, 'products/' + productId, updatedSuccessAction, failureAction ) );
+}
+
+export function handleProductsRequestSuccess( store, action, next, response ) {
+	const { siteId, page } = action;
+	const { headers, body, status } = response.data;
+
+	// We needed to envelope the reponse to get the number of products and pages. see handleProductsRequest
+	if ( status !== 200 ) {
+		return handleProductsRequestError( store, action, next, ( body.code || status ) );
+	}
+
+	const totalPages = headers[ 'X-WP-TotalPages' ];
+	const totalProducts = headers[ 'X-WP-Total' ];
+
+	store.dispatch( {
+		type: WOOCOMMERCE_PRODUCTS_RECEIVE,
+		siteId,
+		page,
+		totalPages,
+		totalProducts,
+		products: body,
+	} );
+
+	return next( action );
+}
+
+export function handleProductsRequestError( { dispatch }, action, next, error ) {
+	const { siteId, page } = action;
+	dispatch( {
+		type: WOOCOMMERCE_PRODUCTS_RECEIVE,
+		siteId,
+		page,
+		error,
+	} );
+	return next( action );
+}
+
+export function handleProductsRequest( { dispatch, getState }, action, next ) {
+	const { siteId, page } = action;
+	// &_envelope is needed because we need X-WP-TotalPages and X-WP-Total
+	// from the WC API Response. The wpcom-http getHeaders method only returns headers from the JP proxy, not the end host
+	dispatch( request( siteId, action ).get( `products?page=${ page }&per_page=10&_envelope` ) );
+	return next( action );
 }

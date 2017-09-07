@@ -39,6 +39,18 @@ export const areProductsLoading = ( state, page = 1, siteId = getSelectedSiteId(
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [page] Page of products. If not provided, defaults to first page.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether the products list for a request page has received an error from the server
+ */
+export const areProductsError = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
+	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isError', page ] );
+	// Strict check because it could also be undefined.
+	return ( true === isLoading );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of pages of products available on a site, or 0 if not loaded yet.
  */
