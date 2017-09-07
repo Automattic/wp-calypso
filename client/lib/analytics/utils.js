@@ -1,10 +1,22 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:analytics:utils' );
+
+/**
  * Whether Do Not Track is enabled in the user's browser.
  *
  * @returns {Boolean} true if Do Not Track is enabled in the user's browser.
  */
 export function doNotTrack() {
-	return '1' === navigator.doNotTrack;
+	const result = '1' === navigator.doNotTrack;
+	debug( `Do Not Track: ${ result }` );
+	return result;
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
@@ -43,5 +55,8 @@ export function isPiiUrl() {
 		return href.indexOf( pattern ) !== -1;
 	};
 
-	return forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
+	const result = forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
+
+	debug( `Is PII URL: ${ result }` );
+	return result;
 }
