@@ -44,7 +44,7 @@ export default class DevdocsSidebar extends React.PureComponent {
 							icon="location"
 							label="The Calypso Guide"
 							link="/devdocs/docs/guide/index.md"
-							selected={ this.isItemSelected( '/devdocs/docs/guide/index.md' ) }
+							selected={ this.isItemSelected( '/devdocs/docs/guide', false ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
