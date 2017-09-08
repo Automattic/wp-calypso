@@ -3,7 +3,7 @@
  *
  * @returns {Boolean} true if Do Not Track is enabled in the user's browser.
  */
-function doNotTrack() {
+export function doNotTrack() {
 	return '1' === navigator.doNotTrack;
 }
 
@@ -36,17 +36,12 @@ const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
  *
  * @returns {Boolean} true if the current URL can potentially contain personally identifiable info.
  */
-function isPiiUrl() {
+export function isPiiUrl() {
 	const href = document.location.href;
 
 	const match = pattern => {
 		return href.indexOf( pattern ) !== -1;
-	}
+	};
 
 	return forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
 }
-
-module.exports = {
-	doNotTrack: doNotTrack,
-	isPiiUrl: isPiiUrl
-};
