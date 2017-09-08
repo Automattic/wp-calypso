@@ -3,9 +3,8 @@
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -15,7 +14,7 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-function requestingAccountCreation( state = {} ) {
+function connectAccountCreate( state = {} ) {
 	return Object.assign( {}, state, {
 		connectedUserID: '',
 		email: '',
@@ -25,43 +24,23 @@ function requestingAccountCreation( state = {} ) {
 }
 
 /**
- * Updates state with successfully created account details
+ * Updates state with created account details
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-function receivingAccountCreated( state = {}, action ) {
-	if ( action.connectedUserID ) {
-		return Object.assign( {}, state, {
-			connectedUserID: action.connectedUserID,
-			email: action.email,
-			isActivated: false,
-			isRequesting: false,
-		} );
-	}
-
-	return state;
-}
-
-/**
- * Updates state when account creation fails
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-function receivingAccountCreationError( state = {} ) {
+function connectAccountCreateComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
-		connectedUserID: '',
-		email: '',
+		connectedUserID: action.connectedUserID || '',
+		email: action.email || '',
+		error: action.error || '',
 		isActivated: false,
 		isRequesting: false,
 	} );
 }
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST ]: requestingAccountCreation,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS ]: receivingAccountCreated,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR ]: receivingAccountCreationError,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE ]: connectAccountCreate,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE ]: connectAccountCreateComplete,
 } );

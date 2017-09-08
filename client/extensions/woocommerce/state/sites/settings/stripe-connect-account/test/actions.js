@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { createAccount } from '../actions';
 import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -19,7 +19,7 @@ describe( 'actions', () => {
 		it( 'should return an action', () => {
 			const action = createAccount( siteId, email, countryCode );
 			expect( action ).to.eql( {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 				siteId,
 				email,
 				countryCode

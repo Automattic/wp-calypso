@@ -9,9 +9,8 @@ import { expect } from 'chai';
 import stripeConnectAccountReducer from '../reducer';
 import sitesReducer from 'woocommerce/state/sites/reducer';
 import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
@@ -22,10 +21,10 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'requestingAccountCreation', () => {
+	describe( 'connectAccountCreate', () => {
 		it( 'should update state to show request in progress', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 				siteId: 123,
 			};
 			const newState = stripeConnectAccountReducer( undefined, action );
@@ -34,7 +33,7 @@ describe( 'reducer', () => {
 
 		it( 'should only update the request in progress flag for the appropriate siteId', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_REQUEST,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 				siteId: 123,
 			};
 			const newState = sitesReducer( {
@@ -64,10 +63,10 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'receivingAccountCreated', () => {
+	describe( 'connectAccountCreateComplete', () => {
 		it( 'should update state with the received account details', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 				connectedUserID: 'acct_14qyt6Alijdnw0EA',
 				email: 'foo@bar.com',
 				siteId: 123,
@@ -76,6 +75,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( {
 				connectedUserID: 'acct_14qyt6Alijdnw0EA',
 				email: 'foo@bar.com',
+				error: '',
 				isActivated: false,
 				isRequesting: false,
 			} );
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 
 		it( 'should leave other sites state unchanged', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 				connectedUserID: 'acct_14qyt6Alijdnw0EA',
 				email: 'foo@bar.com',
 				siteId: 123,
@@ -120,17 +120,23 @@ describe( 'reducer', () => {
 	describe( 'receivingAccountCreationError', () => {
 		it( 'should reset the isRequesting flag in state', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 				siteId: 123,
+				email: 'foo@bar.com',
+				error: 'My error',
 			};
 			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.error ).to.eql( 'My error' );
+			expect( newState.email ).to.eql( 'foo@bar.com' );
 			expect( newState.isRequesting ).to.eql( false );
 		} );
 
 		it( 'should leave other sites state unchanged', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 				siteId: 123,
+				email: 'foo@bar.com',
+				error: 'My error',
 			};
 			const newState = sitesReducer( {
 				123: {

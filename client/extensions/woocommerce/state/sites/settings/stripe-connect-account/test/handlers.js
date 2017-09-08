@@ -11,13 +11,12 @@ import {
 	createAccount,
 } from '../actions.js';
 import {
-	handleCreateRequest,
-	handleCreateRequestSuccess,
-	handleCreateRequestError,
+	handleAccountCreate,
+	handleAccountCreateSuccess,
+	handleAccountCreateFailure,
 } from '../handlers.js';
 import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 } from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
@@ -29,7 +28,7 @@ describe( 'handlers', () => {
 			const country = 'US';
 			const dispatch = spy();
 			const action = createAccount( siteId, email, country );
-			handleCreateRequest( { dispatch }, action );
+			handleAccountCreate( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: WPCOM_HTTP_REQUEST,
 				body: JSON.stringify( { email, country } ),
@@ -44,7 +43,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 
-	describe( '#handleCreateAccountRequestSuccess()', () => {
+	describe( '#handleAccountCreateSuccess()', () => {
 		it( 'should dispatch create account receive on success with the account info', () => {
 			const siteId = '123';
 			const email = 'foo@bar.com';
@@ -54,27 +53,24 @@ describe( 'handlers', () => {
 			};
 			const response = {
 				data: {
-					body: {
-						account_id: 'acct_14qyt6Alijdnw0EA',
-						success: true,
-					},
-					status: 200
+					account_id: 'acct_14qyt6Alijdnw0EA',
+					success: true,
 				}
 			};
 
 			const action = createAccount( siteId, email, countryCode );
-			handleCreateRequestSuccess( store, action, response );
+			handleAccountCreateSuccess( store, action, response );
 
 			expect( store.dispatch ).calledWith( {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_SUCCESS,
-				connectedUserID: response.data.body.account_id,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				connectedUserID: response.data.account_id,
 				email,
 				siteId,
 			} );
 		} );
 	} );
 
-	describe( '#handleCreateAccountRequestError()', () => {
+	describe( '#handleAccountCreateFailure()', () => {
 		it( 'should dispatch create account error', () => {
 			const siteId = '123';
 			const email = 'foo@bar.com';
@@ -95,10 +91,10 @@ describe( 'handlers', () => {
 			};
 
 			const action = createAccount( siteId, email, countryCode );
-			handleCreateRequestError( store, action, response.data.body.data.message );
+			handleAccountCreateFailure( store, action, response.data.body.data.message );
 
 			expect( store.dispatch ).calledWith( {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_ERROR,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 				email,
 				error: response.data.body.data.message,
 				siteId,
