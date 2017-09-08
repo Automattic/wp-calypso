@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:steps:test' );
 import StepWrapper from 'signup/step-wrapper';
 import SubmitStepButton from 'signup/submit-step-button';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TestStep',
 
 	render: function() {
