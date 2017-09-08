@@ -1,8 +1,11 @@
+import { connect } from 'react-redux';
+
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';

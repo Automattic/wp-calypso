@@ -1,8 +1,11 @@
+import debugModule from 'debug';
+const debug = debugModule( 'calypso:signup' );
+
 /**
  * External dependencies
  */
-import debugModule from 'debug';
-const debug = debugModule( 'calypso:signup' );
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -48,7 +51,7 @@ class Signup extends React.Component {
 	static displayName = 'Signup';
 
 	static contextTypes = {
-		store: React.PropTypes.object
+		store: PropTypes.object
 	};
 
 	constructor( props, context ) {
