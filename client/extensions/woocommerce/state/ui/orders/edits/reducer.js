@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniqueId } from 'lodash';
+import { omit, uniqueId } from 'lodash';
 import { combineReducers } from 'state/utils';
 
 /**
@@ -47,7 +47,8 @@ export function currentlyEditingId( state = null, action ) {
 export function changes( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_UI_ORDERS_EDIT:
-			return { ...state, ...action.order };
+			const order = omit( action.order, 'id' );
+			return { ...state, ...order };
 		case WOOCOMMERCE_UI_ORDERS_CLEAR:
 			return {};
 		default:

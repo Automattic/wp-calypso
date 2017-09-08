@@ -15,7 +15,7 @@ import {
 
 const initialState = {
 	123: {
-		edits: { currentlyEditingId: 1, changes: { id: 1, first_name: 'Joan' } },
+		edits: { currentlyEditingId: 1, changes: { first_name: 'Joan' } },
 		list: { currentPage: 3, currentSearch: '' },
 	},
 };
@@ -33,7 +33,7 @@ describe( 'reducer', () => {
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			123: {
-				edits: { currentlyEditingId: 1, changes: { id: 1, first_name: 'Joan' } },
+				edits: { currentlyEditingId: 1, changes: { first_name: 'Joan' } },
 				list: { currentPage: 3, currentSearch: '' },
 			},
 			234: {
@@ -56,11 +56,11 @@ describe( 'reducer', () => {
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			123: {
-				edits: { currentlyEditingId: 1, changes: { id: 1, first_name: 'Joan' } },
+				edits: { currentlyEditingId: 1, changes: { first_name: 'Joan' } },
 				list: { currentPage: 3, currentSearch: '' },
 			},
 			234: {
-				edits: { currentlyEditingId: 2, changes: { id: 2, first_name: 'Fiona' } },
+				edits: { currentlyEditingId: 2, changes: { first_name: 'Fiona' } },
 				list: { currentPage: 1, currentSearch: '' }
 			},
 		} );

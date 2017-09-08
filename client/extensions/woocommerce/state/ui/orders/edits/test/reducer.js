@@ -27,7 +27,6 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( {
 			currentlyEditingId: 40,
 			changes: {
-				id: 40,
 				first_name: 'Joan',
 			},
 		} );
@@ -46,7 +45,6 @@ describe( 'reducer', () => {
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				id: 40,
 				first_name: 'Joan',
 			},
 		} );
@@ -54,7 +52,31 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( {
 			currentlyEditingId: 40,
 			changes: {
+				first_name: 'Joan',
+				last_name: 'Watson',
+			},
+		} );
+	} );
+
+	it( 'should merge updates to an order if new fields are passed in', () => {
+		const action = {
+			type: WOOCOMMERCE_UI_ORDERS_EDIT,
+			siteId: 123,
+			order: {
 				id: 40,
+				last_name: 'Watson',
+			},
+		};
+		const originalState = deepFreeze( {
+			currentlyEditingId: 40,
+			changes: {
+				first_name: 'Joan',
+			},
+		} );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {
+			currentlyEditingId: 40,
+			changes: {
 				first_name: 'Joan',
 				last_name: 'Watson',
 			},
@@ -73,7 +95,6 @@ describe( 'reducer', () => {
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				id: 40,
 				first_name: 'Joan',
 			},
 		} );
@@ -81,13 +102,12 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( {
 			currentlyEditingId: 42,
 			changes: {
-				id: 42,
 				first_name: 'Fiona',
 			},
 		} );
 	} );
 
-	it( 'should store a generated an ID for a created order', () => {
+	it( 'should store a generated ID for a created order', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -96,11 +116,9 @@ describe( 'reducer', () => {
 			},
 		};
 		const newState = reducer( undefined, action );
-		expect( newState ).to.eql( {
-			currentlyEditingId: { placeholder: 'order_1' },
-			changes: {
-				first_name: 'Alex',
-			},
+		expect( newState.currentlyEditingId.placeholder ).to.exist;
+		expect( newState.changes ).to.eql( {
+			first_name: 'Alex',
 		} );
 	} );
 
@@ -112,7 +130,6 @@ describe( 'reducer', () => {
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				id: 40,
 				first_name: 'Joan',
 			},
 		} );
