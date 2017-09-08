@@ -32,6 +32,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	READER_EXPAND_COMMENTS,
+	READER_HIDE_ALL_COMMENTS,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
@@ -217,6 +218,16 @@ export const expansions = createReducer(
 				...state,
 				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
 			};
+		},
+		[ READER_HIDE_ALL_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId } = action.payload;
+
+			if ( ! siteId || ! postId ) {
+				return state;
+			}
+
+			const stateKey = getStateKey( siteId, postId );
+			return { ...state, [ stateKey ]: {} };
 		},
 	}
 );

@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
+import { map, get, last, uniqBy, size, filter, takeRight, compact, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -18,7 +18,7 @@ import {
 	getDateSortedPostComments,
 	getHiddenCommentsForPost,
 } from 'state/comments/selectors';
-import { expandComments } from 'state/comments/actions';
+import { expandComments, hideAllComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
 import { isAncestor } from 'blocks/comments/utils';
@@ -60,6 +60,14 @@ class ConversationCaterpillarComponent extends React.Component {
 		} );
 	};
 
+	handleHideAll = () => {
+		const { blogId, postId } = this.props;
+		this.props.hideAllComments( {
+			siteId: blogId,
+			postId,
+		} );
+	};
+
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
 		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
@@ -81,7 +89,7 @@ class ConversationCaterpillarComponent extends React.Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, hiddenComments } = this.props;
 		const allExpandableComments = this.getExpandableComments();
 		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
 		const commentCount = size( allExpandableComments );
@@ -95,6 +103,13 @@ class ConversationCaterpillarComponent extends React.Component {
 		const displayedAuthorsCount = size( displayedAuthors );
 		const lastAuthorName = get( last( displayedAuthors ), 'name' );
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
+
+		const hideShowAllHandler = isEmpty( hiddenComments )
+			? this.hideAllComments
+			: this.handleShowAll;
+		const hideShowAllText = isEmpty( hiddenComments )
+			? translate( 'Hide all' )
+			: translate( 'Show all' );
 
 		return (
 			<Card className="conversation-caterpillar" onClick={ this.handleTickle }>
@@ -151,13 +166,13 @@ class ConversationCaterpillarComponent extends React.Component {
 								},
 							} ) }
 				</button>
-				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
+				<button onClick={ hideShowAllHandler } className="conversation-caterpillar__show-all">
 					<Gridicon
 						icon="chevron-down"
 						size={ 12 }
 						className="conversation-caterpillar__show-all-chevron"
 					/>
-					{ translate( 'Show all' ) }
+					{ hideShowAllText }
 				</button>
 			</Card>
 		);
@@ -175,7 +190,7 @@ const ConnectedConversationCaterpillar = connect(
 			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},
-	{ expandComments }
+	{ expandComments, hideAllComments }
 )( ConversationCaterpillar );
 
 export default ConnectedConversationCaterpillar;

@@ -29,7 +29,7 @@ import {
 	COMMENTS_EDIT,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
-import { expandComments } from '../actions';
+import { expandComments, hideAllComments } from '../actions';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, content: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -386,6 +386,18 @@ describe( 'reducer', () => {
 					4: 'is-excerpt',
 				},
 			} );
+		} );
+
+		it( 'should delete all keys after receiving hide-all action', () => {
+			const prevState = {
+				[ '1-2' ]: {
+					3: 'is-full',
+					4: 'is-single-line',
+				},
+			};
+			const action = hideAllComments( { siteId: 1, postId: 2 } );
+			const nextState = expansions( prevState, action );
+			expect( nextState ).to.eql( {} );
 		} );
 	} );
 } );
