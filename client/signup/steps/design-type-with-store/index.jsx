@@ -15,10 +15,7 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
-import BlogImage from './blog-image';
-import PageImage from './page-image';
-import GridImage from './grid-image';
-import StoreImage from './store-image';
+import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
 import { abtest } from 'lib/abtest';
 
 import { setDesignType } from 'state/signup/steps/design-type/actions';

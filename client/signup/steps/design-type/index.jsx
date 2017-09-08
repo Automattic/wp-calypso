@@ -13,9 +13,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 
-import BlogImage from '../design-type-with-store/blog-image';
-import PageImage from '../design-type-with-store/page-image';
-import GridImage from '../design-type-with-store/grid-image';
+import { BlogImage, PageImage, GridImage } from '../design-type-with-store/type-images';
 
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
