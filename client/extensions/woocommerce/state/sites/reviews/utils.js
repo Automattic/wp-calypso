@@ -5,9 +5,9 @@ import { omitBy } from 'lodash';
 
 export const DEFAULT_QUERY = {
 	page: 1,
-	per_page: 50,
+	per_page: 10,
 	search: '',
-	status: 'any',
+	status: 'pending',
 };
 
 /**

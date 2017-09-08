@@ -5,6 +5,7 @@ import orders from './orders/reducer';
 import payments from './payments/reducer';
 import products from './products/reducer';
 import productCategories from './product-categories/reducer';
+import reviews from './reviews/reducer';
 import shipping from './shipping/reducer';
 import { combineReducers } from 'state/utils';
 
@@ -13,5 +14,6 @@ export default combineReducers( {
 	payments,
 	products,
 	productCategories,
+	reviews,
 	shipping,
 } );

@@ -1,0 +1,70 @@
+.reviews__placeholder {
+	display: inline-block;
+	width: 100%;
+	@include placeholder();
+}
+
+.reviews__list {
+	.pagination {
+		margin-top: 16px;
+	}
+}
+
+.reviews__card {
+	margin: 0 auto;
+	padding: 16px;
+
+	&.is-unapproved {
+		background: mix( $alert-yellow, $white, 8.5% );
+		box-shadow: inset 4px 0 0 0 $alert-yellow;
+	}
+
+	.reviews__header {
+		display: flex;
+		padding: 8px;
+	}
+
+	.reviews__info {
+		margin-left: 16px;
+		width: 20%;
+	}
+
+	.reviews__content {
+		overflow: hidden;
+		padding: 0 8px;
+		width: 50%;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.reviews__rating {
+		width: 20%;
+		margin-top: 12px;
+	}
+
+	.reviews__author-gravatar img {
+		margin-top: 8px;
+	}
+
+	.reviews__product {
+		height: 40px;
+		width: 50px;
+		overflow: hidden;
+		position: relative;
+		margin-right: 16px;
+
+		&.is-placeholder {
+			background: $gray-light;
+		}
+
+		img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			height: 100%;
+			width: auto;
+			-webkit-transform: translate( -50%, -50% );
+			transform: translate( -50%, -50% );
+		}
+	}
+}

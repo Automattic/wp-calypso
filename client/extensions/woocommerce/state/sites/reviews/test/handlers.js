@@ -33,7 +33,7 @@ describe( 'handlers', () => {
 				method: 'GET',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: '/wc/v3/products/reviews&page=1&per_page=50&status=any&_envelope&_method=GET',
+					path: '/wc/v3/products/reviews&page=1&per_page=10&status=pending&_envelope&_method=GET',
 					json: true,
 					apiVersion: '1.1',
 				}
