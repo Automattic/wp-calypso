@@ -10,7 +10,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
@@ -48,9 +47,9 @@ class DisconnectSite extends Component {
 							"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
 						) }
 					/>
-					<Card className="disconnect-site__card">
+					<div className="disconnect-site__card">
 						<DisconnectSurvey />
-					</Card>
+					</div>
 					<SkipSurvey />
 				</Main>
 			</div>
