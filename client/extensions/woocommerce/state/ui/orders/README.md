@@ -1,7 +1,7 @@
 UI Orders
 =========
 
-This module is used to manage state for the UI of the orders sections. This includes which filters are in effect for the list view, and tracking any edits or new orders.
+This module is used to manage state for the UI of the orders sections. This includes which filters are in effect for the list view, and tracking any edits or new orders. Newly created orders get placeholder IDs in the format `{ placeholder: 'order_1' }`. The current structure only tracks editing one order per site.
 
 ## Actions
 
