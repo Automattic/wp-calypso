@@ -403,7 +403,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
-			areCommentsTreeSupported,
+			isCommentsTreeSupported,
 			isLoading,
 			page,
 			siteBlacklist,
@@ -428,7 +428,7 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
 
-				{ ! areCommentsTreeSupported && (
+				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
 						number={ 100 }
 						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
@@ -436,9 +436,7 @@ export class CommentList extends Component {
 						status={ status }
 					/>
 				) }
-				{ areCommentsTreeSupported && (
-					<QuerySiteCommentsTree siteId={ siteId } status={ status } />
-				) }
+				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
@@ -469,7 +467,7 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={
-								areCommentsTreeSupported &&
+								isCommentsTreeSupported &&
 								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 							}
 							replyComment={ this.replyComment }
@@ -513,9 +511,9 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
-		areCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		comments,
+		isCommentsTreeSupported:
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isLoading,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
