@@ -206,6 +206,7 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentRawContent,
 			commentStatus,
+			commentType,
 			commentUrl,
 			editComment,
 			isBulkEdit,
@@ -234,9 +235,12 @@ export class CommentDetail extends Component {
 			isExpanded,
 		} = this.state;
 
+		const commentIsPing = 'pingback' === commentType || 'trackback' === commentType;
+
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
 			'comment-detail__placeholder': isLoading,
+			'comment-detail__ping': commentIsPing,
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
@@ -265,6 +269,7 @@ export class CommentDetail extends Component {
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
+					commentIsPing={ commentIsPing }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -323,6 +328,7 @@ export class CommentDetail extends Component {
 									commentContent={ commentContent }
 									commentDate={ commentDate }
 									commentId={ commentId }
+									commentIsPing={ commentIsPing }
 									commentStatus={ commentStatus }
 									commentUrl={ commentUrl }
 									repliedToComment={ repliedToComment }
@@ -377,6 +383,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
+		commentType: get( comment, 'type' ),
 		commentUrl: get( comment, 'URL' ),
 		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isLoading,

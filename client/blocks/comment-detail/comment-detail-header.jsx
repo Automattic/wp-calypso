@@ -25,6 +25,7 @@ export const CommentDetailHeader = ( {
 	authorUrl,
 	commentContent,
 	commentIsLiked,
+	commentIsPing,
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
@@ -95,7 +96,13 @@ export const CommentDetailHeader = ( {
 								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
 							</label>
 						}
-						<Gravatar user={ author } />
+						<div className="comment-detail__author-avatar">
+							<Gravatar user={ author } />
+							{ commentIsPing &&
+								// eslint-disable-next-line wpcalypso/jsx-gridicon-size
+								<Gridicon icon="link" size={ 16 } />
+							}
+						</div>
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
 								<strong>

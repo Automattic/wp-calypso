@@ -37,11 +37,22 @@
 		vertical-align: middle;
 	}
 
-
-	.gravatar {
-		border-radius: 50%;
+	.comment-detail__author-avatar {
 		display: block;
 		flex-shrink: 0;
+		height: 32px;
+		position: relative;
+
+		.gridicon {
+			background-color: $gray;
+			border: 2px solid $white;
+			border-radius: 50%;
+			fill: $white;
+			padding: 2px;
+			position: absolute;
+				bottom: -4px;
+				right: -8px;
+		}
 	}
 }
 
@@ -53,7 +64,6 @@
 
 	strong {
 		color: $gray-text;
-		float: left;
 		margin-right: 8px;
 	}
 
@@ -65,6 +75,9 @@
 			color: $blue-wordpress;
 		}
 	}
+}
+.rtl .comment-detail__author-info strong {
+	float: left;
 }
 
 .comment-detail__author-info-element {
@@ -660,6 +673,11 @@
 
 	.comment-detail__header.is-preview {
 		cursor: default;
+		@include breakpoint( "<960px" ) {
+			.comment-detail__header-content {
+				flex-wrap: nowrap;
+			}
+		}
 	}
 
 	.gravatar {
