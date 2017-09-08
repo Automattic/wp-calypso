@@ -18,19 +18,19 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 const Confirmation = ( { slug, translate } ) => {
 	return (
 		<div>
-			<SectionHeader label={ translate( 'All Done!' ) } />
+			<SectionHeader label={ translate( 'You\'re ready to start using WP Job Manager!' ) } />
 			<Card>
 				<p>
-					{ translate( 'Looks like you\'re all set to start using the plugin. In case you\'re wondering where to go next:' ) }
+					{ translate( 'Wondering what to do now? Here are some of the most common next steps:' ) }
 				</p>
 
 				{ translate(
 					'{{ul}}' +
-						'{{li}} {{settings}}Tweak the plugin settings{{/settings}} {{/li}}' +
-						'{{li}} {{addJob}}Add a job via the back-end{{/addJob}} {{/li}}' +
-						'{{li}} {{submission}}Find out more about the front-end job submission form{{/submission}} {{/li}}' +
-						'{{li}} {{jobs}}Add the [jobs] shortcode to a page to list jobs{{/jobs}} {{/li}}' +
-						'{{li}} {{dashboard}}Find out more about the front-end job dashboard{{/dashboard}} {{/li}}' +
+						'{{li}} {{settings}}Tweak your settings{{/settings}} {{/li}}' +
+						'{{li}} {{addJob}}Add a job using the admin dashboard{{/addJob}} {{/li}}' +
+						'{{li}} {{jobs}}Add job listings to a page using the [jobs] shortcode{{/jobs}} {{/li}}' +
+						'{{li}} {{submission}}Learn to use the front-end job submission board{{/submission}} {{/li}}' +
+						'{{li}} {{dashboard}}Learn to use the front-end job dashboard{{/dashboard}} {{/li}}' +
 					'{{/ul}}',
 					{
 						components: {
@@ -38,18 +38,18 @@ const Confirmation = ( { slug, translate } ) => {
 							li: <li />,
 							settings: <a href={ `/extensions/wp-job-manager/${ slug }` } />,
 							addJob: <a href="#" />,
-							submission: (
-								<ExternalLink
-									icon={ true }
-									target="_blank"
-									href="https://wpjobmanager.com/document/the-job-submission-form/"
-								/>
-							),
 							jobs: (
 								<ExternalLink
 									icon={ true }
 									target="_blank"
 									href="https://wpjobmanager.com/document/shortcode-reference/#section-1"
+								/>
+							),
+							submission: (
+								<ExternalLink
+									icon={ true }
+									target="_blank"
+									href="https://wpjobmanager.com/document/the-job-submission-form/"
 								/>
 							),
 							dashboard: (
@@ -64,8 +64,8 @@ const Confirmation = ( { slug, translate } ) => {
 				) }
 
 				<p>
-					{ translate( 'And don\'t forget, if you need any more help using WP Job Manager you can ' +
-						'consult the {{docs}}documentation{{/docs}} or {{forums}}post on the forums!{{/forums}}',
+					{ translate( 'If you need help, you can find more detail in our {{docs}}support documentation{{/docs}}' +
+						'or post your question on the {{forums}}WP Job Manager support forums{{/forums}}. Happy hiring!',
 						{
 							components: {
 								docs: (
@@ -88,12 +88,12 @@ const Confirmation = ( { slug, translate } ) => {
 				</p>
 			</Card>
 
-			<SectionHeader label={ translate( 'Support the Ongoing Development of this Plugin' ) } />
+			<SectionHeader label={ translate( 'Support WP Job Manager\'s Ongoing Development' ) } />
 			<Card>
 				<p>
-					{ translate( 'There are many ways to support open-source projects such as WP Job Manager, ' +
-						'for example code contribution, translation, or even telling your friends how awesome ' +
-						'the plugin (hopefully) is. Thanks in advance for your support - it is much appreciated!' ) }
+					{ translate( 'There are lots of ways you can support open source software projects like this one: ' +
+						'contributing code, fixing a bug, assisting with non-English translation, or just telling your ' +
+						'friends about WP Job Manager to help spread the word. We appreciate your support!' ) }
 				</p>
 
 				{ translate(
