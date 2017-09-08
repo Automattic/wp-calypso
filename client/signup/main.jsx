@@ -55,7 +55,7 @@ class Signup extends React.Component {
 	};
 
 	constructor( props, context ) {
-	    super( props, context );
+		super( props, context );
 		SignupDependencyStore.setReduxStore( context.store );
 
 		this.state = {
