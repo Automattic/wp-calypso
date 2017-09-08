@@ -23,7 +23,7 @@ import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 import { createPages } from '../../../state/setup/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { shouldGoToNextStep } from '../../../state/setup/selectors';
+import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/selectors';
 
 const form = 'extensions.wpJobManager.pageSetup';
 
@@ -35,6 +35,7 @@ class PageSetup extends Component {
 		createPostJob: PropTypes.bool,
 		dashboardTitle: PropTypes.string,
 		goToNextStep: PropTypes.bool,
+		isCreating: PropTypes.bool,
 		jobsTitle: PropTypes.string,
 		postJobTitle: PropTypes.string,
 		siteId: PropTypes.number,
@@ -82,6 +83,7 @@ class PageSetup extends Component {
 			createDashboard,
 			createJobs,
 			createPostJob,
+			isCreating,
 			translate,
 		} = this.props;
 
@@ -121,9 +123,10 @@ class PageSetup extends Component {
 						<form>
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isCreating }
 									name="createPostJob" />
 								<ReduxFormTextInput
-									disabled={ ! createPostJob }
+									disabled={ ! createPostJob || isCreating }
 									name="postJobTitle" />
 
 								<FormSettingExplanation>
@@ -138,9 +141,10 @@ class PageSetup extends Component {
 
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isCreating }
 									name="createDashboard" />
 								<ReduxFormTextInput
-									disabled={ ! createDashboard }
+									disabled={ ! createDashboard || isCreating }
 									name="dashboardTitle" />
 
 								<FormSettingExplanation>
@@ -154,9 +158,10 @@ class PageSetup extends Component {
 
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isCreating }
 									name="createJobs" />
 								<ReduxFormTextInput
-									disabled={ ! createJobs }
+									disabled={ ! createJobs || isCreating }
 									name="jobsTitle" />
 
 								<FormSettingExplanation>
@@ -177,7 +182,7 @@ class PageSetup extends Component {
 					</a>
 					<Button primary
 						className="page-setup__create-pages"
-						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) }
+						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) || isCreating }
 						onClick={ this.createSelectedPages }>
 						{ translate( 'Create selected pages' ) }
 					</Button>
@@ -195,6 +200,7 @@ const mapStateToProps = state => {
 	return {
 		...selector( state, 'createDashboard', 'createJobs', 'createPostJob', 'dashboardTitle', 'jobsTitle', 'postJobTitle' ),
 		goToNextStep: shouldGoToNextStep( state, siteId ),
+		isCreating: isCreatingPages( state, siteId ),
 		siteId,
 		slug: getSelectedSiteSlug( state ) || '',
 	};
