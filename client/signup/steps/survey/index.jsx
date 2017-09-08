@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
@@ -68,25 +69,25 @@ const SurveyStep = React.createClass( {
 	renderOther() {
 		const otherWriteIn = this.getOtherWriteIn();
 		return (
-			<div className="survey__other">
+		    <div className="survey__other">
 				<FormTextInputWithAction
-					action={ this.translate( 'Continue' ) }
+					action={ this.props.translate( 'Continue' ) }
 					defaultValue={ otherWriteIn }
-					placeholder={ this.translate( 'Please describe what your site is about' ) }
+					placeholder={ this.props.translate( 'Please describe what your site is about' ) }
 					onAction={ this.handleVerticalOther }
 					onChange={ this.handleOtherWriteIn }
 				/>
-				<p className="survey__other-copy">{ this.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
+				<p className="survey__other-copy">{ this.props.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
 			</div>
 		);
 	},
 
 	renderOptionList() {
 		return (
-			<div className="survey__verticals-list">
+		    <div className="survey__verticals-list">
 				{ this.state.verticalList.map( this.renderVertical ) }
 				<Button className="survey__vertical" onClick={ this.handleOther }>
-					<span className="survey__vertical-label">{ this.translate( 'Other' ) }</span>
+					<span className="survey__vertical-label">{ this.props.translate( 'Other' ) }</span>
 					<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
 				</Button>
 			</div>
@@ -94,10 +95,10 @@ const SurveyStep = React.createClass( {
 	},
 
 	render() {
-		const blogHeaderText = this.translate( 'Let\'s create your new WordPress.com blog!' );
-		const siteHeaderText = this.translate( 'Let\'s create your new WordPress.com site!' );
-		const blogSubHeaderText = this.translate( 'To get started, tell us what your blog is about.' );
-		const siteSubHeaderText = this.translate( 'To get started, tell us what your blog or website is about.' );
+		const blogHeaderText = this.props.translate( 'Let\'s create your new WordPress.com blog!' );
+		const siteHeaderText = this.props.translate( 'Let\'s create your new WordPress.com site!' );
+		const blogSubHeaderText = this.props.translate( 'To get started, tell us what your blog is about.' );
+		const siteSubHeaderText = this.props.translate( 'To get started, tell us what your blog or website is about.' );
 
 		const backUrl = this.props.stepSectionName
 			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
@@ -173,4 +174,4 @@ const SurveyStep = React.createClass( {
 export default connect(
 	null,
 	{ setSurvey }
-)( SurveyStep );
+)( localize( SurveyStep ) );

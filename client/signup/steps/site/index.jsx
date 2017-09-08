@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
@@ -33,7 +34,7 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'Site',
 
 	getInitialState: function() {
@@ -149,7 +150,7 @@ export default React.createClass( {
 			this.resetAnalyticsData();
 
 			SignupActions.submitSignupStep( {
-				processingMessage: this.translate( 'Setting up your site' ),
+				processingMessage: this.props.translate( 'Setting up your site' ),
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site
@@ -196,10 +197,10 @@ export default React.createClass( {
 		return map( messages, function( message, error_code ) {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
-					<span>
+				    <span>
 						<p>
 							{ message }&nbsp;
-							{ this.translate( 'Is this your username? {{a}}Log in now to claim this site address{{/a}}.', {
+							{ this.props.translate( 'Is this your username? {{a}}Log in now to claim this site address{{/a}}.', {
 								components: {
 									a: <a href={ link } />
 								}
@@ -215,36 +216,38 @@ export default React.createClass( {
 	formFields: function() {
 		const fieldDisabled = this.state.submitting;
 
-		return <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
-			<FormLabel htmlFor="site">
-				{ this.translate( 'Choose a site address' ) }
-			</FormLabel>
-			<FormTextInput
-				autoFocus={ true }
-				autoCapitalize={ 'off' }
-				className="site-signup-step__site-url"
-				disabled={ fieldDisabled }
-				type="text"
-				name="site"
-				value={ formState.getFieldValue( this.state.form, 'site' ) }
-				isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-				isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-				onBlur={ this.handleBlur }
-				onChange={ this.handleChangeEvent } />
-			<span className="site-signup-step__wordpress-domain-suffix">.wordpress.com</span>
-		</ValidationFieldset>;
+		return (
+		    <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
+				<FormLabel htmlFor="site">
+					{ this.props.translate( 'Choose a site address' ) }
+				</FormLabel>
+				<FormTextInput
+					autoFocus={ true }
+					autoCapitalize={ 'off' }
+					className="site-signup-step__site-url"
+					disabled={ fieldDisabled }
+					type="text"
+					name="site"
+					value={ formState.getFieldValue( this.state.form, 'site' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
+					isValid={ formState.isFieldValid( this.state.form, 'site' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent } />
+				<span className="site-signup-step__wordpress-domain-suffix">.wordpress.com</span>
+			</ValidationFieldset>
+		);
 	},
 
 	buttonText: function() {
 		if ( this.props.step && 'completed' === this.props.step.status ) {
-			return this.translate( 'Site created - Go to next step' );
+			return this.props.translate( 'Site created - Go to next step' );
 		}
 
 		if ( this.state.submitting ) {
-			return this.translate( 'Creating your site…' );
+			return this.props.translate( 'Creating your site…' );
 		}
 
-		return this.translate( 'Create My Site' );
+		return this.props.translate( 'Create My Site' );
 	},
 
 	formFooter: function() {
@@ -265,13 +268,13 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<StepWrapper
+		    <StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.translate( 'Create your site.' ) }
+				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
 				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() } />
 		);
 	}
-} );
+} ) );
