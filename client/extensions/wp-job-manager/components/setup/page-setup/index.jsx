@@ -27,17 +27,35 @@ import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/select
 
 const form = 'extensions.wpJobManager.pageSetup';
 
+const validate = ( values, props ) => {
+	const { translate } = props;
+	const errors = {};
+	const message = translate( 'Page name cannot be empty.' );
+
+	if ( values.createPostJob && ! values.postJobTitle.trim() ) {
+		errors.postJobTitle = message;
+	}
+
+	if ( values.createDashboard && ! values.dashboardTitle.trim() ) {
+		errors.dashboardTitle = message;
+	}
+
+	if ( values.createJobs && ! values.jobsTitle.trim() ) {
+		errors.jobsTitle = message;
+	}
+
+	return errors;
+};
+
 class PageSetup extends Component {
 	static propTypes = {
 		createDashboard: PropTypes.bool,
 		createJobs: PropTypes.bool,
 		createPages: PropTypes.func.isRequired,
 		createPostJob: PropTypes.bool,
-		dashboardTitle: PropTypes.string,
 		goToNextStep: PropTypes.bool,
+		handleSubmit: PropTypes.func,
 		isCreating: PropTypes.bool,
-		jobsTitle: PropTypes.string,
-		postJobTitle: PropTypes.string,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -51,8 +69,9 @@ class PageSetup extends Component {
 		page( `/extensions/wp-job-manager/setup/${ slug }/${ Steps.CONFIRMATION }` );
 	}
 
-	createSelectedPages = () => {
+	createSelectedPages = values => {
 		const titles = [];
+		const { siteId } = this.props;
 		const {
 			createDashboard,
 			createJobs,
@@ -60,8 +79,7 @@ class PageSetup extends Component {
 			dashboardTitle,
 			jobsTitle,
 			postJobTitle,
-			siteId,
-		} = this.props;
+		} = values;
 
 		if ( ! siteId ) {
 			return;
@@ -83,6 +101,7 @@ class PageSetup extends Component {
 			createDashboard,
 			createJobs,
 			createPostJob,
+			handleSubmit,
 			isCreating,
 			translate,
 		} = this.props;
@@ -183,7 +202,7 @@ class PageSetup extends Component {
 					<Button primary
 						className="page-setup__create-pages"
 						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) || isCreating }
-						onClick={ this.createSelectedPages }>
+						onClick={ handleSubmit( this.createSelectedPages ) }>
 						{ translate( 'Create selected pages' ) }
 					</Button>
 				</CompactCard>
@@ -198,7 +217,7 @@ const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		...selector( state, 'createDashboard', 'createJobs', 'createPostJob', 'dashboardTitle', 'jobsTitle', 'postJobTitle' ),
+		...selector( state, 'createDashboard', 'createJobs', 'createPostJob' ),
 		goToNextStep: shouldGoToNextStep( state, siteId ),
 		isCreating: isCreatingPages( state, siteId ),
 		siteId,
@@ -217,11 +236,12 @@ const createReduxForm = reduxForm( {
 		dashboardTitle: 'Job Dashboard',
 		jobsTitle: 'Jobs',
 		postJobTitle: 'Post a Job',
-	}
+	},
+	validate,
 } );
 
 export default compose(
+	localize, // Must be the outer HOC, as the validation function relies on `translate` prop
 	connect( mapStateToProps, mapDispatchToProps ),
 	createReduxForm,
-	localize,
 )( PageSetup );
