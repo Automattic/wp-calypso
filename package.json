@@ -74,6 +74,7 @@
     "express": "4.13.3",
     "express-useragent": "1.0.7",
     "filesize": "3.2.1",
+    "find-package-json": "1.0.0",
     "flag-icon-css": "2.3.0",
     "flux": "2.1.1",
     "fuse.js": "2.6.1",

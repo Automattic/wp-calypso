@@ -1942,7 +1942,7 @@
       "version": "1.0.3"
     },
     "exec-sh": {
-      "version": "0.2.0",
+      "version": "0.2.1",
       "dev": true
     },
     "execa": {
@@ -2059,7 +2059,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.14",
+      "version": "0.8.15",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -2127,6 +2127,9 @@
       "version": "0.4.0"
     },
     "find-cache-dir": {
+      "version": "1.0.0"
+    },
+    "find-package-json": {
       "version": "1.0.0"
     },
     "find-parent-dir": {
@@ -4450,7 +4453,7 @@
       "dev": true
     },
     "node-fetch": {
-      "version": "1.7.2"
+      "version": "1.7.3"
     },
     "node-gyp": {
       "version": "3.6.2",
