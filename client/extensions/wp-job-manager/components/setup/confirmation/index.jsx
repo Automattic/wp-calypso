@@ -106,10 +106,10 @@ const Confirmation = ( { slug, translate } ) => (
 					components: {
 						ul: <ul className="confirmation__support" />,
 						li: <li />,
-						star: <Gridicon icon="star" size="18" />,
-						globe: <Gridicon icon="globe" size="18" />,
-						cog: <Gridicon icon="cog" size="18" />,
-						help: <Gridicon icon="help" size="18" />,
+						star: <Gridicon icon="star" size={ 18 } />,
+						globe: <Gridicon icon="globe" size={ 18 } />,
+						cog: <Gridicon icon="cog" size={ 18 } />,
+						help: <Gridicon icon="help" size={ 18 } />,
 						review: (
 							<ExternalLink
 								icon={ true }
