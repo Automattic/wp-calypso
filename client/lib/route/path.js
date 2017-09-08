@@ -63,6 +63,17 @@ function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
+function sectionifyUsingRoutes( path, routes ) {
+	const params = {};
+	for ( let i = 0; i < routes.length; i++ ) {
+		const route = routes[ i ];
+		if ( route.match( path, params ) ) {
+			return route.path;
+		}
+	}
+	return path;
+}
+
 function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
 
@@ -75,7 +86,12 @@ function sectionify( path, siteFragment ) {
 	}
 
 	if ( siteFragment ) {
-		basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
+		if ( siteFragment.constructor === Array ) {
+			// siteFragment is an array of page routes (from 'page' node.js module)
+			basePath = sectionifyUsingRoutes( basePath, siteFragment );
+		} else {
+			basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
+		}
 	}
 	return untrailingslashit( basePath );
 }

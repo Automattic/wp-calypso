@@ -2,11 +2,24 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { Route } from 'page';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+
+const checkoutRoutes = [
+	new Route( '/checkout/thank-you' ),
+	new Route( '/checkout/thank-you/:receipt' ),
+	new Route( '/checkout/:product' ),
+	new Route( '/checkout/:product/renew/:receipt' ),
+];
+
+const commentsRoutes = [
+	new Route( '/comments/approved/:domain' ),
+	new Route( '/comments/pending/:domain' ),
+];
 
 describe( 'route', function() {
 	let route;
@@ -494,6 +507,53 @@ describe( 'route', function() {
 				expect(
 					route.sectionify( '/edit/jetpack-portfolio/2916284/new' )
 				).to.equal( '/edit/jetpack-portfolio/new' );
+			} );
+			it( 'should parameterize checkout thank you paths', function() {
+				expect(
+					route.sectionify( '/checkout/thank-you', checkoutRoutes )
+				).to.equal( '/checkout/thank-you' );
+				expect(
+					route.sectionify( '/checkout/thank-you/25222194', checkoutRoutes )
+				).to.equal( '/checkout/thank-you/:receipt' );
+			} );
+			it( 'should parameterize checkout paths', function() {
+				expect(
+					route.sectionify( '/checkout/gapps', checkoutRoutes )
+				).to.equal( '/checkout/:product' );
+				expect(
+					route.sectionify( '/checkout/theme:elemin', checkoutRoutes )
+				).to.equal( '/checkout/:product' );
+				expect(
+					route.sectionify( '/checkout/domain_map:69thclergycouncil.com', checkoutRoutes )
+				).to.equal( '/checkout/:product' );
+			} );
+			it( 'should parameterize checkout renew paths', function() {
+				expect(
+					route.sectionify( '/checkout/gapps/renew/6527469', checkoutRoutes )
+				).to.equal( '/checkout/:product/renew/:receipt' );
+				expect(
+					route.sectionify( '/checkout/jetpack_premium_monthly/renew/7980613', checkoutRoutes )
+				).to.equal( '/checkout/:product/renew/:receipt' );
+				expect(
+					route.sectionify( '/checkout/personal-bundle/renew/6611954', checkoutRoutes )
+				).to.equal( '/checkout/:product/renew/:receipt' );
+				expect(
+					route.sectionify( '/checkout/domain_map:69thclergycouncil.com/renew/5164008', checkoutRoutes )
+				).to.equal( '/checkout/:product/renew/:receipt' );
+			} );
+			it( 'should parameterize comment paths', function() {
+				expect(
+					route.sectionify( '/comments/approved', commentsRoutes )
+				).to.equal( '/comments/approved' );
+				expect(
+					route.sectionify( '/comments/pending', commentsRoutes )
+				).to.equal( '/comments/pending' );
+				expect(
+					route.sectionify( '/comments/approved/elmundodelaliteraturasite.wordpress.com', commentsRoutes )
+				).to.equal( '/comments/approved/:domain' );
+				expect(
+					route.sectionify( '/comments/pending/17evasetyowatimm2.wordpress.com', commentsRoutes )
+				).to.equal( '/comments/pending/:domain' );
 			} );
 		} );
 		describe( 'for listing paths', function() {
