@@ -75,7 +75,7 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 }
 
 function getValidPath( parameters ) {
-	let locale = getLocale( parameters ),
+	const locale = getLocale( parameters ),
 		flowName = getFlowName( parameters ),
 		currentFlowSteps = flows.getFlow( flowName ).steps,
 		stepName = getStepName( parameters ) || currentFlowSteps[ 0 ],
