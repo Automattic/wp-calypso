@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,15 +24,13 @@ function ProgressBanner( {
 	freshness,
 	restoreId,
 } ) {
-	const restoreStatusDescription = status === 'queued'
-		? translate( 'Your restore will start in a moment.' )
-		: translate( 'We\'re on it! Your site is being restored.' );
+	const restoreStatusDescription =
+		status === 'queued'
+			? translate( 'Your restore will start in a moment.' )
+			: translate( "We're on it! Your site is being restored." );
 
 	return (
-		<ActivityLogBanner
-			status="info"
-			title={ translate( 'Currently restoring your site' ) }
-		>
+		<ActivityLogBanner status="info" title={ translate( 'Currently restoring your site' ) }>
 			<QueryRewindRestoreStatus
 				freshness={ freshness }
 				queryDelay={ 1500 }
@@ -48,13 +47,11 @@ function ProgressBanner( {
 			</p>
 
 			<div>
-				<em>{ restoreStatusDescription }</em>
+				<em>
+					{ restoreStatusDescription }
+				</em>
 				<ProgressBar
-					className={
-						status === 'queued'
-							? 'activity-log-banner__progress-bar--queued'
-							: null
-					}
+					className={ status === 'queued' ? 'activity-log-banner__progress-bar--queued' : null }
 					isPulsing
 					value={ status === 'queued' ? 100 : percent }
 				/>
@@ -67,10 +64,7 @@ ProgressBanner.propTypes = {
 	applySiteOffset: PropTypes.func.isRequired,
 	percent: PropTypes.number.isRequired,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [
-		'queued',
-		'running',
-	] ).isRequired,
+	status: PropTypes.oneOf( [ 'queued', 'running' ] ).isRequired,
 	timestamp: PropTypes.number.isRequired,
 };
 

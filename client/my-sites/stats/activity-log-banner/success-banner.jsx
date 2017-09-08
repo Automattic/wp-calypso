@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,13 +34,7 @@ class SuccessBanner extends PureComponent {
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
 	render() {
-		const {
-			applySiteOffset,
-			moment,
-			siteUrl,
-			timestamp,
-			translate,
-		} = this.props;
+		const { applySiteOffset, moment, siteUrl, timestamp, translate } = this.props;
 
 		return (
 			<ActivityLogBanner
@@ -48,17 +43,18 @@ class SuccessBanner extends PureComponent {
 				status="success"
 				title={ translate( 'Your site has been successfully restored' ) }
 			>
-				<TrackComponentView eventName="calypso_activitylog_successbanner_impression" eventProperties={ {
-					restore_to: timestamp,
-				} } />
-				<p>{ translate(
-					'We successfully restored your site back to %s!',
-					{ args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ) }
-				) }</p>
-				<Button
-					href={ siteUrl }
-					primary
-				>
+				<TrackComponentView
+					eventName="calypso_activitylog_successbanner_impression"
+					eventProperties={ {
+						restore_to: timestamp,
+					} }
+				/>
+				<p>
+					{ translate( 'We successfully restored your site back to %s!', {
+						args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ),
+					} ) }
+				</p>
+				<Button href={ siteUrl } primary>
 					{ translate( 'View site' ) }
 				</Button>
 				{ '  ' }
