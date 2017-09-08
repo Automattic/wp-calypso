@@ -50,31 +50,42 @@ const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
  */
 export function isPiiUrl() {
 	const href = document.location.href;
-
-	const match = pattern => {
-		return href.indexOf( pattern ) !== -1;
-	};
-
+	const match = pattern => href.indexOf( pattern ) !== -1;
 	const result = forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
 
 	debug( `Is PII URL: ${ result }` );
 	return result;
 }
 
-// For better load performance, these routes will skip loading ads.
-const noAdRoutes = [
+// For better load performance, these routes are blacklisted from loading ads.
+const blacklistedRoutes = [
 	'/log-in',
 ];
 
 /**
- * Should we skip loading ads for the given URL for better performance?
+ * Are ads blacklisted from the given URL for better performance?
  *
- * @returns {Boolean} true if the current URL should skip loading ads.
+ * @returns {Boolean} true if the current URL is blacklisted.
  */
-export function shouldSkipAdsForThisUrl() {
+export function isBlacklistedForPerformance() {
 	const { href } = document.location;
-	const result = noAdRoutes.some( pattern => href.indexOf( pattern ) !== -1 );
+	const match = pattern => href.indexOf( pattern ) !== -1;
+	const result = blacklistedRoutes.some( match );
 
-	debug( `Is Skipping Ads For Performance: ${ result }` );
+	debug( `Is URL Blacklisted for Performance: ${ result }` );
 	return result;
 }
+
+/**
+ * Check if the user has DNT enabled or if the route is blacklisted from showing
+ * ads (either due to performance concerns or PII exposure).
+ *
+ * @returns {Boolean} true if we should skip showing ads
+ */
+export function shouldSkipAds() {
+	const result = isBlacklistedForPerformance() || isPiiUrl() || doNotTrack();
+
+	debug( `Is Skipping Ads: ${ result }` );
+	return result;
+}
+

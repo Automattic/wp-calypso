@@ -14,7 +14,7 @@ import config from 'config';
 import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { doNotTrack, isPiiUrl, shouldSkipAdsForThisUrl } from 'lib/analytics/utils';
+import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
  * Module variables
@@ -277,10 +277,10 @@ function loadTrackingScripts( callback ) {
  */
 function isAdTrackingAllowed() {
 	// TODO: Remove the following line before release.
-	return ! shouldSkipAdsForThisUrl() && config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
+	return ! shouldSkipAds() && config.isEnabled( 'ad-tracking' );
 
 	// TODO: Enable the following line before release.
-	// return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl() && ! shouldSkipAdsForThisUrl();
+	// return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
 }
 
 /**
