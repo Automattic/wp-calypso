@@ -46,17 +46,15 @@ function getUrlParameter( name ) {
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
 }
 
-function newAnonId() {
-	const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-	let randomBytes = [];
+function createRandomId( randomBytesLength = 9 ) { // 9 * 4/3 = 12
+	// this is to avoid getting padding of a random byte string when it is base64 encoded
+	let randomBytes;
 
 	if ( window.crypto && window.crypto.getRandomValues ) {
 		randomBytes = new Uint8Array( randomBytesLength );
 		window.crypto.getRandomValues( randomBytes );
 	} else {
-		for ( let i = 0; i < randomBytesLength; ++i ) {
-			randomBytes[ i ] = Math.floor( Math.random() * 256 );
-		}
+		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
 	}
 
 	return btoa( String.fromCharCode.apply( String, randomBytes ) );
@@ -82,7 +80,8 @@ function checkForBlockedTracks() {
 			if ( cookies.tk_ai ) {
 				_ui = cookies.tk_ai;
 			} else {
-				_ui = newAnonId();
+				const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+				_ui = createRandomId( randomIdLength );
 				document.cookie = cookie.serialize( 'tk_ai', _ui );
 			}
 		}
@@ -310,20 +309,7 @@ const analytics = {
 			recordPageViewInFloodlight( urlPath );
 		},
 
-		createRandomId: function() {
-			// this is to avoid getting padding of a random byte string when it is base64 encoded
-			const randomBytesLength = 9; // 9 * 4/3 = 12
-			let randomBytes;
-
-			if ( window.crypto && window.crypto.getRandomValues ) {
-				randomBytes = new Uint8Array( randomBytesLength );
-				window.crypto.getRandomValues( randomBytes );
-			} else {
-				randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
-			}
-
-			return btoa( String.fromCharCode.apply( String, randomBytes ) );
-		},
+		createRandomId,
 
 		/**
 		 * Returns the anoymous id stored in the `tk_ai` cookie
