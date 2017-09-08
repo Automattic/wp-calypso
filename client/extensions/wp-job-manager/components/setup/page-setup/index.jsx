@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import { connect } from 'react-redux';
 import { formValueSelector, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
@@ -11,6 +12,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Steps } from '../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
@@ -19,6 +21,9 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
+import { createPages } from '../../../state/setup/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { shouldGoToNextStep } from '../../../state/setup/selectors';
 
 const form = 'extensions.wpJobManager.pageSetup';
 
@@ -26,9 +31,51 @@ class PageSetup extends Component {
 	static propTypes = {
 		createDashboard: PropTypes.bool,
 		createJobs: PropTypes.bool,
+		createPages: PropTypes.func.isRequired,
 		createPostJob: PropTypes.bool,
+		dashboardTitle: PropTypes.string,
+		goToNextStep: PropTypes.bool,
+		jobsTitle: PropTypes.string,
+		postJobTitle: PropTypes.string,
+		siteId: PropTypes.number,
+		slug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
+
+	componentWillReceiveProps( { goToNextStep, slug } ) {
+		if ( ! goToNextStep ) {
+			return;
+		}
+
+		page( `/extensions/wp-job-manager/setup/${ slug }/${ Steps.CONFIRMATION }` );
+	}
+
+	createSelectedPages = () => {
+		const titles = [];
+		const {
+			createDashboard,
+			createJobs,
+			createPostJob,
+			dashboardTitle,
+			jobsTitle,
+			postJobTitle,
+			siteId,
+		} = this.props;
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		createPostJob && postJobTitle.trim() && titles.push( postJobTitle.trim() );
+		createDashboard && dashboardTitle.trim() && titles.push( dashboardTitle.trim() );
+		createJobs && jobsTitle.trim() && titles.push( jobsTitle.trim() );
+
+		if ( titles.length === 0 ) {
+			return;
+		}
+
+		this.props.createPages( siteId, titles );
+	}
 
 	render() {
 		const {
@@ -130,7 +177,8 @@ class PageSetup extends Component {
 					</a>
 					<Button primary
 						className="page-setup__create-pages"
-						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) }>
+						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) }
+						onClick={ this.createSelectedPages }>
 						{ translate( 'Create selected pages' ) }
 					</Button>
 				</CompactCard>
@@ -141,7 +189,18 @@ class PageSetup extends Component {
 
 const selector = formValueSelector( form );
 
-const mapStateToProps = state => selector( state, 'createDashboard', 'createJobs', 'createPostJob' );
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		...selector( state, 'createDashboard', 'createJobs', 'createPostJob', 'dashboardTitle', 'jobsTitle', 'postJobTitle' ),
+		goToNextStep: shouldGoToNextStep( state, siteId ),
+		siteId,
+		slug: getSelectedSiteSlug( state ) || '',
+	};
+};
+
+const mapDispatchToProps = { createPages };
 
 const createReduxForm = reduxForm( {
 	form,
@@ -156,7 +215,7 @@ const createReduxForm = reduxForm( {
 } );
 
 export default compose(
-	connect( mapStateToProps ),
+	connect( mapStateToProps, mapDispatchToProps ),
 	createReduxForm,
 	localize,
 )( PageSetup );
