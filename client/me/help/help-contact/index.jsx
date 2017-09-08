@@ -49,6 +49,11 @@ import {
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -585,7 +590,7 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { confirmation } = this.state;
+		const { confirmation, olark } = this.state;
 		const { translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
@@ -646,12 +651,19 @@ const HelpContact = React.createClass( {
 
 		// Customers sent to Directly and Forum are not affected by the GM closures
 		const isUserAffectedByGM17Closure = ( supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM );
+		// Paid users will still have ticket support through the GM
+		const doesUserHavePaidPlan = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ].indexOf( selectedSitePlanSlug ) >= 0;
 
 		const shouldShowClosureNotice = (
 			isUserAffectedByGM17Closure &&
 			currentDate > startShowingGM17ClosureNoticeAt &&
 			currentDate < stopShowingGM17ClosureNoticeAt
 		);
+
+		// When support is closed for the GM, the contact form should hide for non-paid plans that are affected by the closure.
+		// This leaves the form open for paid plans and users who are sent to Directly/Forums for support.
+		// Note: this hides the form for Jetpack plans as well, which has been noted as acceptable for the GM.
+		const shouldHideContactForm = ( olark.isSupportClosed && isUserAffectedByGM17Closure && ! doesUserHavePaidPlan );
 
 		return (
 			<div>
@@ -664,7 +676,7 @@ const HelpContact = React.createClass( {
 						showDismiss={ false }
 					/>
 				}
-				<HelpContactForm { ...contactFormProps } />
+				{ ! shouldHideContactForm && <HelpContactForm { ...contactFormProps } /> }
 			</div>
 		);
 	},
