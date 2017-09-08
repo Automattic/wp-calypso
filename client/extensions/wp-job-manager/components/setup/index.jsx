@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Steps } from './constants';
+import Confirmation from './confirmation';
 import DocumentHead from 'components/data/document-head';
 import Intro from './intro';
 import Main from 'components/main';
@@ -22,10 +23,11 @@ const SetupWizard = ( {
 	stepName = Steps.INTRO,
 	translate,
 } ) => {
-	const steps = [ Steps.INTRO, Steps.PAGE_SETUP ];
+	const steps = [ Steps.INTRO, Steps.PAGE_SETUP, Steps.CONFIRMATION ];
 	const components = {
 		[ Steps.INTRO ]: <Intro />,
-		[ Steps.PAGE_SETUP ]: <PageSetup />
+		[ Steps.PAGE_SETUP ]: <PageSetup />,
+		[ Steps.CONFIRMATION ]: <Confirmation />,
 	};
 	const mainClassName = 'wp-job-manager__setup';
 
