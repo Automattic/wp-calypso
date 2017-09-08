@@ -16,6 +16,7 @@ import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } fr
 
 class SuccessBanner extends PureComponent {
 	static propTypes = {
+		applySiteOffset: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteUrl: PropTypes.string.isRequired,
 		timestamp: PropTypes.number.isRequired,
@@ -32,6 +33,7 @@ class SuccessBanner extends PureComponent {
 
 	render() {
 		const {
+			applySiteOffset,
 			moment,
 			siteUrl,
 			timestamp,
@@ -50,7 +52,7 @@ class SuccessBanner extends PureComponent {
 				} } />
 				<p>{ translate(
 					'We successfully restored your site back to %s!',
-					{ args: moment( timestamp ).format( 'LLLL' ) }
+					{ args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ) }
 				) }</p>
 				<Button
 					href={ siteUrl }

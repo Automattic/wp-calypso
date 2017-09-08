@@ -12,6 +12,7 @@ import ProgressBar from 'components/progress-bar';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 
 function ProgressBanner( {
+	applySiteOffset,
 	moment,
 	percent,
 	status,
@@ -37,11 +38,13 @@ function ProgressBanner( {
 				siteId={ siteId }
 				timestamp={ timestamp }
 			/>
-			<p>{ translate(
-				"We're in the process of restoring your site back to %s. " +
-				"You'll be notified once it's complete.",
-				{ args: moment( timestamp ).format( 'LLLL' ) }
-			) }</p>
+			<p>
+				{ translate(
+					"We're in the process of restoring your site back to %s. " +
+						"You'll be notified once it's complete.",
+					{ args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ) }
+				) }
+			</p>
 
 			<div>
 				<em>{ restoreStatusDescription }</em>
@@ -60,6 +63,7 @@ function ProgressBanner( {
 }
 
 ProgressBanner.propTypes = {
+	applySiteOffset: PropTypes.func.isRequired,
 	percent: PropTypes.number.isRequired,
 	siteId: PropTypes.number,
 	status: PropTypes.oneOf( [

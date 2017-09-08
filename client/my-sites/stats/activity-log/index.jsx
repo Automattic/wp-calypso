@@ -215,12 +215,17 @@ class ActivityLog extends Component {
 								siteTitle={ siteTitle }
 								timestamp={ timestamp }
 							/>
-						: <SuccessBanner siteId={ siteId } timestamp={ timestamp } /> }
+						: <SuccessBanner
+								applySiteOffset={ this.applySiteOffset }
+								siteId={ siteId }
+								timestamp={ timestamp }
+							/> }
 				</div>
 			);
 		}
 		return (
 			<ProgressBanner
+				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
 				percent={ percent }
 				restoreId={ restoreId }
