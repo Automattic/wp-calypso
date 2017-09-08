@@ -20,14 +20,18 @@ describe( 'reducer', () => {
 			siteId: 123,
 			order: {
 				id: 40,
-				first_name: 'Joan',
+				billing: {
+					first_name: 'Joan',
+				}
 			},
 		};
 		const newState = reducer( undefined, action );
 		expect( newState ).to.eql( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
+				billing: {
+					first_name: 'Joan',
+				}
 			},
 		} );
 	} );
@@ -38,22 +42,28 @@ describe( 'reducer', () => {
 			siteId: 123,
 			order: {
 				id: 40,
-				first_name: 'Joan',
-				last_name: 'Watson',
+				billing: {
+					first_name: 'Joan',
+					last_name: 'Watson',
+				}
 			},
 		};
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
+				billing: {
+					first_name: 'Joan',
+				}
 			},
 		} );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
-				last_name: 'Watson',
+				billing: {
+					first_name: 'Joan',
+					last_name: 'Watson',
+				}
 			},
 		} );
 	} );
@@ -64,45 +74,27 @@ describe( 'reducer', () => {
 			siteId: 123,
 			order: {
 				id: 40,
-				last_name: 'Watson',
+				billing: {
+					last_name: 'Watson',
+				}
 			},
 		};
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
+				billing: {
+					first_name: 'Joan',
+				}
 			},
 		} );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
-				last_name: 'Watson',
-			},
-		} );
-	} );
-
-	it( 'should change out the order when a new order is edited', () => {
-		const action = {
-			type: WOOCOMMERCE_UI_ORDERS_EDIT,
-			siteId: 123,
-			order: {
-				id: 42,
-				first_name: 'Fiona',
-			},
-		};
-		const originalState = deepFreeze( {
-			currentlyEditingId: 40,
-			changes: {
-				first_name: 'Joan',
-			},
-		} );
-		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( {
-			currentlyEditingId: 42,
-			changes: {
-				first_name: 'Fiona',
+				billing: {
+					first_name: 'Joan',
+					last_name: 'Watson',
+				}
 			},
 		} );
 	} );
@@ -112,13 +104,17 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
 			order: {
-				first_name: 'Alex',
+				billing: {
+					first_name: 'Alex',
+				}
 			},
 		};
 		const newState = reducer( undefined, action );
 		expect( newState.currentlyEditingId.placeholder ).to.exist;
 		expect( newState.changes ).to.eql( {
-			first_name: 'Alex',
+			billing: {
+				first_name: 'Alex',
+			}
 		} );
 	} );
 
@@ -130,7 +126,9 @@ describe( 'reducer', () => {
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
 			changes: {
-				first_name: 'Joan',
+				billing: {
+					first_name: 'Joan',
+				}
 			},
 		} );
 		const newState = reducer( originalState, action );
