@@ -41,7 +41,7 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Thank you!' );
 		}
 
-		return translate( 'Thank you for your purchase!' );
+		return translate( 'Congratulations on your purchase!' );
 	}
 
 	getText() {
