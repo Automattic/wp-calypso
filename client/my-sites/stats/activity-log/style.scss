@@ -11,7 +11,7 @@
 		left: 33px;
 		width: 2px;
 		background-color: lighten( $gray, 20% );
-		
+
 		@include breakpoint( "<660px" ) {
 			left: 48px;
 		}
