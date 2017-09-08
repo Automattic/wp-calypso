@@ -35,10 +35,10 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const mapTree = ( tree, status, type ) => map( tree, comment => ( {
-	commentId: comment[ 0 ],
-	commentParentId: comment[ 2 ],
-	postId: comment[ 1 ],
+const mapTree = ( tree, status, type ) => map( tree, ( [ commentId, postId, commentParentId ] ) => ( {
+	commentId,
+	commentParentId,
+	postId,
 	status,
 	type,
 } ) );
