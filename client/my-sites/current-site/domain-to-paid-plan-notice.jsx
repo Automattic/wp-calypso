@@ -13,6 +13,7 @@ import {
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isSiteConflicting } from 'state/sites/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -38,9 +39,9 @@ export class DomainToPaidPlanNotice extends Component {
 	};
 
 	render() {
-		const { eligible, isDomainOnly, site, translate } = this.props;
+		const { eligible, isConflicting, isDomainOnly, site, translate } = this.props;
 
-		if ( ! site || ! eligible ) {
+		if ( ! site || ! eligible || isConflicting ) {
 			return null;
 		}
 
@@ -73,6 +74,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		eligible: isEligibleForDomainToPaidPlanUpsell( state, siteId ),
+		isConflicting: isSiteConflicting( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		site: getSelectedSite( state ),
 	};
