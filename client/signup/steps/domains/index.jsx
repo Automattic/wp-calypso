@@ -12,7 +12,8 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-const productsList = require( 'lib/products-list' )();
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
 import { cartItems } from 'lib/cart-values';
 import SignupActions from 'lib/signup/actions';
 import MapDomainStep from 'components/domains/map-domain-step';

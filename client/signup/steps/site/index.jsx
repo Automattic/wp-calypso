@@ -3,7 +3,8 @@
  */
 import React from 'react';
 import { includes, isEmpty, map } from 'lodash';
-const debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
  */
@@ -24,12 +25,12 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 /**
  * Constants
  */
-var VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
+const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 
 /**
  * Module variables
  */
-var siteUrlsSearched = [],
+let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
 module.exports = React.createClass( {
@@ -43,7 +44,7 @@ module.exports = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		var initialState;
+		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
 			initialState = this.props.step.form;
@@ -81,7 +82,7 @@ module.exports = React.createClass( {
 	},
 
 	sanitize: function( fields, onComplete ) {
-		var sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
+		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
 		if ( fields.site !== sanitizedSubdomain ) {
 			onComplete( { site: sanitizedSubdomain } );
 		}
@@ -93,7 +94,7 @@ module.exports = React.createClass( {
 			blog_title: fields.site,
 			validate: true
 		}, function( error, response ) {
-			var messages = {},
+			let messages = {},
 				errorObject = {};
 
 			debug( error, response );
@@ -132,7 +133,7 @@ module.exports = React.createClass( {
 		this.setState( { submitting: true } );
 
 		this.formStateController.handleSubmit( function( hasErrors ) {
-			var site = formState.getFieldValue( this.state.form, 'site' );
+			const site = formState.getFieldValue( this.state.form, 'site' );
 
 			this.setState( { submitting: false } );
 
@@ -212,7 +213,7 @@ module.exports = React.createClass( {
 	},
 
 	formFields: function() {
-		var fieldDisabled = this.state.submitting;
+		const fieldDisabled = this.state.submitting;
 
 		return <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 			<FormLabel htmlFor="site">
@@ -221,16 +222,16 @@ module.exports = React.createClass( {
 			<FormTextInput
 				autoFocus={ true }
 				autoCapitalize={ 'off' }
-				className='site-signup-step__site-url'
+				className="site-signup-step__site-url"
 				disabled={ fieldDisabled }
-				type='text'
-				name='site'
+				type="text"
+				name="site"
 				value={ formState.getFieldValue( this.state.form, 'site' ) }
 				isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
 				isValid={ formState.isFieldValid( this.state.form, 'site' ) }
 				onBlur={ this.handleBlur }
 				onChange={ this.handleChangeEvent } />
-			<span className='site-signup-step__wordpress-domain-suffix'>.wordpress.com</span>
+			<span className="site-signup-step__wordpress-domain-suffix">.wordpress.com</span>
 		</ValidationFieldset>;
 	},
 

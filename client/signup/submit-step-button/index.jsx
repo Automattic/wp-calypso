@@ -18,7 +18,7 @@ export default class SubmitStepButton extends Component {
 
 	render() {
 		return (
-			<button onClick={ this.handleSubmit } className='button is-primary'>
+			<button onClick={ this.handleSubmit } className="button is-primary">
 				{ this.props.buttonText }
 			</button>
 		);

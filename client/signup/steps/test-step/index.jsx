@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-const debug = require( 'debug' )( 'calypso:steps:test' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:steps:test' );
 
 /**
  * Internal dependencies

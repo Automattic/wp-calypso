@@ -75,7 +75,7 @@ export default {
 	},
 
 	start( context ) {
-		var basePath = route.sectionify( context.path ),
+		let basePath = route.sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );
