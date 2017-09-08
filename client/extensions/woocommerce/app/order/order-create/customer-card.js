@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -24,28 +27,64 @@ class OrderCustomerCard extends Component {
 		editOrder: PropTypes.func.isRequired,
 	}
 
+	onChange = ( event ) => {
+		let updateOrder;
+		switch ( event.target.name ) {
+			case 'customerEmail':
+				updateOrder = { billing: { email: event.target.value } };
+				break;
+			case 'firstName':
+				updateOrder = { billing: { first_name: event.target.value } };
+				break;
+			case 'lastName':
+				updateOrder = { billing: { last_name: event.target.value } };
+				break;
+			case 'phoneNumber':
+				updateOrder = { billing: { phone: event.target.value } };
+				break;
+		}
+		this.props.editOrder( updateOrder );
+	}
+
 	render() {
-		const { translate } = this.props;
+		const { order, translate } = this.props;
+
 		return (
 			<Card className="order-create__card order-create__card-customer">
 				<FormFieldset>
 					<FormLabel htmlFor="customerEmail">{ translate( 'Email address' ) }</FormLabel>
-					<FormTextInput id="customerEmail" name="customerEmail" />
+					<FormTextInput
+						id="customerEmail"
+						name="customerEmail"
+						value={ get( order, [ 'billing', 'email' ], '' ) }
+						onChange={ this.onChange } />
 				</FormFieldset>
 				<FormFieldset>
 					<FormLegend>{ translate( 'Billing Details' ) }</FormLegend>
 					<div className="order-create__fieldset">
 						<div className="order-create__field">
 							<FormLabel htmlFor="firstName">{ translate( 'First Name' ) }</FormLabel>
-							<FormTextInput id="firstName" name="firstName" />
+							<FormTextInput
+								id="firstName"
+								name="firstName"
+								value={ get( order, [ 'billing', 'first_name' ], '' ) }
+								onChange={ this.onChange } />
 						</div>
 						<div className="order-create__field">
 							<FormLabel htmlFor="lastName">{ translate( 'Last Name' ) }</FormLabel>
-							<FormTextInput id="lastName" name="lastName" />
+							<FormTextInput
+								id="lastName"
+								name="lastName"
+								value={ get( order, [ 'billing', 'last_name' ], '' ) }
+								onChange={ this.onChange } />
 						</div>
 						<div className="order-create__field">
 							<FormLabel htmlFor="phoneNumber">{ translate( 'Phone Number' ) }</FormLabel>
-							<FormTelInput id="phoneNumber" name="phoneNumber" />
+							<FormTelInput
+								id="phoneNumber"
+								name="phoneNumber"
+								value={ get( order, [ 'billing', 'phone' ], '' ) }
+								onChange={ this.onChange } />
 						</div>
 					</div>
 					<AddressSearch />
@@ -62,4 +101,8 @@ class OrderCustomerCard extends Component {
 	}
 }
 
-export default localize( OrderCustomerCard );
+export default connect(
+	state => ( {
+		order: getOrderWithEdits( state ),
+	} )
+)( localize( OrderCustomerCard ) );
