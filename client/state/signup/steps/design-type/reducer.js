@@ -11,7 +11,7 @@ import { designTypeSchema } from './schema';
 
 export default createReducer( '',
 	{
-		[ SIGNUP_STEPS_DESIGN_TYPE_SET ]: ( state = '', action ) => {
+		[ SIGNUP_STEPS_DESIGN_TYPE_SET ]: ( state, action ) => {
 			return action.designType;
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
