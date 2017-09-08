@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
+
 /**
  * Internal dependencies
  */
@@ -195,7 +196,7 @@ export default localize( class extends React.Component {
 		return map( messages, function( message, error_code ) {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
-				    <span>
+					<span>
 						<p>
 							{ message }&nbsp;
 							{ this.props.translate( 'Is this your username? {{a}}Log in now to claim this site address{{/a}}.', {
@@ -215,14 +216,14 @@ export default localize( class extends React.Component {
 		const fieldDisabled = this.state.submitting;
 
 		return (
-		    <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
+			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">
 					{ this.props.translate( 'Choose a site address' ) }
 				</FormLabel>
 				<FormTextInput
 					autoFocus={ true }
 					autoCapitalize={ 'off' }
-					className="site-signup-step__site-url"
+					className="site__site-url"
 					disabled={ fieldDisabled }
 					type="text"
 					name="site"
@@ -231,7 +232,7 @@ export default localize( class extends React.Component {
 					isValid={ formState.isFieldValid( this.state.form, 'site' ) }
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent } />
-				<span className="site-signup-step__wordpress-domain-suffix">.wordpress.com</span>
+				<span className="site__wordpress-domain-suffix">.wordpress.com</span>
 			</ValidationFieldset>
 		);
 	};
@@ -266,7 +267,7 @@ export default localize( class extends React.Component {
 
 	render() {
 		return (
-		    <StepWrapper
+			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }

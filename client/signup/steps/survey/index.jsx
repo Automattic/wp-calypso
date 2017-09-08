@@ -67,7 +67,7 @@ class SurveyStep extends React.Component {
 	renderOther = () => {
 		const otherWriteIn = this.getOtherWriteIn();
 		return (
-		    <div className="survey__other">
+			<div className="survey__other">
 				<FormTextInputWithAction
 					action={ this.props.translate( 'Continue' ) }
 					defaultValue={ otherWriteIn }
@@ -82,7 +82,7 @@ class SurveyStep extends React.Component {
 
 	renderOptionList = () => {
 		return (
-		    <div className="survey__verticals-list">
+			<div className="survey__verticals-list">
 				{ this.state.verticalList.map( this.renderVertical ) }
 				<Button className="survey__vertical" onClick={ this.handleOther }>
 					<span className="survey__vertical-label">{ this.props.translate( 'Other' ) }</span>
