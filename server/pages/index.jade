@@ -55,6 +55,9 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
+		if 'devdocs' === chunk
+			link(rel='stylesheet', href=urls['devdocs.css'])
+
 	body( class=bodyClasses )
 		if renderedLayout
 			#wpcom.wpcom-site!= renderedLayout
