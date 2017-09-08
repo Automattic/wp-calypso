@@ -130,8 +130,9 @@ describe( 'wpcom-api', () => {
 					postId: 1010,
 					direction: 'before',
 				};
+				const comment = { author: { name: 'chicken' } };
 				const data = {
-					comments: [ {}, {} ],
+					comments: [ comment, comment ],
 					found: 2,
 				};
 
