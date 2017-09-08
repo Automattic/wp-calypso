@@ -35,7 +35,7 @@ export class WebPreviewContent extends PureComponent {
 		isLoadingSubpage: false
 	};
 
-	setIframeInstance = ( ref ) => {
+	setIframeInstance = (ref) => {
 		this.iframe = ref;
 	}
 
