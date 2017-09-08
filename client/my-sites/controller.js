@@ -183,9 +183,12 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		domainManagementTransferToOtherSite
 	];
 
-	const domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
+	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
+
 	if ( primaryDomain && slug !== primaryDomain.name ) {
-		domainManagementPaths.concat( allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) ) );
+		domainManagementPaths = domainManagementPaths.concat(
+			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
+		);
 	}
 
 	const otherPaths = [
@@ -217,6 +220,7 @@ function onSelectedSiteAvailable( context ) {
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
 	const primaryDomain = getPrimaryDomainBySiteId( getState(), selectedSite.ID );
+
 	if ( isDomainOnlySite( getState(), selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain ) ) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );

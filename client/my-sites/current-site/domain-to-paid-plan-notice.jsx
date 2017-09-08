@@ -6,14 +6,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
+	endsWith,
 	noop,
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteConflicting } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -70,13 +70,14 @@ export class DomainToPaidPlanNotice extends Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const isDomainOnly = isDomainOnlySite( state, site.ID );
 
 	return {
-		eligible: isEligibleForDomainToPaidPlanUpsell( state, siteId ),
-		isConflicting: isSiteConflicting( state, siteId ),
-		isDomainOnly: isDomainOnlySite( state, siteId ),
-		site: getSelectedSite( state ),
+		eligible: isEligibleForDomainToPaidPlanUpsell( state, site.ID ),
+		isConflicting: isDomainOnly && endsWith( site.domain, '.wordpress.com' ),
+		isDomainOnly,
+		site,
 	};
 };
 const mapDispatchToProps = { recordTracksEvent };
