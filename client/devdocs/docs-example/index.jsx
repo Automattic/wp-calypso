@@ -2,7 +2,8 @@
  * External dependencies
  */
 
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -73,7 +74,7 @@ const DocsExample = ( {
 };
 
 DocsExample.propTypes = {
-	children: React.PropTypes.element.isRequired,
+	children: PropTypes.element.isRequired,
 	componentUsageStats: PropTypes.shape( {
 		count: PropTypes.number
 	} ),

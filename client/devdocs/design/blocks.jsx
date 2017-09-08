@@ -81,24 +81,21 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 
-export default React.createClass( {
-	displayName: 'AppComponents',
+export default class AppComponents extends React.Component {
+	static displayName = 'AppComponents';
+	state = { filter: '' };
 
-	getInitialState() {
-		return { filter: '' };
-	},
-
-	onSearch( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents() {
+	backToComponents = () => {
 		page( '/devdocs/blocks/' );
-	},
+	};
 
 	render() {
 		return (
-			<Main className="design">
+			<Main className="design design__blocks">
 				{ this.props.component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
@@ -178,5 +175,5 @@ export default React.createClass( {
 				</Collection>
 			</Main>
 		);
-	},
-} );
+	}
+}
