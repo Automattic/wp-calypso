@@ -74,7 +74,7 @@ export function handleStepSuccess( { dispatch }, action, now = Date.now() ) {
 	}
 }
 
-export function handleStepFailure( { dispatch, getState }, action, now = Date.now() ) {
+export function handleStepFailure( { dispatch }, action, now = Date.now() ) {
 	const { actionList, error } = action;
 	const { prevSteps, currentStep, nextSteps } = actionList;
 
@@ -96,4 +96,3 @@ export function handleStepFailure( { dispatch, getState }, action, now = Date.no
 		actionList.onFailure( dispatch, nextActionList );
 	}
 }
-
