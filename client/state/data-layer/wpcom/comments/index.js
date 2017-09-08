@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, startsWith, pickBy } from 'lodash';
+import { get, isDate, startsWith, pickBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,12 +24,14 @@ import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
 
 const commentsFromApi = comments =>
-	comments.map( comment => ( {
+	map( comments, comment => ( {
 		...comment,
-		author: {
-			...comment.author,
-			name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
-		},
+		...( comment.author && {
+			author: {
+				...comment.author,
+				name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
+			},
+		} ),
 	} ) );
 
 /***
