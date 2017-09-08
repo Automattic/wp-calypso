@@ -30,6 +30,7 @@
 	width: 250px;
 }
 
+.wp-job-manager__setup .page-setup__pages .form-input-validation.is-error,
 .wp-job-manager__setup .page-setup__pages .form-setting-explanation {
 	margin-left: 36px;
 }
@@ -43,7 +44,7 @@
 	margin: 0;
 }
 
-.wp-job-manager__setup .gridicon {
+.wp-job-manager__setup .confirmation__support .gridicon {
 	color: $blue-wordpress;
 	top: 2px;
 	position: relative;
