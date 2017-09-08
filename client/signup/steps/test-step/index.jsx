@@ -11,10 +11,10 @@ const debug = debugFactory( 'calypso:steps:test' );
 import StepWrapper from 'signup/step-wrapper';
 import SubmitStepButton from 'signup/submit-step-button';
 
-export default React.createClass( {
-	displayName: 'TestStep',
+export default class extends React.Component {
+	static displayName = 'TestStep';
 
-	render: function() {
+	render() {
 		debug( this.props.stepSectionName );
 
 		return (
@@ -34,4 +34,4 @@ export default React.createClass( {
 			</span>
 		);
 	}
-} );
+}

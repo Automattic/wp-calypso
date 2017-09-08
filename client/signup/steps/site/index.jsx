@@ -34,17 +34,15 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
-export default localize( React.createClass( {
-	displayName: 'Site',
+export default localize( class extends React.Component {
+	static displayName = 'Site';
 
-	getInitialState: function() {
-		return {
-			form: null,
-			submitting: false
-		};
-	},
+	state = {
+		form: null,
+		submitting: false
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
@@ -69,27 +67,27 @@ export default localize( React.createClass( {
 		} );
 
 		this.setState( { form: this.formStateController.getInitialState() } );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.save();
-	},
+	}
 
-	sanitizeSubdomain: function( domain ) {
+	sanitizeSubdomain = domain => {
 		if ( ! domain ) {
 			return domain;
 		}
 		return domain.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
-	},
+	};
 
-	sanitize: function( fields, onComplete ) {
+	sanitize = ( fields, onComplete ) => {
 		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
 		if ( fields.site !== sanitizedSubdomain ) {
 			onComplete( { site: sanitizedSubdomain } );
 		}
-	},
+	};
 
-	validate: function( fields, onComplete ) {
+	validate = ( fields, onComplete ) => {
 		wpcom.undocumented().sitesNew( {
 			blog_name: fields.site,
 			blog_title: fields.site,
@@ -117,18 +115,18 @@ export default localize( React.createClass( {
 			}
 			onComplete( null, messages );
 		} );
-	},
+	};
 
-	setFormState: function( state ) {
+	setFormState = state => {
 		this.setState( { form: state } );
-	},
+	};
 
-	resetAnalyticsData: function() {
+	resetAnalyticsData = () => {
 		siteUrlsSearched = [];
 		timesValidationFailed = 0;
-	},
+	};
 
-	handleSubmit: function( event ) {
+	handleSubmit = event => {
 		event.preventDefault();
 
 		this.setState( { submitting: true } );
@@ -158,35 +156,35 @@ export default localize( React.createClass( {
 
 			this.props.goToNextStep();
 		}.bind( this ) );
-	},
+	};
 
-	handleBlur: function() {
+	handleBlur = () => {
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.save();
-	},
+	};
 
-	save: function() {
+	save = () => {
 		SignupActions.saveSignupStep( {
 			stepName: 'site',
 			form: this.state.form
 		} );
-	},
+	};
 
-	handleChangeEvent: function( event ) {
+	handleChangeEvent = event => {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value
 		} );
-	},
+	};
 
-	handleFormControllerError: function( error ) {
+	handleFormControllerError = error => {
 		if ( error ) {
 			throw error;
 		}
-	},
+	};
 
-	getErrorMessagesWithLogin( fieldName ) {
+	getErrorMessagesWithLogin = fieldName => {
 		const link = login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo: window.location.href } ),
 			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
@@ -211,9 +209,9 @@ export default localize( React.createClass( {
 			}
 			return message;
 		}.bind( this ) );
-	},
+	};
 
-	formFields: function() {
+	formFields = () => {
 		const fieldDisabled = this.state.submitting;
 
 		return (
@@ -236,9 +234,9 @@ export default localize( React.createClass( {
 				<span className="site-signup-step__wordpress-domain-suffix">.wordpress.com</span>
 			</ValidationFieldset>
 		);
-	},
+	};
 
-	buttonText: function() {
+	buttonText = () => {
 		if ( this.props.step && 'completed' === this.props.step.status ) {
 			return this.props.translate( 'Site created - Go to next step' );
 		}
@@ -248,13 +246,13 @@ export default localize( React.createClass( {
 		}
 
 		return this.props.translate( 'Create My Site' );
-	},
+	};
 
-	formFooter: function() {
+	formFooter = () => {
 		return <FormButton>{ this.buttonText() }</FormButton>;
-	},
+	};
 
-	renderSiteForm: function() {
+	renderSiteForm = () => {
 		return (
 			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate >
 				{ this.formFields() }
@@ -264,9 +262,9 @@ export default localize( React.createClass( {
 				</LoggedOutFormFooter>
 			</LoggedOutForm>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 		    <StepWrapper
 				flowName={ this.props.flowName }
@@ -277,4 +275,4 @@ export default localize( React.createClass( {
 				stepContent={ this.renderSiteForm() } />
 		);
 	}
-} ) );
+} );

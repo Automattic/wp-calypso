@@ -44,29 +44,30 @@ import { loadTrackingTool } from 'state/analytics/actions';
  */
 const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 
-const Signup = React.createClass( {
-	displayName: 'Signup',
+class Signup extends React.Component {
+	static displayName = 'Signup';
 
-	contextTypes: {
+	static contextTypes = {
 		store: React.PropTypes.object
-	},
+	};
 
-	getInitialState() {
-		SignupDependencyStore.setReduxStore( this.context.store );
+	constructor( props, context ) {
+	    super( props, context );
+		SignupDependencyStore.setReduxStore( context.store );
 
-		return {
+		this.state = {
 			login: false,
 			progress: SignupProgressStore.get(),
-			dependencies: this.props.signupDependencies,
+			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
 			user: user.get(),
 			loginHandler: null,
 			hasCartItems: false,
 		};
-	},
+	}
 
-	loadProgressFromStore() {
+	loadProgressFromStore = () => {
 		const newProgress = SignupProgressStore.get(),
 			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
 			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
@@ -85,9 +86,9 @@ const Signup = React.createClass( {
 		if ( invalidSteps ) {
 			this.setState( { loadingScreenStartTime: undefined } );
 		}
-	},
+	};
 
-	submitQueryDependencies() {
+	submitQueryDependencies = () => {
 		if ( ! this.props.queryObject ) {
 			return;
 		}
@@ -106,7 +107,7 @@ const Signup = React.createClass( {
 				{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
 			);
 		}
-	},
+	};
 
 	componentWillMount() {
 		analytics.tracks.recordEvent( 'calypso_signup_start', {
@@ -178,7 +179,7 @@ const Signup = React.createClass( {
 		this.checkForCartItems( this.props.signupDependencies );
 
 		this.recordStep();
-	},
+	}
 
 	componentWillReceiveProps( { signupDependencies, stepName } ) {
 		if ( this.props.stepName !== stepName ) {
@@ -190,9 +191,9 @@ const Signup = React.createClass( {
 		}
 
 		this.checkForCartItems( signupDependencies );
-	},
+	}
 
-	checkForCartItems( signupDependencies ) {
+	checkForCartItems = signupDependencies => {
 		const dependenciesContainCartItem = ( dependencies ) => {
 			return dependencies && ( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem );
 		};
@@ -200,13 +201,13 @@ const Signup = React.createClass( {
 		if ( dependenciesContainCartItem( signupDependencies ) ) {
 			this.setState( { hasCartItems: true } );
 		}
-	},
+	};
 
-	recordStep( stepName = this.props.stepName ) {
+	recordStep = ( stepName = this.props.stepName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', { flow: this.props.flowName, step: stepName } );
-	},
+	};
 
-	handleFlowComplete( dependencies, destination ) {
+	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Logging you in...' );
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
@@ -220,9 +221,9 @@ const Signup = React.createClass( {
 				loginHandler: this.handleLogin.bind( this, dependencies, destination )
 			} );
 		}
-	},
+	};
 
-	handleLogin( dependencies, destination, event ) {
+	handleLogin = ( dependencies, destination, event ) => {
 		const userIsLoggedIn = Boolean( user.get() );
 
 		if ( event && event.redirectTo ) {
@@ -249,20 +250,20 @@ const Signup = React.createClass( {
 				redirectTo: this.loginRedirectTo( destination )
 			} );
 		}
-	},
+	};
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
-	},
+	}
 
 	componentWillUnmount() {
 		debug( 'Signup component unmounted' );
 		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-	},
+	}
 
-	loginRedirectTo( path ) {
+	loginRedirectTo = path => {
 		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
@@ -275,9 +276,9 @@ const Signup = React.createClass( {
 			redirectTo += ':' + window.location.port;
 		}
 		return redirectTo + path;
-	},
+	};
 
-	firstUnsubmittedStepName() {
+	firstUnsubmittedStepName = () => {
 		const currentSteps = flows.getFlow( this.props.flowName ).steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
@@ -288,9 +289,9 @@ const Signup = React.createClass( {
 			firstInProgressStepName = firstInProgressStep.stepName;
 
 		return firstInProgressStepName || nextStepName || last( currentSteps );
-	},
+	};
 
-	resumeProgress() {
+	resumeProgress = () => {
 		// Update the Flows object to know that the signup flow is being resumed.
 		flows.resumingFlow = true;
 
@@ -306,9 +307,9 @@ const Signup = React.createClass( {
 			stepSectionName,
 			this.props.locale
 		) );
-	},
+	};
 
-	goToStep( stepName, stepSectionName ) {
+	goToStep = ( stepName, stepSectionName ) => {
 		if ( this.state.scrolling ) {
 			return;
 		}
@@ -335,9 +336,9 @@ const Signup = React.createClass( {
 				this.goToFirstInvalidStep();
 			}
 		} );
-	},
+	};
 
-	goToNextStep() {
+	goToNextStep = () => {
 		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
@@ -345,9 +346,9 @@ const Signup = React.createClass( {
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
 
 		this.goToStep( nextStepName, nextStepSection );
-	},
+	};
 
-	goToFirstInvalidStep() {
+	goToFirstInvalidStep = () => {
 		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
@@ -363,9 +364,9 @@ const Signup = React.createClass( {
 
 			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
-	},
+	};
 
-	isEveryStepSubmitted() {
+	isEveryStepSubmitted = () => {
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 		const signupProgress = filter(
 				SignupProgressStore.get(),
@@ -376,33 +377,33 @@ const Signup = React.createClass( {
 			);
 
 		return flowSteps.length === signupProgress.length;
-	},
+	};
 
-	positionInFlow() {
+	positionInFlow = () => {
 		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
-	},
+	};
 
-	localeSuggestions() {
+	localeSuggestions = () => {
 		return 0 === this.positionInFlow() && ! user.get()
 			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 			: null;
-	},
+	};
 
-	loginForm() {
+	loginForm = () => {
 		return this.state.bearerToken
 			? <WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
 				redirectTo={ this.state.redirectTo } />
 			: null;
-	},
+	};
 
-	pageTitle() {
+	pageTitle = () => {
 		const accountFlowName = 'account';
 		return this.props.flowName === accountFlowName ? translate( 'Create an account' ) : translate( 'Create a site' );
-	},
+	};
 
-	currentStep() {
+	currentStep = () => {
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
@@ -446,7 +447,7 @@ const Signup = React.createClass( {
 				}
 			</div>
 		);
-	},
+	};
 
 	render() {
 		if ( ! this.props.stepName ||
@@ -478,7 +479,7 @@ const Signup = React.createClass( {
 			</span>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => ( {

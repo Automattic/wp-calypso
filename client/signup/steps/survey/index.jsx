@@ -21,31 +21,27 @@ import FormTextInputWithAction from 'components/forms/form-text-input-with-actio
 
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
-const SurveyStep = React.createClass( {
-	propTypes: {
+class SurveyStep extends React.Component {
+	static propTypes = {
 		surveySiteType: PropTypes.string,
 		setSurvey: PropTypes.func.isRequired,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			surveySiteType: 'site'
-		};
-	},
+	static defaultProps = {
+		surveySiteType: 'site'
+	};
 
-	getInitialState() {
-		return {
-			otherWriteIn: '',
-			verticalList: verticals.get(),
-		};
-	},
+	state = {
+		otherWriteIn: '',
+		verticalList: verticals.get(),
+	};
 
-	getOtherWriteIn() {
+	getOtherWriteIn = () => {
 		return this.state.otherWriteIn ||
 			get( find( this.props.signupProgress, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
-	},
+	};
 
-	renderVertical( vertical ) {
+	renderVertical = vertical => {
 		return (
 			<Button
 				className="survey__vertical"
@@ -64,9 +60,9 @@ const SurveyStep = React.createClass( {
 				<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
 			</Button>
 		);
-	},
+	};
 
-	renderOther() {
+	renderOther = () => {
 		const otherWriteIn = this.getOtherWriteIn();
 		return (
 		    <div className="survey__other">
@@ -80,9 +76,9 @@ const SurveyStep = React.createClass( {
 				<p className="survey__other-copy">{ this.props.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
 			</div>
 		);
-	},
+	};
 
-	renderOptionList() {
+	renderOptionList = () => {
 		return (
 		    <div className="survey__verticals-list">
 				{ this.state.verticalList.map( this.renderVertical ) }
@@ -92,7 +88,7 @@ const SurveyStep = React.createClass( {
 				</Button>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const blogHeaderText = this.props.translate( 'Let\'s create your new WordPress.com blog!' );
@@ -116,33 +112,33 @@ const SurveyStep = React.createClass( {
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
 		);
-	},
+	}
 
-	handleVerticalButton( e ) {
+	handleVerticalButton = e => {
 		const { value, label } = e.target.dataset;
 		this.submitStep( label, value );
-	},
+	};
 
-	handleOther() {
+	handleOther = () => {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
-	},
+	};
 
-	handleVerticalOther( otherTextValue ) {
+	handleVerticalOther = otherTextValue => {
 		const otherText = otherTextValue.replace( /^\W+|\W+$/g, '' );
 		const otherWriteIn = otherText.length !== 0
 			? otherText
 			: undefined;
 
 		this.submitStep( 'Uncategorized', 'a8c.24', otherWriteIn );
-	},
+	};
 
-	handleOtherWriteIn( value ) {
+	handleOtherWriteIn = value => {
 		this.setState( {
 			otherWriteIn: value.replace( /^\W+|\W+$/g, '' ),
 		} );
-	},
+	};
 
-	submitStep( label, value, otherWriteIn = '' ) {
+	submitStep = ( label, value, otherWriteIn = '' ) => {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
@@ -168,8 +164,8 @@ const SurveyStep = React.createClass( {
 		);
 
 		this.props.goToNextStep();
-	}
-} );
+	};
+}
 
 export default connect(
 	null,
