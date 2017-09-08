@@ -104,9 +104,7 @@ class ConversationCaterpillarComponent extends React.Component {
 		const lastAuthorName = get( last( displayedAuthors ), 'name' );
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
-		const hideShowAllHandler = isEmpty( hiddenComments )
-			? this.hideAllComments
-			: this.handleShowAll;
+		const hideShowAllHandler = isEmpty( hiddenComments ) ? this.handleHideAll : this.handleShowAll;
 		const hideShowAllText = isEmpty( hiddenComments )
 			? translate( 'Hide all' )
 			: translate( 'Show all' );
@@ -136,36 +134,37 @@ class ConversationCaterpillarComponent extends React.Component {
 						);
 					} ) }
 				</div>
-				<button
-					className="conversation-caterpillar__count"
-					title={
-						commentCount > 1
-							? translate( 'View comments from %(commenterName)s and %(count)d more', {
+				{ commentCount > 0 &&
+					<button
+						className="conversation-caterpillar__count"
+						title={
+							commentCount > 1
+								? translate( 'View comments from %(commenterName)s and %(count)d more', {
+										args: {
+											commenterName: lastAuthorName,
+											count: commentCount - 1,
+										},
+									} )
+								: translate( 'View comment from %(commenterName)s', {
+										args: {
+											commenterName: lastAuthorName,
+										},
+									} )
+						}
+					>
+						{ commentCount > 1
+							? translate( '%(commenterName)s and %(count)d more', {
 									args: {
 										commenterName: lastAuthorName,
 										count: commentCount - 1,
 									},
 								} )
-							: translate( 'View comment from %(commenterName)s', {
+							: translate( '%(commenterName)s commented', {
 									args: {
 										commenterName: lastAuthorName,
 									},
-								} )
-					}
-				>
-					{ commentCount > 1
-						? translate( '%(commenterName)s and %(count)d more', {
-								args: {
-									commenterName: lastAuthorName,
-									count: commentCount - 1,
-								},
-							} )
-						: translate( '%(commenterName)s commented', {
-								args: {
-									commenterName: lastAuthorName,
-								},
-							} ) }
-				</button>
+								} ) }
+					</button> }
 				<button onClick={ hideShowAllHandler } className="conversation-caterpillar__show-all">
 					<Gridicon
 						icon="chevron-down"

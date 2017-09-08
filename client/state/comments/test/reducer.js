@@ -390,14 +390,16 @@ describe( 'reducer', () => {
 
 		it( 'should delete all keys after receiving hide-all action', () => {
 			const prevState = {
-				[ '1-2' ]: {
+				'1-2': {
 					3: 'is-full',
 					4: 'is-single-line',
 				},
 			};
 			const action = hideAllComments( { siteId: 1, postId: 2 } );
 			const nextState = expansions( prevState, action );
-			expect( nextState ).to.eql( {} );
+			expect( nextState ).to.eql( {
+				'1-2': {},
+			} );
 		} );
 	} );
 } );
