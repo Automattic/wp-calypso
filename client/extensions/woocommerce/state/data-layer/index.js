@@ -14,7 +14,7 @@ import settingsGeneral from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
-import stripeConnectAccount from '../sites/settings/stripeConnectAccount/handlers';
+import stripeConnectAccount from '../sites/settings/stripe-connect-account/handlers';
 import ui from './ui';
 import debugFactory from 'debug';
 
