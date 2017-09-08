@@ -8,7 +8,7 @@ import { combineReducers } from 'state/utils';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_UI_ORDERS_CLEAR,
+	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
 } from 'woocommerce/state/action-types';
 
@@ -28,7 +28,7 @@ export function currentlyEditingId( state = null, action ) {
 				return action.order.id;
 			}
 			return { placeholder: uniqueId( 'order_' ) };
-		case WOOCOMMERCE_UI_ORDERS_CLEAR:
+		case WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT:
 			return null;
 		default:
 			return state;
@@ -49,7 +49,7 @@ export function changes( state = {}, action ) {
 		case WOOCOMMERCE_UI_ORDERS_EDIT:
 			const order = omit( action.order, 'id' );
 			return { ...state, ...order };
-		case WOOCOMMERCE_UI_ORDERS_CLEAR:
+		case WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT:
 			return {};
 		default:
 			return state;

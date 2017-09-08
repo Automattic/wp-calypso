@@ -13,7 +13,7 @@ Update the query used to display the orders list - ex: set the search term, or c
 
 Track edits made to an order, or content added to a new order.
 
-### `clearOrder( siteId: number )`
+### `clearOrderEdits( siteId: number )`
 
 Clear the current order edit-tracking.
 

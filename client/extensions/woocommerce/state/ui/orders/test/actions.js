@@ -8,26 +8,26 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
-	clearOrder,
+	clearOrderEdits,
 	editOrder,
 	updateCurrentOrdersQuery,
 } from '../actions';
 import {
-	WOOCOMMERCE_UI_ORDERS_CLEAR,
+	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
 	WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
-	describe( '#clearOrder()', () => {
+	describe( '#clearOrderEdits()', () => {
 		const siteId = '123';
 
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			clearOrder( siteId )( dispatch, getState );
+			clearOrderEdits( siteId )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith( {
-				type: WOOCOMMERCE_UI_ORDERS_CLEAR,
+				type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 				siteId,
 			} );
 		} );

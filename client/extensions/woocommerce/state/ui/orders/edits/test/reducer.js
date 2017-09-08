@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer from '../reducer';
 import {
-	WOOCOMMERCE_UI_ORDERS_CLEAR,
+	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
 } from 'woocommerce/state/action-types';
 
@@ -124,7 +124,7 @@ describe( 'reducer', () => {
 
 	it( 'should clear order changes from the state when requested', () => {
 		const action = {
-			type: WOOCOMMERCE_UI_ORDERS_CLEAR,
+			type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 			siteId: 123,
 		};
 		const originalState = deepFreeze( {
