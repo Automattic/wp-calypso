@@ -92,13 +92,11 @@ export class CommentList extends Component {
 		this.props.deleteComment( commentId, postId );
 	}
 
-	editComment = ( commentId, postId, commentData ) => {
+	editComment = ( commentId, postId, commentData, undoCommentData, showNotice = true ) => {
 		this.props.editComment( commentId, postId, commentData );
-		this.props.successNotice( this.props.translate( 'Comment updated.' ), {
-			duration: 5000,
-			id: `comment-notice-${ commentId }`,
-			isPersistent: true,
-		} );
+		if ( showNotice ) {
+			this.showEditNotice( commentId, postId, undoCommentData );
+		}
 	}
 
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
@@ -234,6 +232,25 @@ export class CommentList extends Component {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
+
+	showEditNotice = ( commentId, postId, undoCommentData ) => {
+		const { translate } = this.props;
+
+		const message = translate( 'Your comment has been updated.' );
+
+		const noticeOptions = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+			onClick: () => {
+				this.editComment( commentId, postId, undoCommentData, false );
+				this.props.removeNotice( `comment-notice-${ commentId }` );
+			},
+		};
+
+		this.props.successNotice( message, noticeOptions );
+	};
 
 	showBulkNotice = newStatus => {
 		const { translate } = this.props;
