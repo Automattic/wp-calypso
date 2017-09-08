@@ -141,7 +141,7 @@ class LoggedInForm extends Component {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return goBackToWpAdmin( redirectAfterAuth );
 			}
-		} else if ( siteReceived ) {
+		} else if ( ! this.props.jetpackConnectAuthorize.siteReceived && siteReceived ) {
 			return this.redirect();
 		} else if ( nextProps.isAlreadyOnSitesList && queryObject.already_authorized ) {
 			return this.redirect();
