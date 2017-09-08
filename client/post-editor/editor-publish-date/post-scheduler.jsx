@@ -9,35 +9,28 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 
-const PostSchedule = ( { onDateChange, onMonthChange, posts, selectedDay, site } ) => {
-	const tz = siteUtils.timezone( site );
-	const gmtOffset = siteUtils.gmtOffset( site );
-
+const PostScheduleWithOtherPostsIndicated = connect(
+	( state, { site, query } ) => ( {
+		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
+	} )
+)( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
 	return (
-		<AsyncLoad
-			require="components/post-schedule"
+		<PostSchedule
+			displayInputChrono={ false }
 			selectedDay={ selectedDay }
-			timezone={ tz }
-			gmtOffset={ gmtOffset }
 			onDateChange={ onDateChange }
 			onMonthChange={ onMonthChange }
 			posts={ posts }
 			site={ site }
 		/>
 	);
-};
-
-const ConnectedPostSchedule = connect(
-	( state, { site, query } ) => ( {
-		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
-	} )
-)( PostSchedule );
+} );
 
 export default class PostScheduler extends PureComponent {
 	static propTypes = {
@@ -89,19 +82,21 @@ export default class PostScheduler extends PureComponent {
 		};
 
 		return (
-			<span className="editor-ground-control__schedule-post">
-				{ ! postUtils.isPage( post ) && <QueryPosts
-					siteId={ get( site, 'ID' ) }
-					query={ query } /> }
-				<ConnectedPostSchedule
-					require="components/post-schedule"
+			<div>
+				{ ! postUtils.isPage( post ) && (
+					<QueryPosts
+						siteId={ get( site, 'ID' ) }
+						query={ query }
+					/>
+				) }
+				<PostScheduleWithOtherPostsIndicated
 					onDateChange={ setPostDate }
 					onMonthChange={ this.setCurrentMonth }
 					query={ query }
 					selectedDay={ get( post, 'date' ) }
 					site={ site }
 				/>
-			</span>
+			</div>
 		);
 	}
 }
