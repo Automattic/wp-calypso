@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,6 +21,16 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
+import { decodeEntities } from 'lib/formatting';
+
+const commentsFromApi = comments =>
+	comments.map( comment => ( {
+		...comment,
+		author: {
+			...comment.author,
+			name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
+		},
+	} ) );
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -76,8 +87,8 @@ export const fetchPostComments = ( { dispatch, getState }, action ) => {
 					before,
 				} ),
 			},
-			action,
-		),
+			action
+		)
 	);
 };
 
@@ -111,7 +122,7 @@ export const writePostComment = ( { dispatch }, action ) => {
 				placeholderId: placeholder.ID,
 			},
 			onFailure: action,
-		} ),
+		} )
 	);
 };
 
@@ -121,7 +132,7 @@ export const addComments = ( { dispatch }, action, { comments, found } ) => {
 		type: COMMENTS_RECEIVE,
 		siteId,
 		postId,
-		comments,
+		comments: commentsFromApi( comments ),
 		direction,
 	} );
 
@@ -142,7 +153,7 @@ export const addComments = ( { dispatch }, action, { comments, found } ) => {
 export const writePostCommentSuccess = (
 	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId },
-	comment,
+	comment
 ) => {
 	// remove placeholder from state
 	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
@@ -151,7 +162,7 @@ export const writePostCommentSuccess = (
 		type: COMMENTS_RECEIVE,
 		siteId,
 		postId,
-		comments: [ comment ],
+		comments: commentsFromApi( [ comment ] ),
 		skipSort: !! parentCommentId,
 	} );
 	// increment comments count
@@ -200,13 +211,10 @@ export const announceDeleteSuccess = ( { dispatch }, { options } ) => {
 	}
 
 	dispatch(
-		successNotice(
-			translate( 'Comment deleted permanently.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
+		successNotice( translate( 'Comment deleted permanently.' ), {
+			duration: 5000,
+			isPersistent: true,
+		} )
 	);
 };
 
@@ -214,13 +222,10 @@ export const announceDeleteFailure = ( { dispatch }, action ) => {
 	const { siteId, postId, comment } = action;
 
 	dispatch(
-		errorNotice(
-			translate( 'Could not delete the comment.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
+		errorNotice( translate( 'Could not delete the comment.' ), {
+			duration: 5000,
+			isPersistent: true,
+		} )
 	);
 
 	if ( comment ) {
@@ -236,5 +241,7 @@ export const announceDeleteFailure = ( { dispatch }, action ) => {
 
 export default {
 	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
-	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
+	[ COMMENTS_DELETE ]: [
+		dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ),
+	],
 };
