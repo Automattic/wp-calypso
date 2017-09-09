@@ -56,7 +56,7 @@ export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) 
 
 	// If there is no existing order, the edits are returned as the entire order.
 	if ( isObject( orderId ) ) {
-		return orderEdits;
+		return { ...orderEdits, id: orderId };
 	}
 
 	const order = getOrder( state, orderId, siteId );

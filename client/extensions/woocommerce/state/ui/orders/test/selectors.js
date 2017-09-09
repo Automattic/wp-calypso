@@ -114,7 +114,10 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return just the changes for new orders', () => {
-			expect( getOrderWithEdits( state, 345 ) ).to.eql( { billing: { email: 'test@example.com' } } );
+			expect( getOrderWithEdits( state, 345 ) ).to.eql( {
+				billing: { email: 'test@example.com' },
+				id: { placeholder: 'order_1' },
+			} );
 		} );
 	} );
 
