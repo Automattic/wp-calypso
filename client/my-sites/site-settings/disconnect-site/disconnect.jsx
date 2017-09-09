@@ -10,22 +10,21 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DisconnectFollowUp from './disconnect-follow-up';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isFreeJetpackPlan } from 'lib/products-values';
+import { isBusiness, isFreeJetpackPlan, isPremium } from 'lib/products-values';
 import SelectDropdown from 'components/select-dropdown';
 
 class Disconnect extends Component {
 	state = {
 		reasonSelected: 'tooHard',
-		compactButtons: false,
 		renderFull: false,
 	};
 
-	renderFull() {
-		// placeholder
+	renderFull( option ) {
 		return (
 			<div>
-				{ ' follow-up QA' }
+				<DisconnectFollowUp optionSelected={ option } />
 			</div>
 		);
 	}
@@ -35,31 +34,38 @@ class Disconnect extends Component {
 			reasonSelected: option.value,
 			renderFull: true,
 		} );
+		// save the data
 	};
 
 	getOptions() {
 		const { site } = this.props;
 
-		const options = [
-			{ value: 'tooHard', label: 'It was too hard to configure Jetpack' },
-			{ value: 'didNotInclude', label: 'This plan didn’t include what I needed' },
-		];
+		const options = [ { value: 'didNotInclude', label: 'I could not find what I needed' } ];
 
-		if ( ! isFreeJetpackPlan( site.plan ) ) {
+		if ( isFreeJetpackPlan( site.plan ) ) {
+			options.push( { value: 'tooHard', label: 'I experienced problems setting up Jetpack' } );
+		} else {
+			options.push( { value: 'tooHard', label: 'It was too hard to configure Jetpack' } );
+		}
+		if ( isPremium( site.plan ) || isBusiness( site.plan ) ) {
 			options.push( { value: 'onlyNeedFree', label: 'This plan is too expensive' } );
 		}
+
 		return options;
 	}
 
 	renderCardContent() {
 		const { translate, siteSlug } = this.props;
 
-		const { reasonSelected, compactButtons, renderFull } = this.state;
+		const { reasonSelected, renderFull } = this.state;
 
-		const textShareWhy =
-			translate( ' Would you mind sharing why you want to disconnect ' ) +
-			`${ siteSlug }` +
-			translate( ' from WordPress.com ' );
+		const textShareWhy = translate(
+			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
+			{
+				textOnly: true,
+				args: { siteName: siteSlug },
+			}
+		);
 
 		const options = this.getOptions();
 
@@ -73,9 +79,9 @@ class Disconnect extends Component {
 					{ textShareWhy }
 				</div>
 				<SelectDropdown
-					compact={ compactButtons }
 					onSelect={ this.logReason }
 					options={ options }
+					initialSelected={ 'tooHard' }
 				/>
 				{ renderFull ? this.renderFull( reasonSelected ) : null }
 			</Card>
