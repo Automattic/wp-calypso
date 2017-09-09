@@ -27,6 +27,10 @@ class OrderCustomerCard extends Component {
 		editOrder: PropTypes.func.isRequired,
 	}
 
+	state = {
+		showShipping: false
+	}
+
 	onChange = ( event ) => {
 		let updateOrder;
 		switch ( event.target.name ) {
@@ -42,8 +46,54 @@ class OrderCustomerCard extends Component {
 			case 'phoneNumber':
 				updateOrder = { billing: { phone: event.target.value } };
 				break;
+			case 'shippingFirstName':
+				updateOrder = { shipping: { first_name: event.target.value } };
+				break;
+			case 'shippingLastName':
+				updateOrder = { shipping: { last_name: event.target.value } };
+				break;
+		}
+		if ( this.props.order && this.props.order.id ) {
+			updateOrder.id = this.props.order.id;
 		}
 		this.props.editOrder( updateOrder );
+	}
+
+	toggleShipping = () => {
+		this.setState( state => ( {
+			showShipping: ! state.showShipping
+		} ) );
+	}
+
+	renderShipping = () => {
+		const { order, translate } = this.props;
+		if ( ! this.state.showShipping ) {
+			return null;
+		}
+
+		return (
+			<FormFieldset>
+				<div className="order-create__fieldset">
+					<div className="order-create__field">
+						<FormLabel htmlFor="shippingFirstName">{ translate( 'First Name' ) }</FormLabel>
+						<FormTextInput
+							id="shippingFirstName"
+							name="shippingFirstName"
+							value={ get( order, [ 'shipping', 'first_name' ], '' ) }
+							onChange={ this.onChange } />
+					</div>
+					<div className="order-create__field">
+						<FormLabel htmlFor="shippingLastName">{ translate( 'Last Name' ) }</FormLabel>
+						<FormTextInput
+							id="shippingLastName"
+							name="shippingLastName"
+							value={ get( order, [ 'shipping', 'last_name' ], '' ) }
+							onChange={ this.onChange } />
+					</div>
+				</div>
+				<AddressSearch />
+			</FormFieldset>
+		);
 	}
 
 	render() {
@@ -90,12 +140,13 @@ class OrderCustomerCard extends Component {
 					<AddressSearch />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLegend>{ translate( 'Billing Details' ) }</FormLegend>
+					<FormLegend>{ translate( 'Shipping Details' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox />
+						<FormCheckbox checked={ ! this.state.showShipping } onClick={ this.toggleShipping } />
 						<span>{ translate( 'Same as billing details' ) }</span>
 					</FormLabel>
 				</FormFieldset>
+				{ this.renderShipping() }
 			</Card>
 		);
 	}
