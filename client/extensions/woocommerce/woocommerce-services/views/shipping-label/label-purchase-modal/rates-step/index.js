@@ -14,8 +14,14 @@ import _ from 'lodash';
 import ShippingRates from './list';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { getRatesTotal, getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+
 import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+	getRatesTotal,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved ) => {
 	if ( ! packagesSaved ) {
@@ -81,8 +87,9 @@ const RatesStep = ( props ) => {
 		currencySymbol,
 		errors,
 		expanded,
+		ratesTotal
 	} = props;
-	const summary = ratesSummary( values, available, getRatesTotal( form.rates ), currencySymbol, form.packages.saved );
+	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved );
 
 	const toggleStepHandler = () => props.toggleStep( 'rates' );
 	return (
@@ -107,6 +114,8 @@ const RatesStep = ( props ) => {
 };
 
 RatesStep.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	form: PropTypes.object.isRequired,
 	values: PropTypes.object.isRequired,
 	available: PropTypes.object.isRequired,
@@ -116,14 +125,16 @@ RatesStep.propTypes = {
 	updateRate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
-		...state.shippingLabel.form.rates,
-		form: state.shippingLabel.form,
+		...shippingLabel.form.rates,
+		form: shippingLabel.form,
 		currencySymbol: storeOptions.currency_symbol,
-		errors: loaded && getFormErrors( state, storeOptions ).rates,
+		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
+		ratesTotal: getRatesTotal( state, orderId, siteId ),
 	};
 };
 

@@ -122,6 +122,8 @@ const MoveItemDialog = ( props ) => {
 };
 
 MoveItemDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	showItemMoveDialog: PropTypes.bool.isRequired,
 	movedItemIndex: PropTypes.number.isRequired,
 	targetPackageId: PropTypes.string,

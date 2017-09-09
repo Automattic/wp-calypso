@@ -12,8 +12,12 @@ import { translate as __ } from 'i18n-calypso';
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
 	const { form, errors, paperSize } = props;
@@ -32,19 +36,21 @@ const Sidebar = ( props ) => {
 };
 
 Sidebar.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	paperSize: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
 	form: PropTypes.object.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		paperSize: state.shippingLabel.paperSize,
-		form: state.shippingLabel.form,
-		errors: loaded && getFormErrors( state, storeOptions ).sidebar,
+		paperSize: shippingLabel.paperSize,
+		form: shippingLabel.form,
+		errors: loaded && getFormErrors( state, orderId, siteId ).sidebar,
 	};
 };
 

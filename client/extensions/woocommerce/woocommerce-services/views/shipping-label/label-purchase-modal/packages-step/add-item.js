@@ -98,6 +98,8 @@ const AddItemDialog = ( props ) => {
 };
 
 AddItemDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	showAddItemDialog: PropTypes.bool.isRequired,
 	addedItems: PropTypes.object,
 	openedPackageId: PropTypes.string.isRequired,

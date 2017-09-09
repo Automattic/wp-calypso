@@ -78,6 +78,8 @@ const PackageList = ( props ) => {
 };
 
 PackageList.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	selected: PropTypes.object.isRequired,
 	all: PropTypes.object.isRequired,
 	packageId: PropTypes.string.isRequired,

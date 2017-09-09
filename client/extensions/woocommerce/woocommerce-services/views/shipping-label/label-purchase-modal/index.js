@@ -47,7 +47,7 @@ const PurchaseDialog = ( props ) => {
 
 		if ( props.canPurchase ) {
 			const currencySymbol = props.storeOptions.currency_symbol;
-			const ratesTotal = getRatesTotal( props.form.rates );
+			const ratesTotal = props.ratesTotal;
 
 			if ( noNativePDFSupport ) {
 				return __( 'Buy (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
@@ -65,9 +65,9 @@ const PurchaseDialog = ( props ) => {
 
 	const getPurchaseButtonAction = () => {
 		if ( props.form.needsPrintConfirmation ) {
-			return () => props.confirmPrintLabel( props.form.printUrl );
+			return () => props.confirmPrintLabel( props.siteId, props.orderId, props.form.printUrl );
 		}
-		return props.purchaseLabel;
+		return () => props.purchaseLabel( props.siteId, props.orderId );
 	};
 
 	const buttons = [
@@ -99,26 +99,26 @@ const PurchaseDialog = ( props ) => {
 				</FormSectionHeading>
 				<div className="label-purchase-modal__body">
 					<div className="label-purchase-modal__main-section">
-						<AddressStep.Origin
-							{ ...props }
-							{ ...props.form.origin }
-							errors={ props.errors.origin } />
-						<AddressStep.Destination
-							{ ...props }
-							{ ...props.form.destination }
-							errors={ props.errors.destination } />
+						<AddressStep
+							type="origin"
+							title={ __( 'Origin address' ) }
+							siteId={ props.siteId }
+							orderId={ props.orderId } />
+						<AddressStep
+							type="destination"
+							title={ __( 'Destination address' ) }
+							siteId={ props.siteId }
+							orderId={ props.orderId } />
 						<PackagesStep
-							{ ...props }
-							{ ...props.form.packages }
-							errors={ props.errors.packages } />
+							siteId={ props.siteId }
+							orderId={ props.orderId } />
 						<RatesStep
-							{ ...props }
-							{ ...props.form.rates }
-							errors={ props.errors.rates } />
+							siteId={ props.siteId }
+							orderId={ props.orderId } />
 					</div>
 					<Sidebar
-						{ ...props }
-						errors={ props.errors.rates } />
+						siteId={ props.siteId }
+						orderId={ props.orderId } />
 				</div>
 				<ActionButtons buttons={ buttons } />
 			</div>
@@ -141,6 +141,7 @@ const mapStateToProps = ( state, { orderId } ) => {
 		currency_symbol: storeOptions.currency_symbol,
 		errors: loaded && getFormErrors( state, storeOptions ),
 		canPurchase: loaded && canPurchase( state, storeOptions ),
+		ratesTotal: getRatesTotal( state, orderId )
 	};
 };
 

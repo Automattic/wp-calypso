@@ -14,8 +14,12 @@ import _ from 'lodash';
 import AddressFields from './fields';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
-import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { toggleStep } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const renderSummary = ( {
 		values,
@@ -61,24 +65,31 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 };
 
 const AddressStep = ( props ) => {
-	const toggleStepHandler = () => props.toggleStep( props.type );
+	const toggleStepHandler = () => props.toggleStep( props.siteId, props.orderId, props.type );
+	const { form, storeOptions, error, showCountryInSummary } = props;
+
 	return (
 		<StepContainer
 			title={ props.title }
-			summary={ props.summary }
+			summary={ renderSummary( { ...form, storeOptions, errors: error }, showCountryInSummary ) }
 			expanded={ props.expanded }
 			toggleStep={ toggleStepHandler }
 			{ ...props.normalizationStatus } >
-			<AddressFields group={ props.type } />
+			<AddressFields group={ props.type } siteId={ props.siteId } orderId={ props.orderId } />
 		</StepContainer>
 	);
 };
 
 AddressStep.propTypes = {
-	values: PropTypes.object.isRequired,
-	isNormalized: PropTypes.bool.isRequired,
-	normalized: PropTypes.object,
-	normalizationInProgress: PropTypes.bool.isRequired,
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
+	form: PropTypes.shape( {
+		values: PropTypes.object.isRequired,
+		isNormalized: PropTypes.bool.isRequired,
+		normalized: PropTypes.object,
+		normalizationInProgress: PropTypes.bool.isRequired,
+	} ).isRequired,
+	storeOptions: PropTypes.object.isRequired,
 	errors: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.bool,
@@ -86,20 +97,23 @@ AddressStep.propTypes = {
 	toggleStep: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { siteId, orderId, type } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 
-	const form = state.shippingLabel.form[ ownProps.type ];
-	const errors = loaded && getFormErrors( state, storeOptions )[ ownProps.type ];
+	const form = shippingLabel.form[ type ];
+	const errors = loaded && getFormErrors( state, orderId, siteId )[ type ];
 
-	const showCountryInSummary = ownProps.type === 'destination' &&
-		state.shippingLabel.form.origin.values.country !== form.values.country;
+	const showCountryInSummary = type === 'destination' &&
+		shippingLabel.form.origin.values.country !== form.values.country;
 
 	return {
 		errors,
+		form,
+		storeOptions,
+		showCountryInSummary,
 		expanded: form.expanded,
-		summary: renderSummary( { ...form, storeOptions, errors }, showCountryInSummary ),
 		normalizationStatus: getNormalizationStatus( { ...form, errors } ),
 	};
 };

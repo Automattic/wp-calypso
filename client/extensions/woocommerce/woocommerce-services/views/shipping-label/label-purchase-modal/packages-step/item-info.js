@@ -44,6 +44,8 @@ const ItemInfo = ( props ) => {
 };
 
 ItemInfo.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	item: PropTypes.object.isRequired,
 	itemIndex: PropTypes.number.isRequired,
 	openItemMove: PropTypes.func.isRequired,

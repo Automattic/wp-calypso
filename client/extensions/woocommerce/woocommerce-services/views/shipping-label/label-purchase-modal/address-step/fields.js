@@ -18,7 +18,6 @@ import StateDropdown from 'woocommerce/woocommerce-services/components/state-dro
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
-import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,
@@ -26,9 +25,16 @@ import {
 	updateAddressValue,
 	submitAddressForNormalization,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const AddressFields = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		values,
 		isNormalized,
 		normalized,
@@ -41,9 +47,9 @@ const AddressFields = ( props ) => {
 	} = props;
 
 	if ( isNormalized && normalized && ! _.isEqual( normalized, values ) ) {
-		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( group, select );
-		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( group );
-		const editAddressHandler = () => props.editAddress( group );
+		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( siteId, orderId, group, select );
+		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( siteId, orderId, group );
+		const editAddressHandler = () => props.editAddress( siteId, orderId, group );
 		return (
 			<AddressSuggestion
 				values={ values }
@@ -59,10 +65,10 @@ const AddressFields = ( props ) => {
 	const fieldErrors = _.isObject( errors ) ? errors : {};
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] || '';
-	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( group, fieldName, newValue );
+	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( siteId, orderId, group, fieldName, newValue );
 	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
-	const updatePhoneValue = ( value ) => props.updateAddressValue( group, 'phone', getPhoneNumber( value ) );
-	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( group );
+	const updatePhoneValue = ( value ) => props.updateAddressValue( siteId, orderId, group, 'phone', getPhoneNumber( value ) );
+	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( siteId, orderId, group );
 
 	return (
 		<div>
@@ -143,6 +149,8 @@ const AddressFields = ( props ) => {
 };
 
 AddressFields.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	values: PropTypes.object.isRequired,
 	isNormalized: PropTypes.bool.isRequired,
 	normalized: PropTypes.object,
@@ -156,12 +164,13 @@ AddressFields.propTypes = {
 	group: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { group, siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
-		...state.shippingLabel.form[ ownProps.group ],
-		errors: loaded && getFormErrors( state, storeOptions )[ ownProps.group ],
+		...shippingLabel.form[ group ],
+		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
 		storeOptions,
 	};
 };
