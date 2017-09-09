@@ -175,28 +175,16 @@ export class EditorGroundControl extends PureComponent {
 		);
 	}
 
-	getSaveStatusLabel() {
+	getSaveStatusLabel( translate ) {
 		if ( this.props.isSaving ) {
-			return this.props.translate( 'Saving…' );
+			return translate( 'Saving…' );
 		}
 
 		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
 			return null;
 		}
 
-		return this.props.translate( 'Saved' );
-	}
-
-	getE2ESaveStatus() {
-		if ( this.props.isSaving ) {
-			return 'Saving';
-		}
-
-		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
-			return null;
-		}
-
-		return 'Saved';
+		return translate( 'Saved' );
 	}
 
 	isSaveEnabled() {
@@ -360,9 +348,9 @@ export class EditorGroundControl extends PureComponent {
 					{ ! this.isSaveEnabled() &&
 						<span
 							className="editor-ground-control__save-status"
-							data-e2e-status={ this.getE2ESaveStatus() }
+							data-e2e-status={ this.getSaveStatusLabel( identity ) }
 						>
-							{ this.getSaveStatusLabel() }
+							{ this.getSaveStatusLabel( this.props.translate ) }
 						</span>
 					}
 				</div>
