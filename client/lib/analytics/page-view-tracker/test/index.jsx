@@ -1,11 +1,16 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { spy } from 'sinon';
 
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-
 import { PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
@@ -13,7 +18,7 @@ describe( 'PageViewTracker', () => {
 
 	useFakeDom();
 	useFakeTimers( fakeClock => {
-		clock = fakeClock
+		clock = fakeClock;
 	} );
 
 	it( 'should immediately fire off event when given no delay', () => {
@@ -33,7 +38,7 @@ describe( 'PageViewTracker', () => {
 
 		clock.tick( 500 );
 
-		expect( recorder ).to.have.been.calledOnce
+		expect( recorder ).to.have.been.calledOnce;
 	} );
 
 	it( 'should pass the appropriate event information', () => {

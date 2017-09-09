@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -87,41 +88,36 @@ class DisconnectJetpackButton extends Component {
 	}
 
 	render() {
-		const { site, linkDisplay, planClass } = this.props;
+		const { linkDisplay, planClass, site, text, translate } = this.props;
+		const buttonPropsList = [ 'borderless', 'busy', 'compact', 'disabled', 'href', 'primary', 'rel', 'scary', 'target', 'type' ];
 
-		const pickProps = [ 'compact', 'primary', 'scary', 'busy', 'type', 'href', 'borderless', 'target', 'rel' ];
-
-		const buttonProps = {
-			...pick( this.props, pickProps, ),
-			id: `disconnect-jetpack-${ site.ID }`,
-			className: 'disconnect-jetpack-button',
-			compact: true,
-			disabled: this.props.disabled,
-			scary: true,
-			borderless: linkDisplay,
-			onClick: this.handleClick
-		};
-
-		let { text } = this.props;
-
-		if ( ! text ) {
-			text = this.props.translate( 'Disconnect', {
-				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
-			} );
-		}
-
-		return <Button { ...buttonProps }>
-			{ text }
-			<QuerySitePlans siteId={ site.ID } />
-			<DisconnectJetpackDialog
-				isVisible={ this.state.dialogVisible }
-				onDisconnect={ this.disconnectJetpack }
-				onClose={ this.hideDialog }
-				plan= { planClass }
-				isBroken={ false }
-				siteName={ site.slug }
+		return (
+			<Button
+				{ ...pick( this.props, buttonPropsList ) }
+				borderless={ linkDisplay }
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				className="disconnect-jetpack-button"
+				compact
+				id={ `disconnect-jetpack-${ site.ID }` }
+				onClick={ this.handleClick }
+				scary
+			>
+				{
+					text || translate( 'Disconnect', {
+						context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
+					} )
+				}
+				<QuerySitePlans siteId={ site.ID } />
+				<DisconnectJetpackDialog
+					isVisible={ this.state.dialogVisible }
+					onDisconnect={ this.disconnectJetpack }
+					onClose={ this.hideDialog }
+					plan={ planClass }
+					isBroken={ false }
+					siteName={ site.slug }
 				/>
-		</Button>;
+			</Button>
+		);
 	}
 }
 

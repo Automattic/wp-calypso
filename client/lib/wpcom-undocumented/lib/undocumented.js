@@ -2433,7 +2433,7 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
  * @returns {Promise}  A promise
  */
 Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
-	return this.wpcom.req.get( `/oauth2-client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
+	return this.wpcom.req.get( `/oauth2/client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**

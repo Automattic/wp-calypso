@@ -141,7 +141,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="publish"
 			arrow="right-top"
-			target=".editor-ground-control__publish-combo"
+			target=".editor-ground-control__publish-button"
 			placement="beside"
 			style={ { marginTop: '-17px' } }
 		>

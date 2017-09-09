@@ -1,37 +1,56 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
-import { get } from 'lodash';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import JetpackLogo from 'components/jetpack-logo';
+
+/**
+ * Module constants
+ */
+const JETPACK_ACTOR = (
+	<div className="activity-log-item__actor">
+		<JetpackLogo size={ 40 } />
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">Jetpack</div>
+		</div>
+	</div>
+);
 
 export default class ActivityActor extends PureComponent {
 	static propTypes = {
 		actor: PropTypes.shape( {
-			display_name: PropTypes.string,
-			login: PropTypes.string,
-			translated_role: PropTypes.string,
-			avatar_url: PropTypes.string,
+			actorAvatarUrl: PropTypes.string,
+			actorName: PropTypes.string,
+			actorRole: PropTypes.string,
+			actorType: PropTypes.string,
 		} ),
 	};
 
 	render() {
-		const { actor } = this.props;
-		const avatarUrl = get( actor, 'avatar_url', 'https://www.gravatar.com/avatar/0' );
-		const displayName = get( actor, 'display_name', '' );
-		const login = get( actor, 'login', '' );
-		const translatedRole = get( actor, 'translated_role', '' );
+		const { actorAvatarUrl, actorName, actorRole, actorType } = this.props;
+
+		if ( actorName === 'Jetpack' && actorType === 'Application' ) {
+			return JETPACK_ACTOR;
+		}
 
 		return (
 			<div className="activity-log-item__actor">
-				<Gravatar user={ { avatar_URL: avatarUrl } } size={ 40 } />
+				<Gravatar user={ { avatar_URL: actorAvatarUrl } } size={ 40 } />
 				<div className="activity-log-item__actor-info">
-					<div className="activity-log-item__actor-name">{ displayName || login }</div>
-					<div className="activity-log-item__actor-role">{ translatedRole }</div>
+					<div className="activity-log-item__actor-name">
+						{ actorName }
+					</div>
+					{ actorRole &&
+						<div className="activity-log-item__actor-role">
+							{ actorRole }
+						</div> }
 				</div>
 			</div>
 		);

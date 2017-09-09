@@ -8,15 +8,26 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import {
 	addComments,
+	announceEditFailure,
+	editComment,
 	fetchCommentsList,
 	requestComment,
 	receiveCommentError,
 	receiveCommentSuccess,
+	removeCommentStatusErrorNotice,
 } from '../';
-import { requestComment as requestCommentAction } from 'state/comments/actions';
-import { COMMENTS_RECEIVE } from 'state/action-types';
+import {
+	requestComment as requestCommentAction,
+	editComment as editCommentAction,
+} from 'state/comments/actions';
+import { errorNotice, removeNotice } from 'state/notices/actions';
+import {
+	COMMENTS_EDIT,
+	COMMENTS_RECEIVE,
+} from 'state/action-types';
 
 const query = {
 	siteId: 1337,
@@ -185,5 +196,86 @@ describe( '#receiveCommentError', () => {
 				text: 'Failed to retrieve comment for site “sqeeeeee!”',
 			},
 		} );
+	} );
+} );
+
+describe( '#editComment', () => {
+	let dispatch;
+
+	beforeEach( () => ( dispatch = spy() ) );
+
+	it( 'should dispatch a http action', () => {
+		const originalComment = { ID: 123, text: 'lorem ipsum' };
+		const newComment = { ID: 123, text: 'lorem ipsum dolor' };
+		const action = editCommentAction( 1, 1, 123, newComment );
+		const getState = () => ( {
+			comments: {
+				items: {
+					'1-1': [ originalComment ]
+				}
+			}
+		} );
+
+		editComment( { dispatch, getState }, action );
+
+		expect( dispatch ).calledWith( http(
+			{
+				method: 'POST',
+				path: '/sites/1/comments/123',
+				apiVersion: '1.1',
+				body: newComment
+			},
+			{
+				...action,
+				originalComment
+			}
+		) );
+	} );
+} );
+
+describe( '#removeCommentStatusErrorNotice', () => {
+	let dispatch;
+
+	beforeEach( () => ( dispatch = spy() ) );
+
+	it( 'should dispatch a remove notice action', () => {
+		removeCommentStatusErrorNotice( { dispatch }, { commentId: 123 } );
+
+		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-error-123' ) );
+	} );
+} );
+
+describe( '#announceEditFailure', () => {
+	let dispatch;
+	const originalComment = { ID: 123, text: 'lorem ipsum' };
+	const newComment = { ID: 123, text: 'lorem ipsum dolor' };
+	const action = editCommentAction( 1, 1, 123, newComment );
+
+	beforeEach( () => ( dispatch = spy() ) );
+
+	it( 'should dispatch a local comment edit action', () => {
+		announceEditFailure( { dispatch }, { ...action, originalComment } );
+
+		expect( dispatch ).to.have.been.calledWith( bypassDataLayer( {
+			type: COMMENTS_EDIT,
+			siteId: 1,
+			postId: 1,
+			commentId: 123,
+			comment: originalComment
+		} ) );
+	} );
+
+	it( 'should dispatch a remove notice action', () => {
+		announceEditFailure( { dispatch }, { ...action, originalComment } );
+
+		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-123' ) );
+	} );
+
+	it( 'should dispatch an error notice', () => {
+		announceEditFailure( { dispatch }, { ...action, originalComment } );
+
+		expect( dispatch ).to.have.been.calledWith(	errorNotice( "We couldn't update this comment.", {
+			id: `comment-notice-error-${ action.commentId }`,
+		} ) );
 	} );
 } );

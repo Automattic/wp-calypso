@@ -3,6 +3,7 @@
  */
 import {
 	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
 } from '../action-types';
 
@@ -20,16 +21,33 @@ export const requestFeed = ( siteId, zoneId ) => ( {
 } );
 
 /**
+ * Returns an action object to indicate that the feed should be saved.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} zoneId  Zone ID
+ * @param  {String} zoneId  Form name
+ * @param  {Array}  posts   Feed posts
+ * @return {Object}         Action object
+ */
+export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
+	type: ZONINATOR_SAVE_FEED,
+	siteId,
+	zoneId,
+	form,
+	posts,
+} );
+
+/**
  * Returns an action object to indicate that a feed should be updated.
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
- * @param  {Object} postIds Feed post IDs
+ * @param  {Array}  posts   Feed posts
  * @return {Object}         Action object
  */
-export const updateFeed = ( siteId, zoneId, postIds ) => ( {
+export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_UPDATE_FEED,
 	siteId,
 	zoneId,
-	postIds,
+	posts,
 } );

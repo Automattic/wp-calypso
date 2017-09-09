@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { find } from 'lodash';
 
 /**
@@ -308,12 +309,35 @@ class SignupForm extends Component {
 		} );
 	};
 
+	getNoticeMessageWithLogin( notice ) {
+		const link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.redirectToAfterLoginUrl
+		} );
+
+		if ( notice.error === '2FA_enabled' ) {
+			return (
+				<span>
+					<p>
+						{ notice.message }&nbsp;
+						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
+							}
+						} ) }
+					</p>
+				</span>
+			);
+		}
+		return notice.message;
+	}
+
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
-			text={ notice.message } />;
+			text={ this.getNoticeMessageWithLogin( notice ) } />;
 	}
 
 	getUserData() {
@@ -461,7 +485,6 @@ class SignupForm extends Component {
 		return (
 			<p className="signup-form__terms-of-service-link">{ tosText }</p>
 		);
-
 	}
 
 	getNotice() {

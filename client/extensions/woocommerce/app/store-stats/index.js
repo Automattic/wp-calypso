@@ -20,6 +20,7 @@ import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
 import SectionHeader from 'components/section-header';
+import JetpackColophon from 'components/jetpack-colophon';
 import {
 	sparkWidgets,
 	topProducts,
@@ -140,6 +141,7 @@ class StoreStats extends Component {
 						);
 					} ) }
 				</div>
+				<JetpackColophon />
 			</Main>
 		);
 	}

@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @return {Number} The current page being shown to the user. Defaults to 1.
  */
 export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'currentPage' ], 1 );
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentPage' ], 1 );
 };
 
 /**
@@ -23,5 +23,5 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
  * @return {String} The current search term being shown to the user. Defaults to "".
  */
 export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'currentSearch' ], '' );
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentSearch' ], '' );
 };

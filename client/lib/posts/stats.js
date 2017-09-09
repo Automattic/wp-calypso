@@ -69,7 +69,7 @@ export function recordSaveEvent( context ) {
 	} else if ( 'publish' === nextStatus || 'private' === nextStatus ) {
 		tracksEventName += 'publish';
 		usageAction = 'new';
-		if ( context && context.isConfirmationFeatureEnabled ) {
+		if ( context && context.isConfirmationSidebarEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	} else if ( 'pending' === nextStatus ) {
@@ -78,7 +78,7 @@ export function recordSaveEvent( context ) {
 		tracksEventName += 'schedule';
 		statName = 'status-schedule';
 		statEvent = 'Scheduled Post';
-		if ( context && context.isConfirmationFeatureEnabled ) {
+		if ( context && context.isConfirmationSidebarEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	}

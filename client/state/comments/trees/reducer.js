@@ -21,6 +21,7 @@ const convertToTree = comments =>
 		commentParentId: get( comment, 'parent.ID', 0 ),
 		postId: get( comment, 'post.ID' ),
 		status: get( comment, 'status' ),
+		type: get( comment, 'type', 'comment' ),
 	} ) );
 
 const siteTree = ( state = [], action ) => {

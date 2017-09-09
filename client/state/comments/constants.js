@@ -6,9 +6,9 @@ export const PLACEHOLDER_STATE = {
 	ERROR: 'ERROR',
 };
 
-export const APPROVED_STATUS = 'approved';
-export const DISAPPROVED_STATUS = 'unapproved';
-export const SPAM_STATUS = 'spam';
-export const UNSPAM_STATUS = 'unspam';
-export const TRASH_STATUS = 'trash';
-export const UNTRASH_STATUS = 'untrash';
+// values conveniently also correspond to css classNames to apply
+export const POST_COMMENT_DISPLAY_TYPES = {
+	singleLine: 'is-single-line',
+	excerpt: 'is-excerpt',
+	full: 'is-full',
+};

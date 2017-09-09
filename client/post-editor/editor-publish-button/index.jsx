@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { abtest } from 'lib/abtest';
 import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
@@ -136,14 +134,11 @@ export class EditorPublishButton extends Component {
 	}
 
 	isEnabled() {
-		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
-
 		return ! this.props.isPublishing &&
 			! this.props.isSaveBlocked &&
 			this.props.hasContent &&
 			! this.props.needsVerification &&
-			( ! isInPostPublishConfirmationFlow || ( ! this.props.privatePost || this.props.privatePostPasswordValid ) );
+			( ! this.props.privatePost || this.props.privatePostPasswordValid );
 	}
 
 	render() {

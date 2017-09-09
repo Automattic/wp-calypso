@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -43,8 +44,8 @@ import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
-import PostRelativeTime from 'blocks/post-relative-time/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
+import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
@@ -78,25 +79,23 @@ import UploadImage from 'blocks/upload-image/docs/example';
 import ConversationCommentList from 'blocks/conversations/docs/example';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog/docs/example';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
+import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 
-export default React.createClass( {
-	displayName: 'AppComponents',
+export default class AppComponents extends React.Component {
+	static displayName = 'AppComponents';
+	state = { filter: '' };
 
-	getInitialState() {
-		return { filter: '' };
-	},
-
-	onSearch( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents() {
+	backToComponents = () => {
 		page( '/devdocs/blocks/' );
-	},
+	};
 
 	render() {
 		return (
-			<Main className="design">
+			<Main className="design design__blocks">
 				{ this.props.component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
@@ -142,8 +141,8 @@ export default React.createClass( {
 					<DomainTip />
 					<RelatedPostCardv2 />
 					<PostItem />
-					<PostRelativeTime />
 					<PostStatus />
+					<PostTime />
 					<ReaderAuthorLink />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink />
@@ -172,8 +171,9 @@ export default React.createClass( {
 					<ConversationCommentList />
 					<PostComment />
 					<ConversationCaterpillar />
+					<ColorSchemePicker />
 				</Collection>
 			</Main>
 		);
-	},
-} );
+	}
+}

@@ -24,3 +24,14 @@ export const isRequestingZones = ( state, siteId ) =>
  */
 export const getZones = ( state, siteId ) =>
 	values( get( getZonesState( state ), [ 'items', siteId ], {} ) );
+
+/**
+ * Returns a specific zone.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
+ * @return {Object}        Zone
+ */
+export const getZone = ( state, siteId, zoneId ) =>
+	get( getZonesState( state ), [ 'items', siteId, zoneId ], null );

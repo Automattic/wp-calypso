@@ -1,28 +1,42 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:connected-applications' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect;
+import createReactClass from 'create-react-class';
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+const debug = debugFactory( 'calypso:me:connected-applications' );
 
 /**
  * Internal dependencies
  */
-var ConnectedAppItem = require( 'me/connected-application-item' ),
-	EmptyContent = require( 'components/empty-content' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	ReauthRequired = require( 'me/reauth-required' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	notices = require( 'notices' ),
-	SecuritySectionNav = require( 'me/security-section-nav' ),
-	Main = require( 'components/main' ),
-	successNotice = require( 'state/notices/actions' ).successNotice;
+import ConnectedAppItem from 'me/connected-application-item';
+import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import notices from 'notices';
+/* eslint-disable no-restricted-imports */
+// FIXME: Remove use of this mixin
+import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
+import ReauthRequired from 'me/reauth-required';
+import SecuritySectionNav from 'me/security-section-nav';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import { successNotice } from 'state/notices/actions';
 
-const ConnectedApplications = React.createClass( {
-
+/* eslint-disable react/prefer-es6-class */
+// FIXME: Remove use of createReactClass
+const ConnectedApplications = createReactClass( {
+	/* eslint-enable react/prefer-es6-class */
 	displayName: 'ConnectedApplications',
+
+	propTypes: {
+		translate: PropTypes.func.isRequired,
+	},
 
 	mixins: [ observe( 'connectedAppsData' ) ],
 
@@ -41,7 +55,7 @@ const ConnectedApplications = React.createClass( {
 	},
 
 	revokeConnection: function( applicationID, callback ) {
-		var application = this.props.connectedAppsData.getApplication( applicationID );
+		const application = this.props.connectedAppsData.getApplication( applicationID );
 		if ( 'undefined' !== typeof application ) {
 			this.props.connectedAppsData.revoke( parseInt( applicationID, 10 ), function( error ) {
 				debug( 'API call to revoke application is completed.' );
@@ -52,7 +66,7 @@ const ConnectedApplications = React.createClass( {
 				} else {
 					debug( 'Application connection was successfully revoked.' );
 					this.props.successNotice(
-						this.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
+						this.props.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
 							args: {
 								applicationTitle: application.title
 							}
@@ -64,28 +78,38 @@ const ConnectedApplications = React.createClass( {
 	},
 
 	renderEmptyContent: function() {
+		const { translate } = this.props;
 		return (
 			<EmptyContent
-				title={ this.translate( "You haven't connected any apps yet." ) }
-				line={ this.translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
-					components: {
-						link: <a href="https://apps.wordpress.org/" target="_blank" rel="noopener noreferrer" title="WordPress Mobile Apps" />
+				title={ translate( "You haven't connected any apps yet." ) }
+				line={ translate(
+					'You can get started with the {{link}}WordPress mobile apps!{{/link}}',
+					{
+						components: {
+							link: (
+								<a
+									href="https://apps.wordpress.org/"
+									target="_blank"
+									rel="noopener noreferrer"
+									title="WordPress Mobile Apps"
+								/>
+							),
+						},
 					}
-				} ) }
+				) }
 			/>
 		);
 	},
 
 	renderPlaceholders: function() {
-		var i,
-			placeholders = [];
+		const placeholders = [];
 
-		for ( i = 0; i < 5; i++ ) {
+		for ( let i = 0; i < 5; i++ ) {
 			placeholders.push(
 				<ConnectedAppItem
 					connection={ {
 						ID: i,
-						title: this.translate( 'Loading Connected Applications' )
+						title: this.props.translate( 'Loading Connected Applications' ),
 					} }
 					key={ i }
 					isPlaceholder
@@ -97,22 +121,23 @@ const ConnectedApplications = React.createClass( {
 	},
 
 	renderConnectedApps: function() {
-		return this.props.connectedAppsData.initialized
+		return ( this.props.connectedAppsData.initialized
 		? this.props.connectedAppsData.get().map( function( connection ) {
-				return (
+			return (
 					<ConnectedAppItem
 						connection={ connection }
 						key={ connection.ID }
 						connectedApplications={ this.props.connectedAppsData }
-						revoke={ this.revokeConnection } />
+						revoke={ this.revokeConnection }
+					/>
 				);
-			}, this )
-		: this.renderPlaceholders();
+		}, this )
+		: this.renderPlaceholders() );
 	},
 
 	renderConnectedAppsList: function() {
-		var connectedApps,
-			hasConnectedApps = this.props.connectedAppsData.get().length;
+		let connectedApps;
+		const hasConnectedApps = this.props.connectedAppsData.get().length;
 
 		if ( this.props.connectedAppsData.initialized ) {
 			connectedApps = hasConnectedApps ? this.renderConnectedApps() : this.renderEmptyContent();
@@ -135,13 +160,17 @@ const ConnectedApplications = React.createClass( {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
+				<DocumentHead
+					title={ this.props.translate( 'Connected Applications', { textOnly: true } ) }
+				/>
+
 				{ this.renderConnectedAppsList() }
 			</Main>
 		);
-	}
+	},
 } );
 
 export default connect(
 	null,
 	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( ConnectedApplications );
+)( localize( ConnectedApplications ) );

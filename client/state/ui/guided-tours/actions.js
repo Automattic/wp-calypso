@@ -49,3 +49,7 @@ function addSeenGuidedTour( getState, tourName, finished = false ) {
 		}
 	] );
 }
+
+export function resetGuidedToursHistory() {
+	return savePreference( 'guided-tours-history', [] );
+}

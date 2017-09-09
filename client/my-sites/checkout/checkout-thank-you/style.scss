@@ -92,51 +92,35 @@
 
 // Header subcomponent styles
 .checkout-thank-you__header {
-	background: $blue-medium;
-	color: $white;
-	padding: 48px 24px;
+	position: relative;
+	color: $gray-text-min;
+	padding: 12px 24px 48px;
 	text-align: center;
 
 	@include breakpoint( ">660px" ) {
-		padding: 72px 24px;
+		padding-bottom: 72px;
 	}
+}
+.checkout-thank-you__header::before {
+	content: '';
+	position: absolute;
+	top: -1px;
+	left: 0;
+	width: 100%;
+	border-top: 1px solid #fff;
 }
 
 .checkout-thank-you__header-content {
 	margin: 0 auto;
 	max-width: 700px;
-
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		text-align: left;
-	}
 }
 
 .checkout-thank-you__header-icon {
 	display: block;
 	margin: 0 auto;
 	position: relative;
-
-	@include breakpoint( ">660px" ) {
-		height: 132px;
-		margin-right: 32px;
-		width: 132px;
-	}
-
-	.gridicon {
-		background: white;
-		border-radius: 50%;
-		color: darken( $gray, 20% );
-		height: 48px;
-		padding: 21px;
-		width: 48px;
-
-		@include breakpoint( ">660px" ) {
-			height: 72px;
-			padding: 30px;
-			width: 72px;
-		}
-	}
+	width: 132px;
+	height: 132px;
 }
 
 .checkout-thank-you__header-copy {
@@ -264,11 +248,16 @@
 	align-items: center;
 	display: flex;
 	margin-right: 8px;
+	width: 18px;
 }
 
 .checkout-thank-you__jetpack-feature-status-text {
 	font-size: 16px;
 	text-align: left;
+}
+
+.checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
+	color: $gray-text-min;
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .spinner,
@@ -320,4 +309,17 @@
 	font-size: 14px;
 	font-style: italic;
 	font-weight: 400;
+}
+
+.checkout-thank-you__jetpack-description-in-actions a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.checkout-thank-you__jetpack-action-buttons {
+	display:flex;
+}
+
+.checkout-thank-you__jetpack .thank-you-card__action .button {
+	max-width: 45%;
 }

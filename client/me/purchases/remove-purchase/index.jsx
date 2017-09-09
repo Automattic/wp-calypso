@@ -31,6 +31,7 @@ import { getPurchase, isDataLoading } from '../utils';
 import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
+import { getPurchasesError } from 'state/purchases/selectors';
 import { removePurchase } from 'state/purchases/actions';
 import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -192,42 +193,44 @@ class RemovePurchase extends Component {
 			.removePurchase( purchase.id, user.get().ID )
 			.then( () => {
 				const productName = getName( purchase );
+				const { purchasesError } = this.props;
 
-				if ( isDomainRegistration( purchase ) ) {
-					if ( isDomainOnlySite ) {
-						// Removing the domain from a domain-only site results
-						// in the site being deleted entirely. We need to call
-						// `receiveDeletedSiteDeprecated` here because the site
-						// exists in `sites-list` as well as the global store.
-						receiveDeletedSiteDeprecated( selectedSite );
-						this.props.receiveDeletedSite( selectedSite.ID );
-						this.props.setAllSitesSelected();
+				if ( purchasesError ) {
+					this.setState( { isRemoving: false } );
+
+					closeDialog();
+
+					notices.error( purchasesError );
+				} else {
+					if ( isDomainRegistration( purchase ) ) {
+						if ( isDomainOnlySite ) {
+							// Removing the domain from a domain-only site results
+							// in the site being deleted entirely. We need to call
+							// `receiveDeletedSiteDeprecated` here because the site
+							// exists in `sites-list` as well as the global store.
+							receiveDeletedSiteDeprecated( selectedSite );
+							this.props.receiveDeletedSite( selectedSite.ID );
+							this.props.setAllSitesSelected();
+						}
+
+						notices.success(
+							translate( 'The domain {{domain/}} was removed from your account.', {
+								components: { domain: <em>{ productName }</em> },
+							} ),
+							{ persistent: true }
+						);
+					} else {
+						notices.success(
+							translate( '%(productName)s was removed from {{siteName/}}.', {
+								args: { productName },
+								components: { siteName: <em>{ selectedSite.domain }</em> },
+							} ),
+							{ persistent: true }
+						);
 					}
 
-					notices.success(
-						translate( 'The domain {{domain/}} was removed from your account.', {
-							components: { domain: <em>{ productName }</em> },
-						} ),
-						{ persistent: true }
-					);
-				} else {
-					notices.success(
-						translate( '%(productName)s was removed from {{siteName/}}.', {
-							args: { productName },
-							components: { siteName: <em>{ selectedSite.domain }</em> },
-						} ),
-						{ persistent: true }
-					);
+					page( purchasePaths.purchasesRoot() );
 				}
-
-				page( purchasePaths.purchasesRoot() );
-			} )
-			.catch( () => {
-				this.setState( { isRemoving: false } );
-
-				closeDialog();
-
-				notices.error( this.props.selectedPurchase.error );
 			} );
 	};
 
@@ -435,6 +438,7 @@ export default connect(
 		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		purchasesError: getPurchasesError( state ),
 	} ),
 	{
 		receiveDeletedSite,

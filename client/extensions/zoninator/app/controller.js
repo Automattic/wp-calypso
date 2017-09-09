@@ -7,14 +7,13 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import { getSiteFragment, sectionify } from 'lib/route';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 
 export const renderTab = ( component ) => ( context ) => {
 	const siteId = getSiteFragment( context.path );
-	const { zone = '' } = context.params;
+	const zoneId = parseInt( context.params.zone, 10 ) || 0;
 
 	let baseAnalyticsPath = sectionify( context.path );
 
@@ -22,14 +21,14 @@ export const renderTab = ( component ) => ( context ) => {
 		baseAnalyticsPath += '/:site';
 	}
 
-	if ( zone ) {
+	if ( zoneId ) {
 		baseAnalyticsPath += '/:zone';
 	}
 
 	let analyticsPageTitle = 'WP Zone Manager';
 
-	if ( zone.length ) {
-		analyticsPageTitle += ` > ${ titlecase( zone ) }`;
+	if ( zoneId ) {
+		analyticsPageTitle += ' > Edit zone';
 	}
 
 	if ( baseAnalyticsPath.match( /.*\/new\/:site$/ ) ) {
@@ -40,9 +39,9 @@ export const renderTab = ( component ) => ( context ) => {
 
 	renderWithReduxStore(
 		<Settings>
-			{ React.createElement( component ) }
+			{ React.createElement( component, { zoneId } ) }
 		</Settings>,
 		document.getElementById( 'primary' ),
-		context.store
+		context.store,
 	);
 };

@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -32,8 +33,6 @@ import utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
-import config from 'config';
-import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
@@ -63,6 +62,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import { removep } from 'lib/formatting';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -84,8 +84,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	_previewWindow: null,
-
-	isPostPublishConfirmationABTest: abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation',
 
 	getInitialState() {
 		return {
@@ -295,11 +293,6 @@ export const PostEditor = React.createClass( {
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
 
 		let isPage;
 		let isTrashed;
@@ -334,7 +327,7 @@ export const PostEditor = React.createClass( {
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
-						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
+						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
@@ -726,13 +719,8 @@ export const PostEditor = React.createClass( {
 
 		edits.content = this.editor.getContent();
 
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.props.isConfirmationSidebarEnabled
-		);
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited( edits, { isConfirmationFeatureEnabled: isConfirmationFeatureEnabled }, function( error ) {
+		actions.saveEdited( edits, { isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled }, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
 				this.onSaveDraftFailure( error );
 			} else {
@@ -862,14 +850,8 @@ export const PostEditor = React.createClass( {
 			status: 'publish'
 		};
 
-		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		);
-
 		if (
-			isConfirmationFeatureEnabled &&
+			this.props.isConfirmationSidebarEnabled &&
 			false === isConfirmed
 		) {
 			this.setConfirmationSidebar( { status: 'open' } );
@@ -877,7 +859,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if (
-			isConfirmationFeatureEnabled &&
+			this.props.isConfirmationSidebarEnabled &&
 			'open' === this.state.confirmationSidebar
 		) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
@@ -894,7 +876,7 @@ export const PostEditor = React.createClass( {
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.editor.getContent();
 
-		actions.saveEdited( edits, { isConfirmationFeatureEnabled: isConfirmationFeatureEnabled }, function( error ) {
+		actions.saveEdited( edits, { isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled }, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
 				this.onPublishFailure( error );
 			} else {
@@ -911,11 +893,7 @@ export const PostEditor = React.createClass( {
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
 	},
@@ -936,11 +914,7 @@ export const PostEditor = React.createClass( {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
@@ -971,14 +945,9 @@ export const PostEditor = React.createClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest
-		) {
-			analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
-				context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
-			} );
-		}
+		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
+		} );
 
 		this.checkForDateChange( dateValue );
 	},
@@ -1079,10 +1048,245 @@ export const PostEditor = React.createClass( {
 		return editorMode;
 	},
 
+	getContainingTagInfo: function( content, cursorPosition ) {
+		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
+		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
+
+		if ( lastLtPos > lastGtPos ) {
+			// inside a tag that was opened, but not closed
+
+			// find what the tag is
+			const tagContent = content.substr( lastLtPos );
+			const tagMatch = tagContent.match( /<\s*(\/)?(\w+)/ );
+			if ( ! tagMatch ) {
+				return null;
+			}
+
+			const tagType = tagMatch[ 2 ];
+			const closingGt = tagContent.indexOf( '>' );
+			const isClosingTag = !! tagMatch[ 1 ];
+
+			return {
+				ltPos: lastLtPos,
+				gtPos: lastLtPos + closingGt + 1, // offset by one to get the position _after_ the character,
+				tagType,
+				isClosingTag,
+			};
+		}
+		return null;
+	},
+
+	getCursorMarkerSpan: function( type ) {
+		const tagType = type ? type : 'start';
+
+		return `<span
+				data-mce-type="bookmark"
+				id="mce_SELREST_${ tagType }"
+				data-mce-style="overflow:hidden;line-height:0"
+				style="overflow:hidden;line-height:0"
+			>&#65279;</span>`;
+	},
+
+	addHTMLBookmarkInTextAreaContent: function() {
+		const textArea = this.editor._editor.getElement();
+
+		let htmlModeCursorStartPosition = textArea.selectionStart;
+		let htmlModeCursorEndPosition = textArea.selectionEnd;
+
+		// check if the cursor is in a tag and if so, adjust it
+		const isCursorStartInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorStartPosition );
+		if ( isCursorStartInTag ) {
+			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
+		}
+
+		const isCursorEndInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorEndPosition );
+		if ( isCursorEndInTag ) {
+			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
+		}
+
+		const mode =
+			htmlModeCursorStartPosition !== htmlModeCursorEndPosition
+			? 'range'
+			: 'single';
+
+		let selectedText = null;
+
+		if ( mode === 'range' ) {
+			const bookMarkEnd = this.getCursorMarkerSpan( 'end' );
+
+			selectedText = [
+				textArea.value.slice( htmlModeCursorStartPosition, htmlModeCursorEndPosition ),
+				bookMarkEnd,
+			].join( '' );
+		}
+
+		textArea.value = [
+			textArea.value.slice( 0, htmlModeCursorStartPosition ), // text until the cursor/selection position
+			this.getCursorMarkerSpan( 'start' ), 					// cursor/selection start marker
+			selectedText, 											// selected text with end cursor/position marker
+			textArea.value.slice( htmlModeCursorEndPosition )		// text from last cursor/selection position to end
+		].join( '' );
+
+		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
+	},
+
+	focusHTMLBookmarkInVisualEditor: function( ed ) {
+		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
+		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
+
+		if ( ! startNode ) {
+			return;
+		}
+
+		ed.target.focus();
+
+		if ( ! endNode ) {
+			ed.target.selection.select( startNode );
+		} else {
+			const selection = document.createRange();
+			selection.setStart( startNode, 0 );
+			selection.setEnd( endNode, 0 );
+
+			ed.target.selection.setRng( selection );
+			endNode.parentNode.removeChild( endNode );
+		}
+
+		startNode.parentNode.removeChild( startNode );
+
+		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
+	},
+
+	/**
+	 * Finds the current selection position in the Visual editor.
+	 *
+	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
+	 *
+	 * @param {Object} editor The editor where we must find the selection
+	 * @returns {null | Object} The selection range position in the editor
+	 */
+	findBookmarkedPosition: function( editor ) {
+		// Get the TinyMCE `window` reference, since we need to access the raw selection.
+		const TinyMCEWIndow = editor.getWin();
+
+		const selection = TinyMCEWIndow.getSelection();
+
+		if ( selection.rangeCount <= 0 ) {
+			// no selection, no need to continue.
+			return;
+		}
+
+		/**
+		 * The ID is used to avoid replacing user generated content, that may coincide with the
+		 * format specified below.
+		 * @type {string}
+		 */
+		const selectionID = 'SELRES_' + uuid();
+
+		/**
+		 * Create two marker elements that will be used to mark the start and the end of the range.
+		 *
+		 * The elements have hardcoded style that makes them invisible. This is done to avoid seeing
+		 * random content flickering in the editor when switching between modes.
+		 */
+		const startElement = document.createElement( 'span' );
+		startElement.className = 'mce_SELRES_start';
+		startElement.style.display = 'inline-block';
+		startElement.style.width = 0;
+		startElement.style.overflow = 'hidden';
+		startElement.style.lineHeight = '0px';
+		startElement.innerHTML = selectionID;
+
+		const endElement = document.createElement( 'span' );
+		endElement.className = 'mce_SELRES_end';
+		endElement.style.display = 'inline-block';
+		endElement.style.width = 0;
+		endElement.style.overflow = 'hidden';
+		endElement.style.lineHeight = '0px';
+		endElement.innerHTML = selectionID;
+
+		/**
+		 * Black magic start.
+		 *
+		 * Inspired by https://stackoverflow.com/a/17497803/153310
+		 *
+		 * Why do it this way and not with TinyMCE's bookmarks?
+		 *
+		 * TinyMCE's bookmarks are very nice when working with selections and positions, BUT
+		 * there is no way to determine the precise position of the bookmark when switching modes, since
+		 * TinyMCE does some serialization of the content, to fix things like shortcodes, run plugins, prettify
+		 * HTML code and so on. In this process, the bookmark markup gets lost.
+		 *
+		 * If we decide to hook right after the bookmark is added, we can see where the bookmark is in the raw HTML
+		 * in TinyMCE. Unfortunately this state is before the serialization, so any visual markup in the content will
+		 * throw off the positioning.
+		 *
+		 * To avoid this, we insert two custom `span`s that will serve as the markers at the beginning and end of the
+		 * selection.
+		 *
+		 * Why not use TinyMCE's selection API or the DOM API to wrap the contents? Because if we do that, this creates
+		 * a new node, which is inserted in the dom. Now this will be fine, if we worked with fixed selections to
+		 * full nodes. Unfortunately in our case, the user can select whatever they like, which means that the
+		 * selection may start in the middle of one node and end in the middle of a completely different one. If we
+		 * wrap the selection in another node, this will create artifacts in the content.
+		 *
+		 * Using the method below, we insert the custom `span` nodes at the start and at the end of the selection.
+		 * This helps us not break the content and also gives us the option to work with multi-node selections without
+		 * breaking the markup.
+		 */
+		const range = selection.getRangeAt( 0 );
+		const startNode = range.startContainer;
+		const startOffset = range.startOffset;
+		const boundaryRange = range.cloneRange();
+
+		boundaryRange.collapse( false );
+		boundaryRange.insertNode( endElement );
+		boundaryRange.setStart( startNode, startOffset );
+		boundaryRange.collapse( true );
+		boundaryRange.insertNode( startElement );
+
+		range.setStartAfter( startElement );
+		range.setEndBefore( endElement );
+		selection.removeAllRanges();
+		selection.addRange( range );
+
+		/**
+		 * Now the editor's content has the start/end nodes.
+		 *
+		 * Unfortunately the content goes through some more changes after this step, before it gets inserted
+		 * in the `textarea`. This means that we have to do some minor cleanup on our own here.
+		 */
+		const content = removep( editor.getContent() );
+
+		const startRegex = new RegExp(
+			'<span[^>]*\\s*class="mce_SELRES_start"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
+		);
+
+		const endRegex = new RegExp(
+			'<span[^>]*\\s*class="mce_SELRES_end"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
+		);
+
+		const startMatch = content.match( startRegex );
+		const endMatch = content.match( endRegex );
+		if ( ! startMatch ) {
+			return null;
+		}
+
+		return {
+			start: startMatch.index,
+
+			// We need to adjust the end position to discard the length of the range start marker
+			end: endMatch
+				? endMatch.index - startMatch[ 0 ].length
+				: null
+		};
+	},
+
 	switchEditorMode: function( mode ) {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
+			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
+
 			this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
@@ -1090,6 +1294,11 @@ export const PostEditor = React.createClass( {
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
+
+			this.editor.setSelection( selectionRange );
+		} else if ( mode === 'tinymce' ) {
+			this.addHTMLBookmarkInTextAreaContent();
+			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
 		this.props.setEditorModePreference( mode );
@@ -1136,7 +1345,6 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			editPost,
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,

@@ -18,7 +18,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				description={
 					translate(
 						'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
-						'with a custom domain to personalize your site.',
+						'with a custom domain to personalize your site. Does not apply to premium domains.',
 						{
 							args: { siteDomain: selectedSite.domain },
 							components: { em: <em /> }

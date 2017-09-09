@@ -4,7 +4,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop } from 'lodash';
-import classNames from 'classnames';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
@@ -14,7 +13,6 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Gridicon from 'gridicons';
-import Popover from 'components/popover';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
@@ -22,7 +20,6 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
-import PostScheduler from './post-scheduler';
 import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 
 export class EditorGroundControl extends PureComponent {
@@ -72,7 +69,6 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	state = {
-		showSchedulePopover: false,
 		showAdvanceStatus: false,
 		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 	}
@@ -141,41 +137,8 @@ export class EditorGroundControl extends PureComponent {
 		return buttonLabels[ primaryButtonState ];
 	}
 
-	toggleSchedulePopover = () => {
-		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
-	}
-
-	closeSchedulePopover = ( wasCanceled ) => {
-		if ( wasCanceled ) {
-			const date = this.props.savedPost && this.props.savedPost.date
-				? this.props.moment( this.props.savedPost.date )
-				: null;
-
-			this.props.setPostDate( date );
-		}
-
-		this.setState( { showSchedulePopover: false } );
-	}
-
-	schedulePostPopover() {
-		return (
-			<Popover
-				isVisible={ this.state.showSchedulePopover }
-				onClose={ this.closeSchedulePopover }
-				position={ 'bottom left' }
-				context={ this.refs && this.refs.schedulePost }
-				id="editor-post-schedule"
-				className="editor-ground-control__post-schedule-popover"
-			>
-				<PostScheduler initialDate={ this.props.moment() }
-					post={ this.props.post }
-					setPostDate= { this.props.setPostDate }
-					site={ this.props.site } />
-			</Popover>
-		);
-	}
-
 	getSaveStatusLabel( translate ) {
+
 		if ( this.props.isSaving ) {
 			return translate( 'Saving…' );
 		}
@@ -230,10 +193,6 @@ export class EditorGroundControl extends PureComponent {
 			return;
 		}
 
-		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
-			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
-		} );
-
 		return (
 			<div className="editor-ground-control__action-buttons">
 				<Button
@@ -253,7 +212,7 @@ export class EditorGroundControl extends PureComponent {
 					<Gridicon icon={ this.props.nestedSidebar === NESTED_SIDEBAR_REVISIONS ? 'history' : 'cog' } />
 					<span className="editor-ground-control__button-label"> <EditorPostType isSettings /></span>
 				</Button>
-				<div className={ publishComboClasses }>
+				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
 						site={ this.props.site }
 						post={ this.props.post }
@@ -268,36 +227,7 @@ export class EditorGroundControl extends PureComponent {
 						needsVerification={ this.state.needsVerification }
 						busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
 					/>
-					{ this.canPublishPost() &&
-					! this.props.isConfirmationSidebarEnabled &&
-					<Button
-						primary
-						compact
-						ref="schedulePost"
-						className="editor-ground-control__time-button"
-						onClick={ this.toggleSchedulePopover }
-						aria-label={ this.props.translate( 'Schedule date and time to publish post.' ) }
-						aria-pressed={ !! this.state.showSchedulePopover }
-						title={ this.props.translate( 'Set date and time' ) }
-						tabIndex={ 6 }
-					>
-						{ postUtils.isFutureDated( this.props.post )
-							? <Gridicon icon="scheduled" />
-							: <Gridicon icon="calendar" />
-						}
-						<span className="editor-ground-control__time-button-label">
-										{ postUtils.isFutureDated( this.props.post )
-											? this.props.moment( this.props.post.date ).calendar()
-											: this.props.translate( 'Choose Date' )
-										}
-									</span>
-					</Button>
-					}
 				</div>
-				{ this.canPublishPost() &&
-				! this.props.isConfirmationSidebarEnabled &&
-				this.schedulePostPopover()
-				}
 			</div>
 		);
 	}

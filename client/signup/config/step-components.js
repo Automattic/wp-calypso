@@ -37,9 +37,10 @@ export default {
 	'survey-user': UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
+	'website-themes': ThemeSelectionComponent,
+	'blog-themes': ThemeSelectionComponent,
 	'portfolio-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
-	'user-social': UserSignupComponent,
 	'oauth2-user': UserSignupComponent
 };

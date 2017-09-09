@@ -4,7 +4,15 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { difference, get, includes, isEqual, range, size } from 'lodash';
+import {
+	difference,
+	get,
+	includes,
+	isEqual,
+	range,
+	size,
+	throttle,
+} from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
@@ -19,25 +27,29 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
-import { getOpenSharePanels } from 'state/ui/post-type-list/selectors';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 
 /**
  * Constants
  */
-const DEFAULT_POST_ROW_HEIGHT = 86;
-const DEFAULT_SHARE_POST_ROW_HEIGHT = 300;
+const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
+const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 
 class PostTypeList extends Component {
 	static propTypes = {
+		// Props
 		query: PropTypes.object,
+		largeTitles: PropTypes.bool,
+		wrapTitles: PropTypes.bool,
+
+		// Connected props
 		siteId: PropTypes.number,
 		lastPage: PropTypes.number,
 		posts: PropTypes.array,
-		requestingLastPage: PropTypes.bool
+		requestingLastPage: PropTypes.bool,
 	};
 
 	constructor() {
@@ -58,12 +70,41 @@ class PostTypeList extends Component {
 		};
 	}
 
+	componentWillMount() {
+		// NOTE: Assumes that this property does not change for a given
+		// instance of this component
+		this.defaultPostRowHeight = this.props.largeTitles
+			? DEFAULT_POST_ROW_HEIGHT_LARGE
+			: DEFAULT_POST_ROW_HEIGHT_NORMAL;
+	}
+
+	componentDidMount() {
+		if ( this.props.wrapTitles ) {
+			// Note: Assumes that this property does not change
+			this.resizeListener = throttle( this.handleWindowResize, 50 );
+			window.addEventListener( 'resize', this.resizeListener );
+		}
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.query, nextProps.query ) ) {
 			this.setState( {
 				requestedPages: this.getInitialRequestedPages( nextProps )
 			} );
 		}
+	}
+
+	componentWillUnmount() {
+		if ( this.resizeListener ) {
+			window.removeEventListener( 'resize', this.resizeListener );
+			delete this.resizeListener;
+		}
+	}
+
+	handleWindowResize = () => {
+		this.setState( {
+			windowWidth: window.innerWidth,
+		} );
 	}
 
 	getInitialRequestedPages( props ) {
@@ -113,12 +154,29 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" />;
+		return (
+			<PostItem
+				key="placeholder"
+				largeTitle={ this.props.largeTitles }
+			/>
+		);
 	}
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostItem key={ globalId } globalId={ globalId } onHeightChange={ this.handleHeightChange } />;
+		const { query } = this.props;
+
+		return (
+			<PostItem
+				key={ globalId }
+				globalId={ globalId }
+				onHeightChange={ this.handleHeightChange }
+				largeTitle={ this.props.largeTitles }
+				wrapTitle={ this.props.wrapTitles }
+				windowWidth={ this.state.windowWidth }
+				singleUserQuery={ query && !! query.author }
+			/>
+		);
 	}
 
 	cellRendererWrapper( { key, style, ...rest } ) {
@@ -142,19 +200,15 @@ class PostTypeList extends Component {
 	}
 
 	getPostRowHeight( { index } ) {
-		const { posts, openShares } = this.props;
+		const { posts } = this.props;
 
 		if ( ! posts || ! posts[ index ] || ! posts[ index ].global_ID ) {
-			return DEFAULT_POST_ROW_HEIGHT;
+			return this.defaultPostRowHeight;
 		}
 
 		const globalId = posts[ index ].global_ID;
 
-		if ( openShares && openShares.indexOf( globalId ) > -1 ) {
-			return get( this.rowHeights, globalId ) || DEFAULT_SHARE_POST_ROW_HEIGHT;
-		}
-
-		return DEFAULT_POST_ROW_HEIGHT;
+		return get( this.rowHeights, globalId ) || this.defaultPostRowHeight;
 	}
 
 	render() {
@@ -206,12 +260,10 @@ class PostTypeList extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const lastPage = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
-	const openShares = getOpenSharePanels( state );
 
 	return {
 		siteId,
 		lastPage,
-		openShares,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		requestingLastPage: isRequestingSitePostsForQuery( state, siteId, { ...ownProps.query, page: lastPage } )
 	};

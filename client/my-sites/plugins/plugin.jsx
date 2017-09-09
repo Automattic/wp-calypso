@@ -148,7 +148,7 @@ const SinglePlugin = React.createClass( {
 		if ( this.props.prevPath ) {
 			return this.getPreviousListUrl();
 		}
-		return '/plugins/' + ( this.props.siteUrl || '' );
+		return '/plugins/manage/' + ( this.props.siteUrl || '' );
 	},
 
 	displayHeader() {

@@ -59,6 +59,7 @@ import {
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
+import { errorNotice } from 'state/notices/actions';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -304,15 +305,23 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteFragment ) {
-			const hasInitialized = getSites( getState() ).length;
-			if ( hasInitialized ) {
-				redirectToPrimary();
-				return;
+			if ( primary ) {
+				const hasInitialized = getSites( getState() ).length;
+				if ( hasInitialized ) {
+					redirectToPrimary();
+					return;
+				}
+				dispatch( {
+					type: SITES_ONCE_CHANGED,
+					listener: redirectToPrimary,
+				} );
+			} else {
+				// If the primary site does not exist, skip redirect and display a useful error notification
+				dispatch( errorNotice( i18n.translate( 'Please set your Primary Site to valid site' ), {
+					button: 'Settings',
+					href: '/me/account',
+				} ) );
 			}
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectToPrimary,
-			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible

@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,6 +27,7 @@ class SimplePaymentsDialogExample extends PureComponent {
 					siteId={ this.props.siteId }
 					showDialog={ this.state.showDialog }
 					onClose={ this.handleClose }
+					onInsert={ noop }
 				/>
 			</Card>
 		);

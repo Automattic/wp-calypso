@@ -1,5 +1,4 @@
-Accordion
-=========
+# Accordion
 
 Accordion is a React component to display collapsible content panels.
 
@@ -15,7 +14,7 @@ export default function MyComponent() {
 		<Accordion title="Section One">
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 		</Accordion>
-	);	
+	);
 }
 ```
 
@@ -34,3 +33,4 @@ The following props are available to customize the accordion:
   - `url`: `string` for click navigation
   - `position`: `string`, refer to [`<Tooltip />` documentation](../tooltip)
   - `onClick`: `function` callback on status click
+- `e2eTitle`: Optional title to be used in e2e tests as element locator which is consistent under different locales

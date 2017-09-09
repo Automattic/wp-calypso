@@ -9,7 +9,7 @@ import { spy } from 'sinon';
  */
 import { COMMENTS_LIKE, COMMENTS_UNLIKE, NOTICE_CREATE } from 'state/action-types';
 import { likeComment, updateCommentLikes, handleLikeFailure } from '../';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 91750058;
@@ -51,7 +51,7 @@ describe( '#updateCommentLikes()', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
-			local( {
+			bypassDataLayer( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -70,7 +70,7 @@ describe( '#handleLikeFailure()', () => {
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
-			local( {
+			bypassDataLayer( {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,

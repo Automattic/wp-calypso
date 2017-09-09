@@ -1,34 +1,36 @@
 /**
  * External dependencies
  */
-import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 import cookie from 'cookie';
-const debug = require( 'debug' ),
-	url = require( 'url' ),
-	qs = require( 'qs' );
+import debug from 'debug';
+import qs from 'qs';
+import url from 'url';
+import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' ),
-	loadScript = require( 'lib/load-script' ).loadScript;
+import config from 'config';
+import emitter from 'lib/mixins/emitter';
+import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { loadScript } from 'lib/load-script';
+import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+import { statsdTimingUrl } from 'lib/analytics/statsd';
+
+/**
+ * Module variables
+ */
+const mcDebug = debug( 'calypso:analytics:mc' );
+const gaDebug = debug( 'calypso:analytics:ga' );
+const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps,
 	_user,
 	_selectedSite,
 	_siteCount,
-	_dispatch;
-
-import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-const mcDebug = debug( 'calypso:analytics:mc' );
-const gaDebug = debug( 'calypso:analytics:ga' );
-const tracksDebug = debug( 'calypso:analytics:tracks' );
-
-import emitter from 'lib/mixins/emitter';
-
-import { statsdTimingUrl } from 'lib/analytics/statsd';
+	_dispatch,
+	_loadTracksError;
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -37,7 +39,63 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?56' ); // W_JS_VER
+function getUrlParameter( name ) {
+	name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
+	const results = regex.exec( location.search );
+	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
+}
+
+function newAnonId() {
+	const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+	let randomBytes = [];
+
+	if ( window.crypto && window.crypto.getRandomValues ) {
+		randomBytes = new Uint8Array( randomBytesLength );
+		window.crypto.getRandomValues( randomBytes );
+	} else {
+		for ( let i = 0; i < randomBytesLength; ++i ) {
+			randomBytes[ i ] = Math.floor( Math.random() * 256 );
+		}
+	}
+
+	return btoa( String.fromCharCode.apply( String, randomBytes ) );
+}
+
+function checkForBlockedTracks() {
+	if ( ! _loadTracksError ) {
+		return;
+	}
+
+	let _ut, _ui;
+
+	// detect stats blocking, and include identity from URL, user or cookie if possible
+	if ( _user && _user.get() ) {
+		_ut = 'wpcom:user_id';
+		_ui = _user.get().ID;
+	} else {
+		_ut = getUrlParameter( '_ut' ) || 'anon';
+		_ui = getUrlParameter( '_ui' );
+
+		if ( ! _ui ) {
+			const cookies = cookie.parse( document.cookie );
+			if ( cookies.tk_ai ) {
+				_ui = cookies.tk_ai;
+			} else {
+				_ui = newAnonId();
+				document.cookie = cookie.serialize( 'tk_ai', _ui );
+			}
+		}
+	}
+
+	loadScript( '/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
+}
+
+loadScript( '//stats.wp.com/w.js?56', function( error ) {
+	if ( error ) {
+		_loadTracksError = true;
+	}
+} ); // W_JS_VER
 
 // Google Analytics
 
@@ -114,6 +172,8 @@ const analytics = {
 	},
 
 	setSuperProps: function( superProps ) {
+		// this is called both for anonymous and logged-in users
+		checkForBlockedTracks();
 		_superProps = superProps;
 	},
 
@@ -274,6 +334,10 @@ const analytics = {
 			const cookies = cookie.parse( document.cookie );
 
 			return cookies.tk_ai;
+		},
+
+		setAnonymousUserId: function( anonId ) {
+			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		}
 	},
 
@@ -429,4 +493,4 @@ const analytics = {
 	}
 };
 emitter( analytics );
-module.exports = analytics;
+export default analytics;

@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import { find, identity } from 'lodash';
+import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -16,10 +17,14 @@ import { countries } from './data';
 
 class PhoneInput extends React.PureComponent {
 	static propTypes = {
-		onChange: React.PropTypes.func.isRequired,
-		value: React.PropTypes.string.isRequired,
-		countryCode: React.PropTypes.string.isRequired,
-		countriesList: React.PropTypes.object.isRequired
+		onChange: PropTypes.func.isRequired,
+		value: PropTypes.string.isRequired,
+		countryCode: PropTypes.string.isRequired,
+		countriesList: PropTypes.object.isRequired
+	};
+
+	static defaultProps = {
+		setComponentReference: noop,
 	};
 
 	constructor( props ) {
@@ -60,6 +65,11 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
+		this.props.setComponentReference( this );
+	}
+
+	componentWillUnmount() {
+		this.props.setComponentReference( undefined );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -195,6 +205,8 @@ class PhoneInput extends React.PureComponent {
 		this.setState( { freezeSelection: true } );
 	}
 
+	setNumberInputRef = ( c ) => this.numberInput = c;
+
 	render() {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
@@ -202,7 +214,7 @@ class PhoneInput extends React.PureComponent {
 					placeholder={ this.props.translate( 'Phone' ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
-					ref={ c => this.numberInput = c }
+					ref={ this.setNumberInputRef }
 					type="tel" />
 				<div className="phone-input__select-container">
 					<div className="phone-input__select-inner-container">

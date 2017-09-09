@@ -13,7 +13,6 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
  */
 import config from 'config';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import FormButton from 'components/forms/form-button';
 import Main from 'components/main';
@@ -27,6 +26,7 @@ import { isRequesting, getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
 import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
+import Notice from 'components/notice';
 
 const user = userFactory();
 
@@ -40,6 +40,10 @@ class SocialLogin extends Component {
 		userSettings: PropTypes.object,
 	};
 
+	state = {
+		fetchingUser: false,
+	};
+
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component has mounted.' );
 	}
@@ -48,11 +52,17 @@ class SocialLogin extends Component {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 	}
 
+	refreshUser() {
+		user.fetch();
+		this.setState( { fetchingUser: true } );
+		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
+	}
+
 	disconnectFromGoogle = () => {
-		this.props.disconnectSocialUser( 'google' ).then( () => user.fetch() );
+		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
 	};
 
-	handleGoogleResponse = ( response ) => {
+	handleGoogleLoginResponse = ( response ) => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
@@ -63,15 +73,20 @@ class SocialLogin extends Component {
 			id_token: response.Zi.id_token,
 		};
 
-		return this.props.connectSocialUser( socialInfo ).then( () => user.fetch() );
+		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
 	};
 
 	renderContent() {
-		const { translate } = this.props;
+		const { translate, errorUpdatingSocialConnection } = this.props;
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Manage Social Login Connections' ) } />
+				{
+					errorUpdatingSocialConnection &&
+						<Notice status={ 'is-error' } showDismiss={ false }>
+							{ errorUpdatingSocialConnection.message }
+						</Notice>
+				}
 				<CompactCard>
 					{ translate( 'You’ll be able to log in faster by linking your WordPress.com account with your ' +
 						'social networks. We’ll never post without your permission.' ) }
@@ -81,9 +96,25 @@ class SocialLogin extends Component {
 		);
 	}
 
-	renderGoogleConnection() {
+	renderActionButton( onClickAction = null ) {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
 		const buttonLabel = isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' );
+		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
+
+		return (
+			<FormButton
+				className="social-login__button button"
+				disabled={ disableButton }
+				compact={ true }
+				isPrimary={ ! isUserConnectedToGoogle }
+				onClick={ onClickAction }>
+				{ buttonLabel }
+			</FormButton>
+		);
+	}
+
+	renderGoogleConnection() {
+		const { isUserConnectedToGoogle } = this.props;
 
 		return (
 			<CompactCard>
@@ -98,23 +129,11 @@ class SocialLogin extends Component {
 					<div className="social-login__header-action">
 						{
 							isUserConnectedToGoogle
-								? <FormButton
-									compact={ true }
-									disabled={ isUpdatingSocialConnection }
-									isPrimary={ false }
-									onClick={ this.disconnectFromGoogle }>
-									{ buttonLabel }
-								</FormButton>
+								? this.renderActionButton( this.disconnectFromGoogle )
 								: <GoogleLoginButton
 									clientId={ config( 'google_oauth_client_id' ) }
-									responseHandler={ this.handleGoogleResponse } >
-									<FormButton
-										compact={ true }
-										disabled={ isUpdatingSocialConnection }
-										isPrimary={ true }
-										onClick={ this.disconnectFromGoogle }>
-										{ buttonLabel }
-									</FormButton>
+									responseHandler={ this.handleGoogleLoginResponse }>
+									{ this.renderActionButton() }
 								</GoogleLoginButton>
 						}
 					</div>

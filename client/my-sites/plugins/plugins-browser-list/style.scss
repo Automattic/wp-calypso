@@ -1,5 +1,5 @@
 .plugins-browser-list {
-	margin: 24px 0;
+	margin-bottom: 16px;
 	background: $white;
 	box-shadow: 0 1px 2px lighten( $gray, 30% );
 
@@ -17,11 +17,10 @@
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
-	padding: 6px 0px 7px;
-	color: $gray;
-	font-size: 11px;
-	line-height: 1.6;
-	text-transform: uppercase;
+	padding: 5px 0px;
+	color: $gray-dark;
+	font-size: 12px;
+	line-height: 1.5;
 
 	&.is-expanded {
 		padding-left: 24px;

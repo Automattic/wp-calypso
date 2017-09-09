@@ -2,18 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-export default React.createClass( {
-
-	displayName: 'DevWelcome',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+	static displayName = 'DevWelcome';
 
 	render() {
 		return (
@@ -24,4 +20,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}

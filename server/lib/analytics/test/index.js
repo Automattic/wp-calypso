@@ -6,6 +6,10 @@ import sinon from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Server-Side Analytics', function() {
+	describe( 'tracks.recordEvent', function() {
+
+	} );
+
 	describe( 'statsd.recordTiming', function() {
 		// Allow us to mock disabling statsd.
 		const mockConfig = {

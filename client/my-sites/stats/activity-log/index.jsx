@@ -4,11 +4,12 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import ListEnd from 'components/list-end';
+import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
@@ -33,6 +34,7 @@ import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment } from './utils';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -46,7 +48,11 @@ import {
 	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
+/**
+ * Module constants
+ */
 const debug = debugFactory( 'calypso:activity-log' );
+const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -93,6 +99,24 @@ class ActivityLog extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+	}
+
+	getStartMoment() {
+		const { gmtOffset, moment, startDate, timezone } = this.props;
+
+		if ( timezone ) {
+			if ( ! startDate ) {
+				return moment().tz( timezone );
+			}
+
+			return moment.tz( startDate, timezone );
+		}
+
+		if ( null !== gmtOffset ) {
+			return moment.utc( startDate ).subtract( gmtOffset, 'hours' ).utcOffset( gmtOffset );
+		}
+
+		return moment.utc( startDate );
 	}
 
 	handlePeriodChange = ( { date, direction } ) => {
@@ -191,12 +215,17 @@ class ActivityLog extends Component {
 								siteTitle={ siteTitle }
 								timestamp={ timestamp }
 							/>
-						: <SuccessBanner siteId={ siteId } timestamp={ timestamp } /> }
+						: <SuccessBanner
+								applySiteOffset={ this.applySiteOffset }
+								siteId={ siteId }
+								timestamp={ timestamp }
+							/> }
 				</div>
 			);
 		}
 		return (
 			<ProgressBanner
+				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
 				percent={ percent }
 				restoreId={ restoreId }
@@ -208,6 +237,10 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
+		if ( ! rewindEnabledByConfig ) {
+			return null;
+		}
+
 		const { isPressable, rewindStatusError, translate } = this.props;
 
 		// Do not match null
@@ -232,7 +265,8 @@ class ActivityLog extends Component {
 	}
 
 	renderLogs() {
-		const { isPressable, isRewindActive, logs, moment, translate, siteId, startDate } = this.props;
+		const { isPressable, isRewindActive, logs, moment, translate, siteId } = this.props;
+		const startMoment = this.getStartMoment();
 
 		if ( isNull( logs ) ) {
 			return (
@@ -244,53 +278,67 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore = this.isRestoreInProgress();
-
 		if ( isEmpty( logs ) ) {
 			return (
 				<EmptyContent
 					title={ translate( 'No activity for %s', {
-						args: moment.utc( startDate ).format( 'MMMM YYYY' ),
+						args: startMoment.format( 'MMMM YYYY' ),
 					} ) }
 				/>
 			);
 		}
 
-		const logsGroupedByDay = map(
-			groupBy( logs, log =>
-				this.applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
-			),
-			( daily_logs, tsEndOfSiteDay ) =>
+		const disableRestore = this.isRestoreInProgress();
+		const logsGroupedByDay = groupBy( logs, log =>
+			this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
+		);
+		const activityDays = [];
+
+		// loop backwards through each day in the month
+		for (
+			const m = moment.min(
+					startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+					this.applySiteOffset( moment.utc() ).startOf( 'day' )
+				),
+				startOfMonth = startMoment.clone().startOf( 'month' ).valueOf();
+			startOfMonth <= m.valueOf();
+			m.subtract( 1, 'day' )
+		) {
+			const dayEnd = m.endOf( 'day' ).valueOf();
+			activityDays.push(
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
-					hideRestore={ ! isPressable }
+					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
-					key={ tsEndOfSiteDay }
-					logs={ daily_logs }
+					key={ dayEnd }
+					logs={ get( logsGroupedByDay, dayEnd, [] ) }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
-					tsEndOfSiteDay={ +tsEndOfSiteDay }
+					tsEndOfSiteDay={ dayEnd }
 				/>
-		);
+			);
+		}
 
-		// FIXME: Prefer not to return an array. Fix when background line issue is fixed:
-		// https://github.com/Automattic/wp-calypso/issues/17065
-		return [
-			<section className="activity-log__wrapper" key="logs">
-				{ logsGroupedByDay }
-			</section>,
-			<ListEnd key="end-marker" />,
-		];
+		return (
+			<section className="activity-log__wrapper">
+				{ activityDays }
+			</section>
+		);
 	}
 
 	renderMonthNavigation( position ) {
-		const { moment, slug, startDate } = this.props;
-		const startOfMonth = moment.utc( startDate ).startOf( 'month' );
+		const { logs, slug } = this.props;
+		const startOfMonth = this.getStartMoment().startOf( 'month' );
 		const query = {
 			period: 'month',
 			date: startOfMonth.format( 'YYYY-MM-DD' ),
 		};
+
+		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
+			return null;
+		}
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
@@ -306,15 +354,37 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { isPressable, isRewindActive, moment, siteId, siteTitle, slug, startDate } = this.props;
+		const {
+			canViewActivityLog,
+			isPressable,
+			isRewindActive,
+			siteId,
+			siteTitle,
+			slug,
+			translate,
+		} = this.props;
+
+		if ( false === canViewActivityLog ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+					/>
+				</Main>
+			);
+		}
+
+		const startMoment = this.getStartMoment();
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
 
-		const queryStart = this.applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
-		const queryEnd = this.applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).valueOf();
+		const queryStart = startMoment.startOf( 'month' ).valueOf();
+		const queryEnd = startMoment.endOf( 'month' ).valueOf();
 
 		return (
 			<Main wideLayout>
-				<QueryRewindStatus siteId={ siteId } />
+				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog
 					siteId={ siteId }
 					dateStart={ queryStart }
@@ -340,6 +410,7 @@ class ActivityLog extends Component {
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
+				<JetpackColophon />
 			</Main>
 		);
 	}
@@ -350,6 +421,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset: getSiteGmtOffset( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logs: getActivityLogs( state, siteId ),

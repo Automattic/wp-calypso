@@ -19,8 +19,6 @@ import {
 	siteSupportsJetpackSettingsUi,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import config from 'config';
-import { abtest } from 'lib/abtest';
 
 const Composing = ( {
 	eventTracker,
@@ -40,12 +38,7 @@ const Composing = ( {
 	return (
 		<div>
 			<CardComponent className="composing__card site-settings">
-				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-					abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' &&
-					<PublishConfirmation />
-				}
-
+				<PublishConfirmation />
 				<DefaultPostFormat
 					eventTracker={ eventTracker }
 					fields={ fields }

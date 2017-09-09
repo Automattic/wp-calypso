@@ -61,7 +61,7 @@ module.exports = function() {
 		page( '/plugins/category/:category/:site_id',
 			controller.siteSelection,
 			controller.navigation,
-			nonJetpackRedirectTo( '/plugins' ),
+			nonJetpackRedirectTo( '/plugins/manage' ),
 			pluginsController.plugins.bind( null, 'all' ),
 		);
 
@@ -77,6 +77,12 @@ module.exports = function() {
 		page( '/plugins',
 			controller.siteSelection,
 			controller.navigation,
+			pluginsController.browsePlugins
+		);
+
+		page( '/plugins/manage/:site?',
+			controller.siteSelection,
+			controller.navigation,
 			pluginsController.plugins.bind( null, 'all' ),
 			controller.sites
 		);
@@ -86,7 +92,8 @@ module.exports = function() {
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
-				pluginsController.plugins.bind( null, filter )
+				pluginsController.plugins.bind( null, filter ),
+				controller.sites
 			)
 		) );
 

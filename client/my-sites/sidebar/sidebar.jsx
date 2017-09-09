@@ -8,6 +8,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { includes } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -86,6 +87,27 @@ export class MySitesSidebar extends Component {
 		}
 	};
 
+	onViewSiteClick = ( event ) => {
+		const {
+			isPreviewable,
+			siteSuffix,
+		} = this.props;
+
+		if ( ! isPreviewable ) {
+			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
+			return;
+		}
+
+		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
+			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
+			return;
+		}
+
+		event.preventDefault();
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Calypso' );
+		page( '/view' + siteSuffix );
+	};
+
 	itemLinkClass = ( paths, existingClasses ) => {
 		var classSet = {};
 
@@ -150,22 +172,29 @@ export class MySitesSidebar extends Component {
 	}
 
 	preview() {
-		if ( ! this.props.siteId ) {
+		const {
+			isPreviewable,
+			site,
+			siteId,
+			translate,
+		} = this.props;
+
+		if ( ! siteId ) {
 			return null;
 		}
 
-		const { site, isPreviewable } = this.props;
 		const siteUrl = site && site.URL || '';
 
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
-				label={ this.props.translate( 'View Site' ) }
+				label={ translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ isPreviewable ? '/view' + this.props.siteSuffix : siteUrl }
-				onNavigate={ this.onNavigate }
+				link={ siteUrl }
+				onNavigate={ this.onViewSiteClick }
 				icon="computer"
 				preloadSectionName="preview"
+				forceInternalLink={ isPreviewable }
 			/>
 		);
 	}
@@ -225,20 +254,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	plugins() {
-		const { site } = this.props;
-		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		let pluginsLink = '/plugins' + this.props.siteSuffix;
-
-		// TODO: we can probably rip this out
-		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! site ) {
-				return null;
-			}
-
-			if ( site.options ) {
-				pluginsLink = site.options.admin_url + 'plugins.php';
-			}
-		}
+		const pluginsLink = '/plugins' + this.props.siteSuffix;
+		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
 
 		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
@@ -250,6 +267,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const manageButton = this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites )
+			? <SidebarButton href={ managePluginsLink }>
+					{ this.props.translate( 'Manage' ) }
+				</SidebarButton>
+			: null;
+
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
@@ -259,9 +282,7 @@ export class MySitesSidebar extends Component {
 				icon="plugins"
 				preloadSectionName="plugins"
 			>
-				<SidebarButton href={ addPluginsLink }>
-					{ this.props.translate( 'Add' ) }
-				</SidebarButton>
+				{ manageButton }
 			</SidebarItem>
 		);
 	}
@@ -373,7 +394,9 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
-			/>
+			>
+				<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+			</SidebarItem>
 		);
 	}
 
