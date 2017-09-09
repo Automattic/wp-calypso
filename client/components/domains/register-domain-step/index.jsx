@@ -479,7 +479,6 @@ class RegisterDomainStep extends React.Component {
 
 				let recommendedSuggestion = null;
 
-				// localStorage.setItem( 'ABTests', '{"recommendShortestDomain":"shortest"}' );
 				if ( abtest( 'recommendShortestDomain' ) === 'shortest' ) {
 					const shortestDomainBase = availableSuggestions.map( suggestion => {
 						const dotPos = suggestion.domain_name.indexOf( '.' );
