@@ -138,7 +138,6 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getSaveStatusLabel( translate ) {
-
 		if ( this.props.isSaving ) {
 			return translate( 'Saving…' );
 		}
