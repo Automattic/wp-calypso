@@ -5,6 +5,8 @@
 }
 
 .reviews__list {
+	font-size: 14px;
+	
 	.pagination {
 		margin-top: 16px;
 	}
@@ -12,16 +14,14 @@
 
 .reviews__card {
 	margin: 0 auto;
-	padding: 16px;
+	padding: 12px 8px;
 
 	&.is-unapproved {
 		background: mix( $alert-yellow, $white, 8.5% );
-		box-shadow: inset 4px 0 0 0 $alert-yellow;
 	}
 
 	.reviews__header {
 		display: flex;
-		padding: 8px;
 	}
 
 	.reviews__info {
@@ -36,10 +36,22 @@
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
+	
+	.reviews__author-name {
+		font-weight: 600;
+	}
+	
+	.reviews__date {
+		color: $gray-text-min;
+	}
 
 	.reviews__rating {
 		width: 20%;
 		margin-top: 12px;
+	}
+	
+	.reviews__author-gravatar {
+		padding-left: 8px;
 	}
 
 	.reviews__author-gravatar img {
