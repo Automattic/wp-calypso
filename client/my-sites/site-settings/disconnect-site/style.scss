@@ -1,5 +1,5 @@
 .disconnect-site__card {
-		width: 70%;
+		width: 65%;
 		margin: auto;
 
 		@include breakpoint( "<480px" ) {
@@ -29,6 +29,16 @@
 }
 
 .disconnect-site__question {
+	padding-top: 20px;
 	padding-bottom: 20px;
 	text-align: left;
+}
+
+.disconnect-site__plan-degrade-buttons {
+	margin-bottom: 10px;
+	margin-left: 100px;
+	.button {
+		margin-right: 50px;
+		margin-bottom: 10px;
+	}
 }
