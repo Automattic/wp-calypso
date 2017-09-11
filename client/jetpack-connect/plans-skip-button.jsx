@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,19 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
-const PlansSkipButton = ( {
-	onClick,
-	translate
-} ) => (
+const PlansSkipButton = ( { onClick, translate } ) =>
 	<div className="jetpack-connect__plans-nav-buttons">
-		<Button
-			onClick={ onClick }
-			compact
-			borderless
-		>
+		<Button onClick={ onClick } compact borderless>
 			{ translate( 'Skip' ) }
 		</Button>
-	</div>
-);
+	</div>;
 
 export default localize( PlansSkipButton );

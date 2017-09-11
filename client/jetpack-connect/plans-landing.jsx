@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -51,7 +52,7 @@ class PlansLanding extends Component {
 		}
 	}
 
-	storeSelectedPlan = ( cartItem ) => {
+	storeSelectedPlan = cartItem => {
 		const { url } = this.props;
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
@@ -60,7 +61,7 @@ class PlansLanding extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
-			plan: cartItem ? cartItem.product_slug : 'free'
+			plan: cartItem ? cartItem.product_slug : 'free',
 		} );
 		this.props.selectPlanInAdvance( cartItem ? cartItem.product_slug : 'free', '*' );
 
@@ -76,10 +77,7 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const {
-			basePlansPath,
-			interval,
-		} = this.props;
+		const { basePlansPath, interval } = this.props;
 		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
 
 		return (
@@ -94,10 +92,7 @@ class PlansLanding extends Component {
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				>
-					{
-						hideFreePlanTest &&
-						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
-					}
+					{ hideFreePlanTest && <PlansSkipButton onClick={ this.handleSkipButtonClick } /> }
 				</PlansGrid>
 			</div>
 		);
