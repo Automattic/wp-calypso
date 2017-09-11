@@ -184,32 +184,14 @@ if ( calypsoEnv === 'desktop' ) {
 		'wpcom',
 	];
 
-	webpackConfig.plugins.push(
-		new webpack.optimize.CommonsChunkPlugin( {
-			name: 'vendor',
-			filename: 'vendor.[chunkhash].js',
-			minChunks: Infinity,
-		} )
-	);
-
-	// slight black magic here. 'manifest' is a secret webpack module that includes the webpack loader and
-	// the mapping from module id to path.
-	//
-	// We extract it to prevent build-$env chunk from changing when the contents of a child chunk change.
-	//
-	// See https://github.com/webpack/webpack/issues/1315 for some backgroud. Guidance here taken from
-	// https://github.com/webpack/webpack/issues/1315#issuecomment-158530525.
-	//
-	// Our hashes will still change when modules are added or removed, but many of our deploys don't
-	// involve module structure changes, so this should at least help in many cases.
-	webpackConfig.plugins.push(
-		new webpack.optimize.CommonsChunkPlugin( {
-			name: 'manifest',
-			// have to use [hash] here instead of [chunkhash] because this is an entry chunk
-			// TODO rename to manifest.js.  was changed to cachebust in: https://github.com/Automattic/wp-calypso/pull/17981
-			filename: 'manifest1.[hash].js'
-		} )
-	);
+	// for details on what the manifest is, see: https://webpack.js.org/guides/caching/
+	// tldr: webpack maintains a mapping from chunk ids --> filenames.  whenever a filename changes
+	// then the mapping changes.  By providing a non-existing chunkname to CommonsChunkPlugin,
+	// it extracts the "runtime" so that the frequently changing mapping doesn't break caching of the entry chunks
+	webpackConfig.plugins = webpackConfig.plugins.concat( [
+		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } )
+	] );
 
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
