@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,9 +9,9 @@ import { expect } from 'chai';
  */
 import ThemeQueryManager from '../';
 
-describe( 'ThemeQueryManager', ( ) => {
-	describe( '#sort()', ( ) => {
-		it( 'should leave key order unchanged', ( ) => {
+describe( 'ThemeQueryManager', () => {
+	describe( '#sort()', () => {
+		it( 'should leave key order unchanged', () => {
 			const originalKeys = Object.freeze( [
 				'adaline',
 				'fanwood-light',
@@ -22,7 +23,7 @@ describe( 'ThemeQueryManager', ( ) => {
 				'trvl',
 				'dyad',
 				'little-story',
-				'pachyderm'
+				'pachyderm',
 			] );
 			const keys = [ ...originalKeys ];
 			const manager = new ThemeQueryManager();
