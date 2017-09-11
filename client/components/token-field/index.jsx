@@ -6,6 +6,7 @@ const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:token-field' );
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -16,17 +17,18 @@ var SuggestionsList = require( './suggestions-list' ),
 
 var TokenField = React.createClass( {
 	propTypes: {
-		suggestions: React.PropTypes.array,
-		maxSuggestions: React.PropTypes.number,
-		displayTransform: React.PropTypes.func,
-		saveTransform: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		isBorderless: React.PropTypes.bool,
-		maxLength: React.PropTypes.number,
-		onFocus: React.PropTypes.func,
-		disabled: React.PropTypes.bool,
-		tokenizeOnSpace: React.PropTypes.bool,
-		placeholder: React.PropTypes.string,
+		suggestions: PropTypes.array,
+		maxSuggestions: PropTypes.number,
+		displayTransform: PropTypes.func,
+		saveTransform: PropTypes.func,
+		onChange: PropTypes.func,
+		isBorderless: PropTypes.bool,
+		maxLength: PropTypes.number,
+		onFocus: PropTypes.func,
+		disabled: PropTypes.bool,
+		tokenizeOnSpace: PropTypes.bool,
+		placeholder: PropTypes.string,
+		id: PropTypes.string,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -162,7 +164,7 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
-		const { autoCapitalize, autoComplete, maxLength, value, placeholder } = this.props;
+		const { autoCapitalize, autoComplete, id, maxLength, value, placeholder } = this.props;
 
 		let props = {
 			autoCapitalize,
@@ -172,6 +174,7 @@ var TokenField = React.createClass( {
 			disabled: this.props.disabled,
 			value: this.state.incompleteTokenValue,
 			onBlur: this._onBlur,
+			id,
 		};
 
 		if ( value.length === 0 && placeholder ) {
