@@ -46,7 +46,7 @@ class ScrollHelper {
 	}
 
 	forEachInRow( index, callback, context ) {
-		if ( 'function' !== typeof callback ) {
+		if ( typeof callback !== 'function' ) {
 			return;
 		}
 

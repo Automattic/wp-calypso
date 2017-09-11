@@ -84,7 +84,7 @@ export default React.createClass( {
 	},
 
 	setGMTOffset( event ) {
-		if ( 'undefined' === typeof event.target.value ) {
+		if ( typeof event.target.value === 'undefined' ) {
 			return;
 		}
 
