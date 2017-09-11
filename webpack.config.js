@@ -188,6 +188,7 @@ if ( calypsoEnv === 'desktop' ) {
 	// tldr: webpack maintains a mapping from chunk ids --> filenames.  whenever a filename changes
 	// then the mapping changes.  By providing a non-existing chunkname to CommonsChunkPlugin,
 	// it extracts the "runtime" so that the frequently changing mapping doesn't break caching of the entry chunks
+	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } )
