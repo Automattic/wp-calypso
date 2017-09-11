@@ -362,7 +362,7 @@ export const submitAddressForNormalization = ( siteId, orderId, group ) => ( dis
 		handleNormalizeResponse( true );
 		return;
 	}
-	normalizeAddress( dispatch, getShippingLabel( getState(), orderId, siteId ).form[ group ].values, group )
+	normalizeAddress( siteId, orderId, dispatch, getShippingLabel( getState(), orderId, siteId ).form[ group ].values, group )
 		.then( handleNormalizeResponse )
 		.catch( ( error ) => {
 			console.error( error );
