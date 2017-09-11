@@ -64,7 +64,7 @@ export default class QueryManager {
 	 * @param  {Boolean} patch       Use patching application
 	 * @return {?Object}             Item to track, or undefined to omit
 	 */
-	mergeItem( item, revisedItem, patch = false ) {
+	static mergeItem( item, revisedItem, patch = false ) {
 		if ( patch ) {
 			if ( revisedItem[ DELETE_PATCH_KEY ] ) {
 				return undefined;
@@ -235,7 +235,7 @@ export default class QueryManager {
 			( memo, receivedItem ) => {
 				const receivedItemKey = receivedItem[ this.options.itemKey ];
 				const item = this.getItem( receivedItemKey );
-				const mergedItem = this.mergeItem( item, receivedItem, options.patch );
+				const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
 
 				if ( undefined === mergedItem ) {
 					if ( item ) {

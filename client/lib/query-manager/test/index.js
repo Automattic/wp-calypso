@@ -52,26 +52,26 @@ describe( 'QueryManager', () => {
 
 	describe( '#mergeItem()', () => {
 		test( 'should return the revised item by default', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { ID: 152 } );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { ID: 152 } );
 
 			expect( merged ).to.eql( { ID: 152 } );
 		} );
 
 		test( 'should return a merged item when patching', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { changed: true }, true );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { changed: true }, true );
 
 			expect( merged ).to.eql( { ID: 144, changed: true } );
 		} );
 
 		test( 'should not mutate the original copy', () => {
 			const original = Object.freeze( { ID: 144 } );
-			const merged = manager.mergeItem( original, { changed: true }, true );
+			const merged = QueryManager.mergeItem( original, { changed: true }, true );
 
 			expect( merged ).to.not.equal( original );
 		} );
 
 		test( 'should return undefined if revised item includes delete key and patching', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { [ DELETE_PATCH_KEY ]: true }, true );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { [ DELETE_PATCH_KEY ]: true }, true );
 
 			expect( merged ).to.be.undefined;
 		} );
@@ -272,7 +272,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
@@ -281,7 +281,7 @@ describe( 'QueryManager', () => {
 
 		test( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager ).to.equal( newManager );
@@ -348,7 +348,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it is omitted from items', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
