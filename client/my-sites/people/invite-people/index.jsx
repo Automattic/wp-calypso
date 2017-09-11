@@ -320,8 +320,9 @@ const InvitePeople = React.createClass( {
 				<EmailVerificationGate>
 					<form onSubmit={ this.submitForm } >
 						<div role="group" className="invite-people__token-field-wrapper">
-							<FormLabel>{ translate( 'Usernames or Emails' ) }</FormLabel>
+							<FormLabel htmlFor="usernamesOrEmails">{ translate( 'Usernames or Emails' ) }</FormLabel>
 							<TokenField
+								id="usernamesOrEmails"
 								isBorderless
 								tokenizeOnSpace
 								autoCapitalize="none"
