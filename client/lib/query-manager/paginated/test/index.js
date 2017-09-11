@@ -11,10 +11,12 @@ import PaginatedQueryManager from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
- * Module constants
+ * Provide subclass with compare method implementation for testing
  */
 class TestCustomQueryManager extends PaginatedQueryManager {
-	static DefaultQuery = { number: 25 };
+	static compare( query, a, b ) {
+		return a.ID - b.ID;
+	}
 }
 
 describe( 'PaginatedQueryManager', () => {
@@ -23,8 +25,7 @@ describe( 'PaginatedQueryManager', () => {
 	useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
 	beforeEach( () => {
-		manager = new PaginatedQueryManager();
-		sandbox.stub( PaginatedQueryManager.prototype, 'compare', ( query, a, b ) => a.ID - b.ID );
+		manager = new TestCustomQueryManager();
 	} );
 
 	afterEach( () => {
@@ -307,8 +308,9 @@ describe( 'PaginatedQueryManager', () => {
 		} );
 
 		test( 'should use the constructors DefaultQuery.number if query object does not specify it', () => {
-			let customizedManager = new TestCustomQueryManager();
-			customizedManager = customizedManager.receive(
+			const customizedManager = new class extends TestCustomQueryManager {
+				static DefaultQuery = { number: 25 };
+			}().receive(
 				[
 					{ ID: 144 },
 					{ ID: 152 },

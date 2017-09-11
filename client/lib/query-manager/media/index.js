@@ -88,7 +88,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @return {Number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */
-	compare( query, mediaA, mediaB ) {
+	static compare( query, mediaA, mediaB ) {
 		let order;
 
 		switch ( query.order_by ) {

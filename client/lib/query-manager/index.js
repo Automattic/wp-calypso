@@ -97,7 +97,7 @@ export default class QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	compare( query, itemA, itemB ) {
+	static compare( query, itemA, itemB ) {
 		if ( itemA === itemB ) {
 			return 0;
 		}
@@ -125,7 +125,7 @@ export default class QueryManager {
 				// method aren't required to implement this check.
 				return 0;
 			}
-			return this.compare( query, items[ keyA ], items[ keyB ] );
+			return this.constructor.compare( query, items[ keyA ], items[ keyB ] );
 		} );
 	}
 

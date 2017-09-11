@@ -33,12 +33,9 @@ const DEFAULT_MEDIA = {
 	exif: {},
 };
 
-describe( 'MediaQueryManager', () => {
-	let manager;
-	beforeEach( () => {
-		manager = new MediaQueryManager();
-	} );
+const makeComparator = query => ( a, b ) => MediaQueryManager.compare( query, a, b );
 
+describe( 'MediaQueryManager', () => {
 	describe( '#matches()', () => {
 		describe( 'query.search', () => {
 			test( 'should return false for a non-matching search', () => {
@@ -308,7 +305,7 @@ describe( 'MediaQueryManager', () => {
 		describe( 'query.order', () => {
 			test( 'should sort descending by default', () => {
 				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'ID',
 					} )
 				);
@@ -318,7 +315,7 @@ describe( 'MediaQueryManager', () => {
 
 			test( 'should reverse order when specified as ascending', () => {
 				const sorted = [ { ID: 400 }, { ID: 200 } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'ID',
 						order: 'ASC',
 					} )
@@ -342,7 +339,7 @@ describe( 'MediaQueryManager', () => {
 				};
 
 				test( 'should order by date', () => {
-					const sorted = [ olderMedia, newerMedia ].sort( manager.compare.bind( manager, {} ) );
+					const sorted = [ olderMedia, newerMedia ].sort( makeComparator( {} ) );
 
 					expect( sorted ).to.eql( [ newerMedia, olderMedia ] );
 				} );
@@ -362,7 +359,7 @@ describe( 'MediaQueryManager', () => {
 
 				test( 'should sort by title', () => {
 					const sorted = [ aaMedia, abMedia ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'title',
 						} )
 					);
@@ -374,7 +371,7 @@ describe( 'MediaQueryManager', () => {
 			describe( 'ID', () => {
 				test( 'should sort by ID', () => {
 					const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'ID',
 						} )
 					);

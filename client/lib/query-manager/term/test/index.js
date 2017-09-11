@@ -20,12 +20,9 @@ const DEFAULT_TERM = {
 	post_count: 5,
 };
 
-describe( 'TermQueryManager', () => {
-	let manager;
-	beforeEach( () => {
-		manager = new TermQueryManager();
-	} );
+const makeComparator = query => ( a, b ) => TermQueryManager.compare( query, a, b );
 
+describe( 'TermQueryManager', () => {
 	describe( '#matches()', () => {
 		describe( 'query.search', () => {
 			test( 'should return false for a non-matching search', () => {
@@ -89,7 +86,7 @@ describe( 'TermQueryManager', () => {
 		describe( 'query.order', () => {
 			test( 'should sort ascending by default', () => {
 				const sorted = [ { name: 'Food' }, { name: 'Cars' } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'name',
 					} )
 				);
@@ -99,7 +96,7 @@ describe( 'TermQueryManager', () => {
 
 			test( 'should reverse order when specified as descending', () => {
 				const sorted = [ { name: 'Food' }, { name: 'Cars' } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'name',
 						order: 'DESC',
 					} )
@@ -113,7 +110,7 @@ describe( 'TermQueryManager', () => {
 			describe( 'name', () => {
 				test( 'should sort by name', () => {
 					const sorted = [ { name: 'Food' }, { name: 'Cars' } ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'name',
 						} )
 					);
@@ -130,7 +127,7 @@ describe( 'TermQueryManager', () => {
 
 				test( 'should sort by post count', () => {
 					const sorted = [ DEFAULT_TERM, unusedTerm ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'count',
 						} )
 					);

@@ -47,7 +47,7 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * @return {Number}       0 if equal, less than 0 if termA is first,
 	 *                        greater than 0 if termB is first.
 	 */
-	compare( query, termA, termB ) {
+	static compare( query, termA, termB ) {
 		let order;
 
 		switch ( query.order_by ) {
