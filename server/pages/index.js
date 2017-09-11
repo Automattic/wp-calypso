@@ -37,7 +37,8 @@ const staticFiles = [
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' }
+	{ path: 'style-rtl.css' },
+	{ path: 'vendor.css' },
 ];
 
 // List of browser languages to show pride styling for.
