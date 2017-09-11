@@ -11,7 +11,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
 	static QueryKey = ThemeQueryKey;
-	static DEFAULT_QUERY = DEFAULT_THEME_QUERY;
+	static DefaultQuery = DEFAULT_THEME_QUERY;
 
 	/**
 	 * A sorting function that defines the sort order of items under

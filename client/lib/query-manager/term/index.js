@@ -16,7 +16,7 @@ import { DEFAULT_TERM_QUERY } from './constants';
  */
 export default class TermQueryManager extends PaginatedQueryManager {
 	static QueryKey = TermQueryKey;
-	static DEFAULT_QUERY = DEFAULT_TERM_QUERY;
+	static DefaultQuery = DEFAULT_TERM_QUERY;
 
 	/**
 	 * Returns true if the term matches the given query, or false otherwise.

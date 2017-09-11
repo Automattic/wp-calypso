@@ -17,7 +17,7 @@ import { DEFAULT_MEDIA_QUERY } from './constants';
  */
 export default class MediaQueryManager extends PaginatedQueryManager {
 	static QueryKey = MediaQueryKey;
-	static DEFAULT_QUERY = DEFAULT_MEDIA_QUERY;
+	static DefaultQuery = DEFAULT_MEDIA_QUERY;
 
 	/**
 	 * Returns true if the media item matches the given query, or false
@@ -28,7 +28,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @return {Boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
-		return every( { ...this.constructor.DEFAULT_QUERY, ...query }, ( value, key ) => {
+		return every( { ...this.constructor.DefaultQuery, ...query }, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
 					if ( ! value ) {

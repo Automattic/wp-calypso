@@ -14,7 +14,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
  * Module constants
  */
 class TestCustomQueryManager extends PaginatedQueryManager {
-	static DEFAULT_QUERY = { number: 25 };
+	static DefaultQuery = { number: 25 };
 }
 
 describe( 'PaginatedQueryManager', () => {
@@ -306,7 +306,7 @@ describe( 'PaginatedQueryManager', () => {
 			] );
 		} );
 
-		test( 'should use the constructors DEFAULT_QUERY.number if query object does not specify it', () => {
+		test( 'should use the constructors DefaultQuery.number if query object does not specify it', () => {
 			let customizedManager = new TestCustomQueryManager();
 			customizedManager = customizedManager.receive(
 				[
