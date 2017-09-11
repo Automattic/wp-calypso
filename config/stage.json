@@ -34,6 +34,8 @@
 		"jetpack/activity-log/rewind": true,
 		"jetpack/api-cache": true,
 		"jetpack/happychat": true,
+		"jetpack/google-analytics-anonymize-ip": false,
+		"jetpack/google-analytics-for-stores": false,
 		"jetpack_core_inline_update": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
