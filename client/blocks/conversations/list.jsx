@@ -126,6 +126,7 @@ export class ConversationCommentList extends React.Component {
 						return (
 							<PostComment
 								showNestingReplyArrow
+								timestampDeeplink
 								enableCaterpillar={ enableCaterpillar }
 								post={ post }
 								commentsTree={ commentsTree }
