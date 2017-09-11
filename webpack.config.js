@@ -200,6 +200,10 @@ if ( calypsoEnv === 'desktop' ) {
 }
 
 if ( calypsoEnv === 'development' ) {
+	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
+	webpackConfig.output.filename = '[name].js';
+	webpackConfig.output.chunkFilename = '[name].js';
+
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.LoaderOptionsPlugin( { debug: true } ),
