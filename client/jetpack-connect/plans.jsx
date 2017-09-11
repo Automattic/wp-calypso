@@ -1,3 +1,4 @@
+/** @format */
 import { connect } from 'react-redux';
 import page from 'page';
 
