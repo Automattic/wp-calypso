@@ -9,10 +9,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	AspectRatios,
-	AspectRatiosValues,
-} from 'state/ui/editor/image-editor/constants';
+import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
 
 /**
  * Returns the default aspect ratio image editor should use.
@@ -35,5 +32,5 @@ export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = Aspect
 
 	return includes( AspectRatiosValues, aspectRatio )
 		? aspectRatio
- 		: getDefaultAspectRatio( aspectRatio );
+		: getDefaultAspectRatio( aspectRatio );
 }
