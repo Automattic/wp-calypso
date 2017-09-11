@@ -28,6 +28,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
 
+import Plans from './plans';
+import CheckoutData from 'components/data/checkout';
+import Plans from './plans';
+
 /**
  * Module variables
  */
@@ -195,14 +199,7 @@ export default {
 	},
 
 	plansSelection( context ) {
-		const Plans = require( './plans' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			state = context.store.getState(),
-			siteId = getSelectedSiteId( state ),
-			isJetpack = isJetpackSite( state, siteId ),
-			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath = basePath + '/:site';
+		const state = context.store.getState(), siteId = getSelectedSiteId( state ), isJetpack = isJetpackSite( state, siteId ), analyticsPageTitle = 'Plans', basePath = route.sectionify( context.path ), analyticsBasePath = basePath + '/:site';
 
 		if ( ! isJetpack ) {
 			return;
@@ -231,10 +228,7 @@ export default {
 	},
 
 	plansPreSelection( context ) {
-		const Plans = require( './plans' ),
-			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath = basePath + '/:site';
+		const analyticsPageTitle = 'Plans', basePath = route.sectionify( context.path ), analyticsBasePath = basePath + '/:site';
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
