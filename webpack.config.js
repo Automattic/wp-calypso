@@ -206,7 +206,8 @@ if ( calypsoEnv === 'desktop' ) {
 		new webpack.optimize.CommonsChunkPlugin( {
 			name: 'manifest',
 			// have to use [hash] here instead of [chunkhash] because this is an entry chunk
-			filename: 'manifest.[hash].js'
+			// TODO rename to manifest.js.  was changed to cachebust in: https://github.com/Automattic/wp-calypso/pull/17981
+			filename: 'manifest1.[hash].js'
 		} )
 	);
 
