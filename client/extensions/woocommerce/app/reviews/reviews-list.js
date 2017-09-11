@@ -109,8 +109,6 @@ class ReviewsList extends Component {
 			emptyMessage = translate( 'No spam reviews.' );
 		} else if ( 'trash' === currentStatus ) {
 			emptyMessage = translate( 'No deleted reviews.' );
-		} else if ( 'any' === currentStatus ) {
-			emptyMessage = translate( 'No reviews.' );
 		}
 
 		return (

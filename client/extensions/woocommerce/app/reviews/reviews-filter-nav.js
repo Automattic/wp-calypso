@@ -72,11 +72,6 @@ class ReviewsFilterNav extends Component {
 						selected={ 'trash' === status }>
 						{ translate( 'Trash' ) }
 					</NavItem>
-					<NavItem
-						path={ getLink( '/store/reviews/any/:site', site ) }
-						selected={ 'any' === status }>
-						{ translate( 'All' ) }
-					</NavItem>
 				</NavTabs>
 
 				<Search
