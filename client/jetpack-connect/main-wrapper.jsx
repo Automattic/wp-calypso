@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -22,7 +24,7 @@ const JetpackConnectMainWrapper = ( { isWide, className, children } ) => {
 };
 
 JetpackConnectMainWrapper.propTypes = {
-	isWide: React.PropTypes.bool,
+	isWide: PropTypes.bool,
 };
 
 JetpackConnectMainWrapper.defaultProps = {

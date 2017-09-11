@@ -1,10 +1,13 @@
+import { connect } from 'react-redux';
+import page from 'page';
+
 /** @format */
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 

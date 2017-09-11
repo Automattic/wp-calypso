@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -45,7 +47,7 @@ const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 };
 
 JetpackConnectExampleInstall.propTypes = {
-	onClick: React.PropTypes.func,
+	onClick: PropTypes.func,
 };
 
 JetpackConnectExampleInstall.defaultProps = {
