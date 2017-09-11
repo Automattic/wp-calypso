@@ -18,9 +18,12 @@ import ActionButtons from 'woocommerce/woocommerce-services/components/action-bu
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeAddItem, setAddedItem, addItems } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const AddItemDialog = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		showAddItemDialog,
 		addedItems,
 		openedPackageId,
@@ -42,7 +45,7 @@ const AddItemDialog = ( props ) => {
 			? __( '%(item)s from {{pckg/}}', { args: { item: item.name }, components: { pckg: getPackageNameElement( pckgId ) } } )
 			: item;
 
-		const onChange = ( event ) => props.setAddedItem( pckgId, itemIdx, event.target.checked );
+		const onChange = ( event ) => props.setAddedItem( siteId, orderId, pckgId, itemIdx, event.target.checked );
 		return (
 			<FormLabel
 				key={ `${ pckgId }-${ itemIdx }` }
@@ -67,11 +70,13 @@ const AddItemDialog = ( props ) => {
 		} );
 	} );
 
+	const onClose = () => props.closeAddItem( siteId, orderId );
+
 	return (
 		<Dialog isVisible={ showAddItemDialog }
 				isFullScreen={ false }
-				onClickOutside={ props.closeAddItem }
-				onClose={ props.closeAddItem }
+				onClickOutside={ onClose }
+				onClose={ onClose }
 				additionalClassNames="wcc-root packages-step__dialog" >
 			<FormSectionHeading>{ __( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
@@ -89,9 +94,9 @@ const AddItemDialog = ( props ) => {
 					label: __( 'Add' ),
 					isPrimary: true,
 					isDisabled: ! _.some( addedItems, _.size ),
-					onClick: () => props.addItems( openedPackageId ),
+					onClick: () => props.addItems( siteId, orderId, openedPackageId ),
 				},
-				{ label: __( 'Close' ), onClick: props.closeAddItem },
+				{ label: __( 'Close' ), onClick: onClose },
 			] } />
 		</Dialog>
 	);
@@ -110,13 +115,14 @@ AddItemDialog.propTypes = {
 	addItems: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		showAddItemDialog: state.shippingLabel.showAddItemDialog || false,
-		addedItems: state.shippingLabel.addedItems,
-		openedPackageId: state.shippingLabel.openedPackageId,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
+		showAddItemDialog: shippingLabel.showAddItemDialog || false,
+		addedItems: shippingLabel.addedItems,
+		openedPackageId: shippingLabel.openedPackageId,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
 	};
 };
 

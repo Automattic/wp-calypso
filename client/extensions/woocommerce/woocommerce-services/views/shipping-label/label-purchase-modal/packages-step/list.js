@@ -13,11 +13,15 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import getPackageDescriptions from './get-package-descriptions';
-import { getFormErrors } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PackageList = ( props ) => {
-	const { selected, all, errors, packageId } = props;
+	const { siteId, orderId, selected, all, errors, packageId } = props;
 
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
@@ -34,7 +38,7 @@ const PackageList = ( props ) => {
 
 	const renderPackageListItem = ( pckgId, name, count ) => {
 		const isError = 0 < Object.keys( errors[ pckgId ] || {} ).length;
-		const onOpenClick = () => props.openPackage( pckgId );
+		const onOpenClick = () => props.openPackage( siteId, orderId, pckgId );
 		return (
 			<div className="packages-step__list-item" key={ pckgId }>
 				<div
@@ -87,15 +91,15 @@ PackageList.propTypes = {
 	openPackage: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
-	const errors = loaded && getFormErrors( state, storeOptions ).packages;
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const errors = loaded && getFormErrors( state, orderId, siteId ).packages;
 	return {
 		errors,
-		packageId: state.shippingLabel.openedPackageId,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
+		packageId: shippingLabel.openedPackageId,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
 	};
 };
 

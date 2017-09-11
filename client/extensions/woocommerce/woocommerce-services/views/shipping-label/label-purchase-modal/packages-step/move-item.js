@@ -17,9 +17,12 @@ import ActionButtons from 'woocommerce/woocommerce-services/components/action-bu
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const MoveItemDialog = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		showItemMoveDialog,
 		movedItemIndex,
 		targetPackageId,
@@ -33,7 +36,7 @@ const MoveItemDialog = ( props ) => {
 	}
 
 	const renderRadioButton = ( pckgId, label ) => {
-		const onChange = () => props.setTargetPackage( pckgId );
+		const onChange = () => props.setTargetPackage( siteId, orderId, pckgId );
 		return (
 			<FormLabel
 				key={ pckgId }
@@ -94,11 +97,13 @@ const MoveItemDialog = ( props ) => {
 		);
 	}
 
+	const onClose = () => props.closeItemMove( siteId, orderId );
+
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
 				isFullScreen={ false }
-				onClickOutside={ props.closeItemMove }
-				onClose={ props.closeItemMove }
+				onClickOutside={ onClose }
+				onClose={ onClose }
 				additionalClassNames="wcc-root packages-step__dialog" >
 			<FormSectionHeading>{ __( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
@@ -113,9 +118,9 @@ const MoveItemDialog = ( props ) => {
 					label: __( 'Move' ),
 					isPrimary: true,
 					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
-					onClick: () => props.moveItem( openedPackageId, movedItemIndex, targetPackageId ),
+					onClick: () => props.moveItem( siteId, orderId, openedPackageId, movedItemIndex, targetPackageId ),
 				},
-				{ label: __( 'Cancel' ), onClick: props.closeItemMove },
+				{ label: __( 'Cancel' ), onClick: onClose },
 			] } />
 		</Dialog>
 	);
@@ -133,14 +138,15 @@ MoveItemDialog.propTypes = {
 	moveItem: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		showItemMoveDialog: state.shippingLabel.showItemMoveDialog || false,
-		movedItemIndex: isNaN( state.shippingLabel.movedItemIndex ) ? -1 : state.shippingLabel.movedItemIndex,
-		targetPackageId: state.shippingLabel.targetPackageId,
-		openedPackageId: state.shippingLabel.openedPackageId,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
+		showItemMoveDialog: shippingLabel.showItemMoveDialog || false,
+		movedItemIndex: isNaN( shippingLabel.movedItemIndex ) ? -1 : shippingLabel.movedItemIndex,
+		targetPackageId: shippingLabel.targetPackageId,
+		openedPackageId: shippingLabel.openedPackageId,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
 	};
 };
 
