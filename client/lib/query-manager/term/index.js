@@ -15,6 +15,9 @@ import { DEFAULT_TERM_QUERY } from './constants';
  * TermQueryManager manages terms which can be queried and change over time
  */
 export default class TermQueryManager extends PaginatedQueryManager {
+	static QueryKey = TermQueryKey;
+	static DEFAULT_QUERY = DEFAULT_TERM_QUERY;
+
 	/**
 	 * Returns true if the term matches the given query, or false otherwise.
 	 *
@@ -65,7 +68,3 @@ export default class TermQueryManager extends PaginatedQueryManager {
 		return order || 0;
 	}
 }
-
-TermQueryManager.QueryKey = TermQueryKey;
-
-TermQueryManager.DEFAULT_QUERY = DEFAULT_TERM_QUERY;

@@ -27,6 +27,8 @@ export const DELETE_PATCH_KEY = '__DELETE';
  * responsible for implementing its matching, merging, and sorting behaviors.
  */
 export default class QueryManager {
+	static QueryKey = QueryKey;
+
 	/**
 	 * Constructs a new instance of QueryManager
 	 *
@@ -411,5 +413,3 @@ export default class QueryManager {
 		);
 	}
 }
-
-QueryManager.QueryKey = QueryKey;

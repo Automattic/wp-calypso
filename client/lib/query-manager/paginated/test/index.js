@@ -13,9 +13,8 @@ import { useSandbox } from 'test/helpers/use-sinon';
 /**
  * Module constants
  */
-const TestCustomQueryManager = class TermQueryManager extends PaginatedQueryManager {};
-TestCustomQueryManager.DEFAULT_QUERY = {
-	number: 25,
+const TestCustomQueryManager = class TermQueryManager extends PaginatedQueryManager {
+	static DEFAULT_QUERY = { number: 25 };
 };
 
 describe( 'PaginatedQueryManager', () => {

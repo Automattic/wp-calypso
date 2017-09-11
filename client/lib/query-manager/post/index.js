@@ -16,6 +16,9 @@ import { DEFAULT_POST_QUERY } from './constants';
  * PostQueryManager manages posts which can be queried and change over time
  */
 export default class PostQueryManager extends PaginatedQueryManager {
+	static QueryKey = PostQueryKey;
+	static DEFAULT_QUERY = DEFAULT_POST_QUERY;
+
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
@@ -24,7 +27,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @return {Boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
-		const queryWithDefaults = Object.assign( {}, DEFAULT_POST_QUERY, query );
+		const queryWithDefaults = Object.assign( {}, this.constructor.DEFAULT_QUERY, query );
 		return every( queryWithDefaults, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
@@ -154,7 +157,3 @@ export default class PostQueryManager extends PaginatedQueryManager {
 		return order || 0;
 	}
 }
-
-PostQueryManager.QueryKey = PostQueryKey;
-
-PostQueryManager.DEFAULT_QUERY = DEFAULT_POST_QUERY;

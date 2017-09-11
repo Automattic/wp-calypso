@@ -10,6 +10,9 @@ import { DEFAULT_THEME_QUERY } from './constants';
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
+	static QueryKey = ThemeQueryKey;
+	static DEFAULT_QUERY = DEFAULT_THEME_QUERY;
+
 	/**
 	 * A sorting function that defines the sort order of items under
 	 * consideration of the specified query.
@@ -23,7 +26,3 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 		return; // Leave the keys argument unchanged.
 	}
 }
-
-ThemeQueryManager.QueryKey = ThemeQueryKey;
-
-ThemeQueryManager.DEFAULT_QUERY = DEFAULT_THEME_QUERY;

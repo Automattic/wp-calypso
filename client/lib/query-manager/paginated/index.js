@@ -16,6 +16,9 @@ import { DEFAULT_QUERY, PAGINATION_QUERY_KEYS } from './constants';
  * change over time
  */
 export default class PaginatedQueryManager extends QueryManager {
+	static QueryKey = PaginatedQueryKey;
+	static DEFAULT_QUERY = DEFAULT_QUERY;
+
 	/**
 	 * Returns true if the specified query is an object containing one or more
 	 * query pagination keys.
@@ -219,7 +222,3 @@ export default class PaginatedQueryManager extends QueryManager {
 		);
 	}
 }
-
-PaginatedQueryManager.QueryKey = PaginatedQueryKey;
-
-PaginatedQueryManager.DEFAULT_QUERY = DEFAULT_QUERY;
