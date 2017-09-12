@@ -16,6 +16,7 @@ import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
 	const { reprintDialog, paperSize, storeOptions, label_id } = props;
@@ -58,6 +59,8 @@ const ReprintDialog = ( props ) => {
 };
 
 ReprintDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	reprintDialog: PropTypes.object,
 	paperSize: PropTypes.string.isRequired,
 	storeOptions: PropTypes.object.isRequired,
@@ -66,9 +69,9 @@ ReprintDialog.propTypes = {
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const shippingLabel = state.shippingLabel;
-	const loaded = shippingLabel.loaded;
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
 		reprintDialog: loaded ? shippingLabel.reprintDialog : {},
 		paperSize: shippingLabel.paperSize,

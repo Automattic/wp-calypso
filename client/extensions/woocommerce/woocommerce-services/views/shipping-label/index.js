@@ -21,6 +21,7 @@ import notices from 'notices';
 import GlobalNotices from 'components/global-notices';
 import Notice from 'components/notice';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class ShippingLabelRootView extends Component {
 	componentWillMount() {
@@ -97,6 +98,8 @@ class ShippingLabelRootView extends Component {
 			return (
 				<LabelItem
 					key={ label.label_id }
+					siteId={ this.props.siteId }
+					orderId={ this.props.orderId }
 					label={ label }
 					labelNum={ labelsToRender.length - index }
 				/>
@@ -138,6 +141,7 @@ const mapStateToProps = ( state, { orderId } ) => {
 	const loaded = isLoaded( state, orderId );
 	const shippingLabel = getShippingLabel( state, orderId );
 	return {
+		siteId: getSelectedSiteId( state ),
 		loaded,
 		needToFetchLabelStatus: loaded && ! shippingLabel.refreshedLabelStatus,
 		numPaymentMethods: loaded && shippingLabel.numPaymentMethods,

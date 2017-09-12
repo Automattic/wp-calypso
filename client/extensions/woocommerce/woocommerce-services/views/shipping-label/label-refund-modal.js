@@ -15,19 +15,22 @@ import ActionButtons from 'woocommerce/woocommerce-services/components/action-bu
 import formatDate from 'woocommerce/woocommerce-services/lib/utils/format-date';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeRefundDialog, confirmRefund } from '../../state/actions';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const RefundDialog = ( props ) => {
-	const { refundDialog, storeOptions, created, refundable_amount, label_id } = props;
+	const { siteId, orderId, refundDialog, storeOptions, created, refundable_amount, label_id } = props;
 
 	const getRefundableAmount = () => {
 		return storeOptions.currency_symbol + Number( refundable_amount ).toFixed( 2 );
 	};
 
+	const onClose = () => props.closeRefundDialog( siteId, orderId );
+	const onConfirm = () => props.confirmRefund( siteId, orderId );
 	return (
 		<Dialog
 			additionalClassNames="label-refund-modal woocommerce"
 			isVisible={ Boolean( refundDialog && refundDialog.labelId === label_id ) }
-			onClose={ props.closeRefundDialog }>
+			onClose={ onClose }>
 			<FormSectionHeading>
 				{ __( 'Request a refund' ) }
 			</FormSectionHeading>
@@ -45,13 +48,13 @@ const RefundDialog = ( props ) => {
 			</dl>
 			<ActionButtons buttons={ [
 				{
-					onClick: props.confirmRefund,
+					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: refundDialog && refundDialog.isSubmitting,
 					label: __( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
 				},
 				{
-					onClick: props.closeRefundDialog,
+					onClick: onClose,
 					label: __( 'Cancel' ),
 				},
 			] } />
@@ -60,6 +63,8 @@ const RefundDialog = ( props ) => {
 };
 
 RefundDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	refundDialog: PropTypes.object,
 	storeOptions: PropTypes.object.isRequired,
 	created: PropTypes.number,
@@ -69,9 +74,9 @@ RefundDialog.propTypes = {
 	confirmRefund: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const shippingLabel = state.shippingLabel;
-	const loaded = shippingLabel.loaded;
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
 		refundDialog: loaded ? shippingLabel.refundDialog : {},
 		storeOptions: loaded ? shippingLabel.storeOptions : {},

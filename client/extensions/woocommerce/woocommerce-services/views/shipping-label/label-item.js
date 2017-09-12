@@ -21,6 +21,8 @@ import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-ser
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
+		const { siteId, orderId } = this.props;
+
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
 		if ( ( label.used_date && label.used_date < today.getTime() ) || ( label.created_date && label.created_date < thirtyDaysAgo ) ) {
@@ -29,12 +31,12 @@ class LabelItem extends Component {
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openRefundDialog( label.label_id );
+			this.props.openRefundDialog( siteId, orderId, label.label_id );
 		};
 
 		return (
 			<span>
-				<RefundDialog { ...label } />
+				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
 				<a href="#" onClick={ openDialog } >
 					<Gridicon icon="refund" size={ 12 } />{ __( 'Request refund' ) }
 				</a>
@@ -84,14 +86,16 @@ class LabelItem extends Component {
 			return null;
 		}
 
+		const { siteId, orderId } = this.props;
+
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openReprintDialog( label.label_id );
+			this.props.openReprintDialog( siteId, orderId, label.label_id );
 		};
 
 		return (
 			<span>
-				<ReprintDialog { ...label } />
+				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
 				<a href="#" onClick={ openDialog } >
 					<Gridicon icon="print" size={ 12 } />{ __( 'Reprint' ) }
 				</a>
@@ -147,6 +151,8 @@ class LabelItem extends Component {
 }
 
 LabelItem.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	label: PropTypes.object.isRequired,
 	openRefundDialog: PropTypes.func.isRequired,
 	openReprintDialog: PropTypes.func.isRequired,
