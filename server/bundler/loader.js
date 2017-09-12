@@ -44,7 +44,17 @@ function getSectionsModule( sections ) {
 			'	load: function() {',
 			'		' + sectionLoaders,
 			'	}',
-			'};'
+			'};',
+			'function loadCSS( section ) {',
+			'	if ( section.css ) {',
+			'		var link = document.createElement( "link" );',
+			'		link.setAttribute( "rel", "stylesheet" );',
+			'		link.setAttribute( "type", "text/css" );',
+			'		link.setAttribute( "href", "/calypso/sections/" + section.css + ".css" );', // TODO hashing
+			'		document.getElementsByTagName( "head" )[ 0 ].appendChild( link )',
+			'	}',
+			'}',
+			'\n',
 		].join( '\n' );
 	}
 
@@ -103,6 +113,7 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
+		'			loadCSS( ' + JSON.stringify( section ) + ' );',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
@@ -147,6 +158,7 @@ function requireTemplate( section ) {
 			'	}',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
+			'	loadCSS( ' + JSON.stringify( section ) + ' );',
 			'	next();',
 			'} );\n'
 		] );
