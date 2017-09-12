@@ -547,7 +547,7 @@ const handleLabelPurchaseError = ( siteId, orderId, dispatch, getState, error ) 
 	if ( 'rest_cookie_invalid_nonce' === error ) {
 		dispatch( exitPrintingFlow( siteId, orderId, true ) );
 	} else {
-		dispatch( NoticeActions.errorNotice( error ) );
+		dispatch( NoticeActions.errorNotice( error.toString() ) );
 		//re-request the rates on failure to avoid attempting repurchase of the same shipment id
 		dispatch( clearAvailableRates( siteId, orderId ) );
 		getLabelRates( siteId, orderId, dispatch, getState, _.noop, { orderId } );
@@ -614,7 +614,7 @@ const pollForLabelsPurchase = ( siteId, orderId, dispatch, getState, labels ) =>
 	}
 };
 
-export const purchaseLabel = () => ( siteId, orderId, dispatch, getState ) => {
+export const purchaseLabel = ( siteId, orderId ) => ( dispatch, getState ) => {
 	let error = null;
 	let labels = null;
 

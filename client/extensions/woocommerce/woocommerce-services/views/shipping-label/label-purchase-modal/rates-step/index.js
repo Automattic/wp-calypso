@@ -81,6 +81,8 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 
 const RatesStep = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		form,
 		values,
 		available,
@@ -91,7 +93,8 @@ const RatesStep = ( props ) => {
 	} = props;
 	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved );
 
-	const toggleStepHandler = () => props.toggleStep( 'rates' );
+	const toggleStepHandler = () => props.toggleStep( siteId, orderId, 'rates' );
+	const updateRateHandler = ( packageId, value ) => props.updateRate( siteId, orderId, packageId, value );
 	return (
 		<StepContainer
 			title={ __( 'Rates' ) }
@@ -106,7 +109,7 @@ const RatesStep = ( props ) => {
 				allPackages={ form.packages.all }
 				selectedRates={ values }
 				availableRates={ available }
-				updateRate={ props.updateRate }
+				updateRate={ updateRateHandler }
 				currencySymbol={ currencySymbol }
 				errors={ errors } />
 		</StepContainer>

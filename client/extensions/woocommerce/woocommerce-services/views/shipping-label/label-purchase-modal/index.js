@@ -131,17 +131,18 @@ PurchaseDialog.propTypes = {
 	orderId: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId } ) => {
-	const loaded = isLoaded( state, orderId );
-	const shippingLabel = getShippingLabel( state, orderId );
+const mapStateToProps = ( state, { siteId, orderId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
 		form: loaded && shippingLabel.form,
+		storeOptions,
 		showPurchaseDialog: shippingLabel.showPurchaseDialog,
 		currency_symbol: storeOptions.currency_symbol,
-		errors: loaded && getFormErrors( state, storeOptions ),
-		canPurchase: loaded && canPurchase( state, storeOptions ),
-		ratesTotal: getRatesTotal( state, orderId )
+		errors: loaded && getFormErrors( state, orderId, siteId ),
+		canPurchase: loaded && canPurchase( state, orderId, siteId ),
+		ratesTotal: getRatesTotal( state, orderId, siteId )
 	};
 };
 
