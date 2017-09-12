@@ -25,7 +25,7 @@
 
 		.reviews__header {
 			justify-content: space-between;
-			border-bottom: 1px solid #e9eff3;
+			border-bottom: 1px solid lighten( $gray, 30% );
 		}
 	}
 
@@ -215,5 +215,38 @@
 .reviews__expanded-card {
 	.reviews__content {
 		padding: 16px;
+	}
+}
+
+.reviews__reply {
+	border-top: 1px solid lighten( $gray, 30% );
+
+	.reviews__reply-content {
+		padding: 16px;
+	}
+}
+
+.reviews__reply-textarea {
+	border-right: 0;
+	border-left: 0;
+}
+
+.reviews__reply-submit {
+	padding: 16px;
+	text-align: right;
+}
+
+.reviews__reply-bar {
+	display: flex;
+	flex-flow: row nowrap;
+	padding: 16px;
+
+	.reviews__reply-actions {
+		align-self: flex-start;
+		margin-left: auto;
+
+		.button {
+			margin-left: 32px;
+		}
 	}
 }

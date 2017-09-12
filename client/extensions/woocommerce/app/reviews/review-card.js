@@ -15,10 +15,11 @@ import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import Card from 'components/card';
 import Emojify from 'components/emojify';
-import Gravatar from 'components/gravatar';
+import Gravatar from './gravatar';
 import humanDate from 'lib/human-date';
 import Rating from 'components/rating';
 import ReviewActionsBar from './review-actions-bar';
+import ReviewReplies from './review-replies';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 
 class ReviewCard extends Component {
@@ -58,17 +59,6 @@ class ReviewCard extends Component {
 		);
 	}
 
-	renderGravatar() {
-		const { review } = this.props;
-
-		// The API returns avatar URLs for various sizes. 24, 48, and 96. This uses the middle size.
-		const author = {
-			avatar_URL: review.avatar_urls[ 48 ],
-			display_name: review.name,
-		};
-		return <Gravatar user={ author } />;
-	}
-
 	renderProductImage() {
 		const { review } = this.props;
 		const productImageClasses = classNames( 'reviews__product', { 'is-placeholder': ! review.product.image } );
@@ -97,7 +87,10 @@ class ReviewCard extends Component {
 				onClick={ this.toggleExpanded }
 			>
 				<div className="reviews__author-gravatar">
-					{ this.renderGravatar() }
+					<Gravatar
+						object={ review }
+						forType="review"
+					/>
 				</div>
 				<div className="reviews__info">
 					<div className="reviews__author-name">
@@ -126,7 +119,10 @@ class ReviewCard extends Component {
 			<div className="reviews__expanded-card">
 				<div className="reviews__expanded-card-details">
 					<div className="reviews__author-gravatar">
-						{ this.renderGravatar() }
+						<Gravatar
+							object={ review }
+							forType="review"
+						/>
 					</div>
 
 					<div className="reviews__info">
@@ -155,6 +151,10 @@ class ReviewCard extends Component {
 						/>
 					</Emojify>
 				</AutoDirection>
+
+				<ReviewReplies
+					review={ review }
+				/>
 			</div>
 		);
 	}

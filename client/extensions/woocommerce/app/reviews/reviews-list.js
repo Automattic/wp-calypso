@@ -124,8 +124,14 @@ class ReviewsList extends Component {
 	}
 
 	renderReview = ( review, i ) => {
+		const { siteId } = this.props;
 		return (
-			<ReviewCard key={ i } review={ review } currentStatus={ this.props.currentStatus } />
+			<ReviewCard
+				key={ i }
+				siteId={ siteId }
+				review={ review }
+				currentStatus={ this.props.currentStatus }
+			/>
 		);
 	}
 
