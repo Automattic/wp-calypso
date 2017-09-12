@@ -16,7 +16,7 @@ Destination site route passed to the HoC. The default redirect fallback is `/set
 
 ### How to use:
 The following code redirects to the `Plans` site for non-Jetpack and Atomic
-sites.
+sites:
 
 ```js
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
@@ -28,7 +28,7 @@ export default flowRight(
 
 ```
 
-For default behavior pass no parameters `redirectNonJetpack()`.
+For default behavior call `redirectNonJetpack()` with no parameters.
 
 ## Props received from the HoC
 

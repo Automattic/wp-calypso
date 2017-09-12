@@ -41,5 +41,5 @@ class ManageConnection extends Component {
 
 export default flowRight(
 	localize,
-	redirectNonJetpack
+	redirectNonJetpack()
 )( ManageConnection );
