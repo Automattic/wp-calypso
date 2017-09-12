@@ -1,52 +1,49 @@
 /** @format */
-import { connect } from 'react-redux';
-import page from 'page';
-
-/** @format */
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import page from 'page';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import {
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { addItem } from 'lib/upgrades/actions';
-import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
-import {
-	getFlowType,
-	isRedirectingToWpAdmin,
-	getSiteSelectedPlan,
-	getGlobalSelectedPlan,
-	getAuthorizationData,
-	isCalypsoStartedConnection,
-} from 'state/jetpack-connect/selectors';
-import { mc } from 'lib/analytics';
-import { isSiteAutomatedTransfer } from 'state/selectors';
 import { abtest } from 'lib/abtest';
+import { addItem } from 'lib/upgrades/actions';
+import { canCurrentUser } from 'state/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
+import { mc } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
+import {
+	getAuthorizationData,
+	getFlowType,
+	getGlobalSelectedPlan,
+	getSiteSelectedPlan,
+	isCalypsoStartedConnection,
+	isRedirectingToWpAdmin,
+} from 'state/jetpack-connect/selectors';
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';

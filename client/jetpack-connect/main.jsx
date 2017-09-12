@@ -2,11 +2,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -15,34 +14,34 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import SiteUrlInput from './site-url-input';
-import {
-	getGlobalSelectedPlan,
-	getConnectingSite,
-	getJetpackSiteByUrl,
-} from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import JetpackInstallStep from './install-step';
-import versionCompare from 'lib/version-compare';
-import LocaleSuggestions from 'components/locale-suggestions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackInstallStep from './install-step';
+import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
+import QuerySites from 'components/data/query-sites';
+import SiteUrlInput from './site-url-input';
 import untrailingslashit from 'lib/route/untrailingslashit';
+import versionCompare from 'lib/version-compare';
+import { isRequestingSites } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import {
+	checkUrl,
 	confirmJetpackInstallStatus,
 	dismissUrl,
-	goToRemoteAuth,
-	goToPluginInstall,
 	goToPlans,
 	goToPluginActivation,
-	checkUrl,
+	goToPluginInstall,
+	goToRemoteAuth,
 } from 'state/jetpack-connect/actions';
+import {
+	getConnectingSite,
+	getGlobalSelectedPlan,
+	getJetpackSiteByUrl,
+} from 'state/jetpack-connect/selectors';
 
 /**
  * Constants
