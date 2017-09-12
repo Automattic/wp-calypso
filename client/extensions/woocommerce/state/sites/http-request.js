@@ -11,12 +11,13 @@ import { http } from 'state/data-layer/wpcom-http/actions';
  * @param {Number} siteId Site ID to make the request to
  * @param {Object} body HTTP Body for POST and PUT Requests
  * @param {Object} action The original requesting action
+ * @param {String} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
  * @return {Object} WPCOM_HTTP_REQUEST Action
  */
-const _request = ( method, path, siteId, body, action ) => {
+const _request = ( method, path, siteId, body, action, namespace ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
-	path = `/wc/v3/${ path }&_method=${ method }`;
+	path = `${ namespace }/${ path }&_method=${ method }`;
 	return http( {
 		apiVersion: '1.1',
 		method: 'GET' === method ? 'GET' : 'POST',
@@ -34,17 +35,18 @@ const _request = ( method, path, siteId, body, action ) => {
  * WooCommerce endpoints without repeating things like /wc/v3.
  * @param {Number} siteId Site ID to make the request to
  * @param {Object} action The original requesting action
+ * @param {String} namespace Namespace to be pre-pended to path. Defaults to /wc/v3
  * @return {Object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
-export default ( siteId, action ) => ( {
+export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	get: ( path ) => _request( 'GET', path, siteId, null, action ),
+	get: ( path ) => _request( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API
@@ -52,7 +54,7 @@ export default ( siteId, action ) => ( {
 	 * @param {Object} body Payload to send
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	post: ( path, body ) => _request( 'POST', path, siteId, body || {}, action ),
+	post: ( path, body ) => _request( 'POST', path, siteId, body || {}, action, namespace ),
 
 	/**
 	 * Sends a PUT request to the API.
@@ -62,7 +64,7 @@ export default ( siteId, action ) => ( {
 	 * @param {Object} body Payload to send
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	put: ( path, body ) => _request( 'PUT', path, siteId, body || {}, action ),
+	put: ( path, body ) => _request( 'PUT', path, siteId, body || {}, action, namespace ),
 
 	/**
 	 * Sends a DELETE request to the API.
@@ -71,5 +73,5 @@ export default ( siteId, action ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	del: ( path ) => _request( 'DELETE', path, siteId, null, action ),
+	del: ( path ) => _request( 'DELETE', path, siteId, null, action, namespace ),
 } );
