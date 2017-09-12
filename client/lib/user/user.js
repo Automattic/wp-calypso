@@ -61,7 +61,7 @@ User.prototype.initialize = function() {
 		this.data = window.currentUser || false;
 
 		// Store the current user in localStorage so that we can use it to determine
-		// if the the logged in user has changed when initializing in the future
+		// if the logged in user has changed when initializing in the future
 		if ( this.data ) {
 			this.clearStoreIfChanged( this.data.ID );
 			store.set( 'wpcom_user', this.data );
