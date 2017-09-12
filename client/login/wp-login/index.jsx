@@ -90,6 +90,7 @@ export class Login extends React.Component {
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
 			>
+				<a href="/devdocs">devdocs</a>
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a

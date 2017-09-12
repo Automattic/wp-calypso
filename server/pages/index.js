@@ -35,6 +35,7 @@ const calypsoEnv = config( 'env_id' );
 const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
+	{ path: 'devdocs.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' }

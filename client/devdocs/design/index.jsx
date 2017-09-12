@@ -13,6 +13,7 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
@@ -103,9 +104,11 @@ class DesignAssets extends React.Component {
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
+		const links = [ { href: '/calypso/devdocs.css', rel: 'stylesheet' } ];
 
 		return (
 			<Main className="design">
+				<DocumentHead link={ links } title="test" />
 				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
 							{ slugToCamelCase( component ) }

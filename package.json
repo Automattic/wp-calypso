@@ -179,6 +179,7 @@
     "postbuild": "npm run -s bundle",
     "build-css": "run-p -s build-css:*",
     "build-css:debug": "node-sass --include-path client --source-map \"public/style-debug.css.map\" assets/stylesheets/style.scss public/style-debug.css && npm run -s autoprefixer -- public/style-debug.css",
+    "build-css:devdocs": "node-sass --include-path client assets/stylesheets/devdocs.scss public/devdocs.css && npm run -s autoprefixer -- public/devdocs.css && rtlcss public/devdocs.css public/devdocs-rtl.css",
     "build-css:directly": "node-sass --include-path client assets/stylesheets/directly.scss public/directly.css && npm run -s autoprefixer -- public/directly.css",
     "build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css && npm run -s autoprefixer -- public/editor.css",
     "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css && npm run -s autoprefixer -- public/style.css && rtlcss public/style.css public/style-rtl.css",
