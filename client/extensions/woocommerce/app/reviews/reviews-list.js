@@ -130,10 +130,10 @@ class ReviewsList extends Component {
 	}
 
 	renderReviews = () => {
-		const { reviews, reviewsLoading } = this.props;
+		const { reviews, reviewsLoaded } = this.props;
 		return (
 			<div className="reviews__list">
-				{ reviewsLoading
+				{ ! reviewsLoaded
 					? this.renderPlaceholders()
 					: reviews.map( this.renderReview )
 				}
