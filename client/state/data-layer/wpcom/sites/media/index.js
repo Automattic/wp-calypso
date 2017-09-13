@@ -15,6 +15,9 @@ import {
 import wpcom from 'lib/wp';
 import debug from 'debug';
 
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+
 /**
  * Module variables
  */
@@ -27,23 +30,34 @@ const log = debug( 'calypso:middleware-media' );
  * @param  {Object}  action Action object
  * @return {Promise}        Promise
  */
-export function requestMedia( { dispatch, getState }, { siteId, query } ) {
-	if ( isRequestingMedia( getState(), siteId, query ) ) {
+export function requestMedia( { dispatch, getState }, action ) {
+	if ( isRequestingMedia( getState(), action.siteId, action.query ) ) {
 		return;
 	}
 
-	dispatch( requestingMedia( siteId, query ) );
+	dispatch( requestingMedia( action.siteId, action.query ) );
 
-	log( 'Request media for site %d using query %o', siteId, query );
+	log( 'Request media for site %d using query %o', action.siteId, action.query );
 
-	return wpcom
-		.site( siteId )
-		.mediaList( query )
-		.then( ( { media, found } ) => {
-			dispatch( receiveMedia( siteId, media, found, query ) );
-			dispatch( successMediaRequest( siteId, query ) );
-		}	)
-		.catch( () => dispatch( failMediaRequest( siteId, query ) ) );
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ action.siteId }/media`,
+				apiVersion: '1.1',
+			},
+			action
+		)
+	);
+}
+
+function requestMediaSuccess( { dispatch }, { siteId, query }, { media, found } ) {
+	dispatch( receiveMedia( siteId, media, found, query ) );
+	dispatch( successMediaRequest( siteId, query ) );
+}
+
+function requestMediaError( { dispatch }, { siteId, query } ) {
+	dispatch( failMediaRequest( siteId, query ) );
 }
 
 export function requestMediaItem( { dispatch, getState }, { siteId, mediaId } ) {
@@ -67,6 +81,6 @@ export function requestMediaItem( { dispatch, getState }, { siteId, mediaId } ) 
 }
 
 export default {
-	[ MEDIA_REQUEST ]: [ requestMedia ],
+	[ MEDIA_REQUEST ]: [ dispatchRequest( requestMedia, requestMediaSuccess, requestMediaError ) ],
 	[ MEDIA_ITEM_REQUEST ]: [ requestMediaItem ],
 };
