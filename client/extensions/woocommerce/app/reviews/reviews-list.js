@@ -125,7 +125,7 @@ class ReviewsList extends Component {
 
 	renderReview = ( review, i ) => {
 		return (
-			<ReviewCard key={ i } review={ review } />
+			<ReviewCard key={ i } review={ review } currentStatus={ this.props.currentStatus } />
 		);
 	}
 
