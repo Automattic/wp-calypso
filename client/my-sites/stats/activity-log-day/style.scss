@@ -33,6 +33,12 @@
 		}
 	}
 
+	.foldable-card__main {
+		@include breakpoint( "<480px" ) {
+			flex: 3 1;
+		}
+	}
+
 	.foldable-card.card.is-expanded {
 		box-shadow: none;
 

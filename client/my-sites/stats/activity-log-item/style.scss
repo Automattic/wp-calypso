@@ -114,17 +114,31 @@
 	margin-right: 32px;
 
 	@include breakpoint( "<960px" ) {
-		margin-bottom: 16px;
+		order: 2;
 	}
 
 	.gravatar,
 	.jetpack-logo {
 		float: left;
 		margin-right: 16px;
+
+		@include breakpoint( "<960px" ) {
+			width: 24px;
+			height: 24px;
+			margin-right: 8px;
+		}
 	}
 
 	.jetpack-logo path {
 		fill: $green-jetpack;
+	}
+}
+
+.activity-log-item__actor-name {
+	font-size: 14px;
+
+	@include breakpoint( "<960px" ) {
+		font-size: 13px;
 	}
 }
 
@@ -139,7 +153,7 @@
 	font-size: 14px;
 
 	@include breakpoint( "<960px" ) {
-		margin-left: 54px;
+		margin-bottom: 16px;
 	}
 }
 
