@@ -7,6 +7,23 @@ var webpackMiddleware = require( 'webpack-dev-middleware' ),
 const hotMiddleware = require( 'webpack-hot-middleware' );
 
 const webpackConfig = require( 'webpack.config' );
+const webpackMiddlewareConfig = {
+	publicPath: '/calypso/',
+	stats: {
+		colors: true,
+		hash: true,
+		version: false,
+		timings: true,
+		assets: false,
+		chunks: true,
+		chunkModules: false,
+		modules: false,
+		cached: false,
+		reasons: false,
+		source: false,
+		errorDetails: true
+	}
+};
 
 function middleware( app ) {
 	var compiler = webpack( webpackConfig ),
@@ -72,24 +89,9 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-
-	app.use( webpackMiddleware( compiler, {
-		publicPath: '/calypso/',
-		stats: {
-			colors: true,
-			hash: true,
-			version: false,
-			timings: true,
-			assets: false,
-			chunks: true,
-			chunkModules: false,
-			modules: false,
-			cached: false,
-			reasons: false,
-			source: false,
-			errorDetails: true
-		}
-	} ) );
+	const webpackMiddlewareInstance = webpackMiddleware( compiler, webpackMiddlewareConfig );
+	app.set( 'webpackMiddlewareFs', webpackMiddlewareInstance.fileSystem );
+	app.use( webpackMiddlewareInstance );
 }
 
 module.exports = middleware;

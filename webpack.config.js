@@ -248,8 +248,10 @@ if ( process.env.DASHBOARD ) {
 }
 
 if ( process.env.WEBPACK_OUTPUT_JSON || process.env.NODE_ENV === 'production' ) {
+	let sourceMap = false;
 	if ( process.env.WEBPACK_OUTPUT_JSON ) {
 		webpackConfig.devtool = 'cheap-module-source-map';
+		sourceMap = true;
 	}
 
 	webpackConfig.plugins.push( new webpack.optimize.UglifyJsPlugin( {
@@ -267,7 +269,7 @@ if ( process.env.WEBPACK_OUTPUT_JSON || process.env.NODE_ENV === 'production' ) 
 			negate_iife: false,
 			screw_ie8: true
 		},
-		sourceMap: true,
+		sourceMap
 	} ) );
 }
 

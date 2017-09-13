@@ -9,7 +9,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick, forEach, intersection } from 'lodash';
+import { get, pick, forEach, intersection, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,14 +83,39 @@ function hashFile( filepath ) {
 	return hash;
 }
 
-let assets;
+/**
+ * getAssets takes a request and returns the webpack assets json needed to create
+ * script tags to the necessary js resources.  The implementation splits based on whether node is running
+ * in dev or in prod.
+ *
+ * In prod: read the assets.json file from the filesystem on first-run and then
+ * cache that result until the server is restarted.
+ *
+ * In dev: read the assets.json file from the in-memory filesystem and reload the file on each request.
+ */
+const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
+const getAssets = ( () => {
+	let assets;
+	return () => {
+		if ( ! assets && process.env.NODE_ENV === 'production' ) {
+			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
+		} else if ( process.env.NODE_ENV !== 'production' ) {
+			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
+			assets = mapValues( assets, val => ( {
+				js: val.js.replace( '.hot-update', '' )
+			} ) );
+		}
+		return assets;
+	};
+} )();
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
  * @param {Object} request A request to check for assets
  * @returns {Object} Map of asset names to urls
  **/
-function generateStaticUrls() {
+function generateStaticUrls( request ) {
 	const urls = {};
 
 	function getUrl( filename, hash ) {
@@ -106,13 +131,7 @@ function generateStaticUrls() {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	// in production, only load assets file the first go around
-	if ( ! assets || process.env.NODE_ENV === 'development' ) {
-		assets = JSON.parse(
-			fs.readFileSync( path.join( __dirname, '../', 'bundler', 'assets.json' ), 'utf8' )
-		);
-	}
-
+	const assets = getAssets( request );
 	forEach( assets, ( asset, name ) => urls[ name ] = asset.js );
 
 	return urls;
