@@ -97,10 +97,10 @@ const getAssets = ( () => {
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
- * @param {Object} request A request to check for assets
+ *
  * @returns {Object} Map of asset names to urls
  **/
-function generateStaticUrls( request ) {
+function generateStaticUrls() {
 	const urls = {};
 
 	function getUrl( filename, hash ) {
@@ -116,7 +116,7 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	const assets = getAssets( request );
+	const assets = getAssets();
 	forEach( assets, ( asset, name ) => urls[ name ] = asset.js );
 
 	return urls;
@@ -189,7 +189,7 @@ function getDefaultContext( request ) {
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
-		urls: generateStaticUrls( request ),
+		urls: generateStaticUrls(),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
@@ -356,7 +356,7 @@ function setUpRoute( req, res, next ) {
 
 function render404( request, response ) {
 	response.status( 404 ).render( '404.jade', {
-		urls: generateStaticUrls( request )
+		urls: generateStaticUrls()
 	} );
 }
 
