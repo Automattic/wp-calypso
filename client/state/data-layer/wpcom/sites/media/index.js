@@ -55,8 +55,7 @@ export function requestMediaError( { dispatch }, { siteId, query } ) {
 	dispatch( failMediaRequest( siteId, query ) );
 }
 
-
-function handleMediaItemRequest( { dispatch, getState }, action ) {
+export function handleMediaItemRequest( { dispatch, getState }, action ) {
 	const { mediaId, query, siteId } = action;
 	if ( isRequestingMediaItem( getState(), siteId, mediaId ) ) {
 		return;
@@ -79,12 +78,12 @@ function handleMediaItemRequest( { dispatch, getState }, action ) {
 	);
 }
 
-function receiveMediaItem( { dispatch }, { mediaId, siteId }, media ) {
+export function receiveMediaItem( { dispatch }, { mediaId, siteId }, media ) {
 	dispatch( receiveMedia( siteId, media ) );
 	dispatch( successMediaItemRequest( siteId, mediaId ) );
 }
 
-function receiveMediaItemError( { dispatch }, { mediaId, siteId } ) {
+export function receiveMediaItemError( { dispatch }, { mediaId, siteId } ) {
 	dispatch( failMediaItemRequest( siteId, mediaId ) );
 }
 
