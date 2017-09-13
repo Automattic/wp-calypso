@@ -1,16 +1,14 @@
-import debugModule from 'debug';
-const debug = debugModule( 'calypso:signup' );
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 
-import React from 'react';
-import { connect } from 'react-redux';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import debugModule from 'debug';
 import page from 'page';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
+import { connect } from 'react-redux';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 /**
@@ -28,7 +26,6 @@ import stepComponents from './config/step-components';
 import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
-const user = userModule();
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
@@ -45,8 +42,9 @@ import { loadTrackingTool } from 'state/analytics/actions';
 /**
  * Constants
  */
+const debug = debugModule( 'calypso:signup' );
 const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
-
+const user = userModule();
 class Signup extends React.Component {
 	static displayName = 'Signup';
 

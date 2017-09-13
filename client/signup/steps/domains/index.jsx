@@ -2,25 +2,24 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith } from 'lodash';
-import page from 'page';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import productsListFactory from 'lib/products-list';
-const productsList = productsListFactory();
-import { cartItems } from 'lib/cart-values';
-import SignupActions from 'lib/signup/actions';
 import MapDomainStep from 'components/domains/map-domain-step';
+import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import SignupActions from 'lib/signup/actions';
+import signupUtils from 'signup/utils';
+import StepWrapper from 'signup/step-wrapper';
+import { cartItems } from 'lib/cart-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
-import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
 import {
@@ -30,6 +29,8 @@ import {
 } from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
+
+const productsList = productsListFactory();
 
 class DomainsStep extends React.Component {
 	static propTypes = {

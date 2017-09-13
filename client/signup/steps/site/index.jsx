@@ -5,7 +5,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
@@ -23,6 +22,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+
+const debug = debugFactory( 'calypso:steps:site' );
 
 /**
  * Constants

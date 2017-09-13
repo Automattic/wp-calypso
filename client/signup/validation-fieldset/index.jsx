@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { head, values } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:validate-fieldset' ); // eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:validate-fieldset' );
 
 /**
  * Internal dependencies
