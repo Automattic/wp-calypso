@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { some, noop, throttle } from 'lodash';
 
 /**
@@ -17,11 +18,11 @@ module.exports = React.createClass( {
 	mixins: [ observe( 'dataList' ) ],
 
 	propTypes: {
-		loading: React.PropTypes.bool,
-		data: React.PropTypes.array,
-		minTouchBarWidth: React.PropTypes.number,
-		minBarWidth: React.PropTypes.number,
-		barClick: React.PropTypes.func
+		loading: PropTypes.bool,
+		data: PropTypes.array,
+		minTouchBarWidth: PropTypes.number,
+		minBarWidth: PropTypes.number,
+		barClick: PropTypes.func
 	},
 
 	getInitialState: function() {
