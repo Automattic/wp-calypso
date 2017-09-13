@@ -20,7 +20,6 @@ const AssetsPlugin = require( 'assets-webpack-plugin' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified-files' );
 
 /**
  * Internal variables
@@ -204,7 +203,7 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-if ( calypsoEnv === 'development' ) {
+if ( bundleEnv === 'development' ) {
 	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
@@ -228,7 +227,6 @@ if ( calypsoEnv === 'development' ) {
 		} );
 	}
 } else {
-	webpackConfig.plugins.push( new UseMinifiedFiles() );
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.devtool = false;
 }
