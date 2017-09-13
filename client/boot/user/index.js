@@ -6,8 +6,10 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 const listeners = [];
-window.user = user;
+let unsubscribeStore;
 let currentUserData = null;
+
+window.user = user;
 
 export function updateUserLegacy( newUserData ) {
 	if ( ! newUserData ) {
@@ -25,11 +27,13 @@ export function syncUserWithLegacyStore( reduxStore ) {
 
 export function subscribeToUserChanges( reduxStore, listener ) {
 	listeners.push( listener );
-	reduxStore.subscribe( () => {
-		const newUserData = getCurrentUser( reduxStore.getState() );
-		if ( newUserData && currentUserData !== newUserData ) {
-			currentUserData = newUserData;
-			listeners.map( callback => callback( currentUserData ) );
-		}
-	} );
+	if ( ! unsubscribeStore ) {
+		unsubscribeStore = reduxStore.subscribe( () => {
+			const newUserData = getCurrentUser( reduxStore.getState() );
+			if ( newUserData && currentUserData !== newUserData ) {
+				currentUserData = newUserData;
+				listeners.map( callback => callback( currentUserData ) );
+			}
+		} );
+	}
 }
