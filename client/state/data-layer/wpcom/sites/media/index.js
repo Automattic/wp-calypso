@@ -2,10 +2,8 @@
  * Internal dependencies
  */
 import debug from 'debug';
-import wpcom from 'lib/wp';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { isRequestingMediaItem } from 'state/selectors';
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
 import {
 	failMediaRequest,
@@ -55,11 +53,8 @@ export function requestMediaError( { dispatch }, { siteId, query } ) {
 	dispatch( failMediaRequest( siteId, query ) );
 }
 
-export function handleMediaItemRequest( { dispatch, getState }, action ) {
+export function handleMediaItemRequest( { dispatch }, action ) {
 	const { mediaId, query, siteId } = action;
-	if ( isRequestingMediaItem( getState(), siteId, mediaId ) ) {
-		return;
-	}
 
 	dispatch( requestingMediaItem( siteId, query ) );
 
