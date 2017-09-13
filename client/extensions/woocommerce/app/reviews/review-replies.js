@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getReviewReplies } from 'woocommerce/state/sites/review-replies/selectors';
@@ -55,23 +54,20 @@ class ReviewReplies extends Component {
 		const { replyIds, review, translate } = this.props;
 		const repliesOutput = replyIds.length && replyIds.map( this.renderReply ) || null;
 
-		const textAreaPlaceholder = translate( 'Reply to %(reviewAuthor)s…', {
-			args: { reviewAuthor: review.name }
-		} );
-		const submitButton = 'approved' === review.status ? translate( 'Send reply' ) : translate( 'Approve and send reply' );
+		const textAreaPlaceholder = 'approved' === review.status
+			? translate( 'Reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } )
+			: translate( 'Approve and reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } );
 
 		return (
 			<div className="reviews__replies">
 				{ repliesOutput }
 
-				<textarea
-					className="reviews__reply-textarea"
-					placeholder={ textAreaPlaceholder }
-				/>
-
-				<div className="reviews__reply-submit">
-					<Button>{ submitButton }</Button>
-				</div>
+				<form className="reviews__reply-textarea">
+					<textarea placeholder={ textAreaPlaceholder } />
+					<button className="reviews__reply-submit">
+						{ translate( 'Send' ) }
+					</button>
+				</form>
 			</div>
 		);
 	}

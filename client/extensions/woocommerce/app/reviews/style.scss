@@ -227,15 +227,45 @@
 }
 
 .reviews__reply-textarea {
-	border-right: 0;
-	border-left: 0;
-}
+	line-height: 0;
+	position: relative;
 
-.reviews__reply-submit {
-	padding: 16px;
-	text-align: right;
-}
+	textarea {
+		font-size: 14px;
+		height: 47px;
+		line-height: 21px;
+		min-height: 47px;
+		overflow: hidden;
+		padding: 12px 70px 12px 16px;
+		position: relative;
+		resize: vertical;
+		transition: min-height .15s linear;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		border-left: 0;
+		border-right: 0;
+		border-bottom: 0;
 
+		&::placeholder {
+			color: $gray-text-min;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+	.reviews__reply-submit {
+		color: $gray;
+		font-size: 12px;
+		font-weight: 600;
+		padding: 4px;
+		position: absolute;
+		right: 18px;
+		top: 11px;
+		text-transform: uppercase;
+		transition: opacity 0.2s ease-in-out;
+	}
+}
 .reviews__reply-bar {
 	display: flex;
 	flex-flow: row nowrap;
