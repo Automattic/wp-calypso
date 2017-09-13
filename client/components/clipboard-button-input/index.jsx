@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { omit } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,35 +14,25 @@ import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'ClipboardButtonInput',
-
-	propTypes: {
-		value: PropTypes.string,
-		disabled: PropTypes.bool,
-		className: PropTypes.string,
-		hideHttp: PropTypes.bool
-	},
-
-	getInitialState() {
-		return {
+class ClipboardButtonInputExport extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
 			isCopied: false,
 			disabled: false
 		};
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			value: ''
-		};
-	},
+	static defaultProps = {
+		value: ''
+	};
 
 	componentWillUnmount() {
 		clearTimeout( this.confirmationTimeout );
 		delete this.confirmationTimeout;
-	},
+	}
 
-	showConfirmation() {
+	showConfirmation = () => {
 		this.setState( {
 			isCopied: true
 		} );
@@ -50,10 +42,16 @@ export default React.createClass( {
 				isCopied: false
 			} );
 		}, 4000 );
-	},
+	}
 
 	render() {
-		const { value, className, disabled, hideHttp } = this.props;
+		const {
+			value,
+			className,
+			disabled,
+			hideHttp,
+			translate
+		} = this.props;
 		const classes = classnames( 'clipboard-button-input', className );
 
 		return (
@@ -70,10 +68,20 @@ export default React.createClass( {
 					disabled={ disabled }
 					compact>
 					{ this.state.isCopied
-						? this.translate( 'Copied!' )
-						: this.translate( 'Copy', { context: 'verb' } ) }
+						? translate( 'Copied!' )
+						: translate( 'Copy', { context: 'verb' } ) }
 				</ClipboardButton>
 			</span>
 		);
 	}
-} );
+}
+
+ClipboardButtonInputExport.propTypes = {
+	value: PropTypes.string,
+	disabled: PropTypes.bool,
+	className: PropTypes.string,
+	hideHttp: PropTypes.bool,
+	translate: PropTypes.func
+};
+
+export default localize( ClipboardButtonInputExport );
