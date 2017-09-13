@@ -89,3 +89,4 @@ class EventsTooltip extends Component {
 }
 
 export default localize( EventsTooltip );
+

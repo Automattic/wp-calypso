@@ -189,3 +189,4 @@ class DatePicker extends PureComponent {
 }
 
 export default localize( DatePicker );
+
