@@ -1,35 +1,17 @@
 /**
  * External dependecies
  */
-var webpackMiddleware = require( 'webpack-dev-middleware' ),
-	webpack = require( 'webpack' ),
-	chalk = require( 'chalk' );
+const webpackMiddleware = require( 'webpack-dev-middleware' );
+const webpack = require( 'webpack' );
+const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
-
 const webpackConfig = require( 'webpack.config' );
-const webpackMiddlewareConfig = {
-	publicPath: '/calypso/',
-	stats: {
-		colors: true,
-		hash: true,
-		version: false,
-		timings: true,
-		assets: false,
-		chunks: true,
-		chunkModules: false,
-		modules: false,
-		cached: false,
-		reasons: false,
-		source: false,
-		errorDetails: true
-	}
-};
 
 function middleware( app ) {
-	var compiler = webpack( webpackConfig ),
-		callbacks = [],
-		built = false,
-		beforeFirstCompile = true;
+	const compiler = webpack( webpackConfig );
+	const callbacks = [];
+	let built = false;
+	let beforeFirstCompile = true;
 
 	app.use( hotMiddleware( compiler ) );
 
@@ -43,7 +25,7 @@ function middleware( app ) {
 		built = true;
 
 		// Dequeue and call request handlers
-		while( callbacks.length > 0 ) {
+		while ( callbacks.length > 0 ) {
 			callbacks.shift()();
 		}
 
@@ -89,9 +71,23 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	const webpackMiddlewareInstance = webpackMiddleware( compiler, webpackMiddlewareConfig );
-	app.set( 'webpackMiddlewareFs', webpackMiddlewareInstance.fileSystem );
-	app.use( webpackMiddlewareInstance );
+	app.use( webpackMiddleware( compiler, {
+		publicPath: '/calypso/',
+		stats: {
+			colors: true,
+			hash: true,
+			version: false,
+			timings: true,
+			assets: false,
+			chunks: true,
+			chunkModules: false,
+			modules: false,
+			cached: false,
+			reasons: false,
+			source: false,
+			errorDetails: true
+		}
+	} ) );
 }
 
 module.exports = middleware;

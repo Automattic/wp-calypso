@@ -9,7 +9,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick, forEach, intersection, mapValues } from 'lodash';
+import { get, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,27 +83,12 @@ function hashFile( filepath ) {
 	return hash;
 }
 
-/**
- * getAssets takes a request and returns the webpack assets json needed to create
- * script tags to the necessary js resources.  The implementation splits based on whether node is running
- * in dev or in prod.
- *
- * In prod: read the assets.json file from the filesystem on first-run and then
- * cache that result until the server is restarted.
- *
- * In dev: read the assets.json file from the in-memory filesystem and reload the file on each request.
- */
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
 const getAssets = ( () => {
 	let assets;
 	return () => {
-		if ( ! assets && process.env.NODE_ENV === 'production' ) {
+		if ( ! assets ) {
 			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
-		} else if ( process.env.NODE_ENV !== 'production' ) {
-			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
-			assets = mapValues( assets, val => ( {
-				js: val.js.replace( '.hot-update', '' )
-			} ) );
 		}
 		return assets;
 	};
