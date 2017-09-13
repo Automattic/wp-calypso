@@ -66,6 +66,15 @@ export const itemsSchema = {
 						tag: { type: 'boolean' }
 					}
 				},
+				plugin_list: {
+					type: 'object',
+					items: {
+						desc: { type: 'string' },
+						enabled: { type: 'boolean' },
+						key: { type: 'string' },
+						title: { type: 'string' },
+					}
+				},
 				post_count: { type: 'string' },
 				preload_email_volume: { type: 'string' },
 				preload_interval: { type: 'integer' },
