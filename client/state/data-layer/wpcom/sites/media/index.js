@@ -55,25 +55,6 @@ export function requestMediaError( { dispatch }, { siteId, query } ) {
 	dispatch( failMediaRequest( siteId, query ) );
 }
 
-export function requestMediaItem( { dispatch, getState }, { siteId, mediaId } ) {
-	if ( isRequestingMediaItem( getState(), siteId, mediaId ) ) {
-		return;
-	}
-
-	dispatch( requestingMediaItem( siteId, mediaId ) );
-
-	log( 'Request media item %d for site %d', mediaId, siteId );
-
-	return wpcom
-		.site( siteId )
-		.media( mediaId )
-		.get()
-		.then( ( media ) => {
-			dispatch( receiveMedia( siteId, media ) );
-			dispatch( successMediaItemRequest( siteId, mediaId ) );
-		} )
-		.catch( () => dispatch( failMediaItemRequest( siteId, mediaId ) ) );
-}
 
 function handleMediaItemRequest( { dispatch, getState }, action ) {
 	const { mediaId, query, siteId } = action;
@@ -110,7 +91,6 @@ function receiveMediaItemError( { dispatch }, { mediaId, siteId } ) {
 export default {
 	[ MEDIA_REQUEST ]: [ dispatchRequest( requestMedia, requestMediaSuccess, requestMediaError ) ],
 	[ MEDIA_ITEM_REQUEST ]: [
-		requestMediaItem,
 		dispatchRequest( handleMediaItemRequest, receiveMediaItem, receiveMediaItemError ),
 	],
 };
