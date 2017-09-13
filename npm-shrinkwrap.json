@@ -1198,7 +1198,7 @@
       "version": "0.5.0"
     },
     "content-type": {
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     "content-type-parser": {
       "version": "1.0.1",
@@ -3126,7 +3126,7 @@
       "version": "1.1.0"
     },
     "interpret": {
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     "interval-tree-1d": {
       "version": "1.0.3"
@@ -3735,7 +3735,7 @@
       "version": "1.11.3"
     },
     "js-base64": {
-      "version": "2.3.0"
+      "version": "2.3.2"
     },
     "js-stringify": {
       "version": "1.0.2"
@@ -5603,7 +5603,7 @@
       "version": "0.1.3"
     },
     "rimraf": {
-      "version": "2.6.1",
+      "version": "2.6.2",
       "dependencies": {
         "glob": {
           "version": "7.1.2"
@@ -6442,19 +6442,16 @@
       "version": "1.0.2"
     },
     "uglifyjs-webpack-plugin": {
-      "version": "1.0.0-beta.1",
+      "version": "0.4.6",
       "dependencies": {
-        "commander": {
-          "version": "2.11.0"
-        },
         "source-list-map": {
           "version": "2.0.0"
         },
         "source-map": {
           "version": "0.5.7"
         },
-        "uglify-es": {
-          "version": "3.1.0"
+        "uglify-js": {
+          "version": "2.8.29"
         },
         "webpack-sources": {
           "version": "1.0.1"
@@ -6637,6 +6634,17 @@
         "async": {
           "version": "2.5.0"
         },
+        "camelcase": {
+          "version": "4.1.0"
+        },
+        "cliui": {
+          "version": "3.2.0",
+          "dependencies": {
+            "string-width": {
+              "version": "1.0.2"
+            }
+          }
+        },
         "has-flag": {
           "version": "2.0.0"
         },
@@ -6678,17 +6686,6 @@
         "supports-color": {
           "version": "4.4.0"
         },
-        "uglify-js": {
-          "version": "2.8.29",
-          "dependencies": {
-            "yargs": {
-              "version": "3.10.0"
-            }
-          }
-        },
-        "uglifyjs-webpack-plugin": {
-          "version": "0.4.6"
-        },
         "webpack-sources": {
           "version": "1.0.1"
         },
@@ -6696,28 +6693,10 @@
           "version": "2.0.0"
         },
         "yargs": {
-          "version": "8.0.2",
-          "dependencies": {
-            "camelcase": {
-              "version": "4.1.0"
-            },
-            "cliui": {
-              "version": "3.2.0",
-              "dependencies": {
-                "string-width": {
-                  "version": "1.0.2"
-                }
-              }
-            }
-          }
+          "version": "8.0.2"
         },
         "yargs-parser": {
-          "version": "7.0.0",
-          "dependencies": {
-            "camelcase": {
-              "version": "4.1.0"
-            }
-          }
+          "version": "7.0.0"
         }
       }
     },
@@ -6766,7 +6745,7 @@
           "dev": true
         },
         "etag": {
-          "version": "1.8.0",
+          "version": "1.8.1",
           "dev": true
         },
         "express": {
