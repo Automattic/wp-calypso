@@ -43,7 +43,6 @@ Emitter( User.prototype );
 User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
-	this.initialized = false;
 
 	this.on( 'change', this.checkVerification.bind( this ) );
 
@@ -54,7 +53,8 @@ User.prototype.initialize = function() {
 		this.fetch();
 
 		// We're booting into support user mode, skip initialization of the main user.
-		return;
+	} else {
+		this.data = {};
 	}
 };
 
@@ -161,6 +161,7 @@ User.prototype.set = function( attributes ) {
 	var changed = false,
 		computedAttributes = userUtils.getComputedAttributes( attributes );
 
+	this.initialized = true;
 	this.data = this.data || {};
 	attributes = Object.assign( {}, attributes, computedAttributes );
 

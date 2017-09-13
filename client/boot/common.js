@@ -15,21 +15,17 @@ import url from 'url';
 import accessibleFocus from 'lib/accessible-focus';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
-import {
-	setCurrentUserId,
-	setCurrentUserFlags
-} from 'state/current-user/actions';
-import { receiveUser, requestUser } from 'state/users/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import touchDetect from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { isDefaultLocale } from 'lib/i18n-utils';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const debug = debugFactory( 'calypso' );
 
 const switchUserLocale = ( currentUser, reduxStore ) => {
-	const localeSlug = currentUser.get().localeSlug;
+	const localeSlug = currentUser.localeSlug;
 
 	if ( localeSlug ) {
 		reduxStore.dispatch( setLocale( localeSlug ) );
@@ -80,8 +76,8 @@ const setupContextMiddleware = reduxStore => {
 // We need to require sections to load React with i18n mixin
 const loadSectionsMiddleware = () => require( 'sections' ).load();
 
-const loggedOutMiddleware = currentUser => {
-	if ( currentUser.get() ) {
+const loggedOutMiddleware = reduxStore => {
+	if ( getCurrentUser( reduxStore.getState() ) ) {
 		return;
 	}
 
@@ -142,7 +138,7 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
 };
 
-export const locales = ( currentUser, reduxStore ) => {
+export const locales = ( reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
 
 	// Initialize i18n mixin
@@ -153,7 +149,8 @@ export const locales = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 	}
 
-	// When the user is not bootstrapped, we also bootstrap the
+	const currentUser = getCurrentUser( reduxStore.getState() );
+
 	// user locale strings, unless the locale was already set in the initial store during SSR
 	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
 	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && isDefaultLocale( currentLocaleSlug ) ) {
@@ -180,31 +177,23 @@ export const utils = () => {
 	accessibleFocus();
 };
 
-export const configureReduxStore = ( currentUser, reduxStore ) => {
+export const configureReduxStore = ( reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
 	bindWpLocaleState( reduxStore );
-
-	if ( currentUser.get() ) {
-		reduxStore.dispatch( receiveUser( currentUser.get() ) );
-		reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
-		reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
-	}
-
-	reduxStore.dispatch( requestUser() );
 
 	if ( config.isEnabled( 'network-connection' ) ) {
 		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
+export const setupMiddlewares = ( reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	loadSectionsMiddleware();
-	loggedOutMiddleware( currentUser );
+	loggedOutMiddleware( reduxStore );
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();

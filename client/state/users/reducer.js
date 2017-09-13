@@ -55,6 +55,9 @@ function getComputedAttributes( attributes ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case USER_REQUEST_SUCCESS:
+			if ( ! action.user.ID ) {
+				return state;
+			}
 			return Object.assign( {}, state, {
 				[ action.user.ID ]: Object.assign( {}, action.user, getComputedAttributes( action.user ) )
 			} );

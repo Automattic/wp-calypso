@@ -69,9 +69,9 @@ function checkForBlockedTracks() {
 	let _ut, _ui;
 
 	// detect stats blocking, and include identity from URL, user or cookie if possible
-	if ( _user && _user.get() ) {
+	if ( _user ) {
 		_ut = 'wpcom:user_id';
-		_ui = _user.get().ID;
+		_ui = _user.ID;
 	} else {
 		_ut = getUrlParameter( '_ut' ) || 'anon';
 		_ui = getUrlParameter( '_ui' );
@@ -377,8 +377,8 @@ const analytics = {
 		initialize: function() {
 			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
-				if ( _user && _user.get() ) {
-					parameters.userId = 'u-' + _user.get().ID;
+				if ( _user ) {
+					parameters.userId = 'u-' + _user.ID;
 				}
 
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
@@ -471,12 +471,12 @@ const analytics = {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( _user && _user.initialized ) {
+		if ( _user ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
 
-			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
+			window._tkq.push( [ 'identifyUser', _user.ID, _user.username ] );
 		}
 	},
 

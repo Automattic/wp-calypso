@@ -1,47 +1,35 @@
 /**
- * External dependencies
- */
-import config from 'config';
-import store from 'store';
-
-/**
  * Internal dependencies
  */
-import { receiveUser, requestUser } from 'state/users/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 
 const user = userFactory();
-
+const listeners = [];
+window.user = user;
 let currentUserData = null;
 
-export const getUserFromCache = reduxStore => {
-	let userData;
-
-	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		userData = window.currentUser || false;
-		reduxStore.dispatch( receiveUser( userData ) );
-	} else {
-		userData = store.get( 'wpcom_user' ) || false;
-		reduxStore.dispatch( requestUser() );
+export function updateUserLegacy( newUserData ) {
+	if ( ! newUserData ) {
+		return;
 	}
-
-	if ( userData ) {
-		currentUserData = userData;
-		user.set( userData );
-	}
-
+	currentUserData = newUserData;
+	user.set( currentUserData );
 	return user;
-};
+}
 
-export const subscribeToUserChanges = ( reduxStore, listener ) => {
+export function syncUserWithLegacyStore( reduxStore ) {
+	updateUserLegacy( getCurrentUser( reduxStore.getState() ) );
+	subscribeToUserChanges( reduxStore, updateUserLegacy );
+}
+
+export function subscribeToUserChanges( reduxStore, listener ) {
+	listeners.push( listener );
 	reduxStore.subscribe( () => {
 		const newUserData = getCurrentUser( reduxStore.getState() );
-
 		if ( newUserData && currentUserData !== newUserData ) {
 			currentUserData = newUserData;
-			user.set( currentUserData );
-			listener( user );
+			listeners.map( callback => callback( currentUserData ) );
 		}
 	} );
-};
+}
