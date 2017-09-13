@@ -110,7 +110,6 @@ export class List extends React.Component {
 				<Main>
 					<SidebarNavigation />
 					<DomainOnly
-						domainName={ this.props.selectedSite.domain }
 						hasNotice={ this.isFreshDomainOnlyRegistration() }
 						siteId={ this.props.selectedSite.ID }
 					/>
