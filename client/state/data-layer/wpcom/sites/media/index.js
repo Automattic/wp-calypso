@@ -97,11 +97,15 @@ function handleMediaItemRequest( { dispatch, getState }, action ) {
 		)
 	);
 }
+function receiveMediaItem( { dispatch }, { mediaId, siteId }, media ) {
+	dispatch( receiveMedia( siteId, media ) );
+	dispatch( successMediaItemRequest( siteId, mediaId ) );
+}
 
 export default {
 	[ MEDIA_REQUEST ]: [ dispatchRequest( requestMedia, requestMediaSuccess, requestMediaError ) ],
 	[ MEDIA_ITEM_REQUEST ]: [
 		requestMediaItem,
-		dispatchRequest( handleMediaItemRequest, ()=>{}, () => {} ),
+		dispatchRequest( handleMediaItemRequest, receiveMediaItem, () => {} ),
 	],
 };
