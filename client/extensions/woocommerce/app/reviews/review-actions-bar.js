@@ -12,6 +12,9 @@ import PropTypes from 'prop-types';
  */
 import Button from 'components/button';
 
+// currentStatus is the status/tab that is currently selected in the UI.
+// This is used to show the 'delete' action on the trash page.
+// review.status is the status of the individual review.
 const ReviewActionsBar = ( { review, currentStatus, translate } ) => {
 	const isApproved = 'approved' === review.status;
 	const isSpam = 'spam' === review.status;
@@ -38,7 +41,7 @@ const ReviewActionsBar = ( { review, currentStatus, translate } ) => {
 				<Gridicon icon="spam" />
 				<span>{
 					isSpam
-						? translate( 'Spammed' )
+						? translate( 'Marked as Spam' )
 						: translate( 'Spam' )
 				}</span>
 			</Button>

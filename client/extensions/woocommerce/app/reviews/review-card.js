@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import Card from 'components/card';
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import humanDate from 'lib/human-date';
 import Rating from 'components/rating';
@@ -111,7 +112,7 @@ class ReviewCard extends Component {
 					</div>
 				</AutoDirection>
 				<div className="reviews__rating">
-					<Rating rating={ ( review.rating / 5 ) * 100 } />
+					<Rating rating={ review.rating * 20 } />
 				</div>
 				{ this.renderProductImage() }
 				{ this.renderToggle() }
@@ -136,20 +137,23 @@ class ReviewCard extends Component {
 					{ review.verified && (
 						<div className="reviews__verified-label">
 							<Gridicon icon="checkmark-circle" size={ 18 } />
-							<span>{ translate( 'Verified product owner' ) }</span>
+							<span>{ translate( 'Verified buyer' ) }</span>
 						</div>
 					) }
 
 					<div className="reviews__rating">
-						<Rating rating={ ( review.rating / 5 ) * 100 } />
+						<Rating rating={ review.rating * 20 } />
 					</div>
 					{ this.renderProductImage() }
 				</div>
 
 				<AutoDirection>
-					<div className="reviews__content">
-						{ decodeEntities( stripHTML( review.review ) ) }
-					</div>
+					<Emojify>
+						<div className="reviews__content"
+							dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
+							// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
+						/>
+					</Emojify>
 				</AutoDirection>
 			</div>
 		);
