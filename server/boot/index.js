@@ -39,8 +39,6 @@ function setup() {
 		// setup logger
 		app.use( morgan( 'dev' ) );
 	} else {
-		require( 'bundler/assets' )( app );
-
 		// setup logger
 		app.use( morgan( 'combined' ) );
 	}

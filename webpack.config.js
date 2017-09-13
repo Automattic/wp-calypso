@@ -13,13 +13,13 @@ const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
+const AssetsPlugin = require( 'assets-webpack-plugin' );
 
 /**
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified-files' );
 
 /**
  * Internal variables
@@ -161,6 +161,10 @@ const webpackConfig = {
 			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
 		} ),
 		new NameAllModulesPlugin(),
+		new AssetsPlugin( {
+			filename: 'assets.json',
+			path: path.join( __dirname, 'server', 'bundler' )
+		} ),
 	] ),
 	externals: [ 'electron' ]
 };
@@ -199,7 +203,7 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-if ( calypsoEnv === 'development' ) {
+if ( bundleEnv === 'development' ) {
 	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
@@ -223,7 +227,6 @@ if ( calypsoEnv === 'development' ) {
 		} );
 	}
 } else {
-	webpackConfig.plugins.push( new UseMinifiedFiles() );
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.devtool = false;
 }
@@ -242,8 +245,13 @@ if ( process.env.DASHBOARD ) {
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
-if ( process.env.WEBPACK_OUTPUT_JSON ) {
-	webpackConfig.devtool = 'cheap-module-source-map';
+if ( process.env.WEBPACK_OUTPUT_JSON || process.env.NODE_ENV === 'production' ) {
+	let sourceMap = false;
+	if ( process.env.WEBPACK_OUTPUT_JSON ) {
+		webpackConfig.devtool = 'cheap-module-source-map';
+		sourceMap = true;
+	}
+
 	webpackConfig.plugins.push( new webpack.optimize.UglifyJsPlugin( {
 		minimize: true,
 		compress: {
@@ -259,7 +267,7 @@ if ( process.env.WEBPACK_OUTPUT_JSON ) {
 			negate_iife: false,
 			screw_ie8: true
 		},
-		sourceMap: true
+		sourceMap
 	} ) );
 }
 
