@@ -55,6 +55,10 @@ class Media extends Component {
 			redirect += '/' + this.props.selectedSite.slug;
 		}
 
+		if ( this.props.selectedSite ) {
+			MediaActions.setLibrarySelectedItems( this.props.selectedSite.ID, [] );
+		}
+
 		page( redirect );
 	};
 
