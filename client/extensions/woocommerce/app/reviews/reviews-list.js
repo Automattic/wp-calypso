@@ -53,11 +53,13 @@ class ReviewsList extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
+		const { currentPage, currentSearch, currentStatus, siteId } = this.props;
+
 		const hasAnythingChanged = (
-			newProps.currentPage !== this.props.currentPage ||
-			newProps.currentSearch !== this.props.currentSearch ||
-			newProps.currentStatus !== this.props.currentStatus ||
-			newProps.siteId !== this.props.siteId
+			newProps.currentPage !== currentPage ||
+			newProps.currentSearch !== currentSearch ||
+			newProps.currentStatus !== currentStatus ||
+			newProps.siteId !== siteId
 		);
 		if ( ! newProps.siteId || ! hasAnythingChanged ) {
 			return;
@@ -68,12 +70,12 @@ class ReviewsList extends Component {
 			search: newProps.currentSearch,
 			status: newProps.currentStatus,
 		};
-		if ( newProps.currentSearch !== this.props.currentSearch ) {
-			this.props.updateCurrentReviewsQuery( this.props.siteId, { page: 1, status: 'any' } );
+		if ( newProps.currentSearch !== currentSearch ) {
+			this.props.updateCurrentReviewsQuery( siteId, { page: 1, status: 'any' } );
 			query.page = 1;
 			query.status = 'any';
-		} else if ( newProps.currentStatus !== this.props.currentStatus ) {
-			this.props.updateCurrentReviewsQuery( this.props.siteId, { page: 1, search: '' } );
+		} else if ( newProps.currentStatus !== currentStatus ) {
+			this.props.updateCurrentReviewsQuery( siteId, { page: 1, search: '' } );
 			query.page = 1;
 			query.search = '';
 		}

@@ -37,6 +37,8 @@ class ReviewCard extends Component {
 			'is-approved': review.approved,
 			'is-unapproved': ! review.approved,
 		} );
+
+		// The API returns avatar URLs for various sizes. 24, 48, and 96. This uses the middle size.
 		const author = {
 			avatar_URL: review.avatar_urls[ 48 ],
 			display_name: review.name,

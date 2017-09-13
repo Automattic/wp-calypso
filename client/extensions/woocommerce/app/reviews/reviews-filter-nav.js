@@ -39,14 +39,19 @@ class ReviewsFilterNav extends Component {
 
 	render() {
 		const { translate, site, status } = this.props;
-		let currentSelection = translate( 'Pending' );
 
+		const pendingLabel = translate( 'Pending' );
+		const approvedLabel = translate( 'Approved' );
+		const spamLabel = translate( 'Spam' );
+		const trashlabel = translate( 'Trash' );
+
+		let currentSelection = pendingLabel;
 		if ( 'approved' === status ) {
-			currentSelection = translate( 'Approved' );
+			currentSelection = approvedLabel;
 		} else if ( 'spam' === status ) {
-			currentSelection = translate( 'Spam' );
+			currentSelection = spamLabel;
 		} else if ( 'trash' === status ) {
-			currentSelection = translate( 'Trash' );
+			currentSelection = trashlabel;
 		}
 
 		return (
@@ -55,22 +60,22 @@ class ReviewsFilterNav extends Component {
 					<NavItem
 						path={ getLink( '/store/reviews/:site', site ) }
 						selected={ 'pending' === status }>
-						{ translate( 'Pending' ) }
+						{ pendingLabel }
 					</NavItem>
 					<NavItem
 						path={ getLink( '/store/reviews/approved/:site', site ) }
 						selected={ 'approved' === status }>
-						{ translate( 'Approved' ) }
+						{ approvedLabel }
 					</NavItem>
 					<NavItem
 						path={ getLink( '/store/reviews/spam/:site', site ) }
 						selected={ 'spam' === status }>
-						{ translate( 'Spam' ) }
+						{ spamLabel }
 					</NavItem>
 					<NavItem
 						path={ getLink( '/store/reviews/trash/:site', site ) }
 						selected={ 'trash' === status }>
-						{ translate( 'Trash' ) }
+						{ trashlabel }
 					</NavItem>
 				</NavTabs>
 
