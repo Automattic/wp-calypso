@@ -47,25 +47,25 @@ function stopCloseOnEscForComponent( component ) {
 }
 
 export default class CloseOnEscape extends Component {
+	constructor() {
+		super();
+		this.propTypes = {
+			onEscape: PropTypes.func,
+		};
+		this.defaultProps = {
+			onEscape: noop,
+		};
+	}
 
-	static propTypes = {
-		onEscape: PropTypes.func,
-	};
-
-	static defaultProps = {
-		onEscape: noop,
-	};
-
-	componentDidMount = () => {
+	componentDidMount() {
 		startCloseOnEscForComponent( this, this.props.onEscape );
-	};
+	}
 
-	componentWillUnmount = () => {
+	componentWillUnmount() {
 		stopCloseOnEscForComponent( this, this.props.onEscape );
-	};
+	}
 
 	render() {
 		return null;
 	}
-
 }
