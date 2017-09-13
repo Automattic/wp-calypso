@@ -34,7 +34,7 @@ describe( 'handlers', () => {
 				method: 'GET',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: `/wp/v2/comments&parent=${ reviewId }&per_page=50&_method=GET`,
+					path: `/wp/v2/comments&parent=${ reviewId }&per_page=15&_method=GET`,
 					json: true,
 					apiVersion: '1.1',
 				}

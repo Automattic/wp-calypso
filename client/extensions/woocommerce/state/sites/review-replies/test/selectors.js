@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 			expect( getReviewReplies( loadedState, 555, 123 ) ).to.eql( reviewReplies );
 		} );
 
-		it( 'should be the list of replies if they are loaded.', () => {
+		it( 'should be the list of replies if they are loaded for a different site.', () => {
 			expect( getReviewReplies( loadedState, 556, 321 ) ).to.eql( [] );
 		} );
 

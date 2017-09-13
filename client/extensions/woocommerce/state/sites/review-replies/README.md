@@ -1,4 +1,4 @@
-Reviews
+Review Replies
 ======
 
 This module is used to get admin replies to reviews for a site.
