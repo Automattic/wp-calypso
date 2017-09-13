@@ -929,9 +929,7 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
 	const body = { skipped_connections: [] };
 
-	if ( message ) {
-		body.message = message;
-	}
+	body.message = message;
 
 	if ( skippedConnections && skippedConnections.length > 0 ) {
 		body.skipped_connections = skippedConnections;
