@@ -265,7 +265,7 @@
     "mockery": "1.7.0",
     "nock": "8.0.0",
     "nodemon": "1.4.1",
-    "prettier": "Automattic/calypso-prettier#0cbd77dcfc7bb82bff5f4485a6f078dec5cc9595",
+    "prettier": "github:automattic/calypso-prettier#70f962b0",
     "react-addons-test-utils": "15.4.0",
     "react-codemod": "reactjs/react-codemod",
     "react-test-env": "0.2.0",
