@@ -208,7 +208,7 @@ class LoggedInForm extends Component {
 			(
 				! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites,
 				queryObject.already_authorized
-			 )
+			)
 		) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
