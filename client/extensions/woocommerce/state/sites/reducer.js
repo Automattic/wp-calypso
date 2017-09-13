@@ -11,6 +11,7 @@ import productCategories from './product-categories/reducer';
 import products from './products/reducer';
 import productVariations from './product-variations/reducer';
 import reviews from './reviews/reducer';
+import reviewReplies from './review-replies/reducer';
 import setupChoices from './setup-choices/reducer';
 import shippingMethods from './shipping-methods/reducer';
 import shippingZoneLocations from './shipping-zone-locations/reducer';
@@ -29,6 +30,7 @@ const reducer = combineReducers( {
 	products,
 	productVariations,
 	reviews,
+	reviewReplies,
 	setupChoices,
 	settings,
 	shippingMethods,
