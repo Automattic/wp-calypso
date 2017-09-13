@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
 import { noop, merge, map, filter, get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -188,4 +189,3 @@ class DatePicker extends PureComponent {
 }
 
 export default localize( DatePicker );
-
