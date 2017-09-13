@@ -24,6 +24,10 @@ export const Tabs = {
 		label: translate( 'Preload' ),
 		slug: 'preload',
 	},
+	PLUGINS: {
+		label: translate( 'Plugins' ),
+		slug: 'plugins',
+	},
 	DEBUG: {
 		label: translate( 'Debug' ),
 		slug: 'debug',

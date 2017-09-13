@@ -18,6 +18,7 @@ import EasyTab from '../components/easy';
 import Main from 'components/main';
 import Navigation from '../components/navigation';
 import Notice from 'components/notice';
+import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
 import { Tabs } from './constants';
@@ -47,6 +48,8 @@ class WPSuperCache extends Component {
 				return <ContentsTab isReadOnly={ isReadOnly } />;
 			case Tabs.PRELOAD.slug:
 				return <PreloadTab />;
+			case Tabs.PLUGINS.slug:
+				return <PluginsTab />;
 			case Tabs.DEBUG.slug:
 				return <DebugTab />;
 			default:
