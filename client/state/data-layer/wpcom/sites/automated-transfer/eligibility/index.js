@@ -6,7 +6,8 @@ import { get, identity, isEmpty, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 } from 'state/action-types';
@@ -108,41 +109,37 @@ const trackEligibility = data => {
 };
 
 /**
- * Dispatches to update eligibility information from API response
+ * Issues an API request to fetch eligibility information for a site
  *
- * @param {Function} dispatch action dispatcher
- * @param {number} siteId site for which the update belongs
- * @returns {Function} the handler function with site and dispatch partially applied
+ * @param {Object} store Redux store
+ * @param {Function} store.dispatch action dispatcher
+ * @param {action} action Action object
  */
-const apiResponse = ( dispatch, siteId ) => data => {
+export const requestEligibility = ( { dispatch }, action ) => {
+	const { siteId } = action;
+
+	dispatch( http( {
+		method: 'GET',
+		path: `/sites/${ siteId }/automated-transfers/eligibility`,
+		apiVersion: '1',
+	}, action ) );
+};
+
+const receiveResponse = ( { dispatch }, { siteId }, data ) => {
 	dispatch( withAnalytics(
 		trackEligibility( data ),
 		updateEligibility( siteId, fromApi( data ) )
 	) );
 };
 
-/**
- * Respond to API fetch failure
- *
- * @param {Object} error error from API fetch
- */
-const apiFailure = error => {
+const receiveError = ( store, action, error ) => {
 	throw new Error( error );
 };
 
-/**
- * Issues an API request to fetch eligibility information for a site
- *
- * @param {Object} store Redux store
- * @param {Function} store.dispatch action dispatcher
- * @param {number} siteId Site for which eligibility information is requested
- * @returns {Promise} response promise from API fetch
- */
-export const fetchEligibility = ( { dispatch }, { siteId } ) =>
-	wpcom.req.get( `/sites/${ siteId }/automated-transfers/eligibility` )
-		.then( apiResponse( dispatch, siteId ) )
-		.catch( apiFailure );
-
 export default {
-	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [ fetchEligibility ],
+	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [ dispatchRequest(
+		requestEligibility,
+		receiveResponse,
+		receiveError
+	) ],
 };
