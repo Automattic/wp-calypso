@@ -142,7 +142,7 @@ const Posts = localize( class extends React.Component {
 	};
 
 	getNoContentMessage = () => {
-		let attributes, newPostLink;
+		let attributes;
 
 		if ( this.props.search ) {
 			return (
@@ -156,47 +156,47 @@ const Posts = localize( class extends React.Component {
 						} )	}
 				/>
 			);
-		} else {
-			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
+		}
 
-			if ( this.props.hasRecentError ) {
+		const newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
+
+		if ( this.props.hasRecentError ) {
+			attributes = {
+				title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+				line: this.props.translate( 'Please check your internet connection.' )
+			};
+		}
+
+		switch ( this.props.statusSlug ) {
+			case 'drafts':
 				attributes = {
-					title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.props.translate( 'Please check your internet connection.' )
+					title: this.props.translate( 'You don\'t have any drafts.' ),
+					line: this.props.translate( 'Would you like to create one?' ),
+					action: this.props.translate( 'Start a Post' ),
+					actionURL: newPostLink
 				};
-			}
-
-			switch ( this.props.statusSlug ) {
-				case 'drafts':
-					attributes = {
-						title: this.props.translate( 'You don\'t have any drafts.' ),
-						line: this.props.translate( 'Would you like to create one?' ),
-						action: this.props.translate( 'Start a Post' ),
-						actionURL: newPostLink
-					};
-					break;
-				case 'scheduled':
-					attributes = {
-						title: this.props.translate( 'You don\'t have any scheduled posts.' ),
-						line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
-						action: this.props.translate( 'Edit Drafts' ),
-						actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
-					};
-					break;
-				case 'trashed':
-					attributes = {
-						title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
-						line: this.props.translate( 'Everything you write is solid gold.' )
-					};
-					break;
-				default:
-					attributes = {
-						title: this.props.translate( 'You haven\'t published any posts yet.' ),
-						line: this.props.translate( 'Would you like to publish your first post?' ),
-						action: this.props.translate( 'Start a Post' ),
-						actionURL: newPostLink
-					};
-			}
+				break;
+			case 'scheduled':
+				attributes = {
+					title: this.props.translate( 'You don\'t have any scheduled posts.' ),
+					line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
+					action: this.props.translate( 'Edit Drafts' ),
+					actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
+				};
+				break;
+			case 'trashed':
+				attributes = {
+					title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
+					line: this.props.translate( 'Everything you write is solid gold.' )
+				};
+				break;
+			default:
+				attributes = {
+					title: this.props.translate( 'You haven\'t published any posts yet.' ),
+					line: this.props.translate( 'Would you like to publish your first post?' ),
+					action: this.props.translate( 'Start a Post' ),
+					actionURL: newPostLink
+				};
 		}
 
 		attributes.illustration = '/calypso/images/posts/illustration-posts.svg';
