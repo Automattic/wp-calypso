@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import TrackInputChanges from 'components/track-input-changes';
 import PostActions from 'lib/posts/actions';
 import stats from 'lib/posts/stats';
 
-export default React.createClass( {
+const PublicizeMessage = React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
@@ -107,3 +108,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( PublicizeMessage );
