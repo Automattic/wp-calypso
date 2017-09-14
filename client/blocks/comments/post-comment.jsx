@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
@@ -65,6 +66,7 @@ class PostComment extends React.PureComponent {
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
 		showReadMoreInActions: PropTypes.bool,
+		timestampDeeplink: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -93,6 +95,7 @@ class PostComment extends React.PureComponent {
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
+		timestampDeeplink: false,
 	};
 
 	state = {
@@ -100,6 +103,14 @@ class PostComment extends React.PureComponent {
 		showFull: false,
 	};
 
+	handleTimestampClicked = e => {
+		if ( this.props.timestampDeeplink ) {
+			e.preventDefault();
+			const siteId = this.props.post.site_ID;
+			const postId = this.props.post.ID;
+			page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ this.props.commentId }` );
+		}
+	};
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
@@ -208,6 +219,7 @@ class PostComment extends React.PureComponent {
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
 								enableCaterpillar={ enableCaterpillar }
+								timestampDeeplink={ this.props.timestampDeeplink }
 								depth={ childDepth }
 								key={ childId }
 								commentId={ childId }
@@ -384,7 +396,7 @@ class PostComment extends React.PureComponent {
 							} ) }
 						</span> }
 					<div className="comments__comment-timestamp">
-						<a href={ comment.URL }>
+						<a href={ comment.URL } onClick={ this.handleTimestampClicked }>
 							<PostTime date={ comment.date } />
 						</a>
 					</div>
