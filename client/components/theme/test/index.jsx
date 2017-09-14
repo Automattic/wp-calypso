@@ -11,19 +11,21 @@ import { identity } from 'lodash';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
+import MockMoreButton from '../more-button';
+
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
 
 	useFakeDom();
 
 	useMockery( mockery => {
-		ReactDom = require( 'react-dom' );
+	    ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		let EmptyComponent = React.createClass( {
+		const EmptyComponent = React.createClass( {
 			render: function() {
-				return <div/>;
+				return <div />;
 			}
 		} );
 
@@ -31,7 +33,6 @@ describe( 'Theme', function() {
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
 
 		togglePopoverStub = sinon.stub().returnsArg( 0 );
-		let MockMoreButton = require( '../more-button' );
 		MockMoreButton.prototype.togglePopover = togglePopoverStub;
 		mockery.registerMock( './more-button', MockMoreButton );
 
@@ -54,7 +55,7 @@ describe( 'Theme', function() {
 		context( 'with default display buttonContents', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
+				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -67,12 +68,12 @@ describe( 'Theme', function() {
 			} );
 
 			it( 'should render a screenshot', function() {
-				var imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
+				const imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
 				assert.include( imgNode.getAttribute( 'src' ), '/theme/screenshot.png' );
 			} );
 
 			it( 'should call onScreenshotClick() on click on screenshot', function() {
-				var imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
+				const imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
 				assert( this.props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
 			} );
@@ -82,7 +83,7 @@ describe( 'Theme', function() {
 			} );
 
 			it( 'should render a More button', function() {
-				var more = this.themeNode.getElementsByClassName( 'theme__more-button' );
+				const more = this.themeNode.getElementsByClassName( 'theme__more-button' );
 
 				assert( more.length === 1, 'More button container not found' );
 				assert( more[ 0 ].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
@@ -94,12 +95,12 @@ describe( 'Theme', function() {
 		context( 'with empty buttonContents', function() {
 			beforeEach( function() {
 				this.props.buttonContents = {};
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
+				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
 			it( 'should not render a More button', function() {
-				var more = this.themeNode.getElementsByClassName( 'theme__more-button' );
+				const more = this.themeNode.getElementsByClassName( 'theme__more-button' );
 
 				assert( more.length === 0, 'More button container found' );
 			} );
@@ -108,7 +109,7 @@ describe( 'Theme', function() {
 
 	context( 'when isPlaceholder is set to true', function() {
 		beforeEach( function() {
-			let themeElement = TestUtils.renderIntoDocument(
+			const themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, {
 					theme: { id: 'placeholder-1', name: 'Loading' },
 					isPlaceholder: true,
@@ -127,7 +128,7 @@ describe( 'Theme', function() {
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
 			this.props.price = '$50';
-			let themeElement = TestUtils.renderIntoDocument(
+			const themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, this.props )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
