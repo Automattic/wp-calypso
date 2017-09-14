@@ -142,33 +142,33 @@ const Posts = localize( class extends React.Component {
 	};
 
 	getNoContentMessage = () => {
-		const { translate } = this.props;
+		const { hasRecentError, siteId, search, statusSlug, translate } = this.props;
 		let attributes;
 
-		if ( this.props.search ) {
+		if ( search ) {
 			return (
 				<NoResults
 					image="/calypso/images/posts/illustration-posts.svg"
 					text={
 						translate( 'No posts match your search for {{searchTerm/}}.', {
 							components: {
-								searchTerm: <em>{ this.props.search }</em>
+								searchTerm: <em>{ search }</em>
 							}
 						} )	}
 				/>
 			);
 		}
 
-		const newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
+		const newPostLink = siteId ? '/post/' + siteId : '/post';
 
-		if ( this.props.hasRecentError ) {
+		if ( hasRecentError ) {
 			attributes = {
 				title: translate( 'Oh, no! We couldn\'t fetch your posts.' ),
 				line: translate( 'Please check your internet connection.' )
 			};
 		}
 
-		switch ( this.props.statusSlug ) {
+		switch ( statusSlug ) {
 			case 'drafts':
 				attributes = {
 					title: translate( 'You don\'t have any drafts.' ),
@@ -182,7 +182,7 @@ const Posts = localize( class extends React.Component {
 					title: translate( 'You don\'t have any scheduled posts.' ),
 					line: translate( 'Would you like to schedule a draft to publish?' ),
 					action: translate( 'Edit Drafts' ),
-					actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
+					actionURL: ( siteId ) ? '/posts/drafts/' + siteId : '/posts/drafts'
 				};
 				break;
 			case 'trashed':
