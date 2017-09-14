@@ -9,9 +9,20 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	requestingMedia, requestingMediaItem, successMediaRequest, successMediaItemRequest, failMediaRequest, failMediaItemRequest, receiveMedia
+	requestingMedia,
+	requestingMediaItem,
+	successMediaRequest,
+	successMediaItemRequest,
+	failMediaRequest,
+	failMediaItemRequest,
+	receiveMedia
 } from 'state/media/actions';
-import { requestMediaItem, requestMediaSuccess, requestMediaError, requestMedia } from '../';
+import {
+	requestMediaItem,
+	requestMediaSuccess,
+	requestMediaError,
+	requestMedia
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
