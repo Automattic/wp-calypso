@@ -328,13 +328,13 @@ WebPreviewContent.propTypes = {
 	// The iframe's title element, used for accessibility purposes
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
-	hasSidebar: React.PropTypes.bool,
+	hasSidebar: PropTypes.bool,
 	// Called after user switches device
-	onDeviceUpdate: React.PropTypes.func,
+	onDeviceUpdate: PropTypes.func,
 	// Flag that differentiates modal window from inline embeds
-	isModalWindow: React.PropTypes.bool,
+	isModalWindow: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: React.PropTypes.string,
+	frontPageMetaDescription: PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
