@@ -51,8 +51,8 @@ export function setUpLocale( context, next ) {
 		context.lang = lang;
 		context.isRTL = Boolean( language.rtl );
 	} else {
-		context.lang = config( 'i18n_default_locale_slug' );
-		context.isRTL = Boolean( config( 'rtl' ) );
+		context.lang = context.lang || config( 'i18n_default_locale_slug' );
+		context.isRTL = context.isRTL || Boolean( config( 'rtl' ) );
 	}
 
 	next();

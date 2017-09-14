@@ -172,9 +172,7 @@ function getDefaultContext( request ) {
 	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
-	const isRTL = config( 'rtl' );
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined ? true : false;
-	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -191,26 +189,13 @@ function getDefaultContext( request ) {
 		bodyClasses.push( 'pride' );
 	}
 
-	if ( isRTL ) {
-		bodyClasses.push( 'rtl' );
-	}
-
-	if ( request.context.sectionCss ) {
-		console.log( isRTL );
-		if ( isRTL ) {
-			sectionCss = getHashedUrl( 'sections-rtl/' + request.context.sectionCss + '.css' );
-		} else {
-			sectionCss = getHashedUrl( 'sections/' + request.context.sectionCss + '.css' );
-		}
-	}
-
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		isRTL,
+		isRTL: config( 'rtl' ),
 		isDebug,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
@@ -221,7 +206,6 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
-		sectionCss,
 	} );
 
 	context.app = {
@@ -305,6 +289,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			let searchParam, errorMessage;
 
 			if ( error ) {
+				console.log( 'user bootstrap error', error );
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', { path: '/', httpOnly: true, domain: '.wordpress.com' } );
@@ -329,6 +314,19 @@ function setUpLoggedInRoute( req, res, next ) {
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
 			context.isRTL = data.isRTL ? true : false;
+			context.lang = context.user.lang;
+
+			if ( context.isRTL ) {
+				context.bodyClasses.push( 'rtl' );
+			}
+
+			if ( req.context.sectionCss ) {
+				if ( context.isRTL ) {
+					context.sectionCss = getHashedUrl( 'sections-rtl/' + req.context.sectionCss + '.css' );
+				} else {
+					context.sectionCss = getHashedUrl( 'sections/' + req.context.sectionCss + '.css' );
+				}
+			}
 
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
