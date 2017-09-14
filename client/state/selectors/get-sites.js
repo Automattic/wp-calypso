@@ -28,5 +28,5 @@ export default createSelector(
 			...sortByNameAndUrl( sites )
 		].map( site => getSite( state, site.ID ) );
 	},
-	( state ) => state.sites.items
+	( state ) => [ state.sites.items, state.currentUser.capabilities ]
 );

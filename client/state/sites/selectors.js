@@ -31,8 +31,8 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
-import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import { getSiteComputedAttributes } from './utils';
 import { isSiteUpgradeable } from 'state/selectors';
 
 /**
@@ -86,14 +86,12 @@ export const getSite = createSelector(
 		// To avoid mutating the original site object, create a shallow clone
 		// before assigning computed properties
 		site = { ...site };
-		site.hasConflict = isSiteConflicting( state, siteId );
-		assign( site, getComputedAttributes( site ) );
+		assign( site, getSiteComputedAttributes( state, siteId ) );
 		assign( site, getJetpackComputedAttributes( state, siteId ) );
-		site.is_previewable = isSitePreviewable( state, siteId );
 
 		return site;
 	},
-	( state ) => state.sites.items
+	( state ) => [ state.sites.items, state.currentUser.capabilities ]
 );
 
 export function getJetpackComputedAttributes( state, siteId ) {
