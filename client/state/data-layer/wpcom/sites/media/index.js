@@ -51,12 +51,12 @@ export function requestMedia( { dispatch, getState }, action ) {
 	);
 }
 
-function requestMediaSuccess( { dispatch }, { siteId, query }, { media, found } ) {
+export function requestMediaSuccess( { dispatch }, { siteId, query }, { media, found } ) {
 	dispatch( receiveMedia( siteId, media, found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 }
 
-function requestMediaError( { dispatch }, { siteId, query } ) {
+export function requestMediaError( { dispatch }, { siteId, query } ) {
 	dispatch( failMediaRequest( siteId, query ) );
 }
 
