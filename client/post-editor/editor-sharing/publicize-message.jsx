@@ -13,7 +13,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
 import PostActions from 'lib/posts/actions';
-import stats from 'lib/posts/stats';
+import * as stats from 'lib/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
