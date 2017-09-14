@@ -13,8 +13,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
-	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
 } from 'state/action-types';
@@ -71,15 +69,6 @@ export const validateRequestSuccess = () => ( {
 
 export const validateRequestError = ( error ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
-	error,
-} );
-
-export const requestResetPasswordSuccess = () => ( {
-	type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
-} );
-
-export const requestResetPasswordError = ( error ) => ( {
-	type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 	error,
 } );
 
