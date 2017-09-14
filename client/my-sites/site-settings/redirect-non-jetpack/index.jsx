@@ -18,7 +18,6 @@ import { isSiteAutomatedTransfer } from 'state/selectors';
 const redirectNonJetpack = redirectRoute => WrappedComponent => {
 	class RedirectNonJetpack extends Component {
 		static propTypes = {
-			redirectRoute: PropTypes.string,
 			// Connected props
 			siteIsAtomic: PropTypes.bool,
 			siteIsJetpack: PropTypes.bool,
@@ -42,10 +41,12 @@ const redirectNonJetpack = redirectRoute => WrappedComponent => {
 		redirect = () => {
 			const { siteSlug } = this.props;
 
-			if ( siteSlug ) {
-				const url = redirectRoute ? redirectRoute : '/settings/general/';
+			if ( redirectRoute ) {
+				return page( redirectRoute );
+			}
 
-				page( url + siteSlug );
+			if ( siteSlug ) {
+				page( '/settings/general/' + siteSlug );
 			}
 		};
 

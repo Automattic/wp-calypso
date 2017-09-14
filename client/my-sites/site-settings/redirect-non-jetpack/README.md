@@ -7,12 +7,17 @@ Here, we consider Atomic sites to be Jetpack-like. Note: although Atomic sites a
 ### `WrappedComponent`
 
 Component, which we want to render using this HoC. When not apt for rendering
-due to lack of access rights (non-Jetpack or Atomic), the redirection will be handled using default or provided route (see below), e.g. the `ManageConnection` component in Site Settings.
+due to lack of access rights (non-Jetpack or Atomic), the redirection will be handled using default or provided route (see below). For an example of
+a component using this HoC see `ManageConnection` or `Disconnect Site` components in Site Settings.
 
 
 ### `redirectRoute` ( *optional* )
 
 Destination site route passed to the HoC. The default redirect fallback is `/settings/general/`.
+
+`redirectRoute` can be custom created with a `siteSlug` of choice.
+If absent, it uses current `siteSlug` (if loaded).
+
 
 ### How to use:
 The following code redirects to the `Plans` site for non-Jetpack and Atomic
