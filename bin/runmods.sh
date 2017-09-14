@@ -41,6 +41,6 @@ for MOD in "${MODS[@]}"; do
 		git add $TARGET
 
 		# Commit! (skip pre-commit checks)
-		git ci -nm "Apply codemod $MOD"
+		git commit -nm "Apply codemod $MOD"
 	fi
 done
