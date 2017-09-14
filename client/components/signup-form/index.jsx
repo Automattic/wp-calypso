@@ -269,6 +269,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = () => {
+		const data = this.getUserData();
+		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+			return;
+		}
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
