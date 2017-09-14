@@ -306,7 +306,7 @@ const PluginsBrowser = React.createClass( {
 			return null;
 		}
 
-		const site = this.props.site ? '/' + this.props.site : '';
+		const site = this.props.siteSlug ? '/' + this.props.siteSlug : '';
 		return (
 			<HeaderButton
 				icon="cog"
@@ -325,8 +325,8 @@ const PluginsBrowser = React.createClass( {
 			return null;
 		}
 
-		const { site, translate } = this.props;
-		const uploadUrl = '/plugins/upload' + ( site ? '/' + site : '' );
+		const { siteSlug, translate } = this.props;
+		const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 
 		return (
 			<HeaderButton
@@ -434,7 +434,6 @@ const PluginsBrowser = React.createClass( {
 export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
 		return {
 			sitePlan: getSitePlan( state, selectedSiteId ),
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
@@ -445,7 +444,7 @@ export default connect(
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
-			sites,
+			sites: getSelectedOrAllSitesJetpackCanManage( state ),
 		};
 	},
 	{
