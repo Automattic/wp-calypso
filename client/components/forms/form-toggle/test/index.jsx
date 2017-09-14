@@ -59,7 +59,7 @@ describe( 'FormToggle', function() {
 				/>,
 			);
 
-			toggle.find( '.form-toggle__switch' ).simulate( 'click', { preventDefault() {} } );
+			toggle.find( '.form-toggle__switch' ).simulate( 'click' );
 		} );
 
 		it( 'should not be disabled when disabled is false', function() {
