@@ -1,0 +1,19 @@
+.confirm-disconnection__card {
+		width: 70%;
+		margin: auto;
+
+		@include breakpoint( "<480px" ) {
+			padding: 24px;
+			width: 300px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 2em;
+			max-width: 500px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: 17px;
+			max-width: 800px;
+		}
+	}
