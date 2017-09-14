@@ -1,36 +1,34 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { assign, noop } from 'lodash';
 
-export default React.createClass( {
-	displayName: 'TrackInputChanges',
+export default class TrackInputChanges extends Component {
+	static displayName = 'TrackInputChanges';
 
-	propTypes: {
+	static propTypes = {
 		onNewValue: React.PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onNewValue: noop
-		};
-	},
+	static defaultProps = {
+		onNewValue: noop
+	};
 
 	componentWillMount() {
 		this.inputEdited = false;
-	},
+	}
 
-	onInputChange( /*event*/ ) {
+	onInputChange = () => {
 		this.inputEdited = true;
-	},
+	};
 
-	onInputBlur( event ) {
+	onInputBlur = event => {
 		if ( this.inputEdited ) {
 			this.props.onNewValue( event );
 			this.inputEdited = false;
 		}
-	},
+	};
 
 	render() {
 		// Multiple children not supported
@@ -53,4 +51,4 @@ export default React.createClass( {
 
 		return React.cloneElement( child, props );
 	}
-} );
+}

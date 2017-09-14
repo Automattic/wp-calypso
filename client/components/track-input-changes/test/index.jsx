@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -22,19 +22,19 @@ const spies = {
 	onBlur: null
 };
 
-const DummyInput = React.createClass( {
-	triggerChange( value ) {
+class DummyInput extends Component {
+	triggerChange = value => {
 		this.props.onChange( { target: this, value } );
-	},
+	};
 
-	triggerBlur() {
+	triggerBlur = () => {
 		this.props.onBlur( { target: this } );
-	},
+	};
 
 	render() {
 		return <div />;
 	}
-} );
+}
 
 describe( 'TrackInputChanges#onNewValue', function() {
 	let tree, dummyInput, container;
