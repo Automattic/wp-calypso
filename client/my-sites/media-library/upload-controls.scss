@@ -1,0 +1,61 @@
+.media-library__upload-controls-container {
+	display: flex;
+}
+
+.media-library__upload-controls-header {
+	.section-header__label {
+		color: darken( $gray, 10% );
+		font-weight: 600;
+		font-size: 12px;
+	}
+}
+
+.media-library__upload-controls-option {
+	display: flex;
+	align-items: center;
+
+	svg {
+		color: $gray;
+	}
+}
+
+.media-library__upload-controls-option-name {
+	flex-grow: 1;
+	margin: 0 14px;
+}
+
+.media-library__upload-controls-file-input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0;
+	cursor: pointer;
+
+	&::-webkit-file-upload-button {
+		cursor: pointer; /* webkit needs this to change cursor for file type input. */
+	}
+}
+
+.media-library__upload-controls-file-anchor {
+	position: relative;
+	text-decoration: underline;
+}
+
+.media-library__upload-controls-drop-zone-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex-grow: 1;
+	margin: 0 12px 12px;
+	border: 3px $gray dashed;
+	border-radius: 5px;
+	color: $gray;
+
+	h3 {
+		font-size: 22px;
+		font-weight: 300;
+	}
+}
