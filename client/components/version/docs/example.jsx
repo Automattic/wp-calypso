@@ -1,19 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import Version from 'components/version';
 
-export default React.createClass( {
-
-	displayName: 'Version',
-
-	mixins: [ PureRenderMixin ],
+export default class extends PureComponent {
+	static displayName = 'Version';
 
 	render() {
 		return (
@@ -23,4 +19,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
