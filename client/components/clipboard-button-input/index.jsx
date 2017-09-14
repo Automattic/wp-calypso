@@ -22,6 +22,15 @@ class ClipboardButtonInputExport extends React.Component {
 			disabled: false
 		};
 	}
+	static propTypes = {
+		value: PropTypes.string,
+		disabled: PropTypes.bool,
+		className: PropTypes.string,
+		hideHttp: PropTypes.bool,
+		moment: PropTypes.func,
+		numberFormat: PropTypes.func,
+		translate: PropTypes.func,
+	};
 
 	static defaultProps = {
 		value: ''
@@ -57,7 +66,7 @@ class ClipboardButtonInputExport extends React.Component {
 		return (
 			<span className={ classes }>
 				<FormTextInput
-					{ ...omit( this.props, 'className', 'hideHttp' ) }
+					{ ...omit( this.props, 'className', 'hideHttp', 'moment', 'numberFormat', 'translate' ) }
 					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
@@ -75,13 +84,5 @@ class ClipboardButtonInputExport extends React.Component {
 		);
 	}
 }
-
-ClipboardButtonInputExport.propTypes = {
-	value: PropTypes.string,
-	disabled: PropTypes.bool,
-	className: PropTypes.string,
-	hideHttp: PropTypes.bool,
-	translate: PropTypes.func
-};
 
 export default localize( ClipboardButtonInputExport );
