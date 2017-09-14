@@ -45,7 +45,8 @@ export default class FormToggle extends PureComponent {
 		this.props.onKeyDown( event );
 	};
 
-	onClick = () => {
+	onClick = event => {
+		event.stopPropagation();
 		if ( ! this.props.disabled ) {
 			this.props.onChange( ! this.props.checked );
 		}
