@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { isEqual, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -16,8 +17,8 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 /**
  * Component
  */
-export const ThemesList = React.createClass( {
-
+export const ThemesList = createReactClass( {
+	displayName: 'ThemesList',
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
 	propTypes: {
@@ -85,7 +86,7 @@ export const ThemesList = React.createClass( {
 		} );
 	},
 
-	// Invisible trailing items keep all elements same width in flexbox grid.
+    // Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
 		return times( NUM_SPACERS, function( i ) {

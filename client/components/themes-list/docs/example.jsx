@@ -25,14 +25,14 @@ const demoThemes = [ {
 	actionLabel: 'Click Action Theme 3',
 } ];
 
-export default React.createClass( {
-	displayName: 'ThemesListExample',
+export default class extends React.Component {
+    static displayName = 'ThemesListExample';
 
-	getActionLabel( theme ) {
+	getActionLabel = theme => {
 		return theme.actionLabel;
-	},
+	};
 
-	getButtonOptions( themeId ) {
+	getButtonOptions = themeId => {
 		return {
 			action1: {
 				label: 'Menu Item 1',
@@ -47,11 +47,11 @@ export default React.createClass( {
 				}
 			}
 		}
-	},
+	};
 
-	themeScreenshotClick( themeId, index ) {
+	themeScreenshotClick = (themeId, index) => {
 		console.log( `Theme ${ themeId } at ${ index } clicked` );
-	},
+	};
 
 	render() {
 		return (
@@ -63,4 +63,4 @@ export default React.createClass( {
 			/>
 		);
 	}
-} );
+}
