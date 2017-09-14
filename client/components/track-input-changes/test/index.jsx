@@ -11,7 +11,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 /**
  * Internal dependencies
  */
-var TrackInputChanges = require( '../' );
+import TrackInputChanges from '../';
 
 /**
  * Module variables
@@ -50,7 +50,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	beforeEach( function() {
-		for ( let spy in spies ) {
+		for ( const spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
 		tree = ReactDom.render(
