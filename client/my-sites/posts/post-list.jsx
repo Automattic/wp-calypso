@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
 import { debounce, isEqual, omit } from 'lodash';
@@ -11,24 +13,29 @@ import { debounce, isEqual, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Post = require( './post' ),
-	PostPlaceholder = require( './post-placeholder' ),
-	actions = require( 'lib/posts/actions' ),
-	EmptyContent = require( 'components/empty-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	NoResults = require( 'my-sites/no-results' ),
-	route = require( 'lib/route' ),
-	mapStatus = route.mapPostStatus;
+import PostListFetcher from 'components/post-list-fetcher';
+
+import Post from './post';
+import PostPlaceholder from './post-placeholder';
+import actions from 'lib/posts/actions';
+import EmptyContent from 'components/empty-content';
+import InfiniteList from 'components/infinite-list';
+import NoResults from 'my-sites/no-results';
+import route from 'lib/route';
+
+/**
+ * Internal dependencies
+ */
+const mapStatus = route.mapPostStatus;
 
 import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-var GUESSED_POST_HEIGHT = 250;
+const GUESSED_POST_HEIGHT = 250;
 
-var PostList = React.createClass( {
+const PostList = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
@@ -63,7 +70,7 @@ var PostList = React.createClass( {
 	}
 } );
 
-var Posts = React.createClass( {
+const Posts = React.createClass( {
 
 	propTypes: {
 		author: React.PropTypes.number,
@@ -129,7 +136,7 @@ var Posts = React.createClass( {
 	},
 
 	afterResize: function() {
-		var arePostsAtFullWidth = window.innerWidth >= 960;
+		const arePostsAtFullWidth = window.innerWidth >= 960;
 
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
 			this.setState( {
@@ -149,7 +156,7 @@ var Posts = React.createClass( {
 	},
 
 	getNoContentMessage: function() {
-		var attributes, newPostLink;
+		let attributes, newPostLink;
 
 		if ( this.props.search ) {
 			return <NoResults
@@ -258,7 +265,7 @@ var Posts = React.createClass( {
 	},
 
 	render: function() {
-		var posts = this.props.posts,
+		let posts = this.props.posts,
 			placeholderCount = 1,
 			placeholders = [],
 			postList,
