@@ -131,5 +131,6 @@ export function sharePostSuccessMessage( state, siteId, postId ) {
 }
 
 export function sharePostFailure( state, siteId, postId ) {
-	return ( get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true );
+	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'success' ] ) === false &&
+		!! get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ] );
 }

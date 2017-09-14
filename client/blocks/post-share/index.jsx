@@ -85,7 +85,7 @@ class PostShare extends Component {
 
 		// connect prps
 		connections: PropTypes.array,
-		failed: PropTypes.bool,
+		failure: PropTypes.bool,
 		hasFetchedConnections: PropTypes.bool,
 		hasRepublicizeFeature: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
@@ -438,7 +438,7 @@ class PostShare extends Component {
 		if ( failure ) {
 			return (
 				<Notice status="is-error" onDismissClick={ this.dismiss }>
-					{ translate( 'Something went wrong. Please don\'t be mad.' ) }
+					{ translate( 'Something went wrong. Please try again later.' ) }
 				</Notice>
 			);
 		}
@@ -640,7 +640,7 @@ export default connect(
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
 			schedulingFailed: isSchedulingPublicizeShareActionError( state, siteId, postId ),
-			failed: sharePostFailure( state, siteId, postId ),
+			failure: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
 			premiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_PREMIUM ),
