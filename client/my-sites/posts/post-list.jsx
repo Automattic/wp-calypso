@@ -1,23 +1,17 @@
 /**
  * External dependencies
  */
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-
-import React from 'react';
-
-import { localize } from 'i18n-calypso';
-
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:posts' );
-
 import { connect } from 'react-redux';
 import { debounce, isEqual, omit } from 'lodash';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import PostListFetcher from 'components/post-list-fetcher';
-
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
 import actions from 'lib/posts/actions';
@@ -25,20 +19,17 @@ import EmptyContent from 'components/empty-content';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
 import route from 'lib/route';
-
-/**
- * Internal dependencies
- */
-const mapStatus = route.mapPostStatus;
-
 import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+const debug = debugFactory( 'calypso:my-sites:posts' );
+const mapStatus = route.mapPostStatus;
+
 const GUESSED_POST_HEIGHT = 250;
 
-class PostList extends React.PureComponent {
+class PostList extends PureComponent {
 	static propTypes = {
 		context: PropTypes.object,
 		search: PropTypes.string,
@@ -155,7 +146,7 @@ const Posts = localize( class extends React.Component {
 
 		if ( this.props.search ) {
 			return (
-			    <NoResults
+				<NoResults
 					image="/calypso/images/posts/illustration-posts.svg"
 					text={
 						this.props.translate( 'No posts match your search for {{searchTerm/}}.', {
@@ -173,38 +164,38 @@ const Posts = localize( class extends React.Component {
 					title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
 					line: this.props.translate( 'Please check your internet connection.' )
 				};
-			} else {
-				switch ( this.props.statusSlug ) {
-					case 'drafts':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any drafts.' ),
-							line: this.props.translate( 'Would you like to create one?' ),
-							action: this.props.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-						break;
-					case 'scheduled':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any scheduled posts.' ),
-							line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
-							action: this.props.translate( 'Edit Drafts' ),
-							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
-						};
-						break;
-					case 'trashed':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.props.translate( 'Everything you write is solid gold.' )
-						};
-						break;
-					default:
-						attributes = {
-							title: this.props.translate( 'You haven\'t published any posts yet.' ),
-							line: this.props.translate( 'Would you like to publish your first post?' ),
-							action: this.props.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-				}
+			}
+
+			switch ( this.props.statusSlug ) {
+				case 'drafts':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any drafts.' ),
+						line: this.props.translate( 'Would you like to create one?' ),
+						action: this.props.translate( 'Start a Post' ),
+						actionURL: newPostLink
+					};
+					break;
+				case 'scheduled':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any scheduled posts.' ),
+						line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
+						action: this.props.translate( 'Edit Drafts' ),
+						actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
+					};
+					break;
+				case 'trashed':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
+						line: this.props.translate( 'Everything you write is solid gold.' )
+					};
+					break;
+				default:
+					attributes = {
+						title: this.props.translate( 'You haven\'t published any posts yet.' ),
+						line: this.props.translate( 'Would you like to publish your first post?' ),
+						action: this.props.translate( 'Start a Post' ),
+						actionURL: newPostLink
+					};
 			}
 		}
 
@@ -246,7 +237,7 @@ const Posts = localize( class extends React.Component {
 
 		if ( index === 2 && this.props.selectedSiteId && ! this.props.statusSlug ) {
 			return (
-			    <div key={ post.global_ID }>
+				<div key={ post.global_ID }>
 					<UpgradeNudge
 						title={ this.props.translate( 'No Ads with WordPress.com Premium' ) }
 						message={ this.props.translate( 'Prevent ads from showing on your site.' ) }
@@ -256,15 +247,14 @@ const Posts = localize( class extends React.Component {
 					{ renderedPost }
 				</div>
 			);
-		} else {
-			return renderedPost;
 		}
+		return renderedPost;
 	};
 
 	render() {
-		let posts = this.props.posts,
-			placeholderCount = 1,
-			placeholders = [],
+		const { posts } = this.props;
+		const placeholderCount = 1;
+		let placeholders = [],
 			postList,
 			i;
 
