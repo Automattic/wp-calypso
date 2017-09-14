@@ -173,6 +173,7 @@ function getDefaultContext( request ) {
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined ? true : false;
+	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -187,6 +188,10 @@ function getDefaultContext( request ) {
 		prideLocations.indexOf( '*' ) > -1 ||
 		prideLocations.indexOf( geoLocation ) > -1 ) {
 		bodyClasses.push( 'pride' );
+	}
+
+	if ( request.context.sectionCss ) {
+		sectionCss = getHashedUrl( 'sections/' + request.context.sectionCss + '.css' );
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -206,6 +211,7 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
+		sectionCss,
 	} );
 
 	context.app = {
