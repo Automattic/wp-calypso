@@ -104,7 +104,7 @@ class PostShare extends Component {
 	};
 
 	state = {
-		message: PostMetadata.publicizeMessage( this.props.post ),
+		message: PostMetadata.publicizeMessage( this.props.post ) || '',
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
