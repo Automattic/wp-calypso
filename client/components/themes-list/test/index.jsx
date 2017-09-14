@@ -17,8 +17,8 @@ describe( 'ThemesList', function() {
 	useMockery( mockery => {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		mockery.registerMock( 'components/pulsing-dot', React.createClass( { render: () => <div /> } ) );
-		mockery.registerMock( './more-button', React.createClass( { render: () => <div /> } ) );
+		mockery.registerMock( 'components/pulsing-dot', () => <div /> );
+		mockery.registerMock( './more-button', () => <div /> );
 		ThemesList = require( '../' ).ThemesList;
 	} );
 
