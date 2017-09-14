@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -9,11 +10,11 @@ class Version extends Component {
 	static displayName = 'Version';
 
 	static propTypes = {
-		version: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number,
+		version: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number,
 		] ).isRequired,
-		icon: React.PropTypes.string
+		icon: PropTypes.string
 	};
 
 	renderIcon = () => {
