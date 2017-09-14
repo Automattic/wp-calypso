@@ -1,6 +1,10 @@
 var config = require( 'config' ),
 	utils = require( './utils' );
 
+function getCssUrl( filename ) {
+	return utils.getHashedUrl( 'sections' + ( config( 'rtl' ) ? '-rtl' : '' ) + '/' + filename + '.css' );
+}
+
 function getSectionsModule( sections ) {
 	var dependencies,
 		loadSection = '',
@@ -45,14 +49,13 @@ function getSectionsModule( sections ) {
 			'		' + sectionLoaders,
 			'	}',
 			'};',
-			'function loadCSS( section ) {',
-			'	if ( section.css ) {',
-			'		var link = document.createElement( "link" );',
-			'		link.setAttribute( "rel", "stylesheet" );',
-			'		link.setAttribute( "type", "text/css" );',
-			'		link.setAttribute( "href", "/calypso/sections/" + section.css + ".css" );', // TODO hashing and RTL
-			'		document.getElementsByTagName( "head" )[ 0 ].appendChild( link )',
-			'	}',
+			'\n',
+			'function loadCSS( cssUrl ) {',
+			'	var link = document.createElement( "link" );',
+			'	link.setAttribute( "rel", "stylesheet" );',
+			'	link.setAttribute( "type", "text/css" );',
+			'	link.setAttribute( "href", cssUrl );',
+			'	document.getElementsByTagName( "head" )[ 0 ].appendChild( link )',
 			'}',
 			'\n',
 		].join( '\n' );
@@ -113,7 +116,7 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-		'			loadCSS( ' + JSON.stringify( section ) + ' );',
+		'			' + ( section.css ? 'loadCSS( "' + getCssUrl( section.css ) + '" )' : '' ) + '',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
