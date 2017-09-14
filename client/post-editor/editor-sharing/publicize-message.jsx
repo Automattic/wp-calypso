@@ -65,12 +65,14 @@ export default React.createClass( {
 	},
 
 	renderTextarea: function() {
+		const placeholder = this.props.preview || this.props.translate( 'Write a message for your audience here.' );
+
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
 					disabled={ this.props.disabled }
 					value={ this.props.message }
-					placeholder={ this.props.preview }
+					placeholder={ placeholder }
 					countPlaceholderLength={ true }
 					onChange={ this.onChange }
 					showRemainingCharacters={ true }
@@ -85,7 +87,7 @@ export default React.createClass( {
 				<FormTextarea
 					disabled={ this.props.disabled }
 					value={ this.props.message }
-					placeholder={ this.props.preview }
+					placeholder={ placeholder }
 					onChange={ this.onChange }
 					className="editor-sharing__message-input" />
 			);
