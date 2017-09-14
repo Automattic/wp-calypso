@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
 
-export default class extends React.Component {
+export default class UserItem extends Component {
 	static displayName = 'UserItem';
 
 	static propTypes = {
@@ -18,8 +17,8 @@ export default class extends React.Component {
 	};
 
 	render() {
-		let user = this.props.user || null,
-			name = user ? user.name : '';
+		const user = this.props.user || null;
+		const name = user ? user.name : '';
 		return (
 			<div className="user" title={ name }>
 				<Gravatar size={ 26 } user={ user } />
