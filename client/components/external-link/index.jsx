@@ -1,40 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-
-	displayName: 'ExternalLink',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		className: React.PropTypes.string,
-		href: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		icon: React.PropTypes.bool,
-		iconSize: React.PropTypes.number,
-		target: React.PropTypes.string,
-		showIconFirst: React.PropTypes.bool,
-		iconClassName: React.PropTypes.string,
-	},
-
-	getDefaultProps() {
-		return {
-			iconSize: 18,
-			showIconFirst: false
-		};
-	},
-
+class ExternalLink extends Component {
 	render() {
-		const classes = classnames( 'external-link', this.props.className, {
-			'has-icon': !! this.props.icon,
-		} );
+		const classes = classnames(
+			'external-link',
+			this.props.className,
+			{
+				'has-icon': !! this.props.icon,
+			}
+		);
 		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ), {
 			className: classes,
 			rel: 'external'
@@ -54,4 +35,22 @@ export default React.createClass( {
 			</a>
 		);
 	}
-} );
+}
+
+ExternalLink.defaultProps = {
+	iconSize: 18,
+	showIconFirst: false
+};
+
+ExternalLink.propTypes = {
+	className: PropTypes.string,
+	href: PropTypes.string,
+	onClick: PropTypes.func,
+	icon: PropTypes.bool,
+	iconSize: PropTypes.number,
+	target: PropTypes.string,
+	showIconFirst: PropTypes.bool,
+	iconClassName: PropTypes.string,
+};
+
+export default ExternalLink;
