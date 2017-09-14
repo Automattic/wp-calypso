@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -37,7 +38,6 @@ const Masterbar = ( {
 							</ExternalLink>
 						</InfoPopover>
 					</div>
-
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="masterbar"

@@ -10,6 +10,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
+import Masterbar from './masterbar';
 import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -31,7 +32,7 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 
@@ -296,6 +297,8 @@ class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			isJetpackSite,
+			jetpackMasterbarSupported,
 			siteSlug,
 			translate
 		} = this.props;
@@ -354,6 +357,14 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
+				
+				<Masterbar
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+				/>
+				
+
+
 
 				{
 					! siteIsJetpack && <div className="site-settings__footer-credit-container">
@@ -414,6 +425,8 @@ const connectComponent = connect(
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
+			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 		};
 	},
 	null,
