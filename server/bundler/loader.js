@@ -50,7 +50,7 @@ function getSectionsModule( sections ) {
 			'		var link = document.createElement( "link" );',
 			'		link.setAttribute( "rel", "stylesheet" );',
 			'		link.setAttribute( "type", "text/css" );',
-			'		link.setAttribute( "href", "/calypso/sections/" + section.css + ".css" );', // TODO hashing
+			'		link.setAttribute( "href", "/calypso/sections/" + section.css + ".css" );', // TODO hashing and RTL
 			'		document.getElementsByTagName( "head" )[ 0 ].appendChild( link )',
 			'	}',
 			'}',

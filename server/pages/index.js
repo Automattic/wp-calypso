@@ -196,10 +196,9 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context.sectionCss ) {
+		console.log( isRTL );
 		if ( isRTL ) {
-			sectionCss = getHashedUrl( 'sections/' + request.context.sectionCss + '-rtl.css' );
-		} else if ( isDebug ) {
-			sectionCss = getHashedUrl( 'sections-debug/' + request.context.sectionCss + '.css' );
+			sectionCss = getHashedUrl( 'sections-rtl/' + request.context.sectionCss + '.css' );
 		} else {
 			sectionCss = getHashedUrl( 'sections/' + request.context.sectionCss + '.css' );
 		}
