@@ -146,11 +146,9 @@ function renderPluginsBrowser( context ) {
 
 	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
-			site: site ? site.slug : null,
 			path: context.path,
 			category,
-			sites,
-			search: searchTerm
+			search: searchTerm,
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
