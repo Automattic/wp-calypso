@@ -94,6 +94,7 @@
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"manage/site-settings/disconnect-flow": true,
+		"manage/site-settings/disconnect-flow-confirmation": true,
 		"manage/stats": true,
 		"manage/stats/podcasts": true,
 		"manage/themes": true,
