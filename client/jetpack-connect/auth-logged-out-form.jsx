@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import HelpButton from './help-button';
 import { login } from 'lib/paths';
+import LoginFooter from 'login/wp-login/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -131,6 +132,7 @@ class LoggedOutForm extends Component {
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }
+				<LoginFooter />
 			</div>
 		);
 	}
