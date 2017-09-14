@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -17,9 +17,8 @@ import PulsingDot from 'components/pulsing-dot';
 /**
  * Component
  */
-export const Theme = React.createClass( {
-
-	propTypes: {
+export class Theme extends Component {
+	static propTypes = {
 		theme: React.PropTypes.shape( {
 			// Theme ID (theme-slug)
 			id: React.PropTypes.string.isRequired,
@@ -61,7 +60,15 @@ export const Theme = React.createClass( {
 		actionLabel: React.PropTypes.string,
 		// Translate function,
 		translate: React.PropTypes.func,
-	},
+	};
+
+	static defaultProps = {
+		isPlaceholder: false,
+		buttonContents: {},
+		onMoreButtonClick: noop,
+		actionLabel: '',
+		active: false
+	};
 
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
@@ -72,31 +79,21 @@ export const Theme = React.createClass( {
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
-	},
+	}
 
-	getDefaultProps() {
-		return ( {
-			isPlaceholder: false,
-			buttonContents: {},
-			onMoreButtonClick: noop,
-			actionLabel: '',
-			active: false
-		} );
-	},
-
-	onScreenshotClick() {
+	onScreenshotClick = () => {
 		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return (
 			<Card className="theme is-placeholder">
 				<div className="theme__content" />
 			</Card>
 		);
-	},
+	};
 
-	renderHover() {
+	renderHover = () => {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
@@ -108,9 +105,9 @@ export const Theme = React.createClass( {
 				</a>
 			);
 		}
-	},
+	};
 
-	renderInstalling() {
+	renderInstalling = () => {
 		if ( this.props.installing ) {
 			return (
 				<div className="theme__installing" >
@@ -118,7 +115,7 @@ export const Theme = React.createClass( {
 				</div>
 			);
 		}
-	},
+	};
 
 	render() {
 		const {
@@ -192,6 +189,6 @@ export const Theme = React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
 
 export default localize( Theme );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isFunction, map } from 'lodash';
 
@@ -15,7 +15,7 @@ import { isOutsideCalypso } from 'lib/url';
 /**
  * Component
  */
-class ThemeMoreButton extends React.Component {
+class ThemeMoreButton extends Component {
 
 	constructor( props ) {
 		super( props );
