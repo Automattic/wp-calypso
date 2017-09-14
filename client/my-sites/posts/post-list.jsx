@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:posts' );
@@ -70,7 +72,7 @@ const PostList = React.createClass( {
 	}
 } );
 
-const Posts = React.createClass( {
+const Posts = localize( React.createClass( {
 
 	propTypes: {
 		author: React.PropTypes.number,
@@ -159,52 +161,54 @@ const Posts = React.createClass( {
 		let attributes, newPostLink;
 
 		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/posts/illustration-posts.svg"
-				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
-						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} )	}
-			/>;
+			return (
+			    <NoResults
+					image="/calypso/images/posts/illustration-posts.svg"
+					text={
+						this.props.translate( 'No posts match your search for {{searchTerm/}}.', {
+							components: {
+								searchTerm: <em>{ this.props.search }</em>
+							}
+						} )	}
+				/>
+			);
 		} else {
 			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+					line: this.props.translate( 'Please check your internet connection.' )
 				};
 			} else {
 				switch ( this.props.statusSlug ) {
 					case 'drafts':
 						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Post' ),
+							title: this.props.translate( 'You don\'t have any drafts.' ),
+							line: this.props.translate( 'Would you like to create one?' ),
+							action: this.props.translate( 'Start a Post' ),
 							actionURL: newPostLink
 						};
 						break;
 					case 'scheduled':
 						attributes = {
-							title: this.translate( 'You don\'t have any scheduled posts.' ),
-							line: this.translate( 'Would you like to schedule a draft to publish?' ),
-							action: this.translate( 'Edit Drafts' ),
+							title: this.props.translate( 'You don\'t have any scheduled posts.' ),
+							line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
+							action: this.props.translate( 'Edit Drafts' ),
 							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
 						};
 						break;
 					case 'trashed':
 						attributes = {
-							title: this.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
+							title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
+							line: this.props.translate( 'Everything you write is solid gold.' )
 						};
 						break;
 					default:
 						attributes = {
-							title: this.translate( 'You haven\'t published any posts yet.' ),
-							line: this.translate( 'Would you like to publish your first post?' ),
-							action: this.translate( 'Start a Post' ),
+							title: this.props.translate( 'You haven\'t published any posts yet.' ),
+							line: this.props.translate( 'Would you like to publish your first post?' ),
+							action: this.props.translate( 'Start a Post' ),
 							actionURL: newPostLink
 						};
 				}
@@ -249,10 +253,10 @@ const Posts = React.createClass( {
 
 		if ( index === 2 && this.props.selectedSiteId && ! this.props.statusSlug ) {
 			return (
-				<div key={ post.global_ID }>
+			    <div key={ post.global_ID }>
 					<UpgradeNudge
-						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-						message={ this.translate( 'Prevent ads from showing on your site.' ) }
+						title={ this.props.translate( 'No Ads with WordPress.com Premium' ) }
+						message={ this.props.translate( 'Prevent ads from showing on your site.' ) }
 						feature="no-adverts"
 						event="published_posts_no_ads"
 					/>
@@ -310,7 +314,7 @@ const Posts = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
 
 export default connect(
 	( state ) => ( {
