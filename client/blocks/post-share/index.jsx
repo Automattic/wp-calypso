@@ -438,7 +438,7 @@ class PostShare extends Component {
 		if ( failure ) {
 			return (
 				<Notice status="is-error" onDismissClick={ this.dismiss }>
-					{ translate( 'Something went wrong. Please try again later.' ) }
+					{ translate( 'Something went wrong. Please try again.' ) }
 				</Notice>
 			);
 		}
