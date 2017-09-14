@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
 /**
@@ -12,10 +13,10 @@ import Gridicon from 'gridicons';
 
 class VerticalNavItem extends Component {
 	static propTypes = {
-		external: React.PropTypes.bool,
-		isPlaceholder: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		path: React.PropTypes.string
+		external: PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		onClick: PropTypes.func,
+		path: PropTypes.string
 	};
 
 	static defaultProps = {
