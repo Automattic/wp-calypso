@@ -142,6 +142,7 @@ const Posts = localize( class extends React.Component {
 	};
 
 	getNoContentMessage = () => {
+		const { translate } = this.props;
 		let attributes;
 
 		if ( this.props.search ) {
@@ -149,7 +150,7 @@ const Posts = localize( class extends React.Component {
 				<NoResults
 					image="/calypso/images/posts/illustration-posts.svg"
 					text={
-						this.props.translate( 'No posts match your search for {{searchTerm/}}.', {
+						translate( 'No posts match your search for {{searchTerm/}}.', {
 							components: {
 								searchTerm: <em>{ this.props.search }</em>
 							}
@@ -162,39 +163,39 @@ const Posts = localize( class extends React.Component {
 
 		if ( this.props.hasRecentError ) {
 			attributes = {
-				title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-				line: this.props.translate( 'Please check your internet connection.' )
+				title: translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+				line: translate( 'Please check your internet connection.' )
 			};
 		}
 
 		switch ( this.props.statusSlug ) {
 			case 'drafts':
 				attributes = {
-					title: this.props.translate( 'You don\'t have any drafts.' ),
-					line: this.props.translate( 'Would you like to create one?' ),
-					action: this.props.translate( 'Start a Post' ),
+					title: translate( 'You don\'t have any drafts.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Post' ),
 					actionURL: newPostLink
 				};
 				break;
 			case 'scheduled':
 				attributes = {
-					title: this.props.translate( 'You don\'t have any scheduled posts.' ),
-					line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
-					action: this.props.translate( 'Edit Drafts' ),
+					title: translate( 'You don\'t have any scheduled posts.' ),
+					line: translate( 'Would you like to schedule a draft to publish?' ),
+					action: translate( 'Edit Drafts' ),
 					actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
 				};
 				break;
 			case 'trashed':
 				attributes = {
-					title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
-					line: this.props.translate( 'Everything you write is solid gold.' )
+					title: translate( 'You don\'t have any posts in your trash folder.' ),
+					line: translate( 'Everything you write is solid gold.' )
 				};
 				break;
 			default:
 				attributes = {
-					title: this.props.translate( 'You haven\'t published any posts yet.' ),
-					line: this.props.translate( 'Would you like to publish your first post?' ),
-					action: this.props.translate( 'Start a Post' ),
+					title: translate( 'You haven\'t published any posts yet.' ),
+					line: translate( 'Would you like to publish your first post?' ),
+					action: translate( 'Start a Post' ),
 					actionURL: newPostLink
 				};
 		}
