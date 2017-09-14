@@ -14,6 +14,7 @@ import ReactDom from 'react-dom';
 import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
+import ConfirmDisconnection from './confirm-disconnection';
 import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -132,6 +133,10 @@ const controller = {
 		}
 
 		renderPage( context, <ThemeSetup /> );
+	},
+
+	confirmDisconnection( context ) {
+		renderPage( context, <ConfirmDisconnection /> );
 	},
 
 	manageConnection( context ) {
