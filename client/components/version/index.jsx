@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+const Version = React.createClass( {
 
 	displayName: 'Version',
 
@@ -26,8 +27,10 @@ export default React.createClass( {
 		return this.props.version
 			? <div className="version">
 				{ this.renderIcon() }
-				{ this.translate( 'Version %s', { args: this.props.version } ) }
+				{ this.props.translate( 'Version %s', { args: this.props.version } ) }
 			</div>
 			: null;
 	}
 } );
+
+export default localize( Version );
