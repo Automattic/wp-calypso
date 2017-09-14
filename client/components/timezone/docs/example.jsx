@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -10,21 +9,16 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Timezone from 'components/timezone';
 import Card from 'components/card';
 
-export default React.createClass( {
+export default class extends PureComponent {
+    static displayName = 'Timezone';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		timezone: 'America/Argentina/La_Rioja'
+	};
 
-	displayName: 'Timezone',
-
-	getInitialState() {
-		return {
-			timezone: 'America/Argentina/La_Rioja'
-		};
-	},
-
-	onTimezoneSelect( timezone ) {
+	onTimezoneSelect = timezone => {
 		this.setState( { timezone } );
-	},
+	};
 
 	render() {
 		return (
@@ -36,4 +30,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
