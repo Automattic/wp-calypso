@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -17,7 +18,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 
 class ReaderImportButton extends React.Component {
 	static propTypes = {
-		onProgress: React.PropTypes.func,
+		onProgress: PropTypes.func,
 	};
 
 	static defaultProps = {
