@@ -18,14 +18,13 @@ import actions from 'lib/posts/actions';
 import EmptyContent from 'components/empty-content';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
-import route from 'lib/route';
+import { mapPostStatus as mapStatus, sectionify } from 'lib/route';
 import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:posts' );
-const mapStatus = route.mapPostStatus;
 
 const GUESSED_POST_HEIGHT = 250;
 
@@ -232,7 +231,7 @@ const Posts = localize( class extends React.Component {
 				post={ post }
 				postImages={ postImages }
 				fullWidthPost={ this.state.postsAtFullWidth }
-				path={ route.sectionify( this.props.context.pathname ) }
+				path={ sectionify( this.props.context.pathname ) }
 			/>
 		);
 
