@@ -8,8 +8,8 @@ import React, { PureComponent } from 'react';
  */
 import Version from 'components/version';
 
-export default class extends PureComponent {
-	static displayName = 'Version';
+export default class VersionExample extends PureComponent {
+	static displayName = 'VersionExample';
 
 	render() {
 		return (

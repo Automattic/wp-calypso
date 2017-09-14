@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-export default class extends PureComponent {
+export default class WordPressLogo extends PureComponent {
 	static displayName = 'WordPressLogo';
 
 	static defaultProps = {
