@@ -430,7 +430,7 @@ class SimplePaymentsDialog extends Component {
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
-					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
+					illustration="/calypso/images/illustrations/type-e-commerce.svg"
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
 					action={
