@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 export default class extends PureComponent {
 	static displayName = 'WordPressLogo';
@@ -11,7 +12,7 @@ export default class extends PureComponent {
 	};
 
 	static propTypes = {
-		size: React.PropTypes.number
+		size: PropTypes.number
 	};
 
 	render() {
