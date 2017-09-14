@@ -81,6 +81,14 @@ export default function() {
 	);
 
 	page(
+		'/settings/confirm-disconnection/:site_id',
+		mySitesController.siteSelection,
+		mySitesController.navigation,
+		settingsController.setScroll,
+		controller.confirmDisconnection
+	);
+
+	page(
 		'/settings/manage-connection/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
