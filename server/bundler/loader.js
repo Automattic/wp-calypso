@@ -161,7 +161,7 @@ function requireTemplate( section ) {
 			'	}',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-			'	loadCSS( ' + JSON.stringify( section ) + ' );',
+			'	' + ( section.css ? 'loadCSS( "' + getCssUrl( section.css ) + '" )' : '' ) + '',
 			'	next();',
 			'} );\n'
 		] );
