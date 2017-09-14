@@ -40,7 +40,7 @@ describe( 'FormToggle', function() {
 				const toggle = shallow(
 					<FormToggle checked={ bool }
 						onChange={ noop } />
-        );
+				);
 				const toggleInput = toggle.find( '.form-toggle' );
 
 				assert( 0 < toggleInput.length, 'a form toggle was rendered' );
@@ -59,7 +59,7 @@ describe( 'FormToggle', function() {
 				/>,
 			);
 
-			toggle.find( '.form-toggle__switch' ).simulate( 'click' );
+			toggle.find( '.form-toggle__switch' ).simulate( 'click', { preventDefault() {} } );
 		} );
 
 		it( 'should not be disabled when disabled is false', function() {
