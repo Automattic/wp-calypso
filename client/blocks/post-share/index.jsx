@@ -226,7 +226,7 @@ class PostShare extends Component {
 			<PublicizeMessage
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
-				preview={ this.props.post.title }
+				preview={ this.props.translate( 'Write a message for your audience here.' ) }
 				requireCount={ requireCount }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength } />
