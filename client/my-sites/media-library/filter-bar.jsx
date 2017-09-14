@@ -51,7 +51,11 @@ export class MediaLibraryFilterBar extends Component {
 	};
 
 	getSearchPlaceholderText() {
-		const { filter, translate } = this.props;
+		const { filter, source, translate } = this.props;
+		if ( 'google_photos' === source ) {
+			return translate( 'Search your Google library…' );
+		}
+
 		switch ( filter ) {
 			case 'this-post':
 				return translate( 'Search media uploaded to this post…' );
