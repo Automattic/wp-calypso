@@ -148,6 +148,11 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderPlanStorage() {
+		//hide the plan storage when viewing external sources
+		if ( this.props.source ) {
+			return null;
+		}
+
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'plan-media-storage' };
 		return (
