@@ -3,14 +3,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	Gridicon = require( 'gridicons' );
+import Accordion from 'components/accordion';
+
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'AccordionExample',
