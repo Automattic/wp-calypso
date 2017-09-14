@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,9 +126,16 @@ export const Sites = React.createClass( {
 } );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
-	const path = ( rawPath === '/sites' )
-		? '/stats/insights'
-		: rawPath;
+	let path = rawPath;
+
+	if ( startsWith( rawPath, '/sites' ) ) {
+		path = '/stats/insights';
+	}
+
+	if ( startsWith( rawPath, '/settings' ) ) {
+		path = '/settings/general';
+	}
+
 	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
 };
 
