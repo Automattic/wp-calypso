@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -32,7 +33,7 @@ const CommentCount = ( { count, translate } ) => {
 };
 
 CommentCount.propTypes = {
-	count: React.PropTypes.number.isRequired,
+	count: PropTypes.number.isRequired,
 };
 
 export default localize( CommentCount );

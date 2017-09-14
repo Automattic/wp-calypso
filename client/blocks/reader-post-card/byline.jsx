@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { get, has, map, take, values } from 'lodash';
 import Gridicon from 'gridicons';
@@ -54,12 +55,12 @@ class TagLink extends React.Component {
 
 class PostByline extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		site: React.PropTypes.object,
-		feed: React.PropTypes.object,
-		isDiscoverPost: React.PropTypes.bool,
-		showSiteName: React.PropTypes.bool,
-		showAvatar: React.PropTypes.bool,
+		post: PropTypes.object.isRequired,
+		site: PropTypes.object,
+		feed: PropTypes.object,
+		isDiscoverPost: PropTypes.bool,
+		showSiteName: PropTypes.bool,
+		showAvatar: PropTypes.bool,
 	};
 
 	static defaultProps = {
