@@ -11,10 +11,16 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Count from 'components/count';
 import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
+import QuerySharePostActions from 'components/data/query-share-post-actions';
+import { SCHEDULED } from 'blocks/post-share/constants';
 import { userCan } from 'lib/posts/utils';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	getPostShareScheduledActions,
+	isPublicizeEnabled
+} from 'state/selectors';
 import { getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 
 const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
@@ -74,6 +80,7 @@ const getAvailableControls = props => {
 		if ( isEnabled( 'republicize' ) ) {
 			controls.main.push( {
 				className: 'share' + ( current === 'share' ? ' is-active' : '' ),
+				count: props.scheduledActionsCount,
 				disabled: ! props.isPublicizeEnabled,
 				icon: 'share',
 				onClick: onToggleShare,
@@ -174,8 +181,9 @@ const getControlElements = controls => controls.map( ( control, index ) =>
 			target={ control.target ? control.target : null }
 		>
 			<Gridicon icon={ control.icon } size={ 18 } />
-			<span>
+			<span className="posts__post-controls-text">
 				{ control.text }
+				{ control.count > 0 && <Count count={ control.count } /> }
 			</span>
 		</a>
 	</li>
@@ -190,6 +198,10 @@ export const PostControls = props => {
 
 	return (
 		<div className={ classes }>
+			<QuerySharePostActions
+				siteId={ props.siteId }
+				postId={ props.post.ID }
+				status={ SCHEDULED } />
 			{ more.length > 0 &&
 				<ul className="posts__post-controls post-controls__pane post-controls__more-options">
 					{ getControlElements( more ) }
@@ -224,5 +236,6 @@ PostControls.propTypes = {
 export default connect( ( state, { siteId, post } ) => ( {
 	isPreviewable: false !== isSitePreviewable( state, siteId ),
 	isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
+	scheduledActionsCount: getPostShareScheduledActions( state, siteId, post.ID ).length,
 	siteSlug: getSiteSlug( state, siteId ),
 } ) )( localize( PostControls ) );
