@@ -5,7 +5,6 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-import PureRenderMixin from 'react-pure-render/mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:posts' );
 
@@ -37,11 +36,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const GUESSED_POST_HEIGHT = 250;
 
-const PostList = React.createClass( {
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class PostList extends React.PureComponent {
+	static propTypes = {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
 		category: React.PropTypes.string,
@@ -50,9 +46,9 @@ const PostList = React.createClass( {
 		statusSlug: React.PropTypes.string,
 		siteId: React.PropTypes.number,
 		author: React.PropTypes.number
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<PostListFetcher
 				siteId={ this.props.siteId }
@@ -70,11 +66,10 @@ const PostList = React.createClass( {
 			</PostListFetcher>
 		);
 	}
-} );
+}
 
-const Posts = localize( React.createClass( {
-
-	propTypes: {
+const Posts = localize( class extends React.Component {
+	static propTypes = {
 		author: React.PropTypes.number,
 		context: React.PropTypes.object.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired,
@@ -88,37 +83,33 @@ const Posts = localize( React.createClass( {
 		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasRecentError: false,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			postImages: {},
-			posts: [],
-			trackScrollPage: function() {}
-		};
-	},
+	static defaultProps = {
+		hasRecentError: false,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		postImages: {},
+		posts: [],
+		trackScrollPage: function() {}
+	};
 
-	getInitialState: function() {
-		return {
-			postsAtFullWidth: window.innerWidth >= 960
-		};
-	},
+	state = {
+		postsAtFullWidth: window.innerWidth >= 960
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'Posts React component mounted.' );
 		this.debouncedAfterResize = debounce( this.afterResize, 300 );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate( nextProps ) {
 		if ( nextProps.loading !== this.props.loading ) {
 			return true;
 		}
@@ -135,9 +126,9 @@ const Posts = localize( React.createClass( {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	afterResize: function() {
+	afterResize = () => {
 		const arePostsAtFullWidth = window.innerWidth >= 960;
 
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
@@ -145,9 +136,9 @@ const Posts = localize( React.createClass( {
 				postsAtFullWidth: arePostsAtFullWidth
 			} );
 		}
-	},
+	};
 
-	fetchPosts: function( options ) {
+	fetchPosts = options => {
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
@@ -155,9 +146,9 @@ const Posts = localize( React.createClass( {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		actions.fetchNextPage();
-	},
+	};
 
-	getNoContentMessage: function() {
+	getNoContentMessage = () => {
 		let attributes, newPostLink;
 
 		if ( this.props.search ) {
@@ -226,19 +217,19 @@ const Posts = localize( React.createClass( {
 			illustration={ attributes.illustration }
 			illustrationWidth={ attributes.illustrationWidth }
 		/>;
-	},
+	};
 
-	getPostRef: function( post ) {
+	getPostRef = post => {
 		return post.global_ID;
-	},
+	};
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders = () => {
 		return (
 			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
 		);
-	},
+	};
 
-	renderPost: function( post, index ) {
+	renderPost = ( post, index ) => {
 		const postImages = this.props.postImages[ post.global_ID ];
 		const renderedPost = (
 			<Post
@@ -266,9 +257,9 @@ const Posts = localize( React.createClass( {
 		} else {
 			return renderedPost;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		let posts = this.props.posts,
 			placeholderCount = 1,
 			placeholders = [],
@@ -314,7 +305,7 @@ const Posts = localize( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+} );
 
 export default connect(
 	( state ) => ( {
