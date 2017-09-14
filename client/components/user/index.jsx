@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -12,7 +14,7 @@ export default class extends React.Component {
 	static displayName = 'UserItem';
 
 	static propTypes = {
-		user: React.PropTypes.object
+		user: PropTypes.object
 	};
 
 	render() {
