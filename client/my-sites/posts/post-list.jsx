@@ -100,7 +100,6 @@ const Posts = localize( class extends Component {
 		loading: PropTypes.bool.isRequired,
 		page: PropTypes.number.isRequired,
 		pathname: PropTypes.string.isRequired,
-		postImages: PropTypes.object.isRequired,
 		posts: PropTypes.array.isRequired,
 		search: PropTypes.string,
 		siteId: PropTypes.number,
@@ -113,7 +112,6 @@ const Posts = localize( class extends Component {
 		loading: false,
 		lastPage: false,
 		page: 0,
-		postImages: {},
 		posts: [],
 		trackScrollPage: function() {}
 	};
@@ -251,7 +249,8 @@ const Posts = localize( class extends Component {
 	};
 
 	renderPost = ( post, index ) => {
-		const postImages = this.props.postImages[ post.global_ID ];
+		const { canonical_image, featured_image } = post;
+		const postImages = { canonical_image, featured_image };
 		const renderedPost = (
 			<Post
 				ref={ post.global_ID }
