@@ -8,13 +8,14 @@ import React from 'react';
  */
 import Gravatar from 'components/gravatar';
 
-export default React.createClass( {
-	displayName: 'UserItem',
-	propTypes: {
-		user: React.PropTypes.object
-	},
+export default class extends React.Component {
+	static displayName = 'UserItem';
 
-	render: function() {
+	static propTypes = {
+		user: React.PropTypes.object
+	};
+
+	render() {
 		let user = this.props.user || null,
 			name = user ? user.name : '';
 		return (
@@ -26,4 +27,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
