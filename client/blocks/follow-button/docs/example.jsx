@@ -9,8 +9,8 @@ import React from 'react';
 import FollowButton from 'blocks/follow-button/button';
 import Card from 'components/card/compact';
 
-export default class extends React.PureComponent {
-	static displayName = 'FollowButton';
+export default class FollowButtonExample extends React.PureComponent {
+	static displayName = 'FollowButtonExample';
 
 	render() {
 		return (

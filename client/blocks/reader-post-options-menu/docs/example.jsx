@@ -8,8 +8,8 @@ import React from 'react';
  */
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
-export default class extends React.Component {
-	static displayName = 'ReaderPostOptionsMenu';
+export default class ReaderPostOptionsMenuExample extends React.Component {
+	static displayName = 'ReaderPostOptionsMenuExample';
 
 	render() {
 		const post = {

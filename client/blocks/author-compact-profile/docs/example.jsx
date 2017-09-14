@@ -9,8 +9,8 @@ import React from 'react';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import Card from 'components/card';
 
-export default class extends React.Component {
-	static displayName = 'AuthorCompactProfile';
+export default class AuthorCompactProfileExample extends React.Component {
+	static displayName = 'AuthorCompactProfileExample';
 
 	render() {
 		const author = {

@@ -9,7 +9,7 @@ import React from 'react';
 import CommentButton from 'blocks/comment-button';
 import Card from 'components/card';
 
-export default class extends React.Component {
+export default class CommentButtonExample extends React.Component {
 	static displayName = 'CommentButtonExample';
 
 	render() {

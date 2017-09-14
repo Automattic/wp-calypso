@@ -9,8 +9,8 @@ import React from 'react';
 import ReaderFullPostHeader from 'blocks/reader-full-post/header';
 import Card from 'components/card';
 
-export default class extends React.PureComponent {
-	static displayName = 'ReaderFullPostHeader';
+export default class ReaderFullPostHeaderExample extends React.PureComponent {
+	static displayName = 'ReaderFullPostHeaderExample';
 
 	render() {
 		const post = {
