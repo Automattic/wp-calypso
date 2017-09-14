@@ -10,7 +10,7 @@ import CommentButton from 'blocks/comment-button';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'CommentButtonExample';
+	static displayName = 'CommentButtonExample';
 
 	render() {
 		return (

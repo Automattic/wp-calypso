@@ -10,7 +10,7 @@ import FollowButton from 'blocks/follow-button/button';
 import Card from 'components/card/compact';
 
 export default class extends React.PureComponent {
-    static displayName = 'FollowButton';
+	static displayName = 'FollowButton';
 
 	render() {
 		return (

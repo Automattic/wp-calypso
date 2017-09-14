@@ -10,7 +10,7 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'ReaderSiteStreamLink';
+	static displayName = 'ReaderSiteStreamLink';
 
 	render() {
 		const feedId = 40474296;

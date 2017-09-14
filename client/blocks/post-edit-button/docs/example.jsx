@@ -10,7 +10,7 @@ import Card from 'components/card';
 import PostEditButton from 'blocks/post-edit-button';
 
 export default class extends React.PureComponent {
-    static displayName = 'PostEditButton';
+	static displayName = 'PostEditButton';
 
 	render() {
 		const post = { ID: 123, type: 'post' };

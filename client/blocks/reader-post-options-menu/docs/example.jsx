@@ -9,7 +9,7 @@ import React from 'react';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
 export default class extends React.Component {
-    static displayName = 'ReaderPostOptionsMenu';
+	static displayName = 'ReaderPostOptionsMenu';
 
 	render() {
 		const post = {

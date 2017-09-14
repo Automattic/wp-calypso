@@ -10,7 +10,7 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/header';
 import Card from 'components/card';
 
 export default class extends React.PureComponent {
-    static displayName = 'ReaderFullPostHeader';
+	static displayName = 'ReaderFullPostHeader';
 
 	render() {
 		const post = {

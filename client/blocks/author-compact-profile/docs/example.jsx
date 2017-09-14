@@ -10,7 +10,7 @@ import AuthorCompactProfile from 'blocks/author-compact-profile';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'AuthorCompactProfile';
+	static displayName = 'AuthorCompactProfile';
 
 	render() {
 		const author = {
