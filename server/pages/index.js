@@ -132,7 +132,7 @@ function getDefaultContext( request ) {
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined ? true : false;
-	let sectionCss;
+	let sectionCss, sectionCssRtl;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -151,6 +151,7 @@ function getDefaultContext( request ) {
 
 	if ( request.context.sectionCss ) {
 		sectionCss = utils.getHashedUrl( 'sections/' + request.context.sectionCss + '.css' );
+		sectionCssRtl = utils.getHashedUrl( 'sections-rtl/' + request.context.sectionCss + '.rtl.css' );
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -171,6 +172,7 @@ function getDefaultContext( request ) {
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
 		sectionCss,
+		sectionCssRtl,
 	} );
 
 	context.app = {
@@ -281,12 +283,6 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			if ( context.isRTL ) {
 				context.bodyClasses.push( 'rtl' );
-			}
-
-			if ( req.context.sectionCss ) {
-				if ( context.isRTL ) {
-					context.sectionCss = utils.getHashedUrl( 'sections-rtl/' + req.context.sectionCss + '.css' );
-				}
 			}
 
 			if ( data.localeSlug ) {
