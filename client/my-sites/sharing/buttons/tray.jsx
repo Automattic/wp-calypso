@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, filter, find } from 'lodash';
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -16,14 +17,14 @@ module.exports = React.createClass( {
 	displayName: 'SharingButtonsTray',
 
 	propTypes: {
-		buttons: React.PropTypes.array,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		visibility: React.PropTypes.oneOf( [ 'visible', 'hidden' ] ),
-		onButtonsChange: React.PropTypes.func,
-		onButtonChange: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		active: React.PropTypes.bool,
-		limited: React.PropTypes.bool
+		buttons: PropTypes.array,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		visibility: PropTypes.oneOf( [ 'visible', 'hidden' ] ),
+		onButtonsChange: PropTypes.func,
+		onButtonChange: PropTypes.func,
+		onClose: PropTypes.func,
+		active: PropTypes.bool,
+		limited: PropTypes.bool
 	},
 
 	getInitialState: function() {

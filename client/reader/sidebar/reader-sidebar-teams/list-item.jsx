@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -59,8 +61,8 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 };
 
 ReaderSidebarTeamsListItem.propTypes = {
-	team: React.PropTypes.object.isRequired,
-	path: React.PropTypes.string.isRequired,
+	team: PropTypes.object.isRequired,
+	path: PropTypes.string.isRequired,
 };
 
 export default localize( ReaderSidebarTeamsListItem );

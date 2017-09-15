@@ -1,7 +1,10 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import debugFactory from 'debug';
 import { omit } from 'lodash';
@@ -16,17 +19,17 @@ export default React.createClass( {
 	displayName: 'ResizableIframe',
 
 	propTypes: {
-		src: React.PropTypes.string,
-		width: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number
+		src: PropTypes.string,
+		width: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number
 		] ),
-		height: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number
+		height: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number
 		] ),
-		onLoad: React.PropTypes.func,
-		onResize: React.PropTypes.func
+		onLoad: PropTypes.func,
+		onResize: PropTypes.func
 	},
 
 	getInitialState: function() {

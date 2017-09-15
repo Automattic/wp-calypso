@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -69,11 +71,11 @@ PublishConfirmation.defaultProps = {
 };
 
 PublishConfirmation.propTypes = {
-	siteId: React.PropTypes.number,
-	fetchingPreferences: React.PropTypes.bool,
-	publishConfirmationEnabled: React.PropTypes.bool,
-	savePublishConfirmationPreference: React.PropTypes.func,
-	translate: React.PropTypes.func,
+	siteId: PropTypes.number,
+	fetchingPreferences: PropTypes.bool,
+	publishConfirmationEnabled: PropTypes.bool,
+	savePublishConfirmationPreference: PropTypes.func,
+	translate: PropTypes.func,
 };
 
 export default connect(

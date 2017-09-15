@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { omit } from 'lodash';
 
 /**
@@ -92,6 +94,6 @@ class PressThisLink extends React.Component {
 			</a>
 		);
 	}
-};
+}
 
 export default PressThisLink;

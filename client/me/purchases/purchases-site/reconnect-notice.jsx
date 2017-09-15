@@ -1,7 +1,10 @@
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 
 /**
@@ -13,8 +16,8 @@ import support from 'lib/url/support';
 
 class PurchaseReconnectNotice extends Component {
 	static propTypes = {
-		name: React.PropTypes.string,
-		domain: React.PropTypes.string,
+		name: PropTypes.string,
+		domain: PropTypes.string,
 	};
 
 	render() {

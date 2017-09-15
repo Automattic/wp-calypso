@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop } from 'lodash';
 
@@ -16,10 +18,10 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryDropZone',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		fullScreen: React.PropTypes.bool,
-		onAddMedia: React.PropTypes.func,
-		trackStats: React.PropTypes.bool
+		site: PropTypes.object,
+		fullScreen: PropTypes.bool,
+		onAddMedia: PropTypes.func,
+		trackStats: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

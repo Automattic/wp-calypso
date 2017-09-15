@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 const WpcomPlanPrice = ( { getPrice, hasDiscount, periodLabel } ) => {
@@ -16,9 +18,9 @@ const WpcomPlanPrice = ( { getPrice, hasDiscount, periodLabel } ) => {
 };
 
 WpcomPlanPrice.propTypes = {
-	getPrice: React.PropTypes.func.isRequired,
-	hasDiscount: React.PropTypes.bool,
-	periodLabel: React.PropTypes.string.isRequired
+	getPrice: PropTypes.func.isRequired,
+	hasDiscount: PropTypes.bool,
+	periodLabel: PropTypes.string.isRequired
 };
 
 export default WpcomPlanPrice;

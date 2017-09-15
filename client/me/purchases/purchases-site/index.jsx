@@ -1,8 +1,11 @@
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { some, times } from 'lodash';
 
@@ -65,12 +68,12 @@ const PurchasesSite = ( {
 };
 
 PurchasesSite.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	siteId: React.PropTypes.number,
-	purchases: React.PropTypes.array,
-	name: React.PropTypes.string,
-	domain: React.PropTypes.string,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	siteId: PropTypes.number,
+	purchases: PropTypes.array,
+	name: PropTypes.string,
+	domain: PropTypes.string,
+	slug: PropTypes.string,
 };
 
 export default connect( ( state, { siteId } ) => ( {

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { map, noop, reverse, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +17,7 @@ import EditorMediaModalGalleryEditItem from './edit-item';
 
 const EditorMediaModalGalleryEdit = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
+		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func
 	},

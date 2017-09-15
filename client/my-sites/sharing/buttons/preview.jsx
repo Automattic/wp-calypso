@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' );
 
 /**
@@ -18,14 +19,14 @@ module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {
-		isPrivateSite: React.PropTypes.bool,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		label: React.PropTypes.string,
-		buttons: React.PropTypes.array,
-		showLike: React.PropTypes.bool,
-		showReblog: React.PropTypes.bool,
-		onLabelChange: React.PropTypes.func,
-		onButtonsChange: React.PropTypes.func
+		isPrivateSite: PropTypes.bool,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		label: PropTypes.string,
+		buttons: PropTypes.array,
+		showLike: PropTypes.bool,
+		showReblog: PropTypes.bool,
+		onLabelChange: PropTypes.func,
+		onButtonsChange: PropTypes.func
 	},
 
 	getInitialState: function() {

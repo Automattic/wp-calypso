@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { throttle } from 'lodash';
+var PropTypes = require('prop-types');
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );
@@ -15,9 +16,9 @@ module.exports = React.createClass( {
 	displayName: 'StickyPanel',
 
 	propTypes: {
-		minLimit: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.number,
+		minLimit: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.number,
 		] ),
 	},
 

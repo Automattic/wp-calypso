@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
@@ -36,13 +38,13 @@ const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
 
 export class DomainWarnings extends React.PureComponent {
 	static propTypes = {
-		domains: React.PropTypes.array,
-		ruleWhiteList: React.PropTypes.array,
-		domain: React.PropTypes.object,
-		isCompact: React.PropTypes.bool,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.array,
+		ruleWhiteList: PropTypes.array,
+		domain: PropTypes.object,
+		isCompact: PropTypes.bool,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] )
 	};
 

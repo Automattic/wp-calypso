@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -17,8 +18,8 @@ module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',
 
 	propTypes: {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
+		isActive: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired
 	},
 
 	mixins: [ PureRenderMixin ],

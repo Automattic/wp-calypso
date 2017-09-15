@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -17,9 +19,9 @@ export default React.createClass( {
 	displayName: 'EditorDeletePost',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		onTrashingPost: React.PropTypes.func
+		site: PropTypes.object,
+		post: PropTypes.object,
+		onTrashingPost: PropTypes.func
 	},
 
 	getInitialState: function() {

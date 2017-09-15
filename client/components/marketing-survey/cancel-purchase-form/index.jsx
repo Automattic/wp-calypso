@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
@@ -25,14 +27,14 @@ import UpgradeATStep from './stepComponents/upgrade-at-step';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
-		productName: React.PropTypes.string.isRequired,
-		translate: React.PropTypes.func,
-		surveyStep: React.PropTypes.string.isRequired,
-		showSurvey: React.PropTypes.bool.isRequired,
-		defaultContent: React.PropTypes.node.isRequired,
-		onInputChange: React.PropTypes.func.isRequired,
-		isJetpack: React.PropTypes.bool.isRequired,
-		chatInitiated: React.PropTypes.func.isRequired,
+		productName: PropTypes.string.isRequired,
+		translate: PropTypes.func,
+		surveyStep: PropTypes.string.isRequired,
+		showSurvey: PropTypes.bool.isRequired,
+		defaultContent: PropTypes.node.isRequired,
+		onInputChange: PropTypes.func.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
+		chatInitiated: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 const Suggestion = ( { avatarUrl, fullName, query, username } ) => {
 	const highlight = ( content, type ) => {

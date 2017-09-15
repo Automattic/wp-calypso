@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { flowRight as compose, isEqual, uniqBy } from 'lodash';

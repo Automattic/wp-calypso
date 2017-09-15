@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { isEqual } from 'lodash';
 import debugModule from 'debug';
@@ -22,7 +24,7 @@ export default React.createClass( {
 	displayName: 'EmailFollowersData',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired
+		fetchOptions: PropTypes.object.isRequired
 	},
 
 	getInitialState() {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -12,13 +14,13 @@ import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
 
 class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
-		onClose: React.PropTypes.func,
-		visible: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		onClose: PropTypes.func,
+		visible: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+		selectedDomainName: PropTypes.string.isRequired
 	};
 
 	closeDeleteForwards = () => {

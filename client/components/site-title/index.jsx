@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -12,9 +14,9 @@ import FormTextInput from 'components/forms/form-text-input';
 
 const SiteTitleControl = React.createClass( {
 	propTypes: {
-		blogname: React.PropTypes.string,
-		blogdescription: React.PropTypes.string,
-		onChange: React.PropTypes.func.isRequired,
+		blogname: PropTypes.string,
+		blogdescription: PropTypes.string,
+		onChange: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {

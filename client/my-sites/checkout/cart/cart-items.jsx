@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -15,7 +17,7 @@ const COLLAPSED_ITEMS_COUNT = 2;
 export class CartItems extends React.Component {
 
 	static propTypes = {
-		collapse: React.PropTypes.bool.isRequired
+		collapse: PropTypes.bool.isRequired
 	};
 
 	constructor( props ) {

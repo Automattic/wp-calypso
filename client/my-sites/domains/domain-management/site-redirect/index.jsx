@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -32,11 +34,11 @@ import { withoutHttp } from 'lib/url';
 
 class SiteRedirect extends React.Component {
 	static propTypes = {
-		location: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		location: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

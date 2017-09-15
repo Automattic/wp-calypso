@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -12,9 +13,9 @@ module.exports = React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {
-		onChange: React.PropTypes.func,
-		value: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		onChange: PropTypes.func,
+		value: PropTypes.string,
+		disabled: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

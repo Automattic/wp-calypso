@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -20,12 +22,12 @@ import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		whois: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		whois: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

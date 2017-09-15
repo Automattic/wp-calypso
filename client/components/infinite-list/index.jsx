@@ -1,9 +1,12 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import page from 'page';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import ReactDom from 'react-dom';
 
@@ -29,19 +32,19 @@ module.exports = React.createClass( {
 	isScrolling: false,
 
 	propTypes: {
-		items: React.PropTypes.array.isRequired,
-		fetchingNextPage: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		guessedItemHeight: React.PropTypes.number.isRequired,
-		itemsPerRow: React.PropTypes.number,
-		fetchNextPage: React.PropTypes.func.isRequired,
-		getItemRef: React.PropTypes.func.isRequired,
-		renderItem: React.PropTypes.func.isRequired,
-		renderLoadingPlaceholders: React.PropTypes.func.isRequired,
-		renderTrailingItems: React.PropTypes.func,
-		context: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		items: PropTypes.array.isRequired,
+		fetchingNextPage: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		guessedItemHeight: PropTypes.number.isRequired,
+		itemsPerRow: PropTypes.number,
+		fetchNextPage: PropTypes.func.isRequired,
+		getItemRef: PropTypes.func.isRequired,
+		renderItem: PropTypes.func.isRequired,
+		renderLoadingPlaceholders: PropTypes.func.isRequired,
+		renderTrailingItems: PropTypes.func,
+		context: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] )
 	},
 

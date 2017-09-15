@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
@@ -63,8 +65,8 @@ const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 };
 
 ProductLink.propTypes = {
-	selectedPurchase: React.PropTypes.object.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+	selectedPurchase: PropTypes.object.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
 export default connect( ( state, { selectedPurchase } ) => {

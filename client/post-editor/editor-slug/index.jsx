@@ -1,8 +1,11 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React, { PropTypes, Component } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';

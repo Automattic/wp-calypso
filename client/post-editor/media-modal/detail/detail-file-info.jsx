@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',
 
 	propTypes: {
-		item: React.PropTypes.object
+		item: PropTypes.object
 	},
 
 	getItemValue( attribute ) {

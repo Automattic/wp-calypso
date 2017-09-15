@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import photon from 'photon';
@@ -15,11 +17,11 @@ module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButton',
 
 	propsTypes: {
-		button: React.PropTypes.object.isRequired,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		enabled: React.PropTypes.bool,
-		onMouseOver: React.PropTypes.func,
-		onClick: React.PropTypes.func
+		button: PropTypes.object.isRequired,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		enabled: PropTypes.bool,
+		onMouseOver: PropTypes.func,
+		onClick: PropTypes.func
 	},
 
 	getDefaultProps: function() {

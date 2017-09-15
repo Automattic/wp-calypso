@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import {
 	deburr,
@@ -48,13 +50,13 @@ const wpcom = wp.undocumented();
 
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
-		contactInformation: React.PropTypes.object.isRequired,
-		selectedDomain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		contactInformation: PropTypes.object.isRequired,
+		selectedDomain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		currentUser: React.PropTypes.object.isRequired
+		currentUser: PropTypes.object.isRequired
 	};
 
 	constructor( props ) {

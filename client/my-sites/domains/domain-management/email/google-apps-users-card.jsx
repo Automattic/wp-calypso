@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { find, groupBy } from 'lodash';
 
@@ -22,14 +24,14 @@ const GoogleAppsUsers = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		googleAppsUsers: React.PropTypes.array.isRequired,
-		selectedDomainName: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		googleAppsUsers: PropTypes.array.isRequired,
+		selectedDomainName: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		user: React.PropTypes.object.isRequired
+		user: PropTypes.object.isRequired
 	},
 
 	getDomainsAsList() {

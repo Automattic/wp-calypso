@@ -1,8 +1,11 @@
+import page from 'page';
+import { localize } from 'i18n-calypso';
+
 /**
  * External Dependencies
  */
-import page from 'page';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -44,13 +47,13 @@ const user = userFactory();
 
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		isDomainOnlySite: React.PropTypes.bool,
-		purchaseId: React.PropTypes.number.isRequired,
-		receiveDeletedSite: React.PropTypes.func.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
-		setAllSitesSelected: React.PropTypes.func.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		isDomainOnlySite: PropTypes.bool,
+		purchaseId: PropTypes.number.isRequired,
+		receiveDeletedSite: PropTypes.func.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		setAllSitesSelected: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {

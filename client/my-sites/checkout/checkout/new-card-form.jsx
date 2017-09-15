@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -15,9 +16,9 @@ module.exports = React.createClass( {
 	displayName: 'NewCardForm',
 
 	propTypes: {
-		countriesList: React.PropTypes.object.isRequired,
-		hasStoredCards: React.PropTypes.bool.isRequired,
-		transaction: React.PropTypes.object.isRequired
+		countriesList: PropTypes.object.isRequired,
+		hasStoredCards: PropTypes.bool.isRequired,
+		transaction: PropTypes.object.isRequired
 	},
 
 	isFieldInvalid: function( fieldName ) {

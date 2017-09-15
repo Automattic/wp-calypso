@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 class StatsModuleExpand extends PureComponent {
 	static propTypes = {
-		href: React.PropTypes.string
+		href: PropTypes.string
 	};
 
 	render() {

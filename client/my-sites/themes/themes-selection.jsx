@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 

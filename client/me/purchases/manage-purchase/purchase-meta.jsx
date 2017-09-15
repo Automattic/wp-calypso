@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -43,13 +45,13 @@ import {
 
 class PurchaseMeta extends Component {
 	static propTypes = {
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		purchaseId: React.PropTypes.oneOfType( [ React.PropTypes.number, React.PropTypes.bool ] )
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] )
 			.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType(
-			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType(
+			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
 		),
 	};
 

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, isEqual } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' );
 
 /**
@@ -24,11 +25,11 @@ module.exports = React.createClass( {
 	displayName: 'MediaListData',
 
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired,
-		source: React.PropTypes.string,
-		postId: React.PropTypes.number,
-		filter: React.PropTypes.string,
-		search: React.PropTypes.string
+		siteId: PropTypes.number.isRequired,
+		source: PropTypes.string,
+		postId: PropTypes.number,
+		filter: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	getInitialState: function() {

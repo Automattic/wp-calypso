@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Children, cloneElement } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Children, cloneElement } from 'react';
 
 /**
  * Internal dependencies

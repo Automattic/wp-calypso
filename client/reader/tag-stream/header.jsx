@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -24,12 +26,12 @@ const TAG_HEADER_HEIGHT = 140;
 
 class TagStreamHeader extends React.Component {
 	static propTypes = {
-		isPlaceholder: React.PropTypes.bool,
-		showFollow: React.PropTypes.bool,
-		following: React.PropTypes.bool,
-		onFollowToggle: React.PropTypes.func,
-		tagImages: React.PropTypes.array,
-		showBack: React.PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		showFollow: PropTypes.bool,
+		following: PropTypes.bool,
+		onFollowToggle: PropTypes.func,
+		tagImages: PropTypes.array,
+		showBack: PropTypes.bool,
 	};
 
 	static defaultProps = {

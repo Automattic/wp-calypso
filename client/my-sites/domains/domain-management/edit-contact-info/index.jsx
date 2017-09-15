@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
@@ -23,12 +25,12 @@ import { registrar as registrarNames } from 'lib/domains/constants';
 
 const EditContactInfo = React.createClass( {
 	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		whois: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		whois: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	},
 
