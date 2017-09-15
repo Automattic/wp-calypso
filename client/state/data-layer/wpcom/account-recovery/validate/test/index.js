@@ -20,9 +20,9 @@ import {
 	setValidationKey,
 } from 'state/account-recovery/reset/actions';
 
-describe( 'handleValidateRequest()', () =>{
+describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {
-		it( 'should dispatch SUCCESS action on success', ( ) => {
+		it( 'should dispatch SUCCESS action on success', () => {
 			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
@@ -52,7 +52,7 @@ describe( 'handleValidateRequest()', () =>{
 			);
 		} );
 
-		it( 'should dispatch SET_VALIDATION_KEY action on success', ( ) => {
+		it( 'should dispatch SET_VALIDATION_KEY action on success', () => {
 			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
@@ -67,7 +67,7 @@ describe( 'handleValidateRequest()', () =>{
 			expect( dispatch ).to.have.been.calledWith( setValidationKey( action.key ) );
 		} );
 
-		it( 'should dispatch ERROR action on failure', ( ) => {
+		it( 'should dispatch ERROR action on failure', () => {
 			const dispatch = spy();
 			const error = 'something bad happened';
 			handleValidateRequestFailure( { dispatch }, {}, error );

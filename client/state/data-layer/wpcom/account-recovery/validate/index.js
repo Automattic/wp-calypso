@@ -39,5 +39,9 @@ export const handleValidateRequestFailure = ( { dispatch }, action, response ) =
 };
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: [ dispatchRequest( handleValidateRequest, handleValidateRequestSuccess, handleValidateRequestFailure ) ], // eslint-disable-line max-len
+	[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: [ dispatchRequest(
+		handleValidateRequest,
+		handleValidateRequestSuccess,
+		handleValidateRequestFailure
+	) ],
 };
