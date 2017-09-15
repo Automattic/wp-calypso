@@ -92,4 +92,4 @@ const NavItem = React.createClass( {
 	}
 } );
 
-module.exports = NavItem;
+export default NavItem;
