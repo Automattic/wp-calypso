@@ -1,16 +1,16 @@
-var crypto = require( 'crypto' );
-var fs = require('fs');
-var qs = require( 'qs' );
+const crypto = require( 'crypto' );
+const fs = require( 'fs' );
+const qs = require( 'qs' );
 
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
 
 function getAssets( stats ) {
-	var chunks = stats.chunks;
+	const chunks = stats.chunks;
 
 	return chunks.map( function( chunk ) {
-		var filename = chunk.files[ 0 ];
+		const filename = chunk.files[ 0 ];
 		return {
 			name: chunk.names[ 0 ],
 			hash: chunk.hash,
@@ -60,5 +60,7 @@ function getHashedUrl( filename ) {
 module.exports = {
 	getAssets: getAssets,
 	pathToRegExp: pathToRegExp,
+	hashFile: hashFile,
+	getUrl: getUrl,
 	getHashedUrl: getHashedUrl
 };
