@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop } from 'lodash';
 import i18n from 'i18n-calypso';
