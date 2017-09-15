@@ -8,6 +8,22 @@ import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
 class ExternalLink extends Component {
+	static defaultProps = {
+		iconSize: 18,
+		showIconFirst: false
+	};
+
+	static propTypes = {
+		className: PropTypes.string,
+		href: PropTypes.string,
+		onClick: PropTypes.func,
+		icon: PropTypes.bool,
+		iconSize: PropTypes.number,
+		target: PropTypes.string,
+		showIconFirst: PropTypes.bool,
+		iconClassName: PropTypes.string,
+	};
+
 	render() {
 		const classes = classnames(
 			'external-link',
@@ -36,21 +52,5 @@ class ExternalLink extends Component {
 		);
 	}
 }
-
-ExternalLink.defaultProps = {
-	iconSize: 18,
-	showIconFirst: false
-};
-
-ExternalLink.propTypes = {
-	className: PropTypes.string,
-	href: PropTypes.string,
-	onClick: PropTypes.func,
-	icon: PropTypes.bool,
-	iconSize: PropTypes.number,
-	target: PropTypes.string,
-	showIconFirst: PropTypes.bool,
-	iconClassName: PropTypes.string,
-};
 
 export default ExternalLink;

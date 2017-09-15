@@ -56,9 +56,4 @@ describe( 'External Link', function() {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
 		assert.isTrue( externalLink.children().first().is( Gridicon ) );
 	} );
-
-	// it( 'should contains the passed children wrapped by a feature-example div', () => {
-	// 	const featureExample = shallow( <FeatureExample><div>test</div></FeatureExample> );
-	// 	assert.isTrue( featureExample.contains( <div>test</div> ) );
-	// } );
 } );
