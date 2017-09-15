@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 
-class SectionHeader extends PureComponent {
+class SectionHeaderExample extends PureComponent {
 	static displayName = 'SectionHeader';
 
 	render() {
