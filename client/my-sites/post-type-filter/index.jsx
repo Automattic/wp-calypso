@@ -38,7 +38,7 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	getNavItems() {
-		const { query, siteSlug, jetpack, counts } = this.props;
+		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
 			if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
@@ -76,7 +76,7 @@ const PostTypeFilter = React.createClass( {
 			}
 
 			return memo.concat( {
-				count: jetpack ? null : count,
+				count: ( ! siteId || jetpack ) ? null : count, // Hide count in all sites and Jetpack modes
 				key: `filter-${ status }`,
 				path: compact( [
 					query.type === 'post'
