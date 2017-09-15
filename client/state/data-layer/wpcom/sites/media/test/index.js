@@ -9,14 +9,69 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	requestingMediaItem, successMediaItemRequest, failMediaItemRequest, receiveMedia
+	requestingMedia,
+	requestingMediaItem,
+	successMediaRequest,
+	successMediaItemRequest,
+	failMediaRequest,
+	failMediaItemRequest,
+	receiveMedia
 } from 'state/media/actions';
-import { requestMediaItem } from '../';
+import {
+	requestMediaItem,
+	requestMediaSuccess,
+	requestMediaError,
+	requestMedia
+} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	let dispatch;
 
 	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
+
+	describe( 'media request', () => {
+		const getState = () => ( {
+			media: {
+				queryRequests: {
+					2916284: {
+						'[]': true
+					}
+				}
+			}
+		} );
+
+		it( 'should dispatch REQUESTING action when request triggers', () => {
+			requestMedia( { dispatch, getState }, { siteId: 2916284, query: 'a=b' } );
+			expect( dispatch ).to.have.been.calledWith( requestingMedia( 2916284, 'a=b' ) );
+		} );
+
+		it( 'should dispatch SUCCESS action when request completes', () => {
+			requestMediaSuccess( { dispatch }, { siteId: 2916284, query: 'a=b' },
+				{ media: { ID: 10, title: 'media title' }, found: true } );
+			expect( dispatch ).to.have.been.calledWith( successMediaRequest( 2916284, 'a=b' ) );
+			expect( dispatch ).to.have.been.calledWith( receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' ) );
+		} );
+
+		it( 'should dispatch FAILURE action when request fails', () => {
+			requestMediaError( { dispatch }, { siteId: 2916284, query: 'a=b' } );
+			expect( dispatch ).to.have.been.calledWith( failMediaRequest( 2916284, 'a=b' ) );
+		} );
+
+		it( 'should dispatch http request', () => {
+			requestMedia( { dispatch, getState }, { siteId: 2916284, query: 'a=b' } );
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'GET',
+						path: '/sites/2916284/media',
+						apiVersion: '1.1',
+					},
+					{ siteId: 2916284, query: 'a=b' }
+				)
+			);
+		} );
+	} );
 
 	describe( 'media item request', () => {
 		const getState = () => ( {
