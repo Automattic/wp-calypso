@@ -29,6 +29,9 @@ class ExternalLink extends Component {
 			'external-link',
 			this.props.className,
 			{
+				'icon-first': !! this.props.showIconFirst,
+			},
+			{
 				'has-icon': !! this.props.icon,
 			}
 		);
