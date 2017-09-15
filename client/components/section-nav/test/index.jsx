@@ -28,7 +28,7 @@ describe( 'section-nav', function() {
 	useFakeDom( '<html><body><script></script><div id="container"></div></body></html>' );
 
 	useMockery( mockery => {
-	    ReactDom = require( 'react-dom' );
+		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
