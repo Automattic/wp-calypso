@@ -62,6 +62,6 @@ class AuthCodeButton extends React.Component {
 			</Notice>
 		);
 	}
-};
+}
 
 export default localize( AuthCodeButton );
