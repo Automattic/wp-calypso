@@ -1,63 +1,36 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import { map } from 'lodash';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
-/**
- * Module variables
- */
-const { Component, PropTypes } = React;
-const noop = () => {};
-const undocumented = wpcom.undocumented();
+import QueryTimezones from 'components/data/query-timezones';
+import { getRawOffsets, getTimezones } from 'state/selectors';
 
 class Timezone extends Component {
-	constructor() {
-		super();
-
-		// bound methods
-		this.onSelect = this.onSelect.bind( this );
-
-		this.state = {
-			zonesByContinent: [],
-			manualUtcOffsets: []
-		};
-	}
-
-	componentWillMount() {
-		undocumented.timezones( ( err, zones ) => {
-			if ( err ) {
-				return;
-			}
-
-			const timezones = {
-				zonesByContinent: zones.timezones_by_continent,
-				manualUtcOffsets: zones.manual_utc_offsets
-			};
-
-			this.setState( timezones );
-		} );
-	}
-
-	onSelect( event ) {
+	onSelect = ( event ) => {
 		this.props.onSelect( event.target.value );
 	}
 
 	renderOptionsByContinent() {
-		const { zonesByContinent } = this.state;
+		const { timezones } = this.props;
 
 		return (
-			map( zonesByContinent, ( countries, continent ) => {
+			map( timezones, ( timezoneContinent ) => {
+				const [ continent, countries ] = timezoneContinent;
+
 				return (
 					<optgroup label={ continent } key={ continent }>
 						{
-							map( countries, ( { value, label }, index ) => {
+							map( countries, ( timezone, index ) => {
+								const [ value, label ] = timezone;
+
 								return (
 									<option value={ value } key={ index }>{ label }</option>
 								);
@@ -70,11 +43,13 @@ class Timezone extends Component {
 	}
 
 	renderManualUtcOffsets() {
+		const { rawOffsets, translate } = this.props;
+
 		return (
-			<optgroup label={ this.props.translate( 'Manual Offsets' ) }>
+			<optgroup label={ translate( 'Manual Offsets' ) }>
 				{
-					map( this.state.manualUtcOffsets, ( { value, label }, index ) => {
-						return ( <option value={ value } key={ index }>{ label }</option> );
+					map( rawOffsets, ( label, value ) => {
+						return ( <option value={ value } key={ value }>{ label }</option> );
 					} )
 				}
 			</optgroup>
@@ -85,6 +60,7 @@ class Timezone extends Component {
 		const { selectedZone } = this.props;
 		return (
 			<select onChange={ this.onSelect } value={ selectedZone || '' }>
+				<QueryTimezones />
 				{ this.renderOptionsByContinent() }
 				<optgroup label="UTC">
 					<option value="UTC">UTC</option>
@@ -104,4 +80,9 @@ Timezone.propTypes = {
 	onSelect: PropTypes.func
 };
 
-export default localize( Timezone );
+export default connect(
+	( state ) => ( {
+		rawOffsets: getRawOffsets( state ),
+		timezones: getTimezones( state ),
+	} )
+)( localize( Timezone ) );
