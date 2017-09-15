@@ -37,11 +37,11 @@ class MediaLibraryFooter extends Component {
 		window.removeEventListener( 'resize', this.throttleOnResize );
 	}
 
-	calculateWidth() {
+	calculateWidth = () => {
 		const { parent } = this.props;
 		const width = ReactDom.findDOMNode( parent ).clientWidth;
 		this.setState( { width } );
-	}
+	};
 
 	renderSelectedItem = ( item, index ) => {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
