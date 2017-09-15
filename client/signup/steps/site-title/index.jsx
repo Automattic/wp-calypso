@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -17,17 +19,17 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 import { translate } from 'i18n-calypso';
 
-const SiteTitleStep = React.createClass( {
-	propTypes: {
+class SiteTitleStep extends React.Component {
+	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
-	},
+	};
 
-	submitSiteTitleStep( siteTitle ) {
+	submitSiteTitleStep = siteTitle => {
 		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep( {
@@ -37,13 +39,13 @@ const SiteTitleStep = React.createClass( {
 		}, [], { siteTitle } );
 
 		this.props.goToNextStep();
-	},
+	};
 
-	skipStep() {
+	skipStep = () => {
 		this.submitSiteTitleStep( '' );
-	},
+	};
 
-	renderSiteTitleStep() {
+	renderSiteTitleStep = () => {
 		return (
 			<div>
 				<SignupSiteTitle
@@ -52,7 +54,8 @@ const SiteTitleStep = React.createClass( {
 				<SiteTitleExample />
 			</div>
 		);
-	},
+	};
+
 	render() {
 		const headerText = translate( 'Give your new site a name.' );
 		const subHeaderText = translate( 'Enter a Site Title that will be displayed for visitors. You can always change this later.' );
@@ -74,7 +77,7 @@ const SiteTitleStep = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,

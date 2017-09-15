@@ -10,10 +10,12 @@ import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
+import reviewReplies from '../sites/review-replies/handlers';
 import settingsGeneral from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
+import stripeConnectAccount from '../sites/settings/stripe-connect-account/handlers';
 import ui from './ui';
 import debugFactory from 'debug';
 
@@ -27,10 +29,12 @@ const handlers = mergeHandlers(
 	productVariations,
 	request,
 	reviews,
+	reviewReplies,
 	settingsGeneral,
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,
+	stripeConnectAccount,
 	ui,
 );
 

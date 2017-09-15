@@ -212,7 +212,6 @@ class DesignTypeWithStoreStep extends Component {
 	}
 }
 
-
 export default connect(
 	null,
 	{

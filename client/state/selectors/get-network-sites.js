@@ -31,5 +31,5 @@ export default createSelector(
 		return siteIds.filter( secondarySiteId => isMainSiteOf( state, siteId, secondarySiteId ) )
 			.map( secondarySiteId => getSite( state, secondarySiteId ) );
 	},
-	( state ) => state.sites.items
+	( state ) => [ state.sites.items, state.currentUser.capabilities ]
 );

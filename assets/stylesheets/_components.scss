@@ -218,6 +218,7 @@
 @import 'components/section-header/style';
 @import 'components/seo-preview-pane/style';
 @import 'components/tooltip/style';
+@import 'components/update-post-status/style';
 @import 'components/upgrades/credit-card-number-input/style';
 @import 'components/upgrades/google-apps/google-apps-dialog/style';
 @import 'components/user/style';
@@ -449,12 +450,14 @@
 @import 'my-sites/domains/domain-management/components/designated-agent-notice/style';
 @import 'my-sites/domains/domain-management/transfer/transfer-out/style';
 @import 'my-sites/domains/domain-management/transfer/transfer-to-other-user/style';
+@import 'my-sites/domains/domain-search/style';
 @import 'my-sites/resume-editing/style';
 @import 'my-sites/stats/stats-list/style';
 @import 'notices/style';
 @import 'my-sites/domains/domain-management/style';
 @import 'my-sites/domains/domain-management/email/style';
 @import 'my-sites/domains/domain-management/components/icann-verification/style';
+@import 'notifications/style';
 @import 'post-editor/style';
 @import 'post-editor/edit-post-status/style';
 @import 'post-editor/editor-action-bar/style';

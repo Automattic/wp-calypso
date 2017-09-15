@@ -11,7 +11,8 @@ import steps from 'signup/config/steps';
 import flows from 'signup/config/flows';
 import { defaultFlowName } from 'signup/config/flows';
 import formState from 'lib/form-state';
-const user = require( 'lib/user' )();
+import userFactory from 'lib/user';
+const user = userFactory();
 
 function getFlowName( parameters ) {
 	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
@@ -74,7 +75,7 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 }
 
 function getValidPath( parameters ) {
-	var locale = getLocale( parameters ),
+	const locale = getLocale( parameters ),
 		flowName = getFlowName( parameters ),
 		currentFlowSteps = flows.getFlow( flowName ).steps,
 		stepName = getStepName( parameters ) || currentFlowSteps[ 0 ],
@@ -110,7 +111,7 @@ function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
-function mergeFormWithValue( { form, fieldName, fieldValue} ) {
+function mergeFormWithValue( { form, fieldName, fieldValue } ) {
 	if ( ! formState.getFieldValue( form, fieldName ) ) {
 		return merge( form, {
 			[ fieldName ]: { value: fieldValue }

@@ -5,18 +5,20 @@ import React from 'react';
 import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import CreateClass from 'create-react-class';
+import PropTypes from 'prop-types';
 
-export default React.createClass( {
+export default CreateClass( {
 	displayName: 'Card',
 
 	propTypes: {
-		className: React.PropTypes.string,
-		href: React.PropTypes.string,
-		tagName: React.PropTypes.string,
-		target: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		children: React.PropTypes.node,
-		highlight: React.PropTypes.oneOf( [
+		className: PropTypes.string,
+		href: PropTypes.string,
+		tagName: PropTypes.string,
+		target: PropTypes.string,
+		compact: PropTypes.bool,
+		children: PropTypes.node,
+		highlight: PropTypes.oneOf( [
 			false,
 			'error',
 			'info',

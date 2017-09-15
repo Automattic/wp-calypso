@@ -2,7 +2,8 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -128,8 +129,6 @@ export const DropZone = React.createClass( {
 	},
 
 	toggleDraggingOverDocument( event ) {
-		let isDraggingOverDocument, detail, isValidDrag;
-
 		// Track nodes that have received a drag event. So long as nodes exist
 		// in the set, we can assume that an item is being dragged on the page.
 		if ( 'dragenter' === event.type && ! includes( this.dragEnterNodes, event.target ) ) {
@@ -144,10 +143,9 @@ export const DropZone = React.createClass( {
 		// as the `detail` property.
 		//
 		// See: https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
-		detail = window.CustomEvent && event instanceof window.CustomEvent ? event.detail : event;
-
-		isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer );
-		isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
+		const detail = window.CustomEvent && event instanceof window.CustomEvent ? event.detail : event,
+			isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer ),
+			isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
 
 		this.setState( {
 			isDraggingOverDocument: isDraggingOverDocument,
@@ -183,13 +181,11 @@ export const DropZone = React.createClass( {
 	},
 
 	isWithinZoneBounds( x, y ) {
-		let rect;
-
 		if ( ! this.refs.zone ) {
 			return false;
 		}
 
-		rect = this.refs.zone.getBoundingClientRect();
+		const rect = this.refs.zone.getBoundingClientRect();
 
 		/// make sure the rect is a valid rect
 		if ( rect.bottom === rect.top || rect.left === rect.right ) {

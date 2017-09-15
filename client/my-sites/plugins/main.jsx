@@ -270,7 +270,7 @@ const PluginsMain = React.createClass( {
 
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
-		const { filter, search, selectedSite } = this.props;
+		const { filter, search } = this.props;
 
 		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
 		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
@@ -313,11 +313,8 @@ const PluginsMain = React.createClass( {
 		const suggestedPluginsList = showSuggestedPluginsList && (
 			<PluginsBrowser
 				hideSearchForm
-				site={ selectedSite ? selectedSite.slug : null }
 				path={ this.context.path }
-				sites={ this.props.sites }
 				search={ search }
-				store={ this.context.store }
 				searchTitle={ searchTitle }
 			/>
 		);

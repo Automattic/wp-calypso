@@ -112,6 +112,12 @@ const getStorePages = () => {
 			path: '/store/reviews/:site',
 		},
 		{
+			container: Reviews,
+			configKey: 'woocommerce/extension-reviews',
+			documentTitle: translate( 'Reviews' ),
+			path: '/store/reviews/:filter/:site',
+		},
+		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings',
 			documentTitle: translate( 'Payment Settings' ),

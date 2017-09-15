@@ -26,6 +26,7 @@ import {
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import { isDomainOnlySite } from 'state/selectors';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -35,7 +36,7 @@ class SiteNotice extends React.Component {
 	static defaultProps = {};
 
 	getSiteRedirectNotice( site ) {
-		if ( ! site ) {
+		if ( ! site || this.props.isDomainOnly ) {
 			return null;
 		}
 		if ( ! ( site.options && site.options.is_redirect ) ) {
@@ -150,6 +151,7 @@ class SiteNotice extends React.Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
+		isDomainOnly: isDomainOnlySite( state, siteId ),
 		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),

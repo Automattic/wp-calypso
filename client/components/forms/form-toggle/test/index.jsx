@@ -40,7 +40,7 @@ describe( 'FormToggle', function() {
 				const toggle = shallow(
 					<FormToggle checked={ bool }
 						onChange={ noop } />
-        );
+				);
 				const toggleInput = toggle.find( '.form-toggle' );
 
 				assert( 0 < toggleInput.length, 'a form toggle was rendered' );

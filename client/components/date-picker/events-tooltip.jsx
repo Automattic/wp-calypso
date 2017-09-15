@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { noop, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 

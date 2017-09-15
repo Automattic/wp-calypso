@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -8,10 +9,10 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-const DesignMenuPanel = React.createClass( {
-	propTypes: {
-		label: React.PropTypes.string.isRequired,
-	},
+class DesignMenuPanel extends React.Component {
+	static propTypes = {
+		label: PropTypes.string.isRequired,
+	};
 
 	render() {
 		return (
@@ -25,6 +26,6 @@ const DesignMenuPanel = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default DesignMenuPanel;

@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { has } from 'lodash';
 import ReactDom from 'react-dom';
@@ -27,10 +28,10 @@ import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		streamUrl: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		showFeaturedAsset: React.PropTypes.bool,
+		post: PropTypes.object.isRequired,
+		streamUrl: PropTypes.string,
+		onClick: PropTypes.func,
+		showFeaturedAsset: PropTypes.bool,
 	};
 
 	static defaultProps = {

@@ -148,9 +148,9 @@ WebPreview.propTypes = {
 	// The iframe's title element, used for accessibility purposes
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
-	hasSidebar: React.PropTypes.bool,
+	hasSidebar: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: React.PropTypes.string,
+	frontPageMetaDescription: PropTypes.string,
 };
 
 WebPreview.defaultProps = {
