@@ -63,7 +63,7 @@ module.exports = React.createClass( {
 			query.search = props.search;
 		}
 
-		if ( props.filter ) {
+		if ( props.filter && ! props.source ) {
 			if ( props.filter === 'this-post' ) {
 				if ( props.postId ) {
 					query.post_ID = props.postId;
