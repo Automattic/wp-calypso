@@ -5,7 +5,6 @@ import React from 'react';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import ReactDom from 'react-dom';
-import observe from 'lib/mixins/data-observe';
 
 /**
  * Internal dependencies
@@ -18,8 +17,6 @@ import FormSelect from 'components/forms/form-select';
 
 export default React.createClass( {
 	displayName: 'CountrySelect',
-
-	mixins: [ observe( 'countriesList' ) ],
 
 	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
