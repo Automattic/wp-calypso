@@ -1,24 +1,24 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'components/segmented-control';
 
 /**
  * Internal variables
  */
-var _instance = 1;
+let _instance = 1;
 
 /**
  * Main
  */
-var NavSegmented = React.createClass( {
+const NavSegmented = React.createClass( {
 
 	propTypes: {
 		label: React.PropTypes.string,
@@ -37,7 +37,7 @@ var NavSegmented = React.createClass( {
 	},
 
 	render: function() {
-		var segmentedClassName = classNames( {
+		const segmentedClassName = classNames( {
 			'section-nav-group': true,
 			'section-nav__segmented': true,
 			'has-siblings': this.props.hasSiblingControls

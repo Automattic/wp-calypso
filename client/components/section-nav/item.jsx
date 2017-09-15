@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -14,7 +14,7 @@ import { preload } from 'sections-preload';
 /**
  * Main
  */
-var NavItem = React.createClass( {
+const NavItem = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
@@ -44,7 +44,7 @@ var NavItem = React.createClass( {
 	},
 
 	render: function() {
-		var itemClassPrefix = this.props.itemType
+		let itemClassPrefix = this.props.itemType
 			? this.props.itemType
 			: 'tab',
 

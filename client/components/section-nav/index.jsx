@@ -19,7 +19,7 @@ import Search from 'components/search';
 /**
  * Main
  */
-var SectionNav = React.createClass( {
+const SectionNav = React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node,
@@ -78,7 +78,7 @@ var SectionNav = React.createClass( {
 	},
 
 	render: function() {
-		var children = this.getChildren(),
+		let children = this.getChildren(),
 			className;
 
 		if ( ! children ) {
@@ -115,7 +115,7 @@ var SectionNav = React.createClass( {
 
 	getChildren: function() {
 		return React.Children.map( this.props.children, function( child ) {
-			var extraProps = {
+			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,
 				closeSectionNavMobilePanel: this.closeMobilePanel
 			};
@@ -159,7 +159,7 @@ var SectionNav = React.createClass( {
 	},
 
 	toggleMobileOpenState: function() {
-		var mobileOpen = ! this.state.mobileOpen;
+		const mobileOpen = ! this.state.mobileOpen;
 
 		this.setState( {
 			mobileOpen: mobileOpen
