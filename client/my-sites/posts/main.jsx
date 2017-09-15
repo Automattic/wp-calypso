@@ -10,7 +10,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostsNavigation from './posts-navigation';
+import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostListWrapper from './post-list-wrapper';
 import config from 'config';
@@ -26,7 +26,7 @@ import {
 import Button from 'components/button';
 import Count from 'components/count';
 import SectionHeader from 'components/section-header';
-import { sectionify } from 'lib/route/path';
+import { mapPostStatus as mapStatus, sectionify } from 'lib/route';
 import {
 	getAllPostCount,
 	getMyPostCount
@@ -106,17 +106,26 @@ const PostsMain = React.createClass( {
 	},
 
 	render() {
-		const path = sectionify( this.props.context.path );
+		const { author, category, context, search, siteId, statusSlug, tag } = this.props;
+		const path = sectionify( context.path );
 		const classes = classnames( 'posts', {
 			'is-multisite': ! this.props.siteId,
 			'is-single-site': this.props.siteId
 		} );
+		const query = {
+			author,
+			category,
+			search,
+			status: mapStatus( statusSlug ),
+			tag,
+			type: 'post'
+		};
 
 		return (
 			<Main className={ classes }>
 				<SidebarNavigation />
 				<div className="posts__primary">
-					<PostsNavigation { ...this.props } />
+					<PostTypeFilter query={ query } siteId={ siteId } />
 					<PostListWrapper { ...this.props } />
 				</div>
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
