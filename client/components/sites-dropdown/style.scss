@@ -30,8 +30,13 @@
 		width: 100%;
 	}
 
+<<<<<<< HEAD
 	&:hover {
 		border-color: $gray-lighten-10;
+=======
+	.has-multiple-sites &:hover {
+		border-color: lighten( $gray, 10% );
+>>>>>>> Site picker: Disable the icon and dropdown when only 1 site available
 	}
 }
 
@@ -42,8 +47,11 @@
 }
 
 .sites-dropdown__selected {
-	cursor: pointer;
 	display: flex;
+
+	.has-multiple-sites & {
+		cursor: pointer;
+	}
 
 	.is-open & {
 		border-bottom: 1px solid $gray-lighten-30;

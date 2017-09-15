@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { noop, get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,6 +18,7 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import { getPrimarySiteId } from 'state/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SitesDropdown extends PureComponent {
 	static propTypes = {
@@ -27,6 +28,7 @@ export class SitesDropdown extends PureComponent {
 		onSiteSelect: PropTypes.func,
 		filter: PropTypes.func,
 		isPlaceholder: PropTypes.bool,
+		siteCount: PropTypes.number,
 
 		// connected props
 		selectedSite: PropTypes.object,
@@ -37,6 +39,7 @@ export class SitesDropdown extends PureComponent {
 		onClose: noop,
 		onSiteSelect: noop,
 		isPlaceholder: false,
+		siteCount: 1,
 	};
 
 	constructor( props ) {
@@ -67,7 +70,7 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	toggleOpen() {
-		this.setState( { open: ! this.state.open } );
+		this.props.siteCount > 1 && this.setState( { open: ! this.state.open } );
 	}
 
 	onClose( e ) {
@@ -77,17 +80,26 @@ export class SitesDropdown extends PureComponent {
 
 	render() {
 		return (
-			<div className={ classNames( 'sites-dropdown', { 'is-open': this.state.open } ) }>
+			<div className={ classNames(
+				'sites-dropdown',
+				{ 'is-open': this.state.open },
+				{ 'has-multiple-sites': this.props.siteCount > 1 }
+				) }>
 				<div className="sites-dropdown__wrapper">
-					<div className="sites-dropdown__selected" onClick={ this.toggleOpen }>
-						{ this.props.isPlaceholder ? (
-							<SitePlaceholder />
-						) : (
-							<Site siteId={ this.state.selectedSiteId } indicator={ false } />
-						) }
-						<Gridicon icon="chevron-down" />
+					<div
+						className="sites-dropdown__selected"
+						onClick={ this.toggleOpen } >
+						{
+							this.props.isPlaceholder
+							? <SitePlaceholder />
+							: <Site siteId={ this.state.selectedSiteId } indicator={ false } />
+						}
+						{
+							this.props.siteCount > 1 &&
+							<Gridicon icon="chevron-down" />
+						}
 					</div>
-					{ this.state.open && (
+					{ this.props.siteCount > 1 && this.state.open &&
 						<SiteSelector
 							autoFocus={ true }
 							onClose={ this.onClose }
@@ -96,13 +108,16 @@ export class SitesDropdown extends PureComponent {
 							hideSelected={ true }
 							filter={ this.props.filter && this.siteFilter }
 						/>
-					) }
+					}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	primarySiteId: getPrimarySiteId( state ),
-} ) )( SitesDropdown );
+export default connect(
+	( state ) => ( {
+		primarySiteId: getPrimarySiteId( state ),
+		siteCount: get( getCurrentUser( state ), 'site_count', 0 )
+	} )
+)( SitesDropdown );
