@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { omit } from 'lodash';
 
 /**
@@ -24,16 +26,16 @@ const pressThis = function( postURL ) {
 	let sel;
 
 	if ( winGetSel ) {
-		sel = winGetSel()
+		sel = winGetSel();
 	} else if ( docGetSel ) {
-		sel = docGetSel()
+		sel = docGetSel();
 	} else {
-		sel = docSel ? docSel.createRange().text : 0
+		sel = docSel ? docSel.createRange().text : 0;
 	}
 
-	let url = postURL + '?url=' + encodeURIComponent( loc.href ) + '&title=' + encodeURIComponent( doc.title ) + '&text=' + encodeURIComponent( sel ) + '&v=5';
+	const url = postURL + '?url=' + encodeURIComponent( loc.href ) + '&title=' + encodeURIComponent( doc.title ) + '&text=' + encodeURIComponent( sel ) + '&v=5';
 
-	let redirect = function() {
+	const redirect = function() {
 		if ( ! win.open( url, 't', 'toolbar=0,resizable=1,scrollbars=1,status=1,width=660,height=570' ) ) {
 			loc.href = url;
 		}
@@ -59,8 +61,8 @@ class PressThisLink extends React.Component {
 	 * @return {string} javascript pseudo-protocol link
 	 */
 	pressThisWPAdmin() {
-		let site = this.props.site;
-		let adminURL = site && site.options && site.options.admin_url;
+		const site = this.props.site;
+		const adminURL = site && site.options && site.options.admin_url;
 		return [
 			"javascript:var d=document,w=window,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),f='", // eslint-disable-line no-script-url
 			adminURL,
@@ -76,12 +78,12 @@ class PressThisLink extends React.Component {
 	buildPressThisLink() {
 		const functionText = pressThis.toString();
 		// IE does not reliably support window.location.origin
-		let postDomain = ( typeof window !== 'undefined' && window.location ) ? `${window.location.protocol}//${window.location.hostname}` : 'https://wordpress.com';
+		let postDomain = ( typeof window !== 'undefined' && window.location ) ? `${ window.location.protocol }//${ window.location.hostname }` : 'https://wordpress.com';
 		if ( window.location.port ) {
 			postDomain += `:${ window.location.port }`;
 		}
 		const postURL = postDomain + paths.newPost( this.props.site );
-		return `javascript:( ${functionText} )( '${postURL}' )`;
+		return `javascript:( ${ functionText } )( '${ postURL }' )`;
 	}
 
 	render() {
@@ -92,6 +94,6 @@ class PressThisLink extends React.Component {
 			</a>
 		);
 	}
-};
+}
 
 export default PressThisLink;
