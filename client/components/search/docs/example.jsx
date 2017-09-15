@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	SearchCard = require( 'components/search-card' );
+import Search from 'components/search';
+import SearchCard from 'components/search-card';
 
 /**
  * Globals
