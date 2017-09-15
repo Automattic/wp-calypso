@@ -10,7 +10,7 @@ import { compact, find, includes, reduce } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getNormalizedPostCounts } from 'state/posts/counts/selectors';
+import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { mapPostStatus } from 'lib/route/path';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
@@ -146,7 +146,10 @@ export default connect( ( state, { query } ) => {
 		return props;
 	}
 
-	return Object.assign( props, {
-		counts: getNormalizedPostCounts( state, siteId, query.type )
-	} );
+	return {
+		...props,
+		counts: query.author
+			? getNormalizedMyPostCounts( state, siteId, query.type )
+			: getNormalizedPostCounts( state, siteId, query.type )
+	};
 } )( PostTypeFilter );
