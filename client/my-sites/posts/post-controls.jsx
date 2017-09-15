@@ -206,10 +206,12 @@ class PostControls extends Component {
 
 		return (
 			<div className={ classes }>
-				<QuerySharePostActions
-					siteId={ siteId }
-					postId={ post.ID }
-					status={ SCHEDULED } />
+				{ isEnabled( 'republicize' ) && this.props.isPublicizeEnabled &&
+					<QuerySharePostActions
+						siteId={ siteId }
+						postId={ post.ID }
+						status={ SCHEDULED } />
+				}
 				{ more.length > 0 &&
 					<ul className="posts__post-controls post-controls__pane post-controls__more-options">
 						{ this.getControlElements( more ) }
