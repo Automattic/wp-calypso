@@ -30,35 +30,35 @@ import analytics from 'lib/analytics';
 const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
 const SYNC_STATUS_ERROR_NOTICE_THRESHOLD = 3; // Only show sync status error notice if >= this number
 
-const JetpackSyncPanel = React.createClass( {
-	displayName: 'JetpackSyncPanel',
+class JetpackSyncPanel extends React.Component {
+	static displayName = 'JetpackSyncPanel';
 
 	componentWillMount() {
 		this.fetchSyncStatus();
-	},
+	}
 
-	fetchSyncStatus() {
+	fetchSyncStatus = () => {
 		this.props.getSyncStatus( this.props.siteId );
-	},
+	};
 
-	isErrored() {
+	isErrored = () => {
 		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
 		return !! ( syncRequestError || ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) );
-	},
+	};
 
-	shouldDisableSync() {
+	shouldDisableSync = () => {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
-	},
+	};
 
-	onSyncRequestButtonClick( event ) {
+	onSyncRequestButtonClick = event => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
-	},
+	};
 
-	onTryAgainClick( event ) {
+	onTryAgainClick = event => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
@@ -66,17 +66,17 @@ const JetpackSyncPanel = React.createClass( {
 			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' )
 		} );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
-	},
+	};
 
-	onClickDebug() {
+	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
 			errorCode: get( this.props, 'syncStatus.error.error', '' ),
 			errorMsg: get( this.props, 'syncStatus.error.message', '' )
 		} );
-	},
+	};
 
-	renderErrorNotice() {
+	renderErrorNotice = () => {
 		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
 		const { translate } = this.props;
@@ -123,9 +123,9 @@ const JetpackSyncPanel = React.createClass( {
 		}
 
 		return errorNotice;
-	},
+	};
 
-	renderStatusNotice() {
+	renderStatusNotice = () => {
 		if ( this.isErrored() ) {
 			return null;
 		}
@@ -156,9 +156,9 @@ const JetpackSyncPanel = React.createClass( {
 				{ text }
 			</Notice>
 		);
-	},
+	};
 
-	renderProgressBar() {
+	renderProgressBar = () => {
 		if ( ! this.shouldDisableSync() || this.isErrored() ) {
 			return null;
 		}
@@ -166,7 +166,7 @@ const JetpackSyncPanel = React.createClass( {
 		return (
 			<ProgressBar isPulsing value={ this.props.syncProgress || 0 } />
 		);
-	},
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -200,7 +200,7 @@ const JetpackSyncPanel = React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => {
