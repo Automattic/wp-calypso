@@ -2,6 +2,7 @@
 * External dependencies
 */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -17,13 +18,13 @@ var Cards = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
+		    <div>
+				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
-						{ this.translate( 'Primary Action' ) }
+						{ this.props.translate( 'Primary Action' ) }
 					</Button>
 					<Button compact>
-						{ this.translate( 'Manage' ) }
+						{ this.props.translate( 'Manage' ) }
 					</Button>
 					<Button
 						compact
@@ -31,13 +32,13 @@ var Cards = React.createClass( {
 							alert( 'Clicked add button' );
 						} }
 					>
-						{ this.translate( 'Add' ) }
+						{ this.props.translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
 
 				<h3>Clickable SectionHeader</h3>
 
-				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
+				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
 
 				<h3>Empty SectionHeader</h3>
@@ -47,4 +48,4 @@ var Cards = React.createClass( {
 	}
 } );
 
-export default Cards;
+export default localize(Cards);
