@@ -16,20 +16,20 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import FormSelect from 'components/forms/form-select';
 
-export default localize( React.createClass( {
-	displayName: 'CountrySelect',
+export default localize( class extends React.Component {
+	static displayName = 'CountrySelect';
 
-	recordCountrySelectClick() {
+	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
 		}
-	},
+	};
 
-	focus() {
+	focus = () => {
 		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.additionalClasses, 'country' );
@@ -84,4 +84,4 @@ export default localize( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+} );
