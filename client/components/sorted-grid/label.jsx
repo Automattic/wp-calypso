@@ -17,7 +17,7 @@ const Label = ( {
 	scale,
 	text,
 } ) => {
-	const margin = ( 1 % scale ) / ( itemsPerRow - 1 ) * 100;
+	const margin = ( ( 1 % scale ) / ( itemsPerRow - 1 ) * 100 ) || 0;
 	const style = {
 		marginRight: `${ lastInRow ? 0 : margin }%`,
 		width: `${ scale * itemsCount * 100 + margin * ( itemsCount - 1 ) }%`,
