@@ -6,8 +6,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
-	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
@@ -41,15 +39,6 @@ export const fetchResetOptionsByNameAndUrl = ( firstname, lastname, url ) => fet
 export const updatePasswordResetUserData = ( userData ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	userData,
-} );
-
-export const requestResetSuccess = () => ( {
-	type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-} );
-
-export const requestResetError = ( error ) => ( {
-	type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-	error,
 } );
 
 export const requestReset = ( userData, method ) => ( {
