@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 /**
@@ -20,8 +21,8 @@ let _instance = 1;
  */
 class NavSegmented extends Component {
 	static propTypes = {
-		label: React.PropTypes.string,
-		hasSiblingControls: React.PropTypes.bool
+		label: PropTypes.string,
+		hasSiblingControls: PropTypes.bool
 	};
 
 	static defaultProps = {

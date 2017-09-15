@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 /**
@@ -15,19 +16,19 @@ import { preload } from 'sections-preload';
  */
 class NavItem extends PureComponent {
 	static propTypes = {
-		itemType: React.PropTypes.string,
-		path: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		tabIndex: React.PropTypes.number,
-		onClick: React.PropTypes.func,
-		isExternalLink: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		count: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.bool,
+		itemType: PropTypes.string,
+		path: PropTypes.string,
+		selected: PropTypes.bool,
+		tabIndex: PropTypes.number,
+		onClick: PropTypes.func,
+		isExternalLink: PropTypes.bool,
+		disabled: PropTypes.bool,
+		count: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.bool,
 		] ),
-		className: React.PropTypes.string,
-		preloadSectionName: React.PropTypes.string
+		className: PropTypes.string,
+		preloadSectionName: PropTypes.string
 	};
 
 	_preloaded = false;

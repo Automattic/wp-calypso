@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
 	isEqual,
@@ -22,13 +23,13 @@ import Search from 'components/search';
 const SectionNav = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.node,
-		selectedText: React.PropTypes.node,
-		selectedCount: React.PropTypes.number,
-		hasPinnedItems: React.PropTypes.bool,
-		onMobileNavPanelOpen: React.PropTypes.func,
-		className: React.PropTypes.string,
-		allowDropdown: React.PropTypes.bool,
+		children: PropTypes.node,
+		selectedText: PropTypes.node,
+		selectedCount: PropTypes.number,
+		hasPinnedItems: PropTypes.bool,
+		onMobileNavPanelOpen: PropTypes.func,
+		className: PropTypes.string,
+		allowDropdown: PropTypes.bool,
 	},
 
 	getInitialState: function() {
