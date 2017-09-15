@@ -19,6 +19,12 @@ export function shouldShowComments( post ) {
 	return false;
 }
 
+export function shouldShowReactions( post ) {
+	return shouldShowComments( post ) &&
+		// some other conditions :P
+		true;
+}
+
 export function isCommentableDiscoverPost( post ) {
 	const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 

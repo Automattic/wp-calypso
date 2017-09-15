@@ -1,0 +1,12 @@
+.jp-reactions__list {
+	padding: 0;
+}
+
+.jp-reactions__list-item {
+	display: inline;
+	padding-right: 10px;
+}
+
+.jp-reactions__button {
+	margin-right: 4px;
+}

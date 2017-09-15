@@ -80,6 +80,7 @@ import ListEnd from 'components/list-end/docs/example';
 import Wizard from 'components/wizard/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
+import ReactionsExample from 'components/reactions/docs/reactions-example';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
@@ -158,6 +159,7 @@ class DesignAssets extends React.Component {
 					<Popovers />
 					<ProgressBar />
 					<Ranges />
+					<ReactionsExample />
 					<Rating />
 					<Ribbon />
 					<ScreenReaderTextExample />

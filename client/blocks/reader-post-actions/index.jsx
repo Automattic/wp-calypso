@@ -12,9 +12,13 @@ import classnames from 'classnames';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'reader/like-button';
 import ShareButton from 'blocks/reader-share';
+import Reactions from 'components/reactions';
 import PostEditButton from 'blocks/post-edit-button';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import { shouldShowComments } from 'blocks/comments/helper';
+import {
+	shouldShowComments,
+	shouldShowReactions,
+} from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'blocks/reader-share/helper';
 import { userCan } from 'lib/posts/utils';
@@ -78,6 +82,12 @@ const ReaderPostActions = props => {
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
 				</li> }
+			{
+				shouldShowReactions( post ) && (
+				<li className="reader-post-actions__item">
+					<Reactions post={ post } />
+				</li>
+			) }
 			{ shouldShowComments( post ) &&
 				<li className="reader-post-actions__item">
 					<CommentButton
