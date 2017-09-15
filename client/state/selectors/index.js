@@ -218,7 +218,6 @@ export isRequestingResetPassword from './is-requesting-reset-password';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingSiteConnectionStatus from './is-requesting-site-connection-status';
 export isRequestingSiteMonitorSettings from './is-requesting-site-monitor-settings';
-export isRequestingTimezones from './is-requesting-timezones';
 export isRequestingWhois from './is-requesting-whois';
 export isRewindActivating from './is-rewind-activating';
 export isRewindActive from './is-rewind-active';

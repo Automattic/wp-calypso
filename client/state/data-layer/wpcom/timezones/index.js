@@ -10,15 +10,10 @@ import {
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { TIMEZONES_REQUEST } from 'state/action-types';
-
-import {
-	timezonesRequestSuccess,
-	timezonesRequestFailure,
-	timezonesReceive,
-} from 'state/timezones/actions';
+import { timezonesReceive } from 'state/timezones/actions';
 
 /**
  * Converts an value/label pairs from API into object whose
@@ -50,16 +45,21 @@ export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent
 /*
  * Start a request to WordPress.com server to get the timezones data
  */
-export const fetchTimezones = ( { dispatch } ) =>
-	wpcom.req.get( '/timezones', { apiNamespace: 'wpcom/v2' } )
-		.then( data => {
-			dispatch( timezonesRequestSuccess() );
-			dispatch( timezonesReceive( fromApi( data ) ) );
-		} )
-		.catch( error => {
-			dispatch( timezonesRequestFailure( error ) );
-		} );
+export const fetchTimezones = ( { dispatch }, action ) =>
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: '/timezones',
+				apiNamespace: 'wpcom/v2',
+			},
+			action,
+		),
+	);
+
+export const addTimezones = ( { dispatch }, action, data ) =>
+	dispatch( timezonesReceive( fromApi( data ) ) );
 
 export default {
-	[ TIMEZONES_REQUEST ]: [ fetchTimezones ],
+	[ TIMEZONES_REQUEST ]: [ dispatchRequest( fetchTimezones, addTimezones ) ],
 };
