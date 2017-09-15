@@ -82,6 +82,7 @@ const PostTypeFilter = React.createClass( {
 					query.type === 'post'
 						? '/posts'
 						: '/types/' + query.type,
+					query.type === 'post' && query.author && 'my',
 					pathStatus,
 					siteSlug
 				] ).join( '/' ),
