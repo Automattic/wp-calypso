@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -8,9 +9,9 @@ module.exports = React.createClass( {
 	displayName: 'EditorFieldset',
 
 	propTypes: {
-		legend: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
+		legend: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.element
 		] ).isRequired
 	},
 

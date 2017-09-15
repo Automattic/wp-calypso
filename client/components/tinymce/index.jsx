@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
+const PropTypes = require('prop-types');
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
@@ -161,29 +162,29 @@ module.exports = React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
-		mode: React.PropTypes.string,
-		onActivate: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		onDeactivate: React.PropTypes.func,
-		onFocus: React.PropTypes.func,
-		onHide: React.PropTypes.func,
-		onInit: React.PropTypes.func,
-		onRedo: React.PropTypes.func,
-		onRemove: React.PropTypes.func,
-		onReset: React.PropTypes.func,
-		onShow: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		onUndo: React.PropTypes.func,
-		onSetContent: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		isNew: React.PropTypes.bool,
-		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func
+		mode: PropTypes.string,
+		onActivate: PropTypes.func,
+		onBlur: PropTypes.func,
+		onChange: PropTypes.func,
+		onDeactivate: PropTypes.func,
+		onFocus: PropTypes.func,
+		onHide: PropTypes.func,
+		onInit: PropTypes.func,
+		onRedo: PropTypes.func,
+		onRemove: PropTypes.func,
+		onReset: PropTypes.func,
+		onShow: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onUndo: PropTypes.func,
+		onSetContent: PropTypes.func,
+		tabIndex: PropTypes.number,
+		isNew: PropTypes.bool,
+		onTextEditorChange: PropTypes.func,
+		onKeyUp: PropTypes.func
 	},
 
 	contextTypes: {
-		store: React.PropTypes.object
+		store: PropTypes.object
 	},
 
 	getDefaultProps: function() {

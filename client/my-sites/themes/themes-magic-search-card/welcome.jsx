@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { noop, intersection } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';

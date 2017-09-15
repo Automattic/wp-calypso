@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { filter, isEqual } from 'lodash';
+var PropTypes = require('prop-types');
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );
@@ -18,12 +19,12 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',
 
 	propTypes: {
-		buttons: React.PropTypes.array,
-		visibility: React.PropTypes.oneOf( [ 'hidden', 'visible' ] ),
-		style: React.PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
-		onButtonClick: React.PropTypes.func,
-		showMore: React.PropTypes.bool,
-		forceMorePreviewVisible: React.PropTypes.bool
+		buttons: PropTypes.array,
+		visibility: PropTypes.oneOf( [ 'hidden', 'visible' ] ),
+		style: PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
+		onButtonClick: PropTypes.func,
+		showMore: PropTypes.bool,
+		forceMorePreviewVisible: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

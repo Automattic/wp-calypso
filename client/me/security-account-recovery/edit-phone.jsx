@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { isEmpty } from 'lodash';
 
@@ -21,15 +23,15 @@ module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
 	propTypes: {
-		storedPhone: React.PropTypes.shape( {
-			countryCode: React.PropTypes.string,
-			countryNumericCode: React.PropTypes.string,
-			number: React.PropTypes.string,
-			numberFull: React.PropTypes.string
+		storedPhone: PropTypes.shape( {
+			countryCode: PropTypes.string,
+			countryNumericCode: PropTypes.string,
+			number: PropTypes.string,
+			numberFull: PropTypes.string
 		} ),
-		onSave: React.PropTypes.func,
-		onCancel: React.PropTypes.func,
-		onDelete: React.PropTypes.func
+		onSave: PropTypes.func,
+		onCancel: PropTypes.func,
+		onDelete: PropTypes.func
 	},
 
 	getInitialState: function() {

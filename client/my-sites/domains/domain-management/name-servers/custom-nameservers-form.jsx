@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import { dropRightWhile, negate, identity } from 'lodash';
@@ -27,14 +29,14 @@ const MAX_NAMESERVER_LENGTH = 4;
 
 class CustomNameserversForm extends React.PureComponent {
 	static propTypes = {
-		nameservers: React.PropTypes.array,
-		onChange: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		nameservers: PropTypes.array,
+		onChange: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		submitDisabled: React.PropTypes.bool.isRequired
+		submitDisabled: PropTypes.bool.isRequired
 	};
 
 	warning() {

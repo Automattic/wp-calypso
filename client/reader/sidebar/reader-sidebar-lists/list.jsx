@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { identity, map } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,11 +15,11 @@ import ReaderSidebarListsListItem from './list-item';
 
 export class ReaderSidebarListsList extends React.Component {
 	static propTypes = {
-		lists: React.PropTypes.array,
-		path: React.PropTypes.string.isRequired,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string,
-		translate: React.PropTypes.func,
+		lists: PropTypes.array,
+		path: PropTypes.string.isRequired,
+		currentListOwner: PropTypes.string,
+		currentListSlug: PropTypes.string,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {

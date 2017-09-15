@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
@@ -60,20 +62,20 @@ const debug = debugFactory( 'calypso:themes:theme-upload' );
 class Upload extends React.Component {
 
 	static propTypes = {
-		siteId: React.PropTypes.number,
-		selectedSite: React.PropTypes.object,
-		inProgress: React.PropTypes.bool,
-		complete: React.PropTypes.bool,
-		failed: React.PropTypes.bool,
-		uploadedTheme: React.PropTypes.object,
-		error: React.PropTypes.object,
-		progressTotal: React.PropTypes.number,
-		progressLoaded: React.PropTypes.number,
-		installing: React.PropTypes.bool,
-		isJetpack: React.PropTypes.bool,
-		upgradeJetpack: React.PropTypes.bool,
-		backPath: React.PropTypes.string,
-		showEligibility: React.PropTypes.bool,
+		siteId: PropTypes.number,
+		selectedSite: PropTypes.object,
+		inProgress: PropTypes.bool,
+		complete: PropTypes.bool,
+		failed: PropTypes.bool,
+		uploadedTheme: PropTypes.object,
+		error: PropTypes.object,
+		progressTotal: PropTypes.number,
+		progressLoaded: PropTypes.number,
+		installing: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		upgradeJetpack: PropTypes.bool,
+		backPath: PropTypes.string,
+		showEligibility: PropTypes.bool,
 	};
 
 	state = {

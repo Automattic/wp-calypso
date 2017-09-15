@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
@@ -17,13 +19,13 @@ export default class ProgressBar extends PureComponent {
 	};
 
 	static propTypes = {
-		value: React.PropTypes.number.isRequired,
-		total: React.PropTypes.number,
-		color: React.PropTypes.string,
-		title: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		isPulsing: React.PropTypes.bool
+		value: PropTypes.number.isRequired,
+		total: PropTypes.number,
+		color: PropTypes.string,
+		title: PropTypes.string,
+		compact: PropTypes.bool,
+		className: PropTypes.string,
+		isPulsing: PropTypes.bool
 	};
 
 	getCompletionPercentage() {

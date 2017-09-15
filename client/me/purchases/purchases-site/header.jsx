@@ -1,7 +1,10 @@
+import { connect } from 'react-redux';
+
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 
@@ -16,10 +19,10 @@ import SitePlaceholder from 'blocks/site/placeholder';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {
-		isPlaceholder: React.PropTypes.bool,
-		siteId: React.PropTypes.number,
-		name: React.PropTypes.string,
-		domain: React.PropTypes.string,
+		isPlaceholder: PropTypes.bool,
+		siteId: PropTypes.number,
+		name: PropTypes.string,
+		domain: PropTypes.string,
 	};
 
 	// Disconnected sites can't render the `Site` component, but there can be

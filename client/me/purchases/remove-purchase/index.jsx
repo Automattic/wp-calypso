@@ -1,9 +1,12 @@
+import { connect } from 'react-redux';
+import page from 'page';
+
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';

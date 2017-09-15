@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -16,15 +18,15 @@ import support from 'lib/url/support';
 
 class ContactsPrivacyCard extends React.PureComponent {
 	static propTypes = {
-		contactInformation: React.PropTypes.object.isRequired,
-		privateDomain: React.PropTypes.bool.isRequired,
-		hasPrivacyProtection: React.PropTypes.bool.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		contactInformation: PropTypes.object.isRequired,
+		privateDomain: PropTypes.bool.isRequired,
+		hasPrivacyProtection: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		currentUserCanManage: React.PropTypes.bool.isRequired
+		currentUserCanManage: PropTypes.bool.isRequired
 	};
 
 	render() {

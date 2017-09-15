@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { isEqual, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -21,20 +23,20 @@ export const ThemesList = React.createClass( {
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
 	propTypes: {
-		themes: React.PropTypes.array.isRequired,
-		emptyContent: React.PropTypes.element,
-		loading: React.PropTypes.bool.isRequired,
-		fetchNextPage: React.PropTypes.func.isRequired,
-		getButtonOptions: React.PropTypes.func,
-		onScreenshotClick: React.PropTypes.func.isRequired,
-		onMoreButtonClick: React.PropTypes.func,
-		getActionLabel: React.PropTypes.func,
-		isActive: React.PropTypes.func,
-		getPrice: React.PropTypes.func,
-		isInstalling: React.PropTypes.func,
+		themes: PropTypes.array.isRequired,
+		emptyContent: PropTypes.element,
+		loading: PropTypes.bool.isRequired,
+		fetchNextPage: PropTypes.func.isRequired,
+		getButtonOptions: PropTypes.func,
+		onScreenshotClick: PropTypes.func.isRequired,
+		onMoreButtonClick: PropTypes.func,
+		getActionLabel: PropTypes.func,
+		isActive: PropTypes.func,
+		getPrice: PropTypes.func,
+		isInstalling: PropTypes.func,
 		// i18n function provided by localize()
-		translate: React.PropTypes.func,
-		placeholderCount: React.PropTypes.number
+		translate: PropTypes.func,
+		placeholderCount: PropTypes.number
 	},
 
 	fetchNextPage( options ) {

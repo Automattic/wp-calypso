@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { property, sortBy } from 'lodash';
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
@@ -32,6 +29,12 @@ var AsyncLoad = require( 'components/async-load' ),
 	SupportUser;
 
 import QuerySites from 'components/data/query-sites';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';
@@ -55,20 +58,20 @@ Layout = React.createClass( {
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
 
 	propTypes: {
-		primary: React.PropTypes.element,
-		secondary: React.PropTypes.element,
-		user: React.PropTypes.object,
-		nuxWelcome: React.PropTypes.object,
-		translatorInvitation: React.PropTypes.object,
-		focus: React.PropTypes.object,
+		primary: PropTypes.element,
+		secondary: PropTypes.element,
+		user: PropTypes.object,
+		nuxWelcome: PropTypes.object,
+		translatorInvitation: PropTypes.object,
+		focus: PropTypes.object,
 		// connected props
-		isLoading: React.PropTypes.bool,
-		isSupportUser: React.PropTypes.bool,
-		section: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object,
+		isLoading: PropTypes.bool,
+		isSupportUser: PropTypes.bool,
+		section: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object,
 		] ),
-		isOffline: React.PropTypes.bool,
+		isOffline: PropTypes.bool,
 	},
 
 	closeWelcome: function() {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
@@ -56,7 +58,7 @@ export const AppPromo = React.createClass( {
 	displayName: 'AppPromo',
 
 	propTypes: {
-		location: React.PropTypes.string.isRequired
+		location: PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {

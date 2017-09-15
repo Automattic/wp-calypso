@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -69,14 +71,14 @@ const ListStreamHeader = ( {
 };
 
 ListStreamHeader.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	title: React.PropTypes.string,
-	description: React.PropTypes.string,
-	showEdit: React.PropTypes.bool,
-	editUrl: React.PropTypes.string,
-	showFollow: React.PropTypes.bool,
-	following: React.PropTypes.bool,
-	onFollowToggle: React.PropTypes.func,
+	isPlaceholder: PropTypes.bool,
+	title: PropTypes.string,
+	description: PropTypes.string,
+	showEdit: PropTypes.bool,
+	editUrl: PropTypes.string,
+	showFollow: PropTypes.bool,
+	following: PropTypes.bool,
+	onFollowToggle: PropTypes.func,
 };
 
 export default localize( ListStreamHeader );

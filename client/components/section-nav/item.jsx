@@ -1,14 +1,15 @@
-/**
- * External Dependencies
- */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+var React = require( 'react' ), PureRenderMixin = require( 'react-pure-render/mixin' ), classNames = require( 'classnames' );
 
 /**
  * Internal Dependencies
  */
 import Count from 'components/count';
+
+/**
+ * External Dependencies
+ */
+import PropTypes from 'prop-types';
+
 import { preload } from 'sections-preload';
 
 /**
@@ -19,19 +20,19 @@ var NavItem = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		itemType: React.PropTypes.string,
-		path: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		tabIndex: React.PropTypes.number,
-		onClick: React.PropTypes.func,
-		isExternalLink: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		count: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.bool,
+		itemType: PropTypes.string,
+		path: PropTypes.string,
+		selected: PropTypes.bool,
+		tabIndex: PropTypes.number,
+		onClick: PropTypes.func,
+		isExternalLink: PropTypes.bool,
+		disabled: PropTypes.bool,
+		count: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.bool,
 		] ),
-		className: React.PropTypes.string,
-		preloadSectionName: React.PropTypes.string
+		className: PropTypes.string,
+		preloadSectionName: PropTypes.string
 	},
 
 	_preloaded: false,

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -15,10 +16,10 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
+		media: PropTypes.object,
+		scale: PropTypes.number,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
 	},
 
 	getDefaultProps: function() {

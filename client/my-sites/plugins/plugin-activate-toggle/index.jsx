@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -116,9 +118,9 @@ export class PluginActivateToggle extends Component {
 PluginActivateToggle.propTypes = {
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
-	notices: React.PropTypes.object,
+	notices: PropTypes.object,
 	isMock: PropTypes.bool,
-	disabled: React.PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
 PluginActivateToggle.defaultProps = {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
 
 const DomainsSelect = React.createClass( {
 	propTypes: {
-		domains: React.PropTypes.object.isRequired
+		domains: PropTypes.object.isRequired
 	},
 
 	render() {

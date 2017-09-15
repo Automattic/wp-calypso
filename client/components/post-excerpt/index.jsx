@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 
@@ -10,8 +12,8 @@ import Emojify from 'components/emojify';
 const PostExcerpt = React.createClass( {
 
 	propTypes: {
-		content: React.PropTypes.string.isRequired,
-		maxLength: React.PropTypes.number
+		content: PropTypes.string.isRequired,
+		maxLength: PropTypes.number
 	},
 
 	defaultProps: {

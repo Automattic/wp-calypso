@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { identity, isFunction } from 'lodash';
 import page from 'page';
@@ -15,11 +17,11 @@ export const CartButtons = React.createClass( {
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
 
 	propTypes: {
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		translate: React.PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired
 	},
 
 	getDefaultProps() {

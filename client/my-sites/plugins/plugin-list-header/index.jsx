@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';

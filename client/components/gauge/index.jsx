@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -10,12 +11,12 @@ module.exports = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		percentage: React.PropTypes.number.isRequired,
-		width: React.PropTypes.number,
-		height: React.PropTypes.number,
-		colors: React.PropTypes.array,
-		lineWidth: React.PropTypes.number,
-		metric: React.PropTypes.string.isRequired
+		percentage: PropTypes.number.isRequired,
+		width: PropTypes.number,
+		height: PropTypes.number,
+		colors: PropTypes.array,
+		lineWidth: PropTypes.number,
+		metric: PropTypes.string.isRequired
 	},
 
 	getDefaultProps: function() {

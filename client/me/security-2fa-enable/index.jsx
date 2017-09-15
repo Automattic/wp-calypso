@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -37,9 +38,9 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		doSMSFlow: React.PropTypes.bool,
-		onCancel: React.PropTypes.func.isRequired,
-		onSuccess: React.PropTypes.func.isRequired,
+		doSMSFlow: PropTypes.bool,
+		onCancel: PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
+var PropTypes = require('prop-types');
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );
@@ -24,10 +25,10 @@ var MOBILE_PANEL_THRESHOLD = 480;
 var NavTabs = React.createClass( {
 
 	propTypes: {
-		selectedText: React.PropTypes.string,
-		selectedCount: React.PropTypes.number,
-		label: React.PropTypes.string,
-		hasSiblingControls: React.PropTypes.bool
+		selectedText: PropTypes.string,
+		selectedCount: PropTypes.number,
+		label: PropTypes.string,
+		hasSiblingControls: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

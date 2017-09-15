@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import {
@@ -22,13 +24,13 @@ import Search from 'components/search';
 var SectionNav = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.node,
-		selectedText: React.PropTypes.node,
-		selectedCount: React.PropTypes.number,
-		hasPinnedItems: React.PropTypes.bool,
-		onMobileNavPanelOpen: React.PropTypes.func,
-		className: React.PropTypes.string,
-		allowDropdown: React.PropTypes.bool,
+		children: PropTypes.node,
+		selectedText: PropTypes.node,
+		selectedCount: PropTypes.number,
+		hasPinnedItems: PropTypes.bool,
+		onMobileNavPanelOpen: PropTypes.func,
+		className: PropTypes.string,
+		allowDropdown: PropTypes.bool,
 	},
 
 	getInitialState: function() {

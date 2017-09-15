@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,9 +26,9 @@ const user = userFactory();
 export class EditorAuthor extends Component {
 
 	static propTypes = {
-		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		postAuthor: React.PropTypes.object,
+		post: PropTypes.object,
+		isNew: PropTypes.bool,
+		postAuthor: PropTypes.object,
 	};
 
 	render() {

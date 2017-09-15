@@ -1,7 +1,10 @@
+import { connect } from 'react-redux';
+
 /**
  * External Dependencies
  */
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -198,8 +201,8 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 };
 
 CancelPurchaseRefundInformation.propTypes = {
-	purchase: React.PropTypes.object.isRequired,
-	includedDomainPurchase: React.PropTypes.object,
+	purchase: PropTypes.object.isRequired,
+	includedDomainPurchase: PropTypes.object,
 };
 
 export default connect( ( state, props ) => ( {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { map } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
@@ -9,12 +10,12 @@ const React = require( 'react' ),
 
 var SuggestionsList = React.createClass( {
 	propTypes: {
-		isExpanded: React.PropTypes.bool,
-		match: React.PropTypes.string,
-		displayTransform: React.PropTypes.func.isRequired,
-		onSelect: React.PropTypes.func,
-		suggestions: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number
+		isExpanded: PropTypes.bool,
+		match: PropTypes.string,
+		displayTransform: PropTypes.func.isRequired,
+		onSelect: PropTypes.func,
+		suggestions: PropTypes.array,
+		selectedIndex: PropTypes.number
 	},
 
 	getDefaultProps: function() {

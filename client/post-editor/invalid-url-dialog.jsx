@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop, startsWith } from 'lodash';
 import page from 'page';
@@ -34,8 +36,8 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		onSave: React.PropTypes.func
+		onClose: PropTypes.func,
+		onSave: PropTypes.func
 	},
 
 	getDialogButtons() {

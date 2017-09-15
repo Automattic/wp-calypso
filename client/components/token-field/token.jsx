@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin'
 import classNames from 'classnames';
 
@@ -15,13 +17,13 @@ export default React.createClass( {
 	displayName: 'Token',
 
 	propTypes: {
-		value: React.PropTypes.string.isRequired,
-		displayTransform: React.PropTypes.func.isRequired,
-		onClickRemove: React.PropTypes.func,
-		status: React.PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
-		isBorderless: React.PropTypes.bool,
-		tooltip: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		value: PropTypes.string.isRequired,
+		displayTransform: PropTypes.func.isRequired,
+		onClickRemove: PropTypes.func,
+		status: PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
+		isBorderless: PropTypes.bool,
+		tooltip: PropTypes.string,
+		disabled: PropTypes.bool
 	},
 
 	getDefaultProps() {

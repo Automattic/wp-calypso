@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import keyMirror from 'key-mirror';
 import { localize } from 'i18n-calypso';
@@ -133,8 +135,8 @@ class ManageContact extends Component {
 }
 
 ManageContact.propTypes = {
-	type: React.PropTypes.string,
-	disabled: React.PropTypes.bool
+	type: PropTypes.string,
+	disabled: PropTypes.bool
 };
 
 export default localize( ManageContact );

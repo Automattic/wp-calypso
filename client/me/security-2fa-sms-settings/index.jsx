@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
@@ -38,11 +40,11 @@ module.exports = protectForm( React.createClass( {
 	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ) ],
 
 	propTypes: {
-		onCancel: React.PropTypes.func.isRequired,
-		onVerifyByApp: React.PropTypes.func.isRequired,
-		onVerifyBySMS: React.PropTypes.func.isRequired,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired
+		onCancel: PropTypes.func.isRequired,
+		onVerifyByApp: PropTypes.func.isRequired,
+		onVerifyBySMS: PropTypes.func.isRequired,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired
 	},
 
 	verifyByApp: null,

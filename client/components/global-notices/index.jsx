@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import debugModule from 'debug';
 
@@ -24,10 +26,10 @@ const NoticesList = React.createClass( {
 	mixins: [ observe( 'notices' ) ],
 
 	propTypes: {
-		id: React.PropTypes.string,
-		notices: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.array
+		id: PropTypes.string,
+		notices: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.array
 		] )
 	},
 

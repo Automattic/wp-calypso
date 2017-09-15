@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -24,7 +26,7 @@ export const Sites = React.createClass( {
 	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
-		path: React.PropTypes.string.isRequired
+		path: PropTypes.string.isRequired
 	},
 
 	filterSites( site ) {

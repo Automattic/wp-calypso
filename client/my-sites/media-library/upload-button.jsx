@@ -1,7 +1,10 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop, uniq } from 'lodash';
 import classNames from 'classnames';
@@ -19,9 +22,9 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryUploadButton',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		onAddMedia: React.PropTypes.func,
-		className: React.PropTypes.string,
+		site: PropTypes.object,
+		onAddMedia: PropTypes.func,
+		className: PropTypes.string,
 	},
 
 	getDefaultProps: function() {

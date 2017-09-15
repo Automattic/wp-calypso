@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { compact } from 'lodash';
+const PropTypes = require('prop-types');
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -18,10 +19,10 @@ module.exports = React.createClass( {
 	displayName: 'PluginSiteList',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		title: React.PropTypes.string
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		title: PropTypes.string
 	},
 
 	getSecondaryPluginSites: function( site ) {

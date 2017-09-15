@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -29,8 +31,8 @@ const PushNotificationSettings = React.createClass( {
 	displayName: 'PushNotificationSettings',
 
 	propTypes: {
-		toggleEnabled: React.PropTypes.func.isRequired,
-		toggleUnblockInstructions: React.PropTypes.func.isRequired
+		toggleEnabled: PropTypes.func.isRequired,
+		toggleUnblockInstructions: PropTypes.func.isRequired
 	},
 
 	clickHandler: function() {

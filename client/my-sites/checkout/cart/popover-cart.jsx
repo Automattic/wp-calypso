@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
@@ -23,17 +25,17 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 
 const PopoverCart = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		cart: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		onToggle: React.PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: React.PropTypes.func,
-		visible: React.PropTypes.bool.isRequired,
-		pinned: React.PropTypes.bool.isRequired,
-		showKeepSearching: React.PropTypes.bool.isRequired,
-		onKeepSearchingClick: React.PropTypes.func.isRequired
+		onToggle: PropTypes.func.isRequired,
+		closeSectionNavMobilePanel: PropTypes.func,
+		visible: PropTypes.bool.isRequired,
+		pinned: PropTypes.bool.isRequired,
+		showKeepSearching: PropTypes.bool.isRequired,
+		onKeepSearchingClick: PropTypes.func.isRequired
 	},
 
 	itemCount: function() {

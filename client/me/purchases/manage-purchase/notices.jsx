@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -32,14 +34,14 @@ const eventProperties = ( warning ) => ( { warning, position: 'individual-purcha
 
 class PurchaseNotice extends Component {
 	static propTypes = {
-		isDataLoading: React.PropTypes.bool,
-		handleRenew: React.PropTypes.func,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType(
-			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		isDataLoading: PropTypes.bool,
+		handleRenew: PropTypes.func,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType(
+			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
 		),
-		editCardDetailsPath: React.PropTypes.oneOfType(
-			[ React.PropTypes.string, React.PropTypes.bool ]
+		editCardDetailsPath: PropTypes.oneOfType(
+			[ PropTypes.string, PropTypes.bool ]
 		),
 	};
 

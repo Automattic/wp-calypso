@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isFunction, noop } from 'lodash';
@@ -8,13 +10,13 @@ import Gridicon from 'gridicons';
 
 class MasterbarItem extends Component {
 	static propTypes = {
-		url: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		tooltip: React.PropTypes.string,
-		icon: React.PropTypes.string,
-		className: React.PropTypes.string,
-		isActive: React.PropTypes.bool,
-		preloadSection: React.PropTypes.func
+		url: PropTypes.string,
+		onClick: PropTypes.func,
+		tooltip: PropTypes.string,
+		icon: PropTypes.string,
+		className: PropTypes.string,
+		isActive: PropTypes.bool,
+		preloadSection: PropTypes.func
 	};
 
 	static defaultProps = {

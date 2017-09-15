@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -25,8 +26,8 @@ module.exports = React.createClass( {
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
+		onPrintAgain: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {
