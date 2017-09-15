@@ -172,10 +172,10 @@ const SectionNav = React.createClass( {
 	},
 
 	generateOnSearch: function( existingOnSearch ) {
-		return function() {
-			existingOnSearch.apply( this, arguments );
+		return ( search ) => {
+			existingOnSearch( search );
 			this.closeMobilePanel();
-		}.bind( this );
+		};
 	},
 
 	checkForSiblingControls: function( children ) {
