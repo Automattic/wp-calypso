@@ -23,7 +23,6 @@ import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i, prop;
@@ -48,7 +47,6 @@ export const PluginsList = React.createClass( {
 			name: PropTypes.string,
 		} ) ).isRequired,
 		header: PropTypes.string.isRequired,
-		hasSingleSite: PropTypes.bool.isRequired,
 		selectedSite: PropTypes.object,
 		selectedSiteSlug: PropTypes.string,
 		pluginUpdateCount: PropTypes.number,
@@ -62,7 +60,7 @@ export const PluginsList = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'plugins', 'hasSingleSite', 'selectedSite', 'pluginUpdateCount', '' ];
+		const propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
@@ -175,7 +173,7 @@ export const PluginsList = React.createClass( {
 	},
 
 	siteSuffix() {
-		return ( this.props.selectedSite || this.props.hasSingleSite ) ? '/' + this.props.selectedSiteSlug : '';
+		return this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 	},
 
 	recordEvent( eventAction, includeSelectedPlugins ) {
@@ -530,7 +528,6 @@ export default connect(
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
-			hasSingleSite: getCurrentUserSiteCount( state ) === 1
 		};
 	},
 	{
