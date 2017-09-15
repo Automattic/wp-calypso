@@ -29,7 +29,7 @@
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
 	"olark": {},
-	"port": false,
+	"port": 3000,
 	"happychat_url": "https://happychat.io/customer",
 	"happychat_support_blog": "en.support.wordpress.com",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
