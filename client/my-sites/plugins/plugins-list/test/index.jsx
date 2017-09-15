@@ -15,7 +15,7 @@ import { createReduxStore } from 'state';
 import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
-	let React, testRenderer, PluginsList, siteListMock, TestUtils;
+	let React, testRenderer, PluginsList, TestUtils;
 
 	useFakeDom();
 
@@ -28,7 +28,6 @@ describe( 'PluginsList', () => {
 		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
 
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
-		mockery.registerMock( 'lib/sites-list', () => siteListMock );
 	} );
 
 	before( () => {
@@ -40,7 +39,6 @@ describe( 'PluginsList', () => {
 
 		testRenderer = TestUtils.renderIntoDocument;
 
-		siteListMock = { getSelectedSite: () => sites[ 0 ], get: () => sites, sync() {} };
 		PluginsList = require( '../' ).PluginsList;
 	} );
 
@@ -55,7 +53,6 @@ describe( 'PluginsList', () => {
 			props = {
 				plugins,
 				header: 'Plugins',
-				sites: siteListMock,
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
 				pluginUpdateCount: plugins.length
