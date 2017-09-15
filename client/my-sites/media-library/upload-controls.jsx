@@ -58,6 +58,10 @@ class MediaLibraryUploadControls extends Component {
 		}
 	};
 
+	onExternalServiceClick = () => {
+		this.props.onSourceChange( 'google_photos' );
+	};
+
 	/**
 	 * Returns a string of comma-separated file extensions supported for the
 	 * current site, to be used as the `accept` attribute in an `input` element
@@ -160,7 +164,7 @@ class MediaLibraryUploadControls extends Component {
 					<Card className="media-library__upload-controls-options">
 						{ this.renderFileItem() }
 						{ this.renderUploadViaUrl() }
-						<CompactCard className="media-library__upload-controls-option">
+						<CompactCard className="media-library__upload-controls-option" onClick={ this.onExternalServiceClick }>
 							<SocialLogo icon="google" size={ 18 } />
 							<span className="media-library__upload-controls-option-name">{ translate( 'Google Photos' ) }</span>
 							<Gridicon icon="chevron-right" />
@@ -176,6 +180,7 @@ class MediaLibraryUploadControls extends Component {
 MediaLibraryUploadControls.propTypes = {
 	site: PropTypes.object.isRequired,
 	onAddMedia: PropTypes.func.isRequired,
+	onSourceChange: PropTypes.func.isRequired,
 };
 
 export default localize( MediaLibraryUploadControls );

@@ -60,6 +60,7 @@
 	flex-flow: row nowrap;
 	align-items: stretch;
 	position: relative;
+	min-height: 67px;
 
 	@include breakpoint( "<480px" ) {
 		flex-wrap: wrap;

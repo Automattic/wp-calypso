@@ -98,6 +98,10 @@ class MediaLibraryExternalHeader extends React.Component {
 		} );
 	};
 
+	onCancel = () => {
+		this.props.onSourceChange( '' );
+	};
+
 	renderCopyButton() {
 		const { selectedItems, translate } = this.props;
 
@@ -113,6 +117,11 @@ class MediaLibraryExternalHeader extends React.Component {
 
 		return (
 			<Card className="media-library__header">
+				<Button compact onClick={ this.onCancel }>
+					<Gridicon icon="chevron-left" size={ 24 } />
+
+					{ translate( 'Cancel' ) }
+				</Button>
 				<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
 					<Gridicon icon="refresh" size={ 24 } />
 

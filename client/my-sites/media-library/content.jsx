@@ -27,9 +27,9 @@ import {
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryFooter from './footer';
-import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
+import MediaLibraryUploadControls from './upload-controls';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
@@ -274,21 +274,30 @@ class MediaLibraryContent extends React.Component {
 
 		if ( ! this.props.filterRequiresUpgrade ) {
 			return (
-				<MediaLibraryHeader
+				<MediaLibraryUploadControls
 					site={ this.props.site }
-					filter={ this.props.filter }
-					onMediaScaleChange={ this.props.onMediaScaleChange }
 					onAddMedia={ this.props.onAddMedia }
-					onAddAndEditImage={ this.props.onAddAndEditImage }
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDeleteItem={ this.props.onDeleteItem }
-					sticky={ ! this.props.scrollable }
+					onSourceChange={ this.props.onSourceChange }
 				/>
 			);
 		}
 
 		return null;
+	}
+
+	renderFooter() {
+		if ( this.props.source ) {
+			return null;
+		}
+
+		return (
+			<MediaLibraryFooter
+				site={ this.props.site }
+				parent={ this }
+				selectedItems={ this.props.selectedItems }
+				onViewDetails={ this.props.onViewDetails }
+				onDeleteItem={ this.props.onDeleteItem } />
+		);
 	}
 
 	render() {
@@ -297,12 +306,7 @@ class MediaLibraryContent extends React.Component {
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
-				<MediaLibraryFooter
-					site={ this.props.site }
-					parent={ this }
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDeleteItem={ this.props.onDeleteItem } />
+				{ this.renderFooter() }
 			</div>
 		);
 	}
