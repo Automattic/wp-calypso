@@ -295,7 +295,6 @@ function setUpLoggedInRoute( req, res, next ) {
 			let searchParam, errorMessage;
 
 			if ( error ) {
-				console.log( 'user bootstrap error', error );
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', { path: '/', httpOnly: true, domain: '.wordpress.com' } );
@@ -320,7 +319,6 @@ function setUpLoggedInRoute( req, res, next ) {
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
 			context.isRTL = data.isRTL ? true : false;
-			context.lang = context.user.lang;
 
 			if ( context.isRTL ) {
 				context.bodyClasses.push( 'rtl' );
