@@ -5,10 +5,10 @@ import React from 'react';
 import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
-import CreateClass from 'create-react-class';
+import createClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-export default CreateClass( {
+export default createClass( {
 	displayName: 'Card',
 
 	propTypes: {
