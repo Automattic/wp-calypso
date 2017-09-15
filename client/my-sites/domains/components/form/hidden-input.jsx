@@ -9,7 +9,7 @@ import React from 'react';
  */
 import Input from './input';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HiddenInput',
 
 	componentWillReceiveProps: function( nextProps ) {
