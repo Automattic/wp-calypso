@@ -315,7 +315,6 @@ class Post extends Component {
 				}
 				{
 					this.state.showShare &&
-					config.isEnabled( 'republicize' ) &&
 					<PostShare
 						post={ this.props.post }
 						siteId={ this.props.post.site_ID }

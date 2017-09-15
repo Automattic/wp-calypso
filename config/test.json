@@ -86,7 +86,6 @@
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
-		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
