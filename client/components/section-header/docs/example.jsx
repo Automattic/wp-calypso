@@ -1,9 +1,8 @@
 /**
 * External dependencies
 */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -11,14 +10,12 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 
-var Cards = React.createClass( {
-	displayName: 'SectionHeader',
+class SectionHeader extends PureComponent {
+	static displayName = 'SectionHeader';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		return (
-		    <div>
+			<div>
 				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
 						{ this.props.translate( 'Primary Action' ) }
@@ -46,6 +43,6 @@ var Cards = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default localize(Cards);
+export default localize( SectionHeader );
