@@ -8,16 +8,16 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
-	requestEligibility,
-	receiveResponse,
-	receiveError,
+	requestAutomatedTransferEligibility,
+	updateAutomatedTransferEligibility,
+	throwRequestError,
 } from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
 
-describe( 'requestEligibility', () => {
+describe( 'requestAutomatedTransferEligibility', () => {
 	it( 'should dispatch an http request', () => {
 		const dispatch = sinon.spy();
 		const siteId = 2916284;
-		requestEligibility( { dispatch }, { siteId } );
+		requestAutomatedTransferEligibility( { dispatch }, { siteId } );
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			method: 'GET',
 			path: `/sites/${ siteId }/automated-transfers/eligibility`,
@@ -25,11 +25,11 @@ describe( 'requestEligibility', () => {
 	} );
 } );
 
-describe( 'receiveResponse', () => {
+describe( 'updateAutomatedTransferEligibility', () => {
 	it( 'should dispatch an update eligibility action ', () => {
 		const dispatch = sinon.spy();
 		const action = { type: 'AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST', siteId: 2916284 };
-		receiveResponse( { dispatch }, action, { warnings: {}, errors: [] } );
+		updateAutomatedTransferEligibility( { dispatch }, action, { warnings: {}, errors: [] } );
 		expect( dispatch ).to.have.been.calledWith(
 			sinon.match( { type: 'AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE', siteId: 2916284 } )
 		);
@@ -37,10 +37,10 @@ describe( 'receiveResponse', () => {
 } );
 
 // TODO: Find out why we're throwing
-describe( 'receiveError', () => {
+describe( 'throwRequestError', () => {
 	it( 'should throw an error', () => {
 		const testError = () => {
-			receiveError( {}, {}, {} );
+			throwRequestError( {}, {}, {} );
 		};
 		expect( testError ).to.throw();
 	} );

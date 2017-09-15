@@ -115,7 +115,7 @@ const trackEligibility = data => {
  * @param {Function} store.dispatch action dispatcher
  * @param {action} action Action object
  */
-export const requestEligibility = ( { dispatch }, action ) => {
+export const requestAutomatedTransferEligibility = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http( {
@@ -125,21 +125,21 @@ export const requestEligibility = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveResponse = ( { dispatch }, { siteId }, data ) => {
+export const updateAutomatedTransferEligibility = ( { dispatch }, { siteId }, data ) => {
 	dispatch( withAnalytics(
 		trackEligibility( data ),
 		updateEligibility( siteId, fromApi( data ) )
 	) );
 };
 
-export const receiveError = ( store, action, error ) => {
+export const throwRequestError = ( store, action, error ) => {
 	throw new Error( error );
 };
 
 export default {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [ dispatchRequest(
-		requestEligibility,
-		receiveResponse,
-		receiveError
+		requestAutomatedTransferEligibility,
+		updateAutomatedTransferEligibility,
+		throwRequestError
 	) ],
 };
