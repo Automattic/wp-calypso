@@ -22,19 +22,19 @@ import {
 
 describe( 'account-recovery/reset', () => {
 	describe( '#handleResetPasswordRequest', () => {
-		const dispatchSpy = spy();
-		const dummyAction = {
-			userData: {
-				user: 'foo',
-			},
-			method: 'primary_email',
-			key: 'a-super-secret-key',
-			password: 'my-new-password-which-I-cannot-remember',
-		};
-
-		resetPassword( { dispatch: dispatchSpy }, dummyAction );
-
 		it( 'should dispatch HTTP request to account recovery reset endpoint', () => {
+			const dispatchSpy = spy();
+			const dummyAction = {
+				userData: {
+					user: 'foo',
+				},
+				method: 'primary_email',
+				key: 'a-super-secret-key',
+				password: 'my-new-password-which-I-cannot-remember',
+			};
+
+			resetPassword( { dispatch: dispatchSpy }, dummyAction );
+
 			const {
 				userData,
 				method,
@@ -57,13 +57,13 @@ describe( 'account-recovery/reset', () => {
 	} );
 
 	describe( '#requestResetPasswordError', () => {
-		const dispatchSpy = spy();
-		const message = 'This is an error message.';
-		const rawError = Error( message );
-
-		handleError( { dispatch: dispatchSpy }, null, rawError );
-
 		it( 'should dispatch failure action with error message', () => {
+			const dispatchSpy = spy();
+			const message = 'This is an error message.';
+			const rawError = Error( message );
+
+			handleError( { dispatch: dispatchSpy }, null, rawError );
+
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 				error: message,
@@ -72,11 +72,11 @@ describe( 'account-recovery/reset', () => {
 	} );
 
 	describe( '#requestResetPasswordSuccess', () => {
-		const dispatchSpy = spy();
-
-		handleSuccess( { dispatch: dispatchSpy } );
-
 		it( 'should dispatch success action', () => {
+			const dispatchSpy = spy();
+
+			handleSuccess( { dispatch: dispatchSpy } );
+
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 			} );
