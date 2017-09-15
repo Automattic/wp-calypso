@@ -12,7 +12,7 @@ import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
 import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
 
-export default localize( class extends React.Component {
+class AuthCodeButton extends React.Component {
 	state = Store.get();
 
 	componentDidMount() {
@@ -62,4 +62,6 @@ export default localize( class extends React.Component {
 			</Notice>
 		);
 	}
-} );
+};
+
+export default localize( AuthCodeButton );
