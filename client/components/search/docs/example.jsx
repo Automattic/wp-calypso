@@ -39,4 +39,4 @@ var SearchDemo = React.createClass( {
 	}
 } );
 
-module.exports = SearchDemo;
+export default SearchDemo;
