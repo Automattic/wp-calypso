@@ -115,7 +115,8 @@ const PostTypeFilter = React.createClass( {
 							selectedCount={ selectedItem.count }>
 							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
 						</NavTabs>,
-						<AuthorSegmented key="author"
+						query.type === 'post' && <AuthorSegmented
+							key="author"
 							author={ query.author }
 							siteId={ siteId }
 							statusSlug={ statusSlug } />,
