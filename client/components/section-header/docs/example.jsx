@@ -1,14 +1,14 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+import Button from 'components/button';
+import SectionHeader from 'components/section-header';
 
 var Cards = React.createClass( {
 	displayName: 'SectionHeader',
