@@ -125,7 +125,7 @@ const PostsMain = React.createClass( {
 			<Main className={ classes }>
 				<SidebarNavigation />
 				<div className="posts__primary">
-					<PostTypeFilter query={ query } siteId={ siteId } />
+					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 					<PostListWrapper { ...this.props } />
 				</div>
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }

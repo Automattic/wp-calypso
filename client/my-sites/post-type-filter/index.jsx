@@ -18,6 +18,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
+import AuthorSegmented from './author-segmented';
 
 const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],
@@ -90,7 +91,7 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	render() {
-		const { siteId, query, jetpack } = this.props;
+		const { jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
@@ -112,6 +113,10 @@ const PostTypeFilter = React.createClass( {
 							selectedCount={ selectedItem.count }>
 							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
 						</NavTabs>,
+						<AuthorSegmented key="author"
+							author={ query.author }
+							siteId={ siteId }
+							statusSlug={ statusSlug } />,
 						<Search
 							key="search"
 							pinned
