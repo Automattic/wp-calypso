@@ -7,10 +7,6 @@ import classNames from 'classnames';
 import { noop, identity } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-/**
- * Internal dependencies
- */
-import Button from 'components/button';
 
 class EditorDrawerWell extends Component {
 	static propTypes = {
@@ -22,7 +18,6 @@ class EditorDrawerWell extends Component {
 		label: PropTypes.node,
 		onClick: PropTypes.func,
 		customDropZone: PropTypes.node,
-		onRemove: PropTypes.func,
 		translate: PropTypes.func
 	};
 
@@ -30,12 +25,11 @@ class EditorDrawerWell extends Component {
 		disabled: false,
 		isHidden: false,
 		onClick: noop,
-		onRemove: noop,
 		translate: identity,
 	};
 
 	render() {
-		const { empty, onRemove, onClick, disabled, icon, label, children, isHidden } = this.props;
+		const { empty, onClick, disabled, icon, label, children, isHidden } = this.props;
 		const classes = classNames(
 			'editor-drawer-well',
 			{
@@ -48,21 +42,6 @@ class EditorDrawerWell extends Component {
 			<div className={ classes }>
 				<div className="editor-drawer-well__content">
 					{ children }
-					{ onRemove && (
-						<Button
-							onClick={ onRemove }
-							compact
-							className="editor-drawer-well__remove">
-							<span className="screen-reader-text">
-								{ this.props.translate( 'Remove' ) }
-							</span>
-							<Gridicon
-								icon="cross"
-								size={ 24 }
-								className="editor-drawer-well__remove-icon"
-							/>
-						</Button>
-					) }
 				</div>
 				{ empty && (
 					<button
