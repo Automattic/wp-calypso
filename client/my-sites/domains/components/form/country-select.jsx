@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import ReactDom from 'react-dom';
@@ -16,7 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import FormSelect from 'components/forms/form-select';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'CountrySelect',
 
 	mixins: [ observe( 'countriesList' ) ],
@@ -41,10 +42,10 @@ export default React.createClass( {
 		value = value || '';
 
 		if ( isEmpty( countriesList ) ) {
-			options.push( { key: 'loading', label: this.translate( 'Loading…' ), disabled: 'disabled' } );
+			options.push( { key: 'loading', label: this.props.translate( 'Loading…' ), disabled: 'disabled' } );
 		} else {
 			options = options.concat( [
-				{ key: 'select-country', label: this.translate( 'Select Country' ), value: '' },
+				{ key: 'select-country', label: this.props.translate( 'Select Country' ), value: '' },
 				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' }
 			] );
 
@@ -86,4 +87,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
