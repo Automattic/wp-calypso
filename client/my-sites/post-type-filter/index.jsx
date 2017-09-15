@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { find, includes, reduce } from 'lodash';
+import { compact, find, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,12 +78,13 @@ const PostTypeFilter = React.createClass( {
 			return memo.concat( {
 				count: jetpack ? null : count,
 				key: `filter-${ status }`,
-				path: [
-					'/types',
-					query.type,
+				path: compact( [
+					query.type === 'post'
+						? '/posts'
+						: '/types/' + query.type,
 					pathStatus,
 					siteSlug
-				].filter( Boolean ).join( '/' ),
+				] ).join( '/' ),
 				selected: mapPostStatus( pathStatus ) === query.status,
 				children: label
 			} );
