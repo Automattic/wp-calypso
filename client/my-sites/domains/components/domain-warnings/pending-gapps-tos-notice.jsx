@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,10 +26,10 @@ const strong = <strong />;
 
 class PendingGappsTosNotice extends React.PureComponent {
 	static propTypes = {
-		siteSlug: React.PropTypes.string.isRequired,
-		domains: React.PropTypes.array.isRequired,
-		section: React.PropTypes.string.isRequired,
-		isCompact: React.PropTypes.bool,
+		siteSlug: PropTypes.string.isRequired,
+		domains: PropTypes.array.isRequired,
+		section: PropTypes.string.isRequired,
+		isCompact: PropTypes.bool,
 	};
 
 	static defaultProps = {
