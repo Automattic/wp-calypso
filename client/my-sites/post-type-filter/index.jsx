@@ -134,7 +134,7 @@ const PostTypeFilter = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state, { query } ) => {
 	const siteId = getSelectedSiteId( state );
 	const props = {
 		siteId,
@@ -142,11 +142,11 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: getSiteSlug( state, siteId )
 	};
 
-	if ( ! ownProps.query ) {
+	if ( ! query ) {
 		return props;
 	}
 
 	return Object.assign( props, {
-		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type )
+		counts: getNormalizedPostCounts( state, siteId, query.type )
 	} );
 } )( PostTypeFilter );
