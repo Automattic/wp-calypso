@@ -12,30 +12,27 @@ import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
 import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
 
-export default localize( React.createClass( {
+export default localize( class extends React.Component {
+	state = Store.get();
 
-	componentDidMount: function() {
+	componentDidMount() {
 		Store.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		Store.off( 'change', this.refreshData );
-	},
+	}
 
-	refreshData: function() {
+	refreshData = () => {
 		this.setState( Store.get() );
-	},
+	};
 
-	getInitialState: function() {
-		return Store.get();
-	},
-
-	requestSMSCode: function( e ) {
+	requestSMSCode = e => {
 		e.preventDefault();
 		requestCode( this.props.username, this.props.password );
-	},
+	};
 
-	render: function() {
+	render() {
 		const { status, errorLevel, errorMessage } = this.state;
 
 		let noticeStatus = 'is-info';
@@ -65,5 +62,4 @@ export default localize( React.createClass( {
 			</Notice>
 		);
 	}
-
-} ) );
+} );
