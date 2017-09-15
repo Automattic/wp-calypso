@@ -285,11 +285,12 @@ const PluginsMain = React.createClass( {
 		}
 
 		const installedPluginsList = showInstalledPluginList && (
-				<PluginsList
-					header={ this.props.translate( 'Installed Plugins' ) }
-					plugins={ plugins }
-					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
+			<PluginsList
+				header={ this.props.translate( 'Installed Plugins' ) }
+				plugins={ plugins }
+				pluginUpdateCount={ this.state.pluginUpdateCount }
+				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+			/>
 		);
 
 		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
@@ -495,10 +496,10 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
-		const sites = getSelectedOrAllSitesWithPlugins( state );
 		return {
+			sites: getSelectedOrAllSitesWithPlugins( state ),
 			selectedSite,
-			selectedSiteId: selectedSiteId,
+			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
@@ -509,8 +510,7 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: ( selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
-				: canCurrentUserManagePlugins( state ) ),
-			sites,
+				: canCurrentUserManagePlugins( state ) )
 		};
 	},
 	{ wporgFetchPluginData, recordGoogleEvent }
