@@ -309,7 +309,7 @@ const PluginsMain = React.createClass( {
 		const suggestedPluginsList = showSuggestedPluginsList && (
 			<PluginsBrowser
 				hideSearchForm
-				path={ this.context.path }
+				path={ this.props.context.path }
 				search={ search }
 				searchTitle={ searchTitle }
 			/>
