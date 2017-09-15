@@ -26,6 +26,7 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
+import MediaLibraryFooter from './footer';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
@@ -296,6 +297,12 @@ class MediaLibraryContent extends React.Component {
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
+				<MediaLibraryFooter
+					site={ this.props.site }
+					parent={ this }
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDeleteItem={ this.props.onDeleteItem } />
 			</div>
 		);
 	}

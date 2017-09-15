@@ -13,6 +13,7 @@
 .media-library__upload-controls-option {
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 
 	svg {
 		color: $gray;

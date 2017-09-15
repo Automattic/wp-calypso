@@ -17,18 +17,37 @@ import analytics from 'lib/analytics';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import MediaActions from 'lib/media/actions';
+import MediaLibraryUploadUrl from './upload-url';
 import MediaUtils from 'lib/media/utils';
 import SectionHeader from 'components/section-header';
+import { userCan } from 'lib/site/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
 class MediaLibraryUploadControls extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			addingViaUrl: false,
+		};
+	}
+
+	onAddUrlClick = () => {
+		! this.state.addingViaUrl && this.setState( { addingViaUrl: true } );
+	};
+
+	onAddUrlClose = () => {
+		this.setState( { addingViaUrl: false } );
+	};
+
 	uploadFiles = ( event ) => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
 			MediaActions.add( this.props.site.ID, event.target.files );
 		}
 
-		ReactDom.findDOMNode( this.refs.form ).reset();
+		ReactDom.findDOMNode( this.refs.itemForm ).reset();
+		ReactDom.findDOMNode( this.refs.dropzoneForm ).reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
 	};
@@ -57,59 +76,102 @@ class MediaLibraryUploadControls extends Component {
 		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${ type }` ).join();
 	};
 
-	render() {
+	renderUploadViaUrl() {
+		const { site, translate, onAddMedia } = this.props;
+
+		if ( this.state.addingViaUrl ) {
+			return (
+				<CompactCard className="media-library__upload-controls-option">
+					<MediaLibraryUploadUrl
+						site={ site }
+						onAddMedia={ onAddMedia }
+						onClose={ this.onAddUrlClose } />
+				</CompactCard>
+			);
+		}
+
+		return (
+			<CompactCard className="media-library__upload-controls-option" onClick={ this.onAddUrlClick }>
+				<Gridicon icon="domains" size={ 18 } />
+				<span className="media-library__upload-controls-option-name">{ translate( 'URL' ) }</span>
+				<Gridicon icon="chevron-right" />
+			</CompactCard>
+		);
+	}
+
+	renderFileItem() {
 		const { translate } = this.props;
 
 		return (
-			<form ref="form">
-				<div className="media-library__upload-controls-container">
-					<div>
-						<SectionHeader
-							className="media-library__upload-controls-header"
-							label={ translate( 'Upload from' ) } />
-						<Card className="media-library__upload-controls-options">
-							<CompactCard className="media-library__upload-controls-option">
-								<Gridicon icon="computer" size={ 18 } />
-								<span className="media-library__upload-controls-option-name">{ translate( 'Computer' ) }</span>
-								<Gridicon icon="chevron-right" className="media-library__upload-controls-indicator card__link-indicator" />
-								<input
-									className="media-library__upload-controls-file-input"
-									type="file"
-									accept={ this.getInputAccept() }
-									multiple
-									onChange={ this.uploadFiles }
-									onClick={ this.onUploadClick } />
-							</CompactCard>
-							<CompactCard className="media-library__upload-controls-option" href="#">
-								<Gridicon icon="domains" size={ 18 } />
-								<span className="media-library__upload-controls-option-name">{ translate( 'URL' ) }</span>
-							</CompactCard>
-							<CompactCard className="media-library__upload-controls-option" href="#">
-								<SocialLogo icon="google" size={ 18 } />
-								<span className="media-library__upload-controls-option-name">{ translate( 'Google Photos' ) }</span>
-							</CompactCard>
-						</Card>
-					</div>
-					<div className="media-library__upload-controls-drop-zone-container">
-						<Gridicon icon="cloud-upload" size={ 48 } />
-						<h3>{ translate( 'Drag and drop' ) }</h3>
-						<p>{ translate( 'Your files anywhere to upload, or {{span}}{{input/}}browse{{/span}}', {
-							components: {
-								span: <span className="media-library__upload-controls-file-anchor" />,
-								input: <input
-										className="media-library__upload-controls-file-input"
-										type="file"
-										accept={ this.getInputAccept() }
-										multiple
-										onChange={ this.uploadFiles }
-										onClick={ this.onUploadClick } />
-							} } ) }</p>
-					</div>
-				</div>
+			<form ref="itemForm">
+				<CompactCard className="media-library__upload-controls-option">
+					<Gridicon icon="computer" size={ 18 } />
+					<span className="media-library__upload-controls-option-name">{ translate( 'Computer' ) }</span>
+					<Gridicon icon="chevron-right" />
+					<input
+						className="media-library__upload-controls-file-input"
+						type="file"
+						accept={ this.getInputAccept() }
+						multiple
+						onChange={ this.uploadFiles }
+						onClick={ this.onUploadClick } />
+				</CompactCard>
 			</form>
 		);
 	}
-};
+
+	renderDropzone() {
+		const { translate } = this.props;
+
+		return (
+			<div className="media-library__upload-controls-drop-zone-container">
+				<Gridicon icon="cloud-upload" size={ 48 } />
+				<h3>{ translate( 'Drag and drop' ) }</h3>
+				<form ref="dropzoneForm">
+				<p>{ translate( 'Your files anywhere to upload, or {{span}}{{input/}}browse{{/span}}', {
+					components: {
+						span: <span className="media-library__upload-controls-file-anchor" />,
+						input: <input
+								className="media-library__upload-controls-file-input"
+								type="file"
+								accept={ this.getInputAccept() }
+								multiple
+								onChange={ this.uploadFiles }
+								onClick={ this.onUploadClick } />
+					} } ) }</p>
+				</form>
+			</div>
+		);
+	}
+
+	render() {
+		const { translate, site } = this.props;
+
+		if ( ! userCan( 'upload_files', site ) ) {
+			return null;
+		}
+
+		return (
+			<div className="media-library__upload-controls-container">
+				<div>
+					<SectionHeader
+						className="media-library__upload-controls-header"
+						label={ translate( 'Upload from' ) } />
+					<Card className="media-library__upload-controls-options">
+						{ this.renderFileItem() }
+						{ this.renderUploadViaUrl() }
+						<CompactCard className="media-library__upload-controls-option">
+							<SocialLogo icon="google" size={ 18 } />
+							<span className="media-library__upload-controls-option-name">{ translate( 'Google Photos' ) }</span>
+							<Gridicon icon="chevron-right" />
+						</CompactCard>
+					</Card>
+				</div>
+				{ this.renderDropzone() }
+			</div>
+		);
+	}
+}
 
 MediaLibraryUploadControls.propTypes = {
 	site: PropTypes.object.isRequired,
