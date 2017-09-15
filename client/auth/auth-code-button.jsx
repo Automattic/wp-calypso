@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal Dependencies
  */
@@ -10,7 +12,7 @@ import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
 import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	componentDidMount: function() {
 		Store.on( 'change', this.refreshData );
@@ -36,19 +38,19 @@ export default React.createClass( {
 	render: function() {
 		const { status, errorLevel, errorMessage } = this.state;
 
-		var noticeStatus = 'is-info';
-		var showDismiss = false;
-		var message = (
-			<a href="#" onClick={ this.requestSMSCode }>{ this.translate( 'Send code via text message.' ) }</a>
+		let noticeStatus = 'is-info';
+		let showDismiss = false;
+		let message = (
+			<a href="#" onClick={ this.requestSMSCode }>{ this.props.translate( 'Send code via text message.' ) }</a>
 		);
 
 		if ( status === requestState.REQUESTING ) {
-			message = this.translate( 'Requesting code.' );
+			message = this.props.translate( 'Requesting code.' );
 		}
 
 		if ( status === requestState.COMPLETE ) {
 			noticeStatus = 'is-success';
-			message = this.translate( 'Code sent.' );
+			message = this.props.translate( 'Code sent.' );
 		}
 
 		if ( errorLevel !== false ) {
@@ -64,4 +66,4 @@ export default React.createClass( {
 		);
 	}
 
-} )
+} ) );
