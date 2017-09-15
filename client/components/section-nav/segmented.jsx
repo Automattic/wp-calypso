@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -18,25 +18,22 @@ let _instance = 1;
 /**
  * Main
  */
-const NavSegmented = React.createClass( {
-
-	propTypes: {
+class NavSegmented extends Component {
+	static propTypes = {
 		label: React.PropTypes.string,
 		hasSiblingControls: React.PropTypes.bool
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasSiblingControls: false
-		};
-	},
+	static defaultProps = {
+		hasSiblingControls: false
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.id = _instance;
 		_instance++;
-	},
+	}
 
-	render: function() {
+	render() {
 		const segmentedClassName = classNames( {
 			'section-nav-group': true,
 			'section-nav__segmented': true,
@@ -55,9 +52,9 @@ const NavSegmented = React.createClass( {
 				</SegmentedControl>
 			</div>
 		);
-	},
+	}
 
-	getControlItems: function() {
+	getControlItems = () => {
 		return React.Children.map( this.props.children, function( child, index ) {
 			return (
 				<ControlItem
@@ -68,7 +65,7 @@ const NavSegmented = React.createClass( {
 				</ControlItem>
 			);
 		}, this );
-	}
-} );
+	};
+}
 
 export default NavSegmented;

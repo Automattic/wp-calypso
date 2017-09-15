@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -14,11 +13,8 @@ import { preload } from 'sections-preload';
 /**
  * Main
  */
-const NavItem = React.createClass( {
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class NavItem extends PureComponent {
+	static propTypes = {
 		itemType: React.PropTypes.string,
 		path: React.PropTypes.string,
 		selected: React.PropTypes.bool,
@@ -32,18 +28,18 @@ const NavItem = React.createClass( {
 		] ),
 		className: React.PropTypes.string,
 		preloadSectionName: React.PropTypes.string
-	},
+	};
 
-	_preloaded: false,
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		let itemClassPrefix = this.props.itemType
 			? this.props.itemType
 			: 'tab',
@@ -90,6 +86,6 @@ const NavItem = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
 
 export default NavItem;
