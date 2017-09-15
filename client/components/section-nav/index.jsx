@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
@@ -20,9 +20,8 @@ import Search from 'components/search';
 /**
  * Main
  */
-const SectionNav = React.createClass( {
-
-	propTypes: {
+class SectionNav extends Component {
+	static propTypes = {
 		children: PropTypes.node,
 		selectedText: PropTypes.node,
 		selectedCount: PropTypes.number,
@@ -30,26 +29,22 @@ const SectionNav = React.createClass( {
 		onMobileNavPanelOpen: PropTypes.func,
 		className: PropTypes.string,
 		allowDropdown: PropTypes.bool,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			mobileOpen: false
-		};
-	},
+	static defaultProps = {
+		onMobileNavPanelOpen: () => {},
+		allowDropdown: true,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onMobileNavPanelOpen: () => {},
-			allowDropdown: true,
-		};
-	},
+	state = {
+		mobileOpen: false
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.checkForSiblingControls( this.props.children );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( isEqual( this.props, nextProps ) ) {
 			return;
 		}
@@ -59,9 +54,9 @@ const SectionNav = React.createClass( {
 		if ( ! this.hasSiblingControls ) {
 			this.closeMobilePanel();
 		}
-	},
+	}
 
-	renderDropdown() {
+	renderDropdown = () => {
 		if ( ! this.props.allowDropdown ) {
 			return <div />;
 		}
@@ -76,11 +71,11 @@ const SectionNav = React.createClass( {
 				</span>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
-		let children = this.getChildren(),
-			className;
+	render() {
+		const children = this.getChildren();
+		let className;
 
 		if ( ! children ) {
 			className = classNames( {
@@ -112,9 +107,9 @@ const SectionNav = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	getChildren: function() {
+	getChildren = () => {
 		return React.Children.map( this.props.children, function( child ) {
 			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,
@@ -149,17 +144,17 @@ const SectionNav = React.createClass( {
 
 			return React.cloneElement( child, extraProps );
 		}.bind( this ) );
-	},
+	};
 
-	closeMobilePanel: function() {
+	closeMobilePanel = () => {
 		if ( window.innerWidth < 480 && this.state.mobileOpen ) {
 			this.setState( {
 				mobileOpen: false
 			} );
 		}
-	},
+	};
 
-	toggleMobileOpenState: function() {
+	toggleMobileOpenState = () => {
 		const mobileOpen = ! this.state.mobileOpen;
 
 		this.setState( {
@@ -169,16 +164,16 @@ const SectionNav = React.createClass( {
 		if ( mobileOpen ) {
 			this.props.onMobileNavPanelOpen();
 		}
-	},
+	};
 
-	generateOnSearch: function( existingOnSearch ) {
+	generateOnSearch = existingOnSearch => {
 		return ( search ) => {
 			existingOnSearch( search );
 			this.closeMobilePanel();
 		};
-	},
+	};
 
-	checkForSiblingControls: function( children ) {
+	checkForSiblingControls = children => {
 		this.hasSiblingControls = false;
 
 		const ignoreSiblings = [ Search, CommentNavigationTab ];
@@ -189,7 +184,7 @@ const SectionNav = React.createClass( {
 				this.hasSiblingControls = true;
 			}
 		}.bind( this ) );
-	}
-} );
+	};
+}
 
 export default SectionNav;
