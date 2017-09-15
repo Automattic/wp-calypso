@@ -11,6 +11,9 @@ import {
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_SUCCESS,
+	JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_FAILURE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -18,7 +21,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
-import { fetchSettings, updateSettings, regeneratePostByEmail } from '../actions';
+import { fetchSettings, updateSettings, regeneratePostByEmail, validateAkismetKeyForSite } from '../actions';
 import { filterSettingsByActiveModules } from '../utils';
 import {
 	settings as SETTINGS_FIXTURE,
@@ -224,6 +227,113 @@ describe( 'actions', () => {
 						type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 						siteId,
 						error: 'Invalid request.'
+					} );
+				} );
+			} );
+		} );
+	} );
+	describe( '#validateAkismetKeyForSite()', () => {
+		describe( 'success', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/jetpack/v4/module/akismet/key/check/',
+						body: JSON.stringify( { api_key: '123123123123' } )
+					} )
+					.reply( 200, {
+						code: 'success',
+						data: {
+							validKey: true
+						}
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			it( 'should return a fetch action object when called', () => {
+				validateAkismetKeyForSite( siteId, '123123123123' )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY,
+					siteId,
+					apiKey: '123123123123'
+				} );
+			} );
+
+			it( 'should return a receive action when request successfully completes', () => {
+				return validateAkismetKeyForSite( siteId, '123123123123' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_SUCCESS,
+						siteId,
+						apiKey: '123123123123',
+						validKey: true
+					} );
+				} );
+			} );
+		} );
+
+		describe( 'success-with-invalid-key', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/jetpack/v4/module/akismet/key/check/',
+						body: JSON.stringify( { api_key: '123123123123' } )
+					} )
+					.reply( 200, {
+						code: 'success',
+						data: {
+							validKey: false
+						}
+					}, {
+						'Content-Type': 'application/json',
+					} );
+			} );
+
+			it( 'should return a fetch action object when called', () => {
+				validateAkismetKeyForSite( siteId, '123123123123' )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY,
+					siteId,
+					apiKey: '123123123123'
+				} );
+			} );
+
+			it( 'should return a receive action when request successfully completes', () => {
+				return validateAkismetKeyForSite( siteId, '123123123123' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_SUCCESS,
+						siteId,
+						apiKey: '123123123123',
+						validKey: false
+					} );
+				} );
+			} );
+		} );
+		describe( 'failure', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/jetpack/v4/module/akismet/key/check/',
+						body: JSON.stringify( { api_key: '123123123123' } )
+					} )
+					.reply( 400, {
+						message: 'Invalid parameter(s): api_key'
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			it( 'should return a receive action when an error occurs', () => {
+				return validateAkismetKeyForSite( siteId, '123123123123' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_SETTINGS_VALIDATE_AKISMET_KEY_FAILURE,
+						siteId,
+						apiKey: '123123123123',
+						error: 'Invalid parameter(s): api_key'
 					} );
 				} );
 			} );
