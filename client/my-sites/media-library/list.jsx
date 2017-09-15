@@ -15,13 +15,28 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
+import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
+
+const months = [
+	translate( 'January' ),
+	translate( 'February' ),
+	translate( 'March' ),
+	translate( 'April' ),
+	translate( 'May' ),
+	translate( 'June' ),
+	translate( 'July' ),
+	translate( 'August' ),
+	translate( 'September' ),
+	translate( 'October' ),
+	translate( 'November' ),
+	translate( 'December' ),
+];
 
 export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
@@ -152,6 +167,15 @@ export const MediaLibraryList = React.createClass( {
 		return 'item-' + item.ID;
 	},
 
+	getGroupLabel: function( dateString ) {
+		const date = new Date( dateString );
+		return `${ months[ date.getMonth() ].slice( 0, 3 ) } ${ date.getDate() }`;
+	},
+
+	getItemGroup: function( item ) {
+		return item.date.slice( 0, 10 );
+	},
+
 	renderItem: function( item ) {
 		var index = findIndex( this.props.media, { ID: item.ID } ),
 			selectedItems = this.props.mediaLibrarySelectedItems,
@@ -233,8 +257,10 @@ export const MediaLibraryList = React.createClass( {
 		}.bind( this );
 
 		return (
-			<InfiniteList
+			<SortedGrid
 				ref={ this.setListContext }
+				getItemGroup={ this.getItemGroup }
+				getGroupLabel={ this.getGroupLabel }
 				context={ this.props.scrollable ? this.state.listContext : false }
 				items={ this.props.media || [] }
 				itemsPerRow={ this.getItemsPerRow() }
