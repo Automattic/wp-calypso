@@ -13,10 +13,15 @@ import { localize } from 'i18n-calypso';
 import Gravatar from 'components/gravatar';
 import NavItem from 'components/section-nav/item';
 import NavSegmented from 'components/section-nav/segmented';
+import { areAllSitesSingleUser } from 'state/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 
-const AuthorSegmented = ( { author, siteSlug, statusSlug, translate, user } ) => {
+const AuthorSegmented = ( { author, isHidden, siteSlug, statusSlug, translate, user } ) => {
+	if ( isHidden ) {
+		return null;
+	}
+
 	const scopes = {
 		me: translate( 'Me', { context: 'Filter label for posts list' } ),
 		everyone: translate( 'Everyone', { context: 'Filter label for posts list' } )
@@ -50,14 +55,25 @@ AuthorSegmented.propTypes = {
 	siteId: PropTypes.number,
 	statusSlug: PropTypes.string,
 	// Connected Props
+	isHidden: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	user: PropTypes.object,
 };
 
 export default connect(
-	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId ),
-		user: getCurrentUser( state )
-	} )
+	( state, { siteId } ) => {
+		let isHidden = false;
+		if ( siteId ) {
+			isHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+		} else {
+			isHidden = areAllSitesSingleUser( state );
+		}
+
+		return {
+			isHidden,
+			siteSlug: getSiteSlug( state, siteId ),
+			user: getCurrentUser( state )
+		};
+	}
 )( localize( AuthorSegmented ) );
