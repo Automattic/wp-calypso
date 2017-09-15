@@ -125,14 +125,14 @@ export const requestEligibility = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const receiveResponse = ( { dispatch }, { siteId }, data ) => {
+export const receiveResponse = ( { dispatch }, { siteId }, data ) => {
 	dispatch( withAnalytics(
 		trackEligibility( data ),
 		updateEligibility( siteId, fromApi( data ) )
 	) );
 };
 
-const receiveError = ( store, action, error ) => {
+export const receiveError = ( store, action, error ) => {
 	throw new Error( error );
 };
 
