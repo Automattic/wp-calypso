@@ -1,8 +1,11 @@
 var config = require( 'config' ),
 	utils = require( './utils' );
 
-function getCssUrl( filename ) {
-	return utils.getHashedUrl( 'sections' + ( config( 'rtl' ) ? '-rtl' : '' ) + '/' + filename + '.css' );
+function getCssUrls( filename ) {
+	const ltr = utils.getHashedUrl( 'sections/' + filename + '.css' );
+	const rtl = utils.getHashedUrl( 'sections-rtl/' + filename + '.rtl.css' );
+
+	return { rtl, ltr };
 }
 
 function getSectionsModule( sections ) {
@@ -19,6 +22,8 @@ function getSectionsModule( sections ) {
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
+			"\tgetLanguage = require( 'lib/i18n-utils').getLanguage,",
+			"\tisUserRtl = require( 'state/selectors/is-rtl' ),",
 			"\tpreloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
@@ -50,7 +55,10 @@ function getSectionsModule( sections ) {
 			'	}',
 			'};',
 			'\n',
-			'function loadCSS( cssUrl ) {',
+			'function loadCSS( cssUrls, context ) {',
+			'	var languageFromParams = getLanguage( context.params.lang )',
+			'	var cssUrl = isUserRtl( context.store.getState() ) || ' +
+			'		( languageFromParams && languageFromParams.rtl ) ? cssUrls.rtl : cssUrls.ltr;',
 			'	var link = document.createElement( "link" );',
 			'	link.setAttribute( "rel", "stylesheet" );',
 			'	link.setAttribute( "type", "text/css" );',
@@ -60,7 +68,6 @@ function getSectionsModule( sections ) {
 			'\n',
 		].join( '\n' );
 	}
-
 	dependencies = [
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
@@ -116,7 +123,7 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-		'			' + ( section.css ? 'loadCSS( "' + getCssUrl( section.css ) + '" )' : '' ) + '',
+		'			' + ( section.css ? 'loadCSS( ' + JSON.stringify( getCssUrls( section.css ) ) + ', context )' : '' ) + '',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
@@ -161,7 +168,7 @@ function requireTemplate( section ) {
 			'	}',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-			'	' + ( section.css ? 'loadCSS( "' + getCssUrl( section.css ) + '" )' : '' ) + '',
+			'	' + ( section.css ? 'loadCSS( ' + JSON.stringify( getCssUrls( section.css ) ) + ', context )' : '' ) + '',
 			'	next();',
 			'} );\n'
 		] );
