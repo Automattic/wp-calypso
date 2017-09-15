@@ -8,7 +8,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
