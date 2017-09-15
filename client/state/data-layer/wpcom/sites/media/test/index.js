@@ -41,11 +41,6 @@ describe( 'wpcom-api', () => {
 			}
 		} );
 
-		it( 'should not dispatch anything if the request is in flight', () => {
-			requestMedia( { dispatch, getState }, { siteId: 2916284 } );
-			expect( dispatch ).to.not.have.been.called;
-		} );
-
 		it( 'should dispatch REQUESTING action when request triggers', () => {
 			requestMedia( { dispatch, getState }, { siteId: 2916284, query: 'a=b' } );
 			expect( dispatch ).to.have.been.calledWith( requestingMedia( 2916284, 'a=b' ) );

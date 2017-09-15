@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
-import { isRequestingMedia, isRequestingMediaItem } from 'state/selectors';
+import { isRequestingMediaItem } from 'state/selectors';
 import {
 	failMediaRequest,
 	failMediaItemRequest,
@@ -31,10 +31,6 @@ const log = debug( 'calypso:middleware-media' );
  * @return {Promise}        Promise
  */
 export function requestMedia( { dispatch, getState }, action ) {
-	if ( isRequestingMedia( getState(), action.siteId, action.query ) ) {
-		return;
-	}
-
 	dispatch( requestingMedia( action.siteId, action.query ) );
 
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
