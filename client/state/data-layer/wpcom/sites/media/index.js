@@ -25,7 +25,6 @@ const log = debug( 'calypso:middleware-media' );
  *
  * @param  {Object}  store  Redux store
  * @param  {Object}  action Action object
- * @return {Promise}        Promise
  */
 export function requestMedia( { dispatch, getState }, action ) {
 	dispatch( requestingMedia( action.siteId, action.query ) );
