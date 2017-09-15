@@ -269,6 +269,12 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = () => {
+		const data = this.getUserData();
+		// When a user moves away from the signup form without having entered
+		// anything do not show error messages, think going to click log in.
+		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+			return;
+		}
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
