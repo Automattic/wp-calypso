@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -15,12 +14,10 @@ import SearchCard from 'components/search-card';
  */
 var noop = () => {};
 
-var SearchDemo = React.createClass( {
-	displayName: 'Search',
+class SearchDemo extends PureComponent {
+    static displayName = 'Search';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		return (
 			<div>
 				<Search
@@ -37,6 +34,6 @@ var SearchDemo = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default SearchDemo;
