@@ -12,7 +12,7 @@ import {
 	requestingMedia,
 	requestingMediaItem,
 	successMediaRequest,
-	successMediaItemRequest
+	successMediaItemRequest,
 } from 'state/media/actions';
 
 /**
@@ -26,7 +26,7 @@ const log = debug( 'calypso:middleware-media' );
  * @param  {Object}  store  Redux store
  * @param  {Object}  action Action object
  */
-export function requestMedia( { dispatch, getState }, action ) {
+export function requestMedia( { dispatch }, action ) {
 	dispatch( requestingMedia( action.siteId, action.query ) );
 
 	log( 'Request media for site %d using query %o', action.siteId, action.query );

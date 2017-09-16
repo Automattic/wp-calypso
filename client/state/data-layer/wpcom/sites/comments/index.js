@@ -53,7 +53,7 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
 
-const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
+const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	const { commentId, status, previousStatus } = action;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
