@@ -36,9 +36,9 @@ function isLocale( pathFragment ) {
 	return ! isEmpty( i18nUtils.getLanguage( pathFragment ) );
 }
 
-export function redirectWithoutLocaleifLoggedIn( context, next ) {
+export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	if ( user.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 		return page.redirect( urlWithoutLocale );
 	}
 
