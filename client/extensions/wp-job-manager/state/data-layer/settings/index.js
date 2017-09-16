@@ -32,7 +32,7 @@ export const updateExtensionSettings = ( { dispatch }, { siteId }, { data } ) =>
 export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
 	dispatch( fetchError( siteId ) );
 
-export const saveSettings = ( { dispatch, getState }, action ) => {
+export const saveSettings = ( { dispatch }, action ) => {
 	const { data, form, siteId } = action;
 
 	dispatch( startSave( form ) );
