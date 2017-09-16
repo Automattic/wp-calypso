@@ -14,7 +14,7 @@ import Accordion from 'components/accordion';
 
 import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'AccordionExample',
 
 	mixins: [ PureRenderMixin ],
