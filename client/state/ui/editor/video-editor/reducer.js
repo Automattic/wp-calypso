@@ -46,7 +46,7 @@ export const uploadProgress = ( state = null, { type, percentage } ) => {
  * @param  {Object} action Action object
  * @return {Boolean} Whether or not an error should now be shown
  */
-export const showError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
+export const showError = ( state, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 
 export default combineReducers( {
 	showError,

@@ -9,7 +9,7 @@ import { suggestedUsernameSchema } from './schema';
 
 const suggestedUsername = createReducer( '',
 	{
-		[ SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET ]: ( state = null, action ) => {
+		[ SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET ]: ( state, action ) => {
 			return action.data;
 		}
 	},
@@ -19,4 +19,3 @@ const suggestedUsername = createReducer( '',
 export default combineReducers( {
 	suggestedUsername
 } );
-
