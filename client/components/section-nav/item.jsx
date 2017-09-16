@@ -41,19 +41,15 @@ class NavItem extends PureComponent {
 	};
 
 	render() {
-		let itemClassPrefix = this.props.itemType
-			? this.props.itemType
-			: 'tab',
-
-			itemClassName, target, onClick,
-
-			itemClasses = {
-				'is-selected': this.props.selected,
-				'is-external': this.props.isExternalLink
-			};
-
+		const itemClassPrefix = this.props.itemType ? this.props.itemType : 'tab';
+		const itemClasses = {
+			'is-selected': this.props.selected,
+			'is-external': this.props.isExternalLink
+		};
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
-		itemClassName = classNames( this.props.className, itemClasses );
+		const itemClassName = classNames( this.props.className, itemClasses );
+
+		let target, onClick;
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';
