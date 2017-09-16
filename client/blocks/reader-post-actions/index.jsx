@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,7 +96,18 @@ const ReaderPostActions = props => {
 			) }
 			{ shouldShowReactions( post ) && (
 				<li className="reader-post-actions__item">
-					<Reactions post={ post } />
+					<Reactions
+						onSelected={ noop }
+						key="reaction-button"
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						post={ post }
+						site={ site }
+						fullPost={ fullPost }
+						forceCounter={ true }
+						iconSize={ iconSize }
+						showZeroCount={ false }
+					/>
 				</li>
 			) }
 			{ shouldShowLikes( post ) && (
