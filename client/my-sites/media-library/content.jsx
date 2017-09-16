@@ -8,6 +8,7 @@ import { groupBy, head, mapValues, noop, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -301,8 +302,12 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	render() {
+		const className = classNames( 'media-library__content', {
+			'media-library__external-source-content': Boolean( this.props.source ),
+		} );
+
 		return (
-			<div className="media-library__content">
+			<div className={ className }>
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }

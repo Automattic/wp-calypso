@@ -123,7 +123,7 @@ class MediaLibraryFooter extends Component {
 			</CompactCard>
 		);
 	}
-};
+}
 
 MediaLibraryFooter.propTypes = {
 	site: PropTypes.object.isRequired,
