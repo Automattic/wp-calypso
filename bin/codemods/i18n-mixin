@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 
 /*
-	This codemod converts `this.translate` to `this.props.translate`, and wraps the corresponding
-  React.createClass instance with a `localize()` higher-order component.
-
-	How to use:
-	./bin/codemods/i18n-mixin path-to-transform/
+* This codemod makes these conversions:
+*
+* * `this.translate` to `this.props.translate`
+* * `this.moment` to `this.props.moment`
+* * `this.numberFormat` to `this.props.numberFormat`
+*
+* If found, it will wrap the React.createClass instance with a `localize()` higher-order component.
+*
+* How to use:
+* ./bin/codemods/i18n-mixin path-to-transform/
 */
 
 /**
