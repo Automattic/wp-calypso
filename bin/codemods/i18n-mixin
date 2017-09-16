@@ -5,6 +5,7 @@
 *
 * * `this.translate` to `this.props.translate`
 * * `this.moment` to `this.props.moment`
+* * `this.numberFormat` to `this.props.numberFormat`
 *
 * If found, it will wrap the React.createClass instance with a `localize()` higher-order component.
 *

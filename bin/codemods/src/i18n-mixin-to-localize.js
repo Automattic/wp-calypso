@@ -114,7 +114,24 @@ export default function transformer( file, api ) {
 				j.identifier( 'moment' )
 			)
 		);
-		if ( thisTranslateInstances.size() || thisMomentInstances.size() ) {
+		const thisNumberFormatInstances = j( createClassInstance ).find( j.MemberExpression, {
+			object: { type: 'ThisExpression' },
+			property: {
+				type: 'Identifier',
+				name: 'numberFormat',
+			},
+		} );
+		thisNumberFormatInstances.replaceWith( () =>
+			j.memberExpression(
+				j.memberExpression( j.thisExpression(), j.identifier( 'props' ) ),
+				j.identifier( 'numberFormat' )
+			)
+		);
+		if (
+			thisTranslateInstances.size() ||
+			thisMomentInstances.size() ||
+			thisNumberFormatInstances.size()
+		) {
 			foundMixinUsage = true;
 
 			const declarationsToWrap = findDeclarationsToWrap( createClassInstance );
