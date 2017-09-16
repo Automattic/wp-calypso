@@ -5,8 +5,6 @@
  */
 import React from 'react';
 
-import PureRenderMixin from 'react-pure-render/mixin';
-
 /**
  * Internal dependencies
  */
@@ -14,24 +12,20 @@ import Accordion from 'components/accordion';
 
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'AccordionExample',
+export default class extends React.PureComponent {
+    static displayName = 'AccordionExample';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		showSubtitles: true
+	};
 
-	getInitialState: function() {
-		return {
-			showSubtitles: true
-		};
-	},
-
-	_toggleShowSubtitles: function() {
+	_toggleShowSubtitles = () => {
 		this.setState( {
 			showSubtitles: ! this.state.showSubtitles
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<div style={ { paddingBottom: '10px' } }>
@@ -82,4 +76,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
