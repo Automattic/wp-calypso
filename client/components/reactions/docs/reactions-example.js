@@ -10,6 +10,10 @@ import Reactions from 'components/reactions';
 
 export default class ReactionsExample extends PureComponent {
 	render() {
-		return <Reactions />;
+		return (
+			<Reactions
+				onSelected={ function( icon, slug ) { return [ icon, slug ]; } }
+			/>
+		);
 	}
 }

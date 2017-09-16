@@ -10,7 +10,7 @@ export default class ReactionListItem extends Component {
 
 		return (
 			<li
-				className="jp-reactions__list-item"
+				className="reactions__list-item"
 				onClick={ this.onSelected }>{ icon }
 			</li>
 		);

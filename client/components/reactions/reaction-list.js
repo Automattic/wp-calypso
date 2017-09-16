@@ -11,7 +11,7 @@ import ReactionListItem from './reaction-list-item';
 
 export default function ReactionList( props ) {
 	return (
-		<ul className="jp-reactions__list">{
+		<ul className="reactions__list">{
 			reactionsData.map( ( item ) => (
 				<ReactionListItem
 					icon={ item.icon }

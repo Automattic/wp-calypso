@@ -2,21 +2,20 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import {
-	DEFAULT_ICON,
-	DEFAULT_SLUG,
-} from './constants';
 import Popover from 'components/popover';
-import ReactionsHoverWrapper from './reactions-hover-wrapper';
-import ReactionButton from './reaction-button';
 import ReactionList from './reaction-list';
 
 export default class Reactions extends Component {
+	static propTypes = {
+		onSelected: PropTypes.func,
+	};
+
 	state = {
 		reactionIcon: '',
 		reactionSlug: '',
@@ -24,37 +23,9 @@ export default class Reactions extends Component {
 		listDisplayBlocked: false,
 	};
 
-	onButtonClick = () => {
-		const {
-			reactionIcon,
-			reactionSlug,
-		} = this.state;
-
-		this.setState( {
-			reactionIcon: reactionIcon ? '' : DEFAULT_ICON,
-			reactionSlug: reactionSlug ? '' : DEFAULT_SLUG,
-			showingList: false,
-			listDisplayBlocked: true,
-		} );
-
-		setTimeout( () => {
-			this.setState( {
-				listDisplayBlocked: false,
-			} );
-		}, 700 );
-	}
-
-	onButtonHover = () => {
-		this.setState( {
-			showingList: true,
-		} );
-	};
-
-	onButtonUnhover = () => {
-		this.setState( {
-			showingList: false,
-		} );
-	};
+	toggleShowingList = () => this.setState( {
+		showingList: ! this.state.showingList,
+	} );
 
 	onSelected = ( icon, slug ) => {
 		this.setState( {
@@ -62,12 +33,7 @@ export default class Reactions extends Component {
 			reactionIcon: icon,
 			reactionSlug: slug,
 		} );
-	}
-
-	setButtonRef = ( button ) => this.reactionButton = button;
-
-	componentWillMount() {
-		// @TODO any init / network calls, etc.
+		this.props.onSelected && this.props.onSelected( icon, slug );
 	}
 
 	render() {
@@ -77,34 +43,24 @@ export default class Reactions extends Component {
 			showingList,
 		} = this.state;
 
-console.log(this.refs);
+		const icon = reactionIcon || <Gridicon icon="heart-outline" />;
 
 		return (
-			<ReactionsHoverWrapper
-				onHover={ this.onButtonHover }
-				onUnhover={ this.onButtonUnhover }
-			>
-				<ReactionButton
-					ref="reactionPopoverButton"
-					icon={ reactionIcon || <Gridicon icon="heart-outline" /> }
-					label={ reactionSlug }
-					onButtonClick={ this.onButtonClick }
-				/>
+			<div>
+				<button
+					ref="reactionsButton"
+					onClick={ this.toggleShowingList }>
+					<span className="reactions__button">{ icon }</span>
+					{ reactionSlug }
+				</button>
 				<Popover
-					context={ this.refs && this.refs.reactionPopoverButton }
+					context={ this.refs && this.refs.reactionsButton }
 					isVisible={ showingList }
-					onClose={ function(){ console.log('popover closed') } }
 					className="reactions__popover"
-					position="top">{
-						(
-							showingList && console.log('showing popover') ||
-							<ReactionList
-								onSelected={ this.onSelected }
-							/>
-						)
-					}
+					position="top">
+					<ReactionList onSelected={ this.onSelected } />
 				</Popover>
-			</ReactionsHoverWrapper>
+			</div>
 		);
 	}
 }

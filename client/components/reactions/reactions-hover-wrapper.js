@@ -24,7 +24,7 @@ export default class ReactionsHoverWrapper extends Component {
 		clearTimeout( this.hoverTimeout );
 	}
 
-	onBtnMouseEnter = (e) => {
+	onBtnMouseEnter = () => {
 		this.clearTimeouts();
 		this.hoverTimeout = setTimeout( () => {
 			this.setState( {
@@ -33,7 +33,7 @@ export default class ReactionsHoverWrapper extends Component {
 		}, MOUSE_ENTER_TIMEOUT_DURATION );
 	};
 
-	onBtnMouseLeave = (e) => {
+	onBtnMouseLeave = () => {
 		this.clearTimeouts();
 		this.unHoverTimeout = setTimeout( () => {
 			this.setState( {
@@ -57,8 +57,9 @@ export default class ReactionsHoverWrapper extends Component {
 	render() {
 		return (
 			<div
-				onMouseEnter={this.onBtnMouseEnter}
-				onMouseLeave={this.onBtnMouseLeave}
+				className="reactions__hover-wrapper"
+				onMouseEnter={ this.onBtnMouseEnter }
+				onMouseLeave={ this.onBtnMouseLeave }
 			>{ this.props.children }
 			</div>
 		);

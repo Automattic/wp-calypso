@@ -8,7 +8,7 @@ function ReactionButton( props ) {
 	return (
 		<button
 			onClick={ props.onButtonClick }>
-			<span className="jp-reactions__button">{ props.icon }</span>{
+			<span className="reactions__button">{ props.icon }</span>{
 				props.label
 			}
 		</button>
