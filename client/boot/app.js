@@ -17,6 +17,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
+import { installPublicNotices } from './public-notices';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
@@ -48,4 +49,6 @@ window.AppBoot = () => {
 	} else {
 		user.once( 'change', () => boot( user ) );
 	}
+
+	installPublicNotices();
 };
