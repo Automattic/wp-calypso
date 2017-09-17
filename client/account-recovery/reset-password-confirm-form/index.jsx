@@ -51,6 +51,16 @@ class ResetPasswordConfirmForm extends Component {
 		this.setState( { newPassword: event.target.value } );
 	}
 
+	onGenerateStrongPassword = () => {
+		this.setState( { newPassword: this.props.generateStrongPassword() } );
+
+		if ( this.passwordInputRef.hidden() ) {
+			this.passwordInputRef.togglePasswordVisibility();
+		}
+	}
+
+	capturePasswordInputRef = ( passwordInputRef ) => this.passwordInputRef = passwordInputRef;
+
 	render() {
 		const {
 			translate,
@@ -70,6 +80,7 @@ class ResetPasswordConfirmForm extends Component {
 					<FormPasswordInput
 						className="reset-password-confirm-form__password-input-field"
 						id="password"
+						ref={ this.capturePasswordInputRef }
 						onChange={ this.updateNewPassword }
 						value={ newPassword }
 						autoFocus
@@ -78,6 +89,7 @@ class ResetPasswordConfirmForm extends Component {
 						className="reset-password-confirm-form__button generate-password-button"
 						type="button"
 						isPrimary={ false }
+						onClick={ this.onGenerateStrongPassword }
 					>
 						{ translate( 'Generate strong password' ) }
 					</FormButton>

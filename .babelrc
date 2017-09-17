@@ -16,6 +16,7 @@
 		"add-module-exports",
 		"lodash",
 		"syntax-jsx",
+		"transform-class-properties",
 		"transform-export-extensions",
 		"transform-react-display-name",
 		"transform-react-jsx",
