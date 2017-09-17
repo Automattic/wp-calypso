@@ -2425,8 +2425,19 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 };
 
 Undocumented.prototype.getPostReactions = function( siteId, postId, page = 1, fn ) {
+	if ( ! siteId || ! postId ) {
+		return;
+	}
+
 	return this.wpcom.req.get(
-		`/sites/${ siteId }/posts/${ postId }/replies?hierarchical=1&number=100&page=${ page }&type=reaction`,
+		`/sites/${ siteId }/posts/${ postId }/replies`,
+		{
+			hierarchical: 1,
+			number: 100,
+			page,
+			status: 'approved',
+			type: 'reaction',
+		},
 		fn
 	);
 };
@@ -2461,20 +2472,6 @@ Undocumented.prototype.updatePostReaction = function( siteId, commentId, reactio
  */
 Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 	return this.wpcom.req.get( `/oauth2/client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
-};
-
-/**
- * Get OAuth2 client signup url from redirectTo parameter
- * @param {string}     redirectTo     The redirect to paramter
- * @param {Function}   fn             The callback function
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.oauth2SignupUrl = function( redirectTo, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/signup-url/${ encodeURIComponent( redirectTo ) }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
 };
 
 /**

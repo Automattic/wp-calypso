@@ -6,6 +6,10 @@ export const reactionsData = [
 		slug: 'heart',
 	},
 	{
+		icon: '🎉',
+		slug: 'tada',
+	},
+	{
 		icon: '😂',
 		slug: 'laugh',
 	},
@@ -20,13 +24,5 @@ export const reactionsData = [
 	{
 		icon: '😡',
 		slug: 'angry',
-	},
-	{
-		icon: '👎',
-		slug: 'dislike',
-	},
-	{
-		icon: '🎉',
-		slug: 'tada',
 	},
 ];

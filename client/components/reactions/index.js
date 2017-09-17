@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import { groupBy } from 'lodash';
 import wpcomFactory from 'lib/wp';
 
 /**
@@ -22,12 +23,32 @@ export default class Reactions extends PureComponent {
 		this.wpcom = wpcomFactory.undocumented();
 
 		this.state = {
-			reactionCommentId: props.reactionCommentId || false,
+			reactionCommentId: props.reactionCommentId || localStorage[ this.storageKey ],
 			reactionIcon: '',
 			reactionSlug: '',
 			showingList: false,
 			listDisplayBlocked: false,
 		};
+	}
+
+	getPostReactions = () => {
+		const {
+			postId,
+			siteId,
+		} = this.props;
+
+		if ( ! ( siteId && postId ) ) {
+			return;
+		}
+
+		return this.wpcom.getPostReactions( siteId, postId, 1, ( _, response ) => {
+			const postReactions = response.comments || [];
+
+			//console.log( `reactions: ${ siteId }:${ postId }`, { postReactions } );
+			this.setState( {
+				postReactions,
+			} );
+		} );
 	}
 
 	toggleShowingList = () => this.setState( {
@@ -66,26 +87,57 @@ export default class Reactions extends PureComponent {
 			return;
 		}
 
+		/* const {
+			postId,
+			requestPostComments,
+			siteId,
+		} = this.props;*/
+
 		this.setState( {
 			reactionCommentId: response.ID,
 		} );
+
+		this.getPostReactions();
 	}
 
-	/* TODO save post reactions for display purposes
+	setStorageKey() {
+		this.storageKey = `post_reaction_${ this.props.siteId }_${ this.props.postId }`;
+	}
+
 	componentWillMount() {
-		this.wpcom.getPostReactions( this.props.siteId, this.props.postId, ( reactions ) => {
-			console.log( 'reactions', reactions );
+		const {
+			postId,
+			siteId,
+		} = this.props;
 
+		if ( ! ( siteId && postId ) ) {
+			return;
+		}
+
+		this.setStorageKey();
+
+		this.setState( {
+			reactionCommentId: localStorage[ this.storageKey ],
 		} );
+
+		this.getPostReactions();
 	}
 
-	componentWillUpdate( newState, newProps ) {
-		// @TODO persist to localstorage here
+	componentWillUpdate( nextProps, nextState ) {
+		this.setStorageKey();
+
+		if ( this.state.reactionCommentId !== nextState.reactionCommentId ) {
+			localStorage.setItem( this.storageKey, nextState.reactionCommentId );
+		}
 	}
-	*/
+
+	getGroupedPostReactions = () => {
+		return groupBy( this.state.postReactions, ( r ) => r.raw_content[ 0 ] );
+	}
 
 	render() {
 		const {
+			postReactions,
 			reactionIcon,
 			reactionSlug,
 			showingList,
@@ -106,7 +158,7 @@ export default class Reactions extends PureComponent {
 					isVisible={ showingList }
 					className="reactions__popover"
 					position="top">
-					<ReactionList onSelected={ this.onSelected } />
+					<ReactionList onSelected={ this.onSelected } postReactions={ postReactions } />
 				</Popover>
 			</div>
 		);
