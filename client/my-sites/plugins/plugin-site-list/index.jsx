@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,13 +33,16 @@ export class PluginSiteList extends Component {
 	}
 
 	renderPluginSite( { site, secondarySites } ) {
-		return <PluginSite
+		return (
+			<PluginSite
 				key={ 'pluginSite' + site.ID }
 				site={ site }
 				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices } />;
+				notices={ this.props.notices }
+			/>
+		);
 	}
 
 	render() {
@@ -49,7 +53,7 @@ export class PluginSiteList extends Component {
 			pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<SectionHeader label={ this.props.title } />
 				{ pluginSites }
 			</div>
