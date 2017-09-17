@@ -35,7 +35,7 @@ export class PluginSiteList extends Component {
 		return <PluginSite
 				key={ 'pluginSite' + site.ID }
 				site={ site }
-				secondarySites={ this.getSecondaryPluginSites( secondarySites ) }
+				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
 				notices={ this.props.notices } />;
