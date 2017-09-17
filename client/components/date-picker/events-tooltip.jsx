@@ -77,7 +77,13 @@ class EventsTooltip extends Component {
 								icon={ event.icon }
 								socialIcon={ event.socialIcon }
 								socialIconColor={ event.socialIconColor }
-								title={ event.title } />
+								title={ event.title === ''
+									? this.props.translate( '{{em}}(No title){{/em}}',
+										{ components: { em: <em /> } }
+									)
+									: event.title
+								}
+							/>
 						</li>
 					) }
 
