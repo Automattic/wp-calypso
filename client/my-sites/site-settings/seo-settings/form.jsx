@@ -92,25 +92,23 @@ function stateForSite( site ) {
 	};
 }
 
-export const SeoForm = React.createClass( {
-	displayName: 'SiteSettingsFormSEO',
+export class SeoForm extends React.Component {
+	static displayName = 'SiteSettingsFormSEO';
 
-	getInitialState() {
-		return {
-			...stateForSite( this.props.site ),
-			seoTitleFormats: this.props.storedTitleFormats,
-			// dirtyFields is used to prevent prop updates
-			// from overwriting local stateful edits that
-			// are in progress and haven't yet been saved
-			// to the server
-			dirtyFields: Set(),
-			invalidatedSiteObject: this.props.selectedSite,
-		};
-	},
+	state = {
+		...stateForSite( this.props.site ),
+		seoTitleFormats: this.props.storedTitleFormats,
+		// dirtyFields is used to prevent prop updates
+		// from overwriting local stateful edits that
+		// are in progress and haven't yet been saved
+		// to the server
+		dirtyFields: Set(),
+		invalidatedSiteObject: this.props.selectedSite,
+	};
 
 	componentDidMount() {
 		this.refreshCustomTitles();
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
@@ -164,9 +162,9 @@ export const SeoForm = React.createClass( {
 		this.setState( {
 			...nextState
 		} );
-	},
+	}
 
-	handleMetaChange( { target: { value: frontPageMetaDescription } } ) {
+	handleMetaChange = ( { target: { value: frontPageMetaDescription } } ) => {
 		const { dirtyFields } = this.state;
 
 		// Don't allow html tags in the input field
@@ -177,18 +175,18 @@ export const SeoForm = React.createClass( {
 			! hasHtmlTagError && { frontPageMetaDescription },
 			{ dirtyFields: dirtyFields.add( 'frontPageMetaDescription' ) }
 		) );
-	},
+	};
 
-	updateTitleFormats( seoTitleFormats ) {
+	updateTitleFormats = seoTitleFormats => {
 		const { dirtyFields } = this.state;
 
 		this.setState( {
 			seoTitleFormats,
 			dirtyFields: dirtyFields.add( 'seoTitleFormats' ),
 		} );
-	},
+	};
 
-	submitSeoForm( event ) {
+	submitSeoForm = event => {
 		const {
 			siteId,
 			storedTitleFormats,
@@ -239,9 +237,9 @@ export const SeoForm = React.createClass( {
 		this.props.saveSiteSettings( siteId, updatedOptions );
 
 		this.trackSubmission();
-	},
+	};
 
-	trackSubmission() {
+	trackSubmission = () => {
 		const { dirtyFields } = this.state;
 		const {
 			trackFormSubmitted,
@@ -258,9 +256,9 @@ export const SeoForm = React.createClass( {
 		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
 			trackFrontPageMetaUpdated();
 		}
-	},
+	};
 
-	refreshCustomTitles() {
+	refreshCustomTitles = () => {
 		const {
 			refreshSiteData,
 			selectedSite
@@ -271,17 +269,17 @@ export const SeoForm = React.createClass( {
 				invalidatedSiteObject: selectedSite,
 			}, () => refreshSiteData( selectedSite.ID ) );
 		}
-	},
+	};
 
-	showPreview() {
+	showPreview = () => {
 		this.setState( { showPreview: true } );
-	},
+	};
 
-	hidePreview() {
+	hidePreview = () => {
 		this.setState( { showPreview: false } );
-	},
+	};
 
-	getConflictingSeoPlugins( activePlugins ) {
+	getConflictingSeoPlugins = activePlugins => {
 		const conflictingSeoPlugins = [
 			'Yoast SEO',
 			'Yoast SEO Premium',
@@ -292,7 +290,7 @@ export const SeoForm = React.createClass( {
 		return activePlugins
 			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
 			.map( ( { name, slug } ) => ( { name, slug } ) );
-	},
+	};
 
 	render() {
 		const {
@@ -526,7 +524,7 @@ export const SeoForm = React.createClass( {
 		);
 		/* eslint-enable react/jsx-no-target-blank */
 	}
-} );
+}
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
