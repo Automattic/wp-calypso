@@ -57,17 +57,16 @@ export class PluginSiteList extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		const sitesWithSecondarySites = props.sites
-		.filter( ( site ) => ! isConnectedSecondaryNetworkSite( state, site.ID )	)
-		.map( ( site ) => ( {
+// TODO: make this memoized after sites-list is removed and `sites` comes from Redux
+function getSitesWithSecondarySites( state, sites ) {
+	return sites
+		.filter( site => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
+		.map( site => ( {
 			site,
-			secondarySites: getNetworkSites( state, site.ID )
+			secondarySites: getNetworkSites( state, site.ID ),
 		} ) );
+}
 
-		return {
-			sitesWithSecondarySites
-		};
-	}
-)( PluginSiteList );
+export default connect( ( state, props ) => ( {
+	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
+} ) )( PluginSiteList );
