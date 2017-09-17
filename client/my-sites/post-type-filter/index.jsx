@@ -97,6 +97,11 @@ const PostTypeFilter = React.createClass( {
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
+		const scopes = {
+			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
+			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } )
+		};
+
 		return (
 			<div>
 				{ query && siteId && false === jetpack && (
@@ -105,7 +110,12 @@ const PostTypeFilter = React.createClass( {
 						type={ query.type } />
 				) }
 				<SectionNav
-					selectedText={ selectedItem.children }
+					selectedText={
+						<span>
+							<span>{ selectedItem.children }</span>
+							<small>{ query.author ? scopes.me : scopes.everyone }</small>
+						</span>
+					}
 					selectedCount={ selectedItem.count }>
 					{ query && [
 						<NavTabs
