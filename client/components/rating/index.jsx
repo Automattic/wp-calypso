@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 
@@ -12,48 +14,66 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		rating: React.PropTypes.number,
-		size: React.PropTypes.number
+		rating: PropTypes.number,
+		size: PropTypes.number
 	},
 
-	getStars: function() {
-		var i,
-			stars = [],
-			ratingOverTen = Math.ceil( this.props.rating / 10 ),
-			numberOfStars = Math.floor( ratingOverTen / 2 ),
-			hasHalfStar = ( ( ratingOverTen / 2 ) % 1 >= 0.5 ),
-			starStyles = {
-				fontSize: this.props.size
-					? this.props.size + 'px'
-					: 'inherit'
-			};
+	overlayStars: function() {
+		let i;
+		const stars = [];
+		const starStyles = {
+			width: this.props.size
+				? this.props.size + 'px'
+				: '24px',
+			height: this.props.size
+				? this.props.size + 'px'
+				: '24px'
+		};
 
-		for ( i = 0; i < numberOfStars; i++ ) {
+		for ( i = 1; i < 6; i++ ) {
 			stars.push(
-				<span
-					key={ 'star_' + i }
-					className="noticon noticon-rating-full"
+				<Gridicon
+					key={ 'star-' + i }
+					icon="star"
 					style={ starStyles }
 				/>
 			);
 		}
+		return stars;
+	},
 
-		if ( hasHalfStar ) {
-			stars.push(
-				<span
-					key="halfstar"
-					className="noticon noticon-rating-half"
-					style={ starStyles }
-				/>
-			);
-		}
+	outlineStars: function() {
+		const stars = [];
+		let i;
+		const roundRating = Math.round( this.props.rating / 10 ) * 10;
+		const inverseRating = 100 - roundRating;
+		const outlineCount = Math.floor( inverseRating / 20 );
+		const starStyles = {
+			width: this.props.size
+				? this.props.size + 'px'
+				: '24px',
+			height: this.props.size
+				? this.props.size + 'px'
+				: '24px'
+		};
 
-		while ( stars.length < 5 ) {
+		for ( i = 1; i < 6; i++ ) {
+			let outlineStyles = { fill: '#00aadc' };
+			if ( inverseRating / 20 >= 1 ) {
+				if ( i > ( 5 - outlineCount ) ) {
+					outlineStyles = {
+						fill: '#c8d7e1',
+					};
+				}
+			}
+			const allStyles = Object.assign( {}, starStyles, outlineStyles );
+
 			stars.push(
-				<span
-					key={ 'empty_' + stars.length }
-					className="noticon noticon-rating-empty"
-					style={ starStyles }
+				<Gridicon
+					key={ 'outline-' + i }
+					icon="star-outline"
+					className={ 'outline-' + i }
+					style={ allStyles }
 				/>
 			);
 		}
@@ -62,15 +82,27 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var ratingStyles = {
-			width: this.props.size
-				? ( this.props.size * 5 ) + 'px'
-				: '100%'
+		const ratingStyles = {
+			width: ( this.props.size * 5 ) + 'px'
+		};
+
+		const roundRating = Math.round( this.props.rating / 10 ) * 10;
+		const ratingWidth = ( this.props.size * 5 );
+		const maskPosition = ( ( roundRating / 100 ) * ratingWidth ) + 'px';
+		const overlayHeightPx = ( this.props.size ) + 'px';
+		const overlayStyles = {
+			clip: 'rect(0,' + maskPosition + ',' + overlayHeightPx + ', 0)',
+			width: ( this.props.size * 5 ) + 'px'
 		};
 
 		return (
-			<div className="rating" style={ ratingStyles }>
-				{ this.getStars() }
+			<div className="rating" style={ ratingStyles } data-rating={ this.props.rating } data-size={ this.props.size }>
+				<div className="rating__overlay" style={ overlayStyles }>
+					{ this.overlayStars() }
+				</div>
+				<div className="rating__star-outline">
+					{ this.outlineStars() }
+				</div>
 			</div>
 		);
 	}

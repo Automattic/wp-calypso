@@ -16,7 +16,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<Rating rating={ 65 } size={ 50 } />
+			<Rating rating={ 70 } size={ 48 } />
 		);
 	}
 } );
