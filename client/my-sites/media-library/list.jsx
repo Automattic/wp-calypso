@@ -153,7 +153,14 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	getGroupLabel: function( date ) {
-		return moment( date ).format( 'MMM DD' );
+		const itemDate = new Date( date );
+		const currentDate = new Date();
+
+		if ( itemDate.getYear() === currentDate.getYear() ) {
+			return moment( date ).format( 'MMM DD' );
+		}
+
+		return moment( date ).format( 'MMM DD, YYYY' );
 	},
 
 	getItemGroup: function( item ) {
