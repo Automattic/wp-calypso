@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
@@ -22,21 +22,6 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
-
-const months = [
-	translate( 'January' ),
-	translate( 'February' ),
-	translate( 'March' ),
-	translate( 'April' ),
-	translate( 'May' ),
-	translate( 'June' ),
-	translate( 'July' ),
-	translate( 'August' ),
-	translate( 'September' ),
-	translate( 'October' ),
-	translate( 'November' ),
-	translate( 'December' ),
-];
 
 export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
@@ -167,9 +152,8 @@ export const MediaLibraryList = React.createClass( {
 		return 'item-' + item.ID;
 	},
 
-	getGroupLabel: function( dateString ) {
-		const date = new Date( dateString );
-		return `${ months[ date.getMonth() ].slice( 0, 3 ) } ${ date.getDate() }`;
+	getGroupLabel: function( date ) {
+		return moment( date ).format( 'MMM DD' );
 	},
 
 	getItemGroup: function( item ) {
