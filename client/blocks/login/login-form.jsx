@@ -21,7 +21,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { fetchOAuth2SignupUrl } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
@@ -38,7 +37,6 @@ import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		fetchOAuth2SignupUrl: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -63,10 +61,6 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.redirectTo ) {
-			this.props.fetchOAuth2SignupUrl( this.props.redirectTo );
-		}
-
 		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
@@ -166,15 +160,11 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		let signupUrl = config( 'signup_url' );
 
-		if ( isOauthLogin ) {
-			if ( config.isEnabled( 'signup/wpcc' ) ) {
-				signupUrl = '/start/wpcc?' + qs.stringify( {
-					oauth2_client_id: oauth2Client.id,
-					oauth2_redirect: redirectTo
-				} );
-			} else {
-				signupUrl = oauth2Client.signupUrl;
-			}
+		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
+			signupUrl = '/start/wpcc?' + qs.stringify( {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo
+			} );
 		}
 
 		return (
@@ -324,6 +314,5 @@ export default connect(
 		formUpdate,
 		loginUser,
 		recordTracksEvent,
-		fetchOAuth2SignupUrl,
 	}
 )( localize( LoginForm ) );
