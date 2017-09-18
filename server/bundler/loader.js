@@ -100,34 +100,11 @@ function getRequires( sections ) {
 	return content;
 }
 
-/**
- * Tug does not approve of that
- */
-function clientRouterWrapperFactory( router, preRenderMiddleware ) {
-	if ( typeof preRenderMiddleware !== 'function' ) {
-		return router;
-	}
-
-	return function clientWrapper( ) {
-		var args = Array.prototype.slice.apply( arguments );
-		var setUpLoaleIndex = findIndex( args, function ( param ) {
-			return param.name === 'setUpLocale'; // TODO: Look more into where to insert the middleware
-		} );
-
-		var newArgs = args.slice( 0, setUpLoaleIndex + 1 )
-			.concat( [ preRenderMiddleware ] )
-			.concat( args.slice( setUpLoaleIndex ) );
-
-		return router.apply( null, newArgs );
-	}
-}
-
 function splitTemplate( path, section ) {
 	var pathRegex = getPathRegex( path ),
 		result;
 
 	result = [
-		clientRouterWrapperFactory.toString() + "\n",
 		'page( ' + pathRegex + ', function( context, next ) {',
 		'	var envId = ' + JSON.stringify( section.envId ) + ';',
 		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
@@ -146,11 +123,11 @@ function splitTemplate( path, section ) {
 		'		context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( section.module ) + ' )( ',
-		'				clientRouterWrapperFactory( controller.clientRouter, function( context, next ) {',
-		'					' + ( section.css ? 'loadCSS( ' + JSON.stringify( getCssUrls( section.css ) ) + ', context );' : '' ),
-		'					next();',
-		'				} ) );',
+		'			require( ' + JSON.stringify( section.module ) + ' )(' +
+		'				controller.clientRouterFactory( [' +
+		'					' + ( section.css ? 'context => loadCSS( ' + JSON.stringify( getCssUrls( section.css ) ) + ', context )' : '' ),
+		'				] )',
+		'			);',
 		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
