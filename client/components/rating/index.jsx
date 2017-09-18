@@ -10,7 +10,7 @@ module.exports = React.createClass( {
 	displayName: 'Rating',
 
 	getDefaultProps: function() {
-		return { rating: 0 };
+		return { rating: 0, size: 24 };
 	},
 
 	propTypes: {
