@@ -89,14 +89,17 @@ module.exports = React.createClass( {
 		const roundRating = Math.round( this.props.rating / 10 ) * 10;
 		const ratingWidth = ( this.props.size * 5 );
 		const maskPosition = ( ( roundRating / 100 ) * ratingWidth ) + 'px';
+		const clipPathMaskPosition = ( ratingWidth - ( ( roundRating / 100 ) * ratingWidth ) ) + 'px';
 		const overlayHeightPx = ( this.props.size ) + 'px';
 		const overlayStyles = {
-			clip: 'rect(0,' + maskPosition + ',' + overlayHeightPx + ', 0)',
+			WebkitClipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
+			clipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
+			clip: 'rect(0, ' + maskPosition + ', ' + overlayHeightPx + ', 0)',
 			width: ( this.props.size * 5 ) + 'px'
 		};
 
 		return (
-			<div className="rating" style={ ratingStyles } data-rating={ this.props.rating } data-size={ this.props.size }>
+			<div className="rating" style={ ratingStyles }>
 				<div className="rating__overlay" style={ overlayStyles }>
 					{ this.overlayStars() }
 				</div>
