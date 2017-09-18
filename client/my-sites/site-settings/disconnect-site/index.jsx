@@ -16,6 +16,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
+import SkipSurvey from './skip-survey';
 
 class DisconnectSite extends Component {
 	render() {
@@ -34,6 +35,7 @@ class DisconnectSite extends Component {
 					) }
 				/>
 				<Card className="disconnect-site__card"> </Card>
+				<SkipSurvey />
 			</Main>
 		);
 	}
