@@ -1,14 +1,14 @@
 // Primary Accent (Blues)
-$blue-wordpress:         #0087be;
-$blue-light:             #78dcfa;
-$blue-medium:            #00aadc;
-$blue-dark:              #005082;
+$blue-wordpress:         #fbaed2;
+$blue-light:             #edc7e6;
+$blue-medium:            #e754ca;
+$blue-dark:              #e75480;
 
 // Jetpack Green
 $green-jetpack:          #8cc258;
 
 // Grays
-$gray:                   #87a6bc;
+$gray:                   #e754ca;
 $gray-light:             lighten( $gray, 33% ); //#f3f6f8
 $gray-dark:              darken( $gray, 38% ); //#2e4453
 
@@ -41,7 +41,7 @@ $alert-purple:           #855DA6;
 $link-highlight:         tint($blue-medium, 20%);
 
 // Essentials
-$white:                  rgba(255,255,255,1);
+$white:                  pink;
 $transparent:            rgba(255,255,255,0);
 
 // Uncommon
