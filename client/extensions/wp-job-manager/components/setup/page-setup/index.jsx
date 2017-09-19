@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { formValueSelector, reduxForm } from 'redux-form';
+import { Field, formValueSelector, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 
@@ -17,8 +17,9 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
+import FormTextInput from 'components/forms/form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 import { createPages } from '../../../state/setup/actions';
@@ -45,6 +46,22 @@ const validate = ( values, props ) => {
 	}
 
 	return errors;
+};
+
+const PageRenderer = ( { disabled, explanation, input, meta } ) => {
+	const isError = !! ( meta.touched && meta.error );
+
+	return (
+		<div className="page-setup__page">
+			<FormTextInput { ...input } disabled={ disabled } />
+			{ isError && <FormInputValidation isError text={ meta.error } /> }
+			{ explanation &&
+				<FormSettingExplanation>
+					{ explanation }
+				</FormSettingExplanation>
+			}
+		</div>
+	);
 };
 
 class PageSetup extends Component {
@@ -144,50 +161,43 @@ class PageSetup extends Component {
 								<ReduxFormToggle
 									disabled={ isCreating }
 									name="createPostJob" />
-								<ReduxFormTextInput
+								<Field
+									component={ PageRenderer }
 									disabled={ ! createPostJob || isCreating }
-									name="postJobTitle" />
-
-								<FormSettingExplanation>
-									{ translate(
+									explanation={ translate(
 										'Creates a page that allows employers to post new jobs directly from a page on your website, ' +
 										'instead of requiring them to log in to an admin area. If you\'d rather not allow this -- ' +
 										'for example, if you want employers to use the admin dashboard only -- you can uncheck ' +
 										'this setting.'
 									) }
-								</FormSettingExplanation>
+									name="postJobTitle" />
 							</FormFieldset>
 
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isCreating }
 									name="createDashboard" />
-								<ReduxFormTextInput
+								<Field
+									component={ PageRenderer }
 									disabled={ ! createDashboard || isCreating }
-									name="dashboardTitle" />
-
-								<FormSettingExplanation>
-									{ translate(
+									explanation={ translate(
 										'Creates a page that allows employers to manage their job listings directly from a page on your ' +
 										'website, instead of requiring them to log in to an admin area. If you want to manage all ' +
 										'job listings from the admin dashboard only, you can uncheck this setting.'
 									) }
-								</FormSettingExplanation>
+									name="dashboardTitle" />
 							</FormFieldset>
 
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isCreating }
 									name="createJobs" />
-								<ReduxFormTextInput
+								<Field
+									component={ PageRenderer }
 									disabled={ ! createJobs || isCreating }
+									explanation={ translate( 'Creates a page where visitors can browse, search, and filter ' +
+										'job listings.' ) }
 									name="jobsTitle" />
-
-								<FormSettingExplanation>
-									{ translate(
-										'Creates a page where visitors can browse, search, and filter job listings.'
-									) }
-								</FormSettingExplanation>
 							</FormFieldset>
 						</form>
 					</div>
