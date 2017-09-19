@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Steps } from '../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
@@ -15,8 +16,13 @@ import SectionHeader from 'components/section-header';
 
 class Intro extends Component {
 	static propTypes = {
+		goToStep: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	skipSetup = event => this.props.goToStep( event, Steps.CONFIRMATION );
+
+	startSetup = event => this.props.goToStep( event, Steps.PAGE_SETUP );
 
 	render() {
 		const { translate } = this.props;
@@ -61,11 +67,13 @@ class Intro extends Component {
 				<CompactCard>
 					<a
 						className="intro__skip-setup"
-						href="#">
+						href="#"
+						onClick={ this.skipSetup }>
 						{ translate( 'Skip setup. I will set up the plugin manually.' ) }
 					</a>
 					<Button primary
-						className="intro__start-setup">
+						className="intro__start-setup"
+						onClick={ this.startSetup }>
 						{ translate( 'Start Setup' ) }
 					</Button>
 				</CompactCard>
