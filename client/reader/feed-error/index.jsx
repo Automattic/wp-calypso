@@ -2,17 +2,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import ReaderMain from 'components/reader-main';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class FeedError extends React.Component {

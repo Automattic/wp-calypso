@@ -2,26 +2,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import RefreshFeedHeader from 'blocks/reader-feed-header';
 import EmptyContent from './empty';
-import Stream from 'reader/stream';
-import FeedError from 'reader/feed-error';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
+import RefreshFeedHeader from 'blocks/reader-feed-header';
+import DocumentHead from 'components/data/document-head';
+import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-site';
+import FeedError from 'reader/feed-error';
+import Stream from 'reader/stream';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 class SiteStream extends React.Component {
 	static propTypes = {

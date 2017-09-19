@@ -1,18 +1,17 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import SidebarMenu from 'layout/sidebar/menu';
-import ExpandableSidebarHeading from './expandable-heading';
 import ExpandableSidebarAddForm from './expandable-add-form';
+import ExpandableSidebarHeading from './expandable-heading';
+import SidebarMenu from 'layout/sidebar/menu';
 
 export const ExpandableSidebarMenu = props => {
 	const {

@@ -2,18 +2,17 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
-import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
+import FollowButton from 'reader/follow-button';
 
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {

@@ -1,15 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { handleGapClicked } from 'reader/utils';
 

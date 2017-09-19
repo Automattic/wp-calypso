@@ -1,35 +1,34 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 import escapeRegexp from 'escape-string-regexp';
+import { localize } from 'i18n-calypso';
 import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
-import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderImportButton from 'blocks/reader-import-button';
-import ReaderExportButton from 'blocks/reader-export-button';
-import InfiniteStream from 'components/reader-infinite-stream';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
-import UrlSearch from 'lib/url-search';
-import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
+import ReaderExportButton from 'blocks/reader-export-button';
+import ReaderImportButton from 'blocks/reader-import-button';
+import SyncReaderFollows from 'components/data/sync-reader-follows';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
+import InfiniteStream from 'components/reader-infinite-stream';
+import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import { addQueryArgs } from 'lib/url';
+import UrlSearch from 'lib/url-search';
 import { READER_SUBSCRIPTIONS } from 'reader/follow-button/follow-sources';
+import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
+import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
+import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
