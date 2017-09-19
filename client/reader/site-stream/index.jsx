@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -23,11 +25,11 @@ import FeedFeatured from './featured';
 
 class SiteStream extends React.Component {
 	static propTypes = {
-		siteId: React.PropTypes.number.isRequired,
-		className: React.PropTypes.string,
-		showBack: React.PropTypes.bool,
-		isDiscoverStream: React.PropTypes.bool,
-		featuredStore: React.PropTypes.object,
+		siteId: PropTypes.number.isRequired,
+		className: PropTypes.string,
+		showBack: PropTypes.bool,
+		isDiscoverStream: PropTypes.bool,
+		featuredStore: PropTypes.object,
 	};
 
 	static defaultProps = {
