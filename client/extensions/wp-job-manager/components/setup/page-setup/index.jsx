@@ -28,8 +28,7 @@ import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/select
 
 const form = 'extensions.wpJobManager.pageSetup';
 
-const validate = ( values, props ) => {
-	const { translate } = props;
+const validate = ( values, { translate } ) => {
 	const errors = {};
 	const message = translate( 'Page name cannot be empty.' );
 
