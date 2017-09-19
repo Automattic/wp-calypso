@@ -14,6 +14,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 // import { requestTeams } from 'state/reader/teams/actions';
 import { READER_TEAMS_RECEIVE } from 'state/action-types';
 
+const apiResponse = { teams: [ { slug: 'a8c', title: 'Automattic' } ] };
+
 describe( 'wpcom-api', () => {
 	describe( 'teams request', () => {
 		const action = { type: 'DUMMY_ACTION' };
@@ -48,12 +50,12 @@ describe( 'wpcom-api', () => {
 
 		it( 'should dispatch READER_TEAMS_RECEIVE action without error when request succeeds', () => {
 			const dispatch = spy();
-			teamRequestReceived( { dispatch }, action );
+			teamRequestReceived( { dispatch }, action, apiResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: READER_TEAMS_RECEIVE,
-				payload: action,
+				payload: apiResponse,
 			} );
 		} );
 	} );

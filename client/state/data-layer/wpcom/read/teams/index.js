@@ -19,10 +19,10 @@ export const handleTeamsRequest = ( { dispatch }, action ) => {
 	);
 };
 
-export const teamRequestReceived = ( { dispatch }, payload ) => {
+export const teamRequestReceived = ( { dispatch }, action, apiResponse ) => {
 	dispatch( {
 		type: READER_TEAMS_RECEIVE,
-		payload,
+		payload: apiResponse,
 	} );
 };
 
