@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 
@@ -25,9 +27,9 @@ const isSVGCSSAnimationSupported = ( () => {
 
 export default class Spinner extends PureComponent {
 	static propTypes = {
-		className: React.PropTypes.string,
-		size: React.PropTypes.number,
-		duration: React.PropTypes.number
+		className: PropTypes.string,
+		size: PropTypes.number,
+		duration: PropTypes.number
 	};
 
 	static instances = 0;

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { assign, noop } from 'lodash';
 
@@ -8,7 +10,7 @@ export default React.createClass( {
 	displayName: 'TrackInputChanges',
 
 	propTypes: {
-		onNewValue: React.PropTypes.func
+		onNewValue: PropTypes.func
 	},
 
 	getDefaultProps() {

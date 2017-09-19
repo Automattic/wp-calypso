@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { throttle } from 'lodash';
 
@@ -13,8 +15,8 @@ module.exports = React.createClass( {
 	displayName: 'ModuleChartXAxis',
 
 	propTypes: {
-		labelWidth: React.PropTypes.number.isRequired,
-		data: React.PropTypes.array.isRequired
+		labelWidth: PropTypes.number.isRequired,
+		data: PropTypes.array.isRequired
 	},
 
 	getInitialState: function() {

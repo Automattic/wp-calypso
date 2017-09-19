@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -18,12 +20,12 @@ import AsyncLoad from 'components/async-load';
 
 const MasterbarItemNew = React.createClass( {
 	propTypes: {
-		user: React.PropTypes.object,
-		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		tooltip: React.PropTypes.string,
+		user: PropTypes.object,
+		isActive: PropTypes.bool,
+		className: PropTypes.string,
+		tooltip: PropTypes.string,
 		// connected props
-		selectedSite: React.PropTypes.object,
+		selectedSite: PropTypes.object,
 	},
 
 	getInitialState() {

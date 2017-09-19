@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { assign, includes, find, flatMap } from 'lodash';
@@ -26,8 +28,8 @@ import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {
-		isSubmittingForm: React.PropTypes.bool.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+		isSubmittingForm: PropTypes.bool.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
 	};
 
 	state = {

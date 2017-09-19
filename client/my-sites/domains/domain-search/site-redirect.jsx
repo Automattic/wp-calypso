@@ -1,8 +1,11 @@
+import page from 'page';
+
 /**
  * External dependencies
  */
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 

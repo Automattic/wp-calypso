@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
@@ -16,17 +17,17 @@ var SuggestionsList = require( './suggestions-list' ),
 
 var TokenField = React.createClass( {
 	propTypes: {
-		suggestions: React.PropTypes.array,
-		maxSuggestions: React.PropTypes.number,
-		displayTransform: React.PropTypes.func,
-		saveTransform: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		isBorderless: React.PropTypes.bool,
-		maxLength: React.PropTypes.number,
-		onFocus: React.PropTypes.func,
-		disabled: React.PropTypes.bool,
-		tokenizeOnSpace: React.PropTypes.bool,
-		placeholder: React.PropTypes.string,
+		suggestions: PropTypes.array,
+		maxSuggestions: PropTypes.number,
+		displayTransform: PropTypes.func,
+		saveTransform: PropTypes.func,
+		onChange: PropTypes.func,
+		isBorderless: PropTypes.bool,
+		maxLength: PropTypes.number,
+		onFocus: PropTypes.func,
+		disabled: PropTypes.bool,
+		tokenizeOnSpace: PropTypes.bool,
+		placeholder: PropTypes.string,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {

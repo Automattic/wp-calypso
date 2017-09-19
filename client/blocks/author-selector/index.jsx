@@ -1,7 +1,10 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import debugModule from 'debug';
 import { trim } from 'lodash';
@@ -28,14 +31,14 @@ let instance = 0;
 const SwitcherShell = React.createClass( {
 	displayName: 'AuthorSwitcherShell',
 	propTypes: {
-		users: React.PropTypes.array,
-		fetchingUsers: React.PropTypes.bool,
-		numUsersFetched: React.PropTypes.number,
-		totalUsers: React.PropTypes.number,
-		usersCurrentOffset: React.PropTypes.number,
-		allowSingleUser: React.PropTypes.bool,
-		popoverPosition: React.PropTypes.string,
-		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.func } )
+		users: PropTypes.array,
+		fetchingUsers: PropTypes.bool,
+		numUsersFetched: PropTypes.number,
+		totalUsers: PropTypes.number,
+		usersCurrentOffset: PropTypes.number,
+		allowSingleUser: PropTypes.bool,
+		popoverPosition: PropTypes.string,
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.func } )
 	},
 
 	getInitialState: function() {
@@ -233,11 +236,11 @@ const SwitcherShell = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'AuthorSelector',
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired,
-		onSelect: React.PropTypes.func,
-		exclude: React.PropTypes.arrayOf( React.PropTypes.number ),
-		allowSingleUser: React.PropTypes.bool,
-		popoverPosition: React.PropTypes.string
+		siteId: PropTypes.number.isRequired,
+		onSelect: PropTypes.func,
+		exclude: PropTypes.arrayOf( PropTypes.number ),
+		allowSingleUser: PropTypes.bool,
+		popoverPosition: PropTypes.string
 	},
 
 	getInitialState: function() {

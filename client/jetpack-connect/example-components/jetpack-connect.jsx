@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -65,9 +67,9 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 };
 
 JetpackConnectExampleConnect.propTypes = {
-	isLegacy: React.PropTypes.bool,
-	url: React.PropTypes.string,
-	onClick: React.PropTypes.func
+	isLegacy: PropTypes.bool,
+	url: PropTypes.string,
+	onClick: PropTypes.func
 };
 
 JetpackConnectExampleConnect.defaultProps = {

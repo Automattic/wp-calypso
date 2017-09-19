@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 import classNames from 'classnames';
@@ -25,11 +27,11 @@ export default React.createClass( {
 	displayName: 'PluginInformation',
 
 	propTypes: {
-		plugin: React.PropTypes.object.isRequired,
-		isPlaceholder: React.PropTypes.bool,
-		hasUpdate: React.PropTypes.bool,
-		pluginVersion: React.PropTypes.string,
-		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
+		plugin: PropTypes.object.isRequired,
+		isPlaceholder: PropTypes.bool,
+		hasUpdate: PropTypes.bool,
+		pluginVersion: PropTypes.string,
+		siteVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	},
 
 	getDefaultProps() {

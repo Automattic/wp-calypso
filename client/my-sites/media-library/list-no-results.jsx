@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -12,8 +13,8 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryListNoResults',
 
 	propTypes: {
-		filter: React.PropTypes.string,
-		search: React.PropTypes.string
+		filter: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	getDefaultProps: function() {

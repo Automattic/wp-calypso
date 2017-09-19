@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -41,10 +43,10 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 };
 
 SiteRedirectDetails.propTypes = {
-	domain: React.PropTypes.string.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	domain: PropTypes.string.isRequired,
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired
 };
 

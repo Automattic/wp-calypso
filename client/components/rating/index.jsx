@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -12,8 +13,8 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		rating: React.PropTypes.number,
-		size: React.PropTypes.number
+		rating: PropTypes.number,
+		size: PropTypes.number
 	},
 
 	getStars: function() {

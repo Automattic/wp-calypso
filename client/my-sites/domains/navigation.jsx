@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Dispatcher from 'dispatcher';
 import { get } from 'lodash';
@@ -21,11 +23,11 @@ import { isATEnabled } from 'lib/automated-transfer';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: React.PropTypes.object,
-		path: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		cart: PropTypes.object,
+		path: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

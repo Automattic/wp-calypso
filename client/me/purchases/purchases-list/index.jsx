@@ -1,8 +1,11 @@
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
 /**
  * External Dependencies
  */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 
 /**
@@ -85,9 +88,9 @@ class PurchasesList extends Component {
 }
 
 PurchasesList.propTypes = {
-	noticeType: React.PropTypes.string,
-	purchases: React.PropTypes.oneOfType( [ React.PropTypes.array, React.PropTypes.bool ] ),
-	sites: React.PropTypes.array.isRequired,
+	noticeType: PropTypes.string,
+	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	sites: PropTypes.array.isRequired,
 };
 
 export default connect(

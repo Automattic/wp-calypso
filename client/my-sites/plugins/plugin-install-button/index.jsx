@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -267,9 +269,9 @@ PluginInstallButton.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	notices: React.PropTypes.object,
+	notices: PropTypes.object,
 	isMock: PropTypes.bool,
-	disabled: React.PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
 export default connect(

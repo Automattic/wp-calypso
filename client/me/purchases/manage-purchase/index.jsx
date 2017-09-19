@@ -1,10 +1,13 @@
-/**
- * External Dependencies
- */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+
+/**
+ * External Dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 
 /**
@@ -80,12 +83,12 @@ const user = userFactory();
 
 class ManagePurchase extends Component {
 	static propTypes = {
-		destinationType: React.PropTypes.string,
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType(
-			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		destinationType: PropTypes.string,
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType(
+			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
 		),
 	};
 

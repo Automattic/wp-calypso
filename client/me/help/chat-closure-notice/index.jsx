@@ -5,6 +5,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 
@@ -69,6 +71,6 @@ export default class ChatClosureNotice extends Component {
 }
 
 ChatClosureNotice.PropTypes = {
-	from: React.PropTypes.string.isRequired,
-	to: React.PropTypes.string.isRequired,
+	from: PropTypes.string.isRequired,
+	to: PropTypes.string.isRequired,
 };

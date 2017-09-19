@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -26,17 +28,17 @@ import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/pos
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
-		handlePreferenceChange: React.PropTypes.func,
-		onPrivatePublish: React.PropTypes.func,
-		onPublish: React.PropTypes.func,
-		post: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		isPrivatePost: React.PropTypes.bool,
-		isPrivatePostPasswordValid: React.PropTypes.bool,
-		setPostDate: React.PropTypes.func,
-		setStatus: React.PropTypes.func,
-		site: React.PropTypes.object,
-		status: React.PropTypes.string,
+		handlePreferenceChange: PropTypes.func,
+		onPrivatePublish: PropTypes.func,
+		onPublish: PropTypes.func,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		isPrivatePost: PropTypes.bool,
+		isPrivatePostPasswordValid: PropTypes.bool,
+		setPostDate: PropTypes.func,
+		setStatus: PropTypes.func,
+		site: PropTypes.object,
+		status: PropTypes.string,
 	};
 
 	getCloseOverlayHandler = ( context ) => () => this.props.setStatus( { status: 'closed', context } );

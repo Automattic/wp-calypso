@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -21,11 +23,11 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 const AddGoogleAppsCard = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		products: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	},
 

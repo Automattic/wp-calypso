@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Masterbar from './masterbar';
 import { localize } from 'i18n-calypso';
@@ -56,9 +58,9 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 );
 
 MasterbarLoggedOut.propTypes = {
-	title: React.PropTypes.string,
-	sectionName: React.PropTypes.string,
-	redirectUri: React.PropTypes.string,
+	title: PropTypes.string,
+	sectionName: PropTypes.string,
+	redirectUri: PropTypes.string,
 };
 
 MasterbarLoggedOut.defaultProps = {

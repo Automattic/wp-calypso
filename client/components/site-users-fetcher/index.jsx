@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, isEqual, omit, partition } from 'lodash';
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:site-users-fetcher' );
 
@@ -24,10 +25,10 @@ module.exports = React.createClass( {
 	displayName: 'SiteUsersFetcher',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired,
-		exclude: React.PropTypes.oneOfType( [
-			React.PropTypes.arrayOf( React.PropTypes.number ),
-			React.PropTypes.func
+		fetchOptions: PropTypes.object.isRequired,
+		exclude: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.number ),
+			PropTypes.func
 		] )
 	},
 

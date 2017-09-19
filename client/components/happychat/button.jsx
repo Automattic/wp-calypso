@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import page from 'page';
 import { identity, noop } from 'lodash';
 import { connect } from 'react-redux';

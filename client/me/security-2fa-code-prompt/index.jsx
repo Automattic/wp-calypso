@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -38,11 +39,11 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		action: React.PropTypes.string,
-		onCancel: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired,
-		requestSMSOnMount: React.PropTypes.bool,
-		showCancelButton: React.PropTypes.bool
+		action: PropTypes.string,
+		onCancel: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
+		requestSMSOnMount: PropTypes.bool,
+		showCancelButton: PropTypes.bool
 	},
 
 	componentDidMount: function() {

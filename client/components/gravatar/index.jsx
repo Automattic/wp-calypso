@@ -1,8 +1,11 @@
+import React, { Component } from 'react';
+import url from 'url';
+
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import url from 'url';
+import PropTypes from 'prop-types';
+
 import qs from 'querystring';
 import { connect } from 'react-redux';
 import { get } from 'lodash';

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import SidebarRegion from './region';
@@ -9,8 +11,8 @@ export default React.createClass( {
 	displayName: 'Sidebar',
 
 	propTypes: {
-		className: React.PropTypes.string,
-		onClick: React.PropTypes.func
+		className: PropTypes.string,
+		onClick: PropTypes.func
 	},
 
 	render: function() {

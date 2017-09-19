@@ -1,7 +1,10 @@
+import { find } from 'lodash';
+
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -91,12 +94,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 };
 
 PremiumPlanDetails.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired,
-	selectedFeature: React.PropTypes.object,
-	sitePlans: React.PropTypes.object.isRequired
+	selectedFeature: PropTypes.object,
+	sitePlans: PropTypes.object.isRequired
 };
 
 export default PremiumPlanDetails;

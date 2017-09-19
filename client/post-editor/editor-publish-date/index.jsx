@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
@@ -20,9 +22,9 @@ import { getSelectedSite } from 'state/ui/selectors';
 export class EditorPublishDate extends React.Component {
 
 	static propTypes = {
-		post: React.PropTypes.object,
-		postDate: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
+		post: PropTypes.object,
+		postDate: PropTypes.string,
+		setPostDate: PropTypes.func,
 	};
 
 	constructor( props ) {

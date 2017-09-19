@@ -1,7 +1,10 @@
+import page from 'page';
+
 /**
  * External dependencies
  */
-import page from 'page';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -19,9 +22,9 @@ import { withoutHttp } from 'lib/url';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {
-		cart: React.PropTypes.object.isRequired,
-		products: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired,
+		cart: PropTypes.object.isRequired,
+		products: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 	};
 
 	state = { searchQuery: '' };

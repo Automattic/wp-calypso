@@ -4,6 +4,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
@@ -61,40 +63,40 @@ const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
 
 	propTypes: {
-		id: React.PropTypes.string,
-		name: React.PropTypes.string,
-		author: React.PropTypes.string,
-		screenshot: React.PropTypes.string,
-		screenshots: React.PropTypes.array,
-		price: React.PropTypes.string,
-		description: React.PropTypes.string,
-		descriptionLong: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.bool // happens if no content: false
+		id: PropTypes.string,
+		name: PropTypes.string,
+		author: PropTypes.string,
+		screenshot: PropTypes.string,
+		screenshots: PropTypes.array,
+		price: PropTypes.string,
+		description: PropTypes.string,
+		descriptionLong: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.bool // happens if no content: false
 		] ),
-		supportDocumentation: React.PropTypes.string,
-		download: React.PropTypes.string,
-		taxonomies: React.PropTypes.object,
-		stylesheet: React.PropTypes.string,
-		retired: React.PropTypes.bool,
+		supportDocumentation: PropTypes.string,
+		download: PropTypes.string,
+		taxonomies: PropTypes.object,
+		stylesheet: PropTypes.string,
+		retired: PropTypes.bool,
 		// Connected props
-		isLoggedIn: React.PropTypes.bool,
-		isActive: React.PropTypes.bool,
-		isPurchased: React.PropTypes.bool,
-		isJetpack: React.PropTypes.bool,
-		siteId: React.PropTypes.number,
-		siteSlug: React.PropTypes.string,
-		backPath: React.PropTypes.string,
-		isWpcomTheme: React.PropTypes.bool,
-		defaultOption: React.PropTypes.shape( {
-			label: React.PropTypes.string,
-			action: React.PropTypes.func,
-			getUrl: React.PropTypes.func,
+		isLoggedIn: PropTypes.bool,
+		isActive: PropTypes.bool,
+		isPurchased: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+		backPath: PropTypes.string,
+		isWpcomTheme: PropTypes.bool,
+		defaultOption: PropTypes.shape( {
+			label: PropTypes.string,
+			action: PropTypes.func,
+			getUrl: PropTypes.func,
 		} ),
-		secondaryOption: React.PropTypes.shape( {
-			label: React.PropTypes.string,
-			action: React.PropTypes.func,
-			getUrl: React.PropTypes.func,
+		secondaryOption: PropTypes.shape( {
+			label: PropTypes.string,
+			action: PropTypes.func,
+			getUrl: PropTypes.func,
 		} ),
 	},
 

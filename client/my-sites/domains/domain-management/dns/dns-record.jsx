@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import { endsWith } from 'lodash';
@@ -15,9 +17,9 @@ import { isBeingProcessed } from 'lib/domains/dns';
 
 class DnsRecord extends React.Component {
 	static propTypes = {
-		onDeleteDns: React.PropTypes.func.isRequired,
-		dnsRecord: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+		onDeleteDns: PropTypes.func.isRequired,
+		dnsRecord: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
 	};
 
 	handledBy() {

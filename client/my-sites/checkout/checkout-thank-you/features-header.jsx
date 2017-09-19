@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -42,11 +44,11 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 };
 
 FeaturesHeader.propTypes = {
-	isDataLoaded: React.PropTypes.bool.isRequired,
-	isGenericReceipt: React.PropTypes.bool,
-	purchases: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.array
+	isDataLoaded: PropTypes.bool.isRequired,
+	isGenericReceipt: PropTypes.bool,
+	purchases: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.array
 	] )
 };
 

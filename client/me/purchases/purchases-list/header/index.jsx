@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -35,7 +37,7 @@ const PurchasesHeader = ( { section } ) => {
 };
 
 PurchasesHeader.propTypes = {
-	section: React.PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
 };
 
 export default PurchasesHeader;

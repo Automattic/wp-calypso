@@ -1,7 +1,10 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { find } from 'lodash';
 import classNames from 'classnames';
@@ -36,16 +39,16 @@ const EditorVisibility = React.createClass( {
 	},
 
 	propTypes: {
-		context: React.PropTypes.string,
-		onPrivatePublish: React.PropTypes.func,
-		isPrivateSite: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		status: React.PropTypes.string,
-		password: React.PropTypes.string,
-		savedStatus: React.PropTypes.string,
-		savedPassword: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
+		context: PropTypes.string,
+		onPrivatePublish: PropTypes.func,
+		isPrivateSite: PropTypes.bool,
+		type: PropTypes.string,
+		status: PropTypes.string,
+		password: PropTypes.string,
+		savedStatus: PropTypes.string,
+		savedPassword: PropTypes.string,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 	},
 
 	getInitialState() {

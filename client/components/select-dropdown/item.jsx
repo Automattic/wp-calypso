@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -12,14 +14,14 @@ import Count from 'components/count';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
-		children: React.PropTypes.string.isRequired,
-		path: React.PropTypes.string,
-		isDropdownOpen: React.PropTypes.bool,
-		selected: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		count: React.PropTypes.number,
-		disabled: React.PropTypes.bool,
-		icon: React.PropTypes.element,
+		children: PropTypes.string.isRequired,
+		path: PropTypes.string,
+		isDropdownOpen: PropTypes.bool,
+		selected: PropTypes.bool,
+		onClick: PropTypes.func,
+		count: PropTypes.number,
+		disabled: PropTypes.bool,
+		icon: PropTypes.element,
 	}
 
 	static defaultProps = {

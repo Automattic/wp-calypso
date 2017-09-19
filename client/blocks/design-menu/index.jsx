@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -32,18 +34,18 @@ const WrappedSiteTitleControl = designTool( SiteTitleControl );
 const DesignMenu = React.createClass( {
 
 	propTypes: {
-		isVisible: React.PropTypes.bool,
+		isVisible: PropTypes.bool,
 		// These are provided by the connect method
-		isUnsaved: React.PropTypes.bool,
-		customizations: React.PropTypes.object,
-		selectedSite: React.PropTypes.object,
-		currentLayoutFocus: React.PropTypes.string,
-		activeDesignToolId: React.PropTypes.string,
-		clearCustomizations: React.PropTypes.func.isRequired,
-		fetchPreviewMarkup: React.PropTypes.func.isRequired,
-		saveCustomizations: React.PropTypes.func.isRequired,
-		setActiveDesignTool: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired,
+		isUnsaved: PropTypes.bool,
+		customizations: PropTypes.object,
+		selectedSite: PropTypes.object,
+		currentLayoutFocus: PropTypes.string,
+		activeDesignToolId: PropTypes.string,
+		clearCustomizations: PropTypes.func.isRequired,
+		fetchPreviewMarkup: PropTypes.func.isRequired,
+		saveCustomizations: PropTypes.func.isRequired,
+		setActiveDesignTool: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {

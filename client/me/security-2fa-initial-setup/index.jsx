@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		onSuccess: React.PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	render: function() {

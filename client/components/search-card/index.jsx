@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 
@@ -12,19 +14,19 @@ import Search from 'components/search';
 
 class SearchCard extends React.Component {
 	static propTypes = {
-		additionalClasses: React.PropTypes.string,
-		initialValue: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		delaySearch: React.PropTypes.bool,
-		onSearch: React.PropTypes.func.isRequired,
-		onSearchChange: React.PropTypes.func,
-		analyticsGroup: React.PropTypes.string,
-		autoFocus: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		dir: React.PropTypes.string,
-		maxLength: React.PropTypes.number,
-		hideOpenIcon: React.PropTypes.bool,
-		disableAutocorrect: React.PropTypes.bool,
+		additionalClasses: PropTypes.string,
+		initialValue: PropTypes.string,
+		placeholder: PropTypes.string,
+		delaySearch: PropTypes.bool,
+		onSearch: PropTypes.func.isRequired,
+		onSearchChange: PropTypes.func,
+		analyticsGroup: PropTypes.string,
+		autoFocus: PropTypes.bool,
+		disabled: PropTypes.bool,
+		dir: PropTypes.string,
+		maxLength: PropTypes.number,
+		hideOpenIcon: PropTypes.bool,
+		disableAutocorrect: PropTypes.bool,
 	};
 
 	render() {

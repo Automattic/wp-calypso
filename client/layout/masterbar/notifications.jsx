@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
@@ -21,12 +23,12 @@ import { isNotificationsOpen } from 'state/selectors';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
-		user: React.PropTypes.object.isRequired,
-		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		tooltip: React.PropTypes.string,
+		user: PropTypes.object.isRequired,
+		isActive: PropTypes.bool,
+		className: PropTypes.string,
+		tooltip: PropTypes.string,
 		//connected
-		isNotificationsOpen: React.PropTypes.bool,
+		isNotificationsOpen: PropTypes.bool,
 	};
 
 	state = {

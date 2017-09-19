@@ -1,9 +1,12 @@
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import url from 'url';
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import url from 'url';
+import PropTypes from 'prop-types';
+
 import Qs from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -12,12 +14,12 @@ import SectionHeader from 'components/section-header';
 
 const Header = React.createClass( {
 	propTypes: {
-		domain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		settingPrimaryDomain: React.PropTypes.bool.isRequired
+		settingPrimaryDomain: PropTypes.bool.isRequired
 	},
 
 	render() {

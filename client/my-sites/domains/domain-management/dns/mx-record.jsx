@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -23,10 +25,10 @@ class MxRecord extends React.Component {
 	};
 
 	static propTypes = {
-		fieldValues: React.PropTypes.object.isRequired,
-		onChange: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		show: React.PropTypes.bool.isRequired
+		fieldValues: PropTypes.object.isRequired,
+		onChange: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		show: PropTypes.bool.isRequired
 	};
 
 	render() {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -55,7 +56,7 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		onNextStep: React.PropTypes.func.isRequired
+		onNextStep: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {

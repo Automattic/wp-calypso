@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import Debug from 'debug';
@@ -36,10 +38,10 @@ const PostsNavigation = React.createClass( {
 	displayName: 'PostsNavigation',
 
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		author: React.PropTypes.number,
-		statusSlug: React.PropTypes.string,
-		search: React.PropTypes.string
+		context: PropTypes.object.isRequired,
+		author: PropTypes.number,
+		statusSlug: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	mixins: [ URLSearch ],

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial, pick } from 'lodash';
@@ -25,7 +27,7 @@ class MediaModalSecondaryActions extends Component {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
-		view: React.PropTypes.oneOf( values( ModalViews ) ),
+		view: PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,

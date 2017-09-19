@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -18,8 +20,8 @@ import {
 
 class NameserversToggle extends React.PureComponent {
 	static propTypes = {
-		onToggle: React.PropTypes.func.isRequired,
-		enabled: React.PropTypes.bool.isRequired
+		onToggle: PropTypes.func.isRequired,
+		enabled: PropTypes.bool.isRequired
 	};
 
 	render() {

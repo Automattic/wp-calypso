@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -15,12 +16,12 @@ const PrimaryDomainButton = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	propTypes: {
-		domain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		settingPrimaryDomain: React.PropTypes.bool.isRequired
+		settingPrimaryDomain: PropTypes.bool.isRequired
 	},
 
 	handleClick() {
