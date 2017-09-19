@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 

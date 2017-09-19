@@ -4,7 +4,6 @@
 import { noop, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

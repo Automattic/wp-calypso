@@ -3,7 +3,6 @@
  */
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 

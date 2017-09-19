@@ -6,7 +6,6 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -17,7 +16,6 @@ import ExpandableSidebarMenu from '../expandable';
 import ReaderSidebarTagsList from './list';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'state/selectors';
 

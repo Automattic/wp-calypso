@@ -4,7 +4,6 @@
 import { localize } from 'i18n-calypso';
 import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 

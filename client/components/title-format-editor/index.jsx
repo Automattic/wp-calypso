@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import { get, head, map, max, min, noop } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 

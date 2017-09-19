@@ -3,7 +3,6 @@
  */
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
-
 import { cloneElement, Component } from 'react';
 
 /**

@@ -3,7 +3,6 @@
  */
 import chrono from 'chrono-node';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

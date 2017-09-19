@@ -13,7 +13,6 @@ import Label from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import Tooltip from 'components/tooltip';
 import PureRenderMixin from 'react-pure-render/mixin';
-
 import { setPostType } from 'state/site-settings/exporter/actions';
 import { getSelectedPostType, isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
 

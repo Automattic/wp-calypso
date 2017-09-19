@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { debounce, memoize, get, map, reduce, filter, range, difference, isEqual, includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 

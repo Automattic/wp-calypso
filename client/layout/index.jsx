@@ -11,7 +11,6 @@ import AppBanner from 'blocks/app-banner';
 import SitePreview from 'blocks/site-preview';
 import DocumentHead from 'components/data/document-head';
 import QuerySites from 'components/data/query-sites';
-
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import { isOffline } from 'state/application/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';

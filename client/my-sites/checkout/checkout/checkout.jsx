@@ -5,7 +5,6 @@ import i18n, { localize } from 'i18n-calypso';
 import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 

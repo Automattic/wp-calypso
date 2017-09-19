@@ -4,7 +4,6 @@
 import { localize } from 'i18n-calypso';
 import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 

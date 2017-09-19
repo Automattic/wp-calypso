@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { warningNotice } from 'state/notices/actions';
 import { isJetpackSite, getSiteAdminUrl, getSiteDomain, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
-
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class NonSupportedJetpackVersionNotice extends Component {

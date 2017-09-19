@@ -3,7 +3,6 @@
  */
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +12,6 @@ import { bindActionCreators } from 'redux';
  */
 import Button from 'components/button';
 import QueryPreferences from 'components/data/query-preferences';
-
 import FormCheckbox from 'components/forms/form-checkbox';
 import Popover from 'components/popover';
 import { isMobile } from 'lib/viewport';

@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { isEqual, includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

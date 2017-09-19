@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import { omit } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import ReactDom from 'react-dom';
 

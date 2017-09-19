@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { numberFormat, translate } from 'i18n-calypso';
 import { has, omit } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

@@ -4,7 +4,6 @@
 import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';

@@ -3,7 +3,6 @@
  */
 import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 

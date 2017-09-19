@@ -4,7 +4,6 @@
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

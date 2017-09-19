@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

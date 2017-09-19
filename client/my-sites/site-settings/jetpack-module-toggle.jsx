@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
  */
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
 import { getJetpackModule, isActivatingJetpackModule, isDeactivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
