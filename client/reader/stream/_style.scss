@@ -1,6 +1,7 @@
 // Reader-specific tweaks to components
 
 // Overrides default 720px width
+.is-reader-page .reader-comments.main,
 .is-reader-page .following.main {
 	max-width: 800px;
 }

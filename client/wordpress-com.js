@@ -320,6 +320,14 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
+	paths: [ '/read/comments' ],
+	module: 'reader/comments',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
 	paths: [ '/read/conversations' ],
 	module: 'reader/conversations',
 	secondary: true,

@@ -149,24 +149,26 @@ export const ReaderSidebar = createReactClass( {
 	},
 
 	render() {
+		const { path, teams, translate } = this.props;
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace,max-len */
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarHeading>
-							{ this.props.translate( 'Streams' ) }
+							{ translate( 'Streams' ) }
 						</SidebarHeading>
 						<ul>
 							<li
-								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
+								className={ ReaderSidebarHelper.itemLinkClass( '/', path, {
 									'sidebar-streams__following': true,
 								} ) }
 							>
 								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
 									<Gridicon icon="checkmark-circle" size={ 24 } />
 									<span className="menu-link-text">
-										{ this.props.translate( 'Followed Sites' ) }
+										{ translate( 'Followed Sites' ) }
 									</span>
 								</a>
 								<a
@@ -174,14 +176,14 @@ export const ReaderSidebar = createReactClass( {
 									onClick={ this.handleReaderSidebarFollowManageClicked }
 									className="sidebar__button"
 								>
-									{ this.props.translate( 'Manage' ) }
+									{ translate( 'Manage' ) }
 								</a>
 							</li>
 							{ config.isEnabled( 'reader/conversations' ) &&
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations',
-										this.props.path,
+										path,
 										{
 											'sidebar-streams__conversations': true,
 										}
@@ -193,17 +195,17 @@ export const ReaderSidebar = createReactClass( {
 									>
 										<Gridicon icon="chat" size={ 24 } />
 										<span className="menu-link-text">
-											{ this.props.translate( 'Conversations' ) }
+											{ translate( 'Conversations' ) }
 										</span>
 									</a>
 								</li> }
-							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
+							<ReaderSidebarTeams teams={ teams } path={ path } />
 							{ config.isEnabled( 'reader/conversations' ) &&
-								isAutomatticTeamMember( this.props.teams ) &&
+								isAutomatticTeamMember( teams ) &&
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
-										this.props.path,
+										path,
 										{
 											'sidebar-streams__conversations': true,
 										}
@@ -229,14 +231,14 @@ export const ReaderSidebar = createReactClass( {
 
 							{ isDiscoverEnabled()
 								? <li
-										className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+										className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
 											'sidebar-streams__discover': true,
 										} ) }
 									>
 										<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
 											<Gridicon icon="my-sites" />
 											<span className="menu-link-text">
-												{ this.props.translate( 'Discover' ) }
+												{ translate( 'Discover' ) }
 											</span>
 										</a>
 									</li>
@@ -244,29 +246,44 @@ export const ReaderSidebar = createReactClass( {
 
 							{ config.isEnabled( 'reader/search' ) &&
 								<li
-									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 										'sidebar-streams__search': true,
 									} ) }
 								>
 									<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
 										<Gridicon icon="search" size={ 24 } />
 										<span className="menu-link-text">
-											{ this.props.translate( 'Search' ) }
+											{ translate( 'Search' ) }
 										</span>
 									</a>
 								</li> }
 
+							{ config.isEnabled( 'reader/comments' ) && isAutomatticTeamMember( teams ) && (
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/comments', path, {
+										'sidebar-streams__comments': true,
+									} ) }
+								>
+									<a href="/read/comments">
+										<Gridicon icon="comment" size={ 24 } />
+										<span className="menu-link-text">
+											{ translate( 'My Comments' ) }
+										</span>
+									</a>
+								</li> )
+							}
+
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
 									'/activities/likes',
-									this.props.path,
+									path,
 									{ 'sidebar-activity__likes': true }
 								) }
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
 									<Gridicon icon="star" size={ 24 } />
 									<span className="menu-link-text">
-										{ this.props.translate( 'My Likes' ) }
+										{ translate( 'My Likes' ) }
 									</span>
 								</a>
 							</li>
@@ -278,7 +295,7 @@ export const ReaderSidebar = createReactClass( {
 					{ this.props.subscribedLists && this.props.subscribedLists.length
 						? <ReaderSidebarLists
 								lists={ this.props.subscribedLists }
-								path={ this.props.path }
+								path={ path }
 								isOpen={ this.props.isListsOpen }
 								onClick={ this.props.toggleListsVisibility }
 								currentListOwner={ this.state.currentListOwner }
@@ -287,7 +304,7 @@ export const ReaderSidebar = createReactClass( {
 						: null }
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
-						path={ this.props.path }
+						path={ path }
 						isOpen={ this.props.isTagsOpen }
 						onClick={ this.props.toggleTagsVisibility }
 						onFollowTag={ this.highlightNewTag }

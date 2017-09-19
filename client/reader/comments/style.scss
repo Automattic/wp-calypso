@@ -1,0 +1,31 @@
+.reader-comments {
+
+
+	.reader-post-card__byline {
+		margin-top: 10px;
+	}
+
+	.reader-post-card__post {
+		margin-top: 0;
+	}
+}
+
+.reader-comments__search {
+	margin-top: 8px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 30px;
+	}
+
+	&.card.is-compact {
+		padding: 0;
+	}
+
+	.search {
+		box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+		margin-bottom: 0;
+	}
+}
+
+
+

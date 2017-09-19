@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import comments from './comments/reducer';
 import lists from './lists/reducer';
 import { combineReducers } from 'state/utils';
 import feeds from './feeds/reducer';
@@ -17,6 +18,7 @@ import feedSearches from './feed-searches/reducer';
 import recommendedSites from './recommended-sites/reducer';
 
 export default combineReducers( {
+	comments,
 	feeds,
 	follows,
 	lists,

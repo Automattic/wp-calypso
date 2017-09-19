@@ -2448,6 +2448,14 @@ Undocumented.prototype.oauth2SignupUrl = function( redirectTo, fn ) {
 	);
 };
 
+Undocumented.prototype.getComments = function( query, fn ) {
+	return this.wpcom.req.post( {
+		path: '/comments',
+		body: { query },
+		apiNamespace: 'wpcom/v2',
+	}, fn );
+};
+
 /**
  * Expose `Undocumented` module
  */
