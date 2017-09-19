@@ -60,25 +60,28 @@ class FeedHeader extends Component {
 				<div className="reader-feed-header__back-and-follow">
 					{ showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
-						{ followerCount &&
+						{ followerCount && (
 							<span className="reader-feed-header__follow-count">
 								{' '}
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
 								} ) }
-							</span> }
+							</span>
+						) }
 						{ feed &&
-							! feed.is_error &&
+						! feed.is_error && (
 							<div className="reader-feed-header__follow-button">
 								<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
-							</div> }
+							</div>
+						) }
 						{ site &&
-							following &&
-							! isEmailBlocked &&
+						following &&
+						! isEmailBlocked && (
 							<div className="reader-feed-header__email-settings">
 								<ReaderEmailSettings siteId={ site.ID } />
-							</div> }
+							</div>
+						) }
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">
@@ -86,28 +89,28 @@ class FeedHeader extends Component {
 						<SiteIcon site={ site } size={ 96 } />
 					</a>
 					<div className="reader-feed-header__site-title">
-						{ site &&
+						{ site && (
 							<span className="reader-feed-header__site-badge">
 								<ReaderFeedHeaderSiteBadge site={ site } />
 								<BlogStickers blogId={ site.ID } />
-							</span> }
+							</span>
+						) }
 						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
 							{ siteTitle }
 						</a>
 					</div>
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">
-							{ description }
-						</span>
+						<span className="reader-feed-header__description">{ description }</span>
 						{ ownerDisplayName &&
-							! isAuthorNameBlacklisted( ownerDisplayName ) &&
+						! isAuthorNameBlacklisted( ownerDisplayName ) && (
 							<span className="reader-feed-header__byline">
 								{ translate( 'by %(author)s', {
 									args: {
 										author: ownerDisplayName,
 									},
 								} ) }
-							</span> }
+							</span>
+						) }
 					</div>
 				</Card>
 			</div>

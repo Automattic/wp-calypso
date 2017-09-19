@@ -62,9 +62,9 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		if ( ! searchResults ) {
 			return (
 				<div className={ classNames }>
-					{ times( 10, i =>
+					{ times( 10, i => (
 						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
-					) }
+					) ) }
 				</div>
 			);
 		} else if ( isEmpty ) {
@@ -92,7 +92,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 					rowRenderer={ siteRowRenderer }
 				/>
 				{ ! showMoreResults &&
-					searchResultsCount > 10 &&
+				searchResultsCount > 10 && (
 					<div className="following-manage__show-more">
 						<Button
 							compact
@@ -103,7 +103,8 @@ class FollowingManageSearchFeedsResults extends React.Component {
 							<Gridicon icon="chevron-down" />
 							{ translate( 'Show more' ) }
 						</Button>
-					</div> }
+					</div>
+				) }
 			</div>
 		);
 	}

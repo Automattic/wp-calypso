@@ -59,9 +59,7 @@ class ReaderExportButton extends React.Component {
 		return (
 			<div className="reader-export-button" onClick={ this.onClick }>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
-				<span className="reader-export-button__label">
-					{ this.props.translate( 'Export' ) }
-				</span>
+				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
 			</div>
 		);
 	}

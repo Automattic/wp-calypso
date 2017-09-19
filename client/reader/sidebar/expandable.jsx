@@ -39,9 +39,7 @@ export const ExpandableSidebarMenu = props => {
 				onAddClick={ onAddClick }
 				onAddSubmit={ onAddSubmit }
 			/>
-			<ul className="sidebar__menu-list">
-				{ props.children }
-			</ul>
+			<ul className="sidebar__menu-list">{ props.children }</ul>
 		</SidebarMenu>
 	);
 };

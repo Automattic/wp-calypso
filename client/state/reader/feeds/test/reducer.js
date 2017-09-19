@@ -261,7 +261,9 @@ describe( 'reducer', () => {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: { feed_ID: 1 },
 			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			expect( lastFetched( original, action ) )
+				.to.have.a.property( 1 )
+				.that.is.a( 'number' );
 		} );
 
 		it( 'should update the last fetched time on feed update', () => {
@@ -270,7 +272,9 @@ describe( 'reducer', () => {
 				type: READER_FEED_UPDATE,
 				payload: [ { feed_ID: 1 } ],
 			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			expect( lastFetched( original, action ) )
+				.to.have.a.property( 1 )
+				.that.is.a( 'number' );
 		} );
 	} );
 } );

@@ -118,9 +118,7 @@ class PostPhoto extends React.Component {
 							href={ post.URL }
 							onClick={ this.props.onClick }
 						>
-							<Emojify>
-								{ linkTitle }
-							</Emojify>
+							<Emojify>{ linkTitle }</Emojify>
 						</a>
 					</h1>
 				</AutoDirection>
@@ -135,9 +133,7 @@ class PostPhoto extends React.Component {
 		return (
 			<div className="reader-post-card__post">
 				{ featuredImage }
-				<div className="reader-post-card__post-details">
-					{ children }
-				</div>
+				<div className="reader-post-card__post-details">{ children }</div>
 			</div>
 		);
 	}

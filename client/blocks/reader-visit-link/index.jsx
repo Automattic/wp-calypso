@@ -35,9 +35,7 @@ class ReaderVisitLink extends React.Component {
 				iconClassName="reader-visit-link__icon"
 				onClick={ this.props.onClick }
 			>
-				<span className="reader-visit-link__label">
-					{ this.props.children }
-				</span>
+				<span className="reader-visit-link__label">{ this.props.children }</span>
 			</ExternalLink>
 		);
 	}

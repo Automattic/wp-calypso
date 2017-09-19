@@ -38,15 +38,17 @@ class DiscoverSiteAttribution extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ attribution.avatar_url
-					? <img
-							className="gravatar"
-							src={ encodeURI( attribution.avatar_url ) }
-							alt="Avatar"
-							width="20"
-							height="20"
-						/>
-					: <span className="noticon noticon-website" /> }
+				{ attribution.avatar_url ? (
+					<img
+						className="gravatar"
+						src={ encodeURI( attribution.avatar_url ) }
+						alt="Avatar"
+						width="20"
+						height="20"
+					/>
+				) : (
+					<span className="noticon noticon-website" />
+				) }
 				<span>
 					<a
 						{ ...siteLinkProps }
@@ -57,13 +59,13 @@ class DiscoverSiteAttribution extends React.Component {
 						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
 				</span>
-				{ !! this.props.followUrl
-					? <FollowButton
-							siteUrl={ this.props.followUrl }
-							iconSize={ 20 }
-							onFollowToggle={ this.onFollowToggle }
-						/>
-					: null }
+				{ !! this.props.followUrl ? (
+					<FollowButton
+						siteUrl={ this.props.followUrl }
+						iconSize={ 20 }
+						onFollowToggle={ this.onFollowToggle }
+					/>
+				) : null }
 			</div>
 		);
 	}

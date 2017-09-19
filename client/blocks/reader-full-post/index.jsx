@@ -306,14 +306,15 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
-				{ ! post || post._state === 'pending'
-					? <DocumentHead title={ translate( 'Loading' ) } />
-					: <DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } /> }
+				{ ! post || post._state === 'pending' ? (
+					<DocumentHead title={ translate( 'Loading' ) } />
+				) : (
+					<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+				) }
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ post &&
-					! post.is_external &&
-					post.site_ID &&
-					<QueryReaderSite siteId={ +post.site_ID } /> }
+				! post.is_external &&
+				post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<ReaderFullPostBack onBackClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -331,7 +332,7 @@ export class FullPostView extends React.Component {
 					<div className="reader-full-post__sidebar">
 						{ isLoading && <AuthorCompactProfile author={ null } /> }
 						{ ! isLoading &&
-							post.author &&
+						post.author && (
 							<AuthorCompactProfile
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
@@ -343,54 +344,59 @@ export class FullPostView extends React.Component {
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }
 								post={ post }
-							/> }
-						{ shouldShowComments( post ) &&
+							/>
+						) }
+						{ shouldShowComments( post ) && (
 							<CommentButton
 								key="comment-button"
 								commentCount={ commentCount }
 								onClick={ this.handleCommentClick }
 								tagName="div"
-							/> }
-						{ shouldShowLikes( post ) &&
+							/>
+						) }
+						{ shouldShowLikes( post ) && (
 							<LikeButton
 								siteId={ +post.site_ID }
 								postId={ +post.ID }
 								fullPost={ true }
 								tagName="div"
-							/> }
+							/>
+						) }
 					</div>
 					<Emojify>
 						<article className="reader-full-post__story" ref="article">
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image &&
-								! isFeaturedImageInContent( post ) &&
-								<FeaturedImage src={ post.featured_image } /> }
+							! isFeaturedImageInContent( post ) && <FeaturedImage src={ post.featured_image } /> }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
-							{ post.use_excerpt
-								? <PostExcerpt
-										content={ post.better_excerpt ? post.better_excerpt : post.excerpt }
-									/>
-								: <EmbedContainer>
-										<AutoDirection>
-											<div
-												className="reader-full-post__story-content"
-												dangerouslySetInnerHTML={ { __html: post.content } }
-											/>
-										</AutoDirection>
-									</EmbedContainer> }
+							{ post.use_excerpt ? (
+								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+							) : (
+								<EmbedContainer>
+									<AutoDirection>
+										<div
+											className="reader-full-post__story-content"
+											dangerouslySetInnerHTML={ { __html: post.content } }
+										/>
+									</AutoDirection>
+								</EmbedContainer>
+							) }
 
 							{ post.use_excerpt &&
-								! isDiscoverPost( post ) &&
-								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
-							{ isDiscoverSitePick( post ) &&
+							! isDiscoverPost( post ) && (
+								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+							) }
+							{ isDiscoverSitePick( post ) && (
 								<DiscoverSiteAttribution
 									attribution={ post.discover_metadata.attribution }
 									siteUrl={ getSiteUrl( post ) }
 									followUrl={ getSourceFollowUrl( post ) }
-								/> }
-							{ isDailyPostChallengeOrPrompt( post ) &&
-								<DailyPostButton post={ post } site={ site } /> }
+								/>
+							) }
+							{ isDailyPostChallengeOrPrompt( post ) && (
+								<DailyPostButton post={ post } site={ site } />
+							) }
 
 							<ReaderPostActions
 								post={ post }
@@ -399,7 +405,7 @@ export class FullPostView extends React.Component {
 								fullPost={ true }
 							/>
 
-							{ showRelatedPosts &&
+							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
 									siteId={ +post.site_ID }
 									postId={ +post.ID }
@@ -421,24 +427,25 @@ export class FullPostView extends React.Component {
 									className="is-same-site"
 									/* eslint-enable wpcalypso/jsx-classname-namespace */
 									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
-								/> }
+								/>
+							) }
 
 							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
-								{ shouldShowComments( post )
-									? <Comments
-											showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
-											ref="commentsList"
-											post={ post }
-											initialSize={ startingCommentId ? commentCount : 10 }
-											pageSize={ 25 }
-											startingCommentId={ startingCommentId }
-											commentCount={ commentCount }
-											maxDepth={ 1 }
-										/>
-									: null }
+								{ shouldShowComments( post ) ? (
+									<Comments
+										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
+										ref="commentsList"
+										post={ post }
+										initialSize={ startingCommentId ? commentCount : 10 }
+										pageSize={ 25 }
+										startingCommentId={ startingCommentId }
+										commentCount={ commentCount }
+										maxDepth={ 1 }
+									/>
+								) : null }
 							</div>
 
-							{ showRelatedPosts &&
+							{ showRelatedPosts && (
 								<RelatedPostsFromOtherSites
 									siteId={ +post.site_ID }
 									postId={ +post.ID }
@@ -447,7 +454,8 @@ export class FullPostView extends React.Component {
 									className="is-other-site"
 									/* eslint-enable wpcalypso/jsx-classname-namespace */
 									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
-								/> }
+								/>
+							) }
 						</article>
 					</Emojify>
 				</div>
@@ -535,12 +543,12 @@ export default class FullPostFluxContainer extends React.Component {
 	}
 
 	render() {
-		return this.state.post
-			? <ConnectedFullPostView
-					onClose={ this.props.onClose }
-					post={ this.state.post }
-					referralPost={ this.state.referralPost }
-				/>
-			: null;
+		return this.state.post ? (
+			<ConnectedFullPostView
+				onClose={ this.props.onClose }
+				post={ this.state.post }
+				referralPost={ this.state.referralPost }
+			/>
+		) : null;
 	}
 }

@@ -33,9 +33,7 @@ class ReaderSiteStreamLink extends React.Component {
 		if ( ! this.props.feedId && ! this.props.siteId ) {
 			return (
 				<span>
-					<Emojify>
-						{ this.props.children }
-					</Emojify>
+					<Emojify>{ this.props.children }</Emojify>
 				</span>
 			);
 		}
@@ -45,9 +43,7 @@ class ReaderSiteStreamLink extends React.Component {
 
 		return (
 			<a { ...omit( this.props, omitProps ) } href={ link } onClick={ this.recordClick }>
-				<Emojify>
-					{ this.props.children }
-				</Emojify>
+				<Emojify>{ this.props.children }</Emojify>
 			</a>
 		);
 	}

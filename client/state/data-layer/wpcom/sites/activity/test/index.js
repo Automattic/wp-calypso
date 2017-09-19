@@ -67,8 +67,8 @@ describe( 'receiveActivityLog', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.called.once;
-		expect( dispatch.args[ 0 ][ 0 ] ).to.be
-			.an( 'object' )
+		expect( dispatch.args[ 0 ][ 0 ] )
+			.to.be.an( 'object' )
 			.that.has.keys( [ 'type', 'siteId', 'data' ] )
 			.that.has.property( 'type', ACTIVITY_LOG_UPDATE );
 	} );

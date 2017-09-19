@@ -120,8 +120,9 @@ export class ConversationCommentList extends React.Component {
 		return (
 			<div className="conversations__comment-list">
 				<ul className="conversations__comment-list-ul">
-					{ showCaterpillar &&
-						<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } /> }
+					{ showCaterpillar && (
+						<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } />
+					) }
 					{ map( commentsTree.children, commentId => {
 						return (
 							<PostComment
@@ -147,14 +148,15 @@ export class ConversationCommentList extends React.Component {
 							/>
 						);
 					} ) }
-					{ ! this.state.activeReplyCommentId &&
+					{ ! this.state.activeReplyCommentId && (
 						<PostCommentForm
 							ref="postCommentForm"
 							post={ post }
 							parentCommentId={ null }
 							commentText={ this.state.commentText }
 							onUpdateCommentText={ this.onUpdateCommentText }
-						/> }
+						/>
+					) }
 				</ul>
 			</div>
 		);

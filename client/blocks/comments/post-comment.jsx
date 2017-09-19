@@ -197,13 +197,14 @@ class PostComment extends React.PureComponent {
 
 		return (
 			<div>
-				{ !! replyVisibilityText &&
+				{ !! replyVisibilityText && (
 					<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
 						<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
-					</button> }
-				{ showReplies &&
+					</button>
+				) }
+				{ showReplies && (
 					<ol className="comments__list">
-						{ commentChildrenIds.map( childId =>
+						{ commentChildrenIds.map( childId => (
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
@@ -223,8 +224,9 @@ class PostComment extends React.PureComponent {
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.resetActiveReplyComment }
 							/>
-						) }
-					</ol> }
+						) ) }
+					</ol>
+				) }
 			</div>
 		);
 	}
@@ -257,22 +259,20 @@ class PostComment extends React.PureComponent {
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		return !! authorUrl
-			? <a
-					href={ authorUrl }
-					className={ className }
-					onClick={ this.handleAuthorClick }
-					id={ `comment-${ commentId }` }
-				>
-					<Emojify>
-						{ authorName }
-					</Emojify>
-				</a>
-			: <strong className={ className } id={ `comment-${ commentId }` }>
-					<Emojify>
-						{ authorName }
-					</Emojify>
-				</strong>;
+		return !! authorUrl ? (
+			<a
+				href={ authorUrl }
+				className={ className }
+				onClick={ this.handleAuthorClick }
+				id={ `comment-${ commentId }` }
+			>
+				<Emojify>{ authorName }</Emojify>
+			</a>
+		) : (
+			<strong className={ className } id={ `comment-${ commentId }` }>
+				<Emojify>{ authorName }</Emojify>
+			</strong>
+		);
 	};
 
 	onReadMore = () => {
@@ -306,12 +306,7 @@ class PostComment extends React.PureComponent {
 			return null;
 		} else if ( commentsToShow && ! commentsToShow[ commentId ] ) {
 			// this comment should be hidden so just render children
-			return (
-				this.shouldRenderReplies() &&
-				<div>
-					{ this.renderRepliesList() }
-				</div>
-			);
+			return this.shouldRenderReplies() && <div>{ this.renderRepliesList() }</div>;
 		}
 
 		const displayType =
@@ -360,11 +355,13 @@ class PostComment extends React.PureComponent {
 		return (
 			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
-					{ commentAuthorUrl
-						? <a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
-								<Gravatar user={ comment.author } />
-							</a>
-						: <Gravatar user={ comment.author } /> }
+					{ commentAuthorUrl ? (
+						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
+							<Gravatar user={ comment.author } />
+						</a>
+					) : (
+						<Gravatar user={ comment.author } />
+					) }
 
 					{ this.renderAuthorTag( {
 						authorUrl: commentAuthorUrl,
@@ -373,7 +370,7 @@ class PostComment extends React.PureComponent {
 						className: 'comments__comment-username',
 					} ) }
 					{ this.props.showNestingReplyArrow &&
-						parentAuthorName &&
+					parentAuthorName && (
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />
 							{ this.renderAuthorTag( {
@@ -382,7 +379,8 @@ class PostComment extends React.PureComponent {
 								authorUrl: parentAuthorUrl,
 								commentId: parentCommentId,
 							} ) }
-						</span> }
+						</span>
+					) }
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
@@ -390,28 +388,30 @@ class PostComment extends React.PureComponent {
 					</div>
 				</div>
 
-				{ comment.status && comment.status === 'unapproved'
-					? <p className="comments__comment-moderation">
-							{ translate( 'Your comment is awaiting moderation.' ) }
-						</p>
-					: null }
+				{ comment.status && comment.status === 'unapproved' ? (
+					<p className="comments__comment-moderation">
+						{ translate( 'Your comment is awaiting moderation.' ) }
+					</p>
+				) : null }
 
-				{ this.props.activeEditCommentId !== this.props.commentId &&
+				{ this.props.activeEditCommentId !== this.props.commentId && (
 					<PostCommentContent
 						content={ comment.content }
 						setWithDimensionsRef={ this.props.setWithDimensionsRef }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
-					/> }
+					/>
+				) }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					this.props.activeEditCommentId === this.props.commentId &&
+				this.props.activeEditCommentId === this.props.commentId && (
 					<CommentEditForm
 						post={ this.props.post }
 						commentId={ this.props.commentId }
 						commentText={ comment.content }
 						onCommentSubmit={ this.props.onEditCommentCancel }
-					/> }
+					/>
+				) }
 
 				<CommentActions
 					post={ this.props.post || {} }
@@ -429,12 +429,13 @@ class PostComment extends React.PureComponent {
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
-				{ this.shouldRenderCaterpillar() &&
+				{ this.shouldRenderCaterpillar() && (
 					<ConversationCaterpillar
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
-					/> }
+					/>
+				) }
 				{ this.renderRepliesList() }
 			</li>
 		);

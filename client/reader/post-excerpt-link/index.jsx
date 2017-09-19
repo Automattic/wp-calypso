@@ -44,9 +44,7 @@ class PostExcerptLink extends React.Component {
 				target="_blank"
 				rel="external noopener noreferrer"
 			>
-				<span className="post-excerpt-only-site-name">
-					{ this.props.siteName || '(untitled)' }
-				</span>
+				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
 			</a>
 		);
 		const classes = classNames( {

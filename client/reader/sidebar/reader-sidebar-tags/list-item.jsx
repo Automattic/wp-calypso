@@ -65,11 +65,9 @@ export class ReaderSidebarTagsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-tagname">
-						{ tagName }
-					</div>
+					<div className="sidebar__menu-item-tagname">{ tagName }</div>
 				</a>
-				{ tag.id !== 'pending' &&
+				{ tag.id !== 'pending' && (
 					<button
 						className="sidebar__menu-action"
 						data-tag-slug={ tag.slug }
@@ -81,10 +79,9 @@ export class ReaderSidebarTagsListItem extends Component {
 						} ) }
 					>
 						<Gridicon icon="cross-small" />
-						<span className="sidebar__menu-action-label">
-							{ translate( 'Unfollow' ) }
-						</span>
-					</button> }
+						<span className="sidebar__menu-action-label">{ translate( 'Unfollow' ) }</span>
+					</button>
+				) }
 			</li>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

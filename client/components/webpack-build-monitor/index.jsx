@@ -143,8 +143,9 @@ class WebpackBuildMonitor extends React.PureComponent {
 
 		return (
 			<div className={ classnames }>
-				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], buildStatus ) &&
-					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
+				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], buildStatus ) && (
+					<Spinner size={ 11 } className="webpack-build-monitor__spinner" />
+				) }
 				{ text }
 			</div>
 		);
