@@ -1,22 +1,19 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { isEqual, includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import classNames from 'classnames';
-import {
-	isEqual,
-	includes,
-} from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
 
 /**
  * Main

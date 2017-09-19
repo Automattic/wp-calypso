@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { assign, omit, pick } from 'lodash';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Shortcode from 'components/shortcode';
-import { parse as parseShortcode } from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
+import MediaUtils from 'lib/media/utils';
+import { parse as parseShortcode } from 'lib/shortcode';
 
 /**
  * Module variables

@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import url from 'url';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { omitUrlParams } from 'lib/url';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
+import { omitUrlParams } from 'lib/url';
+import url from 'url';
 
 const EditorPreview = React.createClass( {
 

@@ -1,31 +1,29 @@
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import url from 'url';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import Qs from 'qs';
-import { cloneDeep, get, startsWith } from 'lodash';
-import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { cloneDeep, get, startsWith } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import Qs from 'qs';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import page from 'page';
-import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Actions from 'my-sites/customize/actions';
-import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
+import EmptyContent from 'components/empty-content';
+import Actions from 'my-sites/customize/actions';
+import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import notices from 'notices';
 import { getMenusUrl } from 'state/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import { themeActivated } from 'state/themes/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import url from 'url';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 

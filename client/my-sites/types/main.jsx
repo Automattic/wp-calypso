@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import PostTypeForbidden from './post-type-forbidden';
+import PostTypeUnsupported from './post-type-unsupported';
 import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
-import PostTypeUnsupported from './post-type-unsupported';
-import PostTypeForbidden from './post-type-forbidden';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
 function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (

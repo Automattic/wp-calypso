@@ -1,11 +1,18 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import SortedGrid from 'components/sorted-grid';
+import { getPreference } from 'state/preferences/selectors';
+
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
@@ -18,10 +25,6 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
 	user = require( 'lib/user' )();
-
-import SortedGrid from 'components/sorted-grid';
-import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import { getPreference } from 'state/preferences/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
 

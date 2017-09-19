@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { settingsPath } from '../../../app/util';
+import { saveFeed } from '../../../state/feeds/actions';
+import { getFeed } from '../../../state/feeds/selectors';
+import { deleteZone, saveZone } from '../../../state/zones/actions';
+import { getZone } from '../../../state/zones/selectors';
+import QueryFeed from '../../data/query-feed';
+import ZoneContentForm from '../../forms/zone-content-form';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import DeleteZoneDialog from './delete-zone-dialog';
 import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import DeleteZoneDialog from './delete-zone-dialog';
-import QueryFeed from '../../data/query-feed';
-import ZoneDetailsForm from '../../forms/zone-details-form';
-import ZoneContentForm from '../../forms/zone-content-form';
-import { saveFeed } from '../../../state/feeds/actions';
-import { deleteZone, saveZone } from '../../../state/zones/actions';
-import { getFeed } from '../../../state/feeds/selectors';
-import { getZone } from '../../../state/zones/selectors';
-import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
 

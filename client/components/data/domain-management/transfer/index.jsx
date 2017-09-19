@@ -2,19 +2,18 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import DomainsStore from 'lib/domains/store';
 import StoreConnection from 'components/data/store-connection';
+import DomainsStore from 'lib/domains/store';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import UsersStore from 'lib/users/store';
-import { fetchUsers } from 'lib/users/actions';
 import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
+import { fetchUsers } from 'lib/users/actions';
+import UsersStore from 'lib/users/store';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [

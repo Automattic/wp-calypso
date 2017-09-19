@@ -2,17 +2,16 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
+import Button from 'components/forms/form-button';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'ImporterMappingPane',

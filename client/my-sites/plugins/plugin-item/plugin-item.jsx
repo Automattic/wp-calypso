@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize, moment } from 'i18n-calypso';
+import { flowRight as compose, isEqual, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { flowRight as compose, isEqual, uniqBy } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'components/count';
 import Notice from 'components/notice';
 import PluginNotices from 'lib/plugins/notices';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import { errorNotice } from 'state/notices/actions';
 
 function checkPropsChange( nextProps, propArr ) {

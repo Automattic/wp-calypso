@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import keyMirror from 'key-mirror';
 import { localize } from 'i18n-calypso';
+import keyMirror from 'key-mirror';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

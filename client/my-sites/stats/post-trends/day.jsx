@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-pure-render/mixin';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 

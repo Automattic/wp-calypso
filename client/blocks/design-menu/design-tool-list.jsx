@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import SidebarHeading from 'layout/sidebar/heading';
-import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
 
 const DesignToolList = React.createClass( {
 	propTypes: {

@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import i18n from 'i18n-calypso';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
-import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,10 +16,10 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
-import PluginRatings from 'my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
+import versionCompare from 'lib/version-compare';
+import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',

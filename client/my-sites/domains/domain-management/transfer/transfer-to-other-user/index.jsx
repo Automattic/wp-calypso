@@ -1,33 +1,32 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { includes, head, omit, find } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import FormSelect from 'components/forms/form-select';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import wp from 'lib/wp';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import FormSelect from 'components/forms/form-select';
+import Main from 'components/main';
 import SectionHeader from 'components/section-header';
-import Dialog from 'components/dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSelectedDomain } from 'lib/domains';
+import wp from 'lib/wp';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
+import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 const wpcom = wp.undocumented();
 

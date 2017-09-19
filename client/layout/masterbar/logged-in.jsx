@@ -1,34 +1,33 @@
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
+
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
+import Masterbar from './masterbar';
 import Notifications from './notifications';
+import Publish from './publish';
 import Gravatar from 'components/gravatar';
 import config from 'config';
-import { preload } from 'sections-preload';
+import { getStatsPathForTab } from 'lib/route/path';
+import { domainManagementList } from 'my-sites/domains/paths';
 import ResumeEditing from 'my-sites/resume-editing';
+import { preload } from 'sections-preload';
 import { isNotificationsOpen } from 'state/selectors';
+import { getPrimarySiteId } from 'state/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList } from 'my-sites/domains/paths';
-import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId } from 'state/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {

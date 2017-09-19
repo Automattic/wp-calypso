@@ -1,24 +1,23 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { connect } from 'react-redux';
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
-import Gridicon from 'gridicons';
-import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Button from 'components/button';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
-import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
+import Button from 'components/button';
 import InfiniteStream from 'components/reader-infinite-stream';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
 class FollowingManageSearchFeedsResults extends React.Component {

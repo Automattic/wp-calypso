@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
-import { trashPost, deletePost } from 'state/posts/actions';
-import { canCurrentUser } from 'state/selectors';
-import { getPost } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { trashPost, deletePost } from 'state/posts/actions';
+import { getPost } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 class PostActionsEllipsisMenuTrash extends Component {
 	static propTypes = {

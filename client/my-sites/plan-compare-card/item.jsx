@@ -1,12 +1,11 @@
-import classNames from 'classnames';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default React.createClass( {
 

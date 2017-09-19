@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import GoogleAppsDialog from './google-apps-dialog';
 import HeaderCake from 'components/header-cake';
+import { cartItems } from 'lib/cart-values';
 import { getSelectedSite } from 'state/ui/selectors';
 
 class GoogleApps extends Component {

@@ -1,18 +1,16 @@
-import classNames from 'classnames';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { noop } from 'lodash';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
+
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-
 import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';

@@ -1,25 +1,23 @@
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { debounce, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import MediaUtils from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import TrackInputChanges from 'components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
+import TrackInputChanges from 'components/track-input-changes';
+import analytics from 'lib/analytics';
+import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {

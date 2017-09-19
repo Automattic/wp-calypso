@@ -1,5 +1,3 @@
-/* eslint-disable no-multi-spaces */
-
 /**
  * External dependencies
  */

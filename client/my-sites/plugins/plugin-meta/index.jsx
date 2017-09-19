@@ -1,52 +1,48 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
+import { get, includes, some } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import i18n from 'i18n-calypso';
-import { get, includes, some } from 'lodash';
-import Gridicon from 'gridicons';
-import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Count from 'components/count';
-import NoticeAction from 'components/notice/notice-action';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 import ExternalLink from 'components/external-link';
 import Notice from 'components/notice';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsActions from 'lib/plugins/actions';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import safeProtocolUrl from 'lib/safe-protocol-url';
+import NoticeAction from 'components/notice/notice-action';
 import config from 'config';
+import analytics from 'lib/analytics';
+import { isATEnabled } from 'lib/automated-transfer';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import PluginsActions from 'lib/plugins/actions';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import { addSiteFragment } from 'lib/route/path';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import { userCan } from 'lib/site/utils';
+import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginInformation from 'my-sites/plugins/plugin-information';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginInformation from 'my-sites/plugins/plugin-information';
-import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
-import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import { userCan } from 'lib/site/utils';
-import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
-import {
-	isBusiness,
-	isEnterprise
-} from 'lib/products-values';
-import { addSiteFragment } from 'lib/route/path';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { isATEnabled } from 'lib/automated-transfer';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;

@@ -2,17 +2,16 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { cancelPurchase } from 'me/purchases/paths';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
+import { cancelPurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
 const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {

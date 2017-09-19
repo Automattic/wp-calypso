@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import ExternalLink from 'components/external-link';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import utils from 'lib/site/utils';
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {

@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
+import postUtils from 'lib/posts/utils';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'StatusLabel',

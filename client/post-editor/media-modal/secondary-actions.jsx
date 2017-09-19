@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { values, noop, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { values, noop, some, every, flow, partial, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { canUserDeleteItem } from 'lib/media/utils';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { getMediaModalView } from 'state/ui/media-modal/selectors';
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {

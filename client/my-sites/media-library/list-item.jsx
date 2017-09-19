@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { assign, isEqual, noop, omit } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
@@ -16,9 +22,6 @@ var Spinner = require( 'components/spinner' ),
 	ListItemAudio = require( './list-item-audio' ),
 	ListItemDocument = require( './list-item-document' ),
 	MediaUtils = require( 'lib/media/utils' );
-
-import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
-import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryListItem',

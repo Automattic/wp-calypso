@@ -1,8 +1,7 @@
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
@@ -10,8 +9,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import TwoFactorActions from './two-factor-actions';
+import Card from 'components/card';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {

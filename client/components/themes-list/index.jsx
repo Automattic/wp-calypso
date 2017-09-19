@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { isEqual, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { isEqual, noop, times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
+import Theme from 'components/theme';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 

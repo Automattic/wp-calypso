@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { noop, get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorRestorePostDialog extends Component {
 	static propTypes = {

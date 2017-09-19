@@ -1,3 +1,7 @@
+/**
+ * External dependencies
+ */
+import { saveAs } from 'browser-filesaver';
 const PropTypes = require('prop-types');
 /**
  * External dependencies
@@ -9,7 +13,6 @@ const React = require( 'react' ),
 	Gridicon = require( 'gridicons' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
 
-import { saveAs } from 'browser-filesaver';
 /**
  * Internal dependencies
  */

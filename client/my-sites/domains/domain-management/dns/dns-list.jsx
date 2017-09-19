@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
 import { isDeletingLastMXRecord } from 'lib/domains/dns';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 
 class DnsList extends React.Component {
 	static propTypes = {

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import { getEditedPost } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { decodeEntities } from 'lib/formatting';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function EditorActionBarViewLabel( { translate, siteId, typeSlug, type } ) {
 	let label;

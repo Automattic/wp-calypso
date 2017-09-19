@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { change, formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -23,6 +22,7 @@ import ReduxFormSelect from 'components/redux-forms/redux-form-select';
 import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
+import { ProtectFormGuard } from 'lib/protect-form';
 
 const form = 'extensions.wpJobManager.submission';
 

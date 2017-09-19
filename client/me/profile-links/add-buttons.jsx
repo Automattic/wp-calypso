@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import Gridicon from 'gridicons';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Button from 'components/button';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
 
 export default React.createClass( {
 

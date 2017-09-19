@@ -2,14 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
  */
+import shallowEqual from 'react-pure-render/shallowEqual';
 import { requestSiteTerms } from 'state/terms/actions';
 import { isRequestingTermsForQuery } from 'state/terms/selectors';
 

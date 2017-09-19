@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
 import Button from 'components/button';
+import Tooltip from 'components/tooltip';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorSticky = React.createClass( {
 	displayName: 'EditorSticky',

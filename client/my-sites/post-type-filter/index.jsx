@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import { find, includes, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { find, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getNormalizedPostCounts } from 'state/posts/counts/selectors';
-import { mapPostStatus } from 'lib/route/path';
-import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import UrlSearch from 'lib/mixins/url-search';
+import { mapPostStatus } from 'lib/route/path';
+import { getNormalizedPostCounts } from 'state/posts/counts/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],

@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { getCountryStates } from 'state/country-states/selectors';
 import Input from './input';
 import QueryCountryStates from 'components/data/query-country-states';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCountryStates } from 'state/country-states/selectors';
 
 class StateSelect extends Component {
 	static instances = 0;

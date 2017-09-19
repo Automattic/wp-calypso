@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
+import paths from 'lib/paths';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (

@@ -1,34 +1,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
-import {
-	canExplicitRenew,
-	creditCardExpiresBeforeSubscription,
-	getName,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isRedeemable,
-	isRenewable,
-	showCreditCardExpiringWarning,
-} from 'lib/purchases';
 import { getPurchase, getSelectedSite } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isMonthly } from 'lib/plans/constants';
+import config from 'config';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { isMonthly } from 'lib/plans/constants';
+import { canExplicitRenew, creditCardExpiresBeforeSubscription, getName, isExpired, isExpiring, isIncludedWithPlan, isOneTimePurchase, isRedeemable, isRenewable, showCreditCardExpiringWarning } from 'lib/purchases';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 

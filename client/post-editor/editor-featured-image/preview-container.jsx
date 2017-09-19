@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import EditorFeaturedImagePreview from './preview';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
-import EditorFeaturedImagePreview from './preview';
 
 export default React.createClass( {
 	displayName: 'EditorFeaturedImagePreviewContainer',

@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import PostStatus from 'blocks/post-status';
 import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';
-import PostStatus from 'blocks/post-status';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 function EditorPostType( { translate, siteId, typeSlug, type, globalId, isSettings } ) {
 	let label;

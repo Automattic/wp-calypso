@@ -1,16 +1,15 @@
-var React = require( 'react' ), PureRenderMixin = require( 'react-pure-render/mixin' ), classNames = require( 'classnames' );
-
 /**
- * Internal Dependencies
- */
-import Count from 'components/count';
-
-/**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 
+/**
+ * Internal dependencies
+ */
+import Count from 'components/count';
 import { preload } from 'sections-preload';
+
+var React = require( 'react' ), PureRenderMixin = require( 'react-pure-render/mixin' ), classNames = require( 'classnames' );
 
 /**
  * Main

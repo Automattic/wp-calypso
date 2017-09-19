@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingBillingTransactions } from 'state/selectors';
 import { requestBillingTransactions } from 'state/billing-transactions/actions';
+import { isRequestingBillingTransactions } from 'state/selectors';
 
 class QueryBillingTransactions extends Component {
 	static propTypes = {

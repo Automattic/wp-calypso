@@ -1,21 +1,20 @@
-import { connect } from 'react-redux';
-
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
+import CompactCard from 'components/card/compact';
+import QuerySites from 'components/data/query-sites';
+import { getSite } from 'state/sites/selectors';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {

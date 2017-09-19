@@ -1,38 +1,37 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { trim, initial, flatMap } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { trim, initial, flatMap } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
-import SegmentedControl from 'components/segmented-control';
+import PostResults from './post-results';
+import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
+import SiteResults from './site-results';
+import Suggestion from './suggestion';
+import SuggestionProvider from './suggestion-provider';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import { recordAction, recordTrack } from 'reader/stats';
-import SiteResults from './site-results';
-import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
+import SearchInput from 'components/search';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 import { addQueryArgs } from 'lib/url';
-import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
-import withDimensions from 'lib/with-dimensions';
-import SuggestionProvider from './suggestion-provider';
-import Suggestion from './suggestion';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
-import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
-import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
+import withDimensions from 'lib/with-dimensions';
 import FollowButton from 'reader/follow-button';
+import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { recordAction, recordTrack } from 'reader/stats';
+import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 

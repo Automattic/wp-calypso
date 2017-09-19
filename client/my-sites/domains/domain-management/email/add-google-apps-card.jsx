@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
+import Button from 'components/forms/form-button';
 import config from 'config';
-import paths from 'my-sites/domains/paths';
-import support from 'lib/url/support';
-import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import analyticsMixin from 'lib/mixins/analytics';
+import support from 'lib/url/support';
+import paths from 'my-sites/domains/paths';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 const AddGoogleAppsCard = React.createClass( {

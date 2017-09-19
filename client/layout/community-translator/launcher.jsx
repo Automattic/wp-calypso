@@ -1,10 +1,14 @@
+/**
+ * External dependencies
+ */
+import Gridicon from 'gridicons';
+
 const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

@@ -1,51 +1,41 @@
-import ReactDom from 'react-dom';
-
 /** @format */
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classnames from 'classnames';
-import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
 import EmptyContent from './empty';
-import {
-	fetchNextPage,
-	selectFirstItem,
-	selectItem,
-	selectNextItem,
-	selectPrevItem,
-	showUpdates,
-	shufflePosts,
-} from 'lib/feed-stream-store/actions';
-import LikeStore from 'lib/like-store/like-store';
-import LikeStoreActions from 'lib/like-store/actions';
-import LikeHelper from 'reader/like-helper';
-import ListEnd from 'components/list-end';
-import InfiniteList from 'components/infinite-list';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import PostPlaceholder from './post-placeholder';
-import PostStore from 'lib/feed-post-store';
-import UpdateNotice from 'reader/update-notice';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import scrollTo from 'lib/scroll-to';
-import XPostHelper from 'reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import { showSelectedPost } from 'reader/utils';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
-import { getReaderFollows } from 'state/selectors';
-import { keysAreEqual } from 'lib/feed-stream-store/post-key';
-import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
+import PostPlaceholder from './post-placeholder';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
+import InfiniteList from 'components/infinite-list';
+import ListEnd from 'components/list-end';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import ReaderMain from 'components/reader-main';
+import PostStore from 'lib/feed-post-store';
+import { fetchNextPage, selectFirstItem, selectItem, selectNextItem, selectPrevItem, showUpdates, shufflePosts } from 'lib/feed-stream-store/actions';
+import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import LikeStoreActions from 'lib/like-store/actions';
+import LikeStore from 'lib/like-store/like-store';
+import scrollTo from 'lib/scroll-to';
+import LikeHelper from 'reader/like-helper';
+import UpdateNotice from 'reader/update-notice';
+import { showSelectedPost } from 'reader/utils';
+import XPostHelper from 'reader/xpost-helper';
+import { getReaderFollows } from 'state/selectors';
+import getBlockedSites from 'state/selectors/get-blocked-sites';
+import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;

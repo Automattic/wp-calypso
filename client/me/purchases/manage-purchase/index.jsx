@@ -1,83 +1,51 @@
+/**
+ * External dependencies
+ */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
-import { applyTestFiltersToPlansList } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import { cartItems } from 'lib/cart-values';
-import CompactCard from 'components/card/compact';
-import config from 'config';
-import {
-	getName,
-	hasPrivacyProtection,
-	isCancelable,
-	isExpired,
-	isExpiring,
-	isOneTimePurchase,
-	isRedeemable,
-	isRefundable,
-	isRenewable,
-	isRenewal,
-	isRenewing,
-	isSubscription,
-	purchaseType,
-} from 'lib/purchases';
-import {
-	canEditPaymentDetails,
-	isDataLoading,
-	getEditCardDetailsPath,
-	getPurchase,
-	getSelectedSite,
-	goToList,
-	recordPageView,
-} from '../utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
-import Gridicon from 'gridicons';
-import HeaderCake from 'components/header-cake';
-import {
-	isPersonal,
-	isPremium,
-	isBusiness,
-	isPlan,
-	isDomainProduct,
-	isDomainRegistration,
-	isDomainMapping,
-	isTheme,
-} from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import PlanIcon from 'components/plans/plan-icon';
-import PlanPrice from 'my-sites/plan-price';
-import ProductLink from 'me/purchases/product-link';
-import PurchaseMeta from './purchase-meta';
+import paths from '../paths';
+import PurchaseSiteHeader from '../purchases-site/header';
+import RemovePurchase from '../remove-purchase';
+import { canEditPaymentDetails, isDataLoading, getEditCardDetailsPath, getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
-import PurchaseSiteHeader from '../purchases-site/header';
+import PurchaseMeta from './purchase-meta';
+import Button from 'components/button';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import RemovePurchase from '../remove-purchase';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import PlanIcon from 'components/plans/plan-icon';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
-import support from 'lib/url/support';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import config from 'config';
+import { abtest } from 'lib/abtest';
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
+import { applyTestFiltersToPlansList } from 'lib/plans';
+import { isPersonal, isPremium, isBusiness, isPlan, isDomainProduct, isDomainRegistration, isDomainMapping, isTheme } from 'lib/products-values';
+import { getName, hasPrivacyProtection, isCancelable, isExpired, isExpiring, isOneTimePurchase, isRedeemable, isRefundable, isRenewable, isRenewal, isRenewing, isSubscription, purchaseType } from 'lib/purchases';
 import * as upgradesActions from 'lib/upgrades/actions';
+import support from 'lib/url/support';
+import userFactory from 'lib/user';
+import ProductLink from 'me/purchases/product-link';
+import titles from 'me/purchases/titles';
+import PlanPrice from 'my-sites/plan-price';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
+import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
 
 const user = userFactory();
 

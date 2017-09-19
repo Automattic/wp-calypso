@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { reduce, size, map, get, includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduce, size, map, get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import QueryTaxonomies from 'components/data/query-taxonomies';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
-import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import Accordion from 'components/accordion';
-import TermTokenField from 'post-editor/term-token-field';
+import QueryTaxonomies from 'components/data/query-taxonomies';
+import { decodeEntities } from 'lib/formatting';
 import TermSelector from 'post-editor/editor-term-selector';
+import TermTokenField from 'post-editor/term-token-field';
+import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function isSkippedTaxonomy( postType, taxonomy ) {
 	if ( includes( [ 'post_format', 'mentions', 'xposts' ], taxonomy ) ) {

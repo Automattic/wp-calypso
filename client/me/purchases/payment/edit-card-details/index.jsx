@@ -1,30 +1,29 @@
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { connect } from 'react-redux';
 
 /**
- * External Dependencies
+ * Internal dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import { clearPurchases } from 'state/purchases/actions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
-import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import titles from 'me/purchases/titles';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import userFactory from 'lib/user';
+import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
+import titles from 'me/purchases/titles';
+import { isDataLoading, recordPageView } from 'me/purchases/utils';
+import { clearPurchases } from 'state/purchases/actions';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
+import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 
 const user = userFactory();
 

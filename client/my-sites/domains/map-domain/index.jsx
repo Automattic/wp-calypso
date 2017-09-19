@@ -1,30 +1,29 @@
-import page from 'page';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import QueryProductsList from 'components/data/query-products-list';
 import MapDomainStep from 'components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import paths from 'my-sites/domains/paths';
-import Notice from 'components/notice';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
 
 const wpcom = wp.undocumented();
 

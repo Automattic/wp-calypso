@@ -1,26 +1,24 @@
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import debugModule from 'debug';
-import { trim } from 'lodash';
 import Gridicon from 'gridicons';
+import { trim } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
+import InfiniteList from 'components/infinite-list';
 import Popover from 'components/popover';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Search from 'components/search';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UserItem from 'components/user';
-import InfiniteList from 'components/infinite-list';
-import UsersActions from 'lib/users/actions';
-import Search from 'components/search';
 import { hasTouch } from 'lib/touch-detect';
+import UsersActions from 'lib/users/actions';
 
 /**
  * Module variables

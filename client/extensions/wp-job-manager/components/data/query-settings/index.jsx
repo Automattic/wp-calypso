@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isFetchingSettings } from '../../../state/settings/selectors';
 import { fetchSettings } from '../../../state/settings/actions';
+import { isFetchingSettings } from '../../../state/settings/selectors';
 
 class QuerySettings extends Component {
 	static propTypes = {

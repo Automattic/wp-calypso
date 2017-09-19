@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
 var PropTypes = require('prop-types');
 /**
  * External dependencies
@@ -16,8 +21,6 @@ var FormButton = require( 'components/forms/form-button' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'lib/analytics' ),
 	constants = require( 'me/constants' );
-
-import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

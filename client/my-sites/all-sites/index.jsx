@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import AllSitesIcon from 'my-sites/all-sites-icon';
 import Count from 'components/count';
-import { getSites } from 'state/selectors';
 import userLib from 'lib/user';
+import AllSitesIcon from 'my-sites/all-sites-icon';
+import { getSites } from 'state/selectors';
 
 const user = userLib();
 

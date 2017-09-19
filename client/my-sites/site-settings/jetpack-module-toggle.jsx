@@ -1,27 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
-import {
-	activateModule,
-	deactivateModule
-} from 'state/jetpack/modules/actions';
-import {
-	getJetpackModule,
-	isActivatingJetpackModule,
-	isDeactivatingJetpackModule,
-	isJetpackModuleActive,
-} from 'state/selectors';
+import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import { getJetpackModule, isActivatingJetpackModule, isDeactivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class JetpackModuleToggle extends Component {

@@ -1,30 +1,29 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { assign, includes, find, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { assign, includes, find, flatMap } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
+import MxRecord from './mx-record';
+import SrvRecord from './srv-record';
+import TxtRecord from './txt-record';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-import MxRecord from './mx-record';
-import TxtRecord from './txt-record';
-import SrvRecord from './srv-record';
-import formState from 'lib/form-state';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
+import formState from 'lib/form-state';
+import * as upgradesActions from 'lib/upgrades/actions';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {

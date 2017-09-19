@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import { find, groupBy } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { find, groupBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import GoogleAppsUserItem from './google-apps-user-item';
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
-import Button from 'components/button';
+import SectionHeader from 'components/section-header';
+import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import analyticsMixin from 'lib/mixins/analytics';
+import support from 'lib/url/support';
 import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
 import paths from 'my-sites/domains/paths';
-import analyticsMixin from 'lib/mixins/analytics';
-import SectionHeader from 'components/section-header';
-import GoogleAppsUserItem from './google-apps-user-item';
-import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
 
 const GoogleAppsUsers = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],

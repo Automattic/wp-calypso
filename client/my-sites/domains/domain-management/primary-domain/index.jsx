@@ -1,33 +1,28 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Main from 'components/main';
 import Card from 'components/card/compact';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Notice from 'components/notice';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { getSelectedDomain } from 'lib/domains';
+import Main from 'components/main';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
+import { getSelectedDomain } from 'lib/domains';
+import * as upgradesActions from 'lib/upgrades/actions';
 import support from 'lib/url/support';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
 
 class PrimaryDomain extends React.Component {
 	static propTypes = {

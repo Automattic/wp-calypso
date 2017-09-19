@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import StoreConnection from 'components/data/store-connection';
+import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 

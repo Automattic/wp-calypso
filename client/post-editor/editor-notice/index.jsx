@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import Notice from 'components/notice';
 import { isMobile } from 'lib/viewport';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 export class EditorNotice extends Component {
 	static propTypes = {

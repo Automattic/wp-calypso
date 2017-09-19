@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { isEqual } from 'lodash';
 import debugModule from 'debug';
+import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FollowersStore from 'lib/followers/store';
-import FollowersActions from 'lib/followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
 import pollers from 'lib/data-poller';
+import FollowersActions from 'lib/followers/actions';
+import FollowersStore from 'lib/followers/store';
+import passToChildren from 'lib/react-pass-to-children';
 
 /**
  * Module variables

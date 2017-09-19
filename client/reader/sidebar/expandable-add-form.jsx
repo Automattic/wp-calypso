@@ -1,17 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { noop, identity } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop, identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 

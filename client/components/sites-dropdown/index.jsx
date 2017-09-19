@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { noop } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

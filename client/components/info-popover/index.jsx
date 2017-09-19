@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import Popover from 'components/popover';
-import classNames from 'classnames';
 import analytics from 'lib/analytics';
 
 export default class InfoPopover extends Component {

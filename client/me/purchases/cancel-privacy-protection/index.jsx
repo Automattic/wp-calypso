@@ -1,39 +1,34 @@
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { cancelPrivacyProtection } from 'state/purchases/actions';
-import Card from 'components/card';
-import HeaderCake from 'components/header-cake';
-import {
-	getByPurchaseId,
-	getPurchasesError,
-	hasLoadedUserPurchasesFromServer,
-} from 'state/purchases/selectors';
-import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import notices from 'notices';
-import Notice from 'components/notice';
 import paths from '../paths';
+import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
+import Button from 'components/button';
+import Card from 'components/card';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import userFactory from 'lib/user';
+import titles from 'me/purchases/titles';
+import notices from 'notices';
+import { cancelPrivacyProtection } from 'state/purchases/actions';
+import { getByPurchaseId, getPurchasesError, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 
 const user = userFactory();
 

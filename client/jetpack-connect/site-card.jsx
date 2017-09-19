@@ -2,18 +2,17 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
-import urlModule from 'url';
 
 /**
  * Internal dependencies
  */
+import Site from 'blocks/site';
 import CompactCard from 'components/card/compact';
 import QueryUserConnection from 'components/data/query-user-connection';
-import Site from 'blocks/site';
-import safeImageUrl from 'lib/safe-image-url';
 import { decodeEntities } from 'lib/formatting';
+import safeImageUrl from 'lib/safe-image-url';
+import urlModule from 'url';
 
 class SiteCard extends Component {
 	static propTypes = {

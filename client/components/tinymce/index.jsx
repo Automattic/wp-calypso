@@ -2,6 +2,37 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import advancedPlugin from './plugins/advanced/plugin';
+import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
+import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
+import contactFormPlugin from './plugins/contact-form/plugin';
+import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
+import embedReversalPlugin from './plugins/embed-reversal/plugin';
+import insertMenuPlugin from './plugins/insert-menu/plugin';
+import markdownPlugin from './plugins/markdown/plugin';
+import mediaPlugin from './plugins/media/plugin';
+import mentionsPlugin from './plugins/mentions/plugin';
+import simplePaymentsPlugin from './plugins/simple-payments/plugin';
+import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
+import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
+import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
+import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
+import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
+import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
+import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
+import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
+import wpcomPlugin from './plugins/wpcom/plugin.js';
+import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
+import wpEmojiPlugin from './plugins/wpemoji/plugin';
+import wplinkPlugin from './plugins/wplink/plugin.js';
+import wptextpatternPlugin from './plugins/wptextpattern/plugin';
+import { decodeEntities, wpautop, removep } from 'lib/formatting';
+import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 const PropTypes = require('prop-types');
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
@@ -20,34 +51,6 @@ require( 'tinymce/plugins/media/plugin.js' );
 require( 'tinymce/plugins/paste/plugin.js' );
 require( 'tinymce/plugins/tabfocus/plugin.js' );
 require( 'tinymce/plugins/textcolor/plugin.js' );
-
-// TinyMCE plugins that we've forked or written ourselves
-import wpcomPlugin from './plugins/wpcom/plugin.js';
-import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
-import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
-import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
-import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
-import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
-import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
-import wplinkPlugin from './plugins/wplink/plugin.js';
-import mediaPlugin from './plugins/media/plugin';
-import advancedPlugin from './plugins/advanced/plugin';
-import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
-import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
-import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
-import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
-import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
-import contactFormPlugin from './plugins/contact-form/plugin';
-import simplePaymentsPlugin from './plugins/simple-payments/plugin';
-import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
-import wptextpatternPlugin from './plugins/wptextpattern/plugin';
-import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
-import insertMenuPlugin from './plugins/insert-menu/plugin';
-import embedReversalPlugin from './plugins/embed-reversal/plugin';
-import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
-import mentionsPlugin from './plugins/mentions/plugin';
-import markdownPlugin from './plugins/markdown/plugin';
-import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
 [
 	wpcomPlugin,
@@ -83,7 +86,6 @@ const user = require( 'lib/user' )(),
 	i18n = require( './i18n' ),
 	viewport = require( 'lib/viewport' ),
 	config = require( 'config' );
-import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
 /**
  * Internal Variables

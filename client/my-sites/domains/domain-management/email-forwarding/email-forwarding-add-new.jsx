@@ -2,27 +2,26 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
+import { validateAllFields } from 'lib/domains/email-forwarding';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
-import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { validateAllFields } from 'lib/domains/email-forwarding';
 import support from 'lib/url/support';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import notices from 'notices';
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {

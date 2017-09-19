@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingUserSuggestions as isRequesting } from 'state/users/suggestions/selectors';
 import { requestUserSuggestions } from 'state/users/suggestions/actions';
+import { isRequestingUserSuggestions as isRequesting } from 'state/users/suggestions/selectors';
 
 class QueryUsersSuggestions extends Component {
 	static propTypes = {

@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Button from 'components/button';
 import AccordionSection from 'components/accordion/section';
+import Button from 'components/button';
 import CountedTextarea from 'components/forms/counted-textarea';
+import WebPreview from 'components/web-preview';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import WebPreview from 'components/web-preview';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

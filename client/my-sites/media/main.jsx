@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Dialog from 'components/dialog';
-import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import Dialog from 'components/dialog';
 import accept from 'lib/accept';
+import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaUtils from 'lib/media/utils';
 import searchUrl from 'lib/search-url';
+import MediaLibrary from 'my-sites/media-library';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 
 class Media extends Component {
 

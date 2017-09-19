@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -14,9 +13,9 @@ import { connect } from 'react-redux';
  */
 import Tooltip from 'components/tooltip';
 import { getSiteStatsQueryDate } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsDatePicker extends Component {
 	static propTypes = {

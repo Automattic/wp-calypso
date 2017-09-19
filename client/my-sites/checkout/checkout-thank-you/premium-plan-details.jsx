@@ -1,24 +1,23 @@
-import { find } from 'lodash';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleVoucherDetails from './google-voucher';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { isPremium } from 'lib/products-values';
-import paths from 'lib/paths';
-import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import PurchaseDetail from 'components/purchase-detail';
+import config from 'config';
+import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import paths from 'lib/paths';
+import { isPremium } from 'lib/products-values';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';

@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';

@@ -1,58 +1,36 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { map, reduce, noop, compact } from 'lodash';
-import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { map, reduce, noop, compact } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
-import PlanFeaturesActions from './actions';
-import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import {
-	getPlanRawPrice,
-	getPlan,
-	getPlanSlug,
-	getPlanBySlug
-} from 'state/plans/selectors';
-import {
-	isPopular,
-	isNew,
-	isMonthly,
-	getPlanFeaturesObject,
-	getPlanClass,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-} from 'lib/plans/constants';
-import {
-	getMonthlyPlanByYearly,
-	isFreePlan,
-} from 'lib/plans';
-import {
-	getPlanPath,
-	canUpgradeToPlan,
-	applyTestFiltersToPlansList
-} from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import SpinnerLine from 'components/spinner-line';
-import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import { abtest } from 'lib/abtest';
+import { retargetViewPlans } from 'lib/analytics/ad-tracking';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { getMonthlyPlanByYearly, isFreePlan } from 'lib/plans';
+import { getPlanPath, canUpgradeToPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { isPopular, isNew, isMonthly, getPlanFeaturesObject, getPlanClass, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
+import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
 
 class PlanFeatures extends Component {
 	render() {

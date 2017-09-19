@@ -2,14 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import shallowEqual from 'react-pure-render/shallowEqual';
 import { requestMedia, requestMediaItem } from 'state/media/actions';
 
 /**

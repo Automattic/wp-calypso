@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 const AccountDialogAccount = ( { account, conflicting, onChange, selected } ) => {
 	const classes = classNames( 'account-dialog-account', {

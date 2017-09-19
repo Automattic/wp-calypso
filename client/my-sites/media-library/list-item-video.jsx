@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+
 const PropTypes = require('prop-types');
 /**
  * External dependencies
@@ -10,8 +15,6 @@ var React = require( 'react' ),
  */
 var ListItemFileDetails = require( './list-item-file-details' ),
 	Gridicon = require( 'gridicons' );
-
-import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',

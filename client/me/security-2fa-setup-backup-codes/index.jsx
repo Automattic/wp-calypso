@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
 var PropTypes = require('prop-types');
 /**
  * External dependencies
@@ -13,8 +18,6 @@ var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	support = require( 'lib/url/support' );
-
-import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

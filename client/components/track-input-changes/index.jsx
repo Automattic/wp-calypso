@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { assign, noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { assign, noop } from 'lodash';
 
 export default React.createClass( {
 	displayName: 'TrackInputChanges',

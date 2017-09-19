@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
+import observe from 'lib/mixins/data-observe';
 import { addSiteFragment } from 'lib/route';
 import { getSites } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';

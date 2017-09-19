@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
+import { hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
 
 class QueryUserPurchases extends Component {
 	requestUserPurchases( nextProps ) {

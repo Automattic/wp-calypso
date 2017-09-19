@@ -1,37 +1,29 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import {
-	find,
-	identity,
-	includes,
-	matchesProperty,
-	overSome,
-	some,
-} from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { find, identity, includes, matchesProperty, overSome, some } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import urlSearch from 'lib/url-search';
-import CompactCard from 'components/card/compact';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
 import JetpackPluginItem from './jetpack-plugin-item';
+import jetpackPlugins from './jetpack-plugins';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import CompactCard from 'components/card/compact';
+import Search from 'components/search';
 import SectionHeader from 'components/section-header';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import jetpackPlugins from './jetpack-plugins';
+import NavTabs from 'components/section-nav/tabs';
 import Tooltip from 'components/tooltip';
 import { isEnabled } from 'config';
+import urlSearch from 'lib/url-search';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {

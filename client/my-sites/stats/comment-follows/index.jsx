@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Followers from '../stats-comment-followers-page';
+import StatsFirstView from '../stats-first-view';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import StatsFirstView from '../stats-first-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {

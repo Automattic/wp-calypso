@@ -2,14 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormActions',

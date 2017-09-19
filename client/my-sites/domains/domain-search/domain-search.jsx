@@ -1,34 +1,33 @@
-import { connect } from 'react-redux';
-import page from 'page';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import QueryProductsList from 'components/data/query-products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
+import { abtest } from 'lib/abtest';
 import cartItems from 'lib/cart-values/cart-items';
+import upgradesActions from 'lib/upgrades/actions';
+import UpgradesNavigation from 'my-sites/domains/navigation';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
+import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
+import { getProductsList } from 'state/products-list/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
-import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { abtest } from 'lib/abtest';
 
 class DomainSearch extends Component {
 	static propTypes = {

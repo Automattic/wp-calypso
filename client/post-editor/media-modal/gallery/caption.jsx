@@ -2,14 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
+import MediaActions from 'lib/media/actions';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryCaption',

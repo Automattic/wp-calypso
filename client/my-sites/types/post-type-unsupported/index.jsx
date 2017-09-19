@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

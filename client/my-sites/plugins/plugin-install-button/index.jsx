@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
 import Button from 'components/button';
-import InfoPopover from 'components/info-popover';
+import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import ExternalLink from 'components/external-link';
+import InfoPopover from 'components/info-popover';
+import PluginsActions from 'lib/plugins/actions';
 import utils from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { getSiteConnectionStatus } from 'state/selectors';
 
 export class PluginInstallButton extends Component {

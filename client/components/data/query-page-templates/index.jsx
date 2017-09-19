@@ -2,16 +2,15 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { requestPageTemplates } from 'state/page-templates/actions';
 import { isRequestingPageTemplates } from 'state/page-templates/selectors';
 import { getSiteOption } from 'state/sites/selectors';
-import { requestPageTemplates } from 'state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
 	componentWillMount() {

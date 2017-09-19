@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Site from 'blocks/site';
 import FoldableCard from 'components/foldable-card';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 
 const PluginSiteJetpack = React.createClass( {
 	propTypes: {

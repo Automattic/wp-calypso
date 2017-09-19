@@ -1,17 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import { last } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { last } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';

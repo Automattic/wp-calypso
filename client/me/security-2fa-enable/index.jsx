@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
 var PropTypes = require('prop-types');
 /**
  * External dependencies
@@ -20,8 +25,6 @@ var FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' ),
 	constants = require( 'me/constants' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
-
-import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

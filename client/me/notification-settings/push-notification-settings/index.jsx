@@ -1,31 +1,22 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 import Dialog from 'components/dialog';
 import Notice from 'components/notice';
-import {
-	getStatus,
-	isApiReady,
-	isShowingUnblockInstructions,
-	isEnabled,
-} from 'state/push-notifications/selectors';
-import {
-	toggleEnabled,
-	toggleUnblockInstructions
-} from 'state/push-notifications/actions';
+import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
+import { getStatus, isApiReady, isShowingUnblockInstructions, isEnabled } from 'state/push-notifications/selectors';
 
 const PushNotificationSettings = React.createClass( {
 	displayName: 'PushNotificationSettings',

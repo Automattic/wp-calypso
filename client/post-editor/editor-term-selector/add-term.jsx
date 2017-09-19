@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { get, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import TermFormDialog from 'blocks/term-form-dialog';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Button from 'components/button';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class TermSelectorAddTerm extends Component {
 	static propTypes = {

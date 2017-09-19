@@ -1,16 +1,12 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { omit, startsWith, endsWith } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const SharingButtonsPreviewAction = ( props ) => {
 	const { active, position, icon, children } = props;

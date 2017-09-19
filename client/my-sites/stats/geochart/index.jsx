@@ -1,25 +1,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { throttle, map, uniq } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { throttle, map, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { loadScript } from 'lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
+import analytics from 'lib/analytics';
+import { loadScript } from 'lib/load-script';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
 
 class StatsGeochart extends Component {
 	static propTypes = {

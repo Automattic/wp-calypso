@@ -1,4 +1,22 @@
+/**
+ * External dependencies
+ */
 import { property, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
+/**
+ * Internal dependencies
+ */
+import AppBanner from 'blocks/app-banner';
+import SitePreview from 'blocks/site-preview';
+import DocumentHead from 'components/data/document-head';
+import QuerySites from 'components/data/query-sites';
+
+import NpsSurveyNotice from 'layout/nps-survey-notice';
+import { isOffline } from 'state/application/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { hasSidebar } from 'state/ui/selectors';
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' );
@@ -27,22 +45,6 @@ var AsyncLoad = require( 'components/async-load' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser;
-
-import QuerySites from 'components/data/query-sites';
-
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-
-import { isOffline } from 'state/application/selectors';
-import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
-import SitePreview from 'blocks/site-preview';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
-import AppBanner from 'blocks/app-banner';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { get, some } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
+import ImagePreloader from 'components/image-preloader';
 import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
-import ImagePreloader from 'components/image-preloader';
+import MediaStore from 'lib/media/store';
+import MediaUtils from 'lib/media/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorFeaturedImagePreview = React.createClass( {

@@ -1,18 +1,7 @@
 /**
- * Reactified port of the TinyMCE charmap plugin.
- *
- * Adapted from WordPress.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
- * @see https://github.com/tinymce/tinymce/blob/master/js/tinymce/plugins/charmap/plugin.js
-*/
-
-/**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

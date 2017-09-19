@@ -1,22 +1,20 @@
-import ReactDom from 'react-dom';
-
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { filter, find, findIndex, map, result } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { filter, find, findIndex, map, result } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import DropdownLabel from 'components/select-dropdown/label';
 import Count from 'components/count';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
+import DropdownSeparator from 'components/select-dropdown/separator';
 
 /**
  * SelectDropdown

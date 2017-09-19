@@ -1,27 +1,26 @@
-import { connect } from 'react-redux';
-import { curry } from 'lodash';
-import page from 'page';
-
 /**
  * External dependencies
  */
+import { curry } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { addStoredCard } from 'state/stored-cards/actions';
-import analytics from 'lib/analytics';
-import { concatTitle } from 'lib/react-helpers';
-import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'blocks/credit-card-form';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import titles from 'me/purchases/titles';
+import analytics from 'lib/analytics';
+import { concatTitle } from 'lib/react-helpers';
+import { createPaygateToken } from 'lib/store-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import titles from 'me/purchases/titles';
+import { addStoredCard } from 'state/stored-cards/actions';
 
 class AddCreditCard extends Component {
 	static propTypes = {

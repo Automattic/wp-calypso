@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackSettings } from 'state/selectors';
 import { fetchSettings } from 'state/jetpack/settings/actions';
+import { isRequestingJetpackSettings } from 'state/selectors';
 
 class QueryJetpackSettings extends Component {
 	static propTypes = {

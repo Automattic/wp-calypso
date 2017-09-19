@@ -2,20 +2,19 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
+import { validateSettingsToEmail } from './validations';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { validateSettingsToEmail } from './validations';
+import FormTextInput from 'components/forms/form-text-input';
+import SectionHeader from 'components/section-header';
 
 export default React.createClass( {
 	displayName: 'ContactFormDialogFormSettings',

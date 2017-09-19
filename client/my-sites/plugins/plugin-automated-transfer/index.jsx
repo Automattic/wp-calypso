@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { transferStates } from 'state/automated-transfer/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import {
-	isAutomatedTransferActive,
-	isAutomatedTransferFailed,
-} from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import { transferStates } from 'state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { isAutomatedTransferActive, isAutomatedTransferFailed } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PluginAutomatedTransfer extends Component {
 

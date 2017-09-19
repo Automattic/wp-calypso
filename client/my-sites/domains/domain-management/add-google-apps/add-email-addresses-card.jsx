@@ -2,6 +2,12 @@
  * External dependencies
  */
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
 const PropTypes = require('prop-types');
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
@@ -25,8 +31,6 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	validateUsers = googleAppsLibrary.validate,
 	filterUsers = googleAppsLibrary.filter,
 	DomainsSelect = require( './domains-select' );
-
-import Notice from 'components/notice';
 
 const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],

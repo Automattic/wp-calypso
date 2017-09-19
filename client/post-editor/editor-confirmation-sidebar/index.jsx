@@ -1,30 +1,29 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import EditorConfirmationSidebarHeader from './header';
 import Button from 'components/button';
-import EditorPublishDate from 'post-editor/editor-publish-date';
-import EditorVisibility from 'post-editor/editor-visibility';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import EditorConfirmationSidebarHeader from './header';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import EditorPublishDate from 'post-editor/editor-publish-date';
+import EditorVisibility from 'post-editor/editor-visibility';
+import { editPost } from 'state/posts/actions';
+import { getEditedPost } from 'state/posts/selectors';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import { isEqual, isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostStats } from 'state/stats/posts/selectors';
 import { requestPostStats } from 'state/stats/posts/actions';
+import { isRequestingPostStats } from 'state/stats/posts/selectors';
 
 class QueryPostStats extends Component {
 	static defaultProps = {

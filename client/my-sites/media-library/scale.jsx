@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { debounce, partial } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

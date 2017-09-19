@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isCountryStatesFetching } from 'state/country-states/selectors';
 import { requestCountryStates } from 'state/country-states/actions';
+import { isCountryStatesFetching } from 'state/country-states/selectors';
 
 class QueryCountryStates extends Component {
 	componentWillMount() {

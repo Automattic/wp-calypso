@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,8 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldFeedBeFetched } from 'state/reader/feeds/selectors';
 import { requestFeed } from 'state/reader/feeds/actions';
+import { shouldFeedBeFetched } from 'state/reader/feeds/selectors';
 
 class QueryReaderFeed extends Component {
 	componentWillMount() {

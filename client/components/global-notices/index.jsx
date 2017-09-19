@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import debugModule from 'debug';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import debugModule from 'debug';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
-import { connect } from 'react-redux';
+import notices from 'notices';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 

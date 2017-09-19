@@ -1,11 +1,17 @@
 /**
  * External dependencies
  */
+import { noop, partial } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Internal dependencies
@@ -14,8 +20,6 @@ var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
 	preloadImage = require( '../preload-image' );
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
 export const EditorMediaModalDetail = React.createClass( {
 	propTypes: {

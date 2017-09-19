@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, toArray, unescape as unescapeString } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { get, toArray, unescape as unescapeString } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import TermSelector from 'post-editor/editor-term-selector';
-import TermTokenField from 'post-editor/term-token-field';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { addSiteFragment } from 'lib/route';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
+import TermSelector from 'post-editor/editor-term-selector';
+import TermTokenField from 'post-editor/term-token-field';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {

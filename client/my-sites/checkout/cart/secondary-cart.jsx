@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import ReactDom from 'react-dom';
-import { localize } from 'i18n-calypso';
-import Dispatcher from 'dispatcher';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CartBody from 'my-sites/checkout/cart/cart-body';
 import CartMessagesMixin from './cart-messages-mixin';
-import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
 import CartPlanAd from './cart-plan-ad';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
+import Dispatcher from 'dispatcher';
 import Sidebar from 'layout/sidebar';
 import observe from 'lib/mixins/data-observe';
-import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import CartBody from 'my-sites/checkout/cart/cart-body';
+import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
+import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
 
 const SecondaryCart = React.createClass( {
 	propTypes: {

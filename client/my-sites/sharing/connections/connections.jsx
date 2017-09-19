@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import SharingServicesGroup from './services-group';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate } ) => (
 	<div className="sharing-settings sharing-connections">

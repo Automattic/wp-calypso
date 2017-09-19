@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
+import Card from 'components/card';
 
 export default React.createClass( {
 	displayName: 'StatsOverviewPlaceholder',

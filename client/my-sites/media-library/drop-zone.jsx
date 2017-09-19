@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
+import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,8 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
 import { requestTagImages } from 'state/reader/tags/images/actions';
+import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
 
 class QueryReaderTagImages extends Component {
 	componentWillMount() {

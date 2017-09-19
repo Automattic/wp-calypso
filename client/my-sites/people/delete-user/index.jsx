@@ -1,9 +1,15 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import Gravatar from 'components/gravatar';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -22,8 +28,6 @@ const Card = require( 'components/card' ),
 	UsersActions = require( 'lib/users/actions' ),
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
-import Gravatar from 'components/gravatar';
-import { localize } from 'i18n-calypso';
 
 const DeleteUser = React.createClass( {
 	displayName: 'DeleteUser',

@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { omit } from 'lodash';
 import classNames from 'classnames';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ShortcodesStore from 'lib/shortcodes/store';
-import * as ShortcodesActions from 'lib/shortcodes/actions';
-
-/**
- * Local dependencies
- */
 import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
+import * as ShortcodesActions from 'lib/shortcodes/actions';
+
+import ShortcodesStore from 'lib/shortcodes/store';
 
 export default React.createClass( {
 	displayName: 'Shortcode',

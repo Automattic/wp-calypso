@@ -1,16 +1,14 @@
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { find } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,14 +18,14 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
-import touchDetect from 'lib/touch-detect';
+import accept from 'lib/accept';
+import { tracks } from 'lib/analytics';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
-import { tracks } from 'lib/analytics';
-import accept from 'lib/accept';
+import touchDetect from 'lib/touch-detect';
 import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorVisibility = React.createClass( {
 	showingAcceptDialog: false,
