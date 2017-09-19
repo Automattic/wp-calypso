@@ -38,6 +38,7 @@ const SetupWizard = ( {
 				basePath={ `/extensions/wp-job-manager/setup/${ slug }` }
 				components={ components }
 				forwardText={ translate( 'Continue' ) }
+				hideNavigation={ true }
 				steps={ steps }
 				stepName={ stepName } />
 		</Main>
