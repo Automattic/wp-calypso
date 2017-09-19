@@ -95,7 +95,7 @@ class TagStreamHeader extends React.Component {
 		return (
 			<div className={ classes }>
 				<QueryReaderTagImages tag={ imageSearchString } />
-				{ showFollow &&
+				{ showFollow && (
 					<div className="tag-stream__header-follow">
 						<FollowButton
 							followLabel={ translate( 'Follow Tag' ) }
@@ -104,14 +104,15 @@ class TagStreamHeader extends React.Component {
 							following={ following }
 							onFollowToggle={ onFollowToggle }
 						/>
-					</div> }
+					</div>
+				) }
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
 						<Gridicon icon="tag" size={ 24 } />
 						{ title }
 					</h1>
-					{ tagImage &&
+					{ tagImage && (
 						<div className="tag-stream__header-image-byline">
 							{ translate( '{{photoByWrapper}}Photo by{{/photoByWrapper}} {{authorLink/}}', {
 								components: {
@@ -119,7 +120,8 @@ class TagStreamHeader extends React.Component {
 									authorLink,
 								},
 							} ) }
-						</div> }
+						</div>
+					) }
 				</div>
 			</div>
 		);

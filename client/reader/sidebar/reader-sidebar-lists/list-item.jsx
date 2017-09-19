@@ -78,9 +78,7 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-listname">
-						{ list.title }
-					</div>
+					<div className="sidebar__menu-item-listname">{ list.title }</div>
 				</a>
 			</li>
 		);

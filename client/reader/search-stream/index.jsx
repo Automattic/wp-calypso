@@ -40,14 +40,14 @@ const updateQueryArg = params =>
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) =>
+const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
 			height: `${ height }px`,
 		} }
 	/>
-);
+) );
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -179,7 +179,7 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query &&
+						{ query && (
 							<SegmentedControl compact className="search-stream__sort-picker">
 								<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
 									{ TEXT_RELEVANCE_SORT }
@@ -187,9 +187,10 @@ class SearchStream extends React.Component {
 								<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
 									{ TEXT_DATE_SORT }
 								</ControlItem>
-							</SegmentedControl> }
+							</SegmentedControl>
+						) }
 					</CompactCard>
-					{ showFollowByUrl &&
+					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: queryWithoutProtocol } ) }
@@ -197,14 +198,16 @@ class SearchStream extends React.Component {
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
-						</div> }
-					{ query &&
+						</div>
+					) }
+					{ query && (
 						<SearchStreamHeader
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
-						/> }
-					{ ! query &&
+						/>
+					) }
+					{ ! query && (
 						<div className="search-stream__blank-suggestions">
 							{ suggestions &&
 								this.props.translate( 'Suggestions: {{suggestions /}}.', {
@@ -212,33 +215,39 @@ class SearchStream extends React.Component {
 										suggestions: suggestionList,
 									},
 								} ) }
-						</div> }
+						</div>
+					) }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
-				{ wideDisplay &&
+				{ wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
 						</div>
-						{ query &&
+						{ query && (
 							<div className="search-stream__site-results">
 								<SiteResults
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									showLastUpdatedDate={ false }
 								/>
-							</div> }
-					</div> }
-				{ ! wideDisplay &&
+							</div>
+						) }
+					</div>
+				) }
+				{ ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
-						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) &&
-							<PostResults { ...this.props } /> ) ||
+						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
+							<PostResults { ...this.props } />
+						) ) || (
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
 								showLastUpdatedDate={ true }
-							/> }
-					</div> }
+							/>
+						) }
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -246,10 +255,11 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props =>
+const wrapWithMain = Component => props => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
-	</ReaderMain>;
+	</ReaderMain>
+);
 /* eslint-enable */
 
 export default connect( ( state, ownProps ) => ( {

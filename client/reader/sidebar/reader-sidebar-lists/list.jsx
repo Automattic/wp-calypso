@@ -50,11 +50,7 @@ export class ReaderSidebarListsList extends React.Component {
 			);
 		}
 
-		return (
-			<div>
-				{ this.renderItems() }
-			</div>
-		);
+		return <div>{ this.renderItems() }</div>;
 	}
 }
 

@@ -135,14 +135,15 @@ class CrossPost extends PureComponent {
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
 					{ index + 2 < array.length && <span>, </span> }
-					{ index + 2 === array.length &&
+					{ index + 2 === array.length && (
 						<span>
 							{' '}
 							{ this.props.translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
 							} ) }{' '}
-						</span> }
+						</span>
+					) }
 				</span>
 			);
 		} );
@@ -175,7 +176,7 @@ class CrossPost extends PureComponent {
 					isCompact={ true }
 				/>
 				<div className="reader__x-post">
-					{ post.title &&
+					{ post.title && (
 						<h1 className="reader__post-title">
 							<a
 								className="reader__post-title-link"
@@ -186,7 +187,8 @@ class CrossPost extends PureComponent {
 							>
 								{ xpostTitle }
 							</a>
-						</h1> }
+						</h1>
+					) }
 					{ this.getDescription( post.author.first_name ) }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

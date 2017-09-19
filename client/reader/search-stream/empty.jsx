@@ -41,23 +41,19 @@ class SearchEmptyContent extends React.Component {
 			</a>
 		);
 
-		const secondaryAction = isDiscoverEnabled()
-			? <a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore Discover' ) }
-				</a>
-			: null;
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore Discover' ) }
+			</a>
+		) : null;
 
 		const message = this.props.translate( 'No posts found for {{query /}} for your language.', {
 			components: {
-				query: (
-					<em>
-						{ this.props.query }
-					</em>
-				),
+				query: <em>{ this.props.query }</em>,
 			},
 		} );
 

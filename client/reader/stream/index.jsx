@@ -22,7 +22,15 @@ import ListEnd from 'components/list-end';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import ReaderMain from 'components/reader-main';
 import PostStore from 'lib/feed-post-store';
-import { fetchNextPage, selectFirstItem, selectItem, selectNextItem, selectPrevItem, showUpdates, shufflePosts } from 'lib/feed-stream-store/actions';
+import {
+	fetchNextPage,
+	selectFirstItem,
+	selectItem,
+	selectNextItem,
+	selectPrevItem,
+	showUpdates,
+	shufflePosts,
+} from 'lib/feed-stream-store/actions';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
@@ -468,12 +476,11 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ this.props.isMain &&
-					this.props.showMobileBackToSidebar &&
+				this.props.showMobileBackToSidebar && (
 					<MobileBackToSidebar>
-						<h1>
-							{ this.props.translate( 'Streams' ) }
-						</h1>
-					</MobileBackToSidebar> }
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+				) }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }

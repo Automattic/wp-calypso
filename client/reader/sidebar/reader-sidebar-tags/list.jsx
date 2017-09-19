@@ -50,11 +50,7 @@ export class ReaderSidebarTagsList extends Component {
 			);
 		}
 
-		return (
-			<div>
-				{ this.renderItems() }
-			</div>
-		);
+		return <div>{ this.renderItems() }</div>;
 	}
 }
 

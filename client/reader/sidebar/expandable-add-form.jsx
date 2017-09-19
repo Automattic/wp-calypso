@@ -59,11 +59,11 @@ export class ExpandableSidebarAddForm extends Component {
 		} );
 		return (
 			<div className={ classes }>
-				{ this.props.hideAddButton
-					? null
-					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>
-							{ translate( 'Add' ) }
-						</Button> }
+				{ this.props.hideAddButton ? null : (
+					<Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>
+						{ translate( 'Add' ) }
+					</Button>
+				) }
 				<div className="sidebar__menu-add">
 					<input
 						aria-label={ addLabel }

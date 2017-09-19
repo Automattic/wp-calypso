@@ -40,16 +40,13 @@ export const ExpandableSidebarMenu = props => {
 				onAddClick={ onAddClick }
 				onAddSubmit={ onAddSubmit }
 			/>
-			<ul className="sidebar__menu-list">
-				{ props.children }
-			</ul>
+			<ul className="sidebar__menu-list">{ props.children }</ul>
 		</SidebarMenu>
 	);
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-		.isRequired,
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	addLabel: PropTypes.string,
 	addPlaceholder: PropTypes.string,

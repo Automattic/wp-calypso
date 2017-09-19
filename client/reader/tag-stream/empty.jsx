@@ -41,25 +41,21 @@ class TagEmptyContent extends React.Component {
 			</a>
 		);
 
-		const secondaryAction = isDiscoverEnabled()
-			? <a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore Discover' ) }
-				</a>
-			: null;
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore Discover' ) }
+			</a>
+		) : null;
 
 		const message = this.props.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
 			{
 				components: {
-					tagName: (
-						<em>
-							{ this.props.decodedTagSlug }
-						</em>
-					),
+					tagName: <em>{ this.props.decodedTagSlug }</em>,
 				},
 			}
 		);
