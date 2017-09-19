@@ -88,52 +88,30 @@ export default function transformer( file, api ) {
 	}
 
 	createClassesInstances.forEach( createClassInstance => {
-		const thisTranslateInstances = j( createClassInstance ).find( j.MemberExpression, {
-			object: { type: 'ThisExpression' },
-			property: {
-				type: 'Identifier',
-				name: 'translate',
-			},
-		} );
-		thisTranslateInstances.replaceWith( () =>
-			j.memberExpression(
-				j.memberExpression( j.thisExpression(), j.identifier( 'props' ) ),
-				j.identifier( 'translate' )
-			)
-		);
-		const thisMomentInstances = j( createClassInstance ).find( j.MemberExpression, {
-			object: { type: 'ThisExpression' },
-			property: {
-				type: 'Identifier',
-				name: 'moment',
-			},
-		} );
-		thisMomentInstances.replaceWith( () =>
-			j.memberExpression(
-				j.memberExpression( j.thisExpression(), j.identifier( 'props' ) ),
-				j.identifier( 'moment' )
-			)
-		);
-		const thisNumberFormatInstances = j( createClassInstance ).find( j.MemberExpression, {
-			object: { type: 'ThisExpression' },
-			property: {
-				type: 'Identifier',
-				name: 'numberFormat',
-			},
-		} );
-		thisNumberFormatInstances.replaceWith( () =>
-			j.memberExpression(
-				j.memberExpression( j.thisExpression(), j.identifier( 'props' ) ),
-				j.identifier( 'numberFormat' )
-			)
-		);
-		if (
-			thisTranslateInstances.size() ||
-			thisMomentInstances.size() ||
-			thisNumberFormatInstances.size()
-		) {
-			foundMixinUsage = true;
+		const propertiesToModify = [ 'translate', 'moment', 'numberFormat' ];
 
+		propertiesToModify.forEach( property => {
+			const propertyInstances = j( createClassInstance ).find( j.MemberExpression, {
+				object: { type: 'ThisExpression' },
+				property: {
+					type: 'Identifier',
+					name: property,
+				},
+			} );
+
+			propertyInstances.replaceWith( () =>
+				j.memberExpression(
+					j.memberExpression( j.thisExpression(), j.identifier( 'props' ) ),
+					j.identifier( property )
+				)
+			);
+
+			if ( propertyInstances.size() ) {
+				foundMixinUsage = true;
+			}
+		} );
+
+		if ( foundMixinUsage ) {
 			const declarationsToWrap = findDeclarationsToWrap( createClassInstance );
 			declarationsToWrap.replaceWith( decl => {
 				return j.callExpression( j.identifier( 'localize' ), [ decl.value ] );
