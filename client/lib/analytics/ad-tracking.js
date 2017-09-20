@@ -14,7 +14,7 @@ import config from 'config';
 import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
  * Module variables
@@ -276,7 +276,7 @@ function loadTrackingScripts( callback ) {
  * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
+	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
 }
 
 /**

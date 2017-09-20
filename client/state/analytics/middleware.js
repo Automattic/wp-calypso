@@ -14,6 +14,9 @@ import {
 	trackCustomFacebookConversionEvent,
 } from 'lib/analytics/ad-tracking';
 import {
+	doNotTrack,
+} from 'lib/analytics/utils';
+import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
@@ -36,7 +39,7 @@ const pageViewServices = {
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
-	const trackUser = ! navigator.doNotTrack;
+	const trackUser = ! doNotTrack();
 	const hotJarEnabled = config( 'hotjar_enabled' );
 
 	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) && hotJarEnabled && trackUser ) {
