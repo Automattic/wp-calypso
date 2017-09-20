@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size } from 'lodash';
+import { map, zipObject, fill } from 'lodash';
 
 /***
  * Internal dependencies
@@ -114,8 +114,7 @@ export class ConversationCommentList extends React.Component {
 			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )
 		);
 		const commentsToShow = { ...startingExpanded, ...expansions };
-		const showCaterpillar =
-			enableCaterpillar && size( commentsToShow ) < post.discussion.comment_count;
+		const showCaterpillar = enableCaterpillar;
 
 		return (
 			<div className="conversations__comment-list">

@@ -16,6 +16,7 @@ import {
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
 	READER_EXPAND_COMMENTS,
+	READER_HIDE_ALL_COMMENTS,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -227,4 +228,9 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
 	type: READER_EXPAND_COMMENTS,
 	payload: { siteId, commentIds, postId, displayType },
+} );
+
+export const hideAllComments = ( { siteId, postId } ) => ( {
+	type: READER_HIDE_ALL_COMMENTS,
+	payload: { siteId, postId },
 } );
