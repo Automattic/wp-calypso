@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
  */
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
+import { translate } from 'i18n-calypso';
 
 class SectionHeaderExample extends PureComponent {
 	static displayName = 'SectionHeader';
@@ -15,25 +16,25 @@ class SectionHeaderExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<SectionHeader label="Team" count={ 10 }>
-					<Button compact primary>Primary Action</Button>
-					<Button compact>Manage</Button>
+				<SectionHeader label={ translate( 'Team' ) } count={ 10 }>
+					<Button compact primary>{ translate( 'Primary Action' ) }</Button>
+					<Button compact>{ translate( 'Manage' ) }</Button>
 					<Button
 						compact
 						onClick={ function() {
-							alert( 'Clicked add button' );
+							alert( translate( 'Clicked add button' ) );
 						} }
 					>
-						Add
+						{ translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
 
-				<h3>Clickable SectionHeader</h3>
+				<h3>{ translate( 'Clickable SectionHeader' ) }</h3>
 
-				<SectionHeader label="Team" count={ 10 } href="/devdocs/design/section-header">
+				<SectionHeader label={ translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
 
-				<h3>Empty SectionHeader</h3>
+				<h3>{ translate( 'Empty SectionHeader' ) }</h3>
 				<SectionHeader />
 			</div>
 		);
