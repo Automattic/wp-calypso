@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Steps } from './constants';
+import { SetupPath, Steps } from './constants';
 import Confirmation from './confirmation';
 import DocumentHead from 'components/data/document-head';
 import Intro from './intro';
@@ -35,7 +35,7 @@ const SetupWizard = ( {
 		<Main className={ mainClassName }>
 			<DocumentHead title={ translate( 'Setup' ) } />
 			<Wizard
-				basePath={ `/extensions/wp-job-manager/setup/${ slug }` }
+				basePath={ `${ SetupPath }/${ slug }` }
 				components={ components }
 				forwardText={ translate( 'Continue' ) }
 				hideNavigation={ true }
@@ -45,9 +45,7 @@ const SetupWizard = ( {
 	);
 };
 
-const mapStateToProps = state => ( {
-	slug: getSelectedSiteSlug( state ),
-} );
+const mapStateToProps = state => ( { slug: getSelectedSiteSlug( state ) } );
 
 SetupWizard.propTypes = {
 	slug: PropTypes.string,
