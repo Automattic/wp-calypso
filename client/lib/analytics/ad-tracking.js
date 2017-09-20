@@ -276,11 +276,7 @@ function loadTrackingScripts( callback ) {
  * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	// TODO: Remove the following line before release.
-	return ! shouldSkipAds() && config.isEnabled( 'ad-tracking' );
-
-	// TODO: Enable the following line before release.
-	// return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
+	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
 }
 
 /**
