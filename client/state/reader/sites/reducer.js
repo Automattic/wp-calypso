@@ -46,15 +46,12 @@ function handleDeserialize( state ) {
 
 function handleRequestFailure( state, action ) {
 	// new object proceeds current state to prevent new errors from overwriting existing values
-	return assign(
-		{
-			[ action.payload.ID ]: {
-				ID: action.payload.ID,
-				is_error: true,
-			},
+	return assign( {}, state, {
+		[ action.payload.ID ]: {
+			ID: action.payload.ID,
+			is_error: true,
 		},
-		state
-	);
+	} );
 }
 
 function adaptSite( attributes ) {
