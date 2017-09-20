@@ -3,3 +3,5 @@ export const Steps = {
 	INTRO: 'intro',
 	PAGE_SETUP: 'page-setup',
 };
+
+export const SetupPath = '/extensions/wp-job-manager/setup';
