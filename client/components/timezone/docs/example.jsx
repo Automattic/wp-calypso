@@ -9,8 +9,8 @@ import React, { PureComponent } from 'react';
 import Timezone from 'components/timezone';
 import Card from 'components/card';
 
-export default class extends PureComponent {
-    static displayName = 'Timezone';
+export default class TimezoneExample extends PureComponent {
+	static displayName = 'TimezoneExample';
 
 	state = {
 		timezone: 'America/Argentina/La_Rioja'
