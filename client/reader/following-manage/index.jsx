@@ -196,20 +196,18 @@ class FollowingManage extends Component {
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
 				<MobileBackToSidebar>
-					<h1>
-						{ translate( 'Streams' ) }
-					</h1>
+					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults &&
-					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } /> }
-				{ this.shouldRequestMoreRecs() &&
+				{ ! searchResults && (
+					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
+				) }
+				{ this.shouldRequestMoreRecs() && (
 					<QueryReaderRecommendedSites
 						seed={ recommendationsSeed }
 						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
-					/> }
-				<h2 className="following-manage__header">
-					{ translate( 'Follow Something New' ) }
-				</h2>
+					/>
+				) }
+				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
@@ -228,7 +226,7 @@ class FollowingManage extends Component {
 						/>
 					</CompactCard>
 
-					{ showFollowByUrl &&
+					{ showFollowByUrl && (
 						<div className="following-manage__url-follow">
 							<FollowButton
 								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
@@ -236,16 +234,18 @@ class FollowingManage extends Component {
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
-						</div> }
+						</div>
+					) }
 				</div>
 				{ hasFollows &&
-					! sitesQuery &&
+				! sitesQuery && (
 					<RecommendedSites
 						sites={ take( filteredRecommendedSites, 2 ) }
 						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
-					/> }
+					/>
+				) }
 				{ !! sitesQuery &&
-					! isFollowByUrlWithNoSearchResults &&
+				! isFollowByUrlWithNoSearchResults && (
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
@@ -253,14 +253,16 @@ class FollowingManage extends Component {
 						width={ this.state.width }
 						searchResultsCount={ searchResultsCount }
 						query={ sitesQuery }
-					/> }
-				{ showExistingSubscriptions &&
+					/>
+				) }
+				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
-					/> }
+					/>
+				) }
 				{ ! hasFollows && <FollowingManageEmptyContent /> }
 			</ReaderMain>
 		);

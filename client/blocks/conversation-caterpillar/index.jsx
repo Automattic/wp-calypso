@@ -124,32 +124,36 @@ class ConversationCaterpillarComponent extends React.Component {
 				<button
 					className="conversation-caterpillar__count"
 					title={
-						commentCount > 1
-							? translate( 'View comments from %(commenterName)s and %(count)d more', {
-									args: {
-										commenterName: lastAuthorName,
-										count: commentCount - 1,
-									},
-								} )
-							: translate( 'View comment from %(commenterName)s', {
-									args: {
-										commenterName: lastAuthorName,
-									},
-								} )
-					}
-				>
-					{ commentCount > 1
-						? translate( '%(commenterName)s and %(count)d more', {
+						commentCount > 1 ? (
+							translate( 'View comments from %(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastAuthorName,
 									count: commentCount - 1,
 								},
 							} )
-						: translate( '%(commenterName)s commented', {
+						) : (
+							translate( 'View comment from %(commenterName)s', {
 								args: {
 									commenterName: lastAuthorName,
 								},
-							} ) }
+							} )
+						)
+					}
+				>
+					{ commentCount > 1 ? (
+						translate( '%(commenterName)s and %(count)d more', {
+							args: {
+								commenterName: lastAuthorName,
+								count: commentCount - 1,
+							},
+						} )
+					) : (
+						translate( '%(commenterName)s commented', {
+							args: {
+								commenterName: lastAuthorName,
+							},
+						} )
+					) }
 				</button>
 				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
 					<Gridicon

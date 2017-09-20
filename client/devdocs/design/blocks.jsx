@@ -96,16 +96,18 @@ export default class AppComponents extends React.Component {
 	render() {
 		return (
 			<Main className="design design__blocks">
-				{ this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-							{ slugToCamelCase( this.props.component ) }
-						</HeaderCake>
-					: <SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ this.state.filter }
-							placeholder="Search blocks…"
-							analyticsGroup="Docs"
-						/> }
+				{ this.props.component ? (
+					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
+						{ slugToCamelCase( this.props.component ) }
+					</HeaderCake>
+				) : (
+					<SearchCard
+						onSearch={ this.onSearch }
+						initialValue={ this.state.filter }
+						placeholder="Search blocks…"
+						analyticsGroup="Docs"
+					/>
+				) }
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }

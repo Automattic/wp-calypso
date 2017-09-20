@@ -66,12 +66,16 @@ describe( 'ReaderAuthorLink', () => {
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.find( '.reader-author-link' ) ).to.have.prop( 'href' ).equal( siteUrl );
+		expect( wrapper.find( '.reader-author-link' ) )
+			.to.have.prop( 'href' )
+			.equal( siteUrl );
 	} );
 
 	it( 'should use author.URL if site URL is not provided', () => {
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.find( '.reader-author-link' ) ).to.have.prop( 'href' ).equal( author.URL );
+		expect( wrapper.find( '.reader-author-link' ) )
+			.to.have.prop( 'href' )
+			.equal( author.URL );
 	} );
 
 	it( 'should not return a link if siteUrl and author.URL are both missing', () => {

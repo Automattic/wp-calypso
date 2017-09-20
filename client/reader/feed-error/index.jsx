@@ -53,9 +53,7 @@ class FeedError extends React.Component {
 		return (
 			<ReaderMain>
 				<MobileBackToSidebar>
-					<h1>
-						{ this.props.sidebarTitle }
-					</h1>
+					<h1>{ this.props.sidebarTitle }</h1>
 				</MobileBackToSidebar>
 
 				<EmptyContent

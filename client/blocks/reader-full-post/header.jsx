@@ -42,41 +42,41 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<div className={ classNames( classes ) }>
-			{ post.title
-				? <AutoDirection>
-						<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
-							<ExternalLink
-								className="reader-full-post__header-title-link"
-								href={ externalHref }
-								target="_blank"
-								icon={ false }
-							>
-								{ post.title }
-							</ExternalLink>
-						</h1>
-					</AutoDirection>
-				: null }
+			{ post.title ? (
+				<AutoDirection>
+					<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+						<ExternalLink
+							className="reader-full-post__header-title-link"
+							href={ externalHref }
+							target="_blank"
+							icon={ false }
+						>
+							{ post.title }
+						</ExternalLink>
+					</h1>
+				</AutoDirection>
+			) : null }
 			<div className="reader-full-post__header-meta">
-				{ post.date
-					? <span className="reader-full-post__header-date">
-							<a
-								className="reader-full-post__header-date-link"
-								onClick={ recordDateClick }
-								href={ externalHref }
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<PostTime date={ post.date } />
-							</a>
-						</span>
-					: null }
+				{ post.date ? (
+					<span className="reader-full-post__header-date">
+						<a
+							className="reader-full-post__header-date-link"
+							onClick={ recordDateClick }
+							href={ externalHref }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<PostTime date={ post.date } />
+						</a>
+					</span>
+				) : null }
 
-				{ post.tags && keys( post.tags ).length > 0
-					? <div className="reader-full-post__header-tags">
-							<Gridicon icon="tag" size={ 18 } />
-							<ReaderFullPostHeaderTags tags={ post.tags } />
-						</div>
-					: null }
+				{ post.tags && keys( post.tags ).length > 0 ? (
+					<div className="reader-full-post__header-tags">
+						<Gridicon icon="tag" size={ 18 } />
+						<ReaderFullPostHeaderTags tags={ post.tags } />
+					</div>
+				) : null }
 			</div>
 		</div>
 	);

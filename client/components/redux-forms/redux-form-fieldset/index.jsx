@@ -31,16 +31,10 @@ export const FieldsetRenderer = ( {
 
 	return (
 		<FormFieldset>
-			{ label &&
-				<FormLabel htmlFor={ input.name }>
-					{ label }
-				</FormLabel> }
+			{ label && <FormLabel htmlFor={ input.name }>{ label }</FormLabel> }
 			<InputComponent id={ input.name } isError={ isError } { ...input } { ...props } />
 			{ isError && <FormInputValidation isError text={ meta.error } /> }
-			{ explanation &&
-				<FormSettingExplanation>
-					{ explanation }
-				</FormSettingExplanation> }
+			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };
@@ -49,8 +43,9 @@ export const FieldsetRenderer = ( {
  * Convenience wrapper around Redux Form `Field` to render a `FormFieldset`. Usage:
  *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
  */
-const ReduxFormFieldset = ( { component, ...props } ) =>
-	<Field component={ FieldsetRenderer } inputComponent={ component } { ...props } />;
+const ReduxFormFieldset = ( { component, ...props } ) => (
+	<Field component={ FieldsetRenderer } inputComponent={ component } { ...props } />
+);
 
 ReduxFormFieldset.propTypes = {
 	name: PropTypes.string.isRequired, // name of the Redux Form field to connect to

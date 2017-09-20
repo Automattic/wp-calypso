@@ -108,12 +108,13 @@ class ReaderFeaturedVideo extends React.Component {
 					className={ className }
 					href={ href }
 				>
-					{ allowPlaying &&
+					{ allowPlaying && (
 						<img
 							className="reader-featured-video__play-icon"
 							src="/calypso/images/reader/play-icon.png"
 							title={ translate( 'Play Video' ) }
-						/> }
+						/>
+					) }
 				</ReaderFeaturedImage>
 			);
 		}
@@ -127,12 +128,13 @@ class ReaderFeaturedVideo extends React.Component {
 		return (
 			<div className={ classNames }>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-				{ showEmbed &&
+				{ showEmbed && (
 					<div
 						ref={ this.setVideoEmbedRef }
 						className="reader-featured-video__video"
 						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
-					/> }
+					/>
+				) }
 			</div>
 		);
 		/* eslint-enable-line react/no-danger */

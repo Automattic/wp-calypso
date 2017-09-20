@@ -58,11 +58,11 @@ const StatsNavigation = props => {
 	}
 
 	const ActivityTab =
-		config.isEnabled( 'jetpack/activity-log' ) && isJetpack && hasPaidPlan
-			? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
-					{ sectionTitles.activity }
-				</NavItem>
-			: null;
+		config.isEnabled( 'jetpack/activity-log' ) && isJetpack && hasPaidPlan ? (
+			<NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+				{ sectionTitles.activity }
+			</NavItem>
+		) : null;
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>

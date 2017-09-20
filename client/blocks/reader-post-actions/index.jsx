@@ -53,7 +53,7 @@ const ReaderPostActions = props => {
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<ul className={ listClassnames }>
-			{ showVisit &&
+			{ showVisit && (
 				<li className="reader-post-actions__item reader-post-actions__visit">
 					<ReaderVisitLink
 						href={ visitUrl || post.URL }
@@ -62,10 +62,11 @@ const ReaderPostActions = props => {
 					>
 						{ translate( 'Visit' ) }
 					</ReaderVisitLink>
-				</li> }
+				</li>
+			) }
 			{ showEdit &&
-				site &&
-				userCan( 'edit_post', post ) &&
+			site &&
+			userCan( 'edit_post', post ) && (
 				<li className="reader-post-actions__item">
 					<PostEditButton
 						post={ post }
@@ -73,12 +74,14 @@ const ReaderPostActions = props => {
 						onClick={ onEditClick }
 						iconSize={ iconSize }
 					/>
-				</li> }
-			{ shouldShowShare( post ) &&
+				</li>
+			) }
+			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
-				</li> }
-			{ shouldShowComments( post ) &&
+				</li>
+			) }
+			{ shouldShowComments( post ) && (
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
@@ -87,8 +90,9 @@ const ReaderPostActions = props => {
 						tagName="div"
 						size={ iconSize }
 					/>
-				</li> }
-			{ shouldShowLikes( post ) &&
+				</li>
+			) }
+			{ shouldShowLikes( post ) && (
 				<li className="reader-post-actions__item">
 					<LikeButton
 						key="like-button"
@@ -102,15 +106,17 @@ const ReaderPostActions = props => {
 						iconSize={ iconSize }
 						showZeroCount={ false }
 					/>
-				</li> }
-			{ showMenu &&
+				</li>
+			) }
+			{ showMenu && (
 				<li className="reader-post-actions__item">
 					<ReaderPostOptionsMenu
 						className="ignore-click"
 						showFollow={ showMenuFollow }
 						post={ post }
 					/>
-				</li> }
+				</li>
+			) }
 		</ul>
 	);
 	/* eslint-enable react/jsx-no-target-blank */

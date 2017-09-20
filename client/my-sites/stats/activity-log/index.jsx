@@ -113,7 +113,10 @@ class ActivityLog extends Component {
 		}
 
 		if ( null !== gmtOffset ) {
-			return moment.utc( startDate ).subtract( gmtOffset, 'hours' ).utcOffset( gmtOffset );
+			return moment
+				.utc( startDate )
+				.subtract( gmtOffset, 'hours' )
+				.utcOffset( gmtOffset );
 		}
 
 		return moment.utc( startDate );
@@ -206,20 +209,22 @@ class ActivityLog extends Component {
 			return (
 				<div>
 					<QueryActivityLog siteId={ siteId } />
-					{ errorCode
-						? <ErrorBanner
-								errorCode={ errorCode }
-								failureReason={ failureReason }
-								requestRestore={ this.handleRequestRestore }
-								siteId={ siteId }
-								siteTitle={ siteTitle }
-								timestamp={ timestamp }
-							/>
-						: <SuccessBanner
-								applySiteOffset={ this.applySiteOffset }
-								siteId={ siteId }
-								timestamp={ timestamp }
-							/> }
+					{ errorCode ? (
+						<ErrorBanner
+							errorCode={ errorCode }
+							failureReason={ failureReason }
+							requestRestore={ this.handleRequestRestore }
+							siteId={ siteId }
+							siteTitle={ siteTitle }
+							timestamp={ timestamp }
+						/>
+					) : (
+						<SuccessBanner
+							applySiteOffset={ this.applySiteOffset }
+							siteId={ siteId }
+							timestamp={ timestamp }
+						/>
+					) }
 				</div>
 			);
 		}
@@ -290,17 +295,25 @@ class ActivityLog extends Component {
 
 		const disableRestore = this.isRestoreInProgress();
 		const logsGroupedByDay = groupBy( logs, log =>
-			this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
+			this.applySiteOffset( moment.utc( log.activityTs ) )
+				.endOf( 'day' )
+				.valueOf()
 		);
 		const activityDays = [];
 
 		// loop backwards through each day in the month
 		for (
 			const m = moment.min(
-					startMoment.clone().endOf( 'month' ).startOf( 'day' ),
+					startMoment
+						.clone()
+						.endOf( 'month' )
+						.startOf( 'day' ),
 					this.applySiteOffset( moment.utc() ).startOf( 'day' )
 				),
-				startOfMonth = startMoment.clone().startOf( 'month' ).valueOf();
+				startOfMonth = startMoment
+					.clone()
+					.startOf( 'month' )
+					.valueOf();
 			startOfMonth <= m.valueOf();
 			m.subtract( 1, 'day' )
 		) {
@@ -320,11 +333,7 @@ class ActivityLog extends Component {
 			);
 		}
 
-		return (
-			<section className="activity-log__wrapper">
-				{ activityDays }
-			</section>
-		);
+		return <section className="activity-log__wrapper">{ activityDays }</section>;
 	}
 
 	renderMonthNavigation( position ) {

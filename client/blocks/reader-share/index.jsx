@@ -191,7 +191,7 @@ class ReaderShare extends React.Component {
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
 				</span>,
-				this.state.showingMenu &&
+				this.state.showingMenu && (
 					<ReaderPopoverMenu
 						key="menu"
 						context={ this.refs && this.refs.shareButton }
@@ -219,7 +219,7 @@ class ReaderShare extends React.Component {
 							<SocialLogo icon="twitter" />
 							<span>Twitter</span>
 						</PopoverMenuItem>
-						{ this.props.hasSites &&
+						{ this.props.hasSites && (
 							<SiteSelector
 								className="reader-share__site-selector"
 								siteBasePath="/post"
@@ -228,8 +228,10 @@ class ReaderShare extends React.Component {
 								indicator={ false }
 								autoFocus={ false }
 								groups={ true }
-							/> }
-					</ReaderPopoverMenu>,
+							/>
+						) }
+					</ReaderPopoverMenu>
+				),
 			]
 		);
 	}

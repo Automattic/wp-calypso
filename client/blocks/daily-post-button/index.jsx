@@ -130,12 +130,7 @@ export class DailyPostButton extends React.Component {
 		return (
 			<SitesPopover
 				key="menu"
-				header={
-					<div>
-						{' '}
-						{ translate( 'Post on' ) }{' '}
-					</div>
-				}
+				header={ <div> { translate( 'Post on' ) } </div> }
 				context={ this.refs && this.refs.dailyPostButton }
 				visible={ this.state.showingMenu }
 				groups={ true }
@@ -170,9 +165,7 @@ export class DailyPostButton extends React.Component {
 			[
 				<Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
 					<Gridicon icon="create" />
-					<span>
-						{ translate( 'Post about %(title)s', { args: { title } } ) }{' '}
-					</span>
+					<span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
 				</Button>,
 				this.state.showingMenu ? this.renderSitesPopover() : null,
 			]

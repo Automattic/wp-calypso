@@ -109,8 +109,8 @@ describe( 'fromApi', () => {
 
 	context( 'processItem', () => {
 		it( 'should process an item', () => {
-			expect( processItem( VALID_API_ITEM ) ).to.be
-				.an( 'object' )
+			expect( processItem( VALID_API_ITEM ) )
+				.to.be.an( 'object' )
 				.that.has.keys( [
 					'activityDate',
 					'activityGroup',

@@ -87,20 +87,17 @@ const ReaderAvatar = ( {
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
 
-	const siteIconElement =
-		hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const avatarElement =
-		( hasAvatar || showPlaceholder ) &&
-		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
+	const siteIconElement = hasSiteIcon && (
+		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
+	);
+	const avatarElement = ( hasAvatar || showPlaceholder ) && (
+		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
+	);
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
 		<div className={ classes } onClick={ onClick } aria-hidden="true">
-			{ siteUrl
-				? <a href={ siteUrl }>
-						{ iconElements }
-					</a>
-				: iconElements }
+			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
 };
