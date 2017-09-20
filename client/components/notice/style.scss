@@ -14,62 +14,62 @@
 
 	// Success!
 	&.is-success {
-		background: lighten( $alert-green, 25 );
-		color: darken( $alert-green, 30 );
+		background: $alert-green;
+		color: darken( $alert-green, 35 );
 
 		.notice__text a {
-			color: darken( $alert-green, 30 );
+			color: darken( $alert-green, 38 );
 		}
 
 		.notice__dismiss {
-			color: darken( $alert-green, 30 );
-			overflow: hidden;
+			color: darken( $alert-green, 35 );
 		}
 	}
 
 	// Warning
 	&.is-warning {
-		background: lighten( $alert-yellow, 15 );
-		color: darken( $alert-yellow, 40 );
+		background: $alert-yellow;
+		color: darken( $alert-yellow, 45 );
 
 		.notice__text a {
-			color: darken( $alert-yellow, 40 );
+			color: darken( $alert-yellow, 49 );
 		}
 
 		.notice__dismiss {
-			color: darken( $alert-yellow, 40 );
-			overflow: hidden;
+			color: darken( $alert-yellow, 45 );
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
-		background: lighten( $alert-red, 10 );
-		color: darken( $alert-red, 40 );
+		background: $alert-red;
+		color: darken( $alert-red, 48 );
 
 		.notice__text a {
-			color: darken( $alert-red, 40 );
+			color: darken( $alert-red, 51 );
 		}
 
 		.notice__dismiss {
-			color: darken( $alert-red, 40 );
-			overflow: hidden;
+			color: darken( $alert-red, 48 );
 		}
 	}
 
 	// General notice
 	&.is-info {
 		background: $blue-wordpress;
-		color: $white;
+		color: darken( $blue-wordpress, 32 );
 
 		.notice__text a {
-			color: $white;
+			color: darken( $blue-wordpress, 35 );
 		}
 
 		.notice__dismiss {
-			color: $white;
-			overflow: hidden;
+			color: darken( $blue-wordpress, 32 );
 		}
+	}
+
+	.notice__dismiss {
+		overflow: hidden;
 	}
 
 	&.is-success,
