@@ -26,7 +26,7 @@ const demoThemes = [ {
 } ];
 
 export default class extends React.Component {
-    static displayName = 'ThemesListExample';
+	static displayName = 'ThemesListExample';
 
 	getActionLabel = theme => {
 		return theme.actionLabel;

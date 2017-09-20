@@ -88,7 +88,7 @@ export const ThemesList = createReactClass( {
 		} );
 	},
 
-    // Invisible trailing items keep all elements same width in flexbox grid.
+	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
 		return times( NUM_SPACERS, function( i ) {
