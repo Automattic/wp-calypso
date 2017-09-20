@@ -83,8 +83,6 @@ export function loadSectionCSS( context, next ) {
 export function setUpLocale( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
-	// the lang query parameter has to have a higher priority than the user defined language
-	// because the server might use it to set the rtl version of the global stylesheet (style-rtl.css).
 	if ( context.params.lang ) {
 		context.lang = context.params.lang;
 		context.isRTL = Boolean( getLanguage( context.lang ).rtl );
