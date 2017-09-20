@@ -12,7 +12,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Steps } from '../constants';
+import { SetupPath, Steps } from '../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
@@ -70,7 +70,6 @@ class PageSetup extends Component {
 		createPages: PropTypes.func.isRequired,
 		createPostJob: PropTypes.bool,
 		goToNextStep: PropTypes.bool,
-		goToStep: PropTypes.func.isRequired,
 		handleSubmit: PropTypes.func,
 		isCreating: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -113,8 +112,6 @@ class PageSetup extends Component {
 		this.props.createPages( siteId, titles );
 	}
 
-	skip = event => this.props.goToStep( event, Steps.CONFIRMATION );
-
 	render() {
 		const {
 			createDashboard,
@@ -122,6 +119,7 @@ class PageSetup extends Component {
 			createPostJob,
 			handleSubmit,
 			isCreating,
+			slug,
 			translate,
 		} = this.props;
 
@@ -208,8 +206,7 @@ class PageSetup extends Component {
 				<CompactCard>
 					<a
 						className="page-setup__skip"
-						href="#"
-						onClick={ this.skip }>
+						href={ slug && `${ SetupPath }/${ slug }/${ Steps.CONFIRMATION }` }>
 						{ translate( 'Skip this step' ) }
 					</a>
 					<Button primary

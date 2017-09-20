@@ -3,29 +3,27 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Steps } from '../constants';
+import { SetupPath, Steps } from '../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class Intro extends Component {
 	static propTypes = {
-		goToStep: PropTypes.func.isRequired,
+		slug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
-	skipSetup = event => this.props.goToStep( event, Steps.CONFIRMATION );
-
-	startSetup = event => this.props.goToStep( event, Steps.PAGE_SETUP );
-
 	render() {
-		const { translate } = this.props;
+		const { slug, translate } = this.props;
 
 		return (
 			<div>
@@ -67,13 +65,12 @@ class Intro extends Component {
 				<CompactCard>
 					<a
 						className="intro__skip-setup"
-						href="#"
-						onClick={ this.skipSetup }>
+						href={ slug && `${ SetupPath }/${ slug }/${ Steps.CONFIRMATION }` }>
 						{ translate( 'Skip setup. I will set up the plugin manually.' ) }
 					</a>
 					<Button primary
 						className="intro__start-setup"
-						onClick={ this.startSetup }>
+						href={ slug && `${ SetupPath }/${ slug }/${ Steps.PAGE_SETUP }` }>
 						{ translate( 'Start setup' ) }
 					</Button>
 				</CompactCard>
@@ -82,4 +79,6 @@ class Intro extends Component {
 	}
 }
 
-export default localize( Intro );
+const mapStateToProps = state => ( { slug: getSelectedSiteSlug( state ) } );
+
+export default connect( mapStateToProps )( localize( Intro ) );

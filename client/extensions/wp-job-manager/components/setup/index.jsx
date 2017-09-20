@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,16 +25,11 @@ class SetupWizard extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	goToStep = ( event, step ) => {
-		event.preventDefault();
-		page( `/extensions/wp-job-manager/setup/${ this.props.slug }/${ step }` );
-	}
-
 	render() {
 		const steps = [ Steps.INTRO, Steps.PAGE_SETUP, Steps.CONFIRMATION ];
 		const components = {
-			[ Steps.INTRO ]: <Intro goToStep={ this.goToStep } />,
-			[ Steps.PAGE_SETUP ]: <PageSetup goToStep={ this.goToStep } />,
+			[ Steps.INTRO ]: <Intro />,
+			[ Steps.PAGE_SETUP ]: <PageSetup />,
 			[ Steps.CONFIRMATION ]: <Confirmation />,
 		};
 		const {
