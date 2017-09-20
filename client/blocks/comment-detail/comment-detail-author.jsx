@@ -18,6 +18,8 @@ import { urlToDomainAndPath } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { removeNotice, successNotice } from 'state/notices/actions';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -26,13 +28,16 @@ export class CommentDetailAuthor extends Component {
 		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
+		authorIsBlocked: PropTypes.bool,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
-		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
+		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
+		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
+		updateBlacklist: PropTypes.func,
 	};
 
 	state = {
@@ -54,6 +59,47 @@ export class CommentDetailAuthor extends Component {
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
+	isAuthorBlacklisted = () => ( !! this.props.authorEmail && !! this.props.siteBlacklist )
+		? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
+		: false;
+
+	toggleBlockUser = () => {
+		const {
+			authorEmail,
+			authorIsBlocked,
+			siteBlacklist,
+			commentId,
+			translate,
+			updateBlacklist,
+		} = this.props;
+
+		const noticeOptions = {
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+		};
+
+		if ( authorIsBlocked ) {
+			this.props.successNotice(
+				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
+				noticeOptions,
+			);
+
+			return updateBlacklist( siteBlacklist.split( '\n' ).filter( item => item !== authorEmail ).join( '\n' ) );
+		}
+
+		this.props.successNotice(
+			translate( 'User %(email)s blocked.', { args: { email: authorEmail } } ),
+			noticeOptions,
+		);
+
+		return updateBlacklist(
+			!! siteBlacklist
+				? siteBlacklist + '\n' + authorEmail
+				: authorEmail
+		);
+	}
+
 	authorMoreInfo() {
 		const {
 			authorDisplayName,
@@ -62,9 +108,9 @@ export class CommentDetailAuthor extends Component {
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
-			blockUser,
 			translate,
 		} = this.props;
+
 		return (
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
@@ -110,7 +156,7 @@ export class CommentDetailAuthor extends Component {
 							'comment-detail__author-more-element comment-detail__author-more-element-block-user',
 							{ 'is-blocked': authorIsBlocked }
 						) }
-						onClick={ blockUser }
+						onClick={ this.toggleBlockUser }
 					>
 						<Gridicon icon="block" />
 						<span>{ authorIsBlocked
@@ -180,4 +226,12 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
 } );
 
-export default connect( mapStateToProps )( localize( CommentDetailAuthor ) );
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+	updateBlacklist: blacklist_keys => dispatch(
+		saveSiteSettings( siteId, { blacklist_keys } )
+	),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );
