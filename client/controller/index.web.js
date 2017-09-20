@@ -62,12 +62,6 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
 }
 
-export function clientRouterFactory( globalMiddlewares ) {
-	return function( route, ...routeMiddlewares ) {
-		page( route, ...routeMiddlewares, ...globalMiddlewares, render );
-	};
-}
-
 export function redirectLoggedIn( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 

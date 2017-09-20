@@ -50,7 +50,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		if isRTL
 			link(rel='stylesheet', href=urls['style-rtl.css'])
 			if sectionCssRtl
-				link(rel='stylesheet', href=sectionCssRtl)
+				link(rel='stylesheet', id='section-css', href=sectionCssRtl)
 		else
 			if 'development' === env || isDebug
 				link(rel='stylesheet', href=urls['style-debug.css'])
@@ -58,7 +58,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 			if sectionCss
-				link(rel='stylesheet', href=sectionCss)
+				link(rel='stylesheet', id='section-css', href=sectionCss)
 
 	body( class=bodyClasses )
 		if renderedLayout
