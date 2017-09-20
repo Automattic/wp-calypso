@@ -33,16 +33,17 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 
 /**
  * Prepares a request action that will return the body and headers.
- * The resulting data will be in the form of `{ data: { body: { API data }, headers: { API response headers } } }`
+ * The resulting data will be in the form of `{ data: { status: <code>, body: { API data }, headers: { API response headers } } }`
  * @param {String} method HTTP Request Method
  * @param {String} path The WC API path to make a request to (after /wc/v#)
  * @param {Number} siteId Site ID to make the request to
  * @param {Object} body HTTP Body for POST and PUT Requests
  * @param {Object} action The original requesting action
+ * @param {String} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
  * @return {Object} WPCOM_HTTP_REQUEST Action
  */
-const _requestWithHeaders = ( method, path, siteId, body, action ) => {
-	return _request( method, path + '&_envelope', siteId, body, action );
+const _requestWithHeaders = ( method, path, siteId, body, action, namespace ) => {
+	return _request( method, path + '&_envelope', siteId, body, action, namespace );
 };
 
 /**
@@ -66,9 +67,9 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	/**
 	 * Sends a GET request to the API that will return with headers
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json-/wc/v#/" prefix
-	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { body: { API data }, headers: { API response headers } }`
+	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { status: <code>, body: { API data }, headers: { API response headers } }`
 	 */
-	getWithHeaders: ( path ) => _requestWithHeaders( 'GET', path, siteId, null, action ),
+	getWithHeaders: ( path ) => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API
