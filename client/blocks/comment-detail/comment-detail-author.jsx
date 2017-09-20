@@ -20,6 +20,7 @@ import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
+import { canCurrentUser } from 'state/selectors';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -35,6 +36,7 @@ export class CommentDetailAuthor extends Component {
 		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
+		showBlockUser: PropTypes.bool,
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		updateBlacklist: PropTypes.func,
@@ -108,6 +110,7 @@ export class CommentDetailAuthor extends Component {
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
+			showBlockUser,
 			translate,
 		} = this.props;
 
@@ -150,21 +153,23 @@ export class CommentDetailAuthor extends Component {
 						</span>
 					</div>
 				</div>
-				<div className="comment-detail__author-more-actions">
-					<a
-						className={ classNames(
-							'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-							{ 'is-blocked': authorIsBlocked }
-						) }
-						onClick={ this.toggleBlockUser }
-					>
-						<Gridicon icon="block" />
-						<span>{ authorIsBlocked
-							? translate( 'Unblock user' )
-							: translate( 'Block user' )
-						}</span>
-					</a>
-				</div>
+				{ showBlockUser &&
+					<div className="comment-detail__author-more-actions">
+						<a
+							className={ classNames(
+								'comment-detail__author-more-element comment-detail__author-more-element-block-user',
+								{ 'is-blocked': authorIsBlocked }
+							) }
+							onClick={ this.toggleBlockUser }
+						>
+							<Gridicon icon="block" />
+							<span>{ authorIsBlocked
+								? translate( 'Unblock user' )
+								: translate( 'Block user' )
+							}</span>
+						</a>
+					</div>
+				}
 			</div>
 		);
 	}
@@ -223,6 +228,7 @@ export class CommentDetailAuthor extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
+	showBlockUser: canCurrentUser( state, siteId, 'manage_options' ),
 	site: getSite( state, siteId ),
 } );
 
