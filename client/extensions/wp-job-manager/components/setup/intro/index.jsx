@@ -74,7 +74,7 @@ class Intro extends Component {
 					<Button primary
 						className="intro__start-setup"
 						onClick={ this.startSetup }>
-						{ translate( 'Start Setup' ) }
+						{ translate( 'Start setup' ) }
 					</Button>
 				</CompactCard>
 			</div>
