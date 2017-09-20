@@ -1188,20 +1188,15 @@ export const PostEditor = React.createClass( {
 		 * The elements have hardcoded style that makes them invisible. This is done to avoid seeing
 		 * random content flickering in the editor when switching between modes.
 		 */
+		const markerElementStyle = 'display:inline-block;width:0;overflow:hidden;line-height:0px';
 		const startElement = document.createElement( 'span' );
+		startElement.setAttribute( 'style', markerElementStyle );
 		startElement.className = 'mce_SELRES_start';
-		startElement.style.display = 'inline-block';
-		startElement.style.width = 0;
-		startElement.style.overflow = 'hidden';
-		startElement.style.lineHeight = '0px';
 		startElement.innerHTML = selectionID;
 
 		const endElement = document.createElement( 'span' );
+		endElement.setAttribute( 'style', markerElementStyle );
 		endElement.className = 'mce_SELRES_end';
-		endElement.style.display = 'inline-block';
-		endElement.style.width = 0;
-		endElement.style.overflow = 'hidden';
-		endElement.style.lineHeight = '0px';
 		endElement.innerHTML = selectionID;
 
 		/**
