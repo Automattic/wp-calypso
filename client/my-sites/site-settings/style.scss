@@ -166,11 +166,14 @@
 	}
 
 	fieldset.site-icon-setting {
+		padding-bottom: 16px;
+
 		@include breakpoint( ">660px" ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
 			padding-right: 24px;
+			padding-bottom: 24px;
 		}
 	}
 
@@ -274,10 +277,14 @@
 }
 
 .site-settings__site-options {
-	padding-bottom: 24px;
-
 	@include breakpoint( ">660px" ) {
 		display: flex;
+	}
+
+	&:last-child {
+		.site-icon-setting {
+			padding-bottom: 0;
+		}
 	}
 }
 
