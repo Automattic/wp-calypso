@@ -19,7 +19,7 @@ import { getSite } from 'state/sites/selectors';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
+import { successNotice } from 'state/notices/actions';
 import { canCurrentUser } from 'state/selectors';
 
 export class CommentDetailAuthor extends Component {
@@ -60,10 +60,6 @@ export class CommentDetailAuthor extends Component {
 		timezone( this.props.site ),
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
-
-	isAuthorBlacklisted = () => ( !! this.props.authorEmail && !! this.props.siteBlacklist )
-		? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
-		: false;
 
 	toggleBlockUser = () => {
 		const {
@@ -233,11 +229,8 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: blacklist_keys => dispatch(
-		saveSiteSettings( siteId, { blacklist_keys } )
-	),
+	updateBlacklist: blacklist_keys => dispatch( saveSiteSettings( siteId, { blacklist_keys } ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );
