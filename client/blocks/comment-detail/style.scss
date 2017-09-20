@@ -377,6 +377,10 @@
 
 .comment-detail__author {
 	padding: 16px 0 0;
+
+	&.is-expanded {
+		padding: 16px 0;
+	}
 }
 
 .comment-detail__author-preview {

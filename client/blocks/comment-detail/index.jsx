@@ -369,7 +369,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
+		authorIp: get( comment, 'author.ip_address' ),
 		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
 		authorName: get( comment, 'author.name' ),
 		authorUrl: get( comment, 'author.URL', '' ),

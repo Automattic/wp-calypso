@@ -32,12 +32,7 @@ export class CommentDetailAuthor extends Component {
 		commentDate: PropTypes.string,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
-		showAuthorInfo: PropTypes.bool,
 		siteId: PropTypes.number,
-	};
-
-	static defaultProps = {
-		showAuthorInfo: false,
 	};
 
 	state = {
@@ -60,10 +55,6 @@ export class CommentDetailAuthor extends Component {
 	).format( 'll LT' );
 
 	authorMoreInfo() {
-		if ( ! this.props.showAuthorInfo ) {
-			return null;
-		}
-
 		const {
 			authorDisplayName,
 			authorEmail,
@@ -138,7 +129,6 @@ export class CommentDetailAuthor extends Component {
 			authorUrl,
 			commentStatus,
 			commentUrl,
-			showAuthorInfo,
 			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
@@ -176,12 +166,9 @@ export class CommentDetailAuthor extends Component {
 							{ translate( 'Pending' ) }
 						</div>
 					}
-					{
-						showAuthorInfo &&
-						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
-							<Gridicon icon="info-outline" />
-						</a>
-					}
+					<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
+						<Gridicon icon="info-outline" />
+					</a>
 				</div>
 				{ this.authorMoreInfo() }
 			</div>
