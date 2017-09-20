@@ -290,6 +290,8 @@ function setUpLoggedInRoute( req, res, next ) {
 			const end = new Date().getTime() - start;
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
+			// context.user is still used at in `render` to check if the user is bootstrapped
+			// TODO: remove this and update to using a redux selector
 			context.user = data;
 
 			context.store.dispatch( receiveUser( data ) );
