@@ -70,6 +70,7 @@ class PageSetup extends Component {
 		createPages: PropTypes.func.isRequired,
 		createPostJob: PropTypes.bool,
 		goToNextStep: PropTypes.bool,
+		goToStep: PropTypes.func.isRequired,
 		handleSubmit: PropTypes.func,
 		isCreating: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -111,6 +112,8 @@ class PageSetup extends Component {
 
 		this.props.createPages( siteId, titles );
 	}
+
+	skip = event => this.props.goToStep( event, Steps.CONFIRMATION );
 
 	render() {
 		const {
@@ -205,7 +208,8 @@ class PageSetup extends Component {
 				<CompactCard>
 					<a
 						className="page-setup__skip"
-						href="#">
+						href="#"
+						onClick={ this.skip }>
 						{ translate( 'Skip this step' ) }
 					</a>
 					<Button primary

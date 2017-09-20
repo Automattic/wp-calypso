@@ -35,7 +35,7 @@ class SetupWizard extends Component {
 		const steps = [ Steps.INTRO, Steps.PAGE_SETUP, Steps.CONFIRMATION ];
 		const components = {
 			[ Steps.INTRO ]: <Intro goToStep={ this.goToStep } />,
-			[ Steps.PAGE_SETUP ]: <PageSetup />,
+			[ Steps.PAGE_SETUP ]: <PageSetup goToStep={ this.goToStep } />,
 			[ Steps.CONFIRMATION ]: <Confirmation />,
 		};
 		const {
