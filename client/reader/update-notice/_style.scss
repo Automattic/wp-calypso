@@ -2,7 +2,7 @@
 // Slides in when there are new posts available
 .reader-update-notice {
 	position: fixed;
-		top: ( 47px + 8px );
+		top: ( 47px + 8px + 50 );
 		right: 16px;
 	background: rgba( $orange-jazzy, 0.96 );
 	padding: 6px 18px 6px 34px;

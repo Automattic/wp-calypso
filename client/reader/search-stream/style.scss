@@ -17,8 +17,8 @@
 	background-color: $white;
 	position: fixed;
 	top: 0;
-	margin-top: 47px; // masterbar is exactly 47px
-	padding-top: 30px;
+	margin-top: 98px; // masterbar is exactly 47px
+	padding-top: 22px;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 }
@@ -78,6 +78,10 @@
 .is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results.is-post-results .reader__content {
 	flex-flow: inherit;
 	flex-direction: column; // So post results are stacked
+}
+
+.is-reader-page .search-stream.search-stream__with-sites.vertical-nav {
+	margin-top: 100px;
 }
 
 .is-reader-page .search-stream__recommendation-list-item {

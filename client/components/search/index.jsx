@@ -384,6 +384,7 @@ const Search = React.createClass( {
 					/>
 					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
+				{ this.props.children }
 				{ this.closeButton() }
 			</div>
 		);

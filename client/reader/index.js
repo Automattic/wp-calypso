@@ -18,7 +18,7 @@ import {
 	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
-	sidebar,
+	unmountSidebar,
 	updateLastRoute,
 } from './controller';
 import config from 'config';
@@ -30,7 +30,7 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
+		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, unmountSidebar, following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
@@ -49,7 +49,7 @@ export default function() {
 			'/read/feeds/:feed_id',
 			updateLastRoute,
 			prettyRedirects,
-			sidebar,
+			unmountSidebar,
 			feedDiscovery,
 			feedListing
 		);
@@ -57,7 +57,7 @@ export default function() {
 		// Blog stream
 		page( '/read/blog/id/:blog_id', legacyRedirects );
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
-		page( '/read/blogs/:blog_id', updateLastRoute, prettyRedirects, sidebar, blogListing );
+		page( '/read/blogs/:blog_id', updateLastRoute, prettyRedirects, unmountSidebar, blogListing );
 
 		// Old full post view
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
@@ -65,5 +65,5 @@ export default function() {
 	}
 
 	// Automattic Employee Posts
-	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C );
+	page( '/read/a8c', updateLastRoute, unmountSidebar, forceTeamA8C, readA8C );
 }

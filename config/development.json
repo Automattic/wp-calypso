@@ -139,6 +139,7 @@
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/tags-with-elasticsearch": false,
+		"reader/vertical-nav": true,
 		"resume-editing": true,
 		"republicize": true,
 		"restore-last-location": false,
