@@ -17,6 +17,7 @@ import {
 	normalizePostForEditing,
 	normalizePostForDisplay
 } from './utils';
+import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -431,7 +432,7 @@ export function getEditedPostSlug( state, siteId, postId ) {
 
 	// when post is published, return the slug
 	if ( isPostPublished( state, siteId, postId ) ) {
-		return decodeURI( postSlug );
+		return decodeURIIfValid( postSlug );
 	}
 
 	// only return suggested_slug if slug has not been edited
