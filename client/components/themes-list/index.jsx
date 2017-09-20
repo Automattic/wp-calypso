@@ -19,6 +19,7 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 /**
  * Component
  */
+/* eslint-disable react/prefer-es6-class */
 export const ThemesList = createReactClass( {
 	displayName: 'ThemesList',
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
