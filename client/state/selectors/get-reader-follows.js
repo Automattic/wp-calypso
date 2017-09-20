@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  *
@@ -22,12 +23,19 @@ import { getFeed } from 'state/reader/feeds/selectors';
 const getReaderFollows = createSelector(
 	state => {
 		const items = reject( values( state.reader.follows.items ), 'error' );
+
 		// this is important. don't mutate the original items.
-		return items.map( item => ( {
+		const withSiteAndFeed = items.map( item => ( {
 			...item,
 			site: getSite( state, item.blog_ID ),
 			feed: getFeed( state, item.feed_ID ),
 		} ) );
+
+		const withoutErrors = reject(
+			withSiteAndFeed,
+			item => ( item.site && item.site.is_error ) || ( item.feed && item.feed.is_error )
+		);
+		return withoutErrors;
 	},
 	state => [
 		state.reader.follows.items,
