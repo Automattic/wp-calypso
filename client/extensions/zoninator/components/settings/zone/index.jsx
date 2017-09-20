@@ -85,7 +85,13 @@ class Zone extends Component {
 	}
 
 	render() {
-		const { isRequesting, siteId, siteSlug, translate, zoneId } = this.props;
+		const { isRequesting, siteId, siteSlug, translate, zone, zoneId } = this.props;
+
+		const deleteButton = (
+			<Button compact primary scary onClick={ this.showDeleteDialog }>
+				{ translate( 'Delete' ) }
+			</Button>
+		);
 
 		return (
 			<div>
@@ -93,7 +99,7 @@ class Zone extends Component {
 
 				<HeaderCake
 					backHref={ `${ settingsPath }/${ siteSlug }` }
-					actionButton={ <Button compact primary scary onClick={ this.showDeleteDialog }>{ translate( 'Delete' ) }</Button> } >
+					actionButton={ zone && deleteButton } >
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
