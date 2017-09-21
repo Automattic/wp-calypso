@@ -40,7 +40,7 @@
 		width: 100%;
 	}
 
-	foldable-card.card {
+	.foldable-card.card {
 		@include clear-fix;
 		position: relative;
 		transition: margin .15s linear;
