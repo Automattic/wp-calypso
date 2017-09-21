@@ -53,6 +53,16 @@
 	font-weight: 600;
 }
 
+.activity-log-day__rewind-button {
+	em {
+		font-style: normal;
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
+}
+
 .activity-log-day__events {
 	font-size: 12px;
 	color: $gray;
@@ -75,3 +85,4 @@
 		margin-top: .2em;
 	}
 }
+
