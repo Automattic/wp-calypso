@@ -66,7 +66,12 @@ describe( 'uploadComplete', () => {
 			items: {
 				[ siteId ]: site,
 			}
-		}
+		},
+		currentUser: {
+			capabilities: {
+				edit_theme_options: true,
+			},
+		},
 	} );
 
 	beforeEach( () => {
