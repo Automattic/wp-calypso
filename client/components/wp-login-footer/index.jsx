@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import JetpackColophon from 'components/jetpack-colophon';
 
 class LoginFooter extends Component {
 	render() {
@@ -19,13 +20,13 @@ class LoginFooter extends Component {
 		const isOauthLogin = !! this.props.oauth2Client;
 		return (
 			<div
-				className={ classNames( 'wp-login__footer', {
-					'wp-login__footer--oauth': isOauthLogin,
-					'wp-login__footer--jetpack': ! isOauthLogin,
+				className={ classNames( 'wp-login-footer', {
+					'wp-login-footer__oauth': isOauthLogin,
+					'wp-login-footer__jetpack': ! isOauthLogin,
 				} ) }
 			>
 				{ isOauthLogin
-					? <div className="wp-login__footer-links">
+					? <div className="wp-login-footer__links">
 							<a
 								href="https://wordpress.com/about/"
 								rel="noopener noreferrer"
@@ -51,7 +52,7 @@ class LoginFooter extends Component {
 								{ translate( 'Terms of Service' ) }
 							</a>
 						</div>
-					: <img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" /> }
+					: <JetpackColophon /> }
 			</div>
 		);
 	}

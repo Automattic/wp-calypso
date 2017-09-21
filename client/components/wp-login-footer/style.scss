@@ -1,0 +1,42 @@
+$image-height: 47px;
+
+.wp-login-footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: $image-height;
+	line-height: $image-height;
+	width: 100%;
+
+	a {
+		color: darken( $gray, 20% );
+		text-decoration: none;
+	}
+}
+
+.wp-login-footer__jetpack {
+	background: #fff;
+	border-top: solid 1px #f9fbfc;
+	text-align: center;
+
+	.jetpack-colophon {
+		color: $green-jetpack;
+		display: block;
+		margin: 0 auto;
+
+		.jetpack-colophon__power {
+			.jetpack-logo {
+				vertical-align: middle;
+			}
+		}
+	}
+}
+
+.wp-login-footer__oauth {
+	display: flex;
+	justify-content: center;
+
+	a {
+		padding: 0 1em;
+	}
+}
