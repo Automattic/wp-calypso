@@ -49,16 +49,17 @@ function loadCSS( cssUrl, elementId = null ) {
 
 	if ( link ) {
 		link.href = cssUrl;
-	} else {
-		link = document.createElement( 'link' );
-		link.setAttribute( 'rel', 'stylesheet' );
-		link.setAttribute( 'type', 'text/css' );
-		link.setAttribute( 'href', cssUrl );
-		if ( elementId ) {
-			link.setAttribute( 'id', elementId );
-		}
-		document.getElementsByTagName( 'head' )[ 0 ].appendChild( link );
+		return;
 	}
+
+	link = Object.assign( document.createElement( 'link' ), {
+		rel: 'stylesheet',
+		type: 'text/css',
+		href: cssUrl,
+		... elementId && { id: elementId }
+	} );
+
+	document.head.appendChild( link );
 }
 
 export function setSection( section ) {
