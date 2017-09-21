@@ -227,12 +227,11 @@ counter++;
 ### Globals
 
 Globals should almost never be used. If they are used or you need to reference a pre-existing global do so via `window`.
-Because some of our code runs on the server, always check for the presence of `window` before making reference to it.
 
 ```js
 let userId;
-if ( isPlainObject( window ) ) {
-	userId = window.currentUser.ID;
+if ( typeof window !== 'undefined' ) {
+	userId = get( window, 'currentUser.ID' );
 }
 ```
 
@@ -324,6 +323,7 @@ if ( isNil( someValue ) ) {
 ## Type Checks
 
 When checking the type of a value, use one of the following utilities from [Lodash](https://lodash.com/):
+These are the preferred ways of checking the type of a value:
 
 - String: [`isString( value )`](https://lodash.com/docs#isString)
 - Number: [`isNumber( value )`](https://lodash.com/docs#isNumber)
@@ -333,7 +333,11 @@ When checking the type of a value, use one of the following utilities from [Loda
 - undefined: [`isUndefined( value )`](https://lodash.com/docs#isUndefined)
 - undefined or null (either): [`isNil( value )`](https://lodash.com/docs#isNil)
 
-Note that we don't recommend using [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
+As mentioned earlier, you should avoid referencing global values without first validating their presence.
+Calling `isUndefined( someGlobalValue )` would throw a `ReferenceError` if that value doesn't exist.
+Instead, fall back to checking with `typeof window !== 'undefined'` for global values.
+
+Note that we don't recommend using [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types (arrays, regexes and others) test as true for this check.
 
 Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
 
@@ -397,7 +401,15 @@ Note that the `in` operator checks all inherited properties of an object prototy
 'valueOf' in {}; // true
 ```
 
-If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) or Lodash's [`has`](https://lodash.com/docs#has) instead.
+Instead, use [`has`](https://lodash.com/docs#has) or [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
+
+```js
+{}.hasOwnProperty( 'valueOf' ); // false
+has( {}, 'valueOf' ); // false
+```
+
+[`has`](https://lodash.com/docs#has) and [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) are also recommended for testing the presence of an object key using variable input:
+
 
 ```js
 const key = 'someParam';
