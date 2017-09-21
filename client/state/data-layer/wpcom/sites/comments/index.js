@@ -87,12 +87,13 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 };
 
 export const requestComment = ( store, action ) => {
-	const { siteId, commentId } = action;
+	const { siteId, commentId, query } = action;
 	store.dispatch(
 		http( {
 			method: 'GET',
 			path: `/sites/${ siteId }/comments/${ commentId }`,
 			apiVersion: '1.1',
+			query,
 			onSuccess: action,
 			onFailure: action,
 		} )

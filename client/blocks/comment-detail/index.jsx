@@ -298,7 +298,9 @@ export class CommentDetail extends Component {
 				className={ classes }
 				tabIndex="0"
 			>
-				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
+				{ refreshCommentData && (
+					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
+				) }
 
 				{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
