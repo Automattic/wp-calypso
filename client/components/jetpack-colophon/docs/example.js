@@ -10,6 +10,10 @@ import React from 'react';
 import JetpackColophon from 'components/jetpack-colophon';
 
 export default function JetpackColophonExample() {
-	return <JetpackColophon />;
+	return (
+		<div style={ { fontSize: '15px' } }>
+			<JetpackColophon />
+		</div>
+	);
 }
 JetpackColophonExample.displayName = 'JetpackColophonExample';
