@@ -55,5 +55,16 @@ describe( 'reducer', () => {
 
 			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
 		} );
+
+		it( 'should remove an existing active Share panel when toggling on a different Share panel', () => {
+			const existingPostGlobalId = 5;
+			const postGlobalId = 4;
+			const state = postTypeList( { activeSharePanels: [ existingPostGlobalId ] }, {
+				type: POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
+				postGlobalId: postGlobalId,
+			} );
+
+			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
+		} );
 	} );
 } );

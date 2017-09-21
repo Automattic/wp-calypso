@@ -23,7 +23,7 @@ export const postTypeList = ( state = initialState, action ) => {
 			if ( state.activeSharePanels.indexOf( action.postGlobalId ) > -1 ) {
 				return { ...state, activeSharePanels: without( state.activeSharePanels, action.postGlobalId ) };
 			}
-			return { ...state, activeSharePanels: [ ...state.activeSharePanels, action.postGlobalId ] };
+			return { ...state, activeSharePanels: [ action.postGlobalId ] };
 	}
 
 	return state;
