@@ -155,12 +155,18 @@ const MeSidebar = React.createClass( {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="notification-settings"
 						/>
-
 					</ul>
 				</SidebarMenu>
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
 					<ul>
+						<SidebarItem
+							selected={ selected === 'app-preferences' }
+							link={ '/me/app-preferences' }
+							label={ this.translate( 'App Preferences' ) }
+							icon="cog"
+							onNavigate={ this.onNavigate }
+						/>
 						<SidebarItem
 							selected={ selected === 'get-apps' }
 							link={ '/me/get-apps' }
