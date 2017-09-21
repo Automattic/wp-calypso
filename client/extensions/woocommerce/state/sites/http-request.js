@@ -6,6 +6,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 /**
  * Returns a proper WPCOM_HTTP_REQUEST action (http data layer) for dispatching requests
  * in data-layer handlers.
+ * The resulting data will be in the form of `{ data: { API data } }`
  * @param {String} method HTTP Request Method
  * @param {String} path The WC API path to make a request to (after /wc/v#)
  * @param {Number} siteId Site ID to make the request to
@@ -31,6 +32,21 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 };
 
 /**
+ * Prepares a request action that will return the body and headers.
+ * The resulting data will be in the form of `{ data: { status: <code>, body: { API data }, headers: { API response headers } } }`
+ * @param {String} method HTTP Request Method
+ * @param {String} path The WC API path to make a request to (after /wc/v#)
+ * @param {Number} siteId Site ID to make the request to
+ * @param {Object} body HTTP Body for POST and PUT Requests
+ * @param {Object} action The original requesting action
+ * @param {String} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
+ * @return {Object} WPCOM_HTTP_REQUEST Action
+ */
+const _requestWithHeaders = ( method, path, siteId, body, action, namespace ) => {
+	return _request( method, path + '&_envelope', siteId, body, action, namespace );
+};
+
+/**
  * Provides a wrapper over the http data-layer, made specifically for making requests to
  * WooCommerce endpoints without repeating things like /wc/v3.
  * @param {Number} siteId Site ID to make the request to
@@ -44,9 +60,16 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @return {Object} WPCOM_HTTP_REQUEST Action
+	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { API data }`
 	 */
 	get: ( path ) => _request( 'GET', path, siteId, null, action, namespace ),
+
+	/**
+	 * Sends a GET request to the API that will return with headers
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json-/wc/v#/" prefix
+	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { status: <code>, body: { API data }, headers: { API response headers } }`
+	 */
+	getWithHeaders: ( path ) => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API

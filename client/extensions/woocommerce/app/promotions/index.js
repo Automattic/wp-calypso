@@ -2,6 +2,7 @@
  * External depedencies
  */
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { fetchCouponsPage } from 'woocommerce/state/sites/coupons/actions';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -23,6 +25,23 @@ class Promotions extends Component {
 			ID: PropTypes.number,
 		} )
 	};
+
+	componentDidMount() {
+		const { site } = this.props;
+		if ( site && site.ID ) {
+			this.props.fetchCouponsPage( site.ID, 1 );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		const { site } = this.props;
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+		if ( oldSiteId !== newSiteId ) {
+			// TODO: Fill in with current page number.
+			this.props.fetchCouponsPage( newSiteId, 1 );
+		}
+	}
 
 	render() {
 		const { site, className, translate } = this.props;
@@ -49,4 +68,13 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( Promotions ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchCouponsPage,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Promotions ) );
