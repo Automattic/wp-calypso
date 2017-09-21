@@ -505,6 +505,8 @@ a.comment-detail__author-more-element {
 
 .comment-detail__reply {
 	line-height: 0;
+	overflow: hidden;
+	padding: 2px;
 	position: relative;
 
 	textarea {
@@ -516,14 +518,19 @@ a.comment-detail__author-more-element {
 		padding: 12px 70px 12px 16px;
 		position: relative;
 		resize: vertical;
-		transition: min-height .15s linear;
+		transition: min-height .15s linear, padding-left 0.2s ease-in-out;
 		white-space: pre-wrap;
 		word-wrap: break-word;
 
 		&:not( :focus ) {
 			border-color: $white;
+			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;
+
+			&.has-content {
+				padding-right: 70px;
+			}
 		}
 
 		&:focus,
@@ -543,24 +550,38 @@ a.comment-detail__author-more-element {
 		}
 	}
 
+	.gravatar {
+		position: absolute;
+			left: 16px;
+			top: 12px;
+		transition: transform 0.2s ease-in-out;
+
+		&:not( .is-visible ) {
+			transform: translateX( -40px );
+		}
+	}
+
 	.comment-detail__reply-submit {
 		color: $gray;
 		font-size: 12px;
 		font-weight: 600;
 		padding: 4px;
 		position: absolute;
-			right: 18px;
+			right: -70px;
 			top: 11px;
 		text-transform: uppercase;
-		transition: opacity 0.2s ease-in-out;
-
-		&.has-scrollbar {
-			right: 24px;
-		}
+		transition: transform 0.2s ease-in-out;
 
 		&.is-active {
 			color: $blue-medium;
 			cursor: pointer;
+		}
+
+		&.is-visible {
+			transform: translateX( -88px );
+		}
+		&.is-visible.has-scrollbar {
+			transform: translateX( -94px );
 		}
 	}
 }

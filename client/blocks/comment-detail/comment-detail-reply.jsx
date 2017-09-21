@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Gravatar from 'components/gravatar';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
@@ -101,7 +102,10 @@ export class CommentDetailReply extends Component {
 	} );
 
 	render() {
-		const { translate } = this.props;
+		const {
+			currentUser,
+			translate,
+		} = this.props;
 		const {
 			commentText,
 			hasFocus,
@@ -116,9 +120,13 @@ export class CommentDetailReply extends Component {
 		const buttonClasses = classNames( 'comment-detail__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasCommentText,
+			'is-visible': hasFocus || hasCommentText,
 		} );
 
+		const gravatarClasses = classNames( { 'is-visible': ! hasFocus } );
+
 		const textareaClasses = classNames( {
+			'has-content': hasCommentText,
 			'has-focus': hasFocus,
 			'has-scrollbar': hasScrollbar,
 		} );
@@ -143,15 +151,20 @@ export class CommentDetailReply extends Component {
 						value={ commentText }
 					/>
 				</AutoDirection>
-				{ ( hasFocus || hasCommentText ) &&
-					<button
-						className={ buttonClasses }
-						disabled={ ! hasCommentText }
-						onClick={ this.submitComment }
-					>
-						{ translate( 'Send' ) }
-					</button>
-				}
+
+				<Gravatar
+					className={ gravatarClasses }
+					size={ 24 }
+					user={ currentUser }
+				/>
+
+				<button
+					className={ buttonClasses }
+					disabled={ ! hasCommentText }
+					onClick={ this.submitComment }
+				>
+					{ translate( 'Send' ) }
+				</button>
 			</form>
 		);
 	}
