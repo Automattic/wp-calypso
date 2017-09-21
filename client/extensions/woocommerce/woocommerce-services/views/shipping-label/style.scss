@@ -101,15 +101,6 @@
 }
 
 &.dialog.card.label-reprint-modal {
-	@include breakpoint( ">480px" ) {
-		top: calc(50% - 175px);
-		right: calc(50% - 250px);
-		bottom: calc(50% - 175px);
-		left: calc(50% - 250px);
-		width: 500px;
-		height: 350px;
-	}
-
 	.label-reprint-modal__notice {
 		color: darken($gray, 10);
 		font-style: italic;
@@ -117,15 +108,6 @@
 }
 
 &.dialog.card.label-refund-modal {
-	@include breakpoint( ">480px" ) {
-		top: calc(50% - 175px);
-		right: calc(50% - 250px);
-		bottom: calc(50% - 175px);
-		left: calc(50% - 250px);
-		width: 500px;
-		height: 350px;
-	}
-
 	dd {
 		margin-left: 0;
 	}

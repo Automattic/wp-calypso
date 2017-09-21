@@ -13,7 +13,7 @@ import { translate as __, moment } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeRefundDialog, confirmRefund } from '../../state/actions';
+import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const RefundDialog = ( props ) => {

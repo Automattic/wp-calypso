@@ -771,9 +771,9 @@ export const closeReprintDialog = ( siteId, orderId ) => {
 
 export const confirmReprint = ( siteId, orderId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT, siteId, orderId } );
-	const state = getState().shippingLabel;
-	const labelId = state.reprintDialog.labelId;
-	printDocument( getPrintURL( getState().shippingLabel.paperSize, [ { labelId } ] ) )
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	const labelId = shippingLabel.reprintDialog.labelId;
+	printDocument( getPrintURL( shippingLabel.paperSize, [ { labelId } ] ) )
 		.catch( ( error ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );

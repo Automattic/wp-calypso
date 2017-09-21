@@ -15,16 +15,20 @@ import ActionButtons from 'woocommerce/woocommerce-services/components/action-bu
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
+import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
-	const { reprintDialog, paperSize, storeOptions, label_id } = props;
+	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id } = props;
+
+	const onClose = () => props.closeReprintDialog( siteId, orderId );
+	const onConfirm = () => props.confirmReprint( siteId, orderId );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( siteId, orderId, value );
 
 	return (
 		<Dialog
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
-			onClose={ props.closeReprintDialog }
+			onClose={ onClose }
 			additionalClassNames="label-reprint-modal woocommerce">
 			<FormSectionHeading>
 				{ __( 'Reprint shipping label' ) }
@@ -41,16 +45,16 @@ const ReprintDialog = ( props ) => {
 				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
 				title={ __( 'Paper size' ) }
 				value={ paperSize }
-				updateValue={ props.updatePaperSize } />
+				updateValue={ onPaperSizeChange } />
 			<ActionButtons buttons={ [
 				{
-					onClick: props.confirmReprint,
+					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: reprintDialog && reprintDialog.isFetching,
 					label: __( 'Print' ),
 				},
 				{
-					onClick: props.closeReprintDialog,
+					onClick: onClose,
 					label: __( 'Cancel' ),
 				},
 			] } />
