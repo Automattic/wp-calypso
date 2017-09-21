@@ -11,8 +11,6 @@ import { identity } from 'lodash';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-import MockMoreButton from '../more-button';
-
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
 
@@ -29,6 +27,10 @@ describe( 'Theme', function() {
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
 
 		togglePopoverStub = sinon.stub().returnsArg( 0 );
+
+		// NOTE: This import should not be hoisted, since it relies on the FakeDOM
+		// being available during instantiation.
+		const MockMoreButton = require( '../more-button' );
 		MockMoreButton.prototype.togglePopover = togglePopoverStub;
 		mockery.registerMock( './more-button', MockMoreButton );
 
