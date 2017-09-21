@@ -131,7 +131,7 @@ function getDefaultContext( request ) {
 	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
-	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined ? true : false;
+	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
 	let sectionCss, sectionCssRtl;
 
 	if ( cacheKey ) {
