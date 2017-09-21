@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import {
 	WP_JOB_MANAGER_CREATE_PAGES,
 	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
@@ -16,11 +21,11 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated creating state
  */
-export const creating = createReducer( {}, {
-	[ WP_JOB_MANAGER_CREATE_PAGES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ WP_JOB_MANAGER_CREATE_PAGES_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-} );
+export const creating = ( state = false, { type } ) => get( {
+	[ WP_JOB_MANAGER_CREATE_PAGES ]: true,
+	[ WP_JOB_MANAGER_CREATE_PAGES_ERROR ]: false,
+	[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: false,
+}, type, state );
 
 /**
  * Tracks whether or not to move to the next step in the wizard.
@@ -29,11 +34,12 @@ export const creating = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated state
  */
-export const nextStep = createReducer( {}, {
-	[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-} );
+export const nextStep = ( state = false, { type } ) =>
+	WP_JOB_MANAGER_WIZARD_NEXT_STEP === type
+		? true
+		: state;
 
-export default combineReducers( {
+export default keyedReducer( 'siteId', combineReducers( {
 	creating,
 	nextStep,
-} );
+} ) );
