@@ -70,15 +70,6 @@ export class CommentDetailAuthor extends Component {
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
-	showBlockUser = () => {
-		const { authorEmail, canUserBlacklist, currentUserEmail } = this.props;
-
-		const isAuthorBlacklistable = !! authorEmail;
-		const isAuthorCurrentUser = !! authorEmail && authorEmail === currentUserEmail;
-
-		return isAuthorBlacklistable && canUserBlacklist && ! isAuthorCurrentUser;
-	};
-
 	showMoreInfo = () => !! this.props.authorEmail || !! this.props.authorIp || !! this.props.authorUrl;
 
 	toggleBlockUser = () => {
@@ -132,8 +123,13 @@ export class CommentDetailAuthor extends Component {
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
+			canUserBlacklist,
+			currentUserEmail,
+			site,
 			translate,
 		} = this.props;
+
+		const showBlockUser = canUserBlacklist && !! authorEmail && ( authorEmail === currentUserEmail );
 
 		return (
 			<div className="comment-detail__author-more-info">
@@ -173,7 +169,7 @@ export class CommentDetailAuthor extends Component {
 							{ authorIp }
 						</span>
 					</div>
-					{ this.showBlockUser() &&
+					{ showBlockUser &&
 						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-user">
 							<Button onClick={ this.toggleBlockUser }>
 								<Gridicon icon="block" />
@@ -182,6 +178,17 @@ export class CommentDetailAuthor extends Component {
 									: translate( 'Block user' )
 								}</span>
 							</Button>
+						</div>
+					}
+					{ ! authorEmail &&
+						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-anonymous-user">
+							<span>
+								{ translate(
+									// eslint-disable-next-line max-len
+									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to allow comments only from registered users.",
+									{ components: { a: <a href={ `/settings/discussion/${ site.slug }` } /> } }
+								) }
+							</span>
 						</div>
 					}
 				</div>
