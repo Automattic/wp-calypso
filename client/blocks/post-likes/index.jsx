@@ -15,11 +15,19 @@ import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selec
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 export const PostLikes = props => {
-	const { countLikes, isRequesting, likes, postId, siteId, translate } = props;
+	const { countLikes, isRequesting, likes, postId, postType, siteId, translate } = props;
 	const trackLikeClick = () => props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	const getLikeUrl = like => {
 		return like.URL ? like.URL : `https://gravatar.com/${ like.login }`;
 	};
+
+	let noLikesLabel;
+
+	if ( postType === 'page' ) {
+		noLikesLabel = translate( 'There are no likes on this page yet.' );
+	} else {
+		noLikesLabel = translate( 'There are no likes on this post yet.' );
+	}
 
 	return (
 		<div className="post-likes">
@@ -42,9 +50,13 @@ export const PostLikes = props => {
 					</span>
 				)
 			}
-			{ countLikes === 0 && ! isRequesting && translate( 'There are no likes on this post yet.' ) }
+			{ countLikes === 0 && ! isRequesting && noLikesLabel }
 		</div>
 	);
+};
+
+PostLikes.defaultProps = {
+	postType: 'post'
 };
 
 const connectComponent = connect(
