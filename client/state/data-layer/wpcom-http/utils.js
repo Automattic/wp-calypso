@@ -43,6 +43,23 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
+function SchemaError( errors ) {
+	this.name = 'SchemaError';
+	this.message = 'Failed to validate with JSON schema';
+	this.schemaErrors = errors;
+}
+
+SchemaError.prototype = new Error;
+
+function TransformerError( error, transformer, data ) {
+	this.name = 'TransformerError';
+	this.message = error.message;
+	this.transformer = transformer;
+	this.originalData = data;
+}
+
+TransformerError.prototype = new Error;
+
 export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
 	const options = Object.assign( { verbose: true }, schemaOptions );
 	const validator = schemaValidator( schema, options );
@@ -56,21 +73,13 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// the actual parser
 	return responseData => {
 		if ( ! validator( responseData ) ) {
-			throw {
-				errorType: 'Failed to validate with JSON schema',
-				message: 'Failed to validate with JSON schema',
-				errors: validator.errors,
-			};
+			throw new SchemaError( validator.errors );
 		}
 
 		try {
 			return transformer( filter( responseData ) );
 		} catch ( e ) {
-			throw {
-				errorType: 'Exception when transforming API response',
-				message: e.message,
-				data: responseData,
-			};
+			throw new TransformerError( e, transformer, responseData );
 		}
 	};
 };
