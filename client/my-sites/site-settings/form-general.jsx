@@ -31,11 +31,19 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	siteSupportsJetpackSettingsUi
+} from 'state/sites/selectors';
+
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
+import Masterbar from './masterbar';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormGeneral extends Component {
+
 	componentWillMount() {
 		this._showWarning( this.props.site );
 	}
@@ -296,7 +304,6 @@ class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
-			siteSlug,
 			translate
 		} = this.props;
 		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
@@ -309,7 +316,7 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<div className={ classNames( classes ) }>
-				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+				{ site && <QuerySiteSettings siteId={ this.props.siteId } /> }
 
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
@@ -335,6 +342,13 @@ class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
+				<QueryJetpackModules siteId={ this.props.siteId } />
+
+				<Masterbar
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+				/>
+
 				<SectionHeader label={ translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
@@ -349,6 +363,7 @@ class SiteSettingsFormGeneral extends Component {
 							}
 					</Button>
 				</SectionHeader>
+
 				<Card>
 					<form>
 						{ this.visibilityOptions() }
@@ -356,7 +371,8 @@ class SiteSettingsFormGeneral extends Component {
 				</Card>
 
 				{
-					! siteIsJetpack && <div className="site-settings__footer-credit-container">
+					! siteIsJetpack &&
+					<div className="site-settings__footer-credit-container">
 						<SectionHeader label={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
@@ -383,6 +399,7 @@ class SiteSettingsFormGeneral extends Component {
 					</div>
 				}
 			</div>
+
 		);
 	}
 
@@ -414,6 +431,8 @@ const connectComponent = connect(
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
+			siteId
 		};
 	},
 	null,
