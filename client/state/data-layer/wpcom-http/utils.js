@@ -56,27 +56,21 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// the actual parser
 	return responseData => {
 		if ( ! validator( responseData ) ) {
-			return [
-				false,
-				{
-					errorType: 'Failed to validate with JSON schema',
-					message: 'Failed to validate with JSON schema',
-					errors: validator.errors,
-				},
-			];
+			throw {
+				errorType: 'Failed to validate with JSON schema',
+				message: 'Failed to validate with JSON schema',
+				errors: validator.errors,
+			};
 		}
 
 		try {
-			return [ true, transformer( filter( responseData ) ) ];
+			return transformer( filter( responseData ) );
 		} catch ( e ) {
-			return [
-				false,
-				{
-					errorType: 'Exception when transforming API response',
-					message: e.message,
-					data: responseData,
-				},
-			];
+			throw {
+				errorType: 'Exception when transforming API response',
+				message: e.message,
+				data: responseData,
+			};
 		}
 	};
 };
@@ -87,7 +81,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
  * @property {Function} onProgress called on progress events
  */
 const defaultOptions = {
-	fromApi: data => [ true, data ],
+	fromApi: identity,
 	onProgress: noop,
 };
 
@@ -134,9 +128,11 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 
 	const data = getData( action );
 	if ( data ) {
-		const [ isValid, response ] = fromApi( data );
-
-		return isValid ? onSuccess( store, action, response ) : onError( store, action, response );
+		try {
+			return onSuccess( store, action, fromApi( data ) );
+		} catch ( err ) {
+			return onError( store, action, err );
+		}
 	}
 
 	const progress = getProgress( action );
