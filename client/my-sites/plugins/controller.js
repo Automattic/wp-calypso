@@ -63,7 +63,6 @@ function renderSinglePlugin( context, siteUrl ) {
 			path: context.path,
 			prevQuerystring: lastPluginsQuerystring,
 			prevPath,
-			sites,
 			pluginSlug,
 			siteUrl,
 		} ),
