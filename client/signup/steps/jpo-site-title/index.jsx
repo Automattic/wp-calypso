@@ -5,6 +5,15 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
+import {
+	getAuthorizationData,
+	getAuthorizationRemoteSite
+} from 'state/jetpack-connect/selectors';
+import {
+	authorize,
+} from 'state/jetpack-connect/actions';
+import { urlToSlug } from 'lib/url';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Internal dependencies
@@ -19,6 +28,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import formState from 'lib/form-state';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
+import { updateSettings } from 'state/jetpack/settings/actions';
 
 import { setJPOSiteTitle } from 'state/signup/steps/jpo-site-title/actions';
 
@@ -31,7 +41,31 @@ const JPOSiteTitleStep = React.createClass( {
 		positionInFlow: PropTypes.number,
 		setJPOSiteTitle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
-		stepName: PropTypes.string
+		stepName: PropTypes.string,
+		jetpackConnectAuthorize: PropTypes.shape( {
+			authorizeError: PropTypes.oneOfType( [
+				PropTypes.object,
+				PropTypes.bool,
+			] ),
+			authorizeSuccess: PropTypes.bool,
+			isRedirectingToWpAdmin: PropTypes.bool,
+			queryObject: PropTypes.shape( {
+				already_authorized: PropTypes.bool,
+				jp_version: PropTypes.string.isRequired,
+				new_user_started_connection: PropTypes.bool,
+				redirect_after_auth: PropTypes.string.isRequired,
+				site: PropTypes.string.isRequired,
+			} ).isRequired,
+			siteReceived: PropTypes.bool,
+		} ).isRequired,
+	},
+
+	getInitialState() {
+		return {
+			pluginsReady: 'no',
+			settingsReady: 'no',
+			widgetsReady: 'no',
+		};
 	},
 
 	componentWillMount() {
@@ -79,6 +113,11 @@ const JPOSiteTitleStep = React.createClass( {
 		};
 	},
 
+	/**
+	 * Save setting in Jetpack site
+	 *
+	 * @return {boolean}
+	 */
 	submitStep() {
 		const jpoSiteTitle = this.getPayload();
 
@@ -97,6 +136,24 @@ const JPOSiteTitleStep = React.createClass( {
 		}
 
 		this.props.setJPOSiteTitle( jpoSiteTitle );
+
+		console.log( this.props.jetpackConnectAuthorize );
+		const siteId = get( this.props.jetpackConnectAuthorize, [ 'queryObject', 'client_id' ], -1 );
+
+		if ( 'no' === this.state.settingsReady ) {
+			this.setState( { settingsReady: 'progress' } );
+			this.props.updateSettings(
+				siteId,
+				{
+					onboarding: {
+						jpUser: get( this.props.jetpackConnectAuthorize, [ 'queryObject', 'user_email' ], -1 ),
+						token: get( this.props.jetpackConnectAuthorize, [ 'queryObject', 'onboarding' ], -1 ),
+						...jpoSiteTitle
+					}
+				},
+				false // don't sanitize settings
+			).then( () => this.setState( { settingsReady: 'yes' } ) );
+		}
 
 		SignupActions.submitSignupStep( {
 			processingMessage: translate( 'Setting up your site' ),
@@ -164,8 +221,18 @@ const JPOSiteTitleStep = React.createClass( {
 } );
 
 export default connect(
-	null,
+	state => {
+		const remoteSiteUrl = getAuthorizationRemoteSite( state );
+		const siteSlug = urlToSlug( remoteSiteUrl );
+		return {
+			jetpackConnectAuthorize: getAuthorizationData( state ),
+			siteSlug,
+			user: getCurrentUser( state )
+		};
+	},
 	{
-		setJPOSiteTitle
+		setJPOSiteTitle,
+		authorize,
+		updateSettings,
 	}
 )( JPOSiteTitleStep );
