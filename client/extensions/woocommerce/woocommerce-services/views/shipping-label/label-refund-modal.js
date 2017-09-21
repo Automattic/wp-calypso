@@ -5,14 +5,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { translate as __, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
-import formatDate from 'woocommerce/woocommerce-services/lib/utils/format-date';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeRefundDialog, confirmRefund } from '../../state/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -41,7 +40,7 @@ const RefundDialog = ( props ) => {
 			<hr />
 			<dl>
 				<dt>{ __( 'Purchase date' ) }</dt>
-				<dd>{ formatDate( created ) }</dd>
+				<dd>{ moment( created ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
 
 				<dt>{ __( 'Amount eligible for refund' ) }</dt>
 				<dd>{ getRefundableAmount() }</dd>

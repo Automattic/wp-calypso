@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
-import { translate as __ } from 'i18n-calypso';
+import { translate as __, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,9 +15,11 @@ import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import TrackingLink from './tracking-link';
 //import InfoTooltip from 'components/info-tooltip';
-import formatDate from 'woocommerce/woocommerce-services/lib/utils/format-date';
-//import timeAgo from 'lib/utils/time-ago';
 import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+
+const formatDate = ( date ) => {
+	return moment( date ).format( 'MMMM Do YYYY, h:mm a' );
+};
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
@@ -108,11 +110,11 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		// const tooltipAnchor = (
-		// 	<span className="label-item__detail">
-		// 		{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
-		// 	</span>
-		// );
+		return (
+			<span className="label-item__detail">
+				{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
+			</span>
+		);
 		// return (
 		// 	<InfoTooltip anchor={ tooltipAnchor }>
 		// 		<h3>{ label.package_name }</h3>
@@ -126,7 +128,7 @@ class LabelItem extends Component {
 
 	render() {
 		const { label } = this.props;
-		const purchased = 'TODO';//timeAgo( label.created );
+		const purchased = moment( label.created ).fromNow();
 
 		return (
 			<div key={ label.label_id } className="label-item" >
