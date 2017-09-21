@@ -36,7 +36,14 @@ class PostListWrapper extends React.Component {
 			query.meta = 'counts';
 		}
 
-		return <PostTypeList query={ query } largeTitles={ true } wrapTitles={ true } />;
+		return (
+			<PostTypeList
+				query={ query }
+				largeTitles={ true }
+				wrapTitles={ true }
+				scrollContainer={ document.body }
+			/>
+		);
 	}
 
 	render() {

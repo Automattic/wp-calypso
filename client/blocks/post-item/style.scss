@@ -18,17 +18,11 @@
 	padding-bottom: 0;
 	margin: 0;
 
-	// These heights must also be updated in JavaScript:
-	// client/my-sites/post-type-list/index.jsx
-	// const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
-	// const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
 	min-height: 84px;
 	&.has-large-title {
 		min-height: 89px;
 	}
 	// <PostItem compact> -> <Card className="... is-mini">
-	// This height is not defined in JavaScript because <PostItem compact> is
-	// never used with wrapped titles or other variable-height content.
 	&.is-mini {
 		min-height: 50px;
 	}

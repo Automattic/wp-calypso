@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,92 +31,6 @@ import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
-	static defaultProps = {
-		onHeightChange: noop,
-	};
-
-	constructor() {
-		super( ...arguments );
-
-		this.node = null;
-		this.nodeHeight = 0;
-		this.hasVariableHeightContent = false;
-	}
-
-	componentDidMount() {
-		this.manageMutationObserver();
-		if ( this.props.wrapTitle ) {
-			// Wait for repaint, which may include wrapping the title onto
-			// multiple lines, then update height if needed
-			// `requestAnimationFrame` is not enough here...
-			window.setTimeout( this.handleHeightChange );
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		this.manageMutationObserver();
-		if ( this.props.windowWidth !== prevProps.windowWidth ) {
-			this.handleHeightChange();
-		}
-	}
-
-	componentWillUnmount() {
-		this.disconnectMutationObserver();
-	}
-
-	setDomNode = node => {
-		this.node = node;
-	};
-
-	manageMutationObserver() {
-		if ( this.hasVariableHeightContent && ! this.observer ) {
-			// Post item has expanded content but didn't previously (or is
-			// newly mounted with expanded content).  Watch for further height
-			// changes and update current height.
-			this.connectMutationObserver();
-			this.handleHeightChange();
-		} else if ( ! this.hasVariableHeightContent && this.observer ) {
-			// Post item had expanded content previously but not any more.
-			// Stop watching for height changes and update current height.
-			this.disconnectMutationObserver();
-			this.handleHeightChange();
-		}
-	}
-
-	connectMutationObserver() {
-		if ( this.observer || ! this.node ) {
-			return;
-		}
-		this.observer = new window.MutationObserver( this.handleHeightChange );
-		this.observer.observe( this.node, {
-			childList: true,
-			subtree: true,
-		} );
-	}
-
-	disconnectMutationObserver() {
-		if ( ! this.observer ) {
-			return;
-		}
-		this.observer.disconnect();
-		delete this.observer;
-	}
-
-	handleHeightChange = () => {
-		if ( ! this.node ) {
-			return;
-		}
-
-		const style = window.getComputedStyle( this.node );
-		const nodeHeight =
-			this.node.clientHeight + parseInt( style.marginTop, 10 ) + parseInt( style.marginBottom, 10 );
-
-		if ( nodeHeight && nodeHeight !== this.nodeHeight ) {
-			this.nodeHeight = nodeHeight;
-			this.props.onHeightChange( { nodeHeight, globalId: this.props.globalId } );
-		}
-	};
-
 	hideCurrentSharePanel = () => {
 		this.props.hideSharePanel( this.props.globalId );
 	};
@@ -236,12 +149,10 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	onHeightChange: PropTypes.func,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
 	largeTitle: PropTypes.bool,
 	wrapTitle: PropTypes.bool,
-	windowWidth: PropTypes.number,
 };
 
 export default connect(
