@@ -443,6 +443,10 @@ const analytics = {
 	// HotJar tracking
 	hotjar: {
 		addHotJarScript: function() {
+			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+				return;
+			}
+
 			( function( h, o, t, j, a, r ) {
 				h.hj = h.hj || function() {
 					( h.hj.q = h.hj.q || [] ).push( arguments );
