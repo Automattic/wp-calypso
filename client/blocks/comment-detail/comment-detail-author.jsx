@@ -22,6 +22,12 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { successNotice } from 'state/notices/actions';
 import { canCurrentUser } from 'state/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -96,7 +102,9 @@ export class CommentDetailAuthor extends Component {
 				noticeOptions,
 			);
 
-			return updateBlacklist( siteBlacklist.split( '\n' ).filter( item => item !== authorEmail ).join( '\n' ) );
+			const newBlacklist = siteBlacklist.split( '\n' ).filter( item => item !== authorEmail ).join( '\n' );
+
+			return updateBlacklist( newBlacklist, 'unblock' );
 		}
 
 		this.props.successNotice(
@@ -104,11 +112,11 @@ export class CommentDetailAuthor extends Component {
 			noticeOptions,
 		);
 
-		return updateBlacklist(
-			!! siteBlacklist
-				? siteBlacklist + '\n' + authorEmail
-				: authorEmail
-		);
+		const newBlacklist = !! siteBlacklist
+			? siteBlacklist + '\n' + authorEmail
+			: authorEmail;
+
+		return updateBlacklist( newBlacklist, 'block' );
 	}
 
 	authorMoreInfo() {
@@ -253,7 +261,16 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: blacklist_keys => dispatch( saveSiteSettings( siteId, { blacklist_keys } ) ),
+	updateBlacklist: ( blacklist_keys, action ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'block' === action
+				? 'calypso_comment_management_block_user'
+				: 'calypso_comment_management_unblock_user'
+			),
+			bumpStat( 'calypso_comment_management', ( 'block' === action ? 'user_blocked' : 'user_unblocked' ) )
+		),
+		saveSiteSettings( siteId, { blacklist_keys } )
+	) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );
