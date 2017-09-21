@@ -269,6 +269,10 @@ module.exports = {
 						} );
 				}
 				break;
+			case 'PLUGIN_UPLOAD':
+				return i18n.translate( 'You\'ve successfully uploaded the %(plugin)s plugin.', {
+					args: translateArg
+				} );
 		}
 	},
 
