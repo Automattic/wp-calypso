@@ -94,15 +94,6 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	postSignupUpgradeScreen: {
-		datestamp: '20170810',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	privacyNoPopup: {
 		datestamp: '20170830',
 		variations: {
