@@ -69,8 +69,8 @@ export const uploadComplete = ( { dispatch, getState }, { siteId }, data ) => {
 
 	/*
 	 * Adding plugin to legacy flux store provides data for plugin page
-     * and displays a success message.
-     */
+	 * and displays a success message.
+	 */
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_INSTALLED_PLUGIN',
 		action: 'PLUGIN_UPLOAD',
