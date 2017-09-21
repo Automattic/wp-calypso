@@ -165,22 +165,17 @@ function singleEnsure( chunkName ) {
 	return result.join( '\n' );
 }
 
-function fillSectionCSSUrls( sections ) {
-	sections.forEach( function( section ) {
-		if ( section.css ) {
-			section.cssUrls = {
-				ltr: utils.getHashedUrl( 'sections/' + section.css + '.css' ),
-				rtl: utils.getHashedUrl( 'sections-rtl/' + section.css + '.rtl.css' ),
-			};
+function sectionsWithCSSUrls( sections ) {
+	return sections.map( section => Object.assign( {}, section, section.css && {
+		cssUrls: {
+			ltr: utils.getHashedUrl( 'sections/' + section.css + '.css' ),
+			rtl: utils.getHashedUrl( 'sections-rtl/' + section.css + '.rtl.css' ),
 		}
-	} );
-	return sections;
+	} ) );
 }
 
 module.exports = function( content ) {
-	var sections;
-
-	sections = require( this.resourcePath );
+	const sections = require( this.resourcePath );
 
 	if ( ! Array.isArray( sections ) ) {
 		this.emitError( 'Chunks module is not an array' );
@@ -189,7 +184,5 @@ module.exports = function( content ) {
 
 	this.addDependency( 'page' );
 
-	fillSectionCSSUrls( sections );
-
-	return getSectionsModule( sections );
+	return getSectionsModule( sectionsWithCSSUrls( sections ) );
 };
