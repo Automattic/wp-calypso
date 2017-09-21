@@ -32,6 +32,7 @@ var Desktop = {
 		ipc.on( 'page-my-sites', this.onShowMySites.bind( this ) );
 		ipc.on( 'page-reader', this.onShowReader.bind( this ) );
 		ipc.on( 'page-profile', this.onShowProfile.bind( this ) );
+		ipc.on( 'app-preferences', this.onShowAppPreferences.bind( this ) );
 		ipc.on( 'new-post', this.onNewPost.bind( this ) );
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
@@ -141,6 +142,12 @@ var Desktop = {
 
 		this.clearNotificationBar();
 		page( '/me' );
+	},
+
+	onShowAppPreferences: function() {
+		debug( 'Showing app preferences' );
+		// this.clearNotificationBar();
+		page( '/me/app-preferences' );
 	},
 
 	onNewPost: function() {

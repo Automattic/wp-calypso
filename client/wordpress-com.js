@@ -393,4 +393,12 @@ sections.push( {
 	isomorphic: false
 } );
 
+sections.push( {
+	name: 'app-preferences',
+	paths: [ '/me/app-preferences' ],
+	module: 'me/app-preferences',
+	group: 'me',
+	secondary: true
+} );
+
 module.exports = sections;
