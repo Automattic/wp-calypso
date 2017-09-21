@@ -19,15 +19,11 @@ describe( 'Theme', function() {
 	useFakeDom();
 
 	useMockery( mockery => {
-	    ReactDom = require( 'react-dom' );
+		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		const EmptyComponent = React.createClass( {
-			render: function() {
-				return <div />;
-			}
-		} );
+		const EmptyComponent = () => <div />;
 
 		mockery.registerMock( 'components/popover/menu', EmptyComponent );
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
