@@ -56,13 +56,27 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// the actual parser
 	return responseData => {
 		if ( ! validator( responseData ) ) {
-			return [ false, validator.errors ];
+			return [
+				false,
+				{
+					errorType: 'Failed to validate with JSON schema',
+					message: 'Failed to validate with JSON schema',
+					errors: validator.errors,
+				},
+			];
 		}
 
 		try {
 			return [ true, transformer( filter( responseData ) ) ];
 		} catch ( e ) {
-			return [ false, { errorType: 'Exception when transforming API response', error: e.message, data: responseData } ];
+			return [
+				false,
+				{
+					errorType: 'Exception when transforming API response',
+					message: e.message,
+					data: responseData,
+				},
+			];
 		}
 	};
 };
@@ -111,10 +125,7 @@ const defaultOptions = {
  * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( store, action ) => {
-	const {
-		fromApi,
-		onProgress,
-	} = { ...defaultOptions, ...options };
+	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
 	const error = getError( action );
 	if ( error ) {
@@ -125,9 +136,7 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 	if ( data ) {
 		const [ isValid, response ] = fromApi( data );
 
-		return isValid
-			? onSuccess( store, action, response )
-			: onError( store, action, response );
+		return isValid ? onSuccess( store, action, response ) : onError( store, action, response );
 	}
 
 	const progress = getProgress( action );
