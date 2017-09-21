@@ -129,7 +129,7 @@ export class CommentDetailAuthor extends Component {
 			translate,
 		} = this.props;
 
-		const showBlockUser = canUserBlacklist && !! authorEmail && ( authorEmail === currentUserEmail );
+		const showBlockUser = canUserBlacklist && !! authorEmail && ( authorEmail !== currentUserEmail );
 
 		return (
 			<div className="comment-detail__author-more-info">
