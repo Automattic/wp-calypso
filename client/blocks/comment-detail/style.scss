@@ -586,6 +586,10 @@ a.comment-detail__author-more-element {
 		font-size: 14px;
 	}
 
+	label {
+		display: inline-block;
+	}
+
 	.comment-detail__edit-jetpack-update-notice {
 		color: $alert-red;
 		margin-left: 8px;
@@ -600,6 +604,12 @@ a.comment-detail__author-more-element {
 	.comment-detail__edit-buttons {
 		padding: 0 8px;
 		width: 100%;
+	}
+
+	.info-popover {
+		margin-left: 4px;
+		position: relative;
+		top: -2px;
 	}
 }
 
