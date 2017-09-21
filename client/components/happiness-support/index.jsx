@@ -13,8 +13,8 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import support from 'lib/url/support';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatButton from 'extensions/happychat/components/button';
+import HappychatConnection from 'extensions/happychat/components/connection';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HappinessSupport extends Component {

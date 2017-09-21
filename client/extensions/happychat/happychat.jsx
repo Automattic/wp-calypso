@@ -12,10 +12,10 @@ import {
 	focus,
 } from 'state/happychat/actions';
 import viewport from 'lib/viewport';
-import HappychatConnection from 'components/happychat/connection';
-import Composer from 'components/happychat/composer';
-import Notices from 'components/happychat/notices';
-import Timeline from 'components/happychat/timeline';
+import HappychatConnection from './components/connection';
+import Composer from './components/composer';
+import Notices from './components/notices';
+import Timeline from './components/timeline';
 
 /**
  * React component for rendering a happychat client as a full page

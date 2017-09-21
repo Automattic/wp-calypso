@@ -41,7 +41,7 @@ import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-li
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import HappychatButton from 'components/happychat/button';
+import HappychatButton from 'extensions/happychat/components/button';
 
 const user = userFactory();
 

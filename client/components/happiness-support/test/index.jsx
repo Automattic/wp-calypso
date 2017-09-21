@@ -12,8 +12,8 @@ import { noop } from 'lodash';
  */
 import { HappinessSupport } from '..';
 import support from 'lib/url/support';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatButton from 'extensions/happychat/components/button';
+import HappychatConnection from 'extensions/happychat/components/connection';
 
 describe( 'HappinessSupport', function() {
 	let wrapper;
