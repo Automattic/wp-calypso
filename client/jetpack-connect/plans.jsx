@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
