@@ -50,7 +50,7 @@
 		"manage/plugins": true,
 		"manage/plugins/cache": false,
 		"manage/plugins/setup": true,
-		"manage/plugins/upload": false,
+		"manage/plugins/upload": true,
 		"manage/posts": true,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
