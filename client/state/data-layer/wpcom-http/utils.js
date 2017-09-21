@@ -48,11 +48,23 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	const validator = schemaValidator( schema, options );
 
 	// filter out unwanted properties even though we may have let them slip past validation
+	// note: this property does not nest deeply into the data structure, that is, properties
+	// of a property that aren't in the schema could still come through since only the top
+	// level of properties are pruned
 	const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
 
-	return responseData => validator( responseData )
-		? [ true, transformer( filter( responseData ) ) ]
-		: [ false, validator.errors ];
+	// the actual parser
+	return responseData => {
+		if ( ! validator( responseData ) ) {
+			return [ false, validator.errors ];
+		}
+
+		try {
+			return [ true, transformer( filter( responseData ) ) ];
+		} catch ( e ) {
+			return [ false, { errorType: 'Exception when transforming API response', error: e.message, data: responseData } ];
+		}
+	};
 };
 
 /**
