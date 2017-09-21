@@ -123,7 +123,11 @@ const PluginSiteJetpack = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.site.canManage() ) {
+		if (
+			! ( typeof this.props.site.canManage === 'function'
+				? this.props.site.canManage()
+				: this.props.site.canManage )
+		) {
 			return this.renderManageWarning();
 		}
 

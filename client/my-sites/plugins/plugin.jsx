@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes, uniq, upperFirst } from 'lodash';
+import { includes, uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import PluginsLog from 'lib/plugins/log-store';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import JetpackSite from 'lib/site/jetpack';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -29,14 +28,15 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
 import {
 	canJetpackSiteManage,
-	getRawSite,
 	isJetpackSite,
-	isRequestingSites
+	isRequestingSites,
 } from 'state/sites/selectors';
 import {
 	canCurrentUser,
 	canCurrentUserManagePlugins,
-	isSiteAutomatedTransfer } from 'state/selectors';
+	getSelectedOrAllSitesWithPlugins,
+	isSiteAutomatedTransfer,
+} from 'state/selectors';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 
@@ -54,7 +54,6 @@ const SinglePlugin = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.props.sites.on( 'change', this.refreshSitesAndPlugins );
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 		this.updatePageTitle();
@@ -65,7 +64,6 @@ const SinglePlugin = React.createClass( {
 	},
 
 	componentWillUnmount() {
-		this.props.sites.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
 		if ( this.pluginRefreshTimeout ) {
@@ -80,7 +78,7 @@ const SinglePlugin = React.createClass( {
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props;
 
-		const sites = uniq( props.sites.getSelectedOrAllWithPlugins() ),
+		const sites = uniq( props.sites ),
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
 			plugin = Object.assign( {
 				name: props.pluginSlug,
@@ -169,7 +167,7 @@ const SinglePlugin = React.createClass( {
 			return true;
 		}
 
-		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+		const sites = this.props.sites;
 
 		// If the plugin has at least one site then we know it exists
 		if ( plugin.sites && plugin.sites[ 0 ] ) {
@@ -192,8 +190,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	isFetchingSites() {
-		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-		return sites.every( PluginsStore.isFetchingSite );
+		return this.props.sites.every( PluginsStore.isFetchingSite );
 	},
 
 	getPlugin() {
@@ -402,24 +399,19 @@ const SinglePlugin = React.createClass( {
 export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
-
-		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
-		const selectedSite = site && isJetpackSite( state, selectedSiteId )
-			? JetpackSite( getRawSite( state, selectedSiteId ) )
-			: site;
 
 		return {
 			wporgPlugins: state.plugins.wporg.items,
 			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
-			selectedSite: selectedSite,
+			selectedSite: getSelectedSite( state ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: ( selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) ),
+			sites: getSelectedOrAllSitesWithPlugins( state )
 		};
 	},
 	{
