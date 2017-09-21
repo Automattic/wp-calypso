@@ -85,8 +85,8 @@ class WebpackBuildMonitor extends React.PureComponent {
 			return console.error(
 				'There should only be a single build monitor loaded. ' +
 					"Please make sure we're not trying to load more than one at a time."
-		);
-	}
+			);
+		}
 		alreadyExists = true;
 
 		interceptConsole( console, state => this.setState( state ) );
@@ -115,7 +115,6 @@ class WebpackBuildMonitor extends React.PureComponent {
 				} ) }
 			>
 				{ isBusy && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
-				) }
 				{ getMessage( this.state ) }
 			</div>
 		);
