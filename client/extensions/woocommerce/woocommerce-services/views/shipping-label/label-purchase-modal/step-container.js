@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import LoadingSpinner from 'components/spinner';
+import Spinner from 'components/spinner';
 import FoldableCard from 'components/foldable-card';
 
 const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summary, children, expanded, toggleStep } ) => {
@@ -36,7 +36,11 @@ const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summ
 	const header = (
 		<div>
 			<div className="label-purchase-modal__step-status">
-				{ isProgress ? <LoadingSpinner inline /> : <Gridicon icon={ getIcon() } className={ className } size={ 24 } /> }
+				{ isProgress
+					? <div className="label-purchase-modal__loading-spinner">
+						<Spinner />
+					</div>
+					: <Gridicon icon={ getIcon() } className={ className } size={ 24 } /> }
 			</div>
 			<div className="label-purchase-modal__step-title">{ title }</div>
 		</div>

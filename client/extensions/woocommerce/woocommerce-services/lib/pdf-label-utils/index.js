@@ -8,7 +8,7 @@ import { includes, reduce, filter, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import api from '../../api';
+import * as api from '../../api';
 import getPDFSupport from '../utils/pdf-support';
 
 const PAPER_SIZES = {

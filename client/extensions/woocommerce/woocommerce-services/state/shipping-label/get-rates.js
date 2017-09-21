@@ -12,7 +12,7 @@ import {
 } from '../action-types';
 
 export default ( siteId, orderId, dispatch, origin, destination, packages ) => {
-	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
+	dispatch( { siteId, orderId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
 		const setError = ( err ) => error = err;

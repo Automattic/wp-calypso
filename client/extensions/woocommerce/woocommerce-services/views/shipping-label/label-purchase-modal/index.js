@@ -12,7 +12,7 @@ import { translate as __ } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
-import LoadingSpinner from 'components/spinner';
+import Spinner from 'components/spinner';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
@@ -37,7 +37,7 @@ const PurchaseDialog = ( props ) => {
 		if ( props.form.isSubmitting ) {
 			return (
 				<div>
-					<LoadingSpinner inline />
+					<Spinner size={ 24 } className="label-purchase-modal__button-spinner" />
 					<span className="label-purchase-modal__purchasing-label">{ __( 'Purchasing...' ) }</span>
 				</div>
 			);

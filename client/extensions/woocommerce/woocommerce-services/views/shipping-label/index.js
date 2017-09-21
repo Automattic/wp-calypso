@@ -12,7 +12,7 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import LoadingSpinner from 'components/spinner';
+import Spinner from 'components/spinner';
 import PurchaseDialog from './label-purchase-modal';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import LabelItem from './label-item';
@@ -111,7 +111,9 @@ class ShippingLabelRootView extends Component {
 		return (
 			<div>
 				<QueryLabels orderId={ this.props.orderId } />
-				<LoadingSpinner />
+				<div className="shipping-label__loading-spinner">
+					<Spinner />
+				</div>
 			</div>
 		);
 	}
