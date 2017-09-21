@@ -507,9 +507,8 @@ a.comment-detail__author-more-element {
 	}
 }
 
-.comment-detail__author-more-element-block-user.is-blocked .gridicon {
-	color: $alert-red;
-	fill: $alert-red;
+.comment-detail.card .comment-detail__author-more-element-block-user .gridicon {
+	vertical-align: baseline;
 }
 
 .comment-detail__reply {

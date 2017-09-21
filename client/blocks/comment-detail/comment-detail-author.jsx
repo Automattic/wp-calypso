@@ -11,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
@@ -172,24 +173,18 @@ export class CommentDetailAuthor extends Component {
 							{ authorIp }
 						</span>
 					</div>
+					{ this.showBlockUser() &&
+						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-user">
+							<Button onClick={ this.toggleBlockUser }>
+								<Gridicon icon="block" />
+								<span>{ authorIsBlocked
+									? translate( 'Unblock user' )
+									: translate( 'Block user' )
+								}</span>
+							</Button>
+						</div>
+					}
 				</div>
-				{ this.showBlockUser() &&
-					<div className="comment-detail__author-more-actions">
-						<a
-							className={ classNames(
-								'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-								{ 'is-blocked': authorIsBlocked }
-							) }
-							onClick={ this.toggleBlockUser }
-						>
-							<Gridicon icon="block" />
-							<span>{ authorIsBlocked
-								? translate( 'Unblock user' )
-								: translate( 'Block user' )
-							}</span>
-						</a>
-					</div>
-				}
 			</div>
 		);
 	}
