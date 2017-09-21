@@ -17,7 +17,7 @@ import {
 	getHappychatStatus,
 	getHappychatConnectionStatus,
 	isHappychatServerReachable,
-} from 'state/happychat/selectors';
+} from 'extensions/happychat/state/selectors';
 
 /*
  * Renders any notices about the chat session to the user

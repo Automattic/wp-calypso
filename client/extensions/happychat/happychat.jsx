@@ -7,11 +7,11 @@ import { findDOMNode } from 'react-dom';
 /**
  * Internal dependencies
  */
+import viewport from 'lib/viewport';
 import {
 	blur,
 	focus,
-} from 'state/happychat/actions';
-import viewport from 'lib/viewport';
+} from './state/actions';
 import HappychatConnection from './components/connection';
 import Composer from './components/composer';
 import Notices from './components/notices';

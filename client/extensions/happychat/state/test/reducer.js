@@ -22,7 +22,7 @@ import {
 	lostFocusAt,
 	message,
 	geoLocation,
-} from '../reducer';
+} from '../reducers';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

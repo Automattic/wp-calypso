@@ -52,7 +52,7 @@ describe( 'middleware', () => {
 		let dispatch, getState;
 		const uninitializedState = deepFreeze( {
 			currentUser: { id: 1, capabilities: {} },
-			happychat: { connectionStatus: 'uninitialized' },
+			extensions: { happychat: { connectionStatus: 'uninitialized' } },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
 			sites: {
@@ -80,8 +80,8 @@ describe( 'middleware', () => {
 		} );
 
 		it( 'should not attempt to connect when Happychat has been initialized', () => {
-			const connectedState = { happychat: { connectionStatus: 'connected' } };
-			const connectingState = { happychat: { connectionStatus: 'connecting' } };
+			const connectedState = { extensions: { happychat: { connectionStatus: 'connected' } } };
+			const connectingState = { extensions: { happychat: { connectionStatus: 'connecting' } } };
 
 			return Promise.all( [
 				connectChat( connection, { dispatch, getState: getState.returns( connectedState ) } ),
@@ -139,9 +139,11 @@ describe( 'middleware', () => {
 
 	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
 		const state = {
-			happychat: {
-				geoLocation: {
-					city: 'Timisoara'
+			extensions: {
+				happychat: {
+					geoLocation: {
+						city: 'Timisoara'
+					}
 				}
 			}
 		};
@@ -186,7 +188,7 @@ describe( 'middleware', () => {
 					height: 'windowInnerHeight',
 				},
 				userAgent: 'navigatorUserAgent',
-				geoLocation: state.happychat.geoLocation
+				geoLocation: state.extensions.happychat.geoLocation
 			};
 
 			const getState = () => state;
@@ -215,7 +217,7 @@ describe( 'middleware', () => {
 		// own modules, so that we can stub them and simplify our tests.
 		const uninitializedState = deepFreeze( {
 			currentUser: { id: 1, capabilities: {} },
-			happychat: { connectionStatus: 'uninitialized' },
+			extensions: { happychat: { connectionStatus: 'uninitialized' } },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
 			sites: {
@@ -286,11 +288,6 @@ describe( 'middleware', () => {
 
 	describe( 'HAPPYCHAT_TRANSCRIPT_REQUEST action', () => {
 		it( 'should fetch transcript from connection and dispatch receive action', () => {
-			const state = deepFreeze( {
-				happychat: {
-					timeline: []
-				}
-			} );
 			const response = {
 				messages: [
 					{ text: 'hello' }
@@ -300,7 +297,7 @@ describe( 'middleware', () => {
 
 			const connection = { transcript: stub().returns( Promise.resolve( response ) ) };
 			const dispatch = stub();
-			const getState = stub().returns( state );
+			const getState = stub().returns( {} );
 
 			return requestTranscript( connection, { getState, dispatch } )
 				.then( () => {
@@ -317,8 +314,10 @@ describe( 'middleware', () => {
 	describe( 'HELP_CONTACT_FORM_SITE_SELECT action', () => {
 		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
 			const state = {
-				happychat: {
-					connectionStatus: 'connected'
+				extensions: {
+					happychat: {
+						connectionStatus: 'connected'
+					}
 				},
 				currentUser: {
 					locale: 'en',
@@ -371,10 +370,12 @@ describe( 'middleware', () => {
 					2: { username: 'Link' }
 				}
 			},
-			happychat: {
-				connectionStatus: 'connected',
-				isAvailable: true,
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+			extensions: {
+				happychat: {
+					connectionStatus: 'connected',
+					isAvailable: true,
+					chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+				}
 			}
 		};
 		beforeEach( () => {
@@ -390,7 +391,7 @@ describe( 'middleware', () => {
 		it( 'should not sent the page URL the user is in when client not connected', () => {
 			const getState = () => Object.assign( {},
 				state,
-				{ happychat: { connectionStatus: 'uninitialized' } }
+				{ extensions: { happychat: { connectionStatus: 'uninitialized' } } }
 			);
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
@@ -398,7 +399,7 @@ describe( 'middleware', () => {
 		it( 'should not sent the page URL the user is in when chat is not assigned', () => {
 			const getState = () => Object.assign( {},
 				state,
-				{ happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING } }
+				{ extensions: { happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING } } }
 			);
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
@@ -458,21 +459,27 @@ describe( 'middleware', () => {
 
 	describe( '#sendActionLogsAndEvents', () => {
 		const assignedState = deepFreeze( {
-			happychat: {
-				connectionStatus: 'connected',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+			extensions: {
+				happychat: {
+					connectionStatus: 'connected',
+					chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+				}
 			},
 		} );
 		const unassignedState = deepFreeze( {
-			happychat: {
-				connectionStatus: 'connected',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+			extensions: {
+				happychat: {
+					connectionStatus: 'connected',
+					chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+				}
 			},
 		} );
 		const unconnectedState = deepFreeze( {
-			happychat: {
-				connectionStatus: 'uninitialized',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+			extensions: {
+				happychat: {
+					connectionStatus: 'uninitialized',
+					chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+				}
 			},
 		} );
 

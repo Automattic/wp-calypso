@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
+import { HAPPYCHAT_MESSAGE_TYPES } from 'extensions/happychat/state/constants';
 
 /*
  * Happychat client connection for Socket.IO

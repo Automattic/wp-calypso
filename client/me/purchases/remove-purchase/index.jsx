@@ -33,7 +33,7 @@ import notices from 'notices';
 import purchasePaths from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
 import { removePurchase } from 'state/purchases/actions';
-import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
+import { isHappychatAvailable, hasActiveHappychatSession } from 'extensions/happychat/state/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';

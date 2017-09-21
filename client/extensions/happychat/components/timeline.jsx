@@ -22,7 +22,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	getHappychatConnectionStatus,
 	getHappychatTimeline
-} from 'state/happychat/selectors';
+} from 'extensions/happychat/state/selectors';
 import {
 	isExternal,
 	addSchemeIfMissing,

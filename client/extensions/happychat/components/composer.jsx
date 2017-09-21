@@ -11,10 +11,10 @@ import { isEmpty } from 'lodash';
 import {
 	sendChatMessage,
 	setChatMessage,
-} from 'state/happychat/actions';
+} from 'extensions/happychat/state/actions';
 import {
 	canUserSendMessages,
-} from 'state/happychat/selectors';
+} from 'extensions/happychat/state/selectors';
 import {
 	when,
 	forEach,
@@ -74,7 +74,7 @@ export const Composer = React.createClass( {
 
 const mapState = state => ( {
 	disabled: ! canUserSendMessages( state ),
-	message: state.happychat.message,
+	message: state.extensions.happychat.message,
 } );
 
 const mapDispatch = ( dispatch ) => ( {

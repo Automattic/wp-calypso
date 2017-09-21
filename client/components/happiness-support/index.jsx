@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { isHappychatAvailable } from 'state/happychat/selectors';
+import { isHappychatAvailable } from 'extensions/happychat/state/selectors';
 import support from 'lib/url/support';
 import HappychatButton from 'extensions/happychat/components/button';
 import HappychatConnection from 'extensions/happychat/components/connection';

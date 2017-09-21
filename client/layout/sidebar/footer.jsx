@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import config from 'config';
 import HappychatButton from 'extensions/happychat/components/button';
-import { hasActiveHappychatSession } from 'state/happychat/selectors';
+import { hasActiveHappychatSession } from 'extensions/happychat/state/selectors';
 
 const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 	<div className="sidebar__footer">

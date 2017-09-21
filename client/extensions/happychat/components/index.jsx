@@ -12,7 +12,7 @@ import GridIcon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import {
 	getHappychatConnectionStatus
-} from 'state/happychat/selectors';
+} from 'extensions/happychat/state/selectors';
 import {
 	openChat,
 	closeChat,
@@ -22,7 +22,7 @@ import {
 import {
 	blur,
 	focus,
-} from 'state/happychat/actions';
+} from 'extensions/happychat/state/actions';
 import {
 	isHappychatMinimizing,
 	isHappychatOpen,

@@ -17,8 +17,8 @@ import {
 	hasUnreadMessages,
 	isHappychatAvailable,
 	hasActiveHappychatSession,
-} from 'state/happychat/selectors';
-import { connectChat } from 'state/happychat/actions';
+} from 'extensions/happychat/state/selectors';
+import { connectChat } from 'extensions/happychat/state/actions';
 import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
 

@@ -26,13 +26,13 @@ import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { isHappychatAvailable } from 'state/happychat/selectors';
+import { isHappychatAvailable } from 'extensions/happychat/state/selectors';
 import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSupportRequestError } from 'state/help/ticket/selectors';
 import HappychatConnection from 'extensions/happychat/components/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
+import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'extensions/happychat/state/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
 import {
 	getCurrentUser,
