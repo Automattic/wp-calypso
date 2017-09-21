@@ -179,7 +179,7 @@ describe( 'reducer', () => {
 					{},
 					{
 						type: READER_SITE_REQUEST_FAILURE,
-						error: new Error( 'request failed' ),
+						error: { code: 403 },
 						payload: { ID: 666 },
 					}
 				)
@@ -204,7 +204,7 @@ describe( 'reducer', () => {
 			expect(
 				items( startingState, {
 					type: READER_SITE_REQUEST_FAILURE,
-					error: new Error( 'request failed' ),
+					error: { code: 500 },
 					payload: { ID: 666 },
 				} )
 			).to.deep.equal( startingState );

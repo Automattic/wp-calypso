@@ -45,6 +45,13 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
+	// marking a site as a failure to request also temporarily deletes it from
+	// following/manage.  we only want to do that in the case of 403 which can sometimes also be 404s
+	// in disguise signifying that the site was deleted.
+	if ( action.error && action.error.code !== 403 ) {
+		return state;
+	}
+
 	// new object proceeds current state to prevent new errors from overwriting existing values
 	return assign( {}, state, {
 		[ action.payload.ID ]: {
