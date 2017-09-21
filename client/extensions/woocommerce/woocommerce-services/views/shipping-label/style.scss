@@ -130,3 +130,17 @@
 		margin-left: 0;
 	}
 }
+
+.error-notice {
+	margin: -24px -24px 24px -24px;
+	width: inherit;
+
+	.notice__icon {
+		display: none;
+	}
+}
+
+.loading-spinner {
+	margin: 8px auto;
+	text-align: center;
+}
