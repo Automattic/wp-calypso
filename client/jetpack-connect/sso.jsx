@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +47,7 @@ const debug = debugModule( 'calypso:jetpack-connect:sso' );
 
 class JetpackSsoForm extends Component {
 	state = {
-		showTermsDialog: false
+		showTermsDialog: false,
 	};
 
 	componentWillMount() {
@@ -69,7 +70,7 @@ class JetpackSsoForm extends Component {
 		}
 	}
 
-	onApproveSSO = ( event ) => {
+	onApproveSSO = event => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
@@ -85,13 +86,13 @@ class JetpackSsoForm extends Component {
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	};
 
-	onCancelClick = ( event ) => {
+	onCancelClick = event => {
 		debug( 'Clicked return to site link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
-	onTryAgainClick = ( event ) => {
+	onTryAgainClick = event => {
 		debug( 'Clicked try again link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
@@ -101,21 +102,21 @@ class JetpackSsoForm extends Component {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
-	onClickSharedDetailsModal = ( event ) => {
+	onClickSharedDetailsModal = event => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
-			showTermsDialog: true
+			showTermsDialog: true,
 		} );
 	};
 
 	closeTermsDialog = () => {
 		this.setState( {
-			showTermsDialog: false
+			showTermsDialog: false,
 		} );
 	};
 
-	returnToSiteFallback = ( event ) => {
+	returnToSiteFallback = event => {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
@@ -128,7 +129,14 @@ class JetpackSsoForm extends Component {
 	isButtonDisabled() {
 		const user = this.props.userModule.get();
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
-		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError || ! user.email_verified );
+		return !! (
+			! nonceValid ||
+			isAuthorizing ||
+			isValidating ||
+			ssoUrl ||
+			authorizationError ||
+			! user.email_verified
+		);
 	}
 
 	getSignInLink() {
@@ -138,17 +146,19 @@ class JetpackSsoForm extends Component {
 	maybeValidateSSO( props = this.props ) {
 		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
 
-		if ( ssoNonce && siteId && 'undefined' === typeof nonceValid && ! isAuthorizing && ! isValidating ) {
+		if (
+			ssoNonce &&
+			siteId &&
+			'undefined' === typeof nonceValid &&
+			! isAuthorizing &&
+			! isValidating
+		) {
 			this.props.validateSSONonce( siteId, ssoNonce );
 		}
 	}
 
 	maybeRenderErrorNotice() {
-		const {
-			authorizationError,
-			nonceValid,
-			translate,
-		} = this.props;
+		const { authorizationError, nonceValid, translate } = this.props;
 
 		if ( ! authorizationError && false !== nonceValid ) {
 			return null;
@@ -158,10 +168,12 @@ class JetpackSsoForm extends Component {
 			<Notice
 				status="is-error"
 				text={ translate( 'Oops, something went wrong.' ) }
-				showDismiss={ false }>
+				showDismiss={ false }
+			>
 				<NoticeAction
 					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
-					onClick={ this.onTryAgainClick }>
+					onClick={ this.onTryAgainClick }
+				>
 					{ translate( 'Try again' ) }
 				</NoticeAction>
 			</Notice>
@@ -180,16 +192,12 @@ class JetpackSsoForm extends Component {
 				domain: get( this.props, 'blogDetails.domain', '' ),
 				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
 				is_vip: false,
-				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) )
+				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) ),
 			};
 			site = <Site site={ siteObject } />;
 		}
 
-		return (
-			<CompactCard className="jetpack-connect__site">
-				{ site }
-			</CompactCard>
-		);
+		return <CompactCard className="jetpack-connect__site">{ site }</CompactCard>;
 	}
 
 	getSharedDetailLabel( key ) {
@@ -233,9 +241,7 @@ class JetpackSsoForm extends Component {
 	getSharedDetailValue( key, value ) {
 		const { translate } = this.props;
 		if ( 'two_step_enabled' === key && value !== '' ) {
-			value = ( true === value )
-				? translate( 'Enabled' )
-				: translate( 'Disabled' );
+			value = true === value ? translate( 'Enabled' ) : translate( 'Disabled' );
 		}
 
 		return decodeEntities( value );
@@ -246,13 +252,11 @@ class JetpackSsoForm extends Component {
 		const text = (
 			<span className="jetpack-connect__sso-return-to-site">
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{
-					translate( 'Return to %(siteName)s', {
-						args: {
-							siteName: get( this.props, 'blogDetails.title' )
-						}
-					} )
-				}
+				{ translate( 'Return to %(siteName)s', {
+					args: {
+						siteName: get( this.props, 'blogDetails.title' ),
+					},
+				} ) }
 			</span>
 		);
 
@@ -271,11 +275,11 @@ class JetpackSsoForm extends Component {
 							onClick={ this.onClickSharedDetailsModal }
 							className="jetpack-connect__sso-actions-modal-link"
 						/>
-					)
+					),
 				},
 				args: {
-					siteName: get( this.props, 'blogDetails.title' )
-				}
+					siteName: get( this.props, 'blogDetails.title' ),
+				},
 			}
 		);
 
@@ -285,10 +289,11 @@ class JetpackSsoForm extends Component {
 	getSubHeaderText() {
 		const { translate } = this.props;
 		const text = translate(
-			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
+			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.',
+			{
 				args: {
-					siteName: get( this.props, 'blogDetails.title' )
-				}
+					siteName: get( this.props, 'blogDetails.title' ),
+				},
 			}
 		);
 		return this.maybeWrapWithPlaceholder( text );
@@ -300,11 +305,7 @@ class JetpackSsoForm extends Component {
 			return input;
 		}
 
-		return (
-			<span className="jetpack-connect__sso-placeholder">
-				{ input }
-			</span>
-		);
+		return <span className="jetpack-connect__sso-placeholder">{ input }</span>;
 	}
 
 	renderSharedDetailsList() {
@@ -347,8 +348,10 @@ class JetpackSsoForm extends Component {
 		const buttons = [
 			{
 				action: 'close',
-				label: translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
-			}
+				label: translate( 'Got it', {
+					context: 'Used in a button. Similar phrase would be, "I understand".',
+				} ),
+			},
 		];
 
 		return (
@@ -356,14 +359,13 @@ class JetpackSsoForm extends Component {
 				buttons={ buttons }
 				onClose={ this.closeTermsDialog }
 				isVisible={ this.state.showTermsDialog }
-				className="jetpack-connect__sso-terms-dialog">
+				className="jetpack-connect__sso-terms-dialog"
+			>
 				<div className="jetpack-connect__sso-terms-dialog-content">
 					<p className="jetpack-connect__sso-shared-details-intro">
-						{
-							translate(
-								'When you approve logging in with WordPress.com, we will send the following details to your site.'
-							)
-						}
+						{ translate(
+							'When you approve logging in with WordPress.com, we will send the following details to your site.'
+						) }
 					</p>
 
 					{ this.renderSharedDetailsList() }
@@ -378,15 +380,13 @@ class JetpackSsoForm extends Component {
 			<Main>
 				<EmptyContent
 					illustration="/calypso/images/illustrations/whoops.svg"
-					title={ translate(
-						'Oops, this URL should not be accessed directly'
-					) }
+					title={ translate( 'Oops, this URL should not be accessed directly' ) }
 					line={ translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
 						{
 							components: {
-								em: <em />
-							}
+								em: <em />,
+							},
 						}
 					) }
 					action={ translate( 'Read Single Sign-On Documentation' ) }
@@ -398,12 +398,7 @@ class JetpackSsoForm extends Component {
 
 	render() {
 		const user = this.props.userModule.get();
-		const {
-			ssoNonce,
-			siteId,
-			validationError,
-			translate,
-		} = this.props;
+		const { ssoNonce, siteId, validationError, translate } = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
@@ -421,50 +416,45 @@ class JetpackSsoForm extends Component {
 
 					<EmailVerificationGate
 						noticeText={ translate( 'You must verify your email to sign in with WordPress.com.' ) }
-						noticeStatus="is-info">
+						noticeStatus="is-info"
+					>
 						<Card>
 							{ user.email_verified && this.maybeRenderErrorNotice() }
-								<div className="jetpack-connect__sso-user-profile">
-									<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
-									<h3 className="jetpack-connect__sso-log-in-as">
-										{ translate(
-											'Log in as {{strong}}%s{{/strong}}',
-											{
-												args: user.display_name,
-												components: {
-													strong: <strong className="jetpack-connect__sso-display-name" />
-												}
-											}
-										) }
-									</h3>
-									<div className="jetpack-connect__sso-user-email">
-										{ user.email }
-									</div>
-								</div>
+							<div className="jetpack-connect__sso-user-profile">
+								<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
+								<h3 className="jetpack-connect__sso-log-in-as">
+									{ translate( 'Log in as {{strong}}%s{{/strong}}', {
+										args: user.display_name,
+										components: {
+											strong: <strong className="jetpack-connect__sso-display-name" />,
+										},
+									} ) }
+								</h3>
+								<div className="jetpack-connect__sso-user-email">{ user.email }</div>
+							</div>
 
-								<LoggedOutFormFooter className="jetpack-connect__sso-actions">
-									<p className="jetpack-connect__tos-link">
-										{ this.getTOSText() }
-									</p>
+							<LoggedOutFormFooter className="jetpack-connect__sso-actions">
+								<p className="jetpack-connect__tos-link">{ this.getTOSText() }</p>
 
-									<Button
-										primary
-										onClick={ this.onApproveSSO }
-										disabled={ this.isButtonDisabled() }>
-										{ translate( 'Log in' ) }
-									</Button>
-								</LoggedOutFormFooter>
+								<Button primary onClick={ this.onApproveSSO } disabled={ this.isButtonDisabled() }>
+									{ translate( 'Log in' ) }
+								</Button>
+							</LoggedOutFormFooter>
 						</Card>
 					</EmailVerificationGate>
 
 					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getSignInLink() } onClick={ this.onClickSignInDifferentUser }>
+						<LoggedOutFormLinkItem
+							href={ this.getSignInLink() }
+							onClick={ this.onClickSignInDifferentUser }
+						>
 							{ translate( 'Sign in as a different user' ) }
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
 							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
-							onClick={ this.onCancelClick }>
+							onClick={ this.onCancelClick }
+						>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
 						<HelpButton />
@@ -488,11 +478,15 @@ export default connect(
 			authorizationError: get( jetpackSSO, 'authorizationError' ),
 			validationError: get( jetpackSSO, 'validationError' ),
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
-			sharedDetails: get( jetpackSSO, 'sharedDetails' )
+			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 		};
 	},
-	dispatch => bindActionCreators( {
-		authorizeSSO,
-		validateSSONonce
-	}, dispatch )
+	dispatch =>
+		bindActionCreators(
+			{
+				authorizeSSO,
+				validateSSONonce,
+			},
+			dispatch
+		)
 )( localize( JetpackSsoForm ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ class JetpackNewSite extends Component {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
-	handleJetpackUrlChange = ( event ) => this.setState( { jetpackUrl: event.target.value } );
+	handleJetpackUrlChange = event => this.setState( { jetpackUrl: event.target.value } );
 
 	getNewWpcomSiteUrl() {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
@@ -60,10 +61,14 @@ class JetpackNewSite extends Component {
 				<ReaderBack onBackClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
 					<div className="jetpack-new-site__header">
-						<h2 className="jetpack-new-site__header-title">{ this.props.translate( 'Add a New Site' ) }</h2>
-						<div className="jetpack-new-site__header-text">{ this.props.translate(
-							'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
-						) } </div>
+						<h2 className="jetpack-new-site__header-title">
+							{ this.props.translate( 'Add a New Site' ) }
+						</h2>
+						<div className="jetpack-new-site__header-text">
+							{ this.props.translate(
+								'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
+							) }{' '}
+						</div>
 					</div>
 					<div className="jetpack-new-site__content">
 						<Card className="jetpack-new-site__wpcom-site">
@@ -72,18 +77,19 @@ class JetpackNewSite extends Component {
 								{ this.props.translate( 'Create a new shiny WordPress.com site' ) }
 							</h3>
 							<div className="jetpack-new-site__card-description">
-							<p>
-								{ this.props.translate(
-									'Start telling your story in just 2 minutes. Pick a visual theme and a domain — ' +
-									'we’ll take care of the entire setup. If you need help we’ve got you covered with 24/7 support.' ) }
-							</p>
+								<p>
+									{ this.props.translate(
+										'Start telling your story in just 2 minutes. Pick a visual theme and a domain — ' +
+											'we’ll take care of the entire setup. If you need help we’ve got you covered with 24/7 support.'
+									) }
+								</p>
 							</div>
 							<div className="jetpack-new-site__button-holder">
 								<Button
 									className="jetpack-new-site__button button is-primary"
 									href={ this.getNewWpcomSiteUrl() }
 								>
-								{ this.props.translate( 'Start Now' ) }
+									{ this.props.translate( 'Start Now' ) }
 								</Button>
 							</div>
 						</Card>
@@ -93,7 +99,9 @@ class JetpackNewSite extends Component {
 								{ this.props.translate( 'Add an existing WordPress site with Jetpack' ) }
 							</h3>
 							<div className="jetpack-new-site__card-description">
-								{ this.props.translate( 'We’ll be using the Jetpack plugin to connect your site to WordPress.com.' ) }
+								{ this.props.translate(
+									'We’ll be using the Jetpack plugin to connect your site to WordPress.com.'
+								) }
 							</div>
 							<SiteUrlInput
 								onChange={ this.handleJetpackUrlChange }
@@ -105,8 +113,8 @@ class JetpackNewSite extends Component {
 						<Card className="jetpack-new-site__mobile">
 							<div className="jetpack-new-site__mobile-wpcom-site">
 								<p>{ this.props.translate( 'Create a new shiny WordPress.com site:' ) }</p>
-								<Button primary	href={ this.getNewWpcomSiteUrl() }>
-								{ this.props.translate( 'Start Now' ) }
+								<Button primary href={ this.getNewWpcomSiteUrl() }>
+									{ this.props.translate( 'Start Now' ) }
 								</Button>
 							</div>
 							<div className="jetpack-new-site__divider">
@@ -129,9 +137,11 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( {
-		recordTracksEvent
-	}, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators(
+		{
+			recordTracksEvent,
+		},
+		dispatch
+	)
 )( localize( JetpackNewSite ) );
