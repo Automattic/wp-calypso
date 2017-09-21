@@ -363,14 +363,6 @@ sections.push( {
 } );
 
 sections.push( {
-	name: 'happychat',
-	paths: [ '/me/chat' ],
-	module: 'me/happychat',
-	group: 'me',
-	secondary: true
-} );
-
-sections.push( {
 	name: 'comments',
 	paths: [ '/comments' ],
 	module: 'my-sites/comments',
