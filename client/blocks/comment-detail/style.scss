@@ -407,11 +407,16 @@
 	padding-bottom: 16px;
 }
 
+.comment-detail__author-preview-actions {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin-left: auto;
+}
+
 .comment-detail__status-label {
-	align-self: flex-start;
 	border-radius: 9px;
 	font-size: 12px;
-	margin-left: auto;
 	padding: 0 10px;
 
 	&.is-unapproved {
@@ -429,7 +434,7 @@
 	display: block;
 	fill: $gray;
 	height: 24px;
-	margin-left: auto;
+	margin-left: 8px;
 	&:focus,
 	&:hover {
 		color: $blue-wordpress;

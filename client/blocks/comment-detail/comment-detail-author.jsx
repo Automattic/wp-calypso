@@ -21,6 +21,7 @@ import { gmtOffset, timezone } from 'lib/site/utils';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { successNotice } from 'state/notices/actions';
 import { canCurrentUser } from 'state/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -32,11 +33,12 @@ export class CommentDetailAuthor extends Component {
 		authorIsBlocked: PropTypes.bool,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
+		canUserBlacklist: PropTypes.bool,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
-		showBlockUser: PropTypes.bool,
+		currentUserEmail: PropTypes.string,
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		updateBlacklist: PropTypes.func,
@@ -60,6 +62,17 @@ export class CommentDetailAuthor extends Component {
 		timezone( this.props.site ),
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
+
+	showBlockUser = () => {
+		const { authorEmail, canUserBlacklist, currentUserEmail } = this.props;
+
+		const isAuthorBlacklistable = !! authorEmail;
+		const isAuthorCurrentUser = !! authorEmail && authorEmail === currentUserEmail;
+
+		return isAuthorBlacklistable && canUserBlacklist && ! isAuthorCurrentUser;
+	};
+
+	showMoreInfo = () => !! this.props.authorEmail || !! this.props.authorIp || !! this.props.authorUrl;
 
 	toggleBlockUser = () => {
 		const {
@@ -99,6 +112,10 @@ export class CommentDetailAuthor extends Component {
 	}
 
 	authorMoreInfo() {
+		if ( ! this.showMoreInfo() ) {
+			return;
+		}
+
 		const {
 			authorDisplayName,
 			authorEmail,
@@ -106,7 +123,6 @@ export class CommentDetailAuthor extends Component {
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
-			showBlockUser,
 			translate,
 		} = this.props;
 
@@ -149,7 +165,7 @@ export class CommentDetailAuthor extends Component {
 						</span>
 					</div>
 				</div>
-				{ showBlockUser &&
+				{ this.showBlockUser() &&
 					<div className="comment-detail__author-more-actions">
 						<a
 							className={ classNames(
@@ -208,14 +224,20 @@ export class CommentDetailAuthor extends Component {
 							{ this.getFormattedDate() }
 						</ExternalLink>
 					</div>
-					{ 'unapproved' === commentStatus &&
-						<div className="comment-detail__status-label is-unapproved">
-							{ translate( 'Pending' ) }
-						</div>
-					}
-					<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
-						<Gridicon icon="info-outline" />
-					</a>
+
+					<div className="comment-detail__author-preview-actions">
+						{ 'unapproved' === commentStatus &&
+							<div className="comment-detail__status-label is-unapproved">
+								{ translate( 'Pending' ) }
+							</div>
+						}
+
+						{ this.showMoreInfo() &&
+							<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
+								<Gridicon icon="info-outline" />
+							</a>
+						}
+					</div>
 				</div>
 				{ this.authorMoreInfo() }
 			</div>
@@ -224,7 +246,8 @@ export class CommentDetailAuthor extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	showBlockUser: canCurrentUser( state, siteId, 'manage_options' ),
+	canUserBlacklist: canCurrentUser( state, siteId, 'manage_options' ),
+	currentUserEmail: getCurrentUserEmail( state ),
 	site: getSite( state, siteId ),
 } );
 
