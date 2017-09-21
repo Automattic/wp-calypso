@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
@@ -37,7 +38,7 @@ class Popover extends Component {
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.func } ),
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
