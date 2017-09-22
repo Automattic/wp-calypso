@@ -58,7 +58,7 @@ window.AppBoot = () => {
 			bootProject( reduxStore );
 		} else {
 			reduxStore.dispatch( requestUser() ).catch( () => {
-				// boot the project anyway if the user request fails so we display an offline page or be redirected to /log-in
+				// boot the project anyway if the user request fails so we display an offline page or redirect to log-in
 				bootProject( reduxStore );
 			} );
 			// reboot if user changes
