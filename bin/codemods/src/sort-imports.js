@@ -71,7 +71,7 @@ module.exports = function ( file, api ) {
 	const declarations = src.find(j.ImportDeclaration);
 
 	// if there are no deps at all, then return early.
-	if ( isEmpty( declarations.nodes() ) ) {
+	if ( _.isEmpty( declarations.nodes() ) ) {
 		return file.source;
 	}
 
