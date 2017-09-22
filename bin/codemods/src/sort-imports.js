@@ -70,6 +70,11 @@ module.exports = function ( file, api ) {
 	const includeFormatBlock = shouldFormat( src.toSource().toString() );
 	const declarations = src.find(j.ImportDeclaration);
 
+	// if there are no deps at all, then return early.
+	if ( isEmpty( declarations.nodes() ) ) {
+		return file.source;
+	}
+
 	const withoutComments = declarations
 	  .nodes()
 	  .map( node => { node.comments = ''; return node } );
