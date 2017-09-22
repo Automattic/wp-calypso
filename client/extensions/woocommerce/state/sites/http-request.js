@@ -19,15 +19,47 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
 	path = `${ namespace }/${ path }&_method=${ method }`;
+
+	let requestMethod;
+	let requestQuery;
+	let requestBody;
+
+	// DELETE, PUT, and POST all get passed to the Jetpack API as a POST request
+	switch ( method ) {
+		case 'GET':
+			requestMethod = 'GET';
+			requestQuery = {
+				path,
+				json: true,
+			};
+			requestBody = null;
+			break;
+		case 'DELETE':
+			requestMethod = 'POST';
+			requestQuery = {
+				json: true,
+			};
+			requestBody = {
+				path,
+			};
+			break;
+		default:
+			requestMethod = 'POST';
+			requestQuery = {
+				json: true,
+			};
+			requestBody = {
+				path,
+				body: body && JSON.stringify( body ),
+			};
+	}
+
 	return http( {
 		apiVersion: '1.1',
-		method: 'GET' === method ? 'GET' : 'POST',
+		method: requestMethod,
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			path,
-			json: true,
-		},
-		body: body && JSON.stringify( body ),
+		query: requestQuery,
+		body: requestBody,
 	}, action );
 };
 

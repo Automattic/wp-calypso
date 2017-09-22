@@ -31,11 +31,13 @@ describe( 'handlers', () => {
 			handleAccountCreate( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: WPCOM_HTTP_REQUEST,
-				body: JSON.stringify( { email, country } ),
+				body: {
+					path: '/wc/v1/connect/stripe/account/&_method=POST',
+					body: JSON.stringify( { email, country } ),
+				},
 				method: 'POST',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: '/wc/v1/connect/stripe/account/&_method=POST',
 					json: true,
 					apiVersion: '1.1',
 				}
