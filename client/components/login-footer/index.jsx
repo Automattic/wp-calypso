@@ -20,13 +20,13 @@ class LoginFooter extends Component {
 		const isOauthLogin = !! this.props.oauth2Client;
 		return (
 			<div
-				className={ classNames( 'wp-login-footer', {
-					'wp-login-footer__oauth': isOauthLogin,
-					'wp-login-footer__jetpack': ! isOauthLogin,
+				className={ classNames( 'login-footer', {
+					'login-footer__oauth': isOauthLogin,
+					'login-footer__jetpack': ! isOauthLogin,
 				} ) }
 			>
 				{ isOauthLogin
-					? <div className="wp-login-footer__links">
+					? <div className="login-footer__links">
 							<a
 								href="https://wordpress.com/about/"
 								rel="noopener noreferrer"

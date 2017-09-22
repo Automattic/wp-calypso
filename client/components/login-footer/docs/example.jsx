@@ -15,6 +15,6 @@ const LoginFooterExample = () => (
 	</div>
 );
 
-LoginFooterExample.displayName = 'WP Login Footer';
+LoginFooterExample.displayName = 'Login Footer';
 
 export default LoginFooterExample;

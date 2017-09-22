@@ -1,6 +1,6 @@
 $image-height: 47px;
 
-.wp-login-footer {
+.login-footer {
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -14,7 +14,7 @@ $image-height: 47px;
 	}
 }
 
-.wp-login-footer__jetpack {
+.login-footer__jetpack {
 	background: #fff;
 	border-top: solid 1px #f9fbfc;
 	text-align: center;
@@ -32,7 +32,7 @@ $image-height: 47px;
 	}
 }
 
-.wp-login-footer__oauth {
+.login-footer__oauth {
 	display: flex;
 	justify-content: center;
 
