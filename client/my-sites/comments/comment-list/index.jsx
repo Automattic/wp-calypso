@@ -251,7 +251,10 @@ export class CommentList extends Component {
 	};
 
 	setSortOrder = order => () => {
-		this.setState( { sortOrder: order } );
+		this.setState( {
+			sortOrder: order,
+			page: 1
+		} );
 	};
 
 	showEditNotice = ( commentId, postId, undoCommentData ) => {

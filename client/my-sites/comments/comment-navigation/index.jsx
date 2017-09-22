@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { get, includes, isUndefined, map } from 'lodash';
@@ -13,6 +12,7 @@ import { get, includes, isUndefined, map } from 'lodash';
  */
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
+import ControlItem from 'components/segmented-control/item';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -20,6 +20,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
 import {
@@ -206,34 +207,30 @@ export class CommentNavigation extends Component {
 
 				{ isEnabled( 'manage/comments/bulk-actions' ) &&
 					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-						<span className="comment-navigation__sort-buttons">
-							<Button
-								compact
+						<SegmentedControl
+							primary
+							compact
+							className="comment-navigation__sort-buttons"
+						>
+							<ControlItem
 								onClick={ setSortOrder( NEWEST_FIRST ) }
-								className={ classNames( {
-									'comment-navigation__button-selected': sortOrder === NEWEST_FIRST,
-									first: true
-								} ) }
+								selected={ sortOrder === NEWEST_FIRST }
 							>
 								{ translate(
 									'Newest',
 									{ comment: 'Chronological order for sorting the comments list.' }
 								) }
-							</Button>
-							<Button
-								compact
+							</ControlItem>
+							<ControlItem
 								onClick={ setSortOrder( OLDEST_FIRST ) }
-								className={ classNames( {
-									'comment-navigation__button-selected': sortOrder === OLDEST_FIRST,
-									last: true
-								} ) }
+								selected={ sortOrder === OLDEST_FIRST }
 							>
 								{ translate(
 									'Oldest',
 									{ comment: 'Chronological order for sorting the comments list.' }
 								) }
-							</Button>
-						</span>
+							</ControlItem>
+						</SegmentedControl>
 						<Button compact onClick={ toggleBulkEdit }>
 							{ translate( 'Bulk Edit' ) }
 						</Button>
