@@ -171,7 +171,7 @@ export function announceDeleteSuccess( { dispatch, getState }, action ) {
 export function announceDeleteFailure( { dispatch } ) {
 	dispatch(
 		errorNotice(
-			translate( 'Could not delete the review.' ),
+			translate( "We couldn't delete this review." ),
 			{ duration: 5000 }
 		)
 	);

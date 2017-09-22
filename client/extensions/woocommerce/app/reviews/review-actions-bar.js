@@ -18,14 +18,14 @@ import { changeReviewStatus, deleteReview } from 'woocommerce/state/sites/review
 // This is used to show the 'delete' action on the trash page.
 // review.status is the status of the individual review.
 const ReviewActionsBar = ( {
-	review,
-	currentStatus,
-	translate,
 	approveReview,
-	unapproveReview,
-	spamReview,
-	trashReview,
+	currentStatus,
 	deleteTheReview,
+	review,
+	spamReview,
+	translate,
+	trashReview,
+	unapproveReview,
 } ) => {
 	const isApproved = 'approved' === review.status;
 	const isSpam = 'spam' === review.status;
@@ -92,7 +92,8 @@ ReviewActionsBar.propTypes = {
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { review, review: { product }, siteId, currentStatus, toggleExpanded } = ownProps;
+	const { review, siteId, currentStatus, toggleExpanded } = ownProps;
+	const { product } = review;
 	const postId = product.id;
 	const commentId = review.id;
 	return {
