@@ -91,15 +91,8 @@ export class CommentDetailAuthor extends Component {
 
 		const analytics = {
 			action: authorIsBlocked ? 'unblock_user' : 'block_user',
+			user_type: authorId ? 'wpcom' : 'email_only',
 		};
-		if ( authorId ) {
-			analytics.user_type = 'wpcom';
-		} else if ( !! authorEmail ) {
-			analytics.user_type = 'email_only';
-		} else {
-			// not currently supported
-			analytics.user_type = 'anonymous';
-		}
 
 		if ( authorIsBlocked ) {
 			this.props.successNotice(
@@ -139,6 +132,7 @@ export class CommentDetailAuthor extends Component {
 			canUserBlacklist,
 			currentUserEmail,
 			site,
+			trackAnonymousModeration,
 			translate,
 		} = this.props;
 
@@ -204,7 +198,9 @@ export class CommentDetailAuthor extends Component {
 								{ translate(
 									// eslint-disable-next-line max-len
 									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
-									{ components: { a: <a href={ `/settings/discussion/${ site.slug }` } /> } }
+									{ components: {
+										a: <a href={ `/settings/discussion/${ site.slug }` } onClick={ trackAnonymousModeration } />,
+									} }
 								) }
 							</span>
 						</div>
@@ -291,6 +287,13 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 		saveSiteSettings( siteId, { blacklist_keys } )
 	) ),
+	trackAnonymousModeration: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_moderate_user', {
+			action: 'open_discussion_settings',
+			user_type: 'anonymous',
+		} ),
+		bumpStat( 'calypso_comment_management', 'open_discussion_settings' )
+) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );
