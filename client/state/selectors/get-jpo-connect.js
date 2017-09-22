@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Get stored home page as was last chosen by user.
@@ -9,5 +9,5 @@ import get from 'lodash/get';
  * @return {String} Site title in state tree.
  */
 export default function getJpoConnect( state ) {
-	return get( state, [ 'signup', 'dependencyStore', 'jpoConnect' ], '' );
+	return get( state, [ 'signup', 'dependencyStore', 'jpoConnect' ], null );
 }

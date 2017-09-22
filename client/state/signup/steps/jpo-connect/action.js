@@ -8,7 +8,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-jpo:actions' );
  */
 import { SIGNUP_STEPS_JPO_CONNECT_SET } from 'state/action-types';
 
-export function setJPOConnect( connect ) {
+export function setJpoConnect( connect ) {
 	debug( 'setJPOConnect: ', connect );
 
 	return {

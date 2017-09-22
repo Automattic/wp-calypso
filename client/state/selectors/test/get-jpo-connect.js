@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getJpoConnect } from '../';
 
-describe( 'selectors', () => {
-	it( 'should return empty string as a default state', () => {
-		expect( getJpoConnect( { signup: undefined } ) ).to.be.eql( '' );
+describe( 'getJpoConnect', () => {
+	it( 'should return null as a default state', () => {
+		expect( getJpoConnect( { signup: undefined } ) ).to.be.null;
 	} );
 
 	it( 'should return jpoConnect type from the state', () => {
