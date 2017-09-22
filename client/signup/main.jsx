@@ -257,6 +257,7 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
+		analytics.affiliates.recordPageView();
 	}
 
 	componentWillUnmount() {

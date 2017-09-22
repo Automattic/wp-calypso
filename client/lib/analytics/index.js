@@ -17,6 +17,7 @@ import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
+import { http } from 'state/http/actions';
 
 /**
  * Module variables
@@ -454,6 +455,29 @@ const analytics = {
 				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
 				a.appendChild( r );
 			} )( window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=' );
+		}
+	},
+
+	// Track affiliate page views when the URL contains the 'aff' URL parameter
+	affiliates: {
+		recordPageView: function() {
+			const affiliateId = getUrlParameter( 'aff' );
+			if ( ! affiliateId || isNaN( affiliateId ) ) {
+				return;
+			}
+
+			_dispatch( http( {
+				method: 'POST',
+				url: 'https://refer.wordpress.com/clicks/67402',
+				headers: [
+					[ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ],
+				],
+				body: {
+					affiliate_id: affiliateId,
+					referrer: window.location.href
+				},
+				withCredentials: true,
+			} ) );
 		}
 	},
 
