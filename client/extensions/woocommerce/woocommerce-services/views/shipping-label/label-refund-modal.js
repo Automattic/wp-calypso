@@ -17,14 +17,14 @@ import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-servic
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const RefundDialog = ( props ) => {
-	const { siteId, orderId, refundDialog, storeOptions, created, refundable_amount, label_id } = props;
+	const { orderId, siteId, refundDialog, storeOptions, created, refundable_amount, label_id } = props;
 
 	const getRefundableAmount = () => {
 		return storeOptions.currency_symbol + Number( refundable_amount ).toFixed( 2 );
 	};
 
-	const onClose = () => props.closeRefundDialog( siteId, orderId );
-	const onConfirm = () => props.confirmRefund( siteId, orderId );
+	const onClose = () => props.closeRefundDialog( orderId, siteId );
+	const onConfirm = () => props.confirmRefund( orderId, siteId );
 	return (
 		<Dialog
 			additionalClassNames="label-refund-modal woocommerce"
@@ -73,7 +73,7 @@ RefundDialog.propTypes = {
 	confirmRefund: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {

@@ -78,7 +78,7 @@ const PackageInfo = ( props ) => {
 		return ( <option value={ boxId } key={ boxId }>{ box.name } - { renderPackageDimensions( dimensions, dimensionUnit ) }</option> );
 	};
 
-	const onAddItem = () => props.openAddItem( siteId, orderId );
+	const onAddItem = () => props.openAddItem( orderId, siteId );
 	const renderAddItemButton = () => {
 		if ( isIndividualPackage ) {
 			return null;
@@ -88,7 +88,7 @@ const PackageInfo = ( props ) => {
 	};
 
 	const packageOptionChange = ( e ) => {
-		props.setPackageType( siteId, orderId, packageId, e.target.value );
+		props.setPackageType( orderId, siteId, packageId, e.target.value );
 	};
 
 	const renderItems = () => {
@@ -159,7 +159,7 @@ const PackageInfo = ( props ) => {
 		);
 	};
 
-	const onWeightChange = ( value ) => props.updatePackageWeight( siteId, orderId, packageId, value );
+	const onWeightChange = ( value ) => props.updatePackageWeight( orderId, siteId, packageId, value );
 
 	return (
 		<div className="packages-step__package">

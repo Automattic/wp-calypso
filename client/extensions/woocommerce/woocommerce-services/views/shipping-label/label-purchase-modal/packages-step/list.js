@@ -21,7 +21,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PackageList = ( props ) => {
-	const { siteId, orderId, selected, all, errors, packageId } = props;
+	const { orderId, siteId, selected, all, errors, packageId } = props;
 
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
@@ -38,7 +38,7 @@ const PackageList = ( props ) => {
 
 	const renderPackageListItem = ( pckgId, name, count ) => {
 		const isError = 0 < Object.keys( errors[ pckgId ] || {} ).length;
-		const onOpenClick = () => props.openPackage( siteId, orderId, pckgId );
+		const onOpenClick = () => props.openPackage( orderId, siteId, pckgId );
 		return (
 			<div className="packages-step__list-item" key={ pckgId }>
 				<div

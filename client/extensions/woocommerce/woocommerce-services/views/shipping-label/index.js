@@ -26,13 +26,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 class ShippingLabelRootView extends Component {
 	componentWillMount() {
 		if ( this.props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus( this.props.siteId, this.props.orderId );
+			this.props.fetchLabelsStatus( this.props.orderId, this.props.siteId );
 		}
 	}
 
 	componentWillReceiveProps( props ) {
 		if ( props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus( props.siteId, props.orderId );
+			this.props.fetchLabelsStatus( props.orderId, props.siteId );
 		}
 	}
 
@@ -71,7 +71,7 @@ class ShippingLabelRootView extends Component {
 	};
 
 	renderLabelButton = () => {
-		const onNewLabelClick = () => this.props.openPrintingFlow( this.props.siteId, this.props.orderId );
+		const onNewLabelClick = () => this.props.openPrintingFlow( this.props.orderId, this.props.siteId );
 		return (
 			<Button className="shipping-label__new-label-button" onClick={ onNewLabelClick } >
 				{ __( 'Create new label' ) }

@@ -65,7 +65,7 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 };
 
 const AddressStep = ( props ) => {
-	const toggleStepHandler = () => props.toggleStep( props.siteId, props.orderId, props.type );
+	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
 	const { form, storeOptions, error, showCountryInSummary } = props;
 
 	return (
@@ -97,7 +97,7 @@ AddressStep.propTypes = {
 	toggleStep: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId, type } ) => {
+const mapStateToProps = ( state, { orderId, siteId, type } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};

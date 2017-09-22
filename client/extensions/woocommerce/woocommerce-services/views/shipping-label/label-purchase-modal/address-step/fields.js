@@ -47,9 +47,9 @@ const AddressFields = ( props ) => {
 	} = props;
 
 	if ( isNormalized && normalized && ! _.isEqual( normalized, values ) ) {
-		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( siteId, orderId, group, select );
-		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( siteId, orderId, group );
-		const editAddressHandler = () => props.editAddress( siteId, orderId, group );
+		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( orderId, siteId, group, select );
+		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( orderId, siteId, group );
+		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 		return (
 			<AddressSuggestion
 				values={ values }
@@ -65,10 +65,10 @@ const AddressFields = ( props ) => {
 	const fieldErrors = _.isObject( errors ) ? errors : {};
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] || '';
-	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( siteId, orderId, group, fieldName, newValue );
+	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
-	const updatePhoneValue = ( value ) => props.updateAddressValue( siteId, orderId, group, 'phone', getPhoneNumber( value ) );
-	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( siteId, orderId, group );
+	const updatePhoneValue = ( value ) => props.updateAddressValue( orderId, siteId, group, 'phone', getPhoneNumber( value ) );
+	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( orderId, siteId, group );
 
 	return (
 		<div>
@@ -164,7 +164,7 @@ AddressFields.propTypes = {
 	group: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ( state, { group, siteId, orderId } ) => {
+const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};

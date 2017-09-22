@@ -45,7 +45,7 @@ const AddItemDialog = ( props ) => {
 			? __( '%(item)s from {{pckg/}}', { args: { item: item.name }, components: { pckg: getPackageNameElement( pckgId ) } } )
 			: item;
 
-		const onChange = ( event ) => props.setAddedItem( siteId, orderId, pckgId, itemIdx, event.target.checked );
+		const onChange = ( event ) => props.setAddedItem( orderId, siteId, pckgId, itemIdx, event.target.checked );
 		return (
 			<FormLabel
 				key={ `${ pckgId }-${ itemIdx }` }
@@ -70,7 +70,7 @@ const AddItemDialog = ( props ) => {
 		} );
 	} );
 
-	const onClose = () => props.closeAddItem( siteId, orderId );
+	const onClose = () => props.closeAddItem( orderId, siteId );
 
 	return (
 		<Dialog isVisible={ showAddItemDialog }
@@ -94,7 +94,7 @@ const AddItemDialog = ( props ) => {
 					label: __( 'Add' ),
 					isPrimary: true,
 					isDisabled: ! _.some( addedItems, _.size ),
-					onClick: () => props.addItems( siteId, orderId, openedPackageId ),
+					onClick: () => props.addItems( orderId, siteId, openedPackageId ),
 				},
 				{ label: __( 'Close' ), onClick: onClose },
 			] } />
@@ -115,7 +115,7 @@ AddItemDialog.propTypes = {
 	addItems: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
 		showAddItemDialog: shippingLabel.showAddItemDialog || false,

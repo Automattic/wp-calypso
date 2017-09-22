@@ -11,8 +11,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
 } from '../action-types';
 
-export default ( siteId, orderId, dispatch, origin, destination, packages ) => {
-	dispatch( { siteId, orderId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
+export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
+	dispatch( { orderId, siteId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
@@ -32,7 +32,7 @@ export default ( siteId, orderId, dispatch, origin, destination, packages ) => {
 					orderId,
 				} );
 				if ( 'rest_cookie_invalid_nonce' === error ) {
-					dispatch( exitPrintingFlow( siteId, orderId, true ) );
+					dispatch( exitPrintingFlow( orderId, siteId, true ) );
 				} else if ( error ) {
 					setTimeout( () => reject( error ), 0 );
 				} else {

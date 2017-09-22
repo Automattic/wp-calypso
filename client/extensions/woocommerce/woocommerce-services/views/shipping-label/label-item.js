@@ -23,7 +23,7 @@ const formatDate = ( date ) => {
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
-		const { siteId, orderId } = this.props;
+		const { orderId, siteId } = this.props;
 
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
@@ -33,7 +33,7 @@ class LabelItem extends Component {
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openRefundDialog( siteId, orderId, label.label_id );
+			this.props.openRefundDialog( orderId, siteId, label.label_id );
 		};
 
 		return (
@@ -88,11 +88,11 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const { siteId, orderId } = this.props;
+		const { orderId, siteId } = this.props;
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openReprintDialog( siteId, orderId, label.label_id );
+			this.props.openReprintDialog( orderId, siteId, label.label_id );
 		};
 
 		return (

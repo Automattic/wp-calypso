@@ -93,8 +93,8 @@ const RatesStep = ( props ) => {
 	} = props;
 	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved );
 
-	const toggleStepHandler = () => props.toggleStep( siteId, orderId, 'rates' );
-	const updateRateHandler = ( packageId, value ) => props.updateRate( siteId, orderId, packageId, value );
+	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'rates' );
+	const updateRateHandler = ( packageId, value ) => props.updateRate( orderId, siteId, packageId, value );
 	return (
 		<StepContainer
 			title={ __( 'Rates' ) }
@@ -128,7 +128,7 @@ RatesStep.propTypes = {
 	updateRate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};

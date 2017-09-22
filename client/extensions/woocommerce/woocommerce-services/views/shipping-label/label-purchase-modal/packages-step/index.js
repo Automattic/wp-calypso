@@ -118,8 +118,8 @@ const PackagesStep = ( props ) => {
 		return null;
 	};
 
-	const toggleStepHandler = () => props.toggleStep( siteId, orderId, 'packages' );
-	const confirmPackagesHandler = () => props.confirmPackages( siteId, orderId );
+	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'packages' );
+	const confirmPackagesHandler = () => props.confirmPackages( orderId, siteId );
 	return (
 		<StepContainer
 			title={ __( 'Packages' ) }
@@ -168,7 +168,7 @@ PackagesStep.propTypes = {
 	expanded: PropTypes.bool,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};

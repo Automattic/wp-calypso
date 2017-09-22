@@ -14,8 +14,8 @@ import Button from 'components/button';
 import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ItemInfo = ( props ) => {
-	const { siteId, orderId, item, itemIndex } = props;
-	const onMoveClick = () => props.openItemMove( siteId, orderId, itemIndex );
+	const { orderId, siteId, item, itemIndex } = props;
+	const onMoveClick = () => props.openItemMove( orderId, siteId, itemIndex );
 
 	const renderMoveToPackage = () => {
 		return (

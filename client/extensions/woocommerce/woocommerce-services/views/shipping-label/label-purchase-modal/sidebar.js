@@ -44,7 +44,7 @@ Sidebar.propTypes = {
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {

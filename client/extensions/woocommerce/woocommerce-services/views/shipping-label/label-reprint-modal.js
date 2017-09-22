@@ -21,9 +21,9 @@ import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/sta
 const ReprintDialog = ( props ) => {
 	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id } = props;
 
-	const onClose = () => props.closeReprintDialog( siteId, orderId );
-	const onConfirm = () => props.confirmReprint( siteId, orderId );
-	const onPaperSizeChange = ( value ) => props.updatePaperSize( siteId, orderId, value );
+	const onClose = () => props.closeReprintDialog( orderId, siteId );
+	const onConfirm = () => props.confirmReprint( orderId, siteId );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	return (
 		<Dialog
@@ -73,7 +73,7 @@ ReprintDialog.propTypes = {
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {

@@ -36,7 +36,7 @@ const MoveItemDialog = ( props ) => {
 	}
 
 	const renderRadioButton = ( pckgId, label ) => {
-		const onChange = () => props.setTargetPackage( siteId, orderId, pckgId );
+		const onChange = () => props.setTargetPackage( orderId, siteId, pckgId );
 		return (
 			<FormLabel
 				key={ pckgId }
@@ -97,7 +97,7 @@ const MoveItemDialog = ( props ) => {
 		);
 	}
 
-	const onClose = () => props.closeItemMove( siteId, orderId );
+	const onClose = () => props.closeItemMove( orderId, siteId );
 
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
@@ -118,7 +118,7 @@ const MoveItemDialog = ( props ) => {
 					label: __( 'Move' ),
 					isPrimary: true,
 					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
-					onClick: () => props.moveItem( siteId, orderId, openedPackageId, movedItemIndex, targetPackageId ),
+					onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
 				},
 				{ label: __( 'Cancel' ), onClick: onClose },
 			] } />

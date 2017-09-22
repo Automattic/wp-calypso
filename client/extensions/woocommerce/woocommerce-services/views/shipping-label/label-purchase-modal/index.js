@@ -65,9 +65,9 @@ const PurchaseDialog = ( props ) => {
 
 	const getPurchaseButtonAction = () => {
 		if ( props.form.needsPrintConfirmation ) {
-			return () => props.confirmPrintLabel( props.siteId, props.orderId, props.form.printUrl );
+			return () => props.confirmPrintLabel( props.orderId, props.siteId, props.form.printUrl );
 		}
-		return () => props.purchaseLabel( props.siteId, props.orderId );
+		return () => props.purchaseLabel( props.orderId, props.siteId );
 	};
 
 	const buttons = [
@@ -79,7 +79,7 @@ const PurchaseDialog = ( props ) => {
 		},
 	];
 
-	const onClose = () => props.exitPrintingFlow( props.siteId, props.orderId, false );
+	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
 		buttons.push( {
@@ -131,7 +131,7 @@ PurchaseDialog.propTypes = {
 	orderId: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, orderId } ) => {
+const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
