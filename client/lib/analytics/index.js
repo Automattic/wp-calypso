@@ -476,6 +476,7 @@ const analytics = {
 					affiliate_id: affiliateId,
 					referrer: window.location.href
 				},
+				// Needed to check and set the 'wp-affiliate-tracker' cookie
 				withCredentials: true,
 			} ) );
 		}
