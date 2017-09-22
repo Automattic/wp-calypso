@@ -38,6 +38,7 @@ class ActivityLogItem extends Component {
 			activityIcon: PropTypes.string.isRequired,
 			activityId: PropTypes.string.isRequired,
 			activityName: PropTypes.string.isRequired,
+			activityStatus: PropTypes.string,
 			activityTitle: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
 
@@ -196,7 +197,7 @@ class ActivityLogItem extends Component {
 			<div className={ classes } >
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
-					<ActivityIcon { ...pick( log, [ 'activityName', 'activityIcon' ] ) } />
+					<ActivityIcon { ...pick( log, [ 'activityIcon', 'activityName', 'activityStatus' ] ) } />
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
