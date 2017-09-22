@@ -152,21 +152,26 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="mail" />
 						<span>
-							{ authorEmail }
+							{ authorEmail || <em>{ translate( 'No email address' ) }</em> }
 						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-						<ExternalLink href={ authorUrl }>
-							<Emojify>
-								{ urlToDomainAndPath( authorUrl ) }
-							</Emojify>
-						</ExternalLink>
+						{ !! authorUrl &&
+							<ExternalLink href={ authorUrl }>
+								<Emojify>
+									{ urlToDomainAndPath( authorUrl ) }
+								</Emojify>
+							</ExternalLink>
+						}
+						{ ! authorUrl &&
+							<em>{ translate( 'No website' ) }</em>
+						}
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
 						<span>
-							{ authorIp }
+							{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
 						</span>
 					</div>
 					{ showBlockUser &&
@@ -185,7 +190,7 @@ export class CommentDetailAuthor extends Component {
 							<span>
 								{ translate(
 									// eslint-disable-next-line max-len
-									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to allow comments only from registered users.",
+									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
 									{ components: { a: <a href={ `/settings/discussion/${ site.slug }` } /> } }
 								) }
 							</span>

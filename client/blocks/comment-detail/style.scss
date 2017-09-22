@@ -505,6 +505,10 @@ a.comment-detail__author-more-element {
 		padding-left: 8px;
 		text-overflow: ellipsis;
 	}
+
+	strong {
+		float: none;
+	}
 }
 
 .comment-detail.card .comment-detail__author-more-element-block-user .gridicon {
