@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { includes, size, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ const AddItemDialog = ( props ) => {
 			<FormLabel
 				key={ `${ pckgId }-${ itemIdx }` }
 				className="packages-step__dialog-package-option">
-				<FormCheckbox checked={ _.includes( addedItems[ pckgId ], itemIdx ) }
+				<FormCheckbox checked={ includes( addedItems[ pckgId ], itemIdx ) }
 						onChange={ onChange } />
 				<span>{ itemLabel }</span>
 			</FormLabel>
@@ -93,7 +93,7 @@ const AddItemDialog = ( props ) => {
 				{
 					label: __( 'Add' ),
 					isPrimary: true,
-					isDisabled: ! _.some( addedItems, _.size ),
+					isDisabled: ! some( addedItems, size ),
 					onClick: () => props.addItems( orderId, siteId, openedPackageId ),
 				},
 				{ label: __( 'Close' ), onClick: onClose },

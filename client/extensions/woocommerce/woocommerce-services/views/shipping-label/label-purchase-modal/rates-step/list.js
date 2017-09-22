@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { get, isEmpty, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,7 +49,7 @@ const ShippingRates = ( {
 
 	const renderSinglePackage = ( pckg, pckgId ) => {
 		const selectedRate = selectedRates[ pckgId ] || '';
-		const packageRates = _.get( availableRates, [ pckgId, 'rates' ], [] );
+		const packageRates = get( availableRates, [ pckgId, 'rates' ], [] );
 		const valuesMap = { '': __( 'Select one...' ) };
 		const serverErrors = errors.server && errors.server[ pckgId ];
 		const formError = errors.form && errors.form[ pckgId ];
@@ -62,11 +62,11 @@ const ShippingRates = ( {
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
 				{ serverErrors &&
-					_.isEmpty( packageRates ) &&
+					isEmpty( packageRates ) &&
 					hasMultiplePackages &&
 					<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
 				}
-				{ ! _.isEmpty( packageRates ) &&
+				{ ! isEmpty( packageRates ) &&
 					<Dropdown
 						id={ id + '_' + pckgId }
 						valuesMap={ valuesMap }
@@ -88,7 +88,7 @@ const ShippingRates = ( {
 	return (
 		<div>
 			{ shouldShowRateNotice && renderRateNotice() }
-			{ Object.values( _.mapValues( selectedPackages, renderSinglePackage ) ) }
+			{ Object.values( mapValues( selectedPackages, renderSinglePackage ) ) }
 		</div>
 	);
 };
