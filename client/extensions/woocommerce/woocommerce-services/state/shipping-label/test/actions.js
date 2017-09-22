@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -84,6 +85,19 @@ function createGetFormErrorsFn( opts = {} ) {
 
 describe( 'Shipping label Actions', () => {
 	describe( '#openPrintingFlow', () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+			.reply( 200, {
+				data: {
+					status: 200,
+					body: {
+						normalized: true,
+						is_trivial_normalization: true,
+					},
+				},
+			} );
+
 		describe( 'origin validation ignored', () => {
 			const dispatchSpy = sinon.spy();
 
@@ -200,5 +214,7 @@ describe( 'Shipping label Actions', () => {
 				} ) ).to.equal( true );
 			} );
 		} );
+
+		nock.cleanAll();
 	} );
 } );
