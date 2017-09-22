@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -11,27 +12,36 @@ import _ from 'lodash';
  * Internal dependencies
  */
 import ItemInfo from './item-info';
-import NumberField from 'components/number-field';
+import NumberField from 'woocommerce/woocommerce-services/components/number-field';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Button from 'components/button';
-import getBoxDimensions from 'lib/utils/get-box-dimensions';
-import getFormErrors from '../../../state/selectors/errors';
+import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import {
-	updateWeight,
-	removePackage,
+	updatePackageWeight,
 	setPackageType,
 	openAddItem,
-} from '../../../state/actions';
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
-	return `${ dimensions.length } ${ dimensionUnit } x 
-			${ dimensions.width } ${ dimensionUnit } x 
-			${ dimensions.height } ${ dimensionUnit }`;
+	return [
+		dimensions.length,
+		dimensions.width,
+		dimensions.height,
+	]
+	.map( ( dimension ) => `${ dimension } ${ dimensionUnit }` )
+	.join( ' x ' );
 };
 
 const PackageInfo = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		packageId,
 		selected,
 		all,
@@ -51,12 +61,15 @@ const PackageInfo = ( props ) => {
 
 	const renderItemInfo = ( item, itemIndex ) => {
 		return (
-			<ItemInfo key={ itemIndex }
-					item={ item }
-					itemIndex={ itemIndex }
-					packageId={ packageId }
-					showRemove
-					isIndividualPackage={ isIndividualPackage } />
+			<ItemInfo
+				siteId={ siteId }
+				orderId={ orderId }
+				key={ itemIndex }
+				item={ item }
+				itemIndex={ itemIndex }
+				packageId={ packageId }
+				showRemove
+				isIndividualPackage={ isIndividualPackage } />
 		);
 	};
 
@@ -65,16 +78,17 @@ const PackageInfo = ( props ) => {
 		return ( <option value={ boxId } key={ boxId }>{ box.name } - { renderPackageDimensions( dimensions, dimensionUnit ) }</option> );
 	};
 
+	const onAddItem = () => props.openAddItem( orderId, siteId );
 	const renderAddItemButton = () => {
 		if ( isIndividualPackage ) {
 			return null;
 		}
 
-		return ( <Button className="packages-step__add-item-btn" compact onClick={ props.openAddItem }>{ __( 'Add items' ) }</Button> );
+		return ( <Button className="packages-step__add-item-btn" compact onClick={ onAddItem }>{ __( 'Add items' ) }</Button> );
 	};
 
 	const packageOptionChange = ( e ) => {
-		props.setPackageType( packageId, e.target.value );
+		props.setPackageType( orderId, siteId, packageId, e.target.value );
 	};
 
 	const renderItems = () => {
@@ -145,7 +159,7 @@ const PackageInfo = ( props ) => {
 		);
 	};
 
-	const onWeightChange = ( value ) => props.updateWeight( packageId, value );
+	const onWeightChange = ( value ) => props.updatePackageWeight( orderId, siteId, packageId, value );
 
 	return (
 		<div className="packages-step__package">
@@ -173,11 +187,13 @@ const PackageInfo = ( props ) => {
 };
 
 PackageInfo.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	packageId: PropTypes.string.isRequired,
 	selected: PropTypes.object.isRequired,
 	all: PropTypes.object.isRequired,
 	flatRateGroups: PropTypes.object.isRequired,
-	updateWeight: PropTypes.func.isRequired,
+	updatePackageWeight: PropTypes.func.isRequired,
 	dimensionUnit: PropTypes.string.isRequired,
 	weightUnit: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
@@ -185,16 +201,17 @@ PackageInfo.propTypes = {
 	openAddItem: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
-	const errors = loaded && getFormErrors( state, storeOptions ).packages;
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	const errors = loaded && getFormErrors( state, orderId, siteId ).packages;
 	return {
 		errors,
-		packageId: state.shippingLabel.openedPackageId,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
-		flatRateGroups: state.shippingLabel.form.packages.flatRateGroups,
+		packageId: shippingLabel.openedPackageId,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
+		flatRateGroups: shippingLabel.form.packages.flatRateGroups,
 		dimensionUnit: storeOptions.dimension_unit,
 		weightUnit: storeOptions.weight_unit,
 	};
@@ -202,8 +219,7 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( {
-		updateWeight,
-		removePackage,
+		updatePackageWeight,
 		setPackageType,
 		openAddItem,
 	}, dispatch );

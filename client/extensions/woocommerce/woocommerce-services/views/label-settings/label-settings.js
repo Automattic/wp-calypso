@@ -9,7 +9,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPaperSizes } from '../../lib/pdf-label-utils';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Button from 'components/button';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

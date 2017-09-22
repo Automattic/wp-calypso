@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -9,13 +10,18 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPaperSizes } from 'lib/pdf-label-utils';
-import Dropdown from 'components/dropdown';
-import getFormErrors from '../../state/selectors/errors';
-import { updatePaperSize } from '../../state/actions';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
+import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
 	const { form, errors, paperSize } = props;
+
 	return (
 		<div className="label-purchase-modal__sidebar">
 			<Dropdown
@@ -30,19 +36,21 @@ const Sidebar = ( props ) => {
 };
 
 Sidebar.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	paperSize: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
 	form: PropTypes.object.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		paperSize: state.shippingLabel.paperSize,
-		form: state.shippingLabel.form,
-		errors: loaded && getFormErrors( state, storeOptions ).sidebar,
+		paperSize: shippingLabel.paperSize,
+		form: shippingLabel.form,
+		errors: loaded && getFormErrors( state, orderId, siteId ).sidebar,
 	};
 };
 

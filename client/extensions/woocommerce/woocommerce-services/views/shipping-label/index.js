@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -11,25 +12,27 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import LoadingSpinner from 'components/loading-spinner';
-import PurchaseDialog from './components/label-purchase-modal';
-import QueryLabels from 'components/query-labels';
-import LabelItem from './components/label-item';
-import { fetchLabelsStatus, openPrintingFlow } from './state/actions';
+import Spinner from 'components/spinner';
+import PurchaseDialog from './label-purchase-modal';
+import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
+import LabelItem from './label-item';
+import { fetchLabelsStatus, openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import notices from 'notices';
 import GlobalNotices from 'components/global-notices';
 import Notice from 'components/notice';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class ShippingLabelRootView extends Component {
 	componentWillMount() {
 		if ( this.props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus();
+			this.props.fetchLabelsStatus( this.props.orderId, this.props.siteId );
 		}
 	}
 
 	componentWillReceiveProps( props ) {
 		if ( props.needToFetchLabelStatus ) {
-			this.props.fetchLabelsStatus();
+			this.props.fetchLabelsStatus( props.orderId, props.siteId );
 		}
 	}
 
@@ -68,8 +71,9 @@ class ShippingLabelRootView extends Component {
 	};
 
 	renderLabelButton = () => {
+		const onNewLabelClick = () => this.props.openPrintingFlow( this.props.orderId, this.props.siteId );
 		return (
-			<Button className="shipping-label__new-label-button" onClick={ this.props.openPrintingFlow } >
+			<Button className="shipping-label__new-label-button" onClick={ onNewLabelClick } >
 				{ __( 'Create new label' ) }
 			</Button>
 		);
@@ -78,7 +82,7 @@ class ShippingLabelRootView extends Component {
 	renderPurchaseLabelFlow = () => {
 		return (
 			<div className="shipping-label__item" >
-				<PurchaseDialog />
+				<PurchaseDialog orderId={ this.props.orderId } siteId={ this.props.siteId } />
 				{ this.renderPaymentInfo() }
 				{ this.props.paymentMethod && this.renderLabelButton() }
 			</div>
@@ -94,6 +98,8 @@ class ShippingLabelRootView extends Component {
 			return (
 				<LabelItem
 					key={ label.label_id }
+					siteId={ this.props.siteId }
+					orderId={ this.props.orderId }
 					label={ label }
 					labelNum={ labelsToRender.length - index }
 				/>
@@ -104,8 +110,10 @@ class ShippingLabelRootView extends Component {
 	renderLoading() {
 		return (
 			<div>
-				<QueryLabels />
-				<LoadingSpinner />
+				<QueryLabels orderId={ this.props.orderId } />
+				<div className="shipping-label__loading-spinner">
+					<Spinner />
+				</div>
 			</div>
 		);
 	}
@@ -117,7 +125,7 @@ class ShippingLabelRootView extends Component {
 
 		return (
 			<div className="shipping-label__container">
-				<QueryLabels />
+				<QueryLabels orderId={ this.props.orderId } />
 				<GlobalNotices id="notices" notices={ notices.list } />
 				{ this.renderPurchaseLabelFlow() }
 				{ this.props.labels.length ? this.renderLabels() : null }
@@ -127,23 +135,20 @@ class ShippingLabelRootView extends Component {
 }
 
 ShippingLabelRootView.propTypes = {
-	loaded: PropTypes.bool.isRequired,
-	needToFetchLabelStatus: PropTypes.bool.isRequired,
-	numPaymentMethods: PropTypes.number.isRequired,
-	paymentMethod: PropTypes.number.isRequired,
-	labels: PropTypes.array.isRequired,
-	fetchLabelsStatus: PropTypes.func.isRequired,
-	openPrintingFlow: PropTypes.func.isRequired,
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
+const mapStateToProps = ( state, { orderId } ) => {
+	const loaded = isLoaded( state, orderId );
+	const shippingLabel = getShippingLabel( state, orderId );
 	return {
+		siteId: getSelectedSiteId( state ),
 		loaded,
-		needToFetchLabelStatus: loaded && ! state.shippingLabel.refreshedLabelStatus,
-		numPaymentMethods: state.shippingLabel.numPaymentMethods,
-		paymentMethod: state.shippingLabel.paymentMethod,
-		labels: state.shippingLabel.labels,
+		needToFetchLabelStatus: loaded && ! shippingLabel.refreshedLabelStatus,
+		numPaymentMethods: loaded && shippingLabel.numPaymentMethods,
+		paymentMethod: loaded && shippingLabel.paymentMethod,
+		labels: loaded && shippingLabel.labels,
 	};
 };
 

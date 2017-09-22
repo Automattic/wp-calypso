@@ -1,25 +1,30 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
-import { translate as __ } from 'i18n-calypso';
+import { translate as __, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import RefundDialog from '../label-refund-modal';
-import ReprintDialog from '../label-reprint-modal';
-import TrackingLink from '../tracking-link';
-import InfoTooltip from 'components/info-tooltip';
-import formatDate from 'lib/utils/format-date';
-import timeAgo from 'lib/utils/time-ago';
-import { openRefundDialog, openReprintDialog } from '../../state/actions';
+import RefundDialog from './label-refund-modal';
+import ReprintDialog from './label-reprint-modal';
+import TrackingLink from './tracking-link';
+//import InfoTooltip from 'components/info-tooltip';
+import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+
+const formatDate = ( date ) => {
+	return moment( date ).format( 'MMMM Do YYYY, h:mm a' );
+};
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
+		const { orderId, siteId } = this.props;
+
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
 		if ( ( label.used_date && label.used_date < today.getTime() ) || ( label.created_date && label.created_date < thirtyDaysAgo ) ) {
@@ -28,12 +33,12 @@ class LabelItem extends Component {
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openRefundDialog( label.label_id );
+			this.props.openRefundDialog( orderId, siteId, label.label_id );
 		};
 
 		return (
 			<span>
-				<RefundDialog { ...label } />
+				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
 				<a href="#" onClick={ openDialog } >
 					<Gridicon icon="refund" size={ 12 } />{ __( 'Request refund' ) }
 				</a>
@@ -83,14 +88,16 @@ class LabelItem extends Component {
 			return null;
 		}
 
+		const { orderId, siteId } = this.props;
+
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openReprintDialog( label.label_id );
+			this.props.openReprintDialog( orderId, siteId, label.label_id );
 		};
 
 		return (
 			<span>
-				<ReprintDialog { ...label } />
+				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
 				<a href="#" onClick={ openDialog } >
 					<Gridicon icon="print" size={ 12 } />{ __( 'Reprint' ) }
 				</a>
@@ -103,25 +110,25 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const tooltipAnchor = (
+		return (
 			<span className="label-item__detail">
 				{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
 			</span>
 		);
-		return (
-			<InfoTooltip anchor={ tooltipAnchor }>
-				<h3>{ label.package_name }</h3>
-				<p>{ label.service_name }</p>
-				<ul>
-					{ label.product_names.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
-				</ul>
-			</InfoTooltip>
-		);
+		// return (
+		// 	<InfoTooltip anchor={ tooltipAnchor }>
+		// 		<h3>{ label.package_name }</h3>
+		// 		<p>{ label.service_name }</p>
+		// 		<ul>
+		// 			{ label.product_names.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
+		// 		</ul>
+		// 	</InfoTooltip>
+		// );
 	};
 
 	render() {
 		const { label } = this.props;
-		const purchased = timeAgo( label.created );
+		const purchased = moment( label.created ).fromNow();
 
 		return (
 			<div key={ label.label_id } className="label-item" >
@@ -146,6 +153,8 @@ class LabelItem extends Component {
 }
 
 LabelItem.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	label: PropTypes.object.isRequired,
 	openRefundDialog: PropTypes.func.isRequired,
 	openReprintDialog: PropTypes.func.isRequired,

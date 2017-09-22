@@ -8,6 +8,7 @@ import { includes, reduce, filter, map } from 'lodash';
 /**
  * Internal dependencies
  */
+import * as api from '../../api';
 import getPDFSupport from '../utils/pdf-support';
 
 const PAPER_SIZES = {
@@ -35,23 +36,25 @@ export const getPaperSizes = ( country ) => (
 	}, {} )
 );
 
-const _getPDFURL = ( paperSize, labels, baseURL, nonce ) => {
+const _getPDFURL = ( paperSize, labels, test = false ) => {
 	if ( ! PAPER_SIZES[ paperSize ] ) {
 		throw new Error( `Invalid paper size: ${ paperSize }` );
 	}
 	const params = {
-		_wpnonce: nonce,
 		paper_size: paperSize,
-		'label_ids[]': filter( map( labels, 'labelId' ) ),
-		'captions[]': filter( map( labels, 'caption' ) ),
+		//send params as a CSV to avoid conflicts with some plugins out there (#1111)
+		label_id_csv: filter( map( labels, 'labelId' ) ).join( ',' ),
+		caption_csv: filter( map( labels, ( l ) => ( l.caption ? encodeURIComponent( l.caption ) : null ) ) ).join( ',' ),
 	};
-	return baseURL + '?' + querystring.stringify( params );
+	const urlBase = test ? api.url.labelTestPrint() : api.url.labelsPrint();
+
+	return api.createGetUrlWithNonce( urlBase, querystring.stringify( params ) );
 };
 
-export const getPrintURL = ( paperSize, labels, { labelsPrintURL, nonce } ) => {
-	return _getPDFURL( paperSize, labels, labelsPrintURL, nonce );
+export const getPrintURL = ( paperSize, labels ) => {
+	return _getPDFURL( paperSize, labels );
 };
 
-export const getPreviewURL = ( paperSize, labels, { labelsPreviewURL, nonce } ) => {
-	return getPDFSupport() ? _getPDFURL( paperSize, labels, labelsPreviewURL, nonce ) : null;
+export const getPreviewURL = ( paperSize, labels ) => {
+	return getPDFSupport() ? _getPDFURL( paperSize, labels, true ) : null;
 };

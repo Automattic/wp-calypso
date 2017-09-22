@@ -5114,9 +5114,6 @@
       "version": "1.1.0",
       "dev": true
     },
-    "reselect": {
-      "version": "3.0.1"
-    },
     "resolve": {
       "version": "1.4.0"
     },

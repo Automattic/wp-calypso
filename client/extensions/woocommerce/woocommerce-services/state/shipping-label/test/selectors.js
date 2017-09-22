@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRatesErrors } from '../errors';
+import { getRatesErrors } from '../selectors';
 
 describe( '#getRatesErrors', () => {
 	// when there are selected rates
