@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FieldError from 'components/field-error';
-import Dropdown from 'components/dropdown';
+import FieldError from 'woocommerce/woocommerce-services/components/field-error';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 

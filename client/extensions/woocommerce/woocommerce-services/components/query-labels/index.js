@@ -15,8 +15,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryLabels extends Component {
 	fetch() {
-		const { siteId, orderId } = this.props;
-		this.props.fetchLabelsData( siteId, orderId );
+		const { orderId, siteId } = this.props;
+		this.props.fetchLabelsData( orderId, siteId );
 	}
 
 	componentWillMount() {

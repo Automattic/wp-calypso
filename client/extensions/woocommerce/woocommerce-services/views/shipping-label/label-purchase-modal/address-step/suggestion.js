@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { translate as __ } from 'i18n-calypso';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -11,7 +12,7 @@ import classNames from 'classnames';
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import ErrorNotice from 'components/error-notice';
+import Notice from 'components/notice';
 import StepConfirmationButton from '../step-confirmation-button';
 
 const RadioButton = ( props ) => {
@@ -74,10 +75,13 @@ const AddressSuggestion = ( {
 	const onToggleSelectNormalizedAddress = ( value ) => () => selectNormalizedAddress( value );
 	return (
 		<div>
-			<ErrorNotice isWarning>
+			<Notice
+				className="error-notice"
+				status="is-warning"
+				showDismiss={ false } >
 				{ __( 'We have slightly modified the address entered. ' +
 					'If correct, please use the suggested address to ensure accurate delivery.' ) }
-			</ErrorNotice>
+			</Notice>
 			<div className="address-step__suggestion-container">
 				<RadioButton
 					checked={ ! selectNormalized }

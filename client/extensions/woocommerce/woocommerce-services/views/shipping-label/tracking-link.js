@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { translate as __ } from 'i18n-calypso';
 
 const TRACKING_URL_MAP = {

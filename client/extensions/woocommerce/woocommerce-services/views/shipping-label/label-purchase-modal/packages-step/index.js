@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -14,14 +15,20 @@ import PackageInfo from './package-info';
 import MoveItemDialog from './move-item';
 import AddItemDialog from './add-item';
 import StepConfirmationButton from '../step-confirmation-button';
-import ErrorNotice from 'components/error-notice';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
+import Notice from 'components/notice';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
-import getFormErrors from '../../../state/selectors/errors';
-import { toggleStep, confirmPackages } from '../../../state/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { toggleStep, confirmPackages } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const PackagesStep = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		selected,
 		all,
 		weightUnit,
@@ -96,19 +103,23 @@ const PackagesStep = ( props ) => {
 
 	const renderWarning = () => {
 		if ( ! hasAnyPackagesConfigured ) {
-			return <ErrorNotice isWarning>
+			return <Notice
+			className="error-notice"
+			status="is-warning"
+			showDismiss={ false } >
 				<span>{ __(
 					'There are no packages configured. The items have been packed individually. ' +
 					'You can add or enable packages using the {{a}}Packaging Manager{{/a}}.',
 					{ components: { a: <a href="admin.php?page=wc-settings&tab=shipping&section=package-settings" /> } }
 				) }</span>
-			</ErrorNotice>;
+			</Notice>;
 		}
 
 		return null;
 	};
 
-	const toggleStepHandler = () => props.toggleStep( 'packages' );
+	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'packages' );
+	const confirmPackagesHandler = () => props.confirmPackages( orderId, siteId );
 	return (
 		<StepContainer
 			title={ __( 'Packages' ) }
@@ -118,9 +129,13 @@ const PackagesStep = ( props ) => {
 
 			{ renderWarning() }
 			<div className="packages-step__contents">
-				<PackageList />
+				<PackageList
+					siteId={ props.siteId }
+					orderId={ props.orderId } />
 				{ packageIds.length
-					? <PackageInfo />
+					? <PackageInfo
+						siteId={ props.siteId }
+						orderId={ props.orderId } />
 					: ( <div key="no-packages" className="packages-step__package">
 							{ __( 'There are no packages or items associated with this order' ) }
 						</div> )
@@ -129,17 +144,23 @@ const PackagesStep = ( props ) => {
 
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || ! packageIds.length }
-				onClick={ props.confirmPackages } >
+				onClick={ confirmPackagesHandler } >
 					{ __( 'Use these packages' ) }
 			</StepConfirmationButton>
 
-			<MoveItemDialog />
-			<AddItemDialog />
+			<MoveItemDialog
+				siteId={ props.siteId }
+				orderId={ props.orderId } />
+			<AddItemDialog
+				siteId={ props.siteId }
+				orderId={ props.orderId } />
 		</StepContainer>
 	);
 };
 
 PackagesStep.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	selected: PropTypes.object.isRequired,
 	all: PropTypes.object.isRequired,
 	weightUnit: PropTypes.string.isRequired,
@@ -147,15 +168,16 @@ PackagesStep.propTypes = {
 	expanded: PropTypes.bool,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
-		errors: loaded && getFormErrors( state, storeOptions ).packages,
+		errors: loaded && getFormErrors( state, orderId, siteId ).packages,
 		weightUnit: storeOptions.weight_unit,
-		expanded: state.shippingLabel.form.packages.expanded,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
+		expanded: shippingLabel.form.packages.expanded,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
 	};
 };
 

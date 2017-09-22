@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -10,11 +11,11 @@ import { translate as __ } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { openItemMove, removeItem } from '../../../state/actions';
+import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ItemInfo = ( props ) => {
-	const { item, itemIndex } = props;
-	const onMoveClick = () => props.openItemMove( itemIndex );
+	const { orderId, siteId, item, itemIndex } = props;
+	const onMoveClick = () => props.openItemMove( orderId, siteId, itemIndex );
 
 	const renderMoveToPackage = () => {
 		return (
@@ -43,6 +44,8 @@ const ItemInfo = ( props ) => {
 };
 
 ItemInfo.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	item: PropTypes.object.isRequired,
 	itemIndex: PropTypes.number.isRequired,
 	openItemMove: PropTypes.func.isRequired,
@@ -51,7 +54,6 @@ ItemInfo.propTypes = {
 const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( {
 		openItemMove,
-		removeItem,
 	}, dispatch );
 };
 
