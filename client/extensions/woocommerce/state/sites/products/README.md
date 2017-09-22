@@ -48,11 +48,11 @@ Products are collected in `products`, `isLoading` indicates which pages are bein
 
 ## Selectors
 
-### `areProductsLoaded( state, page, [siteId] )`
+### `areProductsLoaded( state, params, [siteId] )`
 
 Whether the product list on a given page has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
 
-### `areProductsLoading( state, page, [siteId] )`
+### `areProductsLoading( state, params, [siteId] )`
 
 Whether the product list on a given page is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 

@@ -57,7 +57,9 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProducts( siteId, 1 )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_PRODUCTS_REQUEST, siteId, page: 1 } );
+			expect( dispatch ).to.have.been.calledWith(
+				{ type: WOOCOMMERCE_PRODUCTS_REQUEST, siteId, params: { page: 1, per_page: 10 } }
+			);
 		} );
 
 		it( 'should dispatch a success action with products list when request completes', () => {
@@ -69,7 +71,7 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 					siteId,
-					page: 1,
+					params: { page: 1, per_page: 10 },
 					totalPages: 3,
 					totalProducts: 30,
 					products
@@ -98,7 +100,7 @@ describe( 'actions', () => {
 							[ siteId ]: {
 								products: {
 									isLoading: {
-										1: true,
+										[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
 									}
 								}
 							}
@@ -154,7 +156,7 @@ describe( 'actions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
 				siteId,
-				page: 1,
+				params: { page: 1, per_page: 10, search: 'testing' },
 				query: 'testing',
 			} );
 		} );
@@ -168,7 +170,7 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 					siteId,
-					page: 1,
+					params: { page: 1, per_page: 10, search: 'testing' },
 					totalProducts: 28,
 					products,
 					query: 'testing',
@@ -221,7 +223,7 @@ describe( 'actions', () => {
 								products: {
 									search: {
 										isLoading: {
-											1: false,
+											[ JSON.stringify( { page: 1, per_page: 10 } ) ]: false,
 										},
 										query: 'testing',
 										totalProducts: 28,
@@ -238,7 +240,7 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 					siteId,
-					page: 2,
+					params: { page: 2, per_page: 10, search: 'testing' },
 					totalProducts: 28,
 					products: [ product ],
 					query: 'testing',

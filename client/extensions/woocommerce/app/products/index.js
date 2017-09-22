@@ -121,9 +121,9 @@ class Products extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const productsLoaded = site && areProductsLoaded( state, 1, site.ID );
+	const productsLoaded = site && areProductsLoaded( state, { page: 1, per_page: 10 }, site.ID );
 	const totalProducts = site && getTotalProducts( state, site.ID );
-	const productsLoading = site && areProductsLoading( state, 1, site.ID );
+	const productsLoading = site && areProductsLoading( state, { page: 1, per_page: 10 }, site.ID );
 	return {
 		site,
 		productsLoaded,

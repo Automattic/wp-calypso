@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { trim } from 'lodash';
 
 /**
@@ -159,25 +162,34 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 		siteId = getSelectedSiteId( state );
 	}
 
-	if ( areProductsLoading( state, page, siteId ) ) {
+	const params = {
+		page,
+		per_page: 10,
+	};
+
+	if ( areProductsLoading( state, params, siteId ) ) {
 		return;
 	}
 
 	const fetchAction = {
 		type: WOOCOMMERCE_PRODUCTS_REQUEST,
 		siteId,
-		page,
+		params,
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10` ).then( ( response ) => {
+	const paramString = Object.keys( params ).map(
+		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
+	).join( '&' );
+
+	return request( siteId ).getWithHeaders( `products?${ paramString }` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalPages = headers[ 'X-WP-TotalPages' ];
 		const totalProducts = headers[ 'X-WP-Total' ];
 		dispatch( {
 			type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 			siteId,
-			page,
+			params,
 			totalPages,
 			totalProducts,
 			products: data,
@@ -187,7 +199,7 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 		dispatch( {
 			type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 			siteId,
-			page,
+			params,
 			error,
 		} );
 	} );
@@ -199,30 +211,40 @@ export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, 
 		siteId = getSelectedSiteId( state );
 	}
 
+	const params = {
+		page,
+		per_page: 10,
+		search: query,
+	};
+
 	if ( ! query ) {
-		if ( areProductSearchResultsLoading( state, page, siteId ) ) {
+		if ( areProductSearchResultsLoading( state, params, siteId ) ) {
 			return;
 		}
 		query = getProductSearchQuery( state, siteId );
+		params.search = query;
 	}
 
-	const queryForURL = encodeURIComponent( trim( query ) );
 	const fetchAction = {
 		type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
 		siteId,
 		query,
-		page,
+		params,
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10&search=${ queryForURL }` ).then( ( response ) => {
+	const paramString = Object.keys( params ).map(
+		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
+	).join( '&' );
+
+	return request( siteId ).getWithHeaders( `products?${ paramString }` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalProducts = headers[ 'X-WP-Total' ];
 		dispatch( {
 			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 			siteId,
 			query,
-			page,
+			params,
 			totalProducts,
 			products: data,
 		} );
@@ -232,7 +254,7 @@ export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, 
 			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
 			siteId,
 			query,
-			page,
+			params,
 			error,
 		} );
 	} );

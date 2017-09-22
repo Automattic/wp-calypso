@@ -30,11 +30,11 @@ const loadingState = {
 				123: {
 					products: {
 						isLoading: {
-							1: true,
+							[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
 						},
 						search: {
 							isLoading: {
-								1: true,
+								[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
 							},
 							query: 'testing',
 						},
@@ -53,13 +53,13 @@ const loadedState = {
 					products: {
 						search: {
 							isLoading: {
-								1: false,
+								[ JSON.stringify( { page: 1, per_page: 10 } ) ]: false,
 							},
 							totalProducts: 28,
 							query: 'testing',
 						},
 						isLoading: {
-							1: false,
+							[ JSON.stringify( { page: 1, per_page: 10 } ) ]: false,
 						},
 						products,
 						totalPages: 3,
@@ -70,11 +70,11 @@ const loadedState = {
 					products: {
 						search: {
 							isLoading: {
-								1: true,
+								[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
 							}
 						},
 						isLoading: {
-							1: true,
+							[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
 						},
 						products: {},
 						totalPages: 1,
@@ -103,46 +103,50 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#areProductsLoaded', () => {
+		const params = { page: 1, per_page: 10 };
+
 		it( 'should be false when woocommerce state is not available.', () => {
-			expect( areProductsLoaded( preInitializedState, 1, 123 ) ).to.be.false;
+			expect( areProductsLoaded( preInitializedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be false when products are currently being fetched.', () => {
-			expect( areProductsLoaded( loadingState, 1, 123 ) ).to.be.false;
+			expect( areProductsLoaded( loadingState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be true when products are loaded.', () => {
-			expect( areProductsLoaded( loadedState, 1, 123 ) ).to.be.true;
+			expect( areProductsLoaded( loadedState, params, 123 ) ).to.be.true;
 		} );
 
 		it( 'should be false when products are loaded only for a different site.', () => {
-			expect( areProductsLoaded( loadedState, 1, 456 ) ).to.be.false;
+			expect( areProductsLoaded( loadedState, params, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( areProductsLoaded( loadedStateWithUi, 1 ) ).to.be.true;
+			expect( areProductsLoaded( loadedStateWithUi, params ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#areProductsLoading', () => {
+		const params = { page: 1, per_page: 10 };
+
 		it( 'should be false when woocommerce state is not available.', () => {
-			expect( areProductsLoading( preInitializedState, 1, 123 ) ).to.be.false;
+			expect( areProductsLoading( preInitializedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be true when products are currently being fetched.', () => {
-			expect( areProductsLoading( loadingState, 1, 123 ) ).to.be.true;
+			expect( areProductsLoading( loadingState, params, 123 ) ).to.be.true;
 		} );
 
 		it( 'should be false when products are loaded.', () => {
-			expect( areProductsLoading( loadedState, 1, 123 ) ).to.be.false;
+			expect( areProductsLoading( loadedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be false when products are loaded only for a different site.', () => {
-			expect( areProductsLoading( loadedState, 1, 456 ) ).to.be.false;
+			expect( areProductsLoading( loadedState, params, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( areProductsLoading( loadedStateWithUi, 1 ) ).to.be.false;
+			expect( areProductsLoading( loadedStateWithUi, params ) ).to.be.false;
 		} );
 	} );
 
@@ -190,46 +194,50 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#areProductSearchResultsLoaded', () => {
+		const params = { page: 1, per_page: 10 };
+
 		it( 'should be false when woocommerce state is not available.', () => {
-			expect( areProductSearchResultsLoaded( preInitializedState, 1, 123 ) ).to.be.false;
+			expect( areProductSearchResultsLoaded( preInitializedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be false when products are currently being fetched.', () => {
-			expect( areProductSearchResultsLoaded( loadingState, 1, 123 ) ).to.be.false;
+			expect( areProductSearchResultsLoaded( loadingState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be true when products are loaded.', () => {
-			expect( areProductSearchResultsLoaded( loadedState, 1, 123 ) ).to.be.true;
+			expect( areProductSearchResultsLoaded( loadedState, params, 123 ) ).to.be.true;
 		} );
 
 		it( 'should be false when products are loaded only for a different site.', () => {
-			expect( areProductSearchResultsLoaded( loadedState, 1, 456 ) ).to.be.false;
+			expect( areProductSearchResultsLoaded( loadedState, params, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( areProductSearchResultsLoaded( loadedStateWithUi, 1 ) ).to.be.true;
+			expect( areProductSearchResultsLoaded( loadedStateWithUi, params ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#areProductSearchResultsLoading', () => {
+		const params = { page: 1, per_page: 10 };
+
 		it( 'should be false when woocommerce state is not available.', () => {
-			expect( areProductSearchResultsLoading( preInitializedState, 1, 123 ) ).to.be.false;
+			expect( areProductSearchResultsLoading( preInitializedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be true when products are currently being fetched.', () => {
-			expect( areProductSearchResultsLoading( loadingState, 1, 123 ) ).to.be.true;
+			expect( areProductSearchResultsLoading( loadingState, params, 123 ) ).to.be.true;
 		} );
 
 		it( 'should be false when products are loaded.', () => {
-			expect( areProductSearchResultsLoading( loadedState, 1, 123 ) ).to.be.false;
+			expect( areProductSearchResultsLoading( loadedState, params, 123 ) ).to.be.false;
 		} );
 
 		it( 'should be false when products are loaded only for a different site.', () => {
-			expect( areProductSearchResultsLoading( loadedState, 1, 456 ) ).to.be.false;
+			expect( areProductSearchResultsLoading( loadedState, params, 456 ) ).to.be.false;
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( areProductSearchResultsLoading( loadedStateWithUi, 1 ) ).to.be.false;
+			expect( areProductSearchResultsLoading( loadedStateWithUi, params ) ).to.be.false;
 		} );
 	} );
 
