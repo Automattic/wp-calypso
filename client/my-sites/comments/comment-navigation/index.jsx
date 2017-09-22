@@ -207,11 +207,7 @@ export class CommentNavigation extends Component {
 
 				{ isEnabled( 'manage/comments/bulk-actions' ) &&
 					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-						<SegmentedControl
-							primary
-							compact
-							className="comment-navigation__sort-buttons"
-						>
+						<SegmentedControl compact className="comment-navigation__sort-buttons">
 							<ControlItem
 								onClick={ setSortOrder( NEWEST_FIRST ) }
 								selected={ sortOrder === NEWEST_FIRST }
