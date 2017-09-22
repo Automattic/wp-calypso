@@ -75,6 +75,7 @@ export class CommentDetailAuthor extends Component {
 	toggleBlockUser = () => {
 		const {
 			authorEmail,
+			authorId,
 			authorIsBlocked,
 			siteBlacklist,
 			commentId,
@@ -88,6 +89,18 @@ export class CommentDetailAuthor extends Component {
 			isPersistent: true,
 		};
 
+		const analytics = {
+			action: authorIsBlocked ? 'unblock_user' : 'block_user',
+		};
+		if ( authorId ) {
+			analytics.user_type = 'wpcom';
+		} else if ( !! authorEmail ) {
+			analytics.user_type = 'email_only';
+		} else {
+			// not currently supported
+			analytics.user_type = 'anonymous';
+		}
+
 		if ( authorIsBlocked ) {
 			this.props.successNotice(
 				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
@@ -96,7 +109,7 @@ export class CommentDetailAuthor extends Component {
 
 			const newBlacklist = siteBlacklist.split( '\n' ).filter( item => item !== authorEmail ).join( '\n' );
 
-			return updateBlacklist( newBlacklist, 'unblock' );
+			return updateBlacklist( newBlacklist, analytics );
 		}
 
 		this.props.successNotice(
@@ -108,7 +121,7 @@ export class CommentDetailAuthor extends Component {
 			? siteBlacklist + '\n' + authorEmail
 			: authorEmail;
 
-		return updateBlacklist( newBlacklist, 'block' );
+		return updateBlacklist( newBlacklist, analytics );
 	}
 
 	authorMoreInfo() {
@@ -268,13 +281,13 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: ( blacklist_keys, action ) => dispatch( withAnalytics(
+	updateBlacklist: ( blacklist_keys, analytics ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'block' === action
-				? 'calypso_comment_management_block_user'
-				: 'calypso_comment_management_unblock_user'
-			),
-			bumpStat( 'calypso_comment_management', ( 'block' === action ? 'user_blocked' : 'user_unblocked' ) )
+			recordTracksEvent( 'calypso_comment_management_moderate_user', analytics ),
+			bumpStat(
+				'calypso_comment_management',
+				'block_user' === analytics.action ? 'comment_author_blocked' : 'comment_author_unblocked'
+			)
 		),
 		saveSiteSettings( siteId, { blacklist_keys } )
 	) ),
