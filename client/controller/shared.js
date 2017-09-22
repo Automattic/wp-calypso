@@ -48,7 +48,9 @@ function loadCSS( cssUrl, elementId = null ) {
 	}
 
 	if ( link ) {
-		link.href = cssUrl;
+		if ( link.getAttribute( 'href' ) !== cssUrl ) {
+			link.href = cssUrl;
+		}
 		return;
 	}
 
