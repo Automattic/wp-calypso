@@ -180,7 +180,7 @@
 	position: relative;
 	margin-top: 3px;
 
-	&:not(.is-placeholder)::after {
+	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 20% );
 	}
 }
