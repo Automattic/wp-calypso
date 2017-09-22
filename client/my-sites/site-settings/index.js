@@ -11,7 +11,7 @@ import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 
-module.exports = function() {
+export default function() {
 	page(
 		'/settings',
 		mySitesController.siteSelection,
@@ -85,4 +85,4 @@ module.exports = function() {
 		mySitesController.siteSelection,
 		mySitesController.sites
 	);
-};
+}
