@@ -118,6 +118,37 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	it( 'should merge updates to a new order if additional fields are passed in', () => {
+		const action = {
+			type: WOOCOMMERCE_UI_ORDERS_EDIT,
+			siteId: 123,
+			order: {
+				id: { placeholder: 'order_1' },
+				billing: {
+					last_name: 'Helbron',
+				}
+			},
+		};
+		const originalState = deepFreeze( {
+			currentlyEditingId: { placeholder: 'order_1' },
+			changes: {
+				billing: {
+					first_name: 'Fiona',
+				}
+			},
+		} );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {
+			currentlyEditingId: { placeholder: 'order_1' },
+			changes: {
+				billing: {
+					first_name: 'Fiona',
+					last_name: 'Helbron',
+				}
+			},
+		} );
+	} );
+
 	it( 'should clear order changes from the state when requested', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
