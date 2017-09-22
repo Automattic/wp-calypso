@@ -86,7 +86,7 @@
 
 .plugins-browser-item .plugin-icon.is-placeholder,
 .plugins-browser-item .plugin-icon[style*='undefined'] {
-	&:before {
+	&::before {
 		width: 40px;
 		height: 40px;
 		font: normal 40px/40px Noticons;
@@ -97,11 +97,9 @@
 	margin-right: 0;
 }
 
-.plugins-browser-item  .rating {
-	padding-top: 10px;
+.plugins-browser-item .rating {
+	margin-top: 12px;
 	position: absolute;
-		bottom: 16px;
-		left: 16px;
 }
 
 .plugins-browser-item__installed {

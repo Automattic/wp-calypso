@@ -4,7 +4,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-require( 'it-each' )( { testPerIteration: true } );
+import { each } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,24 +66,24 @@ describe( '<Rating />', function() {
 			expect( component.props().style.clip ).to.equal( 'rect(0, 0px, ' + size + 'px, 0)' );
 		} );
 
-		const ratingList = [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ];
-		it.each( ratingList, 'should render rating %s as %s', [ 'element', 'element' ], function( element ) {
-			const rating = element,
-				size = 24, // use default size
-				wrapper = shallow(
+		it( 'should render rating clipping mask properly', function() {
+			each( [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ], function( ratingValue ) {
+				const size = 24; // use default size
+				const wrapper = shallow(
 					<Rating
-						rating={ rating }
+						rating={ ratingValue }
 						size={ size }
 					/>
 				);
 
-			const roundRating = Math.round( rating / 10 ) * 10;
-			const ratingWidth = ( size * 5 );
-			const maskPosition = ( ( roundRating / 100 ) * ratingWidth );
-			const clipPathMaskPosition = ( ratingWidth - ( ( roundRating / 100 ) * ratingWidth ) );
-			const component = wrapper.find( 'div.rating__overlay' );
-			expect( component.props().style.clipPath ).to.equal( 'inset(0 ' + clipPathMaskPosition + 'px 0 0 )' );
-			expect( component.props().style.clip ).to.equal( 'rect(0, ' + maskPosition + 'px, ' + size + 'px, 0)' );
+				const roundRating = Math.round( ratingValue / 10 ) * 10;
+				const ratingWidth = ( size * 5 );
+				const maskPosition = ( ( roundRating / 100 ) * ratingWidth );
+				const clipPathMaskPosition = ( ratingWidth - ( ( roundRating / 100 ) * ratingWidth ) );
+				const component = wrapper.find( 'div.rating__overlay' );
+				expect( component.props().style.clipPath ).to.equal( 'inset(0 ' + clipPathMaskPosition + 'px 0 0 )' );
+				expect( component.props().style.clip ).to.equal( 'rect(0, ' + maskPosition + 'px, ' + size + 'px, 0)' );
+			} );
 		} );
 	} );
 } );
