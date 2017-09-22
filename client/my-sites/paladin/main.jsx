@@ -1,11 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setPreviewType } from 'state/ui/preview/actions';

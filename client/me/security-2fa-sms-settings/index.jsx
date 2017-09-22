@@ -1,23 +1,24 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import FormPhoneInput from 'components/forms/form-phone-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormPhoneInput from 'components/forms/form-phone-input';
 import Notice from 'components/notice';
-import formBase from 'me/form-base';
-import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
+import { forSms } from 'lib/countries-list';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
-import { forSms } from 'lib/countries-list';
+import formBase from 'me/form-base';
+import Security2faProgress from 'me/security-2fa-progress';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
@@ -38,11 +39,11 @@ module.exports = protectForm( React.createClass( {
 	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ) ],
 
 	propTypes: {
-		onCancel: React.PropTypes.func.isRequired,
-		onVerifyByApp: React.PropTypes.func.isRequired,
-		onVerifyBySMS: React.PropTypes.func.isRequired,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired
+		onCancel: PropTypes.func.isRequired,
+		onVerifyByApp: PropTypes.func.isRequired,
+		onVerifyBySMS: PropTypes.func.isRequired,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired
 	},
 
 	verifyByApp: null,

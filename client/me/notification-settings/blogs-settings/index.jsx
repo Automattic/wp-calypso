@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Immutable from 'immutable';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Blog from './blog';
+import Placeholder from './placeholder';
+import EmptyContentComponent from 'components/empty-content';
+import InfiniteList from 'components/infinite-list';
+import config from 'config';
 import { getSites } from 'state/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import EmptyContentComponent from 'components/empty-content';
-import Blog from './blog';
-import InfiniteList from 'components/infinite-list';
-import Placeholder from './placeholder';
-import config from 'config';
 
 const createPlaceholder = () => <Placeholder />;
 

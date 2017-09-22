@@ -1,33 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { compact, includes, isEqual, property, snakeCase } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { trackClick } from './helpers';
+import ThemesSelectionHeader from './themes-selection-header';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
-import ThemesSelectionHeader from './themes-selection-header';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import {
-	getPremiumThemePrice,
-	getThemesForQueryIgnoringPage,
-	getThemesFoundForQuery,
-	isRequestingThemesForQuery,
-	isThemesLastPageForQuery,
-	isThemeActive,
-	isInstallingTheme
-} from 'state/themes/selectors';
-import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { prependThemeFilterKeys } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { setThemePreviewOptions } from 'state/themes/actions';
+import { getPremiumThemePrice, getThemesForQueryIgnoringPage, getThemesFoundForQuery, isRequestingThemesForQuery, isThemesLastPageForQuery, isThemeActive, isInstallingTheme } from 'state/themes/selectors';
 
 class ThemesSelection extends Component {
 	static propTypes = {

@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import { localize } from 'i18n-calypso';
 
 const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } ) => {
 	return (
@@ -71,7 +72,7 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } )
 };
 
 JetpackConnectExampleActivate.propTypes = {
-	onClick: React.PropTypes.func
+	onClick: PropTypes.func
 };
 
 JetpackConnectExampleActivate.defaultProps = {

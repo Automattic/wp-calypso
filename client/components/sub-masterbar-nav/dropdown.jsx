@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
 import Item from './item';
 
 const OptionShape = PropTypes.shape( {

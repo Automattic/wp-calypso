@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPreviewCustomizations } from 'state/preview/selectors';
-import { updateCustomizations } from 'state/preview/actions';
 import { requestSitePosts } from 'state/posts/actions';
+import { updateCustomizations } from 'state/preview/actions';
+import { getPreviewCustomizations } from 'state/preview/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-tool-data' );
 
@@ -19,14 +20,14 @@ export default function designTool( Component ) {
 	const DesignToolData = React.createClass( {
 		propTypes: {
 			// This is the key for the customizations in the Redux store (under preview)
-			previewDataKey: React.PropTypes.string.isRequired,
+			previewDataKey: PropTypes.string.isRequired,
 			// These are provided by the connect method
-			updateCustomizations: React.PropTypes.func.isRequired,
-			customizations: React.PropTypes.object,
-			selectedSiteId: React.PropTypes.number,
-			selectedSite: React.PropTypes.object,
-			allPages: React.PropTypes.array,
-			requestSitePosts: React.PropTypes.func.isRequired,
+			updateCustomizations: PropTypes.func.isRequired,
+			customizations: PropTypes.object,
+			selectedSiteId: PropTypes.number,
+			selectedSite: PropTypes.object,
+			allPages: PropTypes.array,
+			requestSitePosts: PropTypes.func.isRequired,
 		},
 
 		getDefaultProps() {

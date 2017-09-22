@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { isPersonal } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import PurchaseDetail from 'components/purchase-detail';
+import { isPersonal } from 'lib/products-values';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -35,11 +36,11 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 };
 
 PersonalPlanDetails.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired,
-	sitePlans: React.PropTypes.object.isRequired
+	sitePlans: PropTypes.object.isRequired
 };
 
 export default localize( PersonalPlanDetails );

@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
+import Card from 'components/card';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { appStates } from 'state/imports/constants';
 
 /**
  * Module variables

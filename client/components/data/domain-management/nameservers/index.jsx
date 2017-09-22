@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import NameserversStore from 'lib/domains/nameservers/store';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import StoreConnection from 'components/data/store-connection';
+import NameserversStore from 'lib/domains/nameservers/store';
 import { fetchNameservers } from 'lib/upgrades/actions';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';

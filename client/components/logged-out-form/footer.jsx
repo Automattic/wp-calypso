@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

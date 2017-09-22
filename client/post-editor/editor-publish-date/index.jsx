@@ -1,28 +1,29 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { intersection } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
-import { intersection } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import PostScheduler from './post-scheduler';
+import Button from 'components/button';
 import utils from 'lib/posts/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export class EditorPublishDate extends React.Component {
 
 	static propTypes = {
-		post: React.PropTypes.object,
-		postDate: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
+		post: PropTypes.object,
+		postDate: PropTypes.string,
+		setPostDate: PropTypes.func,
 	};
 
 	constructor( props ) {

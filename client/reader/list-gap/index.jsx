@@ -1,21 +1,22 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { handleGapClicked } from 'reader/utils';
 
 class Gap extends React.Component {
 	static propTypes = {
-		gap: React.PropTypes.object.isRequired,
-		store: React.PropTypes.object.isRequired,
-		selected: React.PropTypes.bool,
+		gap: PropTypes.object.isRequired,
+		store: PropTypes.object.isRequired,
+		selected: PropTypes.bool,
 	};
 
 	state = { isFilling: false };

@@ -1,30 +1,31 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { includes, reduce } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Sharing from './';
 import Accordion from 'components/accordion';
+import AccordionSection from 'components/accordion/section';
+import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import FormTextInput from 'components/forms/form-text-input';
 import PostMetadata from 'lib/post-metadata';
-import Sharing from './';
-import AccordionSection from 'components/accordion/section';
 import postUtils from 'lib/posts/utils';
 import { isMobile } from 'lib/viewport';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorSharingAccordion = React.createClass( {
 	propTypes: {

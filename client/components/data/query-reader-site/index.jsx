@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { shouldSiteBeFetched } from 'state/reader/sites/selectors';
 import { requestSite } from 'state/reader/sites/actions';
+import { shouldSiteBeFetched } from 'state/reader/sites/selectors';
 
 class QueryReaderSite extends Component {
 	componentWillMount() {

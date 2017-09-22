@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import SectionHeader from 'components/section-header';
+import CommentTab from './comment-tab';
+import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'components/section-header';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData, hasSiteStatsQueryFailed, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsComments extends Component {
 	static propTypes = {

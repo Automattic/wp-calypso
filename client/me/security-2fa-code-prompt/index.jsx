@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' ),
@@ -18,8 +24,6 @@ var FormButton = require( 'components/forms/form-button' ),
 	constants = require( 'me/constants' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 
-import Notice from 'components/notice';
-
 module.exports = React.createClass( {
 
 	displayName: 'Security2faCodePrompt',
@@ -38,11 +42,11 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		action: React.PropTypes.string,
-		onCancel: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired,
-		requestSMSOnMount: React.PropTypes.bool,
-		showCancelButton: React.PropTypes.bool
+		action: PropTypes.string,
+		onCancel: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
+		requestSMSOnMount: PropTypes.bool,
+		showCancelButton: PropTypes.bool
 	},
 
 	componentDidMount: function() {

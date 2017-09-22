@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
 import Button from 'components/button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export class UpgradeATStep extends Component {
 	static propTypes = {

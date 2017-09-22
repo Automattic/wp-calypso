@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteThemeShowcasePath } from 'state/sites/selectors';
 import { recordStat } from 'lib/posts/stats';
+import { getSiteThemeShowcasePath } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorThemeHelp extends PureComponent {
 	static propTypes = {

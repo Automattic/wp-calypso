@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostLikes } from 'state/selectors';
 import { requestPostLikes } from 'state/posts/likes/actions';
+import { isRequestingPostLikes } from 'state/selectors';
 
 class QueryPostLikes extends Component {
 	static propTypes = {

@@ -1,24 +1,16 @@
 /**
- * External dependencies.
+ * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { forEach, isEqual, map } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { forEach, isEqual, map } from 'lodash';
 
 /**
- * Internal dependencies.
+ * Internal dependencies
  */
-import {
-	getDocumentHeadFormattedTitle,
-	getDocumentHeadLink,
-	getDocumentHeadMeta
-} from 'state/document-head/selectors';
-import {
-	setDocumentHeadTitle as setTitle,
-	setDocumentHeadLink as setLink,
-	setDocumentHeadMeta as setMeta,
-	setDocumentHeadUnreadCount as setUnreadCount
-} from 'state/document-head/actions';
+import { setDocumentHeadTitle as setTitle, setDocumentHeadLink as setLink, setDocumentHeadMeta as setMeta, setDocumentHeadUnreadCount as setUnreadCount } from 'state/document-head/actions';
+import { getDocumentHeadFormattedTitle, getDocumentHeadLink, getDocumentHeadMeta } from 'state/document-head/selectors';
 
 class DocumentHead extends Component {
 	componentWillMount() {

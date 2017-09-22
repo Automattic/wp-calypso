@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import EditorSlug from 'post-editor/editor-slug';
 

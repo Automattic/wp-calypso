@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import getSiteId from 'state/selectors/get-site-id';
+import CommentList from './comment-list';
+import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import CommentList from './comment-list';
+import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { canCurrentUser } from 'state/selectors';
-import { preventWidows } from 'lib/formatting';
-import EmptyContent from 'components/empty-content';
+import getSiteId from 'state/selectors/get-site-id';
 
 export class CommentsManagement extends Component {
 	static propTypes = {

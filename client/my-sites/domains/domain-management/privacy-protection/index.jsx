@@ -1,25 +1,26 @@
 /**
  * External dependencies
  */
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import CardContent from './card/content';
 import PrivacyProtectionCardHeader from './privacy-protection-card/header';
+import Card from 'components/card';
+import QueryProductsList from 'components/data/query-products-list';
+import Main from 'components/main';
+import { getSelectedDomain } from 'lib/domains';
+import { type as domainTypes } from 'lib/domains/constants';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
-import { getProductDisplayCost } from 'state/products-list/selectors';
-import { getSelectedDomain } from 'lib/domains';
-import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
-import QueryProductsList from 'components/data/query-products-list';
-import { type as domainTypes } from 'lib/domains/constants';
+import { getProductDisplayCost } from 'state/products-list/selectors';
 
 class PrivacyProtection extends Component {
 	static propTypes = {

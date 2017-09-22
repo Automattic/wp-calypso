@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingWhois } from 'state/selectors';
 import { requestWhois } from 'state/domains/management/actions';
+import { isRequestingWhois } from 'state/selectors';
 
 class QueryWhois extends Component {
 	componentWillMount() {

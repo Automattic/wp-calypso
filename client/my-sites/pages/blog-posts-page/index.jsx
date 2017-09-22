@@ -1,28 +1,25 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import {
-	getSiteFrontPageType,
-	getSitePostsPage,
-	getSiteFrontPage,
-} from 'state/sites/selectors';
+import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
 
 class BlogPostsPage extends React.Component {
 
 	static propTypes = {
-		site: React.PropTypes.object,
-		pages: React.PropTypes.array,
+		site: PropTypes.object,
+		pages: PropTypes.array,
 	}
 
 	static defaultProps = {

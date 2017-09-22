@@ -3,8 +3,9 @@
  */
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
 import { invoke } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -13,18 +14,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 import PlanIcon from 'components/plans/plan-icon';
-import {
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL
-} from 'lib/plans/constants';
+import { PLAN_PREMIUM, PLAN_BUSINESS, PLAN_JETPACK_FREE, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_PERSONAL } from 'lib/plans/constants';
 import purchasesPaths from 'me/purchases/paths';
 
 class CurrentPlanHeader extends Component {
@@ -33,7 +23,7 @@ class CurrentPlanHeader extends Component {
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: React.PropTypes.oneOf( [
+		currentPlanSlug: PropTypes.oneOf( [
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
 			PLAN_JETPACK_FREE,

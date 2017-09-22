@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
+import HeaderCake from 'components/header-cake';
+import SectionHeader from 'components/section-header';
 
 class SimplePaymentsDialogNavigation extends Component {
 	static propTypes = {

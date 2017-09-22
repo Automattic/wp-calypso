@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ export default React.createClass( {
 	displayName: 'CustomizerLoadingPanel',
 
 	propTypes: {
-		isLoaded: React.PropTypes.bool,
+		isLoaded: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {

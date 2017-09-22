@@ -1,13 +1,18 @@
-/** External Dependencies */
-import React from 'react';
+/**
+ * External dependencies
+ */
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/** Internal Dependencies */
+/**
+ * Internal dependencies
+ */
 import Spinner from 'components/spinner';
 
 export default React.createClass( {
 	propTypes: {
-		countryCode: React.PropTypes.string.isRequired
+		countryCode: PropTypes.string.isRequired
 	},
 	getInitialState() {
 		return {

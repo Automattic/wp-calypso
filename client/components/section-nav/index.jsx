@@ -1,20 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
-import {
-	isEqual,
-	includes,
-} from 'lodash';
+import { isEqual, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
 
 /**
  * Main
@@ -22,13 +20,13 @@ import Search from 'components/search';
 var SectionNav = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.node,
-		selectedText: React.PropTypes.node,
-		selectedCount: React.PropTypes.number,
-		hasPinnedItems: React.PropTypes.bool,
-		onMobileNavPanelOpen: React.PropTypes.func,
-		className: React.PropTypes.string,
-		allowDropdown: React.PropTypes.bool,
+		children: PropTypes.node,
+		selectedText: PropTypes.node,
+		selectedCount: PropTypes.number,
+		hasPinnedItems: PropTypes.bool,
+		onMobileNavPanelOpen: PropTypes.func,
+		className: PropTypes.string,
+		allowDropdown: PropTypes.bool,
 	},
 
 	getInitialState: function() {

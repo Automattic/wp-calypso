@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import ReactDomServer from 'react-dom/server';
-import { connect } from 'react-redux';
 import { escapeRegExp, findIndex, get, head, includes, last, pick } from 'lodash';
-import tinymce from 'tinymce/tinymce';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SuggestionList from './suggestion-list';
 import EditorMention from './editor-mention';
+import SuggestionList from './suggestion-list';
 import QueryUsersSuggestions from 'components/data/query-users-suggestions';
+import ReactDomServer from 'react-dom/server';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getUserSuggestions } from 'state/users/suggestions/selectors';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Module variables

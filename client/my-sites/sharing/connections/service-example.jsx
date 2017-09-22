@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const SharingServiceExample = ( { image, label, single } ) => (
 	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>

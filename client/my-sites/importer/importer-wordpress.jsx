@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FileImporter from './file-importer';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Module variables

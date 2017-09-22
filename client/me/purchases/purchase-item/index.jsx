@@ -2,29 +2,21 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import paths from '../paths';
 import CompactCard from 'components/card/compact';
-import {
-	getName,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isRenewing,
-	purchaseType,
-	showCreditCardExpiringWarning,
-} from 'lib/purchases';
-import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
-import Gridicon from 'gridicons';
-import paths from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
+import { getName, isExpired, isExpiring, isIncludedWithPlan, isOneTimePurchase, isRenewing, purchaseType, showCreditCardExpiringWarning } from 'lib/purchases';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
@@ -195,10 +187,10 @@ class PurchaseItem extends Component {
 }
 
 PurchaseItem.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	isDisconnectedSite: React.PropTypes.bool,
-	purchase: React.PropTypes.object,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	isDisconnectedSite: PropTypes.bool,
+	purchase: PropTypes.object,
+	slug: PropTypes.string,
 };
 
 export default localize( PurchaseItem );

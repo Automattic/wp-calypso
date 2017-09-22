@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,10 +12,10 @@ import { localize } from 'i18n-calypso';
 import AccordionSection from 'components/accordion/section';
 import TextInput from 'components/forms/form-text-input';
 import { recordEvent, recordStat } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorPageOrder extends Component {
 	static propTypes = {

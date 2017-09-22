@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
+import EditorFieldset from 'post-editor/editor-fieldset';
+import { isJetpackModuleActive } from 'state/sites/selectors';
 import { isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
 
 const SharingLikeOptions = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		isSharingButtonsEnabled: React.PropTypes.bool,
-		isLikesEnabled: React.PropTypes.bool,
-		isNew: React.PropTypes.bool
+		site: PropTypes.object,
+		post: PropTypes.object,
+		isSharingButtonsEnabled: PropTypes.bool,
+		isLikesEnabled: PropTypes.bool,
+		isNew: PropTypes.bool
 	},
 
 	isShowingSharingButtons: function() {

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -15,9 +16,9 @@ export default React.createClass( {
 	displayName: 'BulkSelect',
 
 	propTypes: {
-		totalElements: React.PropTypes.number.isRequired,
-		selectedElements: React.PropTypes.number.isRequired,
-		onToggle: React.PropTypes.func.isRequired
+		totalElements: PropTypes.number.isRequired,
+		selectedElements: PropTypes.number.isRequired,
+		onToggle: PropTypes.func.isRequired
 	},
 
 	getStateIcon() {

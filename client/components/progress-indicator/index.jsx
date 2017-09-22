@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default React.createClass( {
 	displayName: 'ProgressIndicator',
@@ -15,7 +16,7 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		status: React.PropTypes.string
+		status: PropTypes.string
 	},
 
 	render: function() {

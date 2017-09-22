@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import { Email, Password, CreateAccountTip, SubmitSection, WPOrgURL } from './fields';
 import CompactCard from 'components/card/compact';
-import {
-	Email,
-	Password,
-	CreateAccountTip,
-	SubmitSection,
-	WPOrgURL,
-} from './fields';
 
 class Pressable extends Component {
 	static propTypes = {

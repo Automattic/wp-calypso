@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setPreviewUrl } from 'state/ui/preview/actions';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {

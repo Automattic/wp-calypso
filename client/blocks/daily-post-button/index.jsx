@@ -1,28 +1,29 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
-import page from 'page';
-import qs from 'qs';
-import { get, defer } from 'lodash';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { get, defer } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import qs from 'qs';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
-import { preload } from 'sections-preload';
-import SitesPopover from 'components/sites-popover';
+import { getDailyPostType } from './helper';
 import Button from 'components/button';
+import SitesPopover from 'components/sites-popover';
 import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
-import { getDailyPostType } from './helper';
+import { preload } from 'sections-preload';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 
 function getPingbackAttributes( post ) {
 	const typeTitles = {
@@ -54,13 +55,13 @@ export class DailyPostButton extends React.Component {
 	}
 
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		site: React.PropTypes.object.isRequired,
-		position: React.PropTypes.string,
-		tagName: React.PropTypes.string,
-		canParticipate: React.PropTypes.bool.isRequired,
-		primarySiteSlug: React.PropTypes.string,
-		onlyOneSite: React.PropTypes.bool.isRequired,
+		post: PropTypes.object.isRequired,
+		site: PropTypes.object.isRequired,
+		position: PropTypes.string,
+		tagName: PropTypes.string,
+		canParticipate: PropTypes.bool.isRequired,
+		primarySiteSlug: PropTypes.string,
+		onlyOneSite: PropTypes.bool.isRequired,
 	};
 
 	static defaultProps = {

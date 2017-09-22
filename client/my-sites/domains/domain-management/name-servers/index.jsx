@@ -1,38 +1,39 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
-import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 import DnsTemplates from './dns-templates';
-import paths from 'my-sites/domains/paths';
+import WpcomNameserversToggle from './wpcom-nameservers-toggle';
+import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
-import { isEmpty } from 'lodash';
+import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
+import * as upgradesActions from 'lib/upgrades/actions';
+import Header from 'my-sites/domains/domain-management/components/header';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import paths from 'my-sites/domains/paths';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
 class NameServers extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		nameservers: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		nameservers: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

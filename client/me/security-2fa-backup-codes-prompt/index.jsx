@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' ),
@@ -16,8 +22,6 @@ var FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' ),
 	constants = require( 'me/constants' );
 
-import Notice from 'components/notice';
-
 module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
@@ -25,8 +29,8 @@ module.exports = React.createClass( {
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
+		onPrintAgain: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

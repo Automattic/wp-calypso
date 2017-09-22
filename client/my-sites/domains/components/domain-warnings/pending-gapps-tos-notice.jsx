@@ -1,33 +1,30 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />;
 const strong = <strong />;
 
 class PendingGappsTosNotice extends React.PureComponent {
 	static propTypes = {
-		siteSlug: React.PropTypes.string.isRequired,
-		domains: React.PropTypes.array.isRequired,
-		section: React.PropTypes.string.isRequired,
-		isCompact: React.PropTypes.bool,
+		siteSlug: PropTypes.string.isRequired,
+		domains: PropTypes.array.isRequired,
+		section: PropTypes.string.isRequired,
+		isCompact: PropTypes.bool,
 	};
 
 	static defaultProps = {

@@ -1,17 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
-import React from 'react';
 import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
-import { getIncludedDomainPurchase } from 'state/purchases/selectors';
+import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
 import support from 'lib/url/support';
+import { getIncludedDomainPurchase } from 'state/purchases/selectors';
 
 const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } ) => {
 	const { refundPeriodInDays } = purchase;
@@ -198,8 +199,8 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 };
 
 CancelPurchaseRefundInformation.propTypes = {
-	purchase: React.PropTypes.object.isRequired,
-	includedDomainPurchase: React.PropTypes.object,
+	purchase: PropTypes.object.isRequired,
+	includedDomainPurchase: PropTypes.object,
 };
 
 export default connect( ( state, props ) => ( {

@@ -1,4 +1,8 @@
-import React, { PropTypes, PureComponent } from 'react';
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 const baseDomain = url =>
 	url

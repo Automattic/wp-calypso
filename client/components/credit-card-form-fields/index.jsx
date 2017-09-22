@@ -2,23 +2,24 @@
  * External dependencies
  */
 import { assign } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CountrySelect from 'my-sites/domains/components/form/country-select';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import Input from 'my-sites/domains/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
+import CountrySelect from 'my-sites/domains/components/form/country-select';
+import Input from 'my-sites/domains/components/form/input';
 
 const CreditCardFormFields = React.createClass( {
 	propTypes: {
-		card: React.PropTypes.object.isRequired,
-		countriesList: React.PropTypes.object.isRequired,
-		eventFormName: React.PropTypes.string.isRequired,
-		isFieldInvalid: React.PropTypes.func.isRequired,
-		onFieldChange: React.PropTypes.func.isRequired
+		card: PropTypes.object.isRequired,
+		countriesList: PropTypes.object.isRequired,
+		eventFormName: PropTypes.string.isRequired,
+		isFieldInvalid: PropTypes.func.isRequired,
+		onFieldChange: PropTypes.func.isRequired
 	},
 
 	field: function( fieldName, componentClass, props ) {

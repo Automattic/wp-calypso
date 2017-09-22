@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import * as React from 'react';
 
 /**
  * Internal dependencies
  */
-
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
-import i18n from 'i18n-calypso';
 import userFactory from 'lib/user';
 
 const userLib = userFactory();
@@ -24,9 +24,9 @@ export default class EmailUnverifiedNotice extends React.Component {
 	};
 
 	static propTypes = {
-		userEmail: React.PropTypes.string,
-		noticeText: React.PropTypes.node,
-		noticeStatus: React.PropTypes.string
+		userEmail: PropTypes.string,
+		noticeText: PropTypes.node,
+		noticeStatus: PropTypes.string
 	};
 
 	static defaultProps = {

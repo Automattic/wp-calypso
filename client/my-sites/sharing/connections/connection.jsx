@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import UsersStore from 'lib/users/store';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import UsersStore from 'lib/users/store';
 
 class SharingConnection extends Component {
 	static propTypes = {

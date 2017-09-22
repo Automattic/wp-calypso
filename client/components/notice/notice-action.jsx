@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default React.createClass( {
 	displayName: 'NoticeAction',
 
 	propTypes: {
-		href: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		external: React.PropTypes.bool,
-		icon: React.PropTypes.string
+		href: PropTypes.string,
+		onClick: PropTypes.func,
+		external: PropTypes.bool,
+		icon: PropTypes.string
 	},
 
 	getDefaultProps() {

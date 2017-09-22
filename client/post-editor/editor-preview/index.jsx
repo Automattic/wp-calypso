@@ -1,32 +1,33 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import url from 'url';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { omitUrlParams } from 'lib/url';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
+import { omitUrlParams } from 'lib/url';
+import url from 'url';
 
 const EditorPreview = React.createClass( {
 
 	_hasTouch: false,
 
 	propTypes: {
-		showPreview: React.PropTypes.bool,
-		isSaving: React.PropTypes.bool,
-		isLoading: React.PropTypes.bool,
-		isFullScreen: React.PropTypes.bool,
-		previewUrl: React.PropTypes.string,
-		editUrl: React.PropTypes.string,
-		onClose: React.PropTypes.func,
-		postId: React.PropTypes.number,
-		revision: React.PropTypes.number,
+		showPreview: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		isLoading: PropTypes.bool,
+		isFullScreen: PropTypes.bool,
+		previewUrl: PropTypes.string,
+		editUrl: PropTypes.string,
+		onClose: PropTypes.func,
+		postId: PropTypes.number,
+		revision: PropTypes.number,
 	},
 
 	getInitialState() {

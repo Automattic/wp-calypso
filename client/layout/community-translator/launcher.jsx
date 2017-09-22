@@ -1,9 +1,14 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+
+const PropTypes = require('prop-types');
+/**
+ * External dependencies
+ */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,8 +22,8 @@ module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',
 
 	propTypes: {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
+		isActive: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired
 	},
 
 	mixins: [ PureRenderMixin ],

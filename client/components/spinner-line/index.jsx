@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 export default class SpinnerLine extends PureComponent {
 	render() {

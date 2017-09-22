@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingOlark } from 'state/ui/olark/selectors';
 import { requestOlark } from 'state/ui/olark/actions';
+import { isRequestingOlark } from 'state/ui/olark/selectors';
 
 class QueryOlark extends Component {
 

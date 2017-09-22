@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import StatUpdateIndicator from 'components/stat-update-indicator';
 import QueryPostStats from 'components/data/query-post-stats';
 import QuerySites from 'components/data/query-sites';
-import { getPostStat } from 'state/stats/posts/selectors';
+import StatUpdateIndicator from 'components/stat-update-indicator';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getPostStat } from 'state/stats/posts/selectors';
 
 function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, viewCount } ) {
 	const { ID: postId, site_ID: siteId } = post;

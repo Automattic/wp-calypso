@@ -1,13 +1,14 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
- * Local dependencies
+ * Internal dependencies
  */
 import HeaderControl from './header-controls';
-import classNames from 'classnames';
 
 /**
  * Globals
@@ -16,9 +17,9 @@ var noop = () => {};
 
 export default React.createClass( {
 	propTypes: {
-		date: React.PropTypes.object,
-		inputChronoDisplayed: React.PropTypes.bool,
-		onDateChange: React.PropTypes.func,
+		date: PropTypes.object,
+		inputChronoDisplayed: PropTypes.bool,
+		onDateChange: PropTypes.func,
 	},
 
 	getDefaultProps() {

@@ -1,37 +1,38 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
-import MediaActions from 'lib/media/actions';
-import PostActions from 'lib/posts/actions';
-import PostUtils from 'lib/posts/utils';
-import * as stats from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import Button from 'components/button';
-import { getMediaItem } from 'state/selectors';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import QueryMedia from 'components/data/query-media';
-import { localize } from 'i18n-calypso';
+import MediaActions from 'lib/media/actions';
+import PostActions from 'lib/posts/actions';
+import * as stats from 'lib/posts/stats';
+import PostUtils from 'lib/posts/utils';
+import { getFeaturedImageId } from 'lib/posts/utils';
+import MediaModal from 'post-editor/media-modal';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getMediaItem } from 'state/selectors';
 
 class EditorFeaturedImage extends Component {
 	static propTypes = {
-		maxWidth: React.PropTypes.number,
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		selecting: React.PropTypes.bool,
-		onImageSelected: React.PropTypes.func,
-		featuredImage: React.PropTypes.object,
+		maxWidth: PropTypes.number,
+		site: PropTypes.object,
+		post: PropTypes.object,
+		selecting: PropTypes.bool,
+		onImageSelected: PropTypes.func,
+		featuredImage: PropTypes.object,
 	};
 
 	static defaultProps = {

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const AccountDialogAccount = ( { account, conflicting, onChange, selected } ) => {
 	const classes = classNames( 'account-dialog-account', {
@@ -27,7 +28,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected } ) =>
 
 AccountDialogAccount.propTypes = {
 	account: PropTypes.shape( {
-		ID: PropTypes.oneOfType( [ React.PropTypes.number, React.PropTypes.string ] ),
+		ID: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		name: PropTypes.string,
 		picture: PropTypes.string,
 		keyringConnectionId: PropTypes.number,

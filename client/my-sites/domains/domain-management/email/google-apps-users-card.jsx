@@ -1,35 +1,36 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { find, groupBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import GoogleAppsUserItem from './google-apps-user-item';
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
-import Button from 'components/button';
+import SectionHeader from 'components/section-header';
+import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import analyticsMixin from 'lib/mixins/analytics';
+import support from 'lib/url/support';
 import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
 import paths from 'my-sites/domains/paths';
-import analyticsMixin from 'lib/mixins/analytics';
-import SectionHeader from 'components/section-header';
-import GoogleAppsUserItem from './google-apps-user-item';
-import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
 
 const GoogleAppsUsers = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		googleAppsUsers: React.PropTypes.array.isRequired,
-		selectedDomainName: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		googleAppsUsers: PropTypes.array.isRequired,
+		selectedDomainName: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		user: React.PropTypes.object.isRequired
+		user: PropTypes.object.isRequired
 	},
 
 	getDomainsAsList() {

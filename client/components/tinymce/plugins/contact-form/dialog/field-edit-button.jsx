@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies

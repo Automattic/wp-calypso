@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { union } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ export default React.createClass( {
 	displayName: 'AllSitesIcon',
 
 	propTypes: {
-		sites: React.PropTypes.array.isRequired,
+		sites: PropTypes.array.isRequired,
 	},
 
 	getMaxSites() {

@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' ),
@@ -20,8 +26,6 @@ var FormButton = require( 'components/forms/form-button' ),
 	constants = require( 'me/constants' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 
-import Notice from 'components/notice';
-
 module.exports = React.createClass( {
 
 	displayName: 'Security2faEnable',
@@ -37,9 +41,9 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		doSMSFlow: React.PropTypes.bool,
-		onCancel: React.PropTypes.func.isRequired,
-		onSuccess: React.PropTypes.func.isRequired,
+		doSMSFlow: PropTypes.bool,
+		onCancel: PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {

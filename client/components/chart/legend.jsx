@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent, Component } from 'react';
 import { find, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent, Component } from 'react';
 
 /**
  * Module variables

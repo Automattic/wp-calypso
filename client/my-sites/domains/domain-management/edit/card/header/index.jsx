@@ -1,23 +1,24 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import PrimaryDomainButton from './primary-domain-button';
 import SectionHeader from 'components/section-header';
+import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 
 const Header = React.createClass( {
 	propTypes: {
-		domain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		settingPrimaryDomain: React.PropTypes.bool.isRequired
+		settingPrimaryDomain: PropTypes.bool.isRequired
 	},
 
 	render() {

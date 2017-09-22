@@ -1,25 +1,26 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import Debug from 'debug';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavSegmented from 'components/section-nav/segmented';
-import NavItem from 'components/section-nav/item';
+import Gravatar from 'components/gravatar';
 import Search from 'components/search';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavSegmented from 'components/section-nav/segmented';
+import NavTabs from 'components/section-nav/tabs';
 import URLSearch from 'lib/mixins/url-search';
 import PostCountsStore from 'lib/posts/post-counts-store';
-import Gravatar from 'components/gravatar';
 import userLib from 'lib/user';
 import { areAllSitesSingleUser } from 'state/selectors';
+import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 
 const debug = new Debug( 'calypso:posts-navigation' );
 const user = userLib();
@@ -36,10 +37,10 @@ const PostsNavigation = React.createClass( {
 	displayName: 'PostsNavigation',
 
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		author: React.PropTypes.number,
-		statusSlug: React.PropTypes.string,
-		search: React.PropTypes.string
+		context: PropTypes.object.isRequired,
+		author: PropTypes.number,
+		statusSlug: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	mixins: [ URLSearch ],

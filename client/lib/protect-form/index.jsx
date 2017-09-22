@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import debugModule from 'debug';
-import page from 'page';
 import i18n from 'i18n-calypso';
 import { includes, without } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Module variables

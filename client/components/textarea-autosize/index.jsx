@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import classnames from 'classnames';
 import autosize from 'autosize';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 export default class TextareaAutosize extends Component {
 	static propTypes = {

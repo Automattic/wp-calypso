@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSiteVouchers } from 'state/sites/vouchers/selectors';
 import { requestSiteVouchers as requestVouchers } from 'state/sites/vouchers/actions';
+import { isRequestingSiteVouchers } from 'state/sites/vouchers/selectors';
 
 class QuerySiteVouchers extends Component {
 

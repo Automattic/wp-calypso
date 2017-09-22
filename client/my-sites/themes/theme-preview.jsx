@@ -1,29 +1,23 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import PulsingDot from 'components/pulsing-dot';
-import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
-import {
-	getThemeDemoUrl,
-	getThemePreviewThemeOptions,
-	themePreviewVisibility,
-	isThemeActive,
-	isInstallingTheme,
-	isActivatingTheme
-} from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Button from 'components/button';
+import QueryTheme from 'components/data/query-theme';
+import PulsingDot from 'components/pulsing-dot';
+import WebPreview from 'components/web-preview';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
-import WebPreview from 'components/web-preview';
+import { getThemeDemoUrl, getThemePreviewThemeOptions, themePreviewVisibility, isThemeActive, isInstallingTheme, isActivatingTheme } from 'state/themes/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThemePreview = React.createClass( {
 	displayName: 'ThemePreview',

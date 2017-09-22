@@ -1,8 +1,9 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { Component, PropTypes } from 'react';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 /**
  * Try to preload image pixel via going through wp-admin login.
@@ -45,4 +46,4 @@ export default class WpadminAutoLogin extends Component {
 	render() {
 		return null;
 	}
-};
+}

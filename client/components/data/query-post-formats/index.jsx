@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostFormats } from 'state/post-formats/selectors';
 import { requestPostFormats } from 'state/post-formats/actions';
+import { isRequestingPostFormats } from 'state/post-formats/selectors';
 
 class QueryPostFormats extends Component {
 	static propTypes = {

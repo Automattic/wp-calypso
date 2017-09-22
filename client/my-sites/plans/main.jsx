@@ -1,33 +1,34 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const Plans = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
-		context: React.PropTypes.object.isRequired,
-		intervalType: React.PropTypes.string,
-		selectedSite: React.PropTypes.object,
-		displayJetpackPlans: React.PropTypes.bool
+		cart: PropTypes.object.isRequired,
+		context: PropTypes.object.isRequired,
+		intervalType: PropTypes.string,
+		selectedSite: PropTypes.object,
+		displayJetpackPlans: PropTypes.bool
 	},
 
 	getDefaultProps() {

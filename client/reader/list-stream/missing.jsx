@@ -2,22 +2,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import QueryReaderList from 'components/data/query-reader-list';
 import EmptyContent from 'components/empty-content';
 import { isDiscoverEnabled } from 'reader/discover/helper';
-import QueryReaderList from 'components/data/query-reader-list';
-
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class ListMissing extends React.Component {
 	static propTypes = {
-		owner: React.PropTypes.string.isRequired,
-		slug: React.PropTypes.string.isRequired,
+		owner: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 	};
 
 	recordAction = () => {

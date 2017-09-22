@@ -2,6 +2,20 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
+/**
+ * Internal dependencies
+ */
+import AppBanner from 'blocks/app-banner';
+import SitePreview from 'blocks/site-preview';
+import DocumentHead from 'components/data/document-head';
+import QuerySites from 'components/data/query-sites';
+import NpsSurveyNotice from 'layout/nps-survey-notice';
+import { isOffline } from 'state/application/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { hasSidebar } from 'state/ui/selectors';
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' );
@@ -31,16 +45,6 @@ var AsyncLoad = require( 'components/async-load' ),
 	Layout,
 	SupportUser;
 
-import QuerySites from 'components/data/query-sites';
-import { isOffline } from 'state/application/selectors';
-import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
-import SitePreview from 'blocks/site-preview';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
-import AppBanner from 'blocks/app-banner';
-
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
 }
@@ -55,20 +59,20 @@ Layout = React.createClass( {
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
 
 	propTypes: {
-		primary: React.PropTypes.element,
-		secondary: React.PropTypes.element,
-		user: React.PropTypes.object,
-		nuxWelcome: React.PropTypes.object,
-		translatorInvitation: React.PropTypes.object,
-		focus: React.PropTypes.object,
+		primary: PropTypes.element,
+		secondary: PropTypes.element,
+		user: PropTypes.object,
+		nuxWelcome: PropTypes.object,
+		translatorInvitation: PropTypes.object,
+		focus: PropTypes.object,
 		// connected props
-		isLoading: React.PropTypes.bool,
-		isSupportUser: React.PropTypes.bool,
-		section: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object,
+		isLoading: PropTypes.bool,
+		isSupportUser: PropTypes.bool,
+		section: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object,
 		] ),
-		isOffline: React.PropTypes.bool,
+		isOffline: PropTypes.bool,
 	},
 
 	closeWelcome: function() {

@@ -1,29 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
+import { hasTouch } from 'lib/touch-detect';
 
 module.exports = React.createClass( {
 	displayName: 'SitesPopover',
 
 	propTypes: {
-		showDelay: React.PropTypes.number,
-		context: React.PropTypes.object,
-		visible: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
-		position: React.PropTypes.string,
-		id: React.PropTypes.string,
-		groups: React.PropTypes.bool,
-		className: React.PropTypes.string
+		showDelay: PropTypes.number,
+		context: PropTypes.object,
+		visible: PropTypes.bool,
+		onClose: PropTypes.func,
+		position: PropTypes.string,
+		id: PropTypes.string,
+		groups: PropTypes.bool,
+		className: PropTypes.string
 	},
 
 	getInitialState: function() {

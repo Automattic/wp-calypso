@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Service from './service';
+import ServicePlaceholder from './service-placeholder';
+import * as Components from './services';
+import SectionHeader from 'components/section-header';
 import { getEligibleKeyringServices, isKeyringServicesFetching } from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
-import Service from './service';
-import * as Components from './services';
-import ServicePlaceholder from './service-placeholder';
 
 /**
  * Module constants

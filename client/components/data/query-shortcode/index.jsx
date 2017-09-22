@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingShortcode } from 'state/shortcodes/selectors';
 import { fetchShortcode } from 'state/shortcodes/actions';
+import { isRequestingShortcode } from 'state/shortcodes/selectors';
 
 class QueryShortcode extends Component {
 	static propTypes = {

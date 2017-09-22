@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
+import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
 
 class QuerySiteDomains extends Component {
 	constructor( props ) {

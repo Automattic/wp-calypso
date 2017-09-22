@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -50,11 +51,11 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 };
 
 CustomDomainPurchaseDetail.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired,
-	hasDomainCredit: React.PropTypes.bool
+	hasDomainCredit: PropTypes.bool
 };
 
 export default localize( CustomDomainPurchaseDetail );

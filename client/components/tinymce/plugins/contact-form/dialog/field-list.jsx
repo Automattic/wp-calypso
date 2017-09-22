@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
 import Field from './field';
+import EmptyContent from 'components/empty-content';
 
 export default React.createClass( {
 	displayName: 'ContactFormDialogFieldList',

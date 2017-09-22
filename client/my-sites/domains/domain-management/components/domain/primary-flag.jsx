@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
-import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
+import { isDomainOnlySite } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class DomainPrimaryFlag extends Component {
 	render() {
@@ -27,9 +28,9 @@ class DomainPrimaryFlag extends Component {
 }
 
 DomainPrimaryFlag.propTypes = {
-	domain: React.PropTypes.object.isRequired,
-	isDomainOnly: React.PropTypes.bool,
-	translate: React.PropTypes.func.isRequired,
+	domain: PropTypes.object.isRequired,
+	isDomainOnly: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
 };
 
 export default connect( ( state ) => {

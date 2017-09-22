@@ -3,22 +3,22 @@
  */
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import config from 'config';
-import CurrentSite from 'my-sites/current-site';
-import productsValues from 'lib/products-values';
 import ManageMenu from './manage-menu';
+import StatsSparkline from 'blocks/stats-sparkline';
+import Button from 'components/button';
+import JetpackLogo from 'components/jetpack-logo';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -26,31 +26,18 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import StatsSparkline from 'blocks/stats-sparkline';
-import JetpackLogo from 'components/jetpack-logo';
-import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getPrimarySiteId,
-	hasJetpackSites,
-	isDomainOnlySite,
-	isSiteAutomatedTransfer
-} from 'state/selectors';
-import {
-	getCustomizerUrl,
-	getSite,
-	isJetpackMinimumVersion,
-	isJetpackModuleActive,
-	isJetpackSite,
-	isSitePreviewable
-} from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
 import { abtest } from 'lib/abtest';
+import analytics from 'lib/analytics';
+import productsValues from 'lib/products-values';
+import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { getStatsPathForTab } from 'lib/route/path';
+import CurrentSite from 'my-sites/current-site';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins, getPrimarySiteId, hasJetpackSites, isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
+import { getCustomizerUrl, getSite, isJetpackMinimumVersion, isJetpackModuleActive, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables

@@ -1,53 +1,43 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Card from 'components/card';
-import CancelPurchaseButton from './button';
-import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
-import CancelPurchaseRefundInformation from './refund-information';
-import CompactCard from 'components/card/compact';
-import {
-	getName,
-	isCancelable,
-	isOneTimePurchase,
-	isRefundable,
-	isSubscription,
-} from 'lib/purchases';
-import {
-	getPurchase,
-	getSelectedSite,
-	goToManagePurchase,
-	recordPageView,
-} from 'me/purchases/utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
-import { isDomainRegistration } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
 import paths from '../paths';
+import CancelPurchaseButton from './button';
+import CancelPurchaseRefundInformation from './refund-information';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import { isDomainRegistration } from 'lib/products-values';
+import { getName, isCancelable, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
+import userFactory from 'lib/user';
+import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import { getPurchase, getSelectedSite, goToManagePurchase, recordPageView } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 
 const user = userFactory();
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
 	componentWillMount() {

@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, flowRight, get, values } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import sectionsModule from 'sections';
 import { Tabs } from '../../constants';
+import SectionNav from 'components/section-nav';
+import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabs from 'components/section-nav/tabs';
+import sectionsModule from 'sections';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

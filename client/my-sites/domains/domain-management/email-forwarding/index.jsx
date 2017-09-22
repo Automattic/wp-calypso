@@ -1,29 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import MainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
-import paths from 'my-sites/domains/paths';
+import EmailForwardingList from './email-forwarding-list';
 import Card from 'components/card/compact';
+import Main from 'components/main';
 import SectionHeader from 'components/section-header';
+import MainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
 
 const EmailForwarding = React.createClass( {
 	propTypes: {
-		emailForwarding: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		emailForwarding: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	},
 

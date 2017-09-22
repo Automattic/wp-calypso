@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isProductsListFetching as isFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
+import { isProductsListFetching as isFetching } from 'state/products-list/selectors';
 
 class QueryProductsList extends Component {
 	componentWillMount() {

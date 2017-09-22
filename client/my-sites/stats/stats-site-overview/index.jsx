@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
+import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
+import SectionHeader from 'components/section-header';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 
 const StatsSiteOverview = React.createClass( {
 	proptypes: {

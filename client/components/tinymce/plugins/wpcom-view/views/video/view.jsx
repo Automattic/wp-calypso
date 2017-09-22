@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { merge } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import resizableView from '../../resizable-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { stringify, parse } from 'lib/shortcode';
 import Shortcode from 'components/shortcode';
+import { stringify, parse } from 'lib/shortcode';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function VideoView( { siteId, content, width } ) {
 	if ( ! siteId || ! width ) {

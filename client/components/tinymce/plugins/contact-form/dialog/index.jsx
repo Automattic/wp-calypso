@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import FieldList from './field-list';
+import Navigation from './navigation';
+import FormSettings from './settings';
+import { validateFormFields, validateSettingsToEmail } from './validations';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import FormSettings from './settings';
-import Navigation from './navigation';
-import FieldList from './field-list';
-import { getCurrentUser } from 'state/current-user/selectors';
 import PostEditStore from 'lib/posts/post-edit-store';
-import { validateFormFields, validateSettingsToEmail } from './validations';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const ContactFormDialog = React.createClass( {
 	displayName: 'ContactFormDialog',

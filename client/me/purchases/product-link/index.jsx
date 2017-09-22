@@ -1,24 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import config from 'config';
+import { googleAppsSettingsUrl } from 'lib/google-apps';
+import { isDomainProduct, isGoogleApps, isPlan, isSiteRedirect, isTheme } from 'lib/products-values';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { googleAppsSettingsUrl } from 'lib/google-apps';
-import {
-	isDomainProduct,
-	isGoogleApps,
-	isPlan,
-	isSiteRedirect,
-	isTheme,
-} from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 	let props = {}, url, text;
@@ -63,8 +58,8 @@ const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 };
 
 ProductLink.propTypes = {
-	selectedPurchase: React.PropTypes.object.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+	selectedPurchase: PropTypes.object.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
 export default connect( ( state, { selectedPurchase } ) => {

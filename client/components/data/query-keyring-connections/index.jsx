@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
 class QueryKeyringConnections extends Component {
 	static propTypes = {

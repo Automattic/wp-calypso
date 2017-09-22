@@ -1,9 +1,8 @@
-/* eslint-disable no-multi-spaces */
-
 /**
  * External dependencies
  */
 import { forEach } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' );
 
 /**
@@ -15,9 +14,9 @@ const Dialog = require( 'components/dialog' ),
 const HelpModal = React.createClass( {
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		macosx: React.PropTypes.bool,
-		showDialog: React.PropTypes.bool
+		onClose: PropTypes.func,
+		macosx: PropTypes.bool,
+		showDialog: PropTypes.bool
 	},
 
 	defaultShortcuts() {

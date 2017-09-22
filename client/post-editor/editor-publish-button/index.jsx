@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import Button from 'components/button';
-import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const getPublishButtonStatus = ( site, post, savedPost ) => {
 	if (
@@ -57,8 +58,8 @@ export class EditorPublishButton extends Component {
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
 		needsVerification: PropTypes.bool,
-		privatePost: React.PropTypes.bool,
-		privatePostPasswordValid: React.PropTypes.bool,
+		privatePost: PropTypes.bool,
+		privatePostPasswordValid: PropTypes.bool,
 		busy: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
 	};

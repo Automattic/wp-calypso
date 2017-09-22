@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies

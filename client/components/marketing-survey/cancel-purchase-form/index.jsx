@@ -1,38 +1,39 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { shuffle } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { shuffle } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
-import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
-import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
+import * as steps from './steps';
+import Button from 'components/button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormRadio from 'components/forms/form-radio';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
+import HappychatButton from 'components/happychat/button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
-		productName: React.PropTypes.string.isRequired,
-		translate: React.PropTypes.func,
-		surveyStep: React.PropTypes.string.isRequired,
-		showSurvey: React.PropTypes.bool.isRequired,
-		defaultContent: React.PropTypes.node.isRequired,
-		onInputChange: React.PropTypes.func.isRequired,
-		isJetpack: React.PropTypes.bool.isRequired,
-		chatInitiated: React.PropTypes.func.isRequired,
+		productName: PropTypes.string.isRequired,
+		translate: PropTypes.func,
+		surveyStep: PropTypes.string.isRequired,
+		showSurvey: PropTypes.bool.isRequired,
+		defaultContent: PropTypes.node.isRequired,
+		onInputChange: PropTypes.func.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
+		chatInitiated: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {

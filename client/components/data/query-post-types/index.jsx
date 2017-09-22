@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { isEqual, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostTypes } from 'state/post-types/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
+import { isRequestingPostTypes } from 'state/post-types/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 
 class QueryPostTypes extends Component {
 	static propTypes = {

@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
+import QueryPostTypes from 'components/data/query-post-types';
+import { decodeEntities } from 'lib/formatting';
 import { getPostType } from 'state/post-types/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { decodeEntities } from 'lib/formatting';
-import QueryPostTypes from 'components/data/query-post-types';
 
 function EditorStatusLabelPlaceholder( { translate, siteId, typeSlug, type, className } ) {
 	const classes = classnames( 'editor-status-label__placeholder', className );

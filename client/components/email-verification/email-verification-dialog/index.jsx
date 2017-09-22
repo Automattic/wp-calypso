@@ -1,22 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get, includes, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import Button from 'components/button';
+import Dialog from 'components/dialog';
 import Spinner from 'components/spinner';
+import { verifyEmail, resetVerifyEmailState } from 'state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
-import {
-	verifyEmail,
-	resetVerifyEmailState,
-} from 'state/current-user/email-verification/actions';
 
 class VerifyEmailDialog extends Component {
 	getResendButtonLabel() {
@@ -97,11 +95,11 @@ class VerifyEmailDialog extends Component {
 }
 
 VerifyEmailDialog.propTypes = {
-	onClose: React.PropTypes.func,
-	translate: React.PropTypes.func,
+	onClose: PropTypes.func,
+	translate: PropTypes.func,
 	// connected props:
-	email: React.PropTypes.string,
-	emailVerificationStatus: React.PropTypes.string,
+	email: PropTypes.string,
+	emailVerificationStatus: PropTypes.string,
 };
 
 VerifyEmailDialog.defaultProps = {

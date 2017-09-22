@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Immutable from 'immutable';
 import { includes, zip } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import SiteInfo from 'blocks/site';
+import analytics from 'lib/analytics';
 
 class BlogSettingsHeader extends PureComponent {
 	static propTypes = {

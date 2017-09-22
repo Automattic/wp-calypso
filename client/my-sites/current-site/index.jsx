@@ -1,47 +1,48 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
-import analytics from 'lib/analytics';
+import SiteNotice from './notice';
+import Site from 'blocks/site';
 import Button from 'components/button';
 import Card from 'components/card';
-import Site from 'blocks/site';
-import Gridicon from 'gridicons';
-import UpgradesActions from 'lib/upgrades/actions';
-import DomainsStore from 'lib/domains/store';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import config from 'config';
-import SiteNotice from './notice';
+import analytics from 'lib/analytics';
 import CartStore from 'lib/cart/store';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import DomainsStore from 'lib/domains/store';
+import UpgradesActions from 'lib/upgrades/actions';
+import AllSites from 'my-sites/all-sites';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedOrAllSites } from 'state/selectors';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSectionName } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		isJetpack: React.PropTypes.bool,
-		isPreviewShowing: React.PropTypes.bool,
-		siteCount: React.PropTypes.number.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		selectedSiteId: React.PropTypes.number,
-		selectedSite: React.PropTypes.object,
-		translate: React.PropTypes.func.isRequired,
-		anySiteSelected: React.PropTypes.array
+		isJetpack: PropTypes.bool,
+		isPreviewShowing: PropTypes.bool,
+		siteCount: PropTypes.number.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		selectedSiteId: PropTypes.number,
+		selectedSite: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		anySiteSelected: PropTypes.array
 	};
 
 	state = {

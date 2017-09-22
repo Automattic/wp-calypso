@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import SidebarHeading from 'layout/sidebar/heading';
-import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
 
 const DesignToolList = React.createClass( {
 	propTypes: {
-		onChange: React.PropTypes.func.isRequired,
+		onChange: PropTypes.func.isRequired,
 	},
 
 	renderControl( tool ) {

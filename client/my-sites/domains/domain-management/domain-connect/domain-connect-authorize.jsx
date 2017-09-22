@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import { actionType, noticeType } from './constants';
+import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
+import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
+import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import CompactCard from 'components/card/compact';
 import Main from 'components/main';
 import Notice from 'components/notice';
-import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
-import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
-import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
-import { actionType, noticeType } from './constants';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();

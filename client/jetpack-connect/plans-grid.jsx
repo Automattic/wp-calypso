@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
+import Main from 'components/main';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
 /**

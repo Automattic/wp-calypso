@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isFetchingStoredCards } from 'state/stored-cards/selectors';
 import { fetchStoredCards } from 'state/stored-cards/actions';
+import { isFetchingStoredCards } from 'state/stored-cards/selectors';
 
 class QueryStoredCards extends Component {
 	componentWillMount() {

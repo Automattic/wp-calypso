@@ -2,22 +2,18 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import QueryMediaStorage from 'components/data/query-media-storage';
-import { getMediaStorage } from 'state/sites/media-storage/selectors';
-import {
-	getSitePlanSlug,
-	getSiteSlug,
-	isJetpackSite
-} from 'state/sites/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-
 import PlanStorageBar from './bar';
+import QueryMediaStorage from 'components/data/query-media-storage';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { getMediaStorage } from 'state/sites/media-storage/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 
 class PlanStorage extends Component {
 	static propTypes = {

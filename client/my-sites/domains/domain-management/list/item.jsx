@@ -1,30 +1,31 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import Notice from 'components/notice';
-import { type as domainTypes } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
+import { type as domainTypes } from 'lib/domains/constants';
+import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
-		busy: React.PropTypes.bool,
-		busyMessage: React.PropTypes.string,
-		domain: React.PropTypes.object.isRequired,
-		enableSelection: React.PropTypes.bool,
-		onClick: React.PropTypes.func.isRequired,
-		onSelect: React.PropTypes.func.isRequired,
-		selectionIndex: React.PropTypes.number,
-		isSelected: React.PropTypes.bool
+		busy: PropTypes.bool,
+		busyMessage: PropTypes.string,
+		domain: PropTypes.object.isRequired,
+		enableSelection: PropTypes.bool,
+		onClick: PropTypes.func.isRequired,
+		onSelect: PropTypes.func.isRequired,
+		selectionIndex: PropTypes.number,
+		isSelected: PropTypes.bool
 	};
 
 	render() {

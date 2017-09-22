@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
-		contactInformation: React.PropTypes.object.isRequired
+		contactInformation: PropTypes.object.isRequired
 	};
 
 	render() {

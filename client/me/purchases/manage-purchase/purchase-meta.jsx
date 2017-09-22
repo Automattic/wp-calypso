@@ -1,55 +1,37 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	getName,
-	creditCardExpiresBeforeSubscription,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isPaidWithCreditCard,
-	isPaidWithPayPalDirect,
-	isRenewing,
-	isSubscription,
-	hasPaymentMethod,
-	paymentLogoType,
-} from 'lib/purchases';
+import paths from '../paths';
+import { canEditPaymentDetails, isDataLoading, getEditCardDetailsPath, getPurchase, getSelectedSite } from '../utils';
+import PaymentLogo from 'components/payment-logo';
+import UserItem from 'components/user';
 import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration } from 'lib/products-values';
+import { getName, creditCardExpiresBeforeSubscription, isExpired, isExpiring, isIncludedWithPlan, isOneTimePurchase, isPaidWithCreditCard, isPaidWithPayPalDirect, isRenewing, isSubscription, hasPaymentMethod, paymentLogoType } from 'lib/purchases';
+import support from 'lib/url/support';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
-import paths from '../paths';
-import PaymentLogo from 'components/payment-logo';
-import support from 'lib/url/support';
-import UserItem from 'components/user';
-import {
-	canEditPaymentDetails,
-	isDataLoading,
-	getEditCardDetailsPath,
-	getPurchase,
-	getSelectedSite,
-} from '../utils';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		purchaseId: React.PropTypes.oneOfType( [ React.PropTypes.number, React.PropTypes.bool ] )
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] )
 			.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType(
-			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType(
+			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
 		),
 	};
 

@@ -1,18 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	identity,
-	includes,
-} from 'lodash';
+import { identity, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import PurchaseButton from './purchase-button';
+import CompactCard from 'components/card/compact';
 
 export const JetpackPluginItem = ( {
 	plugin,

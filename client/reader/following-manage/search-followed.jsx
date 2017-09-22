@@ -1,13 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import SearchCard from 'components/search-card';
 

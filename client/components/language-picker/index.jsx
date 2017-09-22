@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies

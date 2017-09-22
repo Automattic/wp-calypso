@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isFetchingSitePurchases } from 'state/purchases/selectors';
 import { fetchSitePurchases } from 'state/purchases/actions';
+import { isFetchingSitePurchases } from 'state/purchases/selectors';
 
 class QuerySitePurchases extends Component {
 	requestSitePurchases( props = this.props ) {

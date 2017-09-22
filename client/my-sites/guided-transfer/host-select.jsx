@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 export default React.createClass( {
 	propTypes: {

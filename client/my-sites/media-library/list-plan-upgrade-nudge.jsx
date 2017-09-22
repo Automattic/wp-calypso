@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import ListPlanPromo from './list-plan-promo';
 import { FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import ListPlanPromo from './list-plan-promo';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
@@ -48,7 +49,7 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 MediaLibraryUpgradeNudge.propTypes = {
 	site: PropTypes.object,
 	translate: PropTypes.func,
-	filter: React.PropTypes.string
+	filter: PropTypes.string
 };
 
 MediaLibraryUpgradeNudge.defaultProps = {

@@ -1,28 +1,25 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import CompactCard from 'components/card';
-import EmptyContent from 'components/empty-content';
-import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-} from 'state/purchases/selectors';
-import { getSites } from 'state/selectors';
-import { getPurchasesBySite } from 'lib/purchases';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
+import PurchasesHeader from './header';
+import CompactCard from 'components/card';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
+import { getPurchasesBySite } from 'lib/purchases';
 import userFactory from 'lib/user';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import { getUserPurchases, hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
+import { getSites } from 'state/selectors';
 const user = userFactory();
 
 class PurchasesList extends Component {
@@ -85,9 +82,9 @@ class PurchasesList extends Component {
 }
 
 PurchasesList.propTypes = {
-	noticeType: React.PropTypes.string,
-	purchases: React.PropTypes.oneOfType( [ React.PropTypes.array, React.PropTypes.bool ] ),
-	sites: React.PropTypes.array.isRequired,
+	noticeType: PropTypes.string,
+	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	sites: PropTypes.array.isRequired,
 };
 
 export default connect(

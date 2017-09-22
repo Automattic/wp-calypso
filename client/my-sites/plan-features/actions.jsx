@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { noop } from 'lodash';
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass, isMonthly } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const PlanFeaturesActions = ( {
 	canPurchase,

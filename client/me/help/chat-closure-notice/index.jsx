@@ -1,19 +1,16 @@
 /**
- * Fixed notice about upcoming support closures
- */
-
-/**
  * External dependencies
  */
-import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import { title, upcoming, closed } from './messages';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import olarkStore from 'lib/olark-store';
-import { title, upcoming, closed } from './messages';
 
 const Notice = localize( ( { translate, closedFrom, closedTo, reason } ) =>
 	<div className="chat-closure-notice">
@@ -69,6 +66,6 @@ export default class ChatClosureNotice extends Component {
 }
 
 ChatClosureNotice.PropTypes = {
-	from: React.PropTypes.string.isRequired,
-	to: React.PropTypes.string.isRequired,
+	from: PropTypes.string.isRequired,
+	to: PropTypes.string.isRequired,
 };

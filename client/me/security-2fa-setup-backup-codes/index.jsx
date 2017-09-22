@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' ),
@@ -13,8 +19,6 @@ var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	support = require( 'lib/url/support' );
 
-import Notice from 'components/notice';
-
 module.exports = React.createClass( {
 
 	displayName: 'Security2faSetupBackupCodes',
@@ -22,7 +26,7 @@ module.exports = React.createClass( {
 	mixins: [ eventRecorder ],
 
 	propTypes: {
-		onFinished: React.PropTypes.func.isRequired
+		onFinished: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

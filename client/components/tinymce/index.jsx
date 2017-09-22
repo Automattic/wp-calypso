@@ -2,6 +2,38 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import advancedPlugin from './plugins/advanced/plugin';
+import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
+import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
+import contactFormPlugin from './plugins/contact-form/plugin';
+import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
+import embedReversalPlugin from './plugins/embed-reversal/plugin';
+import insertMenuPlugin from './plugins/insert-menu/plugin';
+import markdownPlugin from './plugins/markdown/plugin';
+import mediaPlugin from './plugins/media/plugin';
+import mentionsPlugin from './plugins/mentions/plugin';
+import simplePaymentsPlugin from './plugins/simple-payments/plugin';
+import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
+import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
+import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
+import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
+import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
+import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
+import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
+import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
+import wpcomPlugin from './plugins/wpcom/plugin.js';
+import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
+import wpEmojiPlugin from './plugins/wpemoji/plugin';
+import wplinkPlugin from './plugins/wplink/plugin.js';
+import wptextpatternPlugin from './plugins/wptextpattern/plugin';
+import { decodeEntities, wpautop, removep } from 'lib/formatting';
+import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+const PropTypes = require('prop-types');
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
@@ -19,34 +51,6 @@ require( 'tinymce/plugins/media/plugin.js' );
 require( 'tinymce/plugins/paste/plugin.js' );
 require( 'tinymce/plugins/tabfocus/plugin.js' );
 require( 'tinymce/plugins/textcolor/plugin.js' );
-
-// TinyMCE plugins that we've forked or written ourselves
-import wpcomPlugin from './plugins/wpcom/plugin.js';
-import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
-import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
-import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
-import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
-import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
-import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
-import wplinkPlugin from './plugins/wplink/plugin.js';
-import mediaPlugin from './plugins/media/plugin';
-import advancedPlugin from './plugins/advanced/plugin';
-import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
-import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
-import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
-import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
-import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
-import contactFormPlugin from './plugins/contact-form/plugin';
-import simplePaymentsPlugin from './plugins/simple-payments/plugin';
-import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
-import wptextpatternPlugin from './plugins/wptextpattern/plugin';
-import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
-import insertMenuPlugin from './plugins/insert-menu/plugin';
-import embedReversalPlugin from './plugins/embed-reversal/plugin';
-import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
-import mentionsPlugin from './plugins/mentions/plugin';
-import markdownPlugin from './plugins/markdown/plugin';
-import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
 [
 	wpcomPlugin,
@@ -82,7 +86,6 @@ const user = require( 'lib/user' )(),
 	i18n = require( './i18n' ),
 	viewport = require( 'lib/viewport' ),
 	config = require( 'config' );
-import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
 /**
  * Internal Variables
@@ -161,29 +164,29 @@ module.exports = React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
-		mode: React.PropTypes.string,
-		onActivate: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		onDeactivate: React.PropTypes.func,
-		onFocus: React.PropTypes.func,
-		onHide: React.PropTypes.func,
-		onInit: React.PropTypes.func,
-		onRedo: React.PropTypes.func,
-		onRemove: React.PropTypes.func,
-		onReset: React.PropTypes.func,
-		onShow: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		onUndo: React.PropTypes.func,
-		onSetContent: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		isNew: React.PropTypes.bool,
-		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func
+		mode: PropTypes.string,
+		onActivate: PropTypes.func,
+		onBlur: PropTypes.func,
+		onChange: PropTypes.func,
+		onDeactivate: PropTypes.func,
+		onFocus: PropTypes.func,
+		onHide: PropTypes.func,
+		onInit: PropTypes.func,
+		onRedo: PropTypes.func,
+		onRemove: PropTypes.func,
+		onReset: PropTypes.func,
+		onShow: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onUndo: PropTypes.func,
+		onSetContent: PropTypes.func,
+		tabIndex: PropTypes.number,
+		isNew: PropTypes.bool,
+		onTextEditorChange: PropTypes.func,
+		onKeyUp: PropTypes.func
 	},
 
 	contextTypes: {
-		store: React.PropTypes.object
+		store: PropTypes.object
 	},
 
 	getDefaultProps: function() {

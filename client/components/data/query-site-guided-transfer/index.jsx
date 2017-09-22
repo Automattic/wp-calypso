@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/selectors';
 import { requestGuidedTransferStatus } from 'state/sites/guided-transfer/actions';
+import { isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/selectors';
 
 class QuerySiteGuidedTransfer extends Component {
 

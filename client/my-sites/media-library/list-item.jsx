@@ -2,6 +2,13 @@
  * External dependencies
  */
 import { assign, isEqual, noop, omit } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
+import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -16,22 +23,19 @@ var Spinner = require( 'components/spinner' ),
 	ListItemDocument = require( './list-item-document' ),
 	MediaUtils = require( 'lib/media/utils' );
 
-import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
-import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
-
 export default React.createClass( {
 	displayName: 'MediaLibraryListItem',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number.isRequired,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
-		showGalleryHelp: React.PropTypes.bool,
-		selectedIndex: React.PropTypes.number,
-		onToggle: React.PropTypes.func,
-		onEditItem: React.PropTypes.func,
-		style: React.PropTypes.object,
+		media: PropTypes.object,
+		scale: PropTypes.number.isRequired,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
+		showGalleryHelp: PropTypes.bool,
+		selectedIndex: PropTypes.number,
+		onToggle: PropTypes.func,
+		onEditItem: PropTypes.func,
+		style: PropTypes.object,
 	},
 
 	getDefaultProps: function() {

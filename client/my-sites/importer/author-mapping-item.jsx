@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
 import AuthorSelector from 'blocks/author-selector';
 import UserItem from 'components/user';
 import user from 'lib/user';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'ImporterAuthorMapping',

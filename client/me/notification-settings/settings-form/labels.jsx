@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
+import StreamHeader from './stream-header';
 
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormLabels',

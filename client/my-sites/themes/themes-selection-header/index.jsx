@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import { localize } from 'i18n-calypso';
 
 const ThemesSelectionHeader = ( { label, count, translate } ) => {
 	const selectionHeaderClassName = classNames( 'themes-selection-header', {

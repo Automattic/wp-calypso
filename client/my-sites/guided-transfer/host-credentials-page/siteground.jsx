@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import { Username, Email, CreateAccountTip, SubmitSection, WPOrgURL } from './fields';
 import CompactCard from 'components/card/compact';
-import {
-	Username,
-	Email,
-	CreateAccountTip,
-	SubmitSection,
-	WPOrgURL,
-} from './fields';
 
 class SiteGround extends Component {
 	static propTypes = {

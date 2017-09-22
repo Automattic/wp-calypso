@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
 import { compact } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
-import {
-	firstValid,
-	hardTruncation,
-	shortEnough
-} from '../helpers';
+/**
+ * Internal dependencies
+ */
+import { firstValid, hardTruncation, shortEnough } from '../helpers';
 
 const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 270;

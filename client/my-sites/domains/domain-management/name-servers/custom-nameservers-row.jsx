@@ -1,26 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {
 	static propTypes = {
-		index: React.PropTypes.number,
-		nameserver: React.PropTypes.string,
-		onChange: React.PropTypes.func,
-		onRemove: React.PropTypes.func
+		index: PropTypes.number,
+		nameserver: PropTypes.string,
+		onChange: PropTypes.func,
+		onRemove: PropTypes.func
 	};
 
 	renderRemoveIcon() {

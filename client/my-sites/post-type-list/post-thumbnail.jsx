@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

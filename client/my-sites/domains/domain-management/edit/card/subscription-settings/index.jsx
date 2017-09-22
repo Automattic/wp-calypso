@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import purchasesPaths from 'me/purchases/paths';
 import { type as domainTypes } from 'lib/domains/constants';
+import purchasesPaths from 'me/purchases/paths';
 
 class SubscriptionSettings extends React.Component {
 	static propTypes = {
-		type: React.PropTypes.string.isRequired,
-		siteSlug: React.PropTypes.string,
-		subscriptionId: React.PropTypes.string,
-		onClick: React.PropTypes.func.isRequired,
+		type: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string,
+		subscriptionId: PropTypes.string,
+		onClick: PropTypes.func.isRequired,
 	};
 
 	getLink() {

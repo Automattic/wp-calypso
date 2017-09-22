@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabs from 'components/section-nav/tabs';
 
 export default React.createClass( {
 	displayName: 'ContactFormDialogNavigation',

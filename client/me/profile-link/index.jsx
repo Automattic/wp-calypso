@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import eventRecorder from 'me/event-recorder';
-import { withoutHttp } from 'lib/url';
 import Button from 'components/button';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import { withoutHttp } from 'lib/url';
+import eventRecorder from 'me/event-recorder';
 
 export default React.createClass( {
 
@@ -30,10 +31,10 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		imageSize: React.PropTypes.number,
-		title: React.PropTypes.string.isRequired,
-		url: React.PropTypes.string.isRequired,
-		slug: React.PropTypes.string.isRequired
+		imageSize: PropTypes.number,
+		title: PropTypes.string.isRequired,
+		url: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired
 	},
 
 	renderRemove() {

@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getLabelForSetting } from './locales'
+import { getLabelForSetting } from './locales';
 
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormLabelList',

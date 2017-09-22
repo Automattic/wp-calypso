@@ -1,28 +1,26 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
-import config from 'config';
-import notices from 'notices';
-import urlSearch from 'lib/url-search';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
 import PageList from './page-list';
+import Main from 'components/main';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import config from 'config';
+import urlSearch from 'lib/url-search';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import notices from 'notices';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:pages:pages' );
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
@@ -32,7 +30,7 @@ class PagesMain extends React.Component {
 	static displayName = 'Pages';
 
 	static propTypes = {
-		trackScrollPage: React.PropTypes.func.isRequired
+		trackScrollPage: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {

@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
 import paths from '../../paths.js';
 import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
 
 const PurchasesHeader = ( { section } ) => {
 	let text = i18n.translate( 'Billing History' );
@@ -35,7 +36,7 @@ const PurchasesHeader = ( { section } ) => {
 };
 
 PurchasesHeader.propTypes = {
-	section: React.PropTypes.string.isRequired,
+	section: PropTypes.string.isRequired,
 };
 
 export default PurchasesHeader;

@@ -1,32 +1,33 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import Site from 'blocks/site';
 import CompactCard from 'components/card/compact';
-import AllSites from 'my-sites/all-sites';
+import FoldableCard from 'components/foldable-card';
 import PluginsLog from 'lib/plugins/log-store';
+import AllSites from 'my-sites/all-sites';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 
 export default React.createClass( {
 
 	displayName: 'PluginSiteNetwork',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		secondarySites: React.PropTypes.array,
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		secondarySites: PropTypes.array,
 	},
 
 	renderInstallButton: function() {

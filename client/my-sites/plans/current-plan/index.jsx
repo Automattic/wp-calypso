@@ -1,35 +1,32 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Main from 'components/main';
-import {
-	getCurrentPlan,
-	isCurrentPlanExpiring,
-	isRequestingSitePlans
-} from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import DocumentHead from 'components/data/document-head';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/domains/navigation';
+import CurrentPlanHeader from './header';
 import ProductPurchaseFeatures from 'blocks/product-purchase-features';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/product-purchase-features-list';
-import CurrentPlanHeader from './header';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
+import DocumentHead from 'components/data/document-head';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySites from 'components/data/query-sites';
+import Main from 'components/main';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { getPlan } from 'lib/plans';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import PlansNavigation from 'my-sites/domains/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getCurrentPlan, isCurrentPlanExpiring, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class CurrentPlan extends Component {
 	static propTypes = {

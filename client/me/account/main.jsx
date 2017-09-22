@@ -1,55 +1,49 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import {
-	debounce,
-	flowRight as compose,
-	map,
-	size,
-	update,
-} from 'lodash';
+import i18n, { localize } from 'i18n-calypso';
+import { debounce, flowRight as compose, map, size, update } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import LanguagePicker from 'components/language-picker';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
-import config from 'config';
+import ColorSchemePicker from 'blocks/color-scheme-picker';
 import Card from 'components/card';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import LanguagePicker from 'components/language-picker';
+import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
-import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
-import ColorSchemePicker from 'blocks/color-scheme-picker';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import config from 'config';
 import { getLanguage } from 'lib/i18n-utils';
-import { isRequestingMissingSites } from 'state/selectors';
-
+import observe from 'lib/mixins/data-observe';
+import { protectForm } from 'lib/protect-form';
+import twoStepAuthorization from 'lib/two-step-authorization';
 import _user from 'lib/user';
+import eventRecorder from 'me/event-recorder';
+import formBase from 'me/form-base';
+import ReauthRequired from 'me/reauth-required';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { isRequestingMissingSites } from 'state/selectors';
 
 const user = _user();
 

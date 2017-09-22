@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
 import ServiceExample from './service-example';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module constants

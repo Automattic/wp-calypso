@@ -1,9 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const FollowButton = React.createClass( {
 	propTypes: {

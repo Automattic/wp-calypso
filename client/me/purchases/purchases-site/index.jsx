@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import React from 'react';
 import { some, times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSite, isRequestingSite } from 'state/sites/selectors';
-import { isJetpackPlan } from 'lib/products-values';
-import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+import QuerySites from 'components/data/query-sites';
+import { isJetpackPlan } from 'lib/products-values';
+import { getSite, isRequestingSite } from 'state/sites/selectors';
 
 const PurchasesSite = ( {
 	hasLoadedSite,
@@ -65,12 +66,12 @@ const PurchasesSite = ( {
 };
 
 PurchasesSite.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	siteId: React.PropTypes.number,
-	purchases: React.PropTypes.array,
-	name: React.PropTypes.string,
-	domain: React.PropTypes.string,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	siteId: PropTypes.number,
+	purchases: PropTypes.array,
+	name: PropTypes.string,
+	domain: PropTypes.string,
+	slug: PropTypes.string,
 };
 
 export default connect( ( state, { siteId } ) => ( {

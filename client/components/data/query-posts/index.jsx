@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import debug from 'debug';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import debug from 'debug';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSitePostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
+import shallowEqual from 'react-pure-render/shallowEqual';
 import { requestSitePosts, requestSitePost } from 'state/posts/actions';
+import { isRequestingSitePostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
 
 /**
  * Module variables

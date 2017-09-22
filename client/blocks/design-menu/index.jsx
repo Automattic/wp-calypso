@@ -1,49 +1,50 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import classnames from 'classnames';
-import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
-import { localize } from 'i18n-calypso';
-import { clearCustomizations, fetchPreviewMarkup, saveCustomizations } from 'state/preview/actions';
-import { isPreviewUnsaved, getPreviewCustomizations } from 'state/preview/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getActiveDesignTool } from 'state/ui/preview/selectors';
-import { setActiveDesignTool, closePreview } from 'state/ui/preview/actions';
-import accept from 'lib/accept';
+import DesignMenuHeader from './design-menu-header';
+import DesignMenuPanel from './design-menu-panel';
 import designTool from './design-tool-data';
 import DesignToolList from './design-tool-list';
+import RootChild from 'components/root-child';
 import SiteTitleControl from 'components/site-title';
-import DesignMenuPanel from './design-menu-panel';
-import DesignMenuHeader from './design-menu-header';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import accept from 'lib/accept';
 import { getSiteFragment } from 'lib/route/path';
+import { clearCustomizations, fetchPreviewMarkup, saveCustomizations } from 'state/preview/actions';
+import { isPreviewUnsaved, getPreviewCustomizations } from 'state/preview/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setActiveDesignTool, closePreview } from 'state/ui/preview/actions';
+import { getActiveDesignTool } from 'state/ui/preview/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 
 const DesignMenu = React.createClass( {
 
 	propTypes: {
-		isVisible: React.PropTypes.bool,
+		isVisible: PropTypes.bool,
 		// These are provided by the connect method
-		isUnsaved: React.PropTypes.bool,
-		customizations: React.PropTypes.object,
-		selectedSite: React.PropTypes.object,
-		currentLayoutFocus: React.PropTypes.string,
-		activeDesignToolId: React.PropTypes.string,
-		clearCustomizations: React.PropTypes.func.isRequired,
-		fetchPreviewMarkup: React.PropTypes.func.isRequired,
-		saveCustomizations: React.PropTypes.func.isRequired,
-		setActiveDesignTool: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired,
+		isUnsaved: PropTypes.bool,
+		customizations: PropTypes.object,
+		selectedSite: PropTypes.object,
+		currentLayoutFocus: PropTypes.string,
+		activeDesignToolId: PropTypes.string,
+		clearCustomizations: PropTypes.func.isRequired,
+		fetchPreviewMarkup: PropTypes.func.isRequired,
+		saveCustomizations: PropTypes.func.isRequired,
+		setActiveDesignTool: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import chrono from 'chrono-node';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Supported languages
@@ -15,10 +16,10 @@ export default React.createClass( {
 	focused: false,
 
 	propTypes: {
-		value: React.PropTypes.string,
-		lang: React.PropTypes.string,
-		onSet: React.PropTypes.func,
-		placeholder: React.PropTypes.string
+		value: PropTypes.string,
+		lang: PropTypes.string,
+		onSet: PropTypes.func,
+		placeholder: PropTypes.string
 	},
 
 	getDefaultProps() {

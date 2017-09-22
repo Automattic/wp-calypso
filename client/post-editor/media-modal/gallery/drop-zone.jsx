@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
+import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryDropZone',

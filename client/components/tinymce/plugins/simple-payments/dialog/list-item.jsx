@@ -1,21 +1,20 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getCurrencyObject } from 'lib/format-currency';
+import ProductImage from './product-image';
 import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';
 import PopoverMenuItem from 'components/popover/menu-item';
-import ProductImage from './product-image';
+import { getCurrencyObject } from 'lib/format-currency';
 
 class ProductListItem extends Component {
 	static propTypes = {

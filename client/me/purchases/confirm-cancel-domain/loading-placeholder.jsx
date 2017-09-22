@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { cancelPurchase } from 'me/purchases/paths';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
+import { cancelPurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
 const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
@@ -36,8 +37,8 @@ const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) =
 };
 
 ConfirmCancelDomainLoadingPlaceholder.propTypes = {
-	purchaseId: React.PropTypes.number.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+	purchaseId: PropTypes.number.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
 export default ConfirmCancelDomainLoadingPlaceholder;

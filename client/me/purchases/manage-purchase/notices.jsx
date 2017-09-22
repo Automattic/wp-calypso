@@ -1,45 +1,35 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
-import {
-	canExplicitRenew,
-	creditCardExpiresBeforeSubscription,
-	getName,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isRedeemable,
-	isRenewable,
-	showCreditCardExpiringWarning,
-} from 'lib/purchases';
 import { getPurchase, getSelectedSite } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isMonthly } from 'lib/plans/constants';
+import config from 'config';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { isMonthly } from 'lib/plans/constants';
+import { canExplicitRenew, creditCardExpiresBeforeSubscription, getName, isExpired, isExpiring, isIncludedWithPlan, isOneTimePurchase, isRedeemable, isRenewable, showCreditCardExpiringWarning } from 'lib/purchases';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 
 class PurchaseNotice extends Component {
 	static propTypes = {
-		isDataLoading: React.PropTypes.bool,
-		handleRenew: React.PropTypes.func,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType(
-			[ React.PropTypes.object, React.PropTypes.bool, React.PropTypes.undefined ]
+		isDataLoading: PropTypes.bool,
+		handleRenew: PropTypes.func,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType(
+			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
 		),
-		editCardDetailsPath: React.PropTypes.oneOfType(
-			[ React.PropTypes.string, React.PropTypes.bool ]
+		editCardDetailsPath: PropTypes.oneOfType(
+			[ PropTypes.string, PropTypes.bool ]
 		),
 	};
 

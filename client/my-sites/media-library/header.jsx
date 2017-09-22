@@ -1,23 +1,24 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import Card from 'components/card';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import StickyPanel from 'components/sticky-panel';
 import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
-import Card from 'components/card';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import StickyPanel from 'components/sticky-panel';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -26,9 +27,9 @@ export default React.createClass( {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
-		onMediaScaleChange: React.PropTypes.func,
+		onMediaScaleChange: PropTypes.func,
 		onAddMedia: PropTypes.func,
-		sticky: React.PropTypes.bool,
+		sticky: PropTypes.bool,
 	},
 
 	getInitialState() {

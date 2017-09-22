@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteStatsViewSummary } from 'state/selectors';
-import Card from 'components/card';
-import Months from './months';
-import SegmentedControl from 'components/segmented-control';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import Months from './months';
+import Card from 'components/card';
+import QuerySiteStats from 'components/data/query-site-stats';
+import SegmentedControl from 'components/segmented-control';
+import { getSiteStatsViewSummary } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class StatsViews extends Component {
 	static propTypes = {

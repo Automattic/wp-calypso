@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
 import { cloneDeep, findIndex, map, toArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import TermTreeSelector from 'blocks/term-tree-selector';
 import AddTerm from './add-term';
-import { canCurrentUser } from 'state/selectors';
+import TermTreeSelector from 'blocks/term-tree-selector';
 import { editPost, addTermForPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {

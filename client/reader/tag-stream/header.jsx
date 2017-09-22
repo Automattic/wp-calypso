@@ -2,34 +2,35 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { sample } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { sample } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FollowButton from 'blocks/follow-button/button';
 import QueryReaderTagImages from 'components/data/query-reader-tag-images';
-import { getTagImages } from 'state/reader/tags/images/selectors';
-import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { decodeEntities } from 'lib/formatting';
+import resizeImageUrl from 'lib/resize-image-url';
+import { getTagImages } from 'state/reader/tags/images/selectors';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;
 
 class TagStreamHeader extends React.Component {
 	static propTypes = {
-		isPlaceholder: React.PropTypes.bool,
-		showFollow: React.PropTypes.bool,
-		following: React.PropTypes.bool,
-		onFollowToggle: React.PropTypes.func,
-		tagImages: React.PropTypes.array,
-		showBack: React.PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		showFollow: PropTypes.bool,
+		following: PropTypes.bool,
+		onFollowToggle: PropTypes.func,
+		tagImages: PropTypes.array,
+		showBack: PropTypes.bool,
 	};
 
 	static defaultProps = {

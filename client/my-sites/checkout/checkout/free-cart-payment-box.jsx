@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import CartToggle from './cart-toggle';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' );
@@ -10,11 +16,9 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
-import CartToggle from './cart-toggle';
-
 var FreeCartPaymentBox = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired
+		products: PropTypes.object.isRequired
 	},
 
 	content: function() {

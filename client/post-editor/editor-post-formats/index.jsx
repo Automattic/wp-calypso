@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { map } from 'lodash';
 import Gridicon from 'gridicons';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
+import AccordionSection from 'components/accordion/section';
 import QueryPostFormats from 'components/data/query-post-formats';
+import FormRadio from 'components/forms/form-radio';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorPostFormats = React.createClass( {
 	propTypes: {

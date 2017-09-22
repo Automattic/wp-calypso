@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getPostType } from 'state/post-types/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import EmptyContent from 'components/empty-content';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function PostTypeListEmptyContent( { siteId, translate, status, typeObject, editPath } ) {
 	let title, action;

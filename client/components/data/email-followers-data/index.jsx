@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { isEqual } from 'lodash';
 import debugModule from 'debug';
+import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EmailFollowersStore from 'lib/email-followers/store';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
 import pollers from 'lib/data-poller';
+import EmailFollowersActions from 'lib/email-followers/actions';
+import EmailFollowersStore from 'lib/email-followers/store';
+import passToChildren from 'lib/react-pass-to-children';
 
 /**
  * Module variables
@@ -22,7 +23,7 @@ export default React.createClass( {
 	displayName: 'EmailFollowersData',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired
+		fetchOptions: PropTypes.object.isRequired
 	},
 
 	getInitialState() {

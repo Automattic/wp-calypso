@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import userFactory from 'lib/user';
 import AuthorSelector from 'blocks/author-selector';
+import Gravatar from 'components/gravatar';
 import PostActions from 'lib/posts/actions';
-import touchDetect from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
+import touchDetect from 'lib/touch-detect';
+import userFactory from 'lib/user';
 import { getSelectedSite } from 'state/ui/selectors';
 
 /**
@@ -24,9 +25,9 @@ const user = userFactory();
 export class EditorAuthor extends Component {
 
 	static propTypes = {
-		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		postAuthor: React.PropTypes.object,
+		post: PropTypes.object,
+		isNew: PropTypes.bool,
+		postAuthor: PropTypes.object,
 	};
 
 	render() {

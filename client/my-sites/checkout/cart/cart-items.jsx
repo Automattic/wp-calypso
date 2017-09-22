@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -8,14 +10,13 @@ import React from 'react';
  */
 import CartItem from './cart-item';
 import { cartItems } from 'lib/cart-values';
-import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;
 
 export class CartItems extends React.Component {
 
 	static propTypes = {
-		collapse: React.PropTypes.bool.isRequired
+		collapse: PropTypes.bool.isRequired
 	};
 
 	constructor( props ) {

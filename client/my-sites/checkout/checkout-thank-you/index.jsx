@@ -1,75 +1,56 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { find } from 'lodash';
-import page from 'page';
-import React, { PropTypes } from 'react';
 import moment from 'moment';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { themeActivated } from 'state/themes/actions';
-import analytics from 'lib/analytics';
-import { loadTrackingTool } from 'state/analytics/actions';
-import Card from 'components/card';
+import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
-import CheckoutThankYouHeader from './header';
-import { domainManagementList } from 'my-sites/domains/paths';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import { fetchReceipt } from 'state/receipts/actions';
-import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getReceiptById } from 'state/receipts/selectors';
-import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
+import FailedPurchaseDetails from './failed-purchase-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
-import HappinessSupport from 'components/happiness-support';
-import HeaderCake from 'components/header-cake';
-import PlanThankYouCard from 'blocks/plan-thank-you-card';
-import JetpackThankYouCard from './jetpack-thank-you-card';
-import {
-	isChargeback,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDotComPlan,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackPlan,
-	isPlan,
-	isPersonal,
-	isPremium,
-	isBusiness,
-	isSiteRedirect,
-	isTheme
-} from 'lib/products-values';
+import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
-import Main from 'components/main';
+import JetpackThankYouCard from './jetpack-thank-you-card';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
-import BusinessPlanDetails from './business-plan-details';
-import FailedPurchaseDetails from './failed-purchase-details';
-import PurchaseDetail from 'components/purchase-detail';
-import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
+import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import Card from 'components/card';
+import HappinessSupport from 'components/happiness-support';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import Notice from 'components/notice';
+import PurchaseDetail from 'components/purchase-detail';
 import ThankYouCard from 'components/thank-you-card';
-import domainsPaths from 'my-sites/domains/paths';
 import config from 'config';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import analytics from 'lib/analytics';
+import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY } from 'lib/plans/constants';
+import { isChargeback, isDomainMapping, isDomainProduct, isDomainRedemption, isDomainRegistration, isDotComPlan, isGoogleApps, isGuidedTransfer, isJetpackPlan, isPlan, isPersonal, isPremium, isBusiness, isSiteRedirect, isTheme } from 'lib/products-values';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+import { domainManagementList } from 'my-sites/domains/paths';
+import domainsPaths from 'my-sites/domains/paths';
+import { loadTrackingTool } from 'state/analytics/actions';
+import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
+import { fetchReceipt } from 'state/receipts/actions';
+import { getReceiptById } from 'state/receipts/selectors';
+import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { themeActivated } from 'state/themes/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];

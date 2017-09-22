@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
 import GalleryShortcode from 'components/gallery-shortcode';
+import shortcodeUtils from 'lib/shortcode';
 
 class GalleryView extends Component {
 

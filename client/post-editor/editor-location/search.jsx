@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import EditorLocationSearchResult from './search-result';
+import SearchCard from 'components/search-card';
 import { geocode } from 'lib/geocoding';
 import * as stats from 'lib/posts/stats';
-import SearchCard from 'components/search-card';
-import EditorLocationSearchResult from './search-result';
 
 export default React.createClass( {
 	displayName: 'EditorLocationSearch',

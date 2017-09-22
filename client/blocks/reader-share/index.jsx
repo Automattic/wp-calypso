@@ -2,27 +2,28 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import qs from 'qs';
 import React from 'react';
 import { connect } from 'react-redux';
-import url from 'url';
-import { defer } from 'lodash';
-import config from 'config';
-import classnames from 'classnames';
-import qs from 'qs';
-import page from 'page';
 import SocialLogo from 'social-logos';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'gridicons';
+import ReaderPopoverMenu from 'components/reader-popover/menu';
+import SiteSelector from 'components/site-selector';
+import config from 'config';
 import * as stats from 'reader/stats';
 import { preload as preloadSection } from 'sections-preload';
-import SiteSelector from 'components/site-selector';
 import { getPrimarySiteId } from 'state/selectors';
+import url from 'url';
 
 /**
  * Local variables
@@ -80,7 +81,7 @@ function buildQuerystringForPost( post ) {
 
 class ReaderShare extends React.Component {
 	static propTypes = {
-		iconSize: React.PropTypes.number,
+		iconSize: PropTypes.number,
 	};
 
 	static defaultProps = {

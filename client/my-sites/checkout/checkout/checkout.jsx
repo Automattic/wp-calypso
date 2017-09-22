@@ -1,11 +1,27 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { recordViewCheckout } from 'lib/analytics/ad-tracking';
+import { recordApplePayStatus } from 'lib/apple-pay';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
+import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
+import { fetchSitesAndUser } from 'lib/signup/step-actions';
+import { loadTrackingTool } from 'state/analytics/actions';
+import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
+import { requestSite } from 'state/sites/actions';
+import { getStoredCards } from 'state/stored-cards/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Internal dependencies
@@ -30,35 +46,14 @@ const analytics = require( 'lib/analytics' ),
 	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
-import { getStoredCards } from 'state/stored-cards/selectors';
-import {
-	isValidFeatureKey,
-	getUpgradePlanSlugFromPath
-} from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { recordViewCheckout } from 'lib/analytics/ad-tracking';
-import { recordApplePayStatus } from 'lib/apple-pay';
-import { requestSite } from 'state/sites/actions';
-import {
-	isDomainOnlySite,
-	getCurrentUserPaymentMethods
-} from 'state/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
-import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { loadTrackingTool } from 'state/analytics/actions';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
 
 	propTypes: {
-		cards: React.PropTypes.array.isRequired,
-		couponCode: React.PropTypes.string,
-		selectedFeature: React.PropTypes.string
+		cards: PropTypes.array.isRequired,
+		couponCode: PropTypes.string,
+		selectedFeature: PropTypes.string
 	},
 
 	getInitialState: function() {

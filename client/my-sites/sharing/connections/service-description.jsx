@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {

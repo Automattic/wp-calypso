@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
+import { has, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import PostFormats from './';
 import Accordion from 'components/accordion';
 import QueryPostFormats from 'components/data/query-post-formats';
-import PostFormats from './';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getSiteDefaultPostFormat } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 const EditorPostFormatsAccordion = React.createClass( {
 	propTypes: {

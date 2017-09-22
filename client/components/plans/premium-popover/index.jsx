@@ -1,33 +1,34 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { omit } from 'lodash';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import PlanPrice from 'components/plans/plan-price';
+import Popover from 'components/popover';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { getPlanBySlug } from 'state/plans/selectors';
 import { getSitePlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryPlans from 'components/data/query-plans';
 
 let exclusiveViewLock = null;
 
 const PremiumPopover = React.createClass( {
 	propTypes: {
-		className: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.object, React.PropTypes.array ] ),
-		onClose: React.PropTypes.func,
-		isVisible: React.PropTypes.bool,
-		position: React.PropTypes.string.isRequired,
-		textLabel: React.PropTypes.string
+		className: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] ),
+		onClose: PropTypes.func,
+		isVisible: PropTypes.bool,
+		position: PropTypes.string.isRequired,
+		textLabel: PropTypes.string
 	},
 	getInitialState() {
 		return {

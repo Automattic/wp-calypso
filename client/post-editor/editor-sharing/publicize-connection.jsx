@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { includes } from 'lodash';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FormCheckbox from 'components/forms/form-checkbox';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 export default React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',

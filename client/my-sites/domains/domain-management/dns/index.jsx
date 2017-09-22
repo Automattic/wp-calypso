@@ -1,34 +1,35 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import DnsTemplates from '../name-servers/dns-templates';
 import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
+import Card from 'components/card/compact';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import VerticalNav from 'components/vertical-nav';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
-import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
-import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import DnsTemplates from '../name-servers/dns-templates';
-import VerticalNav from 'components/vertical-nav';
 
 class Dns extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		dns: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		dns: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

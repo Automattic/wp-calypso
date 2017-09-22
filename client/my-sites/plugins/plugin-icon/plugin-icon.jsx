@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	const classes = classNames( {

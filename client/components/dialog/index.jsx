@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import { defer, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
 import DialogBase from './dialog-base';
+import RootChild from 'components/root-child';
 
 class Dialog extends Component {
 	static propTypes = {

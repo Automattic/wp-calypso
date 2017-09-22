@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ export default React.createClass( {
 	displayName: 'CommunityTranslatorInvitation',
 
 	propTypes: {
-		isVisible: React.PropTypes.bool
+		isVisible: PropTypes.bool
 	},
 
 	render: function() {

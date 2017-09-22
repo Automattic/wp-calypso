@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { numberFormat, translate } from 'i18n-calypso';
 import { has, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
+import MappingPane from './author-mapping-pane';
 import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
-import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
+import { mapAuthor, startImporting } from 'lib/importer/actions';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { appStates } from 'state/imports/constants';
 
 const sum = ( a, b ) => a + b;
 

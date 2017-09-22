@@ -1,46 +1,38 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
 import { moment } from 'i18n-calypso';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import config from 'config';
+import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 import Button from 'components/button';
-import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
-import { clearPurchases } from 'state/purchases/actions';
-import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
-import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData
-	from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState
-	from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey
-	from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
 import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
-import {
-	getName,
-	getSubscriptionEndDate,
-	isOneTimePurchase,
-	isRefundable,
-	isSubscription,
-} from 'lib/purchases';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import config from 'config';
 import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
-import notices from 'notices';
+import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
+import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import paths from 'me/purchases/paths';
-import { refreshSitePlans } from 'state/sites/plans/actions';
+import notices from 'notices';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
+import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
+import { clearPurchases } from 'state/purchases/actions';
+import { refreshSitePlans } from 'state/sites/plans/actions';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {

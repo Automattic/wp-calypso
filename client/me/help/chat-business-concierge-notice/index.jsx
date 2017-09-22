@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { identity } from 'lodash';
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import HelpTeaserButton from '../help-teaser-button';
+import analytics from 'lib/analytics';
 import { isBusinessPlanUser } from 'state/selectors';
 
 class ChatBusinessConciergeNotice extends Component {

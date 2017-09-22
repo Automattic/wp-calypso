@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
-import { Container } from 'flux/utils';
 import { pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import ResizableIframe from 'components/resizable-iframe';
-import EmbedsStore from 'lib/embeds/store';
+import { Container } from 'flux/utils';
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
+import EmbedsStore from 'lib/embeds/store';
 
 class EmbedView extends Component {
 	static getStores() {

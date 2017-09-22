@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -11,7 +12,7 @@ import Gravatar from 'components/gravatar';
 module.exports = React.createClass( {
 	displayName: 'UserItem',
 	propTypes: {
-		user: React.PropTypes.object
+		user: PropTypes.object
 	},
 
 	render: function() {

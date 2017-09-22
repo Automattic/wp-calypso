@@ -1,25 +1,26 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
+import postUtils from 'lib/posts/utils';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'StatusLabel',
 
 	propTypes: {
-		onClick: React.PropTypes.func,
-		post: React.PropTypes.object,
-		type: React.PropTypes.string,
-		advancedStatus: React.PropTypes.bool
+		onClick: PropTypes.func,
+		post: PropTypes.object,
+		type: PropTypes.string,
+		advancedStatus: PropTypes.bool
 	},
 
 	mixins: [ PureRenderMixin ],

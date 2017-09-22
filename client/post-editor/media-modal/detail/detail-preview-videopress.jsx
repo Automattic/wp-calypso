@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { get, invoke, noop } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
+import { get, invoke, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

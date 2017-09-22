@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import Notice from 'components/notice';
+
+const PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 const React = require( 'react' ),
@@ -12,8 +18,6 @@ const PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 
-import Notice from 'components/notice';
-
 /**
  * Module variables
  */
@@ -23,7 +27,7 @@ export default React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
-		label: React.PropTypes.string,
+		label: PropTypes.string,
 		coordinates: function( props, propName ) {
 			var prop = props[ propName ];
 			if ( prop && ( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length ) ) {

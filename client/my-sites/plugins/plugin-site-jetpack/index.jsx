@@ -1,33 +1,34 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Site from 'blocks/site';
 import FoldableCard from 'components/foldable-card';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 
 const PluginSiteJetpack = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		allowedActions: React.PropTypes.shape( {
-			activation: React.PropTypes.bool,
-			autoupdate: React.PropTypes.bool,
-			remove: React.PropTypes.bool,
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		allowedActions: PropTypes.shape( {
+			activation: PropTypes.bool,
+			autoupdate: PropTypes.bool,
+			remove: PropTypes.bool,
 		} ),
-		isAutoManaged: React.PropTypes.bool,
+		isAutoManaged: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {

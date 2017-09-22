@@ -1,18 +1,16 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import {
-	getContactDetailsCache,
-	isRequestingContactDetailsCache,
-} from 'state/selectors';
 import { requestContactDetailsCache } from 'state/domains/management/actions';
+import { getContactDetailsCache, isRequestingContactDetailsCache } from 'state/selectors';
 
 class QueryContactDetailsCache extends Component {
 	componentWillMount() {

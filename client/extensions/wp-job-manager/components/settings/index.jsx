@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React, { cloneElement, Children, Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { cloneElement, Children, Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { saveSettings } from '../../state/settings/actions';
+import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
+import QuerySettings from '../data/query-settings';
+import Navigation from '../navigation';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import Navigation from '../navigation';
-import QuerySettings from '../data/query-settings';
-import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
 
 class Settings extends Component {
 	static propTypes = {

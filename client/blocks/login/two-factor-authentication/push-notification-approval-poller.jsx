@@ -1,19 +1,15 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	startPollAppPushAuth,
-	stopPollAppPushAuth,
-} from 'state/login/actions';
-import {
-	getTwoFactorPushPollSuccess,
-} from 'state/login/selectors';
+import { startPollAppPushAuth, stopPollAppPushAuth } from 'state/login/actions';
+import { getTwoFactorPushPollSuccess } from 'state/login/selectors';
 
 class PushNotificationApprovalPoller extends Component {
 	static propTypes = {

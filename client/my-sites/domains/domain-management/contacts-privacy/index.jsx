@@ -1,31 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import ContactsPrivacyCard from './card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		whois: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		whois: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

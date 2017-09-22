@@ -1,31 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import Dispatcher from 'dispatcher';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route/path';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import viewport from 'lib/viewport';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
+import NavTabs from 'components/section-nav/tabs';
+import config from 'config';
+import Dispatcher from 'dispatcher';
 import { isATEnabled } from 'lib/automated-transfer';
+import { sectionify } from 'lib/route/path';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import viewport from 'lib/viewport';
+import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: React.PropTypes.object,
-		path: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		cart: PropTypes.object,
+		path: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

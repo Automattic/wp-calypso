@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import Security2faStatus from 'me/security-2fa-status';
 import Security2faCodePrompt from 'me/security-2fa-code-prompt';
+import Security2faStatus from 'me/security-2fa-status';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice } from 'state/notices/actions';
 

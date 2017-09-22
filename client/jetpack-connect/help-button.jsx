@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { localize } from 'i18n-calypso';
 
 const JetpackConnectHelpButton = ( { translate, onClick } ) => {
 	return (

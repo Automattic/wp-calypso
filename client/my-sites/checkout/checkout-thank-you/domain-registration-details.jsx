@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
-import { isGoogleApps } from 'lib/products-values';
+import { getDomainManagementUrl } from './utils';
 import PurchaseDetail from 'components/purchase-detail';
+import { isGoogleApps } from 'lib/products-values';
 import supportUrls from 'lib/url/support';
 
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
@@ -68,11 +69,11 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 };
 
 DomainRegistrationDetails.propTypes = {
-	domain: React.PropTypes.string.isRequired,
-	purchases: React.PropTypes.array.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	domain: PropTypes.string.isRequired,
+	purchases: PropTypes.array.isRequired,
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired
 };
 

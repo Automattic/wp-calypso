@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackUserConnection } from 'state/selectors';
 import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actions';
+import { isRequestingJetpackUserConnection } from 'state/selectors';
 
 class QueryJetpackUserConnection extends Component {
 	static propTypes = {

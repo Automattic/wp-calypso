@@ -1,8 +1,9 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Globals
@@ -11,7 +12,7 @@ var noop = () => {};
 
 export default React.createClass( {
 	propTypes: {
-		onYearChange: React.PropTypes.func
+		onYearChange: PropTypes.func
 	},
 
 	getDefaultProps() {

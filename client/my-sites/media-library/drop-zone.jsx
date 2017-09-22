@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
+import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 
@@ -16,10 +17,10 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryDropZone',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		fullScreen: React.PropTypes.bool,
-		onAddMedia: React.PropTypes.func,
-		trackStats: React.PropTypes.bool
+		site: PropTypes.object,
+		fullScreen: PropTypes.bool,
+		onAddMedia: PropTypes.func,
+		trackStats: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

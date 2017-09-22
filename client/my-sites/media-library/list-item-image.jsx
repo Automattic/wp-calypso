@@ -1,4 +1,10 @@
 /**
+ * Internal dependencies
+ */
+import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+
+var PropTypes = require('prop-types');
+/**
  * External dependencies
  */
 var React = require( 'react' );
@@ -9,16 +15,14 @@ var React = require( 'react' );
 var MediaUtils = require( 'lib/media/utils' ),
 	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
 
-import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
-
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
+		media: PropTypes.object,
+		scale: PropTypes.number,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
 	},
 
 	getDefaultProps: function() {

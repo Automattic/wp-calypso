@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { groupBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EditorSharingPublicizeConnection from './publicize-connection';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const EditorSharingPublicizeServices = ( { connections, post, newConnectionPopup } ) => (
 	<ul className="editor-sharing__publicize-services">

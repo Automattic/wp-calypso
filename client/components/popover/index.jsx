@@ -1,26 +1,20 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
-import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
-import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
+import debugFactory from 'debug';
 import { uniqueId } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { bindWindowListeners, unbindWindowListeners, suggested as suggestPosition, constrainLeft, isElement as isDOMElement, offset } from './util';
 import RootChild from 'components/root-child';
-import {
-	bindWindowListeners,
-	unbindWindowListeners,
-	suggested as suggestPosition,
-	constrainLeft,
-	isElement as isDOMElement,
-	offset
-} from './util';
 import { isRtl as isRtlSelector } from 'state/selectors';
 
 /**
@@ -37,7 +31,7 @@ class Popover extends Component {
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [

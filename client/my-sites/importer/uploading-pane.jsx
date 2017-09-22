@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { flowRight, includes, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
-import Button from 'components/forms/form-button';
-import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
+import DropZone from 'components/drop-zone';
+import Button from 'components/forms/form-button';
+import ProgressBar from 'components/progress-bar';
+import { startMappingAuthors, startUpload } from 'lib/importer/actions';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { appStates } from 'state/imports/constants';
 
 export const UploadingPane = React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',

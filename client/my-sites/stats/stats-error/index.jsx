@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
 import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {

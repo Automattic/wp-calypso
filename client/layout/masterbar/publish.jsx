@@ -1,29 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import MasterbarItem from './item';
+import AsyncLoad from 'components/async-load';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
-import AsyncLoad from 'components/async-load';
 
 const MasterbarItemNew = React.createClass( {
 	propTypes: {
-		user: React.PropTypes.object,
-		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		tooltip: React.PropTypes.string,
+		user: PropTypes.object,
+		isActive: PropTypes.bool,
+		className: PropTypes.string,
+		tooltip: PropTypes.string,
 		// connected props
-		selectedSite: React.PropTypes.object,
+		selectedSite: PropTypes.object,
 	},
 
 	getInitialState() {

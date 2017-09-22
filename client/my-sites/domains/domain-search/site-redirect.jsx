@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import SiteRedirectStep from './site-redirect-step';
+import QueryProductsList from 'components/data/query-products-list';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import SiteRedirectStep from './site-redirect-step';
+import { getProductsList } from 'state/products-list/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
 
 class SiteRedirect extends Component {
 	static propTypes = {

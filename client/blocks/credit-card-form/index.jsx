@@ -1,24 +1,25 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
-import formState from 'lib/form-state';
-import notices from 'notices';
+import CountriesList from 'lib/countries-list';
 import { validateCardDetails } from 'lib/credit-card-details';
-import ValidationErrorList from 'notices/validation-error-list';
-import wpcomFactory from 'lib/wp';
+import formState from 'lib/form-state';
 import support from 'lib/url/support';
+import wpcomFactory from 'lib/wp';
+import notices from 'notices';
+import ValidationErrorList from 'notices/validation-error-list';
 
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();

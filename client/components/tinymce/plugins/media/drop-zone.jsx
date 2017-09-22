@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaUtils from 'lib/media/utils';
+import MediaValidationStore from 'lib/media/validation-store';
 import observe from 'lib/mixins/data-observe';
 import PostActions from 'lib/posts/actions';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 
 export default React.createClass( {
