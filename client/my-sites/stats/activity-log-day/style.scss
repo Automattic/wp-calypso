@@ -12,6 +12,19 @@
 		}
 	}
 
+	&.is-empty {
+		.card {
+			box-shadow: none;
+		}
+
+		.foldable-card__header {
+			background: $gray-light;
+			min-height: initial;
+			padding-bottom: 4px;
+			padding-top: 4px;
+		}
+	}
+
 	.foldable-card__header {
 		background: $white;
 

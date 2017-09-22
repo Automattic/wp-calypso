@@ -67,7 +67,7 @@ module.exports = {
 	},
 
 	refreshPluginNotices() {
-		const site = this.props.sites.getSelectedSite();
+		const site = this.props.selectedSite;
 		return {
 			errors: PluginsUtil.filterNotices( PluginsLog.getErrors(), site, this.props.pluginSlug ),
 			inProgress: PluginsUtil.filterNotices( PluginsLog.getInProgress(), site, this.props.pluginSlug ),
@@ -269,6 +269,10 @@ module.exports = {
 						} );
 				}
 				break;
+			case 'PLUGIN_UPLOAD':
+				return i18n.translate( 'You\'ve successfully uploaded the %(plugin)s plugin.', {
+					args: translateArg
+				} );
 		}
 	},
 

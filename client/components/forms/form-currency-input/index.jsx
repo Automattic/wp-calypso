@@ -6,13 +6,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-function renderAffix( currencyValue, onCurrencyChange, currencyList, visualCurrencyList ) {
+function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	// If the currency value is not defined, don't render this affix at all
 	if ( ! currencyValue ) {
 		return null;
@@ -24,21 +25,29 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList, visualCurre
 		return currencyValue;
 	}
 
+	// Find the currency code in the `currencyList` and return the label. If not found,
+	// use the code itself as the label.
+	const currencyLabel = get(
+		find( currencyList, currency => currency.code === currencyValue ),
+		'label',
+		currencyValue
+	);
+
 	// For an editable currency, display a <select> overlay
 	return (
 		<span className="form-currency-input__affix">
-			{ ( visualCurrencyList && visualCurrencyList[ currencyValue ] ) || currencyValue }
+			{ currencyLabel }
 			<Gridicon icon="chevron-down" size={ 18 } className="form-currency-input__select-icon" />
 			<select
 				className="form-currency-input__select"
 				value={ currencyValue }
 				onChange={ onCurrencyChange }
 			>
-				{ currencyList.map( code =>
+				{ currencyList.map( ( { code, label = code } ) => (
 					<option key={ code } value={ code }>
-						{ ( visualCurrencyList && visualCurrencyList[ code ] ) || code }
+						{ label }
 					</option>
-				) }
+				) ) }
 			</select>
 		</span>
 	);
@@ -50,23 +59,12 @@ function FormCurrencyInput( {
 	currencySymbolSuffix,
 	onCurrencyChange,
 	currencyList,
-	visualCurrencyList,
 	placeholder = '0.00',
 	...props
 } ) {
 	const classes = classNames( 'form-currency-input', className );
-	const prefix = renderAffix(
-		currencySymbolPrefix,
-		onCurrencyChange,
-		currencyList,
-		visualCurrencyList
-	);
-	const suffix = renderAffix(
-		currencySymbolSuffix,
-		onCurrencyChange,
-		currencyList,
-		visualCurrencyList
-	);
+	const prefix = renderAffix( currencySymbolPrefix, onCurrencyChange, currencyList );
+	const suffix = renderAffix( currencySymbolSuffix, onCurrencyChange, currencyList );
 
 	return (
 		<FormTextInputWithAffixes
@@ -80,12 +78,16 @@ function FormCurrencyInput( {
 	);
 }
 
+const CurrencyShape = PropTypes.shape( {
+	code: PropTypes.string.isRequired,
+	label: PropTypes.string,
+} );
+
 FormCurrencyInput.propTypes = {
 	currencySymbolPrefix: PropTypes.string,
 	currencySymbolSuffix: PropTypes.string,
 	onCurrencyChange: PropTypes.func,
-	currencyList: PropTypes.array,
-	visualCurrencyList: PropTypes.object,
+	currencyList: PropTypes.arrayOf( CurrencyShape ),
 };
 
 export default FormCurrencyInput;

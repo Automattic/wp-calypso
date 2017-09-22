@@ -1,0 +1,52 @@
+{
+	"id": "/contact-validation/fr",
+	"definitions": {
+		"empty": {
+			"anyOf": [
+				{ "type": "null" },
+				{
+					"type": "string",
+					"maxLength": 0
+				}
+			]
+		}
+	},
+
+	"type": "object",
+	"properties": {
+		"extra": {
+			"type": "object",
+			"properties": {
+				"sirenSiret": {
+					"type": "string",
+					"pattern": "^[0-9]*$",
+					"anyOf": [
+						{ "minLength": 9, "maxLength": 9 },
+						{ "minLength": 14, "maxLength": 14 },
+						{ "$ref": "#/definitions/empty" }
+					]
+				},
+				"registrantType": {
+					"enum": [ "individual", "organization" ]
+				},
+				"registrantVatId": {
+					"type": "string",
+					"anyOf": [
+						{ "pattern": "^[a-zA-Z]{2}.{2}[0-9]{2,10}[a-zA-Z0-9]{4}$" },
+						{ "pattern": "^.*GB.*$" },
+						{ "$ref": "#/definitions/empty" }
+					]
+				},
+				"trademarkNumber": {
+					"pattern": "^[0-9]*$",
+					"maxLength": 9,
+					"oneOf": [
+						{ "minLength": 9 },
+						{ "$ref": "#/definitions/empty" }
+					]
+				}
+			}
+		}
+	},
+	"note": "We'll want to fetch this through the API, where wpcom.undocumented already has `mapKeysRecursively()` & `camelCase()`"
+}

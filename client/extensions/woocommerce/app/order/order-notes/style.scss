@@ -1,3 +1,12 @@
+.foldable-card.card.order-notes__day-header,
+.foldable-card.card.order-notes__day-header.is-expanded {
+	margin: 0 0 16px;
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 0 24px;
+	}
+}
+
 .order-notes__day .foldable-card__content {
 	position: relative;
 	z-index: 0;
@@ -9,7 +18,7 @@
 		top: 0;
 		left: 45px;
 		bottom: 0;
-		width: 2px;
+		width: 1px;
 		background: transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
@@ -78,5 +87,46 @@
 
 	.order-notes__note-content {
 		margin: 8px 8px 0 0;
+	}
+}
+
+.order-notes__new-note-content {
+	margin: 0 -15px 16px;
+	border: 1px solid $border-ultra-light-gray;
+	border-width: 1px 0;
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 -24px 24px;
+	}
+
+	.form-label {
+		padding: 0 24px;
+		margin-bottom: 8px;
+	}
+
+	.form-textarea {
+		padding: 16px;
+		border-color: $white;
+		resize: vertical;
+		display: block;
+		font-size: 14px;
+
+		&::placeholder {
+			color: $gray-text-min;
+		}
+
+		&:focus {
+			border-color: $blue-wordpress;
+		}
+
+		@include breakpoint( ">480px" ) {
+			padding: 16px 24px;
+		}
+	}
+}
+
+.order-notes__new-note-type {
+	.button {
+		float: right;
 	}
 }

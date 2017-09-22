@@ -8,15 +8,19 @@
 	position: relative;
 	width: 80px;
 	align-self: stretch;
-	margin: -8px 0;
 	overflow: hidden;
 
+	margin: 8px 0;
+	.post-item__card.is-mini & {
+		margin: 0;
+	}
+
 	&.has-image,
-	.post-item.is-placeholder & {
+	.post-item__card.is-placeholder & {
 		display: block;
 	}
 
-	.post-item.is-placeholder & {
+	.post-item__card.is-placeholder & {
 		@include placeholder;
 	}
 }

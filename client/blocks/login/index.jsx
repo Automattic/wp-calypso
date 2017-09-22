@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { includes, capitalize } from 'lodash';
@@ -21,7 +22,8 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
-import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -35,7 +37,7 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
-		oauth2ClientData: PropTypes.object,
+		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -115,7 +117,7 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			oauth2ClientData,
+			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
@@ -137,13 +139,15 @@ class Login extends Component {
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
-		} else if ( oauth2ClientData ) {
+		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
-					clientTitle: oauth2ClientData.title
-				}
+					clientTitle: oauth2Client.title
+				},
+				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
 			} );
-			if ( oauth2ClientData.name === 'woo' ) {
+
+			if ( isWooOAuth2Client( oauth2Client ) ) {
 				preHeader = (
 					<Gridicon icon="my-sites" size={ 72 } />
 				);
@@ -151,7 +155,8 @@ class Login extends Component {
 					<p>
 						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
 							components: {
-								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />,
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+									target="_blank" rel="noopener noreferrer" />,
 								br: <br />,
 							}
 						} ) }
@@ -251,7 +256,7 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		oauth2ClientData: getOAuth2ClientData( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 	} ), {

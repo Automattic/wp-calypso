@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
+import { get, intersection, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +38,18 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' }
+];
+
+// List of browser languages to show pride styling for.
+// Add a '*' element to show the styling for all visitors.
+const prideLanguages = [
+	'en-au',
+];
+
+// List of geolocated locations to show pride styling for.
+// Geolocation may not be 100% accurate.
+const prideLocations = [
+	'au',
 ];
 
 const sections = sectionsModule.get();
@@ -121,13 +133,53 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
+/**
+ * Given the content of an 'Accept-Language' request header, returns an array of the languages.
+ *
+ * This differs slightly from other language functions, as it doesn't try to validate the language codes,
+ * or merge similar language codes.
+ *
+ * @param  {string} header - The content of the AcceptedLanguages header.
+ * @return {Array} An array of language codes in the header, all in lowercase.
+ */
+function getAcceptedLanguagesFromHeader( header ) {
+	if ( ! header ) {
+		return [];
+	}
+
+	return header.split( ',' ).map( lang => {
+		const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
+		if ( ! match ) {
+			return false;
+		}
+
+		return match[ 0 ].toLowerCase();
+	} ).filter( lang => lang );
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
+	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
+	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
 		initialServerState = getInitialServerState( serializeCachedServerState );
+	}
+
+	// Note: The x-geoip-country-code header should *not* be considered 100% accurate.
+	// It should only be used for guestimating the visitor's location.
+	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
+	if ( prideLanguages.indexOf( '*' ) > -1 ||
+		intersection( prideLanguages, acceptedLanguages ).length > 0 ||
+		prideLocations.indexOf( '*' ) > -1 ||
+		prideLocations.indexOf( geoLocation ) > -1 ) {
+		bodyClasses.push( 'pride' );
+	}
+
+	if ( config( 'rtl' ) ) {
+		bodyClasses.push( 'rtl' );
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -145,7 +197,8 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState )
+		store: createReduxStore( initialServerState ),
+		bodyClasses,
 	} );
 
 	context.app = {
@@ -212,7 +265,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		redirectUrl = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
+			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl
 		} );
 
 		// if we don't have a wordpress cookie, we know the user needs to

@@ -48,8 +48,7 @@ class JetpackPlansGrid extends Component {
 			<FormattedHeader
 				headerText={ headerText }
 				subHeaderText={ subheaderText }
-				step={ 1 }
-				steps={ 3 } />
+			/>
 		);
 	}
 
@@ -67,7 +66,9 @@ class JetpackPlansGrid extends Component {
 							onUpgradeClick={ this.props.onSelect }
 							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
-							displayJetpackPlans={ true } />
+							displayJetpackPlans={ true }
+						/>
+						{ this.props.children }
 					</div>
 				</div>
 			</Main>

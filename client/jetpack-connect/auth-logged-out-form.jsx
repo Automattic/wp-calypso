@@ -57,12 +57,13 @@ class LoggedOutForm extends Component {
 	}
 
 	renderLoginUser() {
-		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
+		const { userData, bearerToken, queryObject } = this.props.jetpackConnectAuthorize;
 
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
+				emailAddress={ queryObject.user_email }
 				redirectTo={ this.getRedirectAfterLoginUrl() } />
 		);
 	}
@@ -94,10 +95,12 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
+		const emailAddress = this.props.jetpackConnectAuthorize.queryObject.user_email;
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ) }>
+				<LoggedOutFormLinkItem
+					href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo, emailAddress } ) }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.handleClickHelp } />
@@ -109,6 +112,7 @@ class LoggedOutForm extends Component {
 		const {
 			isAuthorizing,
 			userData,
+			queryObject,
 		} = this.props.jetpackConnectAuthorize;
 
 		return (
@@ -116,12 +120,13 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
-					getRedirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
+					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
+					email={ queryObject.user_email }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }

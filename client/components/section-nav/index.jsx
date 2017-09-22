@@ -1,16 +1,20 @@
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import {
+	isEqual,
+	includes,
+} from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var NavTabs = require( './tabs' ),
-	NavItem = require( './item' ),
-	Search = require( 'components/search' );
+import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
 
 /**
  * Main
@@ -176,9 +180,11 @@ var SectionNav = React.createClass( {
 	checkForSiblingControls: function( children ) {
 		this.hasSiblingControls = false;
 
+		const ignoreSiblings = [ Search, CommentNavigationTab ];
+
 		React.Children.forEach( children, function( child, index ) {
-			// Checking for at least 2 controls groups that are not search or null
-			if ( index && child && child.type !== Search ) {
+			// Checking for at least 2 controls groups that are not null or ignored siblings
+			if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
 				this.hasSiblingControls = true;
 			}
 		}.bind( this ) );

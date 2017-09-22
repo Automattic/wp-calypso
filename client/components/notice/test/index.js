@@ -22,9 +22,24 @@ describe( 'Notice', function() {
 		assert.isOk( wrapper.find( '.is-dismissable' ).length );
 	} );
 
+	it( 'should have dismiss button by default if isCompact is false', function() {
+		const wrapper = shallow( <Notice isCompact={ false } translate={ identity } /> );
+		assert.isOk( wrapper.find( '.is-dismissable' ).length );
+	} );
+
 	it( 'should have compact look when isCompact passed as true', function() {
 		const wrapper = shallow( <Notice isCompact={ true } translate={ identity } /> );
 		assert.isOk( wrapper.find( '.is-compact' ).length );
+	} );
+
+	it( 'should not have dismiss button by default if isCompact is true', function() {
+		const wrapper = shallow( <Notice isCompact={ true } translate={ identity } /> );
+		assert.isOk( wrapper.find( '.is-dismissable' ).length === 0 );
+	} );
+
+	it( 'should have dismiss button when showDismiss is true and isCompact is true', function() {
+		const wrapper = shallow( <Notice isCompact={ true } showDismiss={ true } translate={ identity } /> );
+		assert.isOk( wrapper.find( '.is-dismissable' ).length );
 	} );
 
 	it( 'should have proper class for is-info status parameter', function() {

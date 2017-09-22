@@ -21,6 +21,7 @@ import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
+import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
@@ -189,6 +190,7 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
+				<JetpackColophon />
 			</Main>
 		);
 	}

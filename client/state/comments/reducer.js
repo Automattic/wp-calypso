@@ -1,7 +1,21 @@
+/** @format */
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
+import {
+	isUndefined,
+	orderBy,
+	has,
+	map,
+	unionBy,
+	reject,
+	isEqual,
+	get,
+	zipObject,
+	includes,
+	isArray,
+	values,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +31,14 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import {
+	PLACEHOLDER_STATE,
+	NUMBER_OF_COMMENTS_PER_FETCH,
+	POST_COMMENT_DISPLAY_TYPES,
+} from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
@@ -31,15 +50,35 @@ export const deconstructStateKey = key => {
 	return { siteId: +siteId, postId: +postId };
 };
 
+const isCommentManagementEdit = newProperties =>
+	has( newProperties, 'commentContent' ) &&
+	has( newProperties, 'authorDisplayName' ) &&
+	has( newProperties, 'authorUrl' );
+
 const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
 	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
 
+	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
+	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
+	// This ternary matches and formats the updated fields sent by Comment Management's Edit form,
+	// in order to optimistically update the state without temporary loss of information.
+	const newComment = isCommentManagementEdit( newProperties )
+		? {
+				...comment,
+				author: {
+					...comment.author,
+					name: newProperties.authorDisplayName,
+					url: newProperties.authorUrl,
+				},
+				content: newProperties.commentContent,
+			}
+		: { ...comment, ...newProperties };
+
 	return {
-		...comment,
-		...newProperties,
+		...newComment,
 		...( updateLikeCount && {
 			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1,
 		} ),
@@ -70,10 +109,10 @@ export function items( state = {}, action ) {
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
 			};
 		case COMMENTS_EDIT:
-			const { content } = action;
+			const { comment } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { content } ) ),
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
@@ -92,7 +131,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: true, like_count } ),
+					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
@@ -100,7 +139,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: false, like_count } ),
+					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
 		case COMMENTS_ERROR:
@@ -112,7 +151,7 @@ export function items( state = {}, action ) {
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
-					} ),
+					} )
 				),
 			};
 	}
@@ -126,6 +165,61 @@ export const fetchStatusInitialState = {
 	hasReceivedBefore: false,
 	hasReceivedAfter: false,
 };
+
+const isValidExpansionsAction = action => {
+	const { siteId, postId, commentIds, displayType } = action.payload;
+	return (
+		siteId &&
+		postId &&
+		isArray( commentIds ) &&
+		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+	);
+};
+
+const expansionValue = type => {
+	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
+	switch ( type ) {
+		case full:
+			return 3;
+		case excerpt:
+			return 2;
+		case singleLine:
+			return 1;
+	}
+};
+
+export const expansions = createReducer(
+	{},
+	{
+		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId, commentIds, displayType } = action.payload;
+
+			if ( ! isValidExpansionsAction( action ) ) {
+				return state;
+			}
+
+			const stateKey = getStateKey( siteId, postId );
+			const currentExpansions = state[ stateKey ] || {};
+
+			const newDisplayTypes = map( commentIds, id => {
+				if (
+					! has( currentExpansions, id ) ||
+					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
+				) {
+					return displayType;
+				}
+				return currentExpansions[ id ];
+			} );
+			// generate object of { [ commentId ]: displayType }
+			const newVal = zipObject( commentIds, newDisplayTypes );
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
+			};
+		},
+	}
+);
 
 /***
  * Stores whether or not there are more comments, and in which directions, for a particular post.
@@ -169,7 +263,7 @@ export const fetchStatus = createReducer(
 				? state
 				: { ...state, [ stateKey ]: nextState };
 		},
-	},
+	}
 );
 
 /***
@@ -189,7 +283,7 @@ export const totalCommentsCount = createReducer(
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: state[ key ] + 1 };
 		},
-	},
+	}
 );
 
 /**
@@ -210,7 +304,7 @@ export const errors = createReducer(
 				[ key ]: { error: true },
 			};
 		},
-	},
+	}
 );
 
 export const treesInitializedReducer = ( state = {}, action ) => {
@@ -220,12 +314,16 @@ export const treesInitializedReducer = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
+export const treesInitialized = keyedReducer(
+	'siteId',
+	keyedReducer( 'status', treesInitializedReducer )
+);
 
 export default combineReducers( {
 	items,
 	fetchStatus,
 	errors,
+	expansions,
 	totalCommentsCount,
 	trees,
 	treesInitialized,

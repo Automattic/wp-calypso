@@ -112,12 +112,17 @@ class SetupTasks extends Component {
 		return [
 			{
 				checked: hasProducts,
-				explanation: translate( 'Start by adding the first product to your store.' ),
-				label: translate( 'Add a product' ),
+				explanation: translate( 'Start by adding the first product to your\u00a0store.' ),
+				label: hasProducts && (
+					( 1 === getTotalProducts ) && (
+						translate( 'Product added' )
+					) || translate( 'Products added' )
+				) || translate( 'Add a product' ),
+
 				show: true,
 				actions: [
 					{
-						label: 'Add a product',
+						label: translate( 'Add a product' ),
 						path: getLink( '/store/product/:site', site ),
 						analyticsProp: 'add-product',
 					}
@@ -126,11 +131,13 @@ class SetupTasks extends Component {
 			{
 				checked: shippingIsSetUp,
 				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
-				label: translate( 'Review shipping settings' ),
+				label: shippingIsSetUp && (
+					translate( 'Shipping is set up' )
+				) || translate( 'Review shipping' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
-						label: translate( 'Review settings' ),
+						label: translate( 'Review shipping' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
 						analyticsProp: 'set-up-shipping',
 					}
@@ -139,11 +146,15 @@ class SetupTasks extends Component {
 			{
 				checked: paymentsAreSetUp,
 				explanation: translate( 'Choose how you would like your customers to pay you.' ),
-				label: translate( 'Set up payments' ),
+				label: paymentsAreSetUp && (
+					translate( 'Payments are set up' )
+				) || translate( 'Review payments' ),
 				show: true,
 				actions: [
 					{
-						label: translate( 'Set up payments' ),
+						label: paymentsAreSetUp && (
+							translate( 'Review payments' )
+						) || translate( 'Set up payments' ),
 						path: getLink( '/store/settings/payments/:site', site ),
 						analyticsProp: 'set-up-payments',
 					}
@@ -152,11 +163,13 @@ class SetupTasks extends Component {
 			{
 				checked: taxesAreSetUp,
 				explanation: translate( 'We\'ve set up automatic tax calculations for you.' ),
-				label: translate( 'Review tax settings' ),
+				label: taxesAreSetUp && (
+					translate( 'Taxes are set up' )
+				) || translate( 'Review taxes' ),
 				show: true,
 				actions: [
 					{
-						label: translate( 'Review settings' ),
+						label: translate( 'Review taxes' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
 						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
@@ -170,7 +183,7 @@ class SetupTasks extends Component {
 				show: true,
 				actions: [
 					{
-						label: translate( 'Customize' ),
+						label: translate( 'View and customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=' + encodeURIComponent( '//' + site.slug ), site ),
 						onClick: this.onClickOpenCustomizer,
 						analyticsProp: 'view-and-customize',

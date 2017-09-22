@@ -1,69 +1,56 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
 import HeaderCake from 'components/header-cake';
-import ReduxFormTextarea from 'components/redux-forms/redux-form-textarea';
-import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import { addZone } from '../../../state/zones/actions';
 import { settingsPath } from '../../../app/util';
 
-const form = 'extensions.zoninator.newZone';
+class ZoneCreator extends PureComponent {
 
-const ZoneCreator = ( { siteSlug, translate } ) => (
-	<div>
-		<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
-			{ translate( 'Add a zone' ) }
-		</HeaderCake>
+	static propTypes = {
+		addZone: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	}
 
-		<form>
-			<SectionHeader label={ translate( 'New zone' ) }>
-				<FormButton compact>{ translate( 'Save' ) }</FormButton>
-			</SectionHeader>
-			<CompactCard>
-				<FormFieldset>
-					<FormLabel htmlFor="zoneName">{ translate( 'Zone name' ) }</FormLabel>
-					<ReduxFormTextInput name="zoneName" />
-				</FormFieldset>
+	save = ( form, data ) => this.props.addZone( this.props.siteId, form, data );
 
-				<FormFieldset>
-					<FormLabel htmlFor="zoneDescription">{ translate( 'Zone description' ) }</FormLabel>
-					<ReduxFormTextarea name="zoneDescription" />
-				</FormFieldset>
-			</CompactCard>
-		</form>
-	</div>
+	render() {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<div>
+				<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
+					{ translate( 'Add a zone' ) }
+				</HeaderCake>
+
+				<ZoneDetailsForm label={ translate( 'New zone' ) } onSubmit={ this.save } />
+			</div>
+		);
+	}
+}
+
+const connectComponent = connect(
+	state => ( {
+		siteId: getSelectedSiteId( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ addZone },
 );
-
-ZoneCreator.propTypes = {
-	siteSlug: PropTypes.string,
-};
-
-const connectComponent = connect( state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
-} ) );
-
-const createReduxForm = reduxForm( {
-	enableReinitialize: true,
-	form,
-} );
 
 export default flowRight(
 	connectComponent,
 	localize,
-	createReduxForm,
 )( ZoneCreator );

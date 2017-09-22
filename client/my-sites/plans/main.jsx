@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -37,9 +38,27 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.redirectIfNonJetpackMonthly();
+
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
+		}
+	},
+
+	componentDidUpdate() {
+		this.redirectIfNonJetpackMonthly();
+	},
+
+	redirectIfNonJetpackMonthly() {
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedSite,
+		} = this.props;
+
+		if ( selectedSite && ! displayJetpackPlans && intervalType === 'monthly' ) {
+			page.redirect( '/plans/' + selectedSite.slug );
 		}
 	},
 

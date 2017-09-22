@@ -3,64 +3,60 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-import { handleTeamsRequest } from '../';
-import { requestTeams } from 'state/reader/teams/actions';
+// import { requestTeams } from 'state/reader/teams/actions';
 import { READER_TEAMS_RECEIVE } from 'state/action-types';
 
-export const successfulResponse = {
-	teams: [
-		{
-			title: 'Automattic',
-			slug: 'a8c',
-		},
-	],
-	number: 1,
-};
+const apiResponse = { teams: [ { slug: 'a8c', title: 'Automattic' } ] };
 
 describe( 'wpcom-api', () => {
 	describe( 'teams request', () => {
-		useNock( nock =>
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 200, successfulResponse )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 500, new Error() )
-		);
+		const action = { type: 'DUMMY_ACTION' };
 
-		it( 'should dispatch RECEIVE action when request completes', done => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: successfulResponse,
-					} );
-					done();
-				}
-			} );
-
-			handleTeamsRequest( { dispatch }, requestTeams() );
+		it( 'should dispatch HTTP request to teams endpoint', () => {
+			const dispatch = spy();
+			handleTeamsRequest( { dispatch }, action );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'GET',
+						path: '/read/teams',
+						apiVersion: '1.2',
+					},
+					action
+				)
+			);
 		} );
 
-		it( 'should dispatch RECEIVE action with error when request errors', done => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: sinon.match.any,
-						error: true,
-					} );
-					done();
-				}
-			} );
+		it( 'should dispatch READER_TEAMS_RECEIVE action with error when request errors', () => {
+			const dispatch = spy();
+			teamRequestFailure( { dispatch }, action );
 
-			handleTeamsRequest( { dispatch }, requestTeams() );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( {
+				type: READER_TEAMS_RECEIVE,
+				payload: action,
+				error: true,
+			} );
+		} );
+
+		it( 'should dispatch READER_TEAMS_RECEIVE action without error when request succeeds', () => {
+			const dispatch = spy();
+			teamRequestReceived( { dispatch }, action, apiResponse );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( {
+				type: READER_TEAMS_RECEIVE,
+				payload: apiResponse,
+			} );
 		} );
 	} );
 } );

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
@@ -77,28 +78,27 @@ import ScreenReaderTextExample from 'components/screen-reader-text/docs/example'
 import PaginationExample from 'components/pagination/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import Wizard from 'components/wizard/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
+import HeaderButton from 'components/header-button/docs/example';
 
-let DesignAssets = React.createClass( {
-	displayName: 'DesignAssets',
-
-	getInitialState() {
-		return { filter: '' };
-	},
+class DesignAssets extends React.Component {
+	static displayName = 'DesignAssets';
+	state = { filter: '' };
 
 	componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();
 		}
-	},
+	}
 
-	onSearch( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents() {
+	backToComponents = () => {
 		page( '/devdocs/design/' );
-	},
+	};
 
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
@@ -145,6 +145,7 @@ let DesignAssets = React.createClass( {
 					<Gravatar />
 					<Gridicons />
 					<Headers />
+					<HeaderButton />
 					<ImagePreloader />
 					<InfoPopover />
 					<Tooltip />
@@ -169,6 +170,7 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<Suggestions />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
@@ -177,8 +179,8 @@ let DesignAssets = React.createClass( {
 				</Collection>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 	const mapStateToProps = state => {

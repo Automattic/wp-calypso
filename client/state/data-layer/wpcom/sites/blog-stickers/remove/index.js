@@ -12,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { addBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, plainNotice } from 'state/notices/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestBlogStickerRemove( { dispatch }, action ) {
 	dispatch(
@@ -55,7 +55,7 @@ export function receiveBlogStickerRemoveError( { dispatch }, action ) {
 		errorNotice( translate( 'Sorry, we had a problem removing that sticker. Please try again.' ) ),
 	);
 	// Revert the removal
-	dispatch( local( addBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
+	dispatch( bypassDataLayer( addBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
 }
 
 export default {

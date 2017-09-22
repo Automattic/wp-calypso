@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, debounce } from 'lodash';
 import classnames from 'classnames';
@@ -117,9 +118,7 @@ class PostPhoto extends React.Component {
 							href={ post.URL }
 							onClick={ this.props.onClick }
 						>
-							<Emojify>
-								{ linkTitle }
-							</Emojify>
+							<Emojify>{ linkTitle }</Emojify>
 						</a>
 					</h1>
 				</AutoDirection>
@@ -134,19 +133,17 @@ class PostPhoto extends React.Component {
 		return (
 			<div className="reader-post-card__post">
 				{ featuredImage }
-				<div className="reader-post-card__post-details">
-					{ children }
-				</div>
+				<div className="reader-post-card__post-details">{ children }</div>
 			</div>
 		);
 	}
 }
 
 PostPhoto.propTypes = {
-	post: React.PropTypes.object,
-	site: React.PropTypes.object,
-	title: React.PropTypes.string,
-	onClick: React.PropTypes.func,
+	post: PropTypes.object,
+	site: PropTypes.object,
+	title: PropTypes.string,
+	onClick: PropTypes.func,
 };
 
 PostPhoto.defaultProps = {

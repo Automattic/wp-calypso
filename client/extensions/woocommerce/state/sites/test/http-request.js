@@ -30,6 +30,15 @@ describe( 'request', () => {
 			} );
 		} );
 	} );
+	describe( '#getWithHeaders', () => {
+		it( 'should return a modified path', () => {
+			const action = request( siteId, originalAction ).getWithHeaders( 'placeholder_endpoint' );
+
+			expect( action.query ).to.exist;
+			expect( action.query.path ).to.exist;
+			expect( action.query.path.indexOf( '&_envelope' ) ).to.not.equal( -1 );
+		} );
+	} );
 	describe( '#post', () => {
 		const body = { name: 'placeholder post request', placeholder: true };
 

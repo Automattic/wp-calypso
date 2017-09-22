@@ -21,8 +21,16 @@ class MediaLibraryListNoContent extends Component {
 	getLabel() {
 		const {
 			filter,
+			source,
 			translate,
 		} = this.props;
+
+		//TODO: handle each service with individual messages
+		if ( 'google_photos' === source ) {
+			return translate( 'You don\'t have any photos in your Google library.', {
+				comment: 'Media no results'
+			} );
+		}
 
 		switch ( filter ) {
 			case 'this-post':

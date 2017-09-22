@@ -51,7 +51,11 @@ export class MediaLibraryFilterBar extends Component {
 	};
 
 	getSearchPlaceholderText() {
-		const { filter, translate } = this.props;
+		const { filter, source, translate } = this.props;
+		if ( 'google_photos' === source ) {
+			return translate( 'Search your Google library…' );
+		}
+
 		switch ( filter ) {
 			case 'this-post':
 				return translate( 'Search media uploaded to this post…' );
@@ -148,6 +152,11 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderPlanStorage() {
+		//hide the plan storage when viewing external sources
+		if ( this.props.source ) {
+			return null;
+		}
+
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'plan-media-storage' };
 		return (

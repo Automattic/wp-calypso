@@ -59,6 +59,8 @@ import {
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
+import { errorNotice } from 'state/notices/actions';
+import { getPrimaryDomainBySiteId } from 'state/selectors';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -150,7 +152,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (
-			<DomainOnly domainName={ selectedSite.slug } siteId={ selectedSite.ID } hasNotice={ false } />
+			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
 		),
 		document.getElementById( 'primary' ),
 		reduxStore
@@ -163,8 +165,8 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( path, domainName ) {
-	const domainManagementPaths = [
+function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
+	const allPaths = [
 		domainManagementAddGoogleApps,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
@@ -179,15 +181,23 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite
-	].map( pathFactory => pathFactory( domainName, domainName ) );
+	];
+
+	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
+
+	if ( primaryDomain && slug !== primaryDomain.name ) {
+		domainManagementPaths = domainManagementPaths.concat(
+			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
+		);
+	}
 
 	const otherPaths = [
-			`/checkout/${ domainName }`
-		],
-		startsWithPaths = [
-			'/checkout/thank-you',
-			`/me/purchases/${ domainName }`
-		];
+		`/checkout/${ slug }`
+	];
+	const startsWithPaths = [
+		'/checkout/thank-you',
+		`/me/purchases/${ slug }`
+	];
 
 	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
 		return true;
@@ -209,8 +219,10 @@ function onSelectedSiteAvailable( context ) {
 
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
+	const primaryDomain = getPrimaryDomainBySiteId( getState(), selectedSite.ID );
+
 	if ( isDomainOnlySite( getState(), selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
+		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain ) ) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
 	}
@@ -267,10 +279,10 @@ module.exports = {
 	siteSelection( context, next ) {
 		const { getState, dispatch } = getStore( context );
 		const siteFragment = context.params.site || route.getSiteFragment( context.path );
-		const basePath = route.sectionify( context.path );
+		const basePath = route.sectionify( context.path, siteFragment );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
-		const allSitesPath = route.sectionify( context.path );
+		const allSitesPath = route.sectionify( context.path, siteFragment );
 		const primaryId = getPrimarySiteId( getState() );
 		const primary = getSite( getState(), primaryId ) || '';
 
@@ -304,15 +316,23 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteFragment ) {
-			const hasInitialized = getSites( getState() ).length;
-			if ( hasInitialized ) {
-				redirectToPrimary();
-				return;
+			if ( primary ) {
+				const hasInitialized = getSites( getState() ).length;
+				if ( hasInitialized ) {
+					redirectToPrimary();
+					return;
+				}
+				dispatch( {
+					type: SITES_ONCE_CHANGED,
+					listener: redirectToPrimary,
+				} );
+			} else {
+				// If the primary site does not exist, skip redirect and display a useful error notification
+				dispatch( errorNotice( i18n.translate( 'Please set your Primary Site to valid site' ), {
+					button: 'Settings',
+					href: '/me/account',
+				} ) );
 			}
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectToPrimary,
-			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible

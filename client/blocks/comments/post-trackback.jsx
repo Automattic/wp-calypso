@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
@@ -55,6 +56,6 @@ export default class PostTrackback extends React.Component {
 }
 
 PostTrackback.propTypes = {
-	commentId: React.PropTypes.number,
-	commentsTree: React.PropTypes.object,
+	commentId: PropTypes.number,
+	commentsTree: PropTypes.object,
 };

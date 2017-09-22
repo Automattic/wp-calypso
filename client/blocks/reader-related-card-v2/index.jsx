@@ -21,6 +21,7 @@ import { getPostUrl, getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
+import ReaderAuthorLink from 'blocks/reader-author-link';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 
@@ -37,12 +38,19 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 			</a>
 			<div className="reader-related-card-v2__byline">
 				{ authorName &&
-					authorAndSiteAreDifferent &&
+				authorAndSiteAreDifferent && (
 					<span className="reader-related-card-v2__byline-author">
-						<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">
+						<ReaderAuthorLink
+							author={ post.author }
+							siteUrl={ siteUrl }
+							post={ post }
+							onClick={ onSiteClick }
+							className="reader-related-card-v2__link"
+						>
 							{ authorName }
-						</a>
-					</span> }
+						</ReaderAuthorLink>
+					</span>
+				) }
 				<span className="reader-related-card-v2__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">
 						{ siteName }
@@ -148,9 +156,7 @@ export function RelatedPostCard( {
 				onClick={ postClickTracker }
 			>
 				<div className="reader-related-card-v2__site-info">
-					<h1 className="reader-related-card-v2__title">
-						{ post.title }
-					</h1>
+					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
 					<div className="reader-related-card-v2__excerpt post-excerpt">
 						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>

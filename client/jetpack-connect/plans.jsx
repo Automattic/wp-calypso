@@ -11,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import PlansGrid from './plans-grid';
+import PlansSkipButton from './plans-skip-button';
 import { PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
@@ -38,6 +39,7 @@ import {
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import { abtest } from 'lib/abtest';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -95,6 +97,12 @@ class Plans extends Component {
 				! this.redirecting ) {
 			return this.autoselectPlan();
 		}
+	}
+
+	handleSkipButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+
+		this.selectFreeJetpackPlan();
 	}
 
 	isFlowTypePaid() {
@@ -220,37 +228,37 @@ class Plans extends Component {
 		}
 
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_39', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal' );
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_3', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal_monthly', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal_monthly' );
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_99', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium' );
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_12', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium_monthly', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium_monthly' );
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_299', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business' );
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_29', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business_monthly', {
 				user: this.props.userId
 			} );
 			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business_monthly' );
@@ -281,6 +289,8 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
+		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
+
 		return (
 			<div>
 				<QueryPlans />
@@ -291,7 +301,14 @@ class Plans extends Component {
 				<PlansGrid
 					{ ...this.props }
 					basePlansPath={ this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
-					onSelect={ this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan } />
+					onSelect={ this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan }
+					hideFreePlan={ hideFreePlanTest }
+				>
+					{
+						hideFreePlanTest &&
+						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
+					}
+				</PlansGrid>
 			</div>
 		);
 	}

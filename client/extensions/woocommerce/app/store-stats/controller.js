@@ -76,20 +76,22 @@ export default function StatsController( context ) {
 	}
 
 	const asyncComponent =
-		props.type === 'orders'
-			? <AsyncLoad
-					/* eslint-disable wpcalypso/jsx-classname-namespace */
-					placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
-					/* eslint-enable wpcalypso/jsx-classname-namespace */
-					require="extensions/woocommerce/app/store-stats"
-					{ ...props }
-				/>
-			: <AsyncLoad
-					/* eslint-disable wpcalypso/jsx-classname-namespace */
-					placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
-					/* eslint-enable wpcalypso/jsx-classname-namespace */
-					require="extensions/woocommerce/app/store-stats/listview"
-					{ ...props }
-				/>;
+		props.type === 'orders' ? (
+			<AsyncLoad
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
+				/* eslint-enable wpcalypso/jsx-classname-namespace */
+				require="extensions/woocommerce/app/store-stats"
+				{ ...props }
+			/>
+		) : (
+			<AsyncLoad
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
+				/* eslint-enable wpcalypso/jsx-classname-namespace */
+				require="extensions/woocommerce/app/store-stats/listview"
+				{ ...props }
+			/>
+		);
 	renderWithReduxStore( asyncComponent, document.getElementById( 'primary' ), context.store );
 }

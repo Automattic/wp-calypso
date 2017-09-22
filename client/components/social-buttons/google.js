@@ -104,6 +104,10 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
@@ -117,18 +121,18 @@ class GoogleLoginButton extends Component {
 
 		const { responseHandler } = this.props;
 
-		// Handle click async if the library is not loaded yet
-		// the popup might be blocked by the browser in that case
-		// options are documented here:
+		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		this.initialize()
-			.then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
-					social_account_type: 'google',
-					error_code: error.error
-				} );
-			} );
+		window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } )
+			.then(
+				responseHandler,
+				error => {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: error.error
+					} );
+				}
+			);
 	}
 
 	showError( event ) {
@@ -149,24 +153,41 @@ class GoogleLoginButton extends Component {
 	render() {
 		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled || this.state.error );
 
+		const { children } = this.props;
+		let customButton = null;
+
+		if ( children ) {
+			const childProps = {
+				className: classNames( { disabled: isDisabled } ),
+				onClick: this.handleClick,
+				onMouseOver: this.showError,
+				onMouseOut: this.hideError,
+			};
+
+			customButton = React.cloneElement( children, childProps );
+		}
+
 		return (
 			<div className="social-buttons__button-container">
-				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-					onMouseOver={ this.showError }
-					onMouseOut={ this.hideError }
-					onClick={ this.handleClick }
-				>
-					<GoogleIcon isDisabled={ isDisabled } />
+				{
+					customButton
+						? customButton
+						: <button
+							className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+							onMouseOver={ this.showError }
+							onMouseOut={ this.hideError }
+							onClick={ this.handleClick }
+						>
+							<GoogleIcon isDisabled={ isDisabled } />
 
-					<span className="social-buttons__service-name">
-						{ this.props.translate( 'Continue with %(service)s', {
-							args: { service: 'Google' },
-							comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
-						} ) }
-					</span>
-				</button>
-
+							<span className="social-buttons__service-name">
+								{ this.props.translate( 'Continue with %(service)s', {
+									args: { service: 'Google' },
+									comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
+								} ) }
+							</span>
+						</button>
+				}
 				<Popover
 					id="social-buttons__error"
 					className="social-buttons__error"

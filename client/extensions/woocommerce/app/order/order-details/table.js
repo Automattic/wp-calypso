@@ -13,6 +13,7 @@ import { sum } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-taxes';
 import OrderDiscountRow from './row-discount';
 import OrderRefundRow from './row-refund';
 import OrderShippingRefundRow from './row-shipping-refund';
@@ -42,9 +43,10 @@ class OrderDetailsTable extends Component {
 
 	constructor( props ) {
 		super( props );
+		const shippingTax = getOrderShippingTax( props.order );
 		this.state = {
 			quantities: [],
-			shippingTotal: parseFloat( props.order.shipping_tax ) + parseFloat( props.order.shipping_total ),
+			shippingTotal: parseFloat( shippingTax ) + parseFloat( props.order.shipping_total ),
 		};
 	}
 
@@ -58,20 +60,22 @@ class OrderDetailsTable extends Component {
 	}
 
 	recalculateRefund = () => {
-		if ( ! this.props.order ) {
+		const { order } = this.props;
+		if ( ! order ) {
 			return 0;
 		}
 		const subtotal = sum( this.state.quantities.map( ( q, i ) => {
-			if ( ! this.props.order.line_items[ i ] ) {
+			if ( ! order.line_items[ i ] ) {
 				return 0;
 			}
-			const price = parseFloat( this.props.order.line_items[ i ].price );
-			const tax = parseFloat( this.props.order.line_items[ i ].total_tax ) / this.props.order.line_items[ i ].quantity;
-			const taxIncludedPrice = price + tax;
-			if ( this.props.order.prices_include_tax ) {
+
+			const price = parseFloat( order.line_items[ i ].price );
+			if ( order.prices_include_tax ) {
 				return price * q;
 			}
-			return taxIncludedPrice * q;
+
+			const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
+			return ( price + tax ) * q;
 		} ) );
 		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
 		this.props.onChange( total );
@@ -105,6 +109,7 @@ class OrderDetailsTable extends Component {
 
 	renderOrderItems = ( item, i ) => {
 		const { isEditable, order, site } = this.props;
+		const tax = getOrderLineItemTax( order, i );
 		return (
 			<TableRow key={ i } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
@@ -127,7 +132,7 @@ class OrderDetailsTable extends Component {
 					}
 				</TableItem>
 				<TableItem className="order-details__item-tax">
-					{ formatCurrency( item.total_tax, order.currency ) }
+					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
 				<TableItem className="order-details__item-total">{ formatCurrency( item.total, order.currency ) }</TableItem>
 			</TableRow>

@@ -154,9 +154,7 @@ export const ReaderSidebar = createReactClass( {
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
-						<SidebarHeading>
-							{ this.props.translate( 'Streams' ) }
-						</SidebarHeading>
+						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
@@ -177,7 +175,7 @@ export const ReaderSidebar = createReactClass( {
 									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
-							{ config.isEnabled( 'reader/conversations' ) &&
+							{ config.isEnabled( 'reader/conversations' ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations',
@@ -196,10 +194,11 @@ export const ReaderSidebar = createReactClass( {
 											{ this.props.translate( 'Conversations' ) }
 										</span>
 									</a>
-								</li> }
+								</li>
+							) }
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 							{ config.isEnabled( 'reader/conversations' ) &&
-								isAutomatticTeamMember( this.props.teams ) &&
+							isAutomatticTeamMember( this.props.teams ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
@@ -220,29 +219,28 @@ export const ReaderSidebar = createReactClass( {
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 24 24"
 										>
-											<path d="M12.2 8c.5.3.6 1 .3 1.4L10 13.3c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.4-.4 1-.5 1.5-.2zM12.7 13h7c1 0 1.8.8 1.8 1.8v4.3c0 1.1-.5 2.2-1.5 2.9l-2.9 2v-3.1h-4.4c-1 0-1.8-.8-1.8-1.8v-4.4c.1-.9.9-1.7 1.8-1.7z" />
-											<path d="M16.3 11.3c0 .2 0 .5-.1.7H19v-1c0-4-3.4-7.6-8.5-7.6S2 7.1 2 11v.4c0 3.8 3.1 7.4 8 7.6v-2.3c-3.4-.2-5.2-2.7-5.2-5.4V11c0-2.8 2-5.3 5.8-5.3s5.8 2.5 5.8 5.3v.3z" />
+											<path d="M12.2 7.1c.5.3.6 1 .3 1.4L10 12.4c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.3-.4 1-.5 1.5-.2zM17.3 21.2h2.8c1 0 1.9-.8 1.9-1.9v-4.7c0-1-.8-1.9-1.9-1.9h-7.6c-1 .1-1.7.9-1.7 1.9v4.7c0 1 .8 1.8 1.7 1.9h2V24l2.8-2.8z" />
+											<path d="M8.8 15.2c-2.7-.7-4.1-2.9-4.1-5.2 0-5.8 5.8-5.7 5.8-5.7 5.8 0 5.8 5.7 5.8 5.7 0 .3 0 .6-.1.8H19v-.7C19 1.6 10.4 2 10.4 2c-8.6 0-8.5 8.1-8.5 8.1 0 3.5 2.7 6.8 6.9 7.5v-2.4z" />
 										</svg>
 										<span className="menu-link-text">A8C Conversations</span>
 									</a>
-								</li> }
+								</li>
+							) }
 
-							{ isDiscoverEnabled()
-								? <li
-										className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
-											'sidebar-streams__discover': true,
-										} ) }
-									>
-										<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
-											<Gridicon icon="my-sites" />
-											<span className="menu-link-text">
-												{ this.props.translate( 'Discover' ) }
-											</span>
-										</a>
-									</li>
-								: null }
+							{ isDiscoverEnabled() ? (
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+										'sidebar-streams__discover': true,
+									} ) }
+								>
+									<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
+										<Gridicon icon="my-sites" />
+										<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
+									</a>
+								</li>
+							) : null }
 
-							{ config.isEnabled( 'reader/search' ) &&
+							{ config.isEnabled( 'reader/search' ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
 										'sidebar-streams__search': true,
@@ -250,11 +248,10 @@ export const ReaderSidebar = createReactClass( {
 								>
 									<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
 										<Gridicon icon="search" size={ 24 } />
-										<span className="menu-link-text">
-											{ this.props.translate( 'Search' ) }
-										</span>
+										<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 									</a>
-								</li> }
+								</li>
+							) }
 
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
@@ -265,9 +262,7 @@ export const ReaderSidebar = createReactClass( {
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
 									<Gridicon icon="star" size={ 24 } />
-									<span className="menu-link-text">
-										{ this.props.translate( 'My Likes' ) }
-									</span>
+									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 								</a>
 							</li>
 						</ul>
@@ -275,16 +270,16 @@ export const ReaderSidebar = createReactClass( {
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
-					{ this.props.subscribedLists && this.props.subscribedLists.length
-						? <ReaderSidebarLists
-								lists={ this.props.subscribedLists }
-								path={ this.props.path }
-								isOpen={ this.props.isListsOpen }
-								onClick={ this.props.toggleListsVisibility }
-								currentListOwner={ this.state.currentListOwner }
-								currentListSlug={ this.state.currentListSlug }
-							/>
-						: null }
+					{ this.props.subscribedLists && this.props.subscribedLists.length ? (
+						<ReaderSidebarLists
+							lists={ this.props.subscribedLists }
+							path={ this.props.path }
+							isOpen={ this.props.isListsOpen }
+							onClick={ this.props.toggleListsVisibility }
+							currentListOwner={ this.state.currentListOwner }
+							currentListSlug={ this.state.currentListSlug }
+						/>
+					) : null }
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
 						path={ this.props.path }
@@ -295,10 +290,11 @@ export const ReaderSidebar = createReactClass( {
 					/>
 				</SidebarRegion>
 
-				{ this.props.shouldRenderAppPromo &&
+				{ this.props.shouldRenderAppPromo && (
 					<div className="sidebar__app-promo">
 						<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
-					</div> }
+					</div>
+				) }
 
 				<SidebarFooter />
 			</Sidebar>

@@ -9,3 +9,56 @@
 .card.is-compact.section-header.after-compact {
 	margin-top: 16px;
 }
+
+.plugins__header {
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), 0.5 ), 0 1px 2px lighten( $gray, 30% );
+	flex-direction: column;
+	display: flex;
+	margin-bottom: 9px;
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+		margin-bottom: 17px;
+	}
+}
+
+.plugins__header .section-nav {
+	border: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
+	border-width: 0 0 1px;
+	box-shadow: none;
+	flex: auto;
+	margin: 0;
+
+	@include breakpoint( '>480px' ) {
+		border-width: 0 1px 0 0;
+	}
+}
+
+.plugins__header-buttons {
+	display: flex;
+
+	.header-button {
+		flex: auto;
+		flex-basis: 0;
+
+		&:not( :last-child ) {
+			border-right: 1px solid transparentize( lighten( $gray, 20% ), 0.5 );
+		}
+
+		@include breakpoint( '>480px' ) {
+			flex: none;
+		}
+	}
+}
+
+.plugins__more-header {
+	font-size: 14px;
+	line-height: 2;
+	margin: 40px 0 20px;
+	padding: 0 15px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 0;
+	}
+}

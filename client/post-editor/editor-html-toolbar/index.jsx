@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
 	get,
@@ -58,6 +59,7 @@ export class EditorHtmlToolbar extends Component {
 		moment: PropTypes.func,
 		onToolbarChangeContent: PropTypes.func,
 		settingsUpdate: PropTypes.func,
+		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
 

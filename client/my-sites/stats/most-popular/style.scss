@@ -63,14 +63,32 @@
 }
 
 .most-popular__notice {
-	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px $gray-light;
-	color: $gray-dark;
-	display: inline-block;
-	padding: 15px 45px;
 	position: relative;
+	top: 25px;
+	padding: 11px 24px;
 	margin-bottom: 24px;
 	border-radius: 1px;
-	background: lighten( $gray, 30 );
+	background: #fff;
 	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 1.4285;
 	animation: appear .3s ease-in-out;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+
+	@include breakpoint( ">660px" ) {
+		padding: 13px 48px;
+		font-size: inherit;
+
+		&::before {
+			@include noticon-style;
+			content: '\f456';
+			position: absolute;
+				top: 23px;
+				left: 20px;
+			margin: -12px 0px 0 -8px;
+			font-size: 24px;
+			line-height: 1;
+		}
+	}
 }

@@ -2,7 +2,7 @@
  * External Dependencies
  */
 
-import { forEach, forOwn } from 'lodash';
+import { forOwn } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,8 +11,10 @@ import { forEach, forOwn } from 'lodash';
 import { decodeEntities as decode } from 'lib/formatting';
 import safeImageURL from 'lib/safe-image-url';
 
-export default function decodeEntities( post ) {
-	forEach( [ 'excerpt', 'title', 'site_name' ], function( prop ) {
+const DEFAULT_FIELDS = [ 'excerpt', 'title', 'site_name' ];
+
+export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
+	fields.forEach( function( prop ) {
 		if ( post[ prop ] ) {
 			post[ prop ] = decode( post[ prop ] );
 		}

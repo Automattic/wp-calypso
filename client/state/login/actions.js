@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import request from 'superagent';
 import { get, omit } from 'lodash';
 import { translate } from 'i18n-calypso';
@@ -26,6 +27,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -86,6 +90,45 @@ function getErrorFromHTTPError( httpError ) {
 	if ( code ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
+		} else if ( code === 'admin_login_attempt' ) {
+			const url = addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', getLocaleSlug() );
+
+			return {
+				code,
+				message: (
+					<div>
+						<p>
+							{ translate( 'You attempted to login with the username {{em}}admin{{/em}} on WordPress.com.',
+								{ components: { em: <em /> } }
+							) }
+						</p>
+
+						<p>
+							{ translate( 'If you were trying to access your self hosted {{a}}WordPress.org{{/a}} site, ' +
+								'try {{strong}}yourdomain.com/wp-admin/{{/strong}} instead.',
+								{
+									components: {
+										a: <a href="http://wordpress.org" target="_blank" rel="noopener noreferrer" />,
+										strong: <strong />
+									}
+								}
+							) }
+						</p>
+
+						<p>
+							{ translate( 'If you can’t remember your WordPress.com username, you can {{a}}reset your password{{/a}} ' +
+								'by providing your email address.',
+								{
+									components: {
+										a: <a href={ url } rel="external" />
+									}
+								}
+							) }
+						</p>
+					</div>
+				),
+				field
+			};
 		}
 	}
 
@@ -334,6 +377,36 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	} );
+};
+
+/**
+ * Attempt to disconnect the current account with a social service
+ *
+ * @param  {String}    socialService    The external social service name.
+ * @return {Function}               Action thunk to trigger the login process.
+ */
+export const disconnectSocialUser = ( socialService ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().me().socialDisconnect( socialService ).then( () => {
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 			error,
 		} );
 

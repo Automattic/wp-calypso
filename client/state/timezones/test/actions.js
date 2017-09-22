@@ -9,12 +9,10 @@ import { expect } from 'chai';
 import {
 	TIMEZONES_RECEIVE,
 	TIMEZONES_REQUEST,
-	TIMEZONES_REQUEST_SUCCESS
 } from 'state/action-types';
 
 import {
 	requestTimezones,
-	timezonesRequestSuccess,
 	timezonesReceive,
 } from '../actions';
 
@@ -23,12 +21,6 @@ describe( 'actions', () => {
 		it( '#requestTimezones()', () => {
 			expect( requestTimezones() ).to.eql( {
 				type: TIMEZONES_REQUEST
-			} );
-		} );
-
-		it( '#timezonesRequestSuccess()', () => {
-			expect( timezonesRequestSuccess() ).to.eql( {
-				type: TIMEZONES_REQUEST_SUCCESS
 			} );
 		} );
 

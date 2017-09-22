@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -18,7 +19,7 @@ const ActionPanelFigure = ( { inlineBodyText, children } ) => {
 };
 
 ActionPanelFigure.propTypes = {
-	inlineBodyText: React.PropTypes.bool // above `480px` does figure align with body text (below title)
+	inlineBodyText: PropTypes.bool // above `480px` does figure align with body text (below title)
 };
 
 ActionPanelFigure.defaultProps = {

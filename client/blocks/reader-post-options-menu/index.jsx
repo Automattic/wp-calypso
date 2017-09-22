@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import page from 'page';
@@ -30,11 +31,11 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		feed: React.PropTypes.object,
-		onBlock: React.PropTypes.func,
-		showFollow: React.PropTypes.bool,
-		position: React.PropTypes.string,
+		post: PropTypes.object.isRequired,
+		feed: PropTypes.object,
+		onBlock: PropTypes.func,
+		showFollow: PropTypes.bool,
+		position: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -143,10 +144,9 @@ class ReaderPostOptionsMenu extends React.Component {
 			<span className={ classes }>
 				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ ! site &&
-					post &&
-					! post.is_external &&
-					post.site_ID &&
-					<QueryReaderSite siteId={ +post.site_ID } /> }
+				post &&
+				! post.is_external &&
+				post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
@@ -156,32 +156,36 @@ class ReaderPostOptionsMenu extends React.Component {
 				>
 					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
-					{ this.props.showFollow &&
-						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
+					{ this.props.showFollow && (
+						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
+					) }
 
-					{ post.URL &&
+					{ post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
 							{ translate( 'Visit Post' ) }
-						</PopoverMenuItem> }
+						</PopoverMenuItem>
+					) }
 
-					{ isEditPossible &&
+					{ isEditPossible && (
 						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
 							{ translate( 'Edit Post' ) }
-						</PopoverMenuItem> }
+						</PopoverMenuItem>
+					) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-						( isBlockPossible || isDiscoverPost ) &&
-						<hr className="reader-post-options-menu__hr" /> }
+					( isBlockPossible || isDiscoverPost ) && <hr className="reader-post-options-menu__hr" /> }
 
-					{ isBlockPossible &&
+					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
 							{ translate( 'Block Site' ) }
-						</PopoverMenuItem> }
+						</PopoverMenuItem>
+					) }
 
-					{ ( isBlockPossible || isDiscoverPost ) &&
+					{ ( isBlockPossible || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
 							{ translate( 'Report this Post' ) }
-						</PopoverMenuItem> }
+						</PopoverMenuItem>
+					) }
 				</EllipsisMenu>
 			</span>
 		);

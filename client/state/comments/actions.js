@@ -1,14 +1,12 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
-	COMMENTS_EDIT_FAILURE,
-	COMMENTS_EDIT_SUCCESS,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
@@ -17,13 +15,14 @@ import {
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 export const requestComment = ( { siteId, commentId } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
-	commentId
+	commentId,
 } );
 
 /***
@@ -37,7 +36,7 @@ export function requestPostComments( {
 	siteId,
 	postId,
 	status = 'approved',
-	direction = 'before'
+	direction = 'before',
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -94,7 +93,12 @@ export const requestCommentsTreeForSite = query => ( {
  * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @returns {Object} action that deletes a comment
  */
-export const deleteComment = ( siteId, postId, commentId, options = { showSuccessNotice: true } ) => ( {
+export const deleteComment = (
+	siteId,
+	postId,
+	commentId,
+	options = { showSuccessNotice: true }
+) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
 	postId,
@@ -165,7 +169,7 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} siteId Site identifier
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
- * @param {Number} status New status
+ * @param {String} status New status
  * @returns {Object} Action that changes a comment status
  */
 export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
@@ -176,35 +180,51 @@ export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
 	status,
 } );
 
-export function editComment( siteId, postId, commentId, content ) {
-	return dispatch => {
-		dispatch( {
-			type: COMMENTS_EDIT,
-			siteId,
-			postId,
-			content,
-		} );
+/**
+ * @typedef {Object} Comment
+ * @property {Number} ID specific API version for request
+ * @property {Author} author comment author
+ * @property {String} content comment content
+ * @property {Date} date date the comment was created
+ * @property {String} status status of the comment
+ */
 
-		return wpcom
-			.site( siteId )
-			.comment( commentId )
-			.update( { content } )
-			.then( data =>
-				dispatch( {
-					type: COMMENTS_EDIT_SUCCESS,
-					siteId,
-					postId,
-					commentId,
-					content: data.content,
-				} ),
-			)
-			.catch( () =>
-				dispatch( {
-					type: COMMENTS_EDIT_FAILURE,
-					siteId,
-					postId,
-					commentId,
-				} ),
-			);
-	};
-}
+/**
+ * @typedef {Object} Author
+ * @property {String} name Full name of the comment author
+ * @property {String} url Address of the commenter site or blog
+ */
+
+/**
+ * Creates an action that edits a comment.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Comment} comment New comment data
+ * @returns {Object} Action that edits a comment
+ */
+export const editComment = ( siteId, postId, commentId, comment ) => ( {
+	type: COMMENTS_EDIT,
+	siteId,
+	postId,
+	commentId,
+	comment,
+} );
+
+/**
+ * Expand selected comments to the level of displayType. It's important to note that a comment will
+ * only get expanded and cannot unexpand from this action.
+ * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
+ *
+ * @param {Object} options options object.
+ * @param {number} options.siteId siteId for the comments to expand.
+ * @param {Array<number>} options.commentIds list of commentIds to expand.
+ * @param {number} options.postId postId for the comments to expand.
+ * @param {string} options.displayType which displayType to set the comment to.
+ *
+ * @returns {Object} reader expand comments action
+ */
+export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
+	type: READER_EXPAND_COMMENTS,
+	payload: { siteId, commentIds, postId, displayType },
+} );

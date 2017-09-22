@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import React from 'react';
 import classNames from 'classnames';
 import {
 	endsWith,
@@ -26,27 +27,27 @@ import { domainAvailability } from 'lib/domains/constants';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
-		lastDomainStatus: React.PropTypes.string,
-		lastDomainSearched: React.PropTypes.string,
-		cart: React.PropTypes.object,
-		products: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object,
-		availableDomain: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		lastDomainStatus: PropTypes.string,
+		lastDomainSearched: PropTypes.string,
+		cart: PropTypes.object,
+		products: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
+		availableDomain: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ),
-		suggestions: React.PropTypes.array,
-		placeholderQuantity: React.PropTypes.number.isRequired,
-		buttonLabel: React.PropTypes.string,
-		mappingSuggestionLabel: React.PropTypes.string,
-		offerMappingOption: React.PropTypes.bool,
-		onClickResult: React.PropTypes.func.isRequired,
-		onAddMapping: React.PropTypes.func,
-		onClickMapping: React.PropTypes.func,
-		isSignupStep: React.PropTypes.bool,
-		railcarSeed: React.PropTypes.string,
-		fetchAlgo: React.PropTypes.string
+		suggestions: PropTypes.array,
+		placeholderQuantity: PropTypes.number.isRequired,
+		buttonLabel: PropTypes.string,
+		mappingSuggestionLabel: PropTypes.string,
+		offerMappingOption: PropTypes.bool,
+		onClickResult: PropTypes.func.isRequired,
+		onAddMapping: PropTypes.func,
+		onClickMapping: PropTypes.func,
+		isSignupStep: PropTypes.bool,
+		railcarSeed: PropTypes.string,
+		fetchAlgo: PropTypes.string
 	};
 
 	renderDomainAvailability() {

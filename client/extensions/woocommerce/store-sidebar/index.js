@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -116,6 +117,32 @@ class StoreSidebar extends Component {
 		);
 	}
 
+	reviews = () => {
+		if ( ! config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/reviews' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link ] );
+		const classes = classNames( {
+			reviews: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		// TODO Add bubble containing count of unapproved reviews.
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Reviews' ) }
+				link={ link }
+			>
+			</SidebarItem>
+		);
+	}
+
 	orders = () => {
 		const { orders, site, siteSuffix, translate } = this.props;
 		const link = '/store/orders' + siteSuffix;
@@ -141,6 +168,37 @@ class StoreSidebar extends Component {
 					? <Count count={ orders.length } />
 					: null
 				}
+			</SidebarItem>
+		);
+	}
+
+	promotions = () => {
+		// TODO: Remove this check when ready to release to production.
+		if ( ! config.isEnabled( 'woocommerce/extension-promotions' ) ) {
+			return null;
+		}
+
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/promotions' + siteSuffix;
+		const validLinks = [
+			'/store/promotions',
+			'/store/promotion',
+		];
+
+		const selected = this.isItemLinkSelected( validLinks );
+		const classes = classNames( {
+			promotions: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="star-outline"
+				label={ translate( 'Promotions' ) }
+				link={ link }
+			>
 			</SidebarItem>
 		);
 	}
@@ -171,9 +229,17 @@ class StoreSidebar extends Component {
 	}
 
 	render = () => {
-		const { finishedAddressSetup, hasProducts, site } = this.props;
+		const {
+			finishedAddressSetup,
+			hasProducts,
+			path,
+			site,
+			siteSuffix,
+		} = this.props;
 
-		const showAllSidebarItems = finishedAddressSetup || hasProducts;
+		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
+		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
+		const showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
@@ -183,6 +249,8 @@ class StoreSidebar extends Component {
 						{ this.dashboard() }
 						{ showAllSidebarItems && this.products() }
 						{ showAllSidebarItems && this.orders() }
+						{ showAllSidebarItems && this.promotions() }
+						{ showAllSidebarItems && this.reviews() }
 						{ showAllSidebarItems && <SidebarSeparator /> }
 						{ showAllSidebarItems && this.settings() }
 					</ul>

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,8 @@ const ConversationCommentListExample = () => {
 				postId={ 12 }
 				commentIds={ [ 1, 2, 3 ] }
 				post={ post }
-				showCaterpillar={ false }
+				enableCaterpillar={ false }
+				shouldRequestComments={ false }
 			/>
 		</div>
 	);

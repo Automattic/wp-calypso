@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { find } from 'lodash';
 
 /**
@@ -57,7 +58,7 @@ class SignupForm extends Component {
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
@@ -151,7 +152,7 @@ class SignupForm extends Component {
 			page(
 				login( {
 					isNative: config.isEnabled( 'login/native-login-links' ),
-					redirectTo: this.props.getRedirectToAfterLoginUrl,
+					redirectTo: this.props.redirectToAfterLoginUrl,
 				} )
 			);
 		}
@@ -268,6 +269,12 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = () => {
+		const data = this.getUserData();
+		// When a user moves away from the signup form without having entered
+		// anything do not show error messages, think going to click log in.
+		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+			return;
+		}
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
@@ -308,12 +315,35 @@ class SignupForm extends Component {
 		} );
 	};
 
+	getNoticeMessageWithLogin( notice ) {
+		const link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.redirectToAfterLoginUrl
+		} );
+
+		if ( notice.error === '2FA_enabled' ) {
+			return (
+				<span>
+					<p>
+						{ notice.message }&nbsp;
+						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
+							}
+						} ) }
+					</p>
+				</span>
+			);
+		}
+		return notice.message;
+	}
+
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
-			text={ notice.message } />;
+			text={ this.getNoticeMessageWithLogin( notice ) } />;
 	}
 
 	getUserData() {
@@ -332,7 +362,7 @@ class SignupForm extends Component {
 
 		let link = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirectTo: this.props.getRedirectToAfterLoginUrl
+			redirectTo: this.props.redirectToAfterLoginUrl
 		} );
 
 		return map( messages, ( message, error_code ) => {
@@ -461,7 +491,6 @@ class SignupForm extends Component {
 		return (
 			<p className="signup-form__terms-of-service-link">{ tosText }</p>
 		);
-
 	}
 
 	getNotice() {
@@ -528,7 +557,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true } )
+			? login( { isNative: true, redirectTo: this.props.redirectToAfterLoginUrl } )
 			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 
 		return (

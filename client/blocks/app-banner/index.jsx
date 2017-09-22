@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -54,9 +55,9 @@ class AppBanner extends Component {
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
-		currentSection: React.PropTypes.string,
-		dismissedUntil: React.PropTypes.object,
-		fetchingPreferences: React.PropTypes.bool,
+		currentSection: PropTypes.string,
+		dismissedUntil: PropTypes.object,
+		fetchingPreferences: PropTypes.bool,
 	};
 
 	static defaultProps = {

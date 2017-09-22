@@ -4,7 +4,15 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { difference, includes, isEqual, range, size } from 'lodash';
+import {
+	difference,
+	get,
+	includes,
+	isEqual,
+	range,
+	size,
+	throttle,
+} from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
@@ -25,17 +33,23 @@ import PostTypeListEmptyContent from './empty-content';
 /**
  * Constants
  */
-const POST_ROW_HEIGHT = 86;
+const DEFAULT_POST_ROW_HEIGHT_NORMAL = 84;
+const DEFAULT_POST_ROW_HEIGHT_LARGE = 89;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 
 class PostTypeList extends Component {
 	static propTypes = {
+		// Props
 		query: PropTypes.object,
+		largeTitles: PropTypes.bool,
+		wrapTitles: PropTypes.bool,
+
+		// Connected props
 		siteId: PropTypes.number,
 		lastPage: PropTypes.number,
 		posts: PropTypes.array,
-		requestingLastPage: PropTypes.bool
+		requestingLastPage: PropTypes.bool,
 	};
 
 	constructor() {
@@ -45,10 +59,31 @@ class PostTypeList extends Component {
 		this.cellRendererWrapper = this.cellRendererWrapper.bind( this );
 		this.renderPlaceholder = this.renderPlaceholder.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
+		this.setListRef = this.setListRef.bind( this );
+		this.handleHeightChange = this.handleHeightChange.bind( this );
+		this.getPostRowHeight = this.getPostRowHeight.bind( this );
+
+		this.rowHeights = {};
 
 		this.state = {
 			requestedPages: this.getInitialRequestedPages( this.props )
 		};
+	}
+
+	componentWillMount() {
+		// NOTE: Assumes that this property does not change for a given
+		// instance of this component
+		this.defaultPostRowHeight = this.props.largeTitles
+			? DEFAULT_POST_ROW_HEIGHT_LARGE
+			: DEFAULT_POST_ROW_HEIGHT_NORMAL;
+	}
+
+	componentDidMount() {
+		if ( this.props.wrapTitles ) {
+			// Note: Assumes that this property does not change
+			this.resizeListener = throttle( this.handleWindowResize, 50 );
+			window.addEventListener( 'resize', this.resizeListener );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -57,6 +92,19 @@ class PostTypeList extends Component {
 				requestedPages: this.getInitialRequestedPages( nextProps )
 			} );
 		}
+	}
+
+	componentWillUnmount() {
+		if ( this.resizeListener ) {
+			window.removeEventListener( 'resize', this.resizeListener );
+			delete this.resizeListener;
+		}
+	}
+
+	handleWindowResize = () => {
+		this.setState( {
+			windowWidth: window.innerWidth,
+		} );
 	}
 
 	getInitialRequestedPages( props ) {
@@ -106,12 +154,29 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" />;
+		return (
+			<PostItem
+				key="placeholder"
+				largeTitle={ this.props.largeTitles }
+			/>
+		);
 	}
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostItem key={ globalId } globalId={ globalId } />;
+		const { query } = this.props;
+
+		return (
+			<PostItem
+				key={ globalId }
+				globalId={ globalId }
+				onHeightChange={ this.handleHeightChange }
+				largeTitle={ this.props.largeTitles }
+				wrapTitle={ this.props.wrapTitles }
+				windowWidth={ this.state.windowWidth }
+				singleUserQuery={ query && !! query.author }
+			/>
+		);
 	}
 
 	cellRendererWrapper( { key, style, ...rest } ) {
@@ -120,6 +185,30 @@ class PostTypeList extends Component {
 				{ this.renderPostRow( rest ) }
 			</div>
 		);
+	}
+
+	setListRef( list ) {
+		this.listRef = list;
+	}
+
+	handleHeightChange( { globalId, nodeHeight } ) {
+		this.rowHeights[ globalId ] = nodeHeight;
+
+		setTimeout( () => {
+			this.listRef.recomputeRowHeights( 0 );
+		}, 1 );
+	}
+
+	getPostRowHeight( { index } ) {
+		const { posts } = this.props;
+
+		if ( ! posts || ! posts[ index ] || ! posts[ index ].global_ID ) {
+			return this.defaultPostRowHeight;
+		}
+
+		const globalId = posts[ index ].global_ID;
+
+		return get( this.rowHeights, globalId ) || this.defaultPostRowHeight;
 	}
 
 	render() {
@@ -153,8 +242,9 @@ class PostTypeList extends Component {
 										height={ height }
 										width={ width }
 										onRowsRendered={ this.setRequestedPages }
+										ref={ this.setListRef }
 										rowRenderer={ this.cellRendererWrapper }
-										rowHeight={ POST_ROW_HEIGHT }
+										rowHeight={ this.getPostRowHeight }
 										rowCount={ size( this.props.posts ) } />
 								) }
 							</AutoSizer>

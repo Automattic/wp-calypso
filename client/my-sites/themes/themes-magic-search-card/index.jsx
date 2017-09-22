@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { debounce, intersection, difference, includes } from 'lodash';
@@ -13,7 +14,7 @@ import Gridicon from 'gridicons';
  */
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
-import Suggestions from 'components/suggestions';
+import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
@@ -25,6 +26,15 @@ import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
 class ThemesMagicSearchCard extends React.Component {
+
+	static propTypes = {
+		showTierThemesControl: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showTierThemesControl: true
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -228,7 +238,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { translate, filters } = this.props;
+		const { translate, filters, showTierThemesControl } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -263,7 +273,7 @@ class ThemesMagicSearchCard extends React.Component {
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
-			'has-suggestions': this.state.searchIsOpen
+			'has-keyed-suggestions': this.state.searchIsOpen
 		} );
 
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
@@ -294,7 +304,7 @@ class ThemesMagicSearchCard extends React.Component {
 							</div>
 						}
 						{
-							isPremiumThemesEnabled &&
+							( isPremiumThemesEnabled && showTierThemesControl ) &&
 								<SegmentedControl
 									initialSelected={ this.props.tier }
 									options={ tiers }
@@ -305,7 +315,7 @@ class ThemesMagicSearchCard extends React.Component {
 				</StickyPanel>
 				<div onClick={ this.handleClickInside }>
 					{ renderSuggestions &&
-						<Suggestions
+						<KeyedSuggestions
 							ref="suggestions"
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }

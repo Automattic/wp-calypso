@@ -7,6 +7,11 @@
 	align-items: center;
 	position: relative;
 
+	// TODO: Remove when foldable cards become "expandable"
+	.foldable-card__header.is-clickable {
+		cursor: default;
+	}
+
 	&:first-of-type {
 		margin-top: 24px;
 	}
@@ -24,7 +29,7 @@
 	}
 
 	.foldable-card {
-		
+
 		.foldable-card__expand .gridicon {
 			transform: none;
 		}
@@ -112,9 +117,14 @@
 		margin-bottom: 16px;
 	}
 
-	.gravatar {
+	.gravatar,
+	.jetpack-logo {
 		float: left;
 		margin-right: 16px;
+	}
+
+	.jetpack-logo path {
+		fill: $green-jetpack;
 	}
 }
 
@@ -126,20 +136,11 @@
 
 .activity-log-item__title {
 	flex: 4 1;
+	font-size: 14px;
 
 	@include breakpoint( "<960px" ) {
 		margin-left: 54px;
 	}
-}
-
-.activity-log-item__title-title {
-	font-size: 14px;
-}
-
-.activity-log-item__title-subtitle {
-	font-size: 12px;
-	text-transform: uppercase;
-	color: $gray;
 }
 
 .activity-log-item__action {

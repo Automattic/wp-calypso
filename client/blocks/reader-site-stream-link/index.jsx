@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 
 /**
@@ -10,13 +11,14 @@ import { omit } from 'lodash';
  */
 import { getStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import Emojify from 'components/emojify';
 
-const ReaderSiteStreamLink = React.createClass( {
-	propTypes: {
-		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		post: React.PropTypes.object, // for stats only
-	},
+class ReaderSiteStreamLink extends React.Component {
+	static propTypes = {
+		feedId: PropTypes.number,
+		siteId: PropTypes.number,
+		post: PropTypes.object, // for stats only
+	};
 
 	recordClick() {
 		recordAction( 'visit_blog_feed' );
@@ -24,14 +26,14 @@ const ReaderSiteStreamLink = React.createClass( {
 		if ( this.props.post ) {
 			recordTrackForPost( 'calypso_reader_feed_link_clicked', this.props.post );
 		}
-	},
+	}
 
 	render() {
 		// If we can't make a link, just return children
 		if ( ! this.props.feedId && ! this.props.siteId ) {
 			return (
 				<span>
-					{ this.props.children }
+					<Emojify>{ this.props.children }</Emojify>
 				</span>
 			);
 		}
@@ -41,10 +43,10 @@ const ReaderSiteStreamLink = React.createClass( {
 
 		return (
 			<a { ...omit( this.props, omitProps ) } href={ link } onClick={ this.recordClick }>
-				{ this.props.children }
+				<Emojify>{ this.props.children }</Emojify>
 			</a>
 		);
-	},
-} );
+	}
+}
 
 export default ReaderSiteStreamLink;

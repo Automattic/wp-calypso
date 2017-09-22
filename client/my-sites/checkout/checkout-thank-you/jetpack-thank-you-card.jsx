@@ -30,7 +30,13 @@ import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
+import {
+	getRawSite,
+	isJetpackSite,
+	isJetpackSiteMainNetworkSite,
+	isJetpackSiteMultiSite,
+	isRequestingSites,
+} from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -63,7 +69,15 @@ import {
 	FEATURES_LIST,
 	getPlanClass
 } from 'lib/plans/constants';
-import { isFreePlan, getPlan } from 'lib/plans';
+import { getPlan } from 'lib/plans';
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+} from 'lib/plans/constants';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -149,8 +163,8 @@ class JetpackThankYouCard extends Component {
 	}
 
 	componentDidUpdate() {
-		const site = this.props.selectedSite;
-		const { plugins } = this.props;
+		const { nextPlugin, planFeatures, plugins, selectedSite: site } = this.props;
+		const { completedJetpackFeatures } = this.state;
 
 		if ( ! site ||
 			! site.jetpack ||
@@ -161,19 +175,21 @@ class JetpackThankYouCard extends Component {
 			return;
 		}
 
-		if ( this.props.planFeatures && ! site.canUpdateFiles && ! Object.keys( this.state.completedJetpackFeatures ).length ) {
+		if ( planFeatures && ! site.canUpdateFiles && ! Object.keys( completedJetpackFeatures ).length ) {
 			this.activateJetpackFeatures();
 		}
 
-		if ( site.canUpdateFiles && this.props.nextPlugin ) {
-			this.startNextPlugin( this.props.nextPlugin );
+		if ( site.canUpdateFiles && nextPlugin ) {
+			this.startNextPlugin( nextPlugin );
 		} else if (
 			site.canUpdateFiles &&
 			plugins &&
 			! this.shouldRenderPlaceholders() &&
 			! some( plugins, ( plugin ) => 'done' !== plugin.status ) &&
-			! Object.keys( this.state.completedJetpackFeatures ).length
+			! Object.keys( completedJetpackFeatures ).length
 		) {
+			this.activateJetpackFeatures();
+		} else if ( site.canUpdateFiles && ! nextPlugin && ! Object.keys( completedJetpackFeatures ).length ) {
 			this.activateJetpackFeatures();
 		}
 	}
@@ -240,13 +256,14 @@ class JetpackThankYouCard extends Component {
 					icon = <Gridicon icon="checkmark" size={ 18 } />;
 					break;
 				case 'error':
-					icon = <Gridicon icon="notice-outline" size={ 18 } />;
+					icon = null;
 					break;
 			}
 		}
 
 		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
-			'is-placeholder': ! feature
+			'is-placeholder': ! feature,
+			'with-error': feature && feature.status === 'error'
 		} );
 		return (
 			<li key={ key } className={ classes }>
@@ -304,17 +321,81 @@ class JetpackThankYouCard extends Component {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_chat_initiated' );
 	};
 
+	isEligibleForLiveChat() {
+		const { planSlug } = this.props;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY ||
+			planSlug === PLAN_JETPACK_PERSONAL || planSlug === PLAN_JETPACK_PERSONAL_MONTHLY ||
+			planSlug === PLAN_JETPACK_PREMIUM || planSlug === PLAN_JETPACK_PREMIUM_MONTHLY;
+	}
+
 	renderLiveChatButton() {
-		const { isJetpackPaidPlan } = this.props;
-		return isJetpackPaidPlan && (
+		const { translate } = this.props;
+		const buttonText = this.isErrored() ? translate( 'Get help setting up' ) : translate( 'Ask a question' );
+		return this.isEligibleForLiveChat() && (
 			<HappyChatButton
 				borderless={ false }
 				className="checkout-thank-you__happychat-button thank-you-card__button"
 				onClick={ this.onHappyChatButtonClick }
 			>
-				{ this.props.translate( 'Ask a question' ) }
+				{ buttonText }
 			</HappyChatButton>
 		);
+	}
+
+	guessErrorReason() {
+		const { isSiteMainNetworkSite, isSiteMultiSite, selectedSite, translate } = this.props;
+		if ( ! this.isErrored() ) {
+			return null;
+		}
+
+		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+		let reason;
+		if ( reasons && reasons.length > 0 ) {
+			reason = translate( 'We can\'t modify files on your site.' );
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
+		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
+			reason = translate(
+				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
+				'Please upgrade Jetpack.'
+			);
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
+				jetpack_version: selectedSite.options.jetpack_version
+			} );
+		} else if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
+			reason = translate(
+				'Your site is part of a multi-site network, but is not the main network site.'
+			);
+
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
+		} else if ( selectedSite.options.is_multi_network ) {
+			reason = translate(
+				'Your site is part of a multi-network.'
+			);
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
+		} else {
+			const erroredPlugins = reduce( this.props.plugins, ( erroredList, plugin ) => {
+				if ( 'error' === plugin.status ) {
+					erroredList.push( plugin.slug );
+				}
+				return erroredList;
+			}, [] );
+
+			if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'akismet' ) ) {
+				reason = translate(
+					'We can\'t automatically configure the Akismet plugin.'
+				);
+			} else if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'vaultpress' ) ) {
+				reason = translate(
+					'We can\'t automatically configure the VaultPress plugin.'
+				);
+			} else {
+				reason = translate(
+					'We can\'t automatically configure the Akismet and VaultPress plugins.'
+				);
+			}
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
+		}
+		return reason;
 	}
 
 	renderErrorDetail() {
@@ -518,9 +599,6 @@ class JetpackThankYouCard extends Component {
 	}
 
 	getProgress() {
-		if ( this.isErrored() ) {
-			return 0;
-		}
 
 		const features = this.getFeaturesWithStatus() || [ '' ];
 		const completed = this.shouldRenderPlaceholders()
@@ -539,21 +617,34 @@ class JetpackThankYouCard extends Component {
 	renderAction( progress = 0 ) {
 		const { selectedSite: site, translate } = this.props;
 		const buttonUrl = site && site.URL;
-		// We return an empty span for the error case becaue the default button will be displayed
-		// further down the tree if the action is falsey.
-		if ( this.isErrored() ) {
-			return <span />;
+		// We return instructions for setting up manually
+		// when we finish if something errored
+		if ( this.isErrored() && ! this.props.isInstalling ) {
+			return (
+				<div className="checkout-thank-you__jetpack-description-in-actions">
+					<p>
+						{ translate( 'You will have to {{link}}set up your plan manually{{/link}}.', {
+							components: {
+								link: (
+									<a href={ support.SETTING_UP_PREMIUM_SERVICES } />
+								)
+							}
+						} ) }
+					</p>
+					{ this.renderLiveChatButton() }
+				</div>
+			);
 		}
 
 		if ( 100 === progress ) {
 			return (
-				<div>
-					{ this.renderLiveChatButton() }
+				<div className="checkout-thank-you__jetpack-action-buttons">
 					<a
-						className={ classNames( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
+						className={ classNames( 'button', 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
 						href={ buttonUrl }>
 						{ translate( 'Visit Your Site' ) }
 					</a>
+					{ this.renderLiveChatButton() }
 				</div>
 			);
 		}
@@ -565,14 +656,20 @@ class JetpackThankYouCard extends Component {
 
 	renderDescription( progress = 0 ) {
 		const { translate } = this.props;
+		const description = translate( "Now that we've taken care of the plan, it's time to power up your site." );
 		if ( 100 === progress ) {
 			return translate( "You are powered up, it's time to see your site." );
 		}
 
-		return translate( "Now that we've taken care of the plan, it's time to power up your site." );
+		if ( this.isErrored() ) {
+			return this.guessErrorReason();
+		}
+
+		return description;
 	}
 
 	render() {
+		const translate = this.props.translate;
 		const site = this.props.selectedSite;
 		if ( ! site && this.props.isRequestingSites ) {
 			return (
@@ -592,10 +689,10 @@ class JetpackThankYouCard extends Component {
 			<div className={ classes }>
 				{ site.canUpdateFiles && <QueryPluginKeys siteId={ site.ID } /> }
 				{ this.renderManageNotice() }
-				{ this.renderErrorDetail() }
 				<PlanThankYouCard
 					siteId={ site.ID }
 					action={ this.renderAction( progress ) }
+					heading={ this.isErrored() && site.canUpdateFiles ? translate( "You're almost there!" ) : null }
 					description={ this.renderDescription( progress ) } />
 				{ this.renderFeatures() }
 			</div>
@@ -609,11 +706,12 @@ export default connect(
 		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
 		let plan = getCurrentPlan( state, siteId );
+		let planSlug;
 		const planClass = plan && plan.productSlug
 			? getPlanClass( plan.productSlug )
 			: '';
-		const isJetpackFreePlan = isJetpackSite( state, siteId ) && plan && plan.productSlug && isFreePlan( plan.productSlug );
 		if ( plan ) {
+			planSlug = plan.productSlug;
 			plan = getPlan( plan.productSlug );
 		}
 		const planFeatures = plan && plan.getFeatures
@@ -626,11 +724,12 @@ export default connect(
 			: site;
 		return {
 			wporg: state.plugins.wporg.items,
+			isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
+			isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, whitelist ),
 			isFinished: isFinished( state, siteId, whitelist ),
-			isJetpackPaidPlan: ! isJetpackFreePlan,
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
@@ -638,7 +737,8 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
 			planFeatures,
-			planClass
+			planClass,
+			planSlug
 		};
 	},
 	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )

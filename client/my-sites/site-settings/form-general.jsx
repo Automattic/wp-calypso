@@ -14,7 +14,7 @@ import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import LanguageSelector from 'components/forms/language-selector';
+import LanguagePicker from 'components/language-picker';
 import SectionHeader from 'components/section-header';
 import config from 'config';
 import notices from 'notices';
@@ -157,14 +157,13 @@ class SiteSettingsFormGeneral extends Component {
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
-				<LanguageSelector
-					name="lang_id"
-					id="lang_id"
+				<LanguagePicker
 					languages={ config( 'languages' ) }
 					value={ fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Language Field' ) } />
+					onClick={ eventTracker( 'Clicked Language Field' ) }
+				/>
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>

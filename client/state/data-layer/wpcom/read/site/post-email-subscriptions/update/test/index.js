@@ -16,7 +16,7 @@ import {
 } from '../';
 import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestUpdatePostEmailSubscription', () => {
@@ -76,7 +76,7 @@ describe( 'comment-email-subscriptions', () => {
 				null
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, previousState ) )
+				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
 		} );
 
@@ -92,7 +92,7 @@ describe( 'comment-email-subscriptions', () => {
 				{ success: false }
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, previousState ) )
+				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
 		} );
 	} );
@@ -109,7 +109,7 @@ describe( 'comment-email-subscriptions', () => {
 				}
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, previousState ) )
+				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: { text: 'Sorry, we had a problem updating that subscription. Please try again.' },

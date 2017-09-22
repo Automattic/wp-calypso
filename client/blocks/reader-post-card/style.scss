@@ -324,6 +324,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__byline-author-site {
 	font-family: $sans;
+	font-weight: 500;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -567,12 +568,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-right: -2px;
 	}
 
+	.reader-share__button .gridicon {
+		position: relative;
+		top: 1px;
+	}
+
 	.like-button .gridicon {
 		top: 5px;
 	}
 
 	.like-button__label {
-		margin: -4px 0 0 -5px;
+		margin: -3px 0 0 -5px;
 	}
 
 	.comment-button {
@@ -580,7 +586,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	.comment-button .gridicon {
-		top: 2px;
+		top: 4px;
 		margin-right: 2px;
 	}
 

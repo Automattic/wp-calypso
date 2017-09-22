@@ -2,27 +2,36 @@
  * External dependencies
  */
 import async from 'async';
-import { assign, clone, cloneDeep, noop, some } from 'lodash';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 import cookie from 'cookie';
+import debugFactory from 'debug';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
 import config from 'config';
+import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
  * Module variables
  */
+const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
+
+// Retargeting events are fired once every `retargetingPeriod` seconds.
+const retargetingPeriod = 60 * 60 * 24;
+
+// Last time the retarget() function effectively fired (Unix time in seconds).
+let lastRetargetTime = 0;
+
+// Last time the recordPageViewInFloodlight() function effectively fired (Unix time in seconds).
+let lastFloodlightPageViewTime = 0;
 
 /**
  * Constants
@@ -264,10 +273,10 @@ function loadTrackingScripts( callback ) {
  * 2. `Do Not Track` is enabled
  * 3. `document.location.href` may contain personally identifiable information
  *
- * @returns {Boolean}
+ * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
+	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
 }
 
 /**
@@ -290,6 +299,12 @@ function retarget() {
 	if ( ! hasFinishedFetchingScripts ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
+		return;
+	}
+	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting' );
 
@@ -702,6 +717,12 @@ function recordPageViewInFloodlight( urlPath ) {
 		return;
 	}
 
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastFloodlightPageViewTime + retargetingPeriod ) {
+		return;
+	}
+	lastFloodlightPageViewTime = nowTimestamp;
+
 	const sessionId = floodlightSessionId();
 
 	debug( 'Floodlight: Recording page view for session ' + sessionId );
@@ -1038,7 +1059,7 @@ function recordSignupCompletion() {
 	recordSignupCompletionInFloodlight();
 }
 
-module.exports = {
+export default {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
 

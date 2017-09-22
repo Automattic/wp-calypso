@@ -17,13 +17,12 @@ import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { isPluginActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { UNITS as StoreStatsTabs } from 'extensions/woocommerce/app/store-stats/constants';
+import { isPluginActive, isSiteOnPaidPlan } from 'state/selectors';
 import config from 'config';
 
 const StatsNavigation = props => {
-	const { translate, section, slug, siteId, isJetpack, isStore } = props;
+	const { translate, section, slug, siteId, isJetpack, isStore, hasPaidPlan } = props;
 	const siteFragment = slug ? '/' + slug : '';
 	const sectionTitles = {
 		insights: translate( 'Insights' ),
@@ -37,9 +36,10 @@ const StatsNavigation = props => {
 	let statsControl;
 
 	if ( isStore ) {
-		const validSection = includes( Object.keys( StoreStatsTabs ), section ) ? section : 'day';
+		const validSection = includes( [ 'day', 'week', 'month', 'year' ], section ) ? section : 'day';
 		statsControl = (
 			<SegmentedControl
+				primary
 				className="stats-navigation__control is-store"
 				initialSelected="site"
 				options={ [
@@ -58,11 +58,11 @@ const StatsNavigation = props => {
 	}
 
 	const ActivityTab =
-		config.isEnabled( 'jetpack/activity-log' ) && isJetpack
-			? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
-					{ sectionTitles.activity }
-				</NavItem>
-			: null;
+		config.isEnabled( 'jetpack/activity-log' ) && isJetpack && hasPaidPlan ? (
+			<NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+				{ sectionTitles.activity }
+			</NavItem>
+		) : null;
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
@@ -104,6 +104,7 @@ const localized = localize( StatsNavigation );
 export default connect( ( state, { siteId } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	return {
+		hasPaidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack,
 		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
 		siteId,

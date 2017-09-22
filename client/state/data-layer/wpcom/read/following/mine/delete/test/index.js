@@ -12,7 +12,7 @@ import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'following/mine/delete', () => {
 	describe( 'requestUnfollow', () => {
@@ -68,7 +68,7 @@ describe( 'following/mine/delete', () => {
 
 			receiveUnfollow( { dispatch, getState }, action, response );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
+			expect( dispatch ).to.be.calledWith( bypassDataLayer( follow( 'http://example.com' ) ) );
 		} );
 	} );
 
@@ -89,7 +89,7 @@ describe( 'following/mine/delete', () => {
 
 			unfollowError( { dispatch, getState }, action );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
+			expect( dispatch ).to.be.calledWith( bypassDataLayer( follow( 'http://example.com' ) ) );
 		} );
 	} );
 } );

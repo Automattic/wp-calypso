@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
@@ -42,22 +43,22 @@ import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.shape( {
-			ID: React.PropTypes.number.isRequired,
-			site_ID: React.PropTypes.number.isRequired,
+		post: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			site_ID: PropTypes.number.isRequired,
 		} ).isRequired,
-		pageSize: React.PropTypes.number,
-		initialSize: React.PropTypes.number,
-		showCommentCount: React.PropTypes.bool,
-		startingCommentId: React.PropTypes.number,
-		commentCount: React.PropTypes.number,
-		maxDepth: React.PropTypes.number,
-		showNestingReplyArrow: React.PropTypes.bool,
+		pageSize: PropTypes.number,
+		initialSize: PropTypes.number,
+		showCommentCount: PropTypes.bool,
+		startingCommentId: PropTypes.number,
+		commentCount: PropTypes.number,
+		maxDepth: PropTypes.number,
+		showNestingReplyArrow: PropTypes.bool,
 
 		// connect()ed props:
-		commentsTree: React.PropTypes.object,
-		requestPostComments: React.PropTypes.func.isRequired,
-		requestComment: React.PropTypes.func.isRequired,
+		commentsTree: PropTypes.object,
+		requestPostComments: PropTypes.func.isRequired,
+		requestComment: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -69,7 +70,7 @@ class PostCommentList extends React.Component {
 	};
 
 	state = {
-		activeReplyCommentID: null,
+		activeReplyCommentId: null,
 		amountOfCommentsToTake: this.props.initialSize,
 		commentsFilter: 'all',
 		activeEditCommentId: null,
@@ -199,7 +200,7 @@ class PostCommentList extends React.Component {
 				key={ commentId }
 				showModerationTools={ this.props.showModerationTools }
 				activeEditCommentId={ this.state.activeEditCommentId }
-				activeReplyCommentID={ this.state.activeReplyCommentID }
+				activeReplyCommentId={ this.state.activeReplyCommentId }
 				onEditCommentClick={ onEditCommentClick }
 				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
@@ -221,7 +222,7 @@ class PostCommentList extends React.Component {
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick = commentID => {
-		this.setState( { activeReplyCommentID: commentID } );
+		this.setState( { activeReplyCommentId: commentID } );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_click', {
@@ -235,7 +236,7 @@ class PostCommentList extends React.Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentID,
+			comment_id: this.state.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
@@ -245,7 +246,7 @@ class PostCommentList extends React.Component {
 	};
 
 	resetActiveReplyComment = () => {
-		this.setState( { activeReplyCommentID: null } );
+		this.setState( { activeReplyCommentId: null } );
 	};
 
 	renderCommentsList = commentIds => {
@@ -261,7 +262,7 @@ class PostCommentList extends React.Component {
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
-		if ( this.state.activeReplyCommentID && ! this.state.errors ) {
+		if ( this.state.activeReplyCommentId && ! this.state.errors ) {
 			return null;
 		}
 
@@ -269,7 +270,7 @@ class PostCommentList extends React.Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ post }
-				parentCommentID={ null }
+				parentCommentId={ null }
 				commentText={ commentText }
 				onUpdateCommentText={ this.onUpdateCommentText }
 			/>

@@ -11,6 +11,7 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
@@ -25,6 +26,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuView key="view" />,
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
+			<PostActionsEllipsisMenuShare key="share" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
 			<PostActionsEllipsisMenuTrash key="trash" />

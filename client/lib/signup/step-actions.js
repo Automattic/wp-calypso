@@ -25,11 +25,13 @@ const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
-
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
+import { abtest } from 'lib/abtest';
+import { cartItems } from 'lib/cart-values';
 
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
@@ -51,7 +53,17 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
+		const domainChoiceCart = [ domainItem ];
+		if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+			domainChoiceCart.push(
+				cartItems.domainPrivacyProtection( {
+					domain: domainItem.meta,
+					source: 'signup'
+				} )
+			);
+		}
+
+		SignupCart.createCart( cartKey, domainChoiceCart, error => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
@@ -86,6 +98,7 @@ function createSiteWithCart( callback, dependencies, {
 	themeSlugWithRepo,
 	themeItem
 }, reduxStore ) {
+	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
@@ -93,6 +106,7 @@ function createSiteWithCart( callback, dependencies, {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
+			designType: designType || undefined,
 			// the theme can be provided in this step's dependencies or the
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
@@ -120,11 +134,20 @@ function createSiteWithCart( callback, dependencies, {
 			themeItem
 		};
 		const addToCartAndProceed = () => {
+			let privacyItem = null;
+			if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+				privacyItem = cartItems.domainPrivacyProtection( {
+					domain: domainItem.meta,
+					source: 'signup'
+				} );
+			}
+
 			const newCartItems = [
 				cartItem,
 				domainItem,
 				googleAppsCartItem,
 				themeItem,
+				privacyItem,
 			].filter( item => item );
 
 			if ( newCartItems.length ) {
@@ -286,7 +309,7 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
@@ -316,8 +339,14 @@ module.exports = {
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
-					jetpack_redirect: queryArgs.jetpackRedirect
-				}
+					// url sent in the confirmation email
+					jetpack_redirect: queryArgs.jetpack_redirect,
+				}, oauth2Signup ? {
+					oauth2_client_id: queryArgs.oauth2_client_id,
+					// url of the WordPress.com authorize page for this OAuth2 client
+					// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
+					oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
+				} : null
 			), ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
@@ -328,7 +357,16 @@ module.exports = {
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+
+				if ( oauth2Signup ) {
+					assign( providedDependencies, {
+						oauth2_client_id: queryArgs.oauth2_client_id,
+						oauth2_redirect: queryArgs.oauth2_redirect,
+					} );
+				}
+
+				callback( errors, providedDependencies );
 			} );
 		}
 	},

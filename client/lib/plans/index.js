@@ -62,7 +62,14 @@ export function getFeatureTitle( feature ) {
 }
 
 export function canUpgradeToPlan( planKey, site ) {
-	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
+	// Which "free plan" should we use to test
+	const freePlan =
+		get( site, 'jetpack', false ) && ! get( site, [ 'options', 'is_automated_transfer' ], false )
+			? PLAN_JETPACK_FREE
+			: PLAN_FREE;
+	const plan = get( site, [ 'plan', 'expired' ], false )
+		? freePlan
+		: get( site, [ 'plan', 'product_slug' ], freePlan );
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 

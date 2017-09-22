@@ -1,10 +1,22 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:analytics:utils' );
+
+/**
  * Whether Do Not Track is enabled in the user's browser.
  *
  * @returns {Boolean} true if Do Not Track is enabled in the user's browser.
  */
-function doNotTrack() {
-	return '1' === navigator.doNotTrack;
+export function doNotTrack() {
+	const result = '1' === navigator.doNotTrack;
+	debug( `Do Not Track: ${ result }` );
+	return result;
 }
 
 // If this list catches things that are not necessarily forbidden we're ok with
@@ -36,17 +48,44 @@ const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
  *
  * @returns {Boolean} true if the current URL can potentially contain personally identifiable info.
  */
-function isPiiUrl() {
+export function isPiiUrl() {
 	const href = document.location.href;
+	const match = pattern => href.indexOf( pattern ) !== -1;
+	const result = forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
 
-	const match = pattern => {
-		return href.indexOf( pattern ) !== -1;
-	}
-
-	return forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
+	debug( `Is PII URL: ${ result }` );
+	return result;
 }
 
-module.exports = {
-	doNotTrack: doNotTrack,
-	isPiiUrl: isPiiUrl
-};
+// For better load performance, these routes are blacklisted from loading ads.
+const blacklistedRoutes = [
+	'/log-in',
+];
+
+/**
+ * Are ads blacklisted from the given URL for better performance?
+ *
+ * @returns {Boolean} true if the current URL is blacklisted.
+ */
+export function isBlacklistedForPerformance() {
+	const { href } = document.location;
+	const match = pattern => href.indexOf( pattern ) !== -1;
+	const result = blacklistedRoutes.some( match );
+
+	debug( `Is URL Blacklisted for Performance: ${ result }` );
+	return result;
+}
+
+/**
+ * Check if the user has DNT enabled or if the route is blacklisted from showing
+ * ads (either due to performance concerns or PII exposure).
+ *
+ * @returns {Boolean} true if we should skip showing ads
+ */
+export function shouldSkipAds() {
+	const result = isBlacklistedForPerformance() || isPiiUrl() || doNotTrack();
+
+	debug( `Is Skipping Ads: ${ result }` );
+	return result;
+}
+

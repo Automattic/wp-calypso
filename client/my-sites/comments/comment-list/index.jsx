@@ -14,12 +14,12 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
 	changeCommentStatus,
 	deleteComment,
+	editComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
@@ -90,6 +90,13 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		this.props.deleteComment( commentId, postId );
+	}
+
+	editComment = ( commentId, postId, commentData, undoCommentData, showNotice = true ) => {
+		this.props.editComment( commentId, postId, commentData );
+		if ( showNotice ) {
+			this.showEditNotice( commentId, postId, undoCommentData );
+		}
 	}
 
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
@@ -225,6 +232,25 @@ export class CommentList extends Component {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
+
+	showEditNotice = ( commentId, postId, undoCommentData ) => {
+		const { translate } = this.props;
+
+		const message = translate( 'Your comment has been updated.' );
+
+		const noticeOptions = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+			onClick: () => {
+				this.editComment( commentId, postId, undoCommentData, false );
+				this.props.removeNotice( `comment-notice-${ commentId }` );
+			},
+		};
+
+		this.props.successNotice( message, noticeOptions );
+	};
 
 	showBulkNotice = newStatus => {
 		const { translate } = this.props;
@@ -406,9 +432,10 @@ export class CommentList extends Component {
 					{ map( commentsPage, commentId =>
 						<CommentDetail
 							commentId={ commentId }
-							deleteCommentPermanently={ this.deleteCommentPermanently }
-							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
+							deleteCommentPermanently={ this.deleteCommentPermanently }
+							editComment={ this.editComment }
+							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
@@ -451,7 +478,6 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 		comments,
 		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
-		notices: getNotices( state ),
 		siteId,
 	};
 };
@@ -478,6 +504,14 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			bumpStat( 'calypso_comment_management', 'comment_deleted' )
 		),
 		deleteComment( siteId, postId, commentId, options )
+	) ),
+
+	editComment: ( commentId, postId, comment ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_edit' ),
+			bumpStat( 'calypso_comment_management', 'comment_updated' )
+		),
+		editComment( siteId, postId, commentId, comment )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(

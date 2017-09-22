@@ -21,7 +21,7 @@ import { isRequestingPostLikes, countPostLikes } from 'state/selectors';
 import PostLikes from 'blocks/post-likes';
 
 export const StatsPostLikes = props => {
-	const { countLikes, isRequesting, opened, postId, siteId, toggle, translate } = props;
+	const { countLikes, isRequesting, opened, postId, postType, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = isRequesting && ! countLikes;
 	const classes = {
@@ -29,12 +29,22 @@ export const StatsPostLikes = props => {
 		'is-loading': isLoading,
 	};
 
+	let likesListLabel, likesTitleLabel;
+
+	if ( postType === 'page' ) {
+		likesTitleLabel = translate( 'Page Likes' );
+		likesListLabel = translate( 'This panel shows the list of people who like your page.' );
+	} else {
+		likesTitleLabel = translate( 'Post Likes' );
+		likesListLabel = translate( 'This panel shows the list of people who like your post.' );
+	}
+
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
 			<div className="module-header">
 				<h4 className="module-header-title">
-					{ translate( 'Post Likes' ) }
+					{ likesTitleLabel }
 					{ countLikes !== null && <Count count={ countLikes } /> }
 				</h4>
 				<ul className="module-header-actions">
@@ -52,14 +62,18 @@ export const StatsPostLikes = props => {
 				</ul>
 			</div>
 			<StatsModuleContent className="module-content-text-info">
-				{ translate( 'This panel shows the list of people who like your post.' ) }
+				{ likesListLabel }
 			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
 			<div className="stats-post-likes__content">
-				<PostLikes siteId={ siteId } postId={ postId } />
+				<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
 			</div>
 		</Card>
 	);
+};
+
+StatsPostLikes.defaultProps = {
+	postType: 'post'
 };
 
 const connectComponent = connect(

@@ -20,13 +20,13 @@
 // Add a New Comment Form
 .comments__form {
 	position: relative;
-	padding: 0 0 0 48px;
+	padding: 0 0 0 42px;
 	margin-top: 24px;
 
 	.gravatar {
 		position: absolute;
 			top: 0;
-			left: 8px;
+			left: 0;
 		border-radius: 48px;
 	}
 
@@ -218,6 +218,7 @@
 
 // Individual Comment
 .comments__comment {
+	list-style-type: none;
 	margin-top: 20px;
 	position: relative;
 
@@ -294,7 +295,7 @@
 	margin-right: 9px;
 	position: absolute;
 		left: 1px;
-		top: -1px;
+		top: -5px;
 	width: 32px;
 
 	.gridicon {
@@ -307,6 +308,43 @@
 	@include breakpoint( "<480px" ) {
 		top: -4px;
 	}
+}
+
+// Post comments line-clamping
+.comments__comment-content-wrapper {
+	display: inline-block;
+	position: relative;
+
+	&.is-single-line,
+	&.is-single-line .comments__comment-content {
+		max-height: 15px * 1.6;
+	}
+
+	&.is-excerpt,
+	&.is-excerpt .comments__comment-content {
+		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
+	}
+
+	&.is-single-line .comments__comment-content,
+	&.is-excerpt .comments__comment-content {
+		overflow: hidden;
+	}
+}
+
+.comments__comment-content-wrapper.is-excerpt ~ .comments__comment-actions {
+	margin-top: -10px;
+}
+
+.comments__comment-content-wrapper.is-full ~ .comments__comment-actions {
+	margin-top: -5px;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
+	margin-bottom: 0;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content blockquote {
+	margin: 10px 0 16px;
 }
 
 // Avoids long trackback links from wrapping
@@ -356,7 +394,7 @@ a.comments__comment-username {
 .comments__comment-content {
 	@extend %content-font;
 	font-size: 15px;
-	line-height: 25px;
+	line-height: 1.56;
 	word-break: break-word;
 
 	p {
@@ -368,21 +406,20 @@ a.comments__comment-username {
 	}
 
 	blockquote {
-		padding: 8px 16px;
-		margin: 8px 0 16px;
-		border-left: 2px solid $gray;
+		background: $gray-light;
+		border-left: 2px solid lighten( $gray, 30% );
+		border-radius: 0;
 		color: darken( $gray, 30% );
-		background: lighten( $gray, 30% );
+		margin: 8px 0 16px;
+		padding: 8px 16px;
 	}
 }
-
 
 // Actions for Individual Comments
 .comments__comment-actions {
 	list-style: none;
 	color: $gray;
 	font-size: 14px;
-	margin-top: 2px;
 
 	button {
 		display: inline-block;
@@ -430,6 +467,12 @@ a.comments__comment-username {
 			margin-top: 4px;
 			margin-right: 0;
 		}
+	}
+
+	// Aligns Like icon to comment text when it's by itself
+	> :only-child {
+		left: -3px;
+		top: 3px;
 	}
 
 	.comments__comment-actions-approve,
@@ -519,4 +562,14 @@ a.comments__comment-username {
 
 .comments__comment-count-phrase {
 	text-transform: uppercase;
+}
+
+.comments__comment-actions .comments__comment-actions-read-more {
+	color: $blue-medium;
+	margin: 0 10px 0 -3px;
+	padding-left: 0;
+}
+
+.comments__comment-actions-read-more-icon {
+	fill: $blue-medium;
 }

@@ -22,10 +22,12 @@ describe( 'actions', () => {
 		let request;
 
 		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/read/feed/1' ).reply( 200, {
-				feed_ID: 1,
-				name: 'My test feed',
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/read/feed/1' )
+				.reply( 200, {
+					feed_ID: 1,
+					name: 'My test feed',
+				} );
 			request = requestFeed( 1 )( spy );
 		} );
 
@@ -62,7 +64,9 @@ describe( 'actions', () => {
 		let request;
 
 		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/read/feed/1' ).reply( 404 );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/read/feed/1' )
+				.reply( 404 );
 			request = requestFeed( 1 )( spy );
 		} );
 

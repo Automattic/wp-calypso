@@ -99,7 +99,11 @@ let sitesListeners = [];
  * @param {number} siteId     - the selected site id
  */
 const updateSelectedSiteIdForSitesList = ( dispatch, { siteId } ) => {
-	sites.select( siteId );
+	if ( siteId ) {
+		sites.select( siteId );
+	} else {
+		sites.selectAll();
+	}
 };
 
 /**

@@ -1847,6 +1847,54 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'זהו עין הנמר' );
 		} );
 
+		it( 'should return undecoded post.slug if post with malformed URI sequence is published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'publish',
+									slug: 'most-of-this-slug-is-fine-%F0%9F%99%88%-but-the-following-is-not-%e42',
+								}
+							}
+						} )
+					},
+					edits: {
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'most-of-this-slug-is-fine-%F0%9F%99%88%-but-the-following-is-not-%e42' );
+		} );
+
+		it( 'should return decoded post.slug with emoji sequences if post is published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'publish',
+									slug: '%F0%9F%99%88%F0%9F%99%8A%F0%9F%99%89',
+								}
+							}
+						} )
+					},
+					edits: {
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( '🙈🙊🙉' );
+		} );
+
 		it( 'should return edited slug if post is not published', () => {
 			const slug = getEditedPostSlug( {
 				posts: {

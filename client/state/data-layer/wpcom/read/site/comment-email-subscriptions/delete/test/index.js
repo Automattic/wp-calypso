@@ -18,7 +18,7 @@ import {
 	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {
@@ -61,7 +61,9 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewCommentEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( subscribeToNewCommentEmail( 1234 ) )
+			);
 		} );
 	} );
 
@@ -74,7 +76,9 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewCommentEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( subscribeToNewCommentEmail( 1234 ) )
+			);
 		} );
 	} );
 } );

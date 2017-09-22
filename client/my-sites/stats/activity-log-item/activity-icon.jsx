@@ -1,79 +1,23 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get, startsWith } from 'lodash';
+import { head, split } from 'lodash';
 
 export default class ActivityIcon extends PureComponent {
 
 	static propTypes = {
-		group: PropTypes.oneOf( [
-			'attachment',
-			'comment',
-			'core',
-			'menu',
-			'plugin',
-			'post',
-			'rewind',
-			'term',
-			'theme',
-			'user',
-			'widget',
-		] ).isRequired,
-		name: PropTypes.string.isRequired,
-		object: PropTypes.object,
+		activityName: PropTypes.string.isRequired,
+		activityIcon: PropTypes.string.isRequired,
 	};
 
-	getIcon() {
-		const {
-			group,
-			object,
-		} = this.props;
-
-		switch ( group ) {
-			case 'attachment':
-				if ( startsWith( get( object, [ 'attachment', 'mime_type' ] ), 'image/' ) ) {
-					return 'image';
-				}
-				return 'attachment';
-
-			case 'comment':
-				return 'comment';
-
-			case 'core':
-				return 'my-sites';
-
-			case 'menu':
-				return 'menu';
-
-			case 'plugin':
-				return 'plugins';
-
-			case 'post':
-				return 'posts';
-
-			case 'rewind':
-				return 'history';
-
-			case 'term':
-				return 'folder';
-
-			case 'theme':
-				return 'themes';
-
-			case 'user':
-				return 'user';
-		}
-
-		return 'info-outline';
-	}
-
 	getStatus() {
-		const { name } = this.props;
+		const { activityName } = this.props;
 
-		switch ( name ) {
+		switch ( activityName ) {
 			case 'widget__removed':
 				return 'is-error';
 
@@ -91,7 +35,7 @@ export default class ActivityIcon extends PureComponent {
 		}
 
 		// Try matching the "verb" part of the name
-		const suffix = name.split( '__' )[ 1 ];
+		const suffix = head( split( activityName, '__', 1 ) );
 		switch ( suffix ) {
 			case 'deleted':
 			case 'error':
@@ -104,12 +48,12 @@ export default class ActivityIcon extends PureComponent {
 	}
 
 	render() {
-		const icon = this.getIcon();
+		const { activityIcon } = this.props;
 		const classes = classNames( 'activity-log-item__activity-icon', this.getStatus() );
 
 		return (
 			<div className={ classes }>
-				<Gridicon icon={ icon } size={ 24 } />
+				<Gridicon icon={ activityIcon } size={ 24 } />
 			</div>
 		);
 	}

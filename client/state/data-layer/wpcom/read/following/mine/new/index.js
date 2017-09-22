@@ -17,7 +17,7 @@ import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestFollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -50,7 +50,7 @@ export function requestFollow( { dispatch, getState }, action ) {
 export function receiveFollow( store, action, response ) {
 	if ( response && response.subscribed ) {
 		const subscription = subscriptionFromApi( response.subscription );
-		store.dispatch( local( follow( action.payload.feedUrl, subscription ) ) );
+		store.dispatch( bypassDataLayer( follow( action.payload.feedUrl, subscription ) ) );
 	} else {
 		followError( store, action, response );
 	}
@@ -70,7 +70,7 @@ export function followError( { dispatch }, action, response ) {
 		dispatch( recordFollowError( action.payload.feedUrl, response.info ) );
 	}
 
-	dispatch( local( unfollow( action.payload.feedUrl ) ) );
+	dispatch( bypassDataLayer( unfollow( action.payload.feedUrl ) ) );
 }
 
 export default {

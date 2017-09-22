@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
@@ -79,6 +80,8 @@ class PostShare extends Component {
 		post: PropTypes.object,
 		siteId: PropTypes.number,
 		disabled: PropTypes.bool,
+		showClose: PropTypes.bool,
+		onClose: PropTypes.func,
 
 		// connect prps
 		connections: PropTypes.array,
@@ -102,7 +105,7 @@ class PostShare extends Component {
 	};
 
 	state = {
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
+		message: PostMetadata.publicizeMessage( this.props.post ) || '',
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
@@ -224,7 +227,6 @@ class PostShare extends Component {
 			<PublicizeMessage
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
-				preview={ this.props.post.title }
 				requireCount={ requireCount }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength } />
@@ -539,21 +541,24 @@ class PostShare extends Component {
 
 		const {
 			hasRepublicizeFeature,
+			hasFetchedConnections,
 			postId,
 			siteId,
 			siteSlug,
 			translate,
+			showClose,
+			onClose,
 		} = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
 		}
 
-		const classes = classNames(
-			'post-share__wrapper',
-			{ 'has-connections': this.hasConnections() },
-			{ 'has-republicize-scheduling-feature': hasRepublicizeFeature },
-		);
+		const classes = classNames( 'post-share__wrapper', {
+			'is-placeholder': ! hasFetchedConnections,
+			'has-connections': this.hasConnections(),
+			'has-republicize-scheduling-feature': hasRepublicizeFeature,
+		} );
 
 		return (
 			<div className="post-share">
@@ -577,6 +582,20 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
+					{ showClose && (
+						<Button
+							borderless
+							aria-label={ translate( 'Close post sharing' ) }
+							className="post-share__close"
+							data-tip-target="post-share__close"
+							onClick={ onClose }
+						>
+							<Gridicon icon="cross" />
+						</Button>
+					) }
+					{ ! hasFetchedConnections && (
+						<div className="post-share__placeholder" />
+					) }
 					{ this.renderRequestSharingNotice() }
 					{ this.renderConnectionsWarning() }
 					{ this.renderPrimarySection() }

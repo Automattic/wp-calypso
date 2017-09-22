@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
 import {
@@ -44,11 +45,15 @@ export const CommentDetailPost = ( {
 				<div className="comment-detail__post-info">
 					{ parentCommentAuthorDisplayName &&
 						<span>
-							{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+							<Emojify>
+								{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+							</Emojify>
 						</span>
 					}
 					<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ recordReaderCommentOpened }>
-						{ parentCommentContent }
+						<Emojify>
+							{ parentCommentContent }
+						</Emojify>
 					</a>
 				</div>
 			</div>
@@ -61,11 +66,15 @@ export const CommentDetailPost = ( {
 			<div className="comment-detail__post-info">
 				{ postAuthorDisplayName &&
 					<span>
-						{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
+						<Emojify>
+							{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
+						</Emojify>
 					</span>
 				}
 				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
-					{ postTitle || translate( 'Untitled' ) }
+					<Emojify>
+						{ postTitle || translate( 'Untitled' ) }
+					</Emojify>
 				</a>
 			</div>
 		</div>

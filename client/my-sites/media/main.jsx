@@ -55,6 +55,10 @@ class Media extends Component {
 			redirect += '/' + this.props.selectedSite.slug;
 		}
 
+		if ( this.props.selectedSite ) {
+			MediaActions.setLibrarySelectedItems( this.props.selectedSite.ID, [] );
+		}
+
 		page( redirect );
 	};
 
@@ -200,9 +204,11 @@ class Media extends Component {
 		const selectedCount = selected.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
-			'It will be permanently removed from all other locations where it currently appears.',
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.',
 			'Are you sure you want to delete these items? ' +
-			'They will be permanently removed from all other locations where they currently appear.',
+			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+			'This cannot be undone.',
 			{ count: selectedCount }
 		);
 

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -24,6 +23,7 @@ import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsList from './plugins-list';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
@@ -44,6 +44,9 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
+import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import HeaderButton from 'components/header-button';
+import { isEnabled } from 'config';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -53,12 +56,10 @@ const PluginsMain = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.props.sites.on( 'change', this.refreshPlugins );
 		PluginsStore.on( 'change', this.refreshPlugins );
 	},
 
 	componentWillUnmount() {
-		this.props.sites.removeListener( 'change', this.refreshPlugins );
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	},
 
@@ -98,7 +99,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getPluginsState( nextProps ) {
-		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
+		const sites = this.props.sites,
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
 			plugins: this.getPluginsFromStore( nextProps, sites ),
@@ -119,26 +120,27 @@ const PluginsMain = React.createClass( {
 	},
 
 	getFilters() {
+		const { translate } = this.props;
 		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
 		return [
 			{
-				title: this.translate( 'All', { context: 'Filter label for plugins list' } ),
-				path: '/plugins' + siteFilter,
+				title: translate( 'All', { context: 'Filter label for plugins list' } ),
+				path: '/plugins/manage' + siteFilter,
 				id: 'all'
 			},
 			{
-				title: this.translate( 'Active', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Active', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/active' + siteFilter,
 				id: 'active'
 			},
 			{
-				title: this.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Inactive', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/inactive' + siteFilter,
 				id: 'inactive'
 			},
 			{
-				title: this.translate( 'Updates', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Updates', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/updates' + siteFilter,
 				id: 'updates'
 			}
@@ -146,8 +148,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	isFetchingPlugins() {
-		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-		return sites.some( PluginsStore.isFetchingSite );
+		return this.props.sites.some( PluginsStore.isFetchingSite );
 	},
 
 	getSelectedText() {
@@ -159,59 +160,62 @@ const PluginsMain = React.createClass( {
 	},
 
 	getSearchPlaceholder() {
+		const { translate } = this.props;
+
 		switch ( this.props.filter ) {
 			case 'active':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return translate( 'Search All…', { textOnly: true } );
 
 			case 'inactive':
-				return this.translate( 'Search Inactive…', { textOnly: true } );
+				return translate( 'Search Inactive…', { textOnly: true } );
 
 			case 'updates':
-				return this.translate( 'Search Updates…', { textOnly: true } );
+				return translate( 'Search Updates…', { textOnly: true } );
 
 			case 'all':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return translate( 'Search All…', { textOnly: true } );
 		}
 	},
 
 	getEmptyContentUpdateData() {
+		const { translate } = this.props;
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
+			emptyContentData.title = translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
 				args: { siteName: selectedSite.title },
 				components: { span: <span className="plugins__plugin-list-state" /> },
 				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
-			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
+			emptyContentData.title = translate( 'All plugins are up to date.', { textOnly: true } );
 		}
 
 		if ( this.getUpdatesTabVisibility() ) {
 			return emptyContentData;
 		}
 
-		emptyContentData.action = this.translate( 'All Plugins', { textOnly: true } );
+		emptyContentData.action = translate( 'All Plugins', { textOnly: true } );
 
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
+				emptyContentData.title = translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			} else {
 				// buisness plan sites
-				emptyContentData.title = this.translate( 'Plugins are updated automatically on %(siteName)s.', {
+				emptyContentData.title = translate( 'Plugins are updated automatically on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			}
 		} else {
-			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
+			emptyContentData.title = translate( 'No updates are available.', { textOnly: true } );
 			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
 		}
@@ -220,14 +224,15 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentData() {
+		const { translate } = this.props;
 		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
 
 		switch ( this.props.filter ) {
 			case 'active':
-				emptyContentData.title = this.translate( 'No plugins are active.', { textOnly: true } );
+				emptyContentData.title = translate( 'No plugins are active.', { textOnly: true } );
 				break;
 			case 'inactive':
-				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
+				emptyContentData.title = translate( 'No plugins are inactive.', { textOnly: true } );
 				break;
 			case 'updates':
 				emptyContentData = this.getEmptyContentUpdateData();
@@ -246,7 +251,7 @@ const PluginsMain = React.createClass( {
 		}
 
 		return some(
-			this.props.sites.getSelectedOrAllWithPlugins(),
+			this.props.sites,
 			site => site && this.props.isJetpackSite( site.ID ) && this.props.canJetpackSiteUpdateFiles( site.ID )
 		);
 	},
@@ -258,33 +263,17 @@ const PluginsMain = React.createClass( {
 	},
 
 	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
+		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	},
 
 	renderPluginsContent() {
-		const plugins = this.state.plugins || [];
-		const { selectedSite } = this.props;
+		const { plugins = [] } = this.state;
+		const { filter, search } = this.props;
 
-		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
-			if ( this.props.search ) {
-				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
-					textOnly: true,
-					args: {
-						searchQuery: this.props.search
-					}
-				} );
+		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
+		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
 
-				return <PluginsBrowser
-						hideSearchForm
-						site={ selectedSite ? selectedSite.slug : null }
-						path={ this.context.path }
-						sites={ this.props.sites }
-						search={ this.props.search }
-						store={ this.context.store }
-						searchTitle={ searchTitle }
-					/>;
-			}
-
+		if ( ! showInstalledPluginList && ! search ) {
 			const emptyContentData = this.getEmptyContentData();
 			if ( emptyContentData ) {
 				return <EmptyContent
@@ -294,14 +283,44 @@ const PluginsMain = React.createClass( {
 					action={ emptyContentData.action } />;
 			}
 		}
+
+		const installedPluginsList = showInstalledPluginList && (
+			<PluginsList
+				header={ this.props.translate( 'Installed Plugins' ) }
+				plugins={ plugins }
+				pluginUpdateCount={ this.state.pluginUpdateCount }
+				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+			/>
+		);
+
+		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
+			<h3 className="plugins__more-header">More Plugins</h3>
+		);
+
+		let searchTitle;
+		if ( search ) {
+			searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+				textOnly: true,
+				args: {
+					searchQuery: search,
+				},
+			} );
+		}
+
+		const suggestedPluginsList = showSuggestedPluginsList && (
+			<PluginsBrowser
+				hideSearchForm
+				path={ this.props.context.path }
+				search={ search }
+				searchTitle={ searchTitle }
+			/>
+		);
+
 		return (
-			<div className="plugins__lists">
-				<PluginsList
-					header={ this.translate( 'Plugins' ) }
-					plugins={ plugins }
-					sites={ this.props.sites }
-					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
+			<div>
+				{ installedPluginsList }
+				{ morePluginsHeader }
+				{ suggestedPluginsList }
 			</div>
 		);
 	},
@@ -340,6 +359,48 @@ const PluginsMain = React.createClass( {
 		} );
 	},
 
+	handleAddPluginButtonClick() {
+		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
+	},
+
+	renderAddPluginButton() {
+		const { selectedSiteSlug, translate } = this.props;
+		const browserUrl = '/plugins/browse' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		return (
+			<HeaderButton
+				icon="plus"
+				label={ translate( 'Add Plugin' ) }
+				aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
+				href={ browserUrl }
+				onClick={ this.handleAddPluginButtonClick }
+			/>
+		);
+	},
+
+	handleUploadPluginButtonClick() {
+		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
+	},
+
+	renderUploadPluginButton() {
+		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
+			return null;
+		}
+
+		const { selectedSiteSlug, translate } = this.props;
+		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		return (
+			<HeaderButton
+				icon="cloud-upload"
+				label={ translate( 'Upload Plugin' ) }
+				aria-label={ translate( 'Upload Plugin' ) }
+				href={ uploadUrl }
+				onClick={ this.handleUploadPluginButtonClick }
+			/>
+		);
+	},
+
 	render() {
 		const {
 			category,
@@ -354,7 +415,7 @@ const PluginsMain = React.createClass( {
 
 		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
-				<Main>
+				<Main wideLayout>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<WpcomPluginPanel { ...{
@@ -373,57 +434,58 @@ const PluginsMain = React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 						section="plugins"
 						featureExample={ this.getMockPluginItems() } />
 				</Main>
 			);
 		}
 
-		const containerClass = classNames( {
-			'main-column': true,
-			plugins: true,
-			'search-open': this.getSearchOpen()
+		const navItems = this.getFilters().map( filterItem => {
+			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+				return null;
+			}
+
+			const attr = {
+				key: filterItem.id,
+				path: filterItem.path,
+				selected: filterItem.id === this.props.filter,
+			};
+
+			if ( 'updates' === filterItem.id ) {
+				attr.count = this.state.pluginUpdateCount;
+			}
+			return (
+				<NavItem { ...attr } >
+					{ filterItem.title }
+				</NavItem>
+			);
 		} );
 
 		return (
-			<Main className={ containerClass }>
+			<Main wideLayout>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-								return null;
-							}
-
-							const attr = {
-								key: filterItem.id,
-								path: filterItem.path,
-								selected: filterItem.id === this.props.filter,
-							};
-
-							if ( 'updates' === filterItem.id ) {
-								attr.count = this.state.pluginUpdateCount;
-							}
-							return (
-								<NavItem { ...attr } >
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.doSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() } />
-				</SectionNav>
+				<div className="plugins__header">
+					<SectionNav selectedText={ this.getSelectedText() }>
+						<NavTabs>
+							{ navItems }
+						</NavTabs>
+						<Search
+							pinned
+							fitsContainer
+							onSearch={ this.doSearch }
+							initialValue={ this.props.search }
+							ref="url-search"
+							analyticsGroup="Plugins"
+							placeholder={ this.getSearchPlaceholder() } />
+					</SectionNav>
+					<div className="plugins__header-buttons">
+						{ this.renderAddPluginButton() }
+						{ this.renderUploadPluginButton() }
+					</div>
+				</div>
 				{ this.renderPluginsContent() }
 			</Main>
 		);
@@ -435,8 +497,9 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			sites: getSelectedOrAllSitesWithPlugins( state ),
 			selectedSite,
-			selectedSiteId: selectedSiteId,
+			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
@@ -450,5 +513,5 @@ export default connect(
 				: canCurrentUserManagePlugins( state ) )
 		};
 	},
-	{ wporgFetchPluginData }
+	{ wporgFetchPluginData, recordGoogleEvent }
 )( localize( PluginsMain ) );

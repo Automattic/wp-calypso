@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -13,10 +14,10 @@ import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
-const CompactPost = ( { post, postByline, children, isDiscover } ) => {
+const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="reader-post-card__post">
+		<div className="reader-post-card__post" onClick={ onClick }>
 			<FeaturedAsset
 				canonicalMedia={ post.canonical_media }
 				postUrl={ post.URL }
@@ -33,9 +34,7 @@ const CompactPost = ( { post, postByline, children, isDiscover } ) => {
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>
-								{ post.title }
-							</Emojify>
+							<Emojify>{ post.title }</Emojify>
 						</a>
 					</h1>
 				</AutoDirection>
@@ -48,9 +47,9 @@ const CompactPost = ( { post, postByline, children, isDiscover } ) => {
 };
 
 CompactPost.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	postByline: React.PropTypes.object,
-	isDiscover: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	postByline: PropTypes.object,
+	isDiscover: PropTypes.bool,
 };
 
 export default CompactPost;

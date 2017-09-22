@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes, noop, partition } from 'lodash';
@@ -108,7 +109,7 @@ export const EligibilityWarnings = ( {
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
 					{ ! isEligible && translate(
-						'You must resolve the errors above before proceeding. '
+						'The errors above must be resolved before proceeding. '
 					) }
 					{ isEligible && warnings.length > 0 && translate(
 						'If you proceed you will no longer be able to use these features. '

@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -31,8 +32,8 @@ const ReaderExcerpt = ( { post, isDiscover } ) => {
 };
 
 ReaderExcerpt.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	isDiscover: React.PropTypes.bool,
+	post: PropTypes.object.isRequired,
+	isDiscover: PropTypes.bool,
 };
 
 export default ReaderExcerpt;

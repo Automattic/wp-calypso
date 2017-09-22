@@ -11,6 +11,7 @@ import {
 	flowRight as compose,
 	map,
 	size,
+	update,
 } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -18,7 +19,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import LanguageSelector from 'components/forms/language-selector';
+import LanguagePicker from 'components/language-picker';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
@@ -43,6 +44,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
+import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
@@ -110,6 +112,18 @@ const Account = React.createClass( {
 		this.updateUserSetting( 'language', value );
 		const redirect = value !== originalLanguage ? '/me/account' : false;
 		this.setState( { redirect } );
+	},
+
+	updateColorScheme( colorScheme ) {
+		const settingName = 'calypso_preferences.colorScheme';
+
+		// Set a fallback color scheme if no default value is provided by the API.
+		// This is a workaround that allows us to use userSettings.updateSetting() without an
+		// existing value. Without this workaround the save button wouldn't become active.
+		// TODO: the API should provide a default value, which would make this line obsolete
+		update( this.props.userSettings.settings, settingName, value => value || 'default' );
+
+		this.updateUserSetting( settingName, colorScheme );
 	},
 
 	getEmailAddress() {
@@ -515,20 +529,29 @@ const Account = React.createClass( {
 
 				<FormFieldset>
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
-					<LanguageSelector
+					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						id="language"
 						languages={ config( 'languages' ) }
-						name="language"
-						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
+						onClick={ this.recordClickEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={ this.getUserSetting( 'language' ) || '' }
 						onChange={ this.updateLanguage }
 					/>
+					<FormSettingExplanation>
+						{ translate( 'This is the language of the interface you see across WordPress.com as a whole.' ) }
+					</FormSettingExplanation>
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
 				{ this.communityTranslator() }
+
+				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+					<FormFieldset>
+						<FormLabel htmlFor="color_scheme">
+							{ translate( 'Admin Color Scheme' ) }
+						</FormLabel>
+						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+					</FormFieldset> }
 
 				{ this.renderHolidaySnow() }
 

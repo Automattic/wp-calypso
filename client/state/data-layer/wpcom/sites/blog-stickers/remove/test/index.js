@@ -14,7 +14,7 @@ import {
 } from '../';
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {
@@ -80,7 +80,7 @@ describe( 'blog-sticker-remove', () => {
 				},
 			} );
 			expect( dispatch ).to.have.been.calledWith(
-				local( addBlogSticker( 123, 'broken-in-reader' ) ),
+				bypassDataLayer( addBlogSticker( 123, 'broken-in-reader' ) ),
 			);
 		} );
 	} );

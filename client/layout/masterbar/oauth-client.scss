@@ -1,6 +1,5 @@
 .masterbar__oauth-client {
 	background-color: $blue-wordpress;
-	height: 50px;
 
 	nav {
 		display: flex;
@@ -10,7 +9,6 @@
 
 	ul {
 		margin: 0;
-		padding-left: 0;
 
 		li {
 			list-style-type: none;
@@ -26,15 +24,28 @@
 	}
 }
 
+.masterbar__oauth-client-main-nav {
+	width: 100%;
+}
+
+.masterbar__oauth-client-current {
+	float: left;
+}
+
+.masterbar__oauth-client-logo img {
+	max-height: 47px;
+}
+
 .masterbar__oauth-client-wpcc-sign-in {
 	background-color: rgba(255, 255, 255, 0.15);
 	border-radius: 3px;
 	color: #fff;
 	display: block;
+	float: right;
 	line-height: 100%;
-	margin-right: 5px;
+	margin-right: 4px;
 	position: relative;
-	top: 6px;
+	top: 4px;
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.2);
@@ -88,52 +99,48 @@
 		background-color: #fff;
 		border: 1px solid #d3d3d3;
 		box-sizing: border-box;
-		height: 83px;
+		height: 85px;
 		line-height: 83px;
 		margin: 0 auto;
-		padding: 0 10px;
 		z-index: 100;
 
-		a {
-			color: #fff;
-			float: left;
-			line-height: 55px;
-			padding: 0 10px;
-			transition: 0.05 all ease-in-out;
+		nav {
+			box-sizing: border-box;
+			max-width: 1500px;
+			margin-left: auto;
+			margin-right: auto;
+			padding-left: 55px;
+			padding-right: 13px;
 		}
 	}
 
-	.masterbar__oauth-client-logo img {
-		max-width: none;
-		margin-top: 22px;
-		vertical-align: middle;
-	}
+	.masterbar__oauth-client-logo {
+		padding-top: 23px;
+		transition: 0.05 all ease-in-out;
 
-	.masterbar__oauth-client-main-nav {
-		margin: 0;
+		img {
+			max-height: 37px;
+		}
 	}
 
 	.masterbar__oauth-client-close {
 		float: right;
-		padding-top: 13px;
 
 		a {
 			color: #999;
-			cursor: pointer;
-			float: right;
 			font-size: 0.9em;
+			font-weight: bold;
+			padding: 32px;
 			text-decoration: none;
 			text-transform: uppercase;
-			font-weight: bold;
 		}
 	}
 
 	.button.is-primary {
-		background: #a46497;
+		background-color: #a46497;
 		border-radius: 100px;
 		border: none;
 		color: #fff;
-		cursor: pointer;
 		font-size: 1.1em;
 		padding: 15px 50px;
 		text-decoration: none;
@@ -143,12 +150,25 @@
 		&:focus {
 			background: #696969;
 		}
+
+		&:disabled {
+			background-color: #DDDDDD;
+		}
 	}
 
-	button {
-		float: none;
-		margin-left: 0;
-		max-width: 300px;
+	.login__form,
+	.login__form-social,
+	.logged-out-form {
+		.button {
+			max-width: 300px;
+		}
+	}
+
+	.login__form {
+		.button {
+			float: none;
+			margin: 0;
+		}
 	}
 
 	input[type='text'],
@@ -160,16 +180,16 @@
 		border-radius: 3px;
 		box-sizing: border-box;
 		color: #666;
-		font-size: 1.25em !important;
-		line-height: 1.563 !important;
-		padding: 0.7em !important;
-		transition: all ease-in-out 0.2;
+		font-size: 1.25em;
+		line-height: 1.563;
+		padding: 0.7em;
+		transition: all ease-in-out 0.2s;
 		width: 100%;
 
-		&:focus {
+		&:focus, &.is-error:hover {
 			border: 1px solid #e6e6e6;
-			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8) !important;
-			outline: 0 !important;
+			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			outline: 0;
 		}
 	}
 
@@ -194,7 +214,14 @@
 	$woo-form-whitespace-480: 24px;
 	$woo-form-whitespace-660: 100px;
 
-	.wp-login__container {
+	.card {
+		box-shadow: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.wp-login__container,
+	.step-wrapper {
 		background: #fff;
 		border: 1px solid #d3d3d3;
 		border-radius: 5px;
@@ -211,12 +238,16 @@
 		}
 	}
 
-	.card {
-		box-shadow: none;
-		padding-left: 0;
-		padding-right: 0;
+	.step-wrapper {
+		margin-bottom: 50px;
+		width: 778px;
 	}
 
+	.logged-out-form {
+		max-width: 100%;
+	}
+
+	.logged-out-form label,
 	.login__form-userdata label {
 		font-size: 16px;
 		font-weight: normal;
@@ -253,5 +284,30 @@
 		font-weight: normal;
 		line-height: 3em;
 		text-align: center;
+	}
+
+	.logged-out-form__footer {
+		background: none;
+		border: none;
+		text-align: center;
+	}
+
+	.logged-out-form__links {
+		text-align: center;
+	}
+
+	// Signup styles
+	.signup__step {
+		background: linear-gradient( to bottom, #e6e6e6, transparent );
+	}
+
+	.signup-processing__content:after {
+		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
+		content: '';
+		height: 100px;
+		left: 50%;
+		position: absolute;
+		top: 33px;
+		width: 69px;
 	}
 }

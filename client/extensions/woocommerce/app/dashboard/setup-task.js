@@ -45,6 +45,8 @@ class SetupTask extends Component {
 					primaryActions.map( ( action, index ) => {
 						// Only the last primary action gets to be a primary button
 						const primary = ( index === primaryActions.length - 1 ) && ! taskCompleted;
+						// Make buttons borderless if the task is completed
+						const borderless = taskCompleted;
 						const target = '/' === action.path.substring( 0, 1 ) ? '_self' : '_blank';
 						const trackClick = ( e ) => {
 							this.track( action.analyticsProp );
@@ -62,6 +64,7 @@ class SetupTask extends Component {
 								onClick={ trackClick }
 								key={ index }
 								primary={ primary }
+								borderless={ borderless }
 								target={ target }>
 								{ action.label }
 							</Button>
@@ -93,9 +96,8 @@ class SetupTask extends Component {
 
 	render = () => {
 		const { actions, checked, explanation, label } = this.props;
-
 		return (
-			<div className="dashboard__setup-task">
+			<div className={ checked ? 'dashboard__setup-task is-checked' : 'dashboard__setup-task' }>
 				<div className="dashboard__setup-task-status">
 					{ checked ? <Gridicon icon="checkmark" size={ 36 } /> : null }
 				</div>

@@ -107,7 +107,11 @@ class MediaLibrary extends Component {
 	}
 
 	filterRequiresUpgrade() {
-		const { filter, site } = this.props;
+		const { filter, site, source } = this.props;
+		if ( source ) {
+			return false;
+		}
+
 		switch ( filter ) {
 			case 'audio':
 				return ! ( site && site.options.upgraded_filetypes_enabled || site.jetpack );

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
 
@@ -146,7 +147,7 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<FoldableCard
-				className="date-time-format"
+				className="date-time-format site-settings__foldable-card"
 				clickableHeader
 				header={ this.getCardHeader() }
 			>

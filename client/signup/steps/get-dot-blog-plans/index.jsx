@@ -1,7 +1,13 @@
-// External dependencies
-import React, { PropTypes } from 'react';
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
 
-// Internal dependencies
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
 import { cartItems } from 'lib/cart-values';
 import PlansStep from 'signup/steps/plans';
 

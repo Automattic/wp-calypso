@@ -13,6 +13,7 @@ import { noop } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import CommentDetailActions from './comment-detail-actions';
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
@@ -27,11 +28,12 @@ export const CommentDetailHeader = ( {
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
-	edit,
 	isBulkEdit,
+	isEditMode,
 	isExpanded,
 	postTitle,
 	toggleApprove,
+	toggleEditMode,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
@@ -56,17 +58,33 @@ export const CommentDetailHeader = ( {
 			className={ classes }
 			onClick={ isExpanded ? noop : handleFullHeaderClick }
 		>
-			{ isExpanded &&
+			{ isExpanded && ! isEditMode &&
 				<CommentDetailActions
-					edit={ edit }
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
+					toggleEditMode={ toggleEditMode }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
+			}
+
+			{ isExpanded && isEditMode &&
+				<div className="comment-detail__header-edit-mode">
+					<div className="comment-detail__header-edit-title">
+						<Gridicon icon="pencil" />
+						<span>{ translate( 'Edit Comment' ) }</span>
+					</div>
+					<Button
+						borderless
+						className="comment-detail__action-collapse"
+						onClick={ toggleEditMode }
+					>
+						<Gridicon icon="cross" />
+					</Button>
+				</div>
 			}
 
 			{ ! isExpanded &&
@@ -81,31 +99,40 @@ export const CommentDetailHeader = ( {
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
 								<strong>
-									{ authorDisplayName }
+									<Emojify>
+										{ authorDisplayName }
+									</Emojify>
 								</strong>
 								<span>
-									{ urlToDomainAndPath( authorUrl ) }
+									<Emojify>
+										{ urlToDomainAndPath( authorUrl ) }
+									</Emojify>
 								</span>
 							</div>
 							<div className="comment-detail__author-info-element">
-								{ translate( 'on %(postTitle)s', { args: {
-									postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-								} } ) }
+								<Emojify>
+									{ translate( 'on %(postTitle)s', { args: {
+										postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+									} } ) }
+								</Emojify>
 							</div>
 						</div>
 					</div>
 					<AutoDirection>
 						<div className="comment-detail__comment-preview">
-							{ decodeEntities( stripHTML( commentContent ) ) }
+							<Emojify>
+								{ decodeEntities( stripHTML( commentContent ) ) }
+							</Emojify>
 						</div>
 					</AutoDirection>
 				</div>
 			}
 
-			{ ! isBulkEdit &&
+			{ ! isBulkEdit && ! isEditMode &&
 				<Button
 					borderless
 					className="comment-detail__action-collapse"
+					disabled={ isEditMode }
 					onClick={ isExpanded ? toggleExpanded : noop }
 				>
 					<Gridicon icon="chevron-down" />

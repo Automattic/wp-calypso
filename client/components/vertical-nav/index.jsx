@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 
-const VerticalNav = React.createClass( {
+class VerticalNav extends Component {
 	render() {
 		return (
 			<div className="vertical-nav">
@@ -11,6 +11,6 @@ const VerticalNav = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default VerticalNav;

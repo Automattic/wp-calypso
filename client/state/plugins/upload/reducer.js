@@ -8,6 +8,8 @@ import {
 } from 'state/utils';
 
 import {
+	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
+	AUTOMATED_TRANSFER_STATUS_SET,
 	PLUGIN_UPLOAD,
 	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
@@ -20,6 +22,7 @@ export const uploadedPluginId = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: ( state, { pluginId } ) => pluginId,
 	[ PLUGIN_UPLOAD_CLEAR ]: () => null,
 	[ PLUGIN_UPLOAD_ERROR ]: () => null,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { uploadedPluginId: pluginId } ) => pluginId,
 } ) );
 
 export const uploadError = keyedReducer( 'siteId', createReducer( {}, {
@@ -41,6 +44,8 @@ export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: () => false,
 	[ PLUGIN_UPLOAD_ERROR ]: () => false,
 	[ PLUGIN_UPLOAD_CLEAR ]: () => false,
+	[ AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP ]: () => true,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { status } ) => status !== 'complete',
 } ) );
 
 export default combineReducers( {

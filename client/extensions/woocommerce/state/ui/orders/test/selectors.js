@@ -24,12 +24,16 @@ const state = {
 			ui: {
 				orders: {
 					123: {
-						currentPage: 2,
-						currentSearch: 'example',
+						list: {
+							currentPage: 2,
+							currentSearch: 'example',
+						}
 					},
 					234: {
-						currentPage: 5,
-						currentSearch: 'test',
+						list: {
+							currentPage: 5,
+							currentSearch: 'test',
+						}
 					},
 				},
 			},

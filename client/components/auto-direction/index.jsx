@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 /**
@@ -171,6 +172,9 @@ const setChildDirection = ( child ) => {
 	if ( child && child.props.children ) {
 		let innerChildDirection = null;
 		const children = React.Children.map( child.props.children, innerChild => {
+			if ( ! innerChild ) {
+				return innerChild;
+			}
 			if ( innerChildDirection ) {
 				return innerChild;
 			}

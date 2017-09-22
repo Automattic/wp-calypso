@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
 /**
  * Internal dependencies

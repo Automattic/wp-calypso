@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ import {
 	getCurrentUserSiteCount,
 } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
-import { isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
@@ -49,6 +49,11 @@ import {
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -61,6 +66,9 @@ const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
+
+const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
+const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
 const HelpContact = React.createClass( {
 
@@ -128,9 +136,9 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, site } = contactForm;
+		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( site.URL );
+		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
 		this.props.sendHappychatMessage( message );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
@@ -582,15 +590,11 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation } = this.state;
-		const { translate } = this.props;
+		const { confirmation, olark } = this.state;
+		const { translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
-		}
-
-		if ( olark.isSupportClosed ) {
-			return <HelpContactClosed />;
 		}
 
 		if ( this.shouldShowPreloadForm() ) {
@@ -643,8 +647,27 @@ const HelpContact = React.createClass( {
 			this.getContactFormPropsVariation( supportVariation ),
 		);
 
+		const currentDate = Date.now();
+
+		// Customers sent to Directly and Forum are not affected by the GM closures
+		const isUserAffectedByGM17Closure = ( supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM );
+		// Paid users will still have ticket support through the GM
+		const doesUserHavePaidPlan = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ].indexOf( selectedSitePlanSlug ) >= 0;
+
+		const shouldShowClosureNotice = (
+			isUserAffectedByGM17Closure &&
+			currentDate > startShowingGM17ClosureNoticeAt &&
+			currentDate < stopShowingGM17ClosureNoticeAt
+		);
+
+		// When support is closed for the GM, the contact form should hide for non-paid plans that are affected by the closure.
+		// This leaves the form open for paid plans and users who are sent to Directly/Forums for support.
+		// Note: this hides the form for Jetpack plans as well, which has been noted as acceptable for the GM.
+		const shouldHideContactForm = ( olark.isSupportClosed && isUserAffectedByGM17Closure && ! doesUserHavePaidPlan );
+
 		return (
 			<div>
+				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
@@ -653,7 +676,7 @@ const HelpContact = React.createClass( {
 						showDismiss={ false }
 					/>
 				}
-				<HelpContactForm { ...contactFormProps } />
+				{ ! shouldHideContactForm && <HelpContactForm { ...contactFormProps } /> }
 			</div>
 		);
 	},
@@ -678,6 +701,7 @@ const HelpContact = React.createClass( {
 export default connect(
 	( state ) => {
 		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+		const selectedSitePlan = getSitePlan( state, helpSelectedSiteId );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
@@ -694,6 +718,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			isRequestingSites: isRequestingSites( state ),
 			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
+			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
 		};
 	},
 	{

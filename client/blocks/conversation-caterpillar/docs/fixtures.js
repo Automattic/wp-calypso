@@ -1,4 +1,10 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { keyBy, map } from 'lodash';
+
 export const comments = [
 	{
 		ID: 1,
@@ -158,3 +164,8 @@ export const comments = [
 		date: '2016-04-18T15:22:00+00:00',
 	},
 ];
+
+export const commentsTree = {
+	...keyBy( comments, 'ID' ),
+	children: map( comments, 'ID' ),
+};

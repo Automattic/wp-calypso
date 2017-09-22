@@ -12,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestPostEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
@@ -42,7 +42,7 @@ export function receivePostEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
 		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
 	);
-	dispatch( local( subscribeToNewPostEmail( action.payload.blogId ) ) );
+	dispatch( bypassDataLayer( subscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
 export default {

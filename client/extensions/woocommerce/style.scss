@@ -8,11 +8,13 @@
 	@import 'app/order/order-details/style';
 	@import 'app/order/order-fulfillment/style';
 	@import 'app/order/order-notes/style';
-	@import 'app/order/order-refund/style';
+	@import 'app/order/order-payment/style';
 	@import 'app/orders/style';
 	@import 'app/settings/payments/style';
+	@import 'app/settings/payments/stripe/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
+	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';

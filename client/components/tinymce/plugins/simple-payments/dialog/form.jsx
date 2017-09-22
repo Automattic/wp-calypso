@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, padEnd } from 'lodash';
+import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ReduxFormFieldset, { RenderFieldset } from 'components/redux-forms/redux-form-fieldset';
+import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 
@@ -57,32 +57,13 @@ const SUPPORTED_CURRENCY_LIST = [
 	'THB',
 ];
 
-const VISUAL_CURRENCY_LIST = {
-	USD: 'USD $',
-	EUR: 'EUR €',
-	AUD: 'AUD $',
-	BRL: 'BRL R$',
-	CAD: 'CAD $',
-	CZK: 'CZK Kč',
-	DKK: 'DKK kr',
-	HKD: 'HKD $',
-	HUF: 'HUF Ft',
-	ILS: 'ILS ₪',
-	JPY: 'JPY ¥',
-	MYR: 'MYR RM',
-	MXN: 'MXN $',
-	TWD: 'TWD NT$',
-	NZD: 'NZD $',
-	NOK: 'NOK kr',
-	PHP: 'PHP ₱',
-	PLN: 'PLN zł',
-	GBP: 'GBP £',
-	RUB: 'RUB ₽',
-	SGD: 'SGD $',
-	SEK: 'SEK kr',
-	CHF: 'CHF',
-	THB: 'THB ฿',
-};
+const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
+	const { symbol } = getCurrencyDefaults( code );
+	// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
+	// trim the dot at the end, e.g., 'kr.' becomes 'kr'
+	const label = symbol === code ? code : `${ code } ${ trimEnd( symbol, '.' ) }`;
+	return { code, label };
+} );
 
 // based on https://stackoverflow.com/a/10454560/59752
 function decimalPlaces( number ) {
@@ -154,14 +135,13 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
 	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
 	return (
-		<RenderFieldset
+		<FieldsetRenderer
 			inputComponent={ FormCurrencyInput }
 			{ ...price }
-			{ ...props }
+			{ ...omit( props, [ 'names' ] ) }
 			currencySymbolPrefix={ currency.input.value }
 			onCurrencyChange={ currency.input.onChange }
-			currencyList={ SUPPORTED_CURRENCY_LIST }
-			visualCurrencyList={ VISUAL_CURRENCY_LIST }
+			currencyList={ VISUAL_CURRENCY_LIST }
 			placeholder={ placeholder }
 		/>
 	);

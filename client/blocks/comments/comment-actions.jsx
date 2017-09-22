@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +25,7 @@ const CommentActions = ( {
 	showModerationTools,
 	translate,
 	activeEditCommentId,
-	activeReplyCommentID,
+	activeReplyCommentId,
 	commentId,
 	handleReply,
 	onReplyCancel,
@@ -33,9 +35,11 @@ const CommentActions = ( {
 	spamComment,
 	editComment,
 	editCommentCancel,
+	showReadMore,
+	onReadMore,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-	const showCancelReplyButton = activeReplyCommentID === commentId;
+	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const showCancelEditButton = activeEditCommentId === commentId;
 	const isApproved = status === 'approved';
 
@@ -46,21 +50,32 @@ const CommentActions = ( {
 
 	return (
 		<div className="comments__comment-actions">
-			{ showReplyButton &&
+			{ showReadMore && (
+				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
+					<Gridicon
+						icon="chevron-down"
+						size={ 18 }
+						className="comments__comment-actions-read-more-icon"
+					/>
+					{ translate( 'Read More' ) }
+				</button>
+			) }
+			{ showReplyButton && (
 				<button className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
-					<span className="comments__comment-actions-reply-label">
-						{ translate( 'Reply' ) }
-					</span>
-				</button> }
-			{ showCancelReplyButton &&
+					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
+				</button>
+			) }
+			{ showCancelReplyButton && (
 				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</button> }
-			{ showCancelEditButton &&
+				</button>
+			) }
+			{ showCancelEditButton && (
 				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
 					{ translate( 'Cancel' ) }
-				</button> }
+				</button>
+			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
 				tagName="button"
@@ -68,26 +83,20 @@ const CommentActions = ( {
 				postId={ post.ID }
 				commentId={ commentId }
 			/>
-			{ showModerationTools &&
+			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
 					<button className="comments__comment-actions-trash" onClick={ trashComment }>
 						<Gridicon icon="trash" size={ 18 } />
-						<span className="comments__comment-actions-like-label">
-							{ translate( 'Trash' ) }
-						</span>
+						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
 					</button>
 					<button className="comments__comment-actions-spam" onClick={ spamComment }>
 						<Gridicon icon="spam" size={ 18 } />
-						<span className="comments__comment-actions-like-label">
-							{ translate( 'Spam' ) }
-						</span>
+						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
 					</button>
 					<button className="comments__comment-actions-edit" onClick={ editComment }>
 						<Gridicon icon="pencil" size={ 18 } />
-						<span className="comments__comment-actions-like-label">
-							{ translate( 'Edit' ) }
-						</span>
+						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
 					</button>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
@@ -110,9 +119,14 @@ const CommentActions = ( {
 							{ translate( 'Edit' ) }
 						</PopoverMenuItem>
 					</EllipsisMenu>
-				</div> }
+				</div>
+			) }
 		</div>
 	);
+};
+
+CommentActions.defaultProps = {
+	onReadMore: noop,
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {

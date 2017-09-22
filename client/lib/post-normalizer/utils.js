@@ -163,6 +163,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'www.audiomack.com',
 		'player.theplatform.com',
 		'embed.radiopublic.com',
+		'gfycat.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
