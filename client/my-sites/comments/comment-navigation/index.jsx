@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { get, includes, isUndefined, map } from 'lodash';
@@ -27,6 +28,10 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 import { getSiteComment } from 'state/selectors';
+import {
+	NEWEST_FIRST,
+	OLDEST_FIRST,
+} from '../constants';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -41,6 +46,7 @@ export class CommentNavigation extends Component {
 		isSelectedAll: false,
 		selectedCount: 0,
 		status: 'unapproved',
+		sortOrder: NEWEST_FIRST,
 	};
 
 	bulkDeletePermanently = () => {
@@ -48,7 +54,7 @@ export class CommentNavigation extends Component {
 		if ( isUndefined( window ) || window.confirm( translate( 'Delete these comments permanently?' ) ) ) {
 			setBulkStatus( 'delete' )();
 		}
-	}
+	};
 
 	changeFilter = status => () => this.props.recordChangeFilter( status );
 
@@ -76,7 +82,7 @@ export class CommentNavigation extends Component {
 		}
 
 		return navItems;
-	}
+	};
 
 	getStatusPath = status => 'unapproved' !== status
 		? `/comments/${ status }/${ this.props.siteFragment }`
@@ -90,7 +96,7 @@ export class CommentNavigation extends Component {
 		}
 
 		return this.props.toggleSelectAll( this.props.visibleComments );
-	}
+	};
 
 	render() {
 		const {
@@ -101,6 +107,8 @@ export class CommentNavigation extends Component {
 			query,
 			selectedCount,
 			setBulkStatus,
+			setSortOrder,
+			sortOrder,
 			status: queryStatus,
 			toggleBulkEdit,
 			translate,
@@ -198,6 +206,34 @@ export class CommentNavigation extends Component {
 
 				{ isEnabled( 'manage/comments/bulk-actions' ) &&
 					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+						<span className="comment-navigation__sort-buttons">
+							<Button
+								compact
+								onClick={ setSortOrder( NEWEST_FIRST ) }
+								className={ classNames( {
+									'comment-navigation__button-selected': sortOrder === NEWEST_FIRST,
+									first: true
+								} ) }
+							>
+								{ translate(
+									'Newest',
+									{ comment: 'Chronological order for sorting the comments list.' }
+								) }
+							</Button>
+							<Button
+								compact
+								onClick={ setSortOrder( OLDEST_FIRST ) }
+								className={ classNames( {
+									'comment-navigation__button-selected': sortOrder === OLDEST_FIRST,
+									last: true
+								} ) }
+							>
+								{ translate(
+									'Oldest',
+									{ comment: 'Chronological order for sorting the comments list.' }
+								) }
+							</Button>
+						</span>
 						<Button compact onClick={ toggleBulkEdit }>
 							{ translate( 'Bulk Edit' ) }
 						</Button>

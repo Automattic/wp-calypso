@@ -68,6 +68,25 @@
 	}
 }
 
+.comment-navigation__sort-buttons {
+	margin-right: 32px;
+}
+
+.comment-navigation__sort-buttons .first {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: 0;
+}
+
+.comment-navigation__sort-buttons .last {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.comment-navigation__button-selected {
+	background-color: $gray-light;
+}
+
 .comment-list .pagination {
 	margin-top: 16px;
 }
