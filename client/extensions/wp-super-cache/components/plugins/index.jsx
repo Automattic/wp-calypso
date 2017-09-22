@@ -9,6 +9,7 @@ import { map, pick } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
@@ -39,17 +40,20 @@ class PluginsTab extends Component {
 			<div className="wp-super-cache__plugins-tab">
 				<SectionHeader label={ translate( 'Plugins' ) } />
 				<Card>
-					{ map( plugins, ( { desc, enabled, key, title } ) => {
+					{ map( plugins, ( { desc, enabled, key, title, url } ) => {
 						return (
 							<div key={ key }>
 								<FormToggle
 									checked={ !! enabled }
 									disabled={ isRequesting || isSaving }
 									onChange={ handleAutosavingToggle( 'plugin_list' ) /* FIXME */ }>
-									<span>{ title }</span>
+									<span>{ title } { url }</span>
 								</FormToggle>
 								<FormSettingExplanation>
-									{ desc }
+									{ desc + ' ' }
+									{ url && <ExternalLink href={ url } icon={ true } target="_blank">
+										{ translate( 'Plugin Information' ) }
+									</ExternalLink> }
 								</FormSettingExplanation>
 							</div>
 						);

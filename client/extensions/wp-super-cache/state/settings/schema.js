@@ -73,6 +73,7 @@ export const itemsSchema = {
 						enabled: { type: 'boolean' },
 						key: { type: 'string' },
 						title: { type: 'string' },
+						url: { type: 'string' },
 					}
 				},
 				post_count: { type: 'string' },
