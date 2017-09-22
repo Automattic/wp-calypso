@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { isEqual, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ const AddressFields = ( props ) => {
 		errors,
 	} = props;
 
-	if ( isNormalized && normalized && ! _.isEqual( normalized, values ) ) {
+	if ( isNormalized && normalized && ! isEqual( normalized, values ) ) {
 		const selectNormalizedAddressHandler = ( select ) => props.selectNormalizedAddress( orderId, siteId, group, select );
 		const confirmAddressSuggestionHandler = () => props.confirmAddressSuggestion( orderId, siteId, group );
 		const editAddressHandler = () => props.editAddress( orderId, siteId, group );
@@ -62,7 +62,7 @@ const AddressFields = ( props ) => {
 		);
 	}
 
-	const fieldErrors = _.isObject( errors ) ? errors : {};
+	const fieldErrors = isObject( errors ) ? errors : {};
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] || '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );

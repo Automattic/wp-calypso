@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { isEmpty, map, pickBy, reduce, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,7 +92,7 @@ const PackageInfo = ( props ) => {
 	};
 
 	const renderItems = () => {
-		const canAddItems = _.some( selected, ( sel, selId ) => ( packageId !== selId && sel.items.length ) );
+		const canAddItems = some( selected, ( sel, selId ) => ( packageId !== selId && sel.items.length ) );
 
 		if ( ! pckg.items.length ) {
 			return (
@@ -126,16 +126,16 @@ const PackageInfo = ( props ) => {
 			</div> );
 		}
 
-		const groups = _.reduce( flatRateGroups, ( result, groupTitle, groupId ) => {
-			const definitions = _.pickBy( all, { group_id: groupId } );
-			if ( _.isEmpty( definitions ) ) {
+		const groups = reduce( flatRateGroups, ( result, groupTitle, groupId ) => {
+			const definitions = pickBy( all, { group_id: groupId } );
+			if ( isEmpty( definitions ) ) {
 				return result;
 			}
 
 			result[ groupId ] = { title: groupTitle, definitions };
 			return result;
 		}, {
-			custom: { title: __( 'Custom Packages' ), definitions: _.pickBy( all, p => ! p.group_id ) },
+			custom: { title: __( 'Custom Packages' ), definitions: pickBy( all, p => ! p.group_id ) },
 		} );
 
 		return (
@@ -145,13 +145,13 @@ const PackageInfo = ( props ) => {
 				</div>
 				<FormSelect onChange={ packageOptionChange } value={ pckg.box_id } isError={ pckgErrors.box_id }>
 					<option value={ 'not_selected' } key={ 'not_selected' }>{ __( 'Please select a package' ) }</option> )
-					{ _.map( groups, ( group, groupId ) => {
-						if ( _.isEmpty( group.definitions ) ) {
+					{ map( groups, ( group, groupId ) => {
+						if ( isEmpty( group.definitions ) ) {
 							return null;
 						}
 
 						return <optgroup label={ group.title } key={ groupId }>
-							{ _.map( group.definitions, renderPackageOption ) }
+							{ map( group.definitions, renderPackageOption ) }
 						</optgroup>;
 					} ) }
 				</FormSelect>
