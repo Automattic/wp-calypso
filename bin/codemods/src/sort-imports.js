@@ -55,7 +55,7 @@ const removeExtraNewlines = str => str.replace(/(import.*\n)\n+(import)/g, '$1$2
  * Adds a newline in between the last import of external deps + the internal deps docblock
  */
 const addNewlineBeforeDocBlock = str => str.replace( /(import.*\n)(\/\*\*)/, '$1\n$2' );
-const isExternal = importNode => externalDependenciesSet.has( importNode.source.value );
+const isExternal = importNode => externalDependenciesSet.has( importNode.source.value.split('/')[ 0 ] );
 
 /**
  *
