@@ -3,19 +3,19 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import nock from 'nock';
 
 /**
  * Internal dependencies
  */
 import { openPrintingFlow } from '../actions';
+import {
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+ } from '../../action-types';
 
-const context = {
-	storeOptions: {
-		countriesData: {
-			US: '',
-		},
-	},
-};
+const orderId = 1;
+const siteId = 123456;
 
 function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	const defaultProps = {
@@ -38,15 +38,25 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 
 	return function() {
 		return {
-			shippingLabel: {
-				form: {
-					origin,
-					destination,
-					packages: {
-						selected: {},
-					},
-					rates: {
-						values: {},
+			extensions: {
+				woocommerce: {
+					woocommerceServices: {
+						[ siteId ]: {
+							shippingLabel: {
+								[ orderId ]: {
+									form: {
+										origin,
+										destination,
+										packages: {
+											selected: {},
+										},
+										rates: {
+											values: {},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -75,13 +85,25 @@ function createGetFormErrorsFn( opts = {} ) {
 
 describe( 'Shipping label Actions', () => {
 	describe( '#openPrintingFlow', () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+			.reply( 200, {
+				data: {
+					status: 200,
+					body: {
+						normalized: true,
+						is_trivial_normalization: true,
+					},
+				},
+			} );
+
 		describe( 'origin validation ignored', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow()(
+			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
 				createGetStateFn( { origin: { ignoreValidation: true } } ),
-				context,
 				createGetFormErrorsFn(
 					{ setOriginError: false, setDestinationError: false }
 				)
@@ -89,19 +111,19 @@ describe( 'Shipping label Actions', () => {
 
 			it( 'toggle origin', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: 'TOGGLE_STEP',
+					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) )
 					.to.equal( true );
 			} );
 			it( 'do not toggle destination', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: 'TOGGLE_STEP',
+					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) )
 					.to.equal( false );
 			} );
 			it( 'open printing flow', () => {
 				expect( dispatchSpy.calledWith( {
-					type: 'OPEN_PRINTING_FLOW',
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) )
 					.to.equal( true );
 			} );
@@ -110,10 +132,9 @@ describe( 'Shipping label Actions', () => {
 		describe( 'origin errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow()(
+			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
 				createGetStateFn(),
-				context,
 				createGetFormErrorsFn(
 					{ setOriginError: true, setDestinationError: false }
 				)
@@ -121,17 +142,17 @@ describe( 'Shipping label Actions', () => {
 
 			it( 'toggles origin', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: 'TOGGLE_STEP',
+					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 			it( 'do not toggle destination', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: 'TOGGLE_STEP',
+					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
 				expect( dispatchSpy.calledWith( {
-					type: 'OPEN_PRINTING_FLOW',
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 		} );
@@ -139,12 +160,11 @@ describe( 'Shipping label Actions', () => {
 		describe( 'destination validation ignored', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow()(
+			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
 				createGetStateFn( {
 					destination: { ignoreValidation: true },
 				} ),
-				context,
 				createGetFormErrorsFn(
 					{ setOriginError: false, setDestinationError: false }
 				)
@@ -152,17 +172,17 @@ describe( 'Shipping label Actions', () => {
 
 			it( 'toggle destination', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: 'TOGGLE_STEP',
+					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 			it( 'do not toggle origin', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: 'TOGGLE_STEP',
+					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
 				expect( dispatchSpy.calledWith( {
-					type: 'OPEN_PRINTING_FLOW',
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 		} );
@@ -170,10 +190,9 @@ describe( 'Shipping label Actions', () => {
 		describe( 'destination errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow()(
+			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
 				createGetStateFn(),
-				context,
 				createGetFormErrorsFn(
 					{ setOriginError: false, setDestinationError: true }
 				)
@@ -181,19 +200,21 @@ describe( 'Shipping label Actions', () => {
 
 			it( 'toggle destination', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'destination', type: 'TOGGLE_STEP',
+					stepName: 'destination', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 			it( 'do not toggle origin', () => {
 				expect( dispatchSpy.calledWith( {
-					stepName: 'origin', type: 'TOGGLE_STEP',
+					stepName: 'origin', type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP, orderId, siteId,
 				} ) ).to.equal( false );
 			} );
 			it( 'open printing flow', () => {
 				expect( dispatchSpy.calledWith( {
-					type: 'OPEN_PRINTING_FLOW',
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
 		} );
+
+		nock.cleanAll();
 	} );
 } );

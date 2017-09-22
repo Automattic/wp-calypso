@@ -10,8 +10,8 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import ShippingRates from '../list';
-import Dropdown from 'components/dropdown';
-import FieldError from 'components/field-error';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
+import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 
 /*
  * Useful data for testing
@@ -200,7 +200,7 @@ describe( '<ShippingRates />', () => {
 				availableRates={ {} }
 			/>
 		);
-		expect( wrapper.exists() ).to.equal( true );
+		expect( wrapper ).to.have.length( 1 );
 	} );
 
 	describe( 'Individual package', () => {
