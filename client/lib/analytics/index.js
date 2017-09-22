@@ -23,6 +23,7 @@ import { statsdTimingUrl } from 'lib/analytics/statsd';
  */
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
+const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps,
@@ -444,10 +445,12 @@ const analytics = {
 	hotjar: {
 		addHotJarScript: function() {
 			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+				hotjarDebug( 'Not loading HotJar script' );
 				return;
 			}
 
 			( function( h, o, t, j, a, r ) {
+				hotjarDebug( 'Loading HotJar script' );
 				h.hj = h.hj || function() {
 					( h.hj.q = h.hj.q || [] ).push( arguments );
 				};
