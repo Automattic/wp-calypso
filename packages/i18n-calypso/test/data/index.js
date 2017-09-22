@@ -2,13 +2,13 @@
 var locale = {
 	'': {
 		localeSlug: 'de',
-		'Plural-Forms': ' nplurals=2; plural=n != 1;',
-		'MIME-Version': ' 1.0',
-		'X-Generator': ' GlotPress/0.1',
-		'Content-Type': ' text/plain; charset=UTF-8',
-		'PO-Revision-Date': ' 2014-08-11 23:50:52+0000',
-		'Content-Transfer-Encoding': ' 8bit',
-		'Project-Id-Version': ' WordPress.com'
+		'Plural-Forms': 'nplurals=2; plural=n != 1;',
+		'MIME-Version': '1.0',
+		'X-Generator': 'GlotPress/0.1',
+		'Content-Type': 'text/plain; charset=UTF-8',
+		'PO-Revision-Date': '2014-08-11 23:50:52+0000',
+		'Content-Transfer-Encoding': '8bit',
+		'Project-Id-Version': 'WordPress.com'
 	},
 	'test1': [
 		null,
