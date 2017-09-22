@@ -444,10 +444,15 @@
 
 .comment-detail__author-more-info {
 	border-bottom: 1px solid lighten( $gray, 30% );
-	color: $gray;
+	color: $gray-text-min;
 	display: none;
 	transform: scaleY( 0 );
 	transform-origin: top;
+
+	.gridicon {
+		color: $gray;
+		fill: $gray;
+	}
 }
 .comment-detail__author.is-expanded .comment-detail__author-more-info {
 	animation: comment-detail__author-more-info .15s linear;
@@ -476,17 +481,6 @@
 
 	@include breakpoint( ">660px" ) {
 		width: 50%;
-	}
-}
-
-a.comment-detail__author-more-element {
-	color: $gray;
-	cursor: pointer;
-	fill: $gray;
-	&:focus,
-	&:hover {
-		color: $blue-wordpress;
-		fill: $blue-wordpress;
 	}
 }
 
