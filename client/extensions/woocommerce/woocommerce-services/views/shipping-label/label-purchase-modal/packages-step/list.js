@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -12,11 +13,15 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import getPackageDescriptions from './get-package-descriptions';
-import getFormErrors from '../../../state/selectors/errors';
-import { openPackage } from '../../../state/actions';
+import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PackageList = ( props ) => {
-	const { selected, all, errors, packageId } = props;
+	const { orderId, siteId, selected, all, errors, packageId } = props;
 
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
@@ -33,7 +38,7 @@ const PackageList = ( props ) => {
 
 	const renderPackageListItem = ( pckgId, name, count ) => {
 		const isError = 0 < Object.keys( errors[ pckgId ] || {} ).length;
-		const onOpenClick = () => props.openPackage( pckgId );
+		const onOpenClick = () => props.openPackage( orderId, siteId, pckgId );
 		return (
 			<div className="packages-step__list-item" key={ pckgId }>
 				<div
@@ -77,6 +82,8 @@ const PackageList = ( props ) => {
 };
 
 PackageList.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	selected: PropTypes.object.isRequired,
 	all: PropTypes.object.isRequired,
 	packageId: PropTypes.string.isRequired,
@@ -84,15 +91,15 @@ PackageList.propTypes = {
 	openPackage: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
-	const errors = loaded && getFormErrors( state, storeOptions ).packages;
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const errors = loaded && getFormErrors( state, orderId, siteId ).packages;
 	return {
 		errors,
-		packageId: state.shippingLabel.openedPackageId,
-		selected: state.shippingLabel.form.packages.selected,
-		all: state.shippingLabel.form.packages.all,
+		packageId: shippingLabel.openedPackageId,
+		selected: shippingLabel.form.packages.selected,
+		all: shippingLabel.form.packages.all,
 	};
 };
 

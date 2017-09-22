@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -12,10 +13,15 @@ import _ from 'lodash';
  */
 import ShippingRates from './list';
 import StepContainer from '../step-container';
-import { hasNonEmptyLeaves } from 'lib/utils/tree';
-import { getRatesTotal } from 'apps/shipping-label/state/selectors/rates';
-import getFormErrors from '../../../state/selectors/errors';
-import { toggleStep, updateRate } from '../../../state/actions';
+import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+
+import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	getShippingLabel,
+	isLoaded,
+	getFormErrors,
+	getRatesTotal,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved ) => {
 	if ( ! packagesSaved ) {
@@ -75,16 +81,20 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 
 const RatesStep = ( props ) => {
 	const {
+		siteId,
+		orderId,
 		form,
 		values,
 		available,
 		currencySymbol,
 		errors,
 		expanded,
+		ratesTotal
 	} = props;
-	const summary = ratesSummary( values, available, getRatesTotal( form.rates ), currencySymbol, form.packages.saved );
+	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved );
 
-	const toggleStepHandler = () => props.toggleStep( 'rates' );
+	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'rates' );
+	const updateRateHandler = ( packageId, value ) => props.updateRate( orderId, siteId, packageId, value );
 	return (
 		<StepContainer
 			title={ __( 'Rates' ) }
@@ -99,7 +109,7 @@ const RatesStep = ( props ) => {
 				allPackages={ form.packages.all }
 				selectedRates={ values }
 				availableRates={ available }
-				updateRate={ props.updateRate }
+				updateRate={ updateRateHandler }
 				currencySymbol={ currencySymbol }
 				errors={ errors } />
 		</StepContainer>
@@ -107,6 +117,8 @@ const RatesStep = ( props ) => {
 };
 
 RatesStep.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	form: PropTypes.object.isRequired,
 	values: PropTypes.object.isRequired,
 	available: PropTypes.object.isRequired,
@@ -116,14 +128,16 @@ RatesStep.propTypes = {
 	updateRate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const loaded = state.shippingLabel.loaded;
-	const storeOptions = loaded ? state.shippingLabel.storeOptions : {};
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
-		...state.shippingLabel.form.rates,
-		form: state.shippingLabel.form,
+		...shippingLabel.form.rates,
+		form: shippingLabel.form,
 		currencySymbol: storeOptions.currency_symbol,
-		errors: loaded && getFormErrors( state, storeOptions ).rates,
+		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
+		ratesTotal: getRatesTotal( state, orderId, siteId ),
 	};
 };
 

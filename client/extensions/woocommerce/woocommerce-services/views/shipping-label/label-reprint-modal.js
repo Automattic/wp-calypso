@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
@@ -9,20 +10,26 @@ import { translate as __ } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Modal from 'components/modal';
-import ActionButtons from 'components/action-buttons';
-import Dropdown from 'components/dropdown';
-import { getPaperSizes } from 'lib/pdf-label-utils';
+import Dialog from 'components/dialog';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
+import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
+import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeReprintDialog, confirmReprint, updatePaperSize } from '../../state/actions';
+import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
-	const { reprintDialog, paperSize, storeOptions, label_id } = props;
+	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id } = props;
+
+	const onClose = () => props.closeReprintDialog( orderId, siteId );
+	const onConfirm = () => props.confirmReprint( orderId, siteId );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
+
 	return (
-		<Modal
+		<Dialog
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
-			onClose={ props.closeReprintDialog }
-			additionalClassNames="label-reprint-modal">
+			onClose={ onClose }
+			additionalClassNames="label-reprint-modal woocommerce">
 			<FormSectionHeading>
 				{ __( 'Reprint shipping label' ) }
 			</FormSectionHeading>
@@ -38,24 +45,26 @@ const ReprintDialog = ( props ) => {
 				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
 				title={ __( 'Paper size' ) }
 				value={ paperSize }
-				updateValue={ props.updatePaperSize } />
+				updateValue={ onPaperSizeChange } />
 			<ActionButtons buttons={ [
 				{
-					onClick: props.confirmReprint,
+					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: reprintDialog && reprintDialog.isFetching,
 					label: __( 'Print' ),
 				},
 				{
-					onClick: props.closeReprintDialog,
+					onClick: onClose,
 					label: __( 'Cancel' ),
 				},
 			] } />
-		</Modal>
+		</Dialog>
 	);
 };
 
 ReprintDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 	reprintDialog: PropTypes.object,
 	paperSize: PropTypes.string.isRequired,
 	storeOptions: PropTypes.object.isRequired,
@@ -64,9 +73,9 @@ ReprintDialog.propTypes = {
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state ) => {
-	const shippingLabel = state.shippingLabel;
-	const loaded = shippingLabel.loaded;
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
 		reprintDialog: loaded ? shippingLabel.reprintDialog : {},
 		paperSize: shippingLabel.paperSize,
