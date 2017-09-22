@@ -43,22 +43,20 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
-function SchemaError( errors ) {
-	this.name = 'SchemaError';
-	this.message = 'Failed to validate with JSON schema';
-	this.schemaErrors = errors;
+class SchemaError extends Error {
+	constructor( errors ) {
+		super( 'Failed to validate with JSON schema' );
+		this.schemaErrors = errors;
+	}
 }
 
-SchemaError.prototype = new Error;
-
-function TransformerError( error, transformer, data ) {
-	this.name = 'TransformerError';
-	this.message = error.message;
-	this.transformer = transformer;
-	this.originalData = data;
+class TransformerError extends Error {
+	constructor( error, transformer, data ) {
+		super( error.message );
+		this.transformer = transformer;
+		this.inputData = data;
+	}
 }
-
-TransformerError.prototype = new Error;
 
 export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
 	const options = Object.assign( { verbose: true }, schemaOptions );
