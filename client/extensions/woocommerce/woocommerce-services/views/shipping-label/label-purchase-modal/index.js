@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,16 +29,18 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
+	const { translate } = props;
+
 	const getPurchaseButtonLabel = () => {
 		if ( props.form.needsPrintConfirmation ) {
-			return __( 'Print' );
+			return translate( 'Print' );
 		}
 
 		if ( props.form.isSubmitting ) {
 			return (
 				<div>
 					<Spinner size={ 24 } className="label-purchase-modal__button-spinner" />
-					<span className="label-purchase-modal__purchasing-label">{ __( 'Purchasing...' ) }</span>
+					<span className="label-purchase-modal__purchasing-label">{ translate( 'Purchasing…' ) }</span>
 				</div>
 			);
 		}
@@ -50,17 +52,17 @@ const PurchaseDialog = ( props ) => {
 			const ratesTotal = props.ratesTotal;
 
 			if ( noNativePDFSupport ) {
-				return __( 'Buy (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
+				return translate( 'Buy (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
 			}
 
-			return __( 'Buy & Print (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
+			return translate( 'Buy & Print (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
 		}
 
 		if ( noNativePDFSupport ) {
-			return __( 'Buy' );
+			return translate( 'Buy' );
 		}
 
-		return __( 'Buy & Print' );
+		return translate( 'Buy & Print' );
 	};
 
 	const getPurchaseButtonAction = () => {
@@ -84,7 +86,7 @@ const PurchaseDialog = ( props ) => {
 	if ( ! props.form.needsPrintConfirmation ) {
 		buttons.push( {
 			onClick: onClose,
-			label: __( 'Cancel' ),
+			label: translate( 'Cancel' ),
 		} );
 	}
 
@@ -95,18 +97,20 @@ const PurchaseDialog = ( props ) => {
 			onClose={ onClose } >
 			<div className="label-purchase-modal__content">
 				<FormSectionHeading>
-					{ 1 === props.form.packages.selected.length ? __( 'Create shipping label' ) : __( 'Create shipping labels' ) }
+					{ 1 === props.form.packages.selected.length
+						? translate( 'Create shipping label' )
+						: translate( 'Create shipping labels' ) }
 				</FormSectionHeading>
 				<div className="label-purchase-modal__body">
 					<div className="label-purchase-modal__main-section">
 						<AddressStep
 							type="origin"
-							title={ __( 'Origin address' ) }
+							title={ translate( 'Origin address' ) }
 							siteId={ props.siteId }
 							orderId={ props.orderId } />
 						<AddressStep
 							type="destination"
-							title={ __( 'Destination address' ) }
+							title={ translate( 'Destination address' ) }
 							siteId={ props.siteId }
 							orderId={ props.orderId } />
 						<PackagesStep
@@ -150,4 +154,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { confirmPrintLabel, purchaseLabel, exitPrintingFlow }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PurchaseDialog );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PurchaseDialog ) );

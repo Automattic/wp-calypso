@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEqual, isObject } from 'lodash';
 
 /**
@@ -44,6 +44,7 @@ const AddressFields = ( props ) => {
 		group,
 		storeOptions,
 		errors,
+		translate,
 	} = props;
 
 	if ( isNormalized && normalized && ! isEqual( normalized, values ) ) {
@@ -74,21 +75,21 @@ const AddressFields = ( props ) => {
 		<div>
 			<TextField
 				id={ getId( 'name' ) }
-				title={ __( 'Name' ) }
+				title={ translate( 'Name' ) }
 				value={ getValue( 'name' ) }
 				updateValue={ updateValue( 'name' ) }
 				error={ fieldErrors.name } />
 			<div className="address-step__company-phone">
 				<TextField
 					id={ getId( 'company' ) }
-					title={ __( 'Company' ) }
+					title={ translate( 'Company' ) }
 					value={ getValue( 'company' ) }
 					updateValue={ updateValue( 'company' ) }
 					className="address-step__company"
 					error={ fieldErrors.company } />
 				<TextField
 					id={ getId( 'phone' ) }
-					title={ __( 'Phone' ) }
+					title={ translate( 'Phone' ) }
 					value={ formatPhoneForDisplay( getValue( 'phone' ), getValue( 'country' ) ) }
 					updateValue={ updatePhoneValue }
 					className="address-step__phone"
@@ -96,7 +97,7 @@ const AddressFields = ( props ) => {
 			</div>
 			<TextField
 				id={ getId( 'address' ) }
-				title={ __( 'Address' ) }
+				title={ translate( 'Address' ) }
 				value={ getValue( 'address' ) }
 				updateValue={ updateValue( 'address' ) }
 				className="address-step__address-1"
@@ -109,14 +110,14 @@ const AddressFields = ( props ) => {
 			<div className="address-step__city-state-postal-code">
 				<TextField
 					id={ getId( 'city' ) }
-					title={ __( 'City' ) }
+					title={ translate( 'City' ) }
 					value={ getValue( 'city' ) }
 					updateValue={ updateValue( 'city' ) }
 					className="address-step__city"
 					error={ fieldErrors.city } />
 				<StateDropdown
 					id={ getId( 'state' ) }
-					title={ __( 'State' ) }
+					title={ translate( 'State' ) }
 					value={ getValue( 'state' ) }
 					countryCode={ getValue( 'country' ) }
 					countriesData={ storeOptions.countriesData }
@@ -125,7 +126,7 @@ const AddressFields = ( props ) => {
 					error={ fieldErrors.state } />
 				<TextField
 					id={ getId( 'postcode' ) }
-					title={ __( 'Postal code' ) }
+					title={ translate( 'Postal code' ) }
 					value={ getValue( 'postcode' ) }
 					updateValue={ updateValue( 'postcode' ) }
 					className="address-step__postal-code"
@@ -133,7 +134,7 @@ const AddressFields = ( props ) => {
 			</div>
 			<CountryDropdown
 				id={ getId( 'country' ) }
-				title={ __( 'Country' ) }
+				title={ translate( 'Country' ) }
 				value={ getValue( 'country' ) }
 				disabled={ ! allowChangeCountry }
 				countriesData={ storeOptions.countriesData }
@@ -142,7 +143,7 @@ const AddressFields = ( props ) => {
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
 				onClick={ submitAddressForNormalizationHandler } >
-					{ __( 'Use this address' ) }
+					{ translate( 'Use this address' ) }
 			</StepConfirmationButton>
 		</div>
 	);
@@ -185,4 +186,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	}, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddressFields );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressFields ) );

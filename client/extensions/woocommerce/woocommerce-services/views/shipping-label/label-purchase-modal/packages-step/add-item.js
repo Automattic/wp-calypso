@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { includes, size, some } from 'lodash';
 
 /**
@@ -29,6 +29,7 @@ const AddItemDialog = ( props ) => {
 		openedPackageId,
 		selected,
 		all,
+		translate,
 	} = props;
 
 	if ( ! showAddItemDialog ) {
@@ -42,7 +43,7 @@ const AddItemDialog = ( props ) => {
 
 	const renderCheckbox = ( pckgId, itemIdx, item ) => {
 		const itemLabel = packageLabels[ pckgId ]
-			? __( '%(item)s from {{pckg/}}', { args: { item: item.name }, components: { pckg: getPackageNameElement( pckgId ) } } )
+			? translate( '%(item)s from {{pckg/}}', { args: { item: item.name }, components: { pckg: getPackageNameElement( pckgId ) } } )
 			: item;
 
 		const onChange = ( event ) => props.setAddedItem( orderId, siteId, pckgId, itemIdx, event.target.checked );
@@ -78,10 +79,10 @@ const AddItemDialog = ( props ) => {
 				onClickOutside={ onClose }
 				onClose={ onClose }
 				additionalClassNames="wcc-root packages-step__dialog" >
-			<FormSectionHeading>{ __( 'Add item' ) }</FormSectionHeading>
+			<FormSectionHeading>{ translate( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>
-					{ __( 'Which items would you like to add to {{pckg/}}?', {
+					{ translate( 'Which items would you like to add to {{pckg/}}?', {
 						components: {
 							pckg: getPackageNameElement( openedPackageId ),
 						}
@@ -91,12 +92,12 @@ const AddItemDialog = ( props ) => {
 			</div>
 			<ActionButtons buttons={ [
 				{
-					label: __( 'Add' ),
+					label: translate( 'Add' ),
 					isPrimary: true,
 					isDisabled: ! some( addedItems, size ),
 					onClick: () => props.addItems( orderId, siteId, openedPackageId ),
 				},
-				{ label: __( 'Close' ), onClick: onClose },
+				{ label: translate( 'Close' ), onClick: onClose },
 			] } />
 		</Dialog>
 	);
@@ -130,4 +131,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddItemDialog );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddItemDialog ) );

@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,14 +20,14 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
-	const { form, errors, paperSize } = props;
+	const { form, errors, paperSize, translate } = props;
 
 	return (
 		<div className="label-purchase-modal__sidebar">
 			<Dropdown
 				id={ 'paper_size' }
 				valuesMap={ getPaperSizes( form.origin.values.country ) }
-				title={ __( 'Paper size' ) }
+				title={ translate( 'Paper size' ) }
 				value={ paperSize }
 				updateValue={ props.updatePaperSize }
 				error={ errors.paperSize } />
@@ -58,4 +58,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { updatePaperSize }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( Sidebar );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Sidebar ) );
