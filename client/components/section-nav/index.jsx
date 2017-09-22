@@ -167,8 +167,8 @@ class SectionNav extends Component {
 	};
 
 	generateOnSearch = existingOnSearch => {
-		return ( search ) => {
-			existingOnSearch( search );
+		return ( ...args ) => {
+			existingOnSearch( ...args );
 			this.closeMobilePanel();
 		};
 	};
