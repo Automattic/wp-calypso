@@ -443,6 +443,14 @@
 	min-width: 80px;
 }
 
+.products__product-form-variation-table-wrapper {
+	.form-dimensions-input__length,
+	.form-dimensions-input__width,
+	.form-dimensions-input__height {
+		max-width: 80px;
+	}
+}
+
 .products__product-form-variation-image {
 	margin-bottom: 0;
 	margin-right: 0px;
@@ -547,6 +555,7 @@
 
 .products__product-name {
 	font-size: 13px;
+	text-align: left;
 }
 
 .products__product-form-sku {
@@ -832,6 +841,10 @@
 	.products__product-weight-input {
 		width: 150px;
 
+		.form-text-input-with-affixes__suffix {
+			flex-grow: 0;
+		}
+
 		@include breakpoint( ">480px" ) {
 			.form-text-input {
 				min-width: 60px;
@@ -856,15 +869,6 @@
 
 		@include breakpoint( ">480px" ) {
 			margin-top: -16px;
-		}
-	}
-
-	@include breakpoint( ">480px" ) {
-		.form-dimensions-input__length,
-		.form-dimensions-input__width,
-		.form-dimensions-input__height {
-			min-width: 60px;
-			max-width: 100px;
 		}
 	}
 

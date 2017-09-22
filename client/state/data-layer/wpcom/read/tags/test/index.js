@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +67,7 @@ describe( 'wpcom-api', () => {
 						path: `/read/tags/${ slug }`,
 						onSuccess: action,
 						onFailure: action,
-					} ),
+					} )
 				);
 			} );
 
@@ -84,7 +85,7 @@ describe( 'wpcom-api', () => {
 						path: '/read/tags',
 						onSuccess: action,
 						onFailure: action,
-					} ),
+					} )
 				);
 			} );
 		} );
@@ -94,14 +95,14 @@ describe( 'wpcom-api', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 
-				receiveTagsSuccess( { dispatch }, action, null, successfulSingleTagResponse );
+				receiveTagsSuccess( { dispatch }, action, successfulSingleTagResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
 						payload: fromApi( successfulSingleTagResponse ),
 						resetFollowingData: false,
-					} ),
+					} )
 				);
 			} );
 
@@ -109,7 +110,7 @@ describe( 'wpcom-api', () => {
 				const action = requestTagsAction();
 				const dispatch = sinon.spy();
 
-				receiveTagsSuccess( { dispatch }, action, null, successfulFollowedTagsResponse );
+				receiveTagsSuccess( { dispatch }, action, successfulFollowedTagsResponse );
 
 				const transformedResponse = map( fromApi( successfulFollowedTagsResponse ), tag => ( {
 					...tag,
@@ -121,7 +122,7 @@ describe( 'wpcom-api', () => {
 					receiveTagsAction( {
 						payload: transformedResponse,
 						resetFollowingData: true,
-					} ),
+					} )
 				);
 			} );
 		} );
@@ -132,7 +133,7 @@ describe( 'wpcom-api', () => {
 				const dispatch = sinon.spy();
 				const error = 'could not find tag(s)';
 
-				receiveTagsError( { dispatch }, action, null, error );
+				receiveTagsError( { dispatch }, action, error );
 
 				expect( dispatch ).to.have.been.calledTwice;
 				expect( dispatch ).to.have.been.calledWithMatch( {

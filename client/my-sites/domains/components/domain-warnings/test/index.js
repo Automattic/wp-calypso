@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import assert from 'assert';
-import identity from 'lodash/identity';
+import { identity } from 'lodash';
 import moment from 'moment';
 import ReactDom from 'react-dom';
 import React from 'react';

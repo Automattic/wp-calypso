@@ -14,15 +14,9 @@
 @import 'shared/dropdowns';                    // dropdown styling
 @import 'shared/livechat';                     // styles for the popup livechat box
 @import 'shared/welcome';                      // welcome messages
-@import 'shared/infinite-scroll-end';          // Last page marker once infinite scroll has reached end
 
 // Main
 @import 'main';                                // global layout and responsive styles
-
-// Sections
-@import 'sections/updated-confirmation';       // confirmation boxes for posts/pages
-@import 'sections/notifications';              // notifications styles
-@import 'sections/domain-search';              // Domain Search styles
 
 // Components
 @import 'components';
@@ -31,6 +25,7 @@
 @import 'extensions/woocommerce/style';
 @import 'extensions/wp-job-manager/style';
 @import 'extensions/wp-super-cache/style';
+@import 'extensions/zoninator/style';
 
 // Devdocs
 @import 'devdocs/design/style';

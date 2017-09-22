@@ -1,12 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +17,7 @@ import i18n, { localize } from 'i18n-calypso';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
-import ValidationFieldset from 'signup/validation-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -31,6 +34,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { createSocialUserFailed } from 'state/login/actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -54,7 +58,7 @@ class SignupForm extends Component {
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
@@ -113,7 +117,51 @@ class SignupForm extends Component {
 		const initialState = this.formStateController.getInitialState();
 		const stateWithFilledUsername = this.autoFillUsername( initialState );
 
+		this.maybeRedirectToSocialConnect( this.props );
+
 		this.setState( { form: stateWithFilledUsername } );
+	}
+
+	getUserExistsError( props ) {
+		const { step } = props;
+
+		if ( ! step || step.status !== 'invalid' ) {
+			return null;
+		}
+
+		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+
+		return userExistsError;
+	}
+
+	/***
+	 * If the step is invalid because we had an error that the user exists,
+	 * we should prompt user with a request to connect his social account
+	 * to his existing WPCOM account
+	 *
+	 * @param {Object} props react component props that has step info
+	 */
+	maybeRedirectToSocialConnect( props ) {
+		const userExistsError = this.getUserExistsError( props );
+
+		if ( userExistsError ) {
+			const { service, id_token, access_token } = props.step;
+			const socialInfo = { service, id_token, access_token };
+
+			this.props.createSocialUserFailed( socialInfo, userExistsError );
+			page(
+				login( {
+					isNative: config.isEnabled( 'login/native-login-links' ),
+					redirectTo: this.props.redirectToAfterLoginUrl,
+				} )
+			);
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
+			this.maybeRedirectToSocialConnect( nextProps );
+		}
 	}
 
 	sanitizeEmail( email ) {
@@ -221,6 +269,12 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = () => {
+		const data = this.getUserData();
+		// When a user moves away from the signup form without having entered
+		// anything do not show error messages, think going to click log in.
+		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+			return;
+		}
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
@@ -261,12 +315,35 @@ class SignupForm extends Component {
 		} );
 	};
 
+	getNoticeMessageWithLogin( notice ) {
+		const link = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.props.redirectToAfterLoginUrl
+		} );
+
+		if ( notice.error === '2FA_enabled' ) {
+			return (
+				<span>
+					<p>
+						{ notice.message }&nbsp;
+						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />
+							}
+						} ) }
+					</p>
+				</span>
+			);
+		}
+		return notice.message;
+	}
+
 	globalNotice( notice ) {
 		return <Notice
 			className="signup-form__notice"
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
-			text={ notice.message } />;
+			text={ this.getNoticeMessageWithLogin( notice ) } />;
 	}
 
 	getUserData() {
@@ -285,7 +362,7 @@ class SignupForm extends Component {
 
 		let link = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirectTo: this.props.getRedirectToAfterLoginUrl
+			redirectTo: this.props.redirectToAfterLoginUrl
 		} );
 
 		return map( messages, ( message, error_code ) => {
@@ -313,58 +390,58 @@ class SignupForm extends Component {
 
 		return (
 			<div>
-				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
-					<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
-					<FormTextInput
-						autoFocus={ ! this.props.isSocialSignupEnabled }
-						autoCapitalize="off"
-						autoCorrect="off"
-						className="signup-form__input"
-						disabled={ this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput }
-						id="email"
-						name="email"
-						type="email"
-						value={ formState.getFieldValue( this.state.form, 'email' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
-						isValid={ this.state.validationInitialized && isEmailValid }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent } />
-					{ this.emailDisableExplanation() }
-				</ValidationFieldset>
+				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormTextInput
+					autoFocus={ ! this.props.isSocialSignupEnabled }
+					autoCapitalize="off"
+					autoCorrect="off"
+					className="signup-form__input"
+					disabled={ this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput }
+					id="email"
+					name="email"
+					type="email"
+					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
+					isValid={ this.state.validationInitialized && isEmailValid }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent } />
+				{ this.emailDisableExplanation() }
 
-				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
-					<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
-					<FormTextInput
-						autoCapitalize="off"
-						autoCorrect="off"
-						className="signup-form__input"
-						disabled={ this.state.submitting || this.props.disabled }
-						id="username"
-						name="username"
-						value={ formState.getFieldValue( this.state.form, 'username' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'username' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent } />
-				</ValidationFieldset>
+				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
+				) }
 
-				<ValidationFieldset errorMessages={ formState.getFieldErrorMessages( this.state.form, 'password' ) }>
-					<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
-					<FormPasswordInput
-						className="signup-form__input"
-						disabled={ this.state.submitting || this.props.disabled }
-						id="password"
-						name="password"
-						value={ formState.getFieldValue( this.state.form, 'password' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'password' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-						submitting={ this.state.submitting || this.props.submitting } />
-					<FormSettingExplanation>
-						{ this.props.translate( 'Your password must be at least six characters long.' ) }
-					</FormSettingExplanation>
-				</ValidationFieldset>
+				<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
+				<FormTextInput
+					autoCapitalize="off"
+					autoCorrect="off"
+					className="signup-form__input"
+					disabled={ this.state.submitting || this.props.disabled }
+					id="username"
+					name="username"
+					value={ formState.getFieldValue( this.state.form, 'username' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
+					isValid={ formState.isFieldValid( this.state.form, 'username' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent } />
+
+				{ formState.isFieldInvalid( this.state.form, 'username' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+				) }
+
+				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormPasswordInput
+					className="signup-form__input"
+					disabled={ this.state.submitting || this.props.disabled }
+					id="password"
+					name="password"
+					value={ formState.getFieldValue( this.state.form, 'password' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
+					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent }
+					submitting={ this.state.submitting || this.props.submitting } />
+				{ this.passwordValidationExplanation() }
 			</div>
 		);
 	}
@@ -382,21 +459,37 @@ class SignupForm extends Component {
 	}
 
 	termsOfServiceLink() {
-		return (
-			<p className="signup-form__terms-of-service-link">{
-				this.props.translate(
-					'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
-					{
-						components: {
-							a: <a
-								href={ this.getTermsOfServiceUrl() }
-								onClick={ this.handleOnClickTos }
-								target="_blank"
-								rel="noopener noreferrer" />
+		const tosLink = <a
+			href={ this.getTermsOfServiceUrl() }
+			onClick={ this.handleOnClickTos }
+			target="_blank"
+			rel="noopener noreferrer" />;
+		const tosText = this.props.translate(
+			'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
+			{
+				components: {
+					a: tosLink
+				}
+			}
+		);
+
+		if ( this.props.isSocialSignupEnabled ) {
+			return (
+				<p className="signup-form__terms-of-service-link">{
+					this.props.translate(
+						'By creating an account via any of the options below, you agree to our {{a}}Terms of Service{{/a}}.',
+						{
+							components: {
+								a: tosLink
+							}
 						}
-					}
-				)
-			}</p>
+					)
+				}</p>
+			);
+		}
+
+		return (
+			<p className="signup-form__terms-of-service-link">{ tosText }</p>
 		);
 	}
 
@@ -416,6 +509,26 @@ class SignupForm extends Component {
 				<FormSettingExplanation noValidate={ true }>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
+	}
+
+	passwordValidationExplanation() {
+		const passwordValue = formState.getFieldValue( this.state.form, 'password' );
+
+		if ( formState.isFieldInvalid( this.state.form, 'password' ) ) {
+			return (
+				<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />
+			);
+		}
+
+		if ( passwordValue && passwordValue < 6 ) {
+			return (
+				<FormSettingExplanation>
+					{ this.props.translate( 'Your password must be at least six characters long.' ) }
+				</FormSettingExplanation>
+			);
+		}
+
+		return false;
 	}
 
 	formFooter() {
@@ -444,7 +557,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true } )
+			? login( { isNative: true, redirectTo: this.props.redirectToAfterLoginUrl } )
 			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 
 		return (
@@ -457,6 +570,10 @@ class SignupForm extends Component {
 	}
 
 	render() {
+		if ( this.getUserExistsError( this.props ) ) {
+			return null;
+		}
+
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 
@@ -488,6 +605,7 @@ class SignupForm extends Component {
 export default connect(
 	null,
 	{
-		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' )
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		createSocialUserFailed
 	}
 )( localize( SignupForm ) );

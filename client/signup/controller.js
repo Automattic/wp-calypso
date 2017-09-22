@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import qs from 'qs';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -75,7 +75,7 @@ export default {
 	},
 
 	start( context ) {
-		var basePath = route.sectionify( context.path ),
+		const basePath = route.sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );

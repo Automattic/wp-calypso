@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import transform from 'lodash/transform';
+import { transform } from 'lodash';
 
 /**
  * Internal dependencies

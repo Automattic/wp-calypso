@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ export const items = keyedReducer(
 	createReducer( [], {
 		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
 			uniqBy( state.concat( action.payload.sites ), 'feedId' ),
-	} ),
+	} )
 );
 
 /**
@@ -38,7 +39,7 @@ export const pagingOffset = keyedReducer(
 	createReducer( null, {
 		[ READER_RECOMMENDED_SITES_RECEIVE ]: ( state, action ) =>
 			Math.max( action.payload.offset, state ),
-	} ),
+	} )
 );
 
 export default combineReducers( {

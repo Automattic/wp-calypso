@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 const WAIT_INITIAL = 1; // initial wait in milliseconds
 const WAIT_MULTIPLIER = 2;

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/startsWith';
-import filter from 'lodash/filter';
+import { filter, startsWith } from 'lodash';
 
 function domainManagementRoot() {
 	return '/domains/manage';
@@ -100,13 +99,13 @@ function domainManagementTransferToOtherSite( siteName, domainName ) {
 }
 
 function getSectionName( pathname ) {
-	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' ),
-		matches = regExp.exec( pathname );
+	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
+	const matches = regExp.exec( pathname );
 
 	return matches ? matches[ 1 ] : null;
 }
 
-module.exports = {
+export default {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
 	domainManagementDns,

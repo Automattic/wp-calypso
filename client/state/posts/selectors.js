@@ -17,6 +17,7 @@ import {
 	normalizePostForEditing,
 	normalizePostForDisplay
 } from './utils';
+import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -331,6 +332,32 @@ export function getEditedPostValue( state, siteId, postId, field ) {
 }
 
 /**
+ * Returns true if the edited post visibility is private.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether edited post visibility is private
+ */
+export function isEditedPostPrivate( state, siteId, postId ) {
+	const password = getEditedPostValue( state, siteId, postId, 'password' );
+	return !! ( password && password.length > 0 );
+}
+
+/**
+ * Returns true if a valid password is set for the edited post with private visibility.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether password for the edited post with private visibility is valid
+ */
+export function isPrivateEditedPostPasswordValid( state, siteId, postId ) {
+	const password = getEditedPostValue( state, siteId, postId, 'password' );
+	return !! ( password && password.trim().length > 0 );
+}
+
+/**
  * Returns true if there are "dirty" edited fields to be saved for the post
  * corresponding with the site ID post ID pair, or false otherwise.
  *
@@ -405,7 +432,7 @@ export function getEditedPostSlug( state, siteId, postId ) {
 
 	// when post is published, return the slug
 	if ( isPostPublished( state, siteId, postId ) ) {
-		return decodeURI( postSlug );
+		return decodeURIIfValid( postSlug );
 	}
 
 	// only return suggested_slug if slug has not been edited

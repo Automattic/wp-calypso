@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import union from 'lodash/union';
+import { union } from 'lodash';
 
 /**
  * Internal dependencies

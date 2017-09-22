@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,11 +11,8 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 
-export default React.createClass( {
-
-	displayName: 'DevdocsSidebar',
-
-	mixins: [ PureRenderMixin ],
+export default class DevdocsSidebar extends React.PureComponent {
+	static displayName = 'DevdocsSidebar';
 
 	render() {
 		return (
@@ -92,4 +88,4 @@ export default React.createClass( {
 			</Sidebar>
 		);
 	}
-} );
+}

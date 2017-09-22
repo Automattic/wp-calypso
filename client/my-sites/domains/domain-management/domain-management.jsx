@@ -1,18 +1,38 @@
-module.exports = {
-	AddGoogleApps: require( './add-google-apps' ),
-	ContactsPrivacy: require( './contacts-privacy' ),
-	Dns: require( './dns' ),
-	Edit: require( './edit' ),
-	EditContactInfo: require( './edit-contact-info' ),
-	Email: require( './email' ),
-	EmailForwarding: require( './email-forwarding' ),
-	List: require( './list' ),
-	NameServers: require( './name-servers' ),
-	PrimaryDomain: require( './primary-domain' ),
-	PrivacyProtection: require( './privacy-protection' ),
-	SiteRedirect: require( './site-redirect' ),
-	TransferOut: require( './transfer/transfer-out' ),
-	TransferToOtherSite: require( './transfer/transfer-to-other-site' ),
-	TransferToOtherUser: require( './transfer/transfer-to-other-user' ),
-	Transfer: require( './transfer' )
+/**
+ * Internal Dependencies
+ */
+import AddGoogleApps from './add-google-apps';
+import ContactsPrivacy from './contacts-privacy';
+import Dns from './dns';
+import Edit from './edit';
+import EditContactInfo from './edit-contact-info';
+import Email from './email';
+import EmailForwarding from './email-forwarding';
+import List from './list';
+import NameServers from './name-servers';
+import PrimaryDomain from './primary-domain';
+import PrivacyProtection from './privacy-protection';
+import SiteRedirect from './site-redirect';
+import TransferOut from './transfer/transfer-out';
+import TransferToOtherSite from './transfer/transfer-to-other-site';
+import TransferToOtherUser from './transfer/transfer-to-other-user';
+import Transfer from './transfer';
+
+export default {
+	AddGoogleApps,
+	ContactsPrivacy,
+	Dns,
+	Edit,
+	EditContactInfo,
+	Email,
+	EmailForwarding,
+	List,
+	NameServers,
+	PrimaryDomain,
+	PrivacyProtection,
+	SiteRedirect,
+	TransferOut,
+	TransferToOtherSite,
+	TransferToOtherUser,
+	Transfer,
 };

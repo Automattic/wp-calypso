@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { map, includes } from 'lodash';
 import { connect } from 'react-redux';
@@ -14,7 +16,7 @@ import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	static propTypes = {
-		blogId: React.PropTypes.number.isRequired,
+		blogId: PropTypes.number.isRequired,
 	};
 
 	render() {
@@ -23,7 +25,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 
 		return (
 			<div className="reader-post-options-menu__blog-stickers">
-				{ map( blogStickersOffered, blogStickerName =>
+				{ map( blogStickersOffered, blogStickerName => (
 					<ReaderPostOptionsMenuBlogStickerMenuItem
 						key={ blogStickerName }
 						blogId={ blogId }
@@ -31,8 +33,8 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 						hasSticker={ includes( stickers, blogStickerName ) }
 					>
 						{ blogStickerName }
-					</ReaderPostOptionsMenuBlogStickerMenuItem>,
-				) }
+					</ReaderPostOptionsMenuBlogStickerMenuItem>
+				) ) }
 				{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			</div>
 		);

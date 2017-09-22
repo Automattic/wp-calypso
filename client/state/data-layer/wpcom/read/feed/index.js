@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,11 +34,11 @@ export function initiateFeedSearch( store, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
-export function receiveFeeds( store, action, next, apiResponse ) {
+export function receiveFeeds( store, action, apiResponse ) {
 	const feeds = map( apiResponse.feeds, feed => ( {
 		...feed,
 		feed_URL: feed.subscribe_URL,
@@ -47,7 +48,7 @@ export function receiveFeeds( store, action, next, apiResponse ) {
 	store.dispatch( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
 }
 
-export function receiveError( store, action, next, error ) {
+export function receiveError( store, action, error ) {
 	if ( process.env.NODE_ENV === 'development' ) {
 		console.error( action, error ); // eslint-disable-line no-console
 	}

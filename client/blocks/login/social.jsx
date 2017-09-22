@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginSocialUser, createSocialUser } from 'state/login/actions';
+import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
@@ -29,16 +31,27 @@ class SocialLoginForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
+		linkingSocialService: PropTypes.string,
+	};
+
+	static defaultProps = {
+		linkingSocialService: '',
 	};
 
 	handleGoogleResponse = ( response ) => {
 		const { onSuccess, redirectTo } = this.props;
 
-		if ( ! response.Zi || ! response.Zi.id_token ) {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo )
+		const socialInfo = {
+			service: 'google',
+			access_token: response.Zi.access_token,
+			id_token: response.Zi.id_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo )
 			.then(
 				() => {
 					this.recordEvent( 'calypso_login_social_login_success' );
@@ -47,7 +60,7 @@ class SocialLoginForm extends Component {
 				},
 				error => {
 					if ( error.code === 'unknown_user' ) {
-						return this.props.createSocialUser( 'google', response.Zi.id_token, 'login' )
+						return this.props.createSocialUser( socialInfo, 'login' )
 							.then(
 								() => this.recordEvent( 'calypso_login_social_signup_success' ),
 								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
@@ -55,6 +68,8 @@ class SocialLoginForm extends Component {
 									error_message: createAccountError.message
 								} )
 							);
+					} else if ( error.code === 'user_exists' ) {
+						this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
 					}
 
 					this.recordEvent( 'calypso_login_social_login_failure', {
@@ -74,12 +89,30 @@ class SocialLoginForm extends Component {
 		this.recordEvent( 'calypso_login_social_button_click' );
 	};
 
+	renderText() {
+		if ( this.props.linkingSocialService ) {
+			return (
+				<p className="login__social-text">
+					{ this.props.translate( 'Or, choose a different %(service)s account:', {
+						args: {
+							service: capitalize( this.props.linkingSocialService ),
+						}
+					} ) }
+				</p>
+			);
+		}
+
+		return (
+			<p className="login__social-text">
+				{ this.props.translate( 'Or log in with your existing social profile:' ) }
+			</p>
+		);
+	}
+
 	render() {
 		return (
 			<div className="login__social">
-				<p className="login__social-text">
-					{ this.props.translate( 'Or log in with your existing social profile:' ) }
-				</p>
+				{ this.renderText() }
 
 				<div className="login__social-buttons">
 					<GoogleLoginButton
@@ -96,7 +129,7 @@ class SocialLoginForm extends Component {
 					<WpcomLoginForm
 						log={ this.props.username }
 						authorization={ 'Bearer ' + this.props.bearerToken }
-						redirectTo="/start"
+						redirectTo={ this.props.redirectTo || '/start' }
 					/>
 				) }
 			</div>
@@ -114,6 +147,7 @@ export default connect(
 	{
 		loginSocialUser,
 		createSocialUser,
+		createSocialUserFailed,
 		recordTracksEvent,
 	}
 )( localize( SocialLoginForm ) );

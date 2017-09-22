@@ -1,35 +1,39 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import defer from 'lodash/defer';
+import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { defer, endsWith } from 'lodash';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-const productsList = require( 'lib/products-list' )();
-import { cartItems } from 'lib/cart-values';
-import SignupActions from 'lib/signup/actions';
 import MapDomainStep from 'components/domains/map-domain-step';
+import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import SignupActions from 'lib/signup/actions';
+import signupUtils from 'signup/utils';
+import StepWrapper from 'signup/step-wrapper';
+import { cartItems } from 'lib/cart-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
-import analyticsMixin from 'lib/mixins/analytics';
-import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
-
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 
-const registerDomainAnalytics = analyticsMixin( 'registerDomain' );
+const productsList = productsListFactory();
 
-const DomainsStep = React.createClass( {
-	propTypes: {
+class DomainsStep extends React.Component {
+	static propTypes = {
 		domainsWithPlansOnly: PropTypes.bool,
 		flowName: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func.isRequired,
@@ -42,40 +46,38 @@ const DomainsStep = React.createClass( {
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
-	},
+	};
 
-	contextTypes: {
-		store: React.PropTypes.object
-	},
+	static contextTypes = {
+		store: PropTypes.object
+	};
 
-	showDomainSearch: function() {
+	state = { products: productsList.get() };
+
+	showDomainSearch = () => {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
-	},
+	};
 
-	getMapDomainUrl: function() {
+	getMapDomainUrl = () => {
 		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
-	},
+	};
 
-	getInitialState: function() {
-		return { products: productsList.get() };
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		productsList.on( 'change', this.refreshState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		productsList.off( 'change', this.refreshState );
-	},
+	}
 
-	refreshState: function() {
+	refreshState = () => {
 		this.setState( { products: productsList.get() } );
-	},
+	};
 
-	handleAddDomain: function( suggestion ) {
+	handleAddDomain = suggestion => {
 		const stepData = {
 			stepName: this.props.stepName,
-			suggestion
+			suggestion,
 		};
 
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'signup' );
@@ -85,17 +87,17 @@ const DomainsStep = React.createClass( {
 		defer( () => {
 			this.submitWithDomain();
 		} );
-	},
+	};
 
-	isPurchasingTheme: function() {
+	isPurchasingTheme = () => {
 		return this.props.queryObject && this.props.queryObject.premium;
-	},
+	};
 
-	getThemeSlug: function() {
+	getThemeSlug = () => {
 		return this.props.queryObject ? this.props.queryObject.theme : undefined;
-	},
+	};
 
-	getThemeArgs: function() {
+	getThemeArgs = () => {
 		const themeSlug = this.getThemeSlug(),
 			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
 			themeItem = this.isPurchasingTheme()
@@ -103,17 +105,17 @@ const DomainsStep = React.createClass( {
 			: undefined;
 
 		return { themeSlug, themeSlugWithRepo, themeItem };
-	},
+	};
 
-	getThemeSlugWithRepo: function( themeSlug ) {
+	getThemeSlugWithRepo = themeSlug => {
 		if ( ! themeSlug ) {
 			return undefined;
 		}
 		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
-		return `${repo}/${themeSlug}`;
-	},
+		return `${ repo }/${ themeSlug }`;
+	};
 
-	submitWithDomain: function( googleAppsCartItem ) {
+	submitWithDomain = googleAppsCartItem => {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
 			siteUrl = isPurchasingItem
@@ -122,56 +124,56 @@ const DomainsStep = React.createClass( {
 			domainItem = isPurchasingItem
 				? cartItems.domainRegistration( {
 					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug
+					productSlug: suggestion.product_slug,
 				} )
 				: undefined;
 
-		registerDomainAnalytics.recordEvent( 'submitDomainStepSelection', suggestion, 'signup' );
+		this.props.submitDomainStepSelection( suggestion, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
-			processingMessage: this.translate( 'Adding your domain' ),
+			processingMessage: this.props.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
 			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
-			stepSectionName: this.props.stepSectionName
+			stepSectionName: this.props.stepSectionName,
 		}, this.getThemeArgs() ), [], { domainItem } );
 
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
 		getUsernameSuggestion( siteUrl.split( '.' )[ 0 ], this.context.store );
-	},
+	};
 
-	handleAddMapping: function( sectionName, domain, state ) {
+	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
 		this.props.recordAddDomainButtonClickInMapDomain( domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
-			processingMessage: this.translate( 'Adding your domain mapping' ),
+			processingMessage: this.props.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
 			[ sectionName ]: state,
 			domainItem,
 			isPurchasingItem,
 			siteUrl: domain,
-			stepSectionName: this.props.stepSectionName
+			stepSectionName: this.props.stepSectionName,
 		}, this.getThemeArgs() ) );
 
 		this.props.goToNextStep();
-	},
+	};
 
-	handleSave: function( sectionName, state ) {
+	handleSave = ( sectionName, state ) => {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 			stepSectionName: this.props.stepSectionName,
-			[ sectionName ]: state
+			[ sectionName ]: state,
 		} );
-	},
+	};
 
-	domainForm: function() {
+	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' );
 
@@ -193,11 +195,13 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
+				designType={ this.props.signupDependencies && this.props.signupDependencies.designType }
+			/>
 		);
-	},
+	};
 
-	mappingForm: function() {
+	mappingForm = () => {
 		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
 			initialQuery = this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
@@ -212,15 +216,17 @@ const DomainsStep = React.createClass( {
 					products={ productsList.get() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
-					analyticsSection="signup" />
+					analyticsSection="signup"
+				/>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		let content;
+		const { translate } = this.props;
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
 			: undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
@@ -249,17 +255,53 @@ const DomainsStep = React.createClass( {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ this.translate( 'Let\'s give your site an address.' ) }
-				fallbackSubHeaderText={ this.translate(
+				subHeaderText={ translate( 'First up, let\'s find a domain.' ) }
+				fallbackHeaderText={ translate( 'Let\'s give your site an address.' ) }
+				fallbackSubHeaderText={ translate(
 					'Enter your site\'s name, or some key words that describe it - ' +
 					'we\'ll use this to create your new site\'s address.' ) }
-				stepContent={ content } />
+				stepContent={ content }
+			/>
 		);
 	}
-} );
+}
 
-module.exports = connect(
+const submitDomainStepSelection = ( suggestion, section ) => {
+	let domainType = 'domain_reg';
+	if ( suggestion.is_free ) {
+		domainType = 'wpcom_subdomain';
+		if ( endsWith( suggestion.domain_name, '.blog' ) ) {
+			domainType = 'dotblog_subdomain';
+		}
+	}
+
+	const tracksObjects = {
+		domain_name: suggestion.domain_name,
+		section,
+		type: domainType
+	};
+	if ( suggestion.isRecommended ) {
+		tracksObjects.label = 'recommended';
+	}
+	if ( suggestion.isBestAlternative ) {
+		tracksObjects.label = 'best-alternative';
+	}
+
+	return composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			`Submitted Domain Selection for a ${ domainType } on a Domain Registration`,
+			'Domain Name',
+			suggestion.domain_name
+		),
+		recordTracksEvent(
+			'calypso_domain_search_submit_step',
+			tracksObjects
+		)
+	);
+};
+
+export default connect(
 	( state ) => ( {
 		// no user = DOMAINS_WITH_PLANS_ONLY
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
@@ -268,5 +310,6 @@ module.exports = connect(
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
+		submitDomainStepSelection,
 	}
-)( DomainsStep );
+)( localize( DomainsStep ) );

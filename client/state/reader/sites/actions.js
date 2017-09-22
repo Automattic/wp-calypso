@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -61,7 +62,7 @@ export function requestSite( siteId ) {
 						error: err,
 					} );
 					throw err;
-				},
+				}
 			);
 	};
 }

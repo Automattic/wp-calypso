@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +13,14 @@ import { fetchPlugins } from 'state/plugins/installed/actions';
 import { isRequestingForSites } from 'state/plugins/installed/selectors';
 
 class QueryJetpackPlugins extends Component {
+	static propTypes = {
+		siteIds: PropTypes.arrayOf(
+			PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired
+		).isRequired,
+		isRequestingForSites: PropTypes.bool,
+		fetchPlugins: PropTypes.func,
+	};
+
 	componentWillMount() {
 		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
 			this.props.fetchPlugins( this.props.siteIds );
@@ -35,12 +44,6 @@ class QueryJetpackPlugins extends Component {
 		return null;
 	}
 }
-
-QueryJetpackPlugins.propTypes = {
-	siteIds: PropTypes.array.isRequired,
-	isRequestingForSites: PropTypes.bool,
-	fetchPlugins: PropTypes.func
-};
 
 export default connect(
 	( state, props ) => {

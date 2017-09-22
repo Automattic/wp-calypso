@@ -16,7 +16,9 @@ describe( 'WPorg Data Actions', () => {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wporg', mockedWporg );
-		mockery.registerMock( 'lodash/debounce', cb => cb );
+		mockery.registerMock( 'lib/impure-lodash', {
+			debounce: cb => cb,
+		} );
 	} );
 
 	beforeEach( () => {

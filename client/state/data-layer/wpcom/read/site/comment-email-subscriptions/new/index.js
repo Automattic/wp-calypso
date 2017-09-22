@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestCommentEmailSubscription( { dispatch }, action ) {
 	dispatch(
@@ -22,11 +23,11 @@ export function requestCommentEmailSubscription( { dispatch }, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
-export function receiveCommentEmailSubscription( store, action, next, response ) {
+export function receiveCommentEmailSubscription( store, action, response ) {
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
@@ -37,7 +38,7 @@ export function receiveCommentEmailSubscription( store, action, next, response )
 
 export function receiveCommentEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	dispatch( local( unsubscribeToNewCommentEmail( action.payload.blogId ) ) );
+	dispatch( bypassDataLayer( unsubscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
 export default {
@@ -45,7 +46,7 @@ export default {
 		dispatchRequest(
 			requestCommentEmailSubscription,
 			receiveCommentEmailSubscription,
-			receiveCommentEmailSubscriptionError,
+			receiveCommentEmailSubscriptionError
 		),
 	],
 };

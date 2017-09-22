@@ -1,8 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { forEach, startsWith, random } from 'lodash';
-
+import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -13,6 +13,7 @@ import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -58,7 +59,7 @@ const conversationsKeyMaker = ( function() {
 	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
 	return function keyMaker( post ) {
 		const key = baseMaker( post );
-		key.comments = post.comments;
+		key.comments = map( post.comments, 'ID' ).reverse();
 		return key;
 	};
 } )();
@@ -69,6 +70,27 @@ function conversationsPager( params ) {
 	delete params.before;
 	delete params.after;
 	params.page_handle = this.lastPageHandle;
+}
+
+function filterConversationsPosts( posts ) {
+	// turn the new ones into post keys
+	const newPosts = map( posts, this.keyMaker );
+	return filter( newPosts, post => {
+		// only keep things that we don't have or things that have new comments
+		if ( ! this.postById.has( keyToString( post ) ) ) {
+			return true; // new new
+		}
+		const existingPost = find( this.postKeys, postKey => keysAreEqual( postKey, post ) );
+		if ( ! existingPost ) {
+			// this should never happen
+			return true;
+		}
+
+		if ( isEqual( existingPost.comments, post.comments ) ) {
+			return false;
+		}
+		return true;
+	} );
 }
 
 function addMetaToNextPageFetch( params ) {
@@ -164,23 +186,25 @@ function getStoreForSearch( storeId ) {
 	const slug = idParts.slice( 2 ).join( ':' );
 	// We can use a feed stream when it's a strict date sort.
 	// This lets us go deeper than 20 pages and let's the results auto-update
-	const stream =
-		sort === 'date'
-			? new FeedStream( {
-				id: storeId,
-				fetcher: fetcher,
-				keyMaker: siteKeyMaker,
-				perPage: 5,
-				onGapFetch: limitSiteParams,
-				onUpdateFetch: limitSiteParams,
-				maxUpdates: 20,
-			} )
-			: new PagedStream( {
-				id: storeId,
-				fetcher: fetcher,
-				keyMaker: siteKeyMaker,
-				perPage: 5,
-			} );
+	let stream;
+	if ( sort === 'date' ) {
+		stream = new FeedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: siteKeyMaker,
+			perPage: 5,
+			onGapFetch: limitSiteParams,
+			onUpdateFetch: limitSiteParams,
+			maxUpdates: 20,
+		} );
+	} else {
+		stream = new PagedStream( {
+			id: storeId,
+			fetcher: fetcher,
+			keyMaker: siteKeyMaker,
+			perPage: 5,
+		} );
+	}
 	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
@@ -325,6 +349,21 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
+	} else if ( storeId === 'conversations-a8c' ) {
+		store = new FeedStream( {
+			id: storeId,
+			fetcher: wpcomUndoc.readA8cConversations.bind( wpcomUndoc ),
+			keyMaker: conversationsKeyMaker,
+			onNextPageFetch: conversationsPager,
+			onUpdateFetch: limitSiteParamsForConversations,
+			onGapFetch: limitSiteParamsForConversations,
+			dateProperty: 'last_comment_date_gmt',
+		} );
+
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,

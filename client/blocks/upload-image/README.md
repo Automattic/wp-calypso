@@ -6,10 +6,10 @@ Upload Image
 - in file explorer, select an image to upload
 - image is moved to `ImageEditor` where user can edit the image before uploading
 - after clicking on "Done", `UploadImage` calls the `onImageEditorDone` handler where you can perform any operation
- (such as actual uploading of the image).
- 
-The initial idea to create the block comes from the `edit-gravatar` one -- it's very similar but reusable and extensible.
+- after clicking on "Done", image is automatically uploaded to the supplied `siteId` Media library
+- after the upload is complete, `onUploadImageDone` is called with the uploaded image props (such as URL, ID, etc)
 
+If there's any error during the above flow, the error with its error code will be passed to the `onError` function.
 
 #### Basic usage:
 
@@ -18,7 +18,25 @@ import UploadImage from 'blocks/upload-image';
 
 render: function() {
 	return
-		<UploadImage onImageEditorDone={ ( imageBlob ) => console.log( URL.createObjectURL( imageBlob ) ) } />;
+		<UploadImage 
+			siteId={ <your-site-id> or currently selected siteId if not specified }
+			onUploadImageDone={ ( uploadedImage ) => console.log( uploadedImage.ID ) }
+		/>;
+}
+```
+
+To use as changable image:
+
+```js
+import UploadImage from 'blocks/upload-image';
+
+render: function() {
+	return
+		<UploadImage 
+			siteId={ <your-site-id> or currently selected siteId if not specified }
+			defaultImage={ default image or its id }
+			onUploadImageDone={ ( uploadedImage ) => console.log( uploadedImage.ID ) }
+		/>;
 }
 ```
 
@@ -26,19 +44,20 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 
 #### Props
 
-- `isUploading`: (default: false) whether to display a spinner over selected-n-edited image (use only after user 
-	selects an image in `onImageEditorDone`).
 - `imageEditorProps`: (default: allowedAspectRatios set to 1X1) object of additional props to send to `ImageEditor`
 	component.
 - `onImageEditorDone`: (default: `noop`) function to call when user clicks on the "Done" button in `ImageEditor`.
+- `onImageUploadDone`: (default: `noop`) function to call when the image is uploaded to specified `siteId` Media library.
+- `onImageRemove`: (default: `noop`) function to call when user clicked the (X) button to remove uploaded image.
+- `onError`: (default: `noop`) function to call when there's any error during file uploading/image editing.
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
 - `doneButtonText`: text on the "Done" button in Image Editor modal.
-- `addAnImage`: text on the placeholder when selecting an image.
+- `addAnImageText`: text on the image picker when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
+- `defaultImage`: previously uploaded image or its id to be used as default image.
 
-## Additional notes
-
-This component could be made better (.e.g add error handling). If you need anything more of it, feel free to extend it
-as needed. It's main use is in the Simple Payments project ("Add Payment Button" in Editor) and it was built to
-accommodate its needs.
+There's a way to design and supply your own HTML for the image picker (when no image is selected) by supplying the
+`imagePickerContent` prop and for the uploading process (when image is being uploaded) by supplying the
+`uploadingContent` prop. You can also supply your own HTML for when image is uploaded to Media library by passing the
+`uploadingDoneContent` prop.

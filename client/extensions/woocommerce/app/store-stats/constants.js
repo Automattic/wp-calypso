@@ -115,3 +115,10 @@ export const UNITS = {
 		title: translate( 'Years' )
 	}
 };
+
+export const chartTabs = [
+	{ label: translate( 'Gross Sales' ), attr: 'gross_sales', type: 'currency' },
+	{ label: translate( 'Net Sales' ), attr: 'net_sales', type: 'currency' },
+	{ label: translate( 'Orders' ), attr: 'orders', type: 'number' },
+	{ label: translate( 'Average Order Value' ), attr: 'avg_order_value', type: 'currency' },
+];

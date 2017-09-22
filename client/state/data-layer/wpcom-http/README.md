@@ -121,9 +121,9 @@ You may need to know about the original action which triggered the request when 
 Notice how we can store that information inside of the responder actions just like how we encapsulate date in closures.
 
 ```js
-const missileMiddleware = ( store, action, next ) => {
+const missileMiddleware = ( store, action ) => {
 	if ( FIRE_ZE_MISSILES !== action.type ) {
-		return next( action );
+		return;
 	}
 
 	dispatch( http( {
@@ -140,9 +140,9 @@ Because the information from the request response extends the action through met
 ```js
 import { getProgress } from 'state/data-layer/wpcom-http/utils';
 
-const packageMiddleware = ( store, action, next ) => {
+const packageMiddleware = ( store, action ) => {
 	if ( CREATE_PACKAGE !== action.type ) {
-		return next;
+		return;
 	}
 
 	const progress = getProgress( action );
@@ -188,7 +188,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 dispatchRequest( fetchMenu, addMenuItems, alertFailure );
 
 // create request when no meta present, indicate on success, undo on failure, update on progress
-dispatchRequest( sendRecipe, indicateSuccess, removeRecipe, updateRecipeProgress );
+dispatchRequest( sendRecipe, indicateSuccess, removeRecipe, { onProgress: updateRecipeProgress } );
 ```
 
 ### Helpers
@@ -209,7 +209,7 @@ import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
 /**
  * @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/posts/%24post_ID/likes/new/ API description
  */
-const likePost = ( { dispatch }, action, next ) => {
+const likePost = ( { dispatch }, action ) => {
 	// dispatch intent to issue HTTP request
 	// by not supplying onSuccess, onError, and onProgress
 	// _and_ by supplying the second optional `action`
@@ -227,10 +227,6 @@ const likePost = ( { dispatch }, action, next ) => {
 		// (not implemented yet)
 		whenOffline: QUEUE_REQUEST,
 	}, action ) );
-	
-	// feed LIKE_POST action along to reducers
-	// and skip additional data-layer middleware
-	next( action );
 }
 
 /**
@@ -238,34 +234,34 @@ const likePost = ( { dispatch }, action, next ) => {
  *
  * This is the place to map fromAPI to Calypso formats
  */
-const verifyLike = ( { dispatch }, { siteId, postId }, next, data ) => {
+const verifyLike = ( { dispatch }, { siteId, postId } data ) => {
 	// this is a response to data coming in from the data layer,
-	// so skip further data-layer middleware with next vs. dispatch
-	next( {
+	// so skip further data-layer middleware with local
+	dispatch( bypassDataLayer( {
 		type: data.i_like ? LIKE_POST : UNLIKE_POST,
 		siteId,
 		postId,
 		likeCount: data.like_count,
-	} );
+	} ) );
 }
 
 /**
  * Called on failure from the HTTP middleware with `error` parameter
  */
-const undoLike = ( { dispatch }, { siteId, postId }, next, error ) => {
+const undoLike = ( { dispatch }, { siteId, postId }, error ) => {
 	// skip data-layer middleware
-	next( {
+	dispatch( bypassDataLayer( {
 		type: UNLIKE_POST,
 		siteId,
 		postId,
-	} );
+	} ) );
 }
 
 /**
  * Maps progress information from the API into a Calypso-native representation
  */
-const updateProgress = ( store, { siteId, postId }, next, progress ) => {
-	next( {
+const updateProgress = ( store, { siteId, postId }, progress ) => {
+	dispatch( {
 		type: LIKE_POST_PROGRESS,
 		siteId,
 		postId,
@@ -274,8 +270,8 @@ const updateProgress = ( store, { siteId, postId }, next, progress ) => {
 }
 
 export default {
-	// watch for this action       -> initiate, onSuccess,  onFailure, onProgress
-	[ LIKE_POST ]: [ dispatchRequest( likePost, verifyLike, undoLike, updateProgress ) ],
+	// watch for this action       -> initiate, onSuccess,  onFailure, options: { onProgress }
+	[ LIKE_POST ]: [ dispatchRequest( likePost, verifyLike, undoLike, { onProgress: updateProgress } ) ],
 };
 ```
 

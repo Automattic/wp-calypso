@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import noop from 'lodash/noop';
+import { get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,11 +98,11 @@ class VerifyEmailDialog extends Component {
 }
 
 VerifyEmailDialog.propTypes = {
-	onClose: React.PropTypes.func,
-	translate: React.PropTypes.func,
+	onClose: PropTypes.func,
+	translate: PropTypes.func,
 	// connected props:
-	email: React.PropTypes.string,
-	emailVerificationStatus: React.PropTypes.string,
+	email: PropTypes.string,
+	emailVerificationStatus: PropTypes.string,
 };
 
 VerifyEmailDialog.defaultProps = {

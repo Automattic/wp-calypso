@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -57,7 +58,7 @@ describe( 'recommended sites', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -67,13 +68,13 @@ describe( 'recommended sites', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
 
-			receiveRecommendedSitesResponse( { dispatch }, action, null, response );
+			receiveRecommendedSitesResponse( { dispatch }, action, response );
 			expect( dispatch ).calledWith(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),
 					seed,
 					offset: 0,
-				} ),
+				} )
 			);
 		} );
 	} );

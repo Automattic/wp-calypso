@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var clone = require( 'lodash/clone' );
+import { clone } from 'lodash';
 
 /**
  * Internal dependencies

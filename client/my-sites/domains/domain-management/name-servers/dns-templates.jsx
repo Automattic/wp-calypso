@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { find, replace } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -13,9 +13,10 @@ import { dnsTemplates } from 'lib/domains/constants';
 import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
 
-class DnsTemplates extends Component {
+class DnsTemplates extends React.Component {
 	constructor( props ) {
 		super( props );
+
 		const { translate } = this.props;
 
 		this.state = {
@@ -76,8 +77,8 @@ class DnsTemplates extends Component {
 			return;
 		}
 
-		const componentName = this.state.currentComponentName,
-			template = find( this.state.templates, ( dnsTemplate ) => dnsTemplate.name === componentName );
+		const componentName = this.state.currentComponentName;
+		const template = find( this.state.templates, ( dnsTemplate ) => dnsTemplate.name === componentName );
 
 		return <EmailProvider
 			key={ `dns-templates-email-provider-${ template.dnsTemplate }` }

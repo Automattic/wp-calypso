@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External Dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { noop, truncate, get, isEmpty } from 'lodash';
 import classnames from 'classnames';
@@ -19,6 +21,7 @@ import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
+import ConversationPost from './conversation-post';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -47,6 +50,7 @@ class ReaderPostCard extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -121,11 +125,12 @@ class ReaderPostCard extends React.Component {
 			postKey,
 			isExpanded,
 			expandCard,
+			compact,
 		} = this.props;
 
-		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
-		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
+		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
+		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
+		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
@@ -135,18 +140,19 @@ class ReaderPostCard extends React.Component {
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
 			'is-expanded-video': isVideo && isExpanded,
+			'is-compact': compact,
 		} );
 
 		let discoverFollowButton;
 
-		if ( isDiscover ) {
+		if ( isDiscover && ! compact ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton =
-				discoverBlogName &&
+			discoverFollowButton = discoverBlogName && (
 				<DiscoverFollowButton
 					siteName={ discoverBlogName }
 					followUrl={ getDiscoverFollowUrl( post ) }
-				/>;
+				/>
+			);
 		}
 
 		const readerPostActions = (
@@ -165,8 +171,45 @@ class ReaderPostCard extends React.Component {
 			/>
 		);
 
+		// Set up post byline
+		let postByline;
+
+		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
+			// create a post like object with some props from the discover post
+			const postForByline = Object.assign( {}, discoverPick.post || {}, {
+				date: post.date,
+				URL: post.URL,
+				primary_tag: post.primary_tag,
+			} );
+			postByline = (
+				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
+			);
+		} else {
+			postByline = (
+				<PostByline
+					post={ post }
+					site={ site }
+					feed={ feed }
+					showSiteName={ showSiteName || isDiscover }
+					showAvatar={ ! compact }
+				/>
+			);
+		}
+
+		// Set up post card
 		let readerPostCard;
-		if ( isPhotoPost ) {
+		if ( compact ) {
+			readerPostCard = (
+				<ConversationPost
+					post={ post }
+					title={ title }
+					isDiscover={ isDiscover }
+					postByline={ postByline }
+					commentIds={ postKey.comments }
+					onClick={ this.handleCardClick }
+				/>
+			);
+		} else if ( isPhotoPost ) {
 			readerPostCard = (
 				<PhotoPost
 					post={ post }
@@ -199,50 +242,26 @@ class ReaderPostCard extends React.Component {
 					postKey={ postKey }
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
-						site &&
-						<DailyPostButton post={ post } site={ site } tagName="span" /> }
+					site && <DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
 			);
 		}
 
-		// set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPick.post || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-				/>
-			);
-		}
-
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
-			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
-				{ postByline }
+			<Card className={ classes } onClick={ ! isPhotoPost && ! compact && this.handleCardClick }>
+				{ ! compact && postByline }
 				{ showPrimaryFollowButton &&
-					followUrl &&
+				followUrl && (
 					<FollowButton
 						siteUrl={ followUrl }
 						followSource={ followSource }
 						railcar={ post.railcar }
-					/> }
+					/>
+				) }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>
@@ -254,5 +273,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
-	{ expandCard: expandCardAction },
+	{ expandCard: expandCardAction }
 )( ReaderPostCard );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -73,5 +74,5 @@ export default connect(
 			sort: ownProps.sort,
 		} ),
 	} ),
-	{ requestFeedSearch },
+	{ requestFeedSearch }
 )( localize( withDimensions( SiteResults ) ) );

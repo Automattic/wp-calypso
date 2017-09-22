@@ -12,15 +12,21 @@ import { translate } from 'i18n-calypso';
 import App from './app';
 
 import controller from 'my-sites/controller';
+import Dashboard from './app/dashboard';
+import EmptyContent from 'components/empty-content';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
+import OrderCreate from './app/order/order-create';
 import Orders from './app/orders';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import ProductUpdate from './app/products/product-update';
-import Dashboard from './app/dashboard';
+import Promotions from './app/promotions';
+import PromotionCreate from './app/promotions/promotion-create';
+import PromotionUpdate from './app/promotions/promotion-update';
+import Reviews from './app/reviews';
 import SettingsPayments from './app/settings/payments';
 import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
@@ -64,10 +70,52 @@ const getStorePages = () => {
 			path: '/store/orders/:site',
 		},
 		{
+			container: Orders,
+			configKey: 'woocommerce/extension-orders',
+			documentTitle: translate( 'Orders' ),
+			path: '/store/orders/:filter/:site',
+		},
+		{
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
 			documentTitle: translate( 'Order Details' ),
 			path: '/store/order/:site/:order',
+		},
+		{
+			container: OrderCreate,
+			configKey: 'woocommerce/extension-orders-create',
+			documentTitle: translate( 'New Order' ),
+			path: '/store/order/:site/',
+		},
+		{
+			container: Promotions,
+			configKey: 'woocommerce/extension-promotions',
+			documentTitle: translate( 'Promotions' ),
+			path: '/store/promotions/:site',
+		},
+		{
+			container: PromotionCreate,
+			configKey: 'woocommerce/extension-promotions',
+			documentTitle: translate( 'New Promotion' ),
+			path: '/store/promotion/:site',
+		},
+		{
+			container: PromotionUpdate,
+			configKey: 'woocommerce/extension-promotions',
+			documentTitle: translate( 'Edit Promotion' ),
+			path: '/store/promotion/:site/:promotion',
+		},
+		{
+			container: Reviews,
+			configKey: 'woocommerce/extension-reviews',
+			documentTitle: translate( 'Reviews' ),
+			path: '/store/reviews/:site',
+		},
+		{
+			container: Reviews,
+			configKey: 'woocommerce/extension-reviews',
+			documentTitle: translate( 'Reviews' ),
+			path: '/store/reviews/:filter/:site',
 		},
 		{
 			container: SettingsPayments,
@@ -127,6 +175,20 @@ function createStoreNavigation( context, next, storePage ) {
 	next();
 }
 
+function notFoundError( context, next ) {
+	renderWithReduxStore(
+		React.createElement( EmptyContent, {
+			className: 'content-404',
+			illustration: '/calypso/images/illustrations/illustration-404.svg',
+			title: translate( 'Uh oh. Page not found.' ),
+			line: translate( 'Sorry, the page you were looking for doesn\'t exist or has been moved.' ),
+		} ),
+		document.getElementById( 'content' ),
+		context.store
+	);
+	next();
+}
+
 export default function() {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
@@ -136,10 +198,13 @@ export default function() {
 	} );
 
 	// Add pages that use my-sites navigation instead
-	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
-		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
-	}
+	page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
+	page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
+
+	page(
+		'/store/*',
+		notFoundError
+	);
 }
 
 // TODO: This could probably be done in a better way through the same mechanisms

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -71,7 +72,7 @@ describe( 'actions', () => {
 				err => {
 					assert.fail( 'Errback should not be invoked!', err );
 					return err;
-				},
+				}
 			);
 		} );
 	} );
@@ -81,7 +82,9 @@ describe( 'actions', () => {
 		let request;
 
 		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/read/sites/1' ).reply( 404 );
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/read/sites/1' )
+				.reply( 404 );
 			request = requestSite( 1 )( spy );
 		} );
 
@@ -108,7 +111,7 @@ describe( 'actions', () => {
 						},
 						error: sinon.match.instanceOf( Error ),
 					} );
-				},
+				}
 			);
 		} );
 	} );

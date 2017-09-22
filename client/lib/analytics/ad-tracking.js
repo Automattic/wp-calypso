@@ -2,30 +2,36 @@
  * External dependencies
  */
 import async from 'async';
-import noop from 'lodash/noop';
-import some from 'lodash/some';
-import assign from 'lodash/assign';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
+import debugFactory from 'debug';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
 import config from 'config';
+import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
  * Module variables
  */
+const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
+
+// Retargeting events are fired once every `retargetingPeriod` seconds.
+const retargetingPeriod = 60 * 60 * 24;
+
+// Last time the retarget() function effectively fired (Unix time in seconds).
+let lastRetargetTime = 0;
+
+// Last time the recordPageViewInFloodlight() function effectively fired (Unix time in seconds).
+let lastFloodlightPageViewTime = 0;
 
 /**
  * Constants
@@ -267,10 +273,10 @@ function loadTrackingScripts( callback ) {
  * 2. `Do Not Track` is enabled
  * 3. `document.location.href` may contain personally identifiable information
  *
- * @returns {Boolean}
+ * @returns {Boolean} Is ad tracking is allowed?
  */
 function isAdTrackingAllowed() {
-	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
+	return config.isEnabled( 'ad-tracking' ) && ! shouldSkipAds();
 }
 
 /**
@@ -293,6 +299,12 @@ function retarget() {
 	if ( ! hasFinishedFetchingScripts ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
+		return;
+	}
+	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting' );
 
@@ -705,6 +717,12 @@ function recordPageViewInFloodlight( urlPath ) {
 		return;
 	}
 
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastFloodlightPageViewTime + retargetingPeriod ) {
+		return;
+	}
+	lastFloodlightPageViewTime = nowTimestamp;
+
 	const sessionId = floodlightSessionId();
 
 	debug( 'Floodlight: Recording page view for session ' + sessionId );
@@ -800,7 +818,14 @@ function recordParamsInFloodlight( params ) {
 
 	// The ord is only set for purchases; the rest of the time it should be a random string
 	if ( params.ord === undefined ) {
+		// From the docs:
+		// "For unique user tags, use a constant value."
+		// TODO: Should we use a constant value if it's a unique user? How do we determine a unique user?
 		params.ord = floodlightCacheBuster();
+
+		// From the docs:
+		// "Unique user tags also require a random number as the value of the num= parameter."
+		params.num = floodlightCacheBuster();
 	}
 
 	debug( 'recordParamsInFloodlight:', params );
@@ -1034,7 +1059,7 @@ function recordSignupCompletion() {
 	recordSignupCompletionInFloodlight();
 }
 
-module.exports = {
+export default {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
 

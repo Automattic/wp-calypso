@@ -13,5 +13,5 @@ import { isJetpackSite } from 'state/sites/selectors';
  */
 export default createSelector(
 	( state ) => getSites( state ).filter( site => isJetpackSite( state, site.ID ) ),
-	( state ) => state.sites.items
+	( state ) => [ state.sites.items, state.currentUser.capabilities ]
 );

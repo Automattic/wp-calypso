@@ -767,35 +767,39 @@ ul.email-forwarding__list {
 		margin-top: 10px;
 		padding-right: 15px;
 	}
+}
 
-	.name-servers__dns-templates-buttons {
-		margin-top: 20px;
-	}
+.name-servers__dns-templates-buttons {
+	margin-top: 20px;
+}
 
-	&.is-placeholder {
-		.name-servers__dns, .name-servers__dns-templates {
-			.name-servers__title {
-				@include placeholder();
-			}
-
-			.name-servers__toggle, .name-servers__dns-templates-buttons {
-				display: none;
-			}
-
-			.name-servers__explanation,
-			.name-servers__explanation a {
-				@include placeholder();
-			}
+.is-placeholder {
+	.name-servers__dns, .name-servers__dns-templates {
+		.name-servers__title {
+			@include placeholder();
 		}
 
-		.vertical-nav-item {
-			.noticon {
-				display: none;
-			}
+		.name-servers__toggle, .name-servers__dns-templates-buttons {
+			display: none;
+		}
 
-			span:nth-of-type( 2 ) {
-				@include placeholder();
-			}
+		.name-servers__explanation,
+		.name-servers__explanation a {
+			@include placeholder();
+		}
+	}
+
+	.vertical-nav-item {
+		.noticon {
+			display: none;
+		}
+
+		span:nth-of-type( 1 ) {
+			@include placeholder();
+		}
+
+		span:nth-of-type( 2 ) {
+			display: none;
 		}
 	}
 }
@@ -883,5 +887,11 @@ ul.domain-connect__dns-list
 		height: 1px;
 		margin: 0 auto 30px;
 		width: 60px;
+	}
+}
+
+.domain-only-site__placeholder {
+	h2 {
+		@include placeholder();
 	}
 }

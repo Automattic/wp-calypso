@@ -15,6 +15,7 @@ import { partial, noop } from 'lodash';
 import { isEnabled } from 'config';
 import Card from 'components/card';
 import PostControls from './post-controls';
+import PostFormat from 'components/post-format';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
@@ -132,7 +133,10 @@ class Post extends Component {
 					className="post__title-link post__content-link"
 					target={ this.getContentLinkTarget() }
 					onClick={ this.props.recordPostTitleClick }>
-					<h4 className="post__title">{ this.props.post.title }</h4>
+					<PostFormat format={ this.props.post.format } />
+					<h4 className="post__title">
+						{ this.props.post.title }
+					</h4>
 				</a>
 			);
 		}
@@ -300,6 +304,7 @@ class Post extends Component {
 				{ this.state.showComments &&
 					<Comments
 						showCommentCount={ false }
+						commentCount = { this.props.post.discussion.comment_count }
 						post={ this.props.post }
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -14,11 +15,11 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 export class EmailVerificationGate extends React.Component {
 	static propTypes = {
-		noticeText: React.PropTypes.node,
-		noticeStatus: React.PropTypes.string,
+		noticeText: PropTypes.node,
+		noticeStatus: PropTypes.string,
 		//connected
-		userEmail: React.PropTypes.string,
-		needsVerification: React.PropTypes.bool
+		userEmail: PropTypes.string,
+		needsVerification: PropTypes.bool
 	};
 
 	static defaultProps = {

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { get, pick } from 'lodash';
 import { connect } from 'react-redux';
@@ -11,15 +12,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import LikeButton from 'blocks/like-button/button';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack
-} from 'reader/stats';
-import {
-	likeComment,
-	unlikeComment
-} from 'state/comments/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { likeComment, unlikeComment } from 'state/comments/actions';
 import { getCommentLike } from 'state/comments/selectors';
 
 class CommentLikeButtonContainer extends React.Component {
@@ -39,7 +33,7 @@ class CommentLikeButtonContainer extends React.Component {
 		recordGaEvent( liked ? 'Clicked Comment Like' : 'Clicked Comment Unlike' );
 		recordTrack( 'calypso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment', {
 			blog_id: this.props.siteId,
-			comment_id: this.props.commentId
+			comment_id: this.props.commentId,
 		} );
 	}
 
@@ -49,34 +43,42 @@ class CommentLikeButtonContainer extends React.Component {
 		const iLike = get( this.props.commentLike, 'i_like' );
 		const likedLabel = translate( 'Liked' );
 
-		return <LikeButton { ...props }
+		return (
+			<LikeButton
+				{ ...props }
 				likeCount={ likeCount }
 				liked={ iLike }
 				onLikeToggle={ this.boundHandleLikeToggle }
 				likedLabel={ likedLabel }
-				iconSize={ 18 } />;
+				iconSize={ 18 }
+			/>
+		);
 	}
 }
 
 CommentLikeButtonContainer.propTypes = {
-	siteId: React.PropTypes.number.isRequired,
-	postId: React.PropTypes.number.isRequired,
-	commentId: React.PropTypes.number.isRequired,
-	showZeroCount: React.PropTypes.bool,
-	tagName: React.PropTypes.string,
+	siteId: PropTypes.number.isRequired,
+	postId: PropTypes.number.isRequired,
+	commentId: PropTypes.number.isRequired,
+	showZeroCount: PropTypes.bool,
+	tagName: PropTypes.string,
 
 	// connected props:
-	commentLike: React.PropTypes.object.isRequired,
-	likeComment: React.PropTypes.func.isRequired,
-	unlikeComment: React.PropTypes.func.isRequired
+	commentLike: PropTypes.object.isRequired,
+	likeComment: PropTypes.func.isRequired,
+	unlikeComment: PropTypes.func.isRequired,
 };
 
 export default connect(
 	( state, props ) => ( {
-		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId )
+		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
 	} ),
-	( dispatch ) => bindActionCreators( {
-		likeComment,
-		unlikeComment
-	}, dispatch )
+	dispatch =>
+		bindActionCreators(
+			{
+				likeComment,
+				unlikeComment,
+			},
+			dispatch,
+		),
 )( CommentLikeButtonContainer );

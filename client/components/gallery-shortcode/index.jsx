@@ -4,9 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import assign from 'lodash/assign';
-import pick from 'lodash/pick';
-import omit from 'lodash/omit';
+import { assign, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies

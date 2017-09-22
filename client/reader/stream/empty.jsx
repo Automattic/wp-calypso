@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,15 +24,15 @@ class FollowingEmptyContent extends React.Component {
 	};
 
 	render() {
-		const action = isDiscoverEnabled()
-				? <a
-						className="empty-content__action button is-primary"
-						onClick={ this.recordAction }
-						href="/read/search"
-					>
-						{ this.props.translate( 'Find Sites to Follow' ) }
-					</a>
-				: null,
+		const action = isDiscoverEnabled() ? (
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/read/search"
+				>
+					{ this.props.translate( 'Find Sites to Follow' ) }
+				</a>
+			) : null,
 			secondaryAction = null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

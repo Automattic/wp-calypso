@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import { moment } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import DatePicker from 'my-sites/stats/stats-date-picker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getUnitPeriod } from './utils';
 import HeaderCake from 'components/header-cake';
+import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
 import Module from './store-stats-module';
@@ -110,6 +112,7 @@ class StoreStatsListView extends Component {
 						statType={ statType }
 					/>
 				</Module>
+				<JetpackColophon />
 			</Main>
 		);
 	}

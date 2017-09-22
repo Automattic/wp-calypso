@@ -1,0 +1,15 @@
+.form-radios-bar {
+	display: block;
+
+	&.is-thumbnail {
+		display: flex;
+		flex-wrap: wrap;
+	}
+}
+
+.form-radios-bar .form-radio-with-thumbnail {
+	flex-grow: 1;
+	min-width: 136px;
+	max-width: 150px;
+	margin-bottom: 10px;
+}

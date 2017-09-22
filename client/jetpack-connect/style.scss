@@ -485,6 +485,14 @@
 	margin-bottom: 16px;
 }
 
+.jetpack-connect__plans-nav-buttons {
+	text-align: center;
+
+	.button.is-compact {
+		font-size: 14px;
+		font-weight: 500;
+	}
+}
 
 .jetpack-connect__plans {
 	.plan-features__header-figure {

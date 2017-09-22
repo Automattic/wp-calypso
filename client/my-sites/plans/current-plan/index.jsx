@@ -24,7 +24,6 @@ import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/produc
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
@@ -62,12 +61,9 @@ class CurrentPlan extends Component {
 				}
 			} );
 
-		let tagLine = translate( 'Unlock the full potential of your site with all the features included in your plan.' );
-
-		if ( plan === PLAN_BUSINESS ) {
-			tagLine = translate( 'Learn more about everything included with Business and take advantage of' +
-				' its professional features.' );
-		}
+		const tagLine = planConstObj.getTagline
+			? planConstObj.getTagline()
+			: translate( 'Unlock the full potential of your site with all the features included in your plan.' );
 
 		return {
 			title: title,

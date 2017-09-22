@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var url = require( 'url' ),
-	pick = require( 'lodash/pick' );
+import { pick } from 'lodash';
+const url = require( 'url' );
 
 /**
  * Given a URL or path and search terms, returns a path including the search

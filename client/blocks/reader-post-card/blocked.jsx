@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -15,7 +17,7 @@ import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
 class PostBlocked extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object,
+		post: PropTypes.object,
 	};
 
 	unblock = () => {

@@ -3,11 +3,15 @@
  */
 import React from 'react';
 import {
+	deburr,
 	endsWith,
+	get,
+	includes,
 	isEqual,
 	keys,
 	omit,
 	pick,
+	snakeCase,
 } from 'lodash';
 import page from 'page';
 import { bindActionCreators } from 'redux';
@@ -55,6 +59,22 @@ class EditContactInfoFormCard extends React.Component {
 
 	constructor( props ) {
 		super( props );
+
+		this.fieldNames = [
+			'first-name',
+			'last-name',
+			'organization',
+			'email',
+			'phone',
+			'fax',
+			'country-code',
+			'address-1',
+			'address-2',
+			'city',
+			'state',
+			'postal-code',
+		];
+
 		this.state = {
 			form: null,
 			notice: null,
@@ -70,6 +90,7 @@ class EditContactInfoFormCard extends React.Component {
 
 		this.formStateController = formState.Controller( {
 			initialFields: contactInformation,
+			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
@@ -96,6 +117,22 @@ class EditContactInfoFormCard extends React.Component {
 				onComplete( null, data.messages || {} );
 			}
 		} );
+	}
+
+	sanitize = ( fieldValues, onComplete ) => {
+		const sanitizedFieldValues = Object.assign( {}, fieldValues );
+
+		this.fieldNames.forEach( ( fieldName ) => {
+			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				// TODO: Deep
+				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+				if ( fieldName === 'postal-code' ) {
+					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+				}
+			}
+		} );
+
+		onComplete( sanitizedFieldValues );
 	}
 
 	setFormState = ( state ) => {
@@ -356,12 +393,16 @@ class EditContactInfoFormCard extends React.Component {
 
 	getField( Component, props ) {
 		const { name } = props;
+		const unmodifiableFields = get( this.props, [ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ], [] );
+		const isDisabled = this.state.formSubmitting ||
+			formState.isFieldDisabled( this.state.form, name ) ||
+			includes( unmodifiableFields, snakeCase( name ) );
 
 		return (
 			<Component
 				{ ...props }
 				additionalClasses="edit-contact-info__form-field"
-				disabled={ this.state.formSubmitting || formState.isFieldDisabled( this.state.form, name ) }
+				disabled={ isDisabled }
 				isError={ formState.isFieldInvalid( this.state.form, name ) }
 				value={ formState.getFieldValue( this.state.form, name ) }
 				onChange={ this.onChange } />

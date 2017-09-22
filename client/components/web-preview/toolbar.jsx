@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { partial } from 'lodash';
 import Gridicon from 'gridicons';
 
@@ -104,6 +105,7 @@ class PreviewToolbar extends Component {
 						className="web-preview__device-switcher"
 						selectedText={ selectedDevice.title }
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
+						ref={ this.setDropdown }
 					>
 						{ devicesToShow.map( device => (
 							<DropdownItem
@@ -121,6 +123,7 @@ class PreviewToolbar extends Component {
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
 						value={ externalUrl || previewUrl }
+						hideHttp
 					/>
 				}
 				<div className="web-preview__toolbar-actions">

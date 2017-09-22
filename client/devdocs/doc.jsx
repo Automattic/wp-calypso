@@ -1,72 +1,71 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var DocService = require( './service' ),
-	CompactCard = require( 'components/card/compact' ),
-	highlight = require( 'lib/highlight' );
+import DocService from './service';
+import CompactCard from 'components/card/compact';
+import highlight from 'lib/highlight';
 
-module.exports = React.createClass( {
-	displayName: 'SingleDocument',
-	propTypes: {
-		path: React.PropTypes.string.isRequired,
-		term: React.PropTypes.string,
-		sectionId: React.PropTypes.string
-	},
-	timeoutID: null,
+export default class extends React.Component {
+	static displayName = 'SingleDocument';
 
-	getInitialState: function() {
-		return {
-			body: ''
-		};
-	},
+	static propTypes = {
+		path: PropTypes.string.isRequired,
+		term: PropTypes.string,
+		sectionId: PropTypes.string
+	};
 
-	componentDidMount: function() {
+	state = {
+		body: ''
+	};
+
+	timeoutID = null;
+
+	componentDidMount() {
 		this.fetch();
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.path !== prevProps.path ) {
 			this.fetch();
 		}
 		if ( this.state.body ) {
 			this.setBodyScrollPosition();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.clearLoadingMessage();
-	},
+	}
 
-	fetch: function() {
+	fetch = () => {
 		this.setState( {
 			body: ''
 		} );
 		this.delayLoadingMessage();
 		DocService.fetch( this.props.path, function( err, body ) {
-			if ( this.isMounted() ) {
-				this.setState( {
-					body: ( err || body )
-				} );
-			}
+			this.setState( {
+				body: ( err || body )
+			} );
 		}.bind( this ) );
-	},
+	};
 
-	setBodyScrollPosition: function() {
+	setBodyScrollPosition = () => {
 		if ( this.props.sectionId ) {
-			var sectionNode = document.getElementById( this.props.sectionId );
+			const sectionNode = document.getElementById( this.props.sectionId );
 
 			if ( sectionNode ) {
 				sectionNode.scrollIntoView();
 			}
 		}
-	},
+	};
 
-	delayLoadingMessage: function() {
+	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
 		this.timeoutID = setTimeout( function() {
 			if ( ! this.state.body ) {
@@ -75,18 +74,17 @@ module.exports = React.createClass( {
 				} );
 			}
 		}.bind( this ), 1000 );
-	},
+	};
 
-	clearLoadingMessage: function() {
+	clearLoadingMessage = () => {
 		if ( 'number' === typeof this.timeoutID ) {
 			window.clearTimeout( this.timeoutID );
 			this.timeoutID = null;
 		}
-	},
+	};
 
-	render: function() {
-
-		var editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
+	render() {
+		const editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
 		return (
@@ -98,9 +96,11 @@ module.exports = React.createClass( {
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }} //eslint-disable-line react/no-danger
+					dangerouslySetInnerHTML={ //eslint-disable-line react/no-danger
+						{ __html: highlight( this.props.term, this.state.body ) }
+					}
 				/>
 			</div>
 		);
 	}
-} );
+}

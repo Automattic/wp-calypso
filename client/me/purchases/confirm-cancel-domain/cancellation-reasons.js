@@ -36,13 +36,12 @@ export default [
 		value: 'transfer',
 		label: i18n.translate( 'I want to transfer my domain to another registrar' ),
 		helpMessage: i18n.translate(
-			'You may not transfer a domain name for 60 days after its purchase, renewal, name server change, ' +
-				'or any contact information change. This is a rule set by the Internet Corporation for ' +
-				'Assigned Names and Numbers (ICANN) and standard across all registrars. ' +
-				'You will need to {{a}}update your name servers{{/a}} instead.',
+			'Canceling a domain name may cause the domain to become unavailable for a long time before it ' +
+				'can be purchased again, and someone may purchase it before you get a chance. Instead, ' +
+				'please {{a}}use our transfer out feature{{/a}} if you want to use this domain again in the future.',
 			{
 				components: {
-					a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
+					a: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer" />,
 				},
 			}
 		),

@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -59,7 +60,7 @@ describe( 'unfollow tag request', () => {
 					path: `/read/tags/${ slug }/mine/delete`,
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -69,13 +70,13 @@ describe( 'unfollow tag request', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, null, successfulUnfollowResponse );
+			receiveUnfollowTag( { dispatch }, action, successfulUnfollowResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
 					payload: successfulUnfollowResponse.removed_tag,
-				} ),
+				} )
 			);
 		} );
 
@@ -83,7 +84,7 @@ describe( 'unfollow tag request', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, null, unsuccessfulResponse );
+			receiveUnfollowTag( { dispatch }, action, unsuccessfulResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -98,7 +99,7 @@ describe( 'unfollow tag request', () => {
 			const dispatch = sinon.spy();
 			const error = 'could not find tag';
 
-			receiveError( { dispatch }, action, null, error );
+			receiveError( { dispatch }, action, error );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {

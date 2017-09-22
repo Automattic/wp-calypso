@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,12 +35,8 @@ class FollowingManageSortControls extends React.Component {
 				onChange={ this.handleSelectChange }
 				value={ sortOrder }
 			>
-				<option value="date-followed">
-					{ this.props.translate( 'Sort by date followed' ) }
-				</option>
-				<option value="alpha">
-					{ this.props.translate( 'Sort by site name' ) }
-				</option>
+				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
+				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
 			</FormSelect>
 		);
 	}

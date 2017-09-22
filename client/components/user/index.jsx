@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
-	displayName: 'UserItem',
-	propTypes: {
-		user: React.PropTypes.object
-	},
+export default class UserItem extends Component {
+	static displayName = 'UserItem';
 
-	render: function() {
-		var user = this.props.user || null,
-		name = user ? user.name : '';
+	static propTypes = {
+		user: PropTypes.object
+	};
+
+	render() {
+		const user = this.props.user || null;
+		const name = user ? user.name : '';
 		return (
 			<div className="user" title={ name }>
 				<Gravatar size={ 26 } user={ user } />
@@ -26,4 +28,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { noop, startsWith } from 'lodash';
@@ -22,8 +23,9 @@ import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded
 } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
-class ImageEditorCanvas extends Component {
+export class ImageEditorCanvas extends Component {
 	static propTypes = {
 		src: PropTypes.string,
 		mimeType: PropTypes.string,
@@ -41,7 +43,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: PropTypes.func,
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
-		isImageLoaded: PropTypes.bool
+		isImageLoaded: PropTypes.bool,
+		showCrop: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -59,7 +62,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: noop,
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
-		isImageLoaded: false
+		isImageLoaded: false,
+		showCrop: true
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -274,6 +278,11 @@ class ImageEditorCanvas extends Component {
 			heightRatio
 		} = this.props.crop;
 
+		const {
+			isImageLoaded,
+			showCrop
+		} = this.props;
+
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
 		const canvasY = -50 * heightRatio - 100 * topRatio;
 
@@ -282,8 +291,6 @@ class ImageEditorCanvas extends Component {
 			maxWidth: ( 85 / widthRatio ) + '%',
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
-
-		const { isImageLoaded } = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded
@@ -297,7 +304,7 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && <ImageEditorCrop /> }
+				{ showCrop && <ImageEditorCrop /> }
 			</div>
 		);
 	}
@@ -309,13 +316,15 @@ export default connect(
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
 			crop,
-			isImageLoaded
+			isImageLoaded,
+			showCrop: !! ( isImageLoaded && isGreaterThanMinimumDimensions )
 		};
 	},
 	{

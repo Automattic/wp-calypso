@@ -1,5 +1,18 @@
+/**
+ * Internal dependencies
+ */
+import { pickBy } from 'lodash';
+
 export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
+}
+
+export function getProductsList( state ) {
+	return state.productsList.items;
+}
+
+export function getAvailableProductsList( state ) {
+	return pickBy( state.productsList.items, product => product.available );
 }
 
 /**

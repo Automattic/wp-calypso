@@ -12,14 +12,17 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
+import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import EditorConfirmationSidebarHeader from './header';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -28,6 +31,9 @@ class EditorConfirmationSidebar extends React.Component {
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
+		isPrivatePost: React.PropTypes.bool,
+		isPrivatePostPasswordValid: React.PropTypes.bool,
+		setPostDate: React.PropTypes.func,
 		setStatus: React.PropTypes.func,
 		site: React.PropTypes.object,
 		status: React.PropTypes.string,
@@ -60,9 +66,10 @@ class EditorConfirmationSidebar extends React.Component {
 
 		const publishButtonStatus = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
 		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
+		const enabled = ! this.props.isPrivatePost || this.props.isPrivatePostPasswordValid;
 
 		return (
-			<Button onClick={ this.closeAndPublish }>{ buttonLabel }</Button>
+			<Button disabled={ ! enabled } onClick={ this.closeAndPublish }>{ buttonLabel }</Button>
 		);
 	}
 
@@ -86,7 +93,8 @@ class EditorConfirmationSidebar extends React.Component {
 			return;
 		}
 
-		const { password, type, status } = this.props.post || {};
+		const { password, type } = this.props.post || {};
+		const status = get( this.props.post, 'status', 'draft' );
 		const isPrivateSite = get( this.props, 'site.is_private' );
 		const savedStatus = get( this.props, 'savedPost.status' );
 		const savedPassword = get( this.props, 'savedPost.password' );
@@ -172,19 +180,11 @@ class EditorConfirmationSidebar extends React.Component {
 						</div>
 					</div>
 					<div className="editor-confirmation-sidebar__content-wrap">
-						<div className="editor-confirmation-sidebar__header">
-							{
-								this.props.translate( '{{strong}}Almost there!{{/strong}} ' +
-									'You can double-check your post’s settings below. When you’re happy, ' +
-									'use the big green button to send your post out into the world!', {
-										comment: 'This string appears as the header for the confirmation sidebar ' +
-										'when a user publishes a post or page.',
-										components: {
-											strong: <strong />
-										},
-									} )
-							}
-						</div>
+						<EditorConfirmationSidebarHeader post={ this.props.post } />
+						<EditorPublishDate
+							post={ this.props.post }
+							setPostDate={ this.props.setPostDate }
+						/>
 						<div className="editor-confirmation-sidebar__privacy-control">
 							{ this.renderPrivacyControl() }
 						</div>
@@ -201,11 +201,15 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
+		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
+		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
 
 		return {
 			siteId,
 			postId,
-			post
+			post,
+			isPrivatePost,
+			isPrivatePostPasswordValid
 		};
 	},
 	{ editPost }

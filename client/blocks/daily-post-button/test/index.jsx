@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External  dependencies
  */
@@ -6,7 +7,7 @@ import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import { stub, spy } from 'sinon';
 import qs from 'qs';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,24 +45,24 @@ describe( 'DailyPostButton', () => {
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ false }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ false }
 				/>
 			);
 			assert.isNull( dailyPostPrompt.type() );
 		} );
 
-		it( 'renders as an li tag by default', () => {
-			const renderAsLi = shallow(
+		it( 'renders as a span tag by default', () => {
+			const renderAsSpan = shallow(
 				<DailyPostButton
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ true }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
 				/>
 			);
-			assert.equal( 'li', renderAsLi.type() );
+			assert.equal( 'span', renderAsSpan.type() );
 		} );
 
 		it( 'renders as the tag specified in props tagName', () => {
@@ -71,7 +72,7 @@ describe( 'DailyPostButton', () => {
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ true }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
 				/>
 			);
@@ -86,7 +87,7 @@ describe( 'DailyPostButton', () => {
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ true }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
 				/>
 			);
@@ -101,7 +102,7 @@ describe( 'DailyPostButton', () => {
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ true }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ false }
 				/>
 			);
@@ -118,7 +119,7 @@ describe( 'DailyPostButton', () => {
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
 					canParticipate={ true }
-					primarySiteSlug= { sampleUserSite.slug }
+					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
 				/>
 			);

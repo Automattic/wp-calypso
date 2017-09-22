@@ -34,6 +34,18 @@ describe( 'getPostRevisionChanges', () => {
 								date: '2017-04-21T12:12:12Z',
 								content: 'Hello',
 							},
+							15: {
+								id: 15,
+								author: 2,
+								date: '2017-04-22T12:12:12Z',
+								content: '',
+							},
+							16: {
+								id: 16,
+								author: 2,
+								date: '2017-04-22T12:13:12Z',
+								content: 'L&#8217;usage d&#8217;un instrument savant',
+							},
 						},
 					},
 				},
@@ -67,6 +79,15 @@ describe( 'getPostRevisionChanges', () => {
 			{
 				added: true,
 				value: 'Hello World',
+			},
+		] );
+	} );
+
+	it( 'should properly decode HTML entities', () => {
+		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 16 ) ).to.eql( [
+			{
+				added: true,
+				value: 'L’usage d’un instrument savant',
 			},
 		] );
 	} );

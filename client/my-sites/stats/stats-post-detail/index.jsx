@@ -99,6 +99,17 @@ class StatsPostDetail extends Component {
 			title = translate( 'We don\'t have that post on record yet.' );
 		}
 
+		const postType = post && post.type !== null ? post.type : 'post';
+		let actionLabel, noViewsLabel;
+
+		if ( postType === 'page' ) {
+			actionLabel = translate( 'View Page' );
+			noViewsLabel = translate( 'Your page has not received any views yet!' );
+		} else {
+			actionLabel = translate( 'View Post' );
+			noViewsLabel = translate( 'Your post has not received any views yet!' );
+		}
+
 		return (
 			<Main wideLayout>
 				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
@@ -109,7 +120,7 @@ class StatsPostDetail extends Component {
 				<HeaderCake
 					onClick={ this.goBack }
 					actionIcon={ showViewLink ? 'visible' : null }
-					actionText={ showViewLink ? translate( 'View Post' ) : null }
+					actionText={ showViewLink ? actionLabel : null }
 					actionOnClick={ showViewLink ? this.openPreview : null }
 					>
 					{ title }
@@ -119,7 +130,7 @@ class StatsPostDetail extends Component {
 
 				{ ! isLoading && countViews === 0 &&
 					<EmptyContent
-						title={ translate( 'Your post has not received any views yet!' ) }
+						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
 						action={ translate( 'Get more traffic!' ) }
 						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
@@ -133,7 +144,7 @@ class StatsPostDetail extends Component {
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
 
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } /> }
+						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
 
 						<PostMonths
 							dataKey="years"

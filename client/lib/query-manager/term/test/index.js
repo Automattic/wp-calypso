@@ -28,7 +28,7 @@ describe( 'TermQueryManager', () => {
 	describe( '#matches()', () => {
 		context( 'query.search', () => {
 			it( 'should return false for a non-matching search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = TermQueryManager.matches( {
 					search: 'Cars'
 				}, DEFAULT_TERM );
 
@@ -36,7 +36,7 @@ describe( 'TermQueryManager', () => {
 			} );
 
 			it( 'should return true for an empty search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = TermQueryManager.matches( {
 					search: ''
 				}, DEFAULT_TERM );
 
@@ -44,7 +44,7 @@ describe( 'TermQueryManager', () => {
 			} );
 
 			it( 'should return true for a matching name search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = TermQueryManager.matches( {
 					search: 'ood'
 				}, DEFAULT_TERM );
 
@@ -52,7 +52,7 @@ describe( 'TermQueryManager', () => {
 			} );
 
 			it( 'should return true for a matching slug search', () => {
-				const isMatch = manager.matches( {
+				const isMatch = TermQueryManager.matches( {
 					search: 'y-sl'
 				}, DEFAULT_TERM );
 
@@ -60,7 +60,7 @@ describe( 'TermQueryManager', () => {
 			} );
 
 			it( 'should search case-insensitive', () => {
-				const isMatch = manager.matches( {
+				const isMatch = TermQueryManager.matches( {
 					search: 'fOoD'
 				}, DEFAULT_TERM );
 

@@ -1,16 +1,20 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	isEqual = require( 'lodash/isEqual' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import {
+	isEqual,
+	includes,
+} from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var NavTabs = require( './tabs' ),
-	NavItem = require( './item' ),
-	Search = require( 'components/search' );
+import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
 
 /**
  * Main
@@ -24,6 +28,7 @@ var SectionNav = React.createClass( {
 		hasPinnedItems: React.PropTypes.bool,
 		onMobileNavPanelOpen: React.PropTypes.func,
 		className: React.PropTypes.string,
+		allowDropdown: React.PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -34,7 +39,8 @@ var SectionNav = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			onMobileNavPanelOpen: () => {}
+			onMobileNavPanelOpen: () => {},
+			allowDropdown: true,
 		};
 	},
 
@@ -52,6 +58,23 @@ var SectionNav = React.createClass( {
 		if ( ! this.hasSiblingControls ) {
 			this.closeMobilePanel();
 		}
+	},
+
+	renderDropdown() {
+		if ( ! this.props.allowDropdown ) {
+			return <div />;
+		}
+
+		return (
+			<div
+				className="section-nav__mobile-header"
+				onClick={ this.toggleMobileOpenState }
+			>
+				<span className="section-nav__mobile-header-text">
+					{ this.props.selectedText }
+				</span>
+			</div>
+		);
 	},
 
 	render: function() {
@@ -81,14 +104,7 @@ var SectionNav = React.createClass( {
 
 		return (
 			<div className={ className }>
-				<div
-					className="section-nav__mobile-header"
-					onClick={ this.toggleMobileOpenState }
-				>
-					<span className="section-nav__mobile-header-text">
-						{ this.props.selectedText }
-					</span>
-				</div>
+				{ this.renderDropdown() }
 
 				<div className="section-nav__panel">
 					{ children }
@@ -164,9 +180,11 @@ var SectionNav = React.createClass( {
 	checkForSiblingControls: function( children ) {
 		this.hasSiblingControls = false;
 
+		const ignoreSiblings = [ Search, CommentNavigationTab ];
+
 		React.Children.forEach( children, function( child, index ) {
-			// Checking for at least 2 controls groups that are not search or null
-			if ( index && child && child.type !== Search ) {
+			// Checking for at least 2 controls groups that are not null or ignored siblings
+			if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
 				this.hasSiblingControls = true;
 			}
 		}.bind( this ) );

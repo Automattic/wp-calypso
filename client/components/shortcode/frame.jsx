@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
+import { isEqual, omit } from 'lodash';
 import classNames from 'classnames';
 
 /**

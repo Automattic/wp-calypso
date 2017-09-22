@@ -21,7 +21,7 @@ module.exports = React.createClass( {
 			return event.preventDefault();
 		}
 
-		this.props.onClick && this.props.onClick( event );
+		this.props.onClick && this.props.onClick( event, this.props.helpLink );
 	},
 
 	getResultIcon: function() {

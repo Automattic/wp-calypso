@@ -23,7 +23,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @param  {Object}  media Item to consider
 	 * @return {Boolean}       Whether media item matches query
 	 */
-	matches( query, media ) {
+	static matches( query, media ) {
 		return every( { ...DEFAULT_MEDIA_QUERY, ...query }, ( value, key ) => {
 			switch ( key ) {
 				case 'search':

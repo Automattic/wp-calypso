@@ -33,6 +33,14 @@ module.exports = {
 		defaultVariation: 'original',
 		localeTargets: 'any',
 	},
+	jetpackConnectHideFreePlan: {
+		datestamp: '20170905',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
+	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
@@ -68,31 +76,13 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	signupPlansCopyChanges: {
-		datestamp: '20170623',
+	jetpackConnectPlansCopyChanges: {
+		datestamp: '20170728',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100,
 		},
-		defaultVariation: 'original',
-	},
-	showCartAbandonmentNotice: {
-		datestamp: '20170630',
-		variations: {
-			doNotShowNotice: 50,
-			showNotice: 50,
-		},
-		defaultVariation: 'doNotShowNotice',
-		allowExistingUsers: true,
-	},
-	postPublishConfirmation: {
-		datestamp: '20170713',
-		allowExistingUsers: true,
-		variations: {
-			showPublishConfirmation: 30,
-			noPublishConfirmation: 70,
-		},
-		defaultVariation: 'noPublishConfirmation',
+		defaultVariation: 'modified',
 	},
 	readerIntroIllustration: {
 		datestamp: '20170718',
@@ -104,13 +94,22 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	paymentShowPaypalLogo: {
-		datestamp: '20170719',
+	privacyNoPopup: {
+		datestamp: '20170830',
 		variations: {
-			hide: 50,
+			original: 50,
+			nopopup: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	skipThemesSelectionModal: {
+		datestamp: '20170904',
+		variations: {
+			skip: 50,
 			show: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},

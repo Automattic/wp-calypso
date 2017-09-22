@@ -3,9 +3,9 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import head from 'lodash/head';
-import values from 'lodash/values';
-const debug = require( 'debug' )( 'calypso:validate-fieldset' ); // eslint-disable-line no-unused-vars
+import { head, values } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:validate-fieldset' );
 
 /**
  * Internal dependencies

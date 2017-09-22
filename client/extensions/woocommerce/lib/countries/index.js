@@ -14,6 +14,9 @@ import US from './US';
 // want to decorate these objects further in a subsequent PR
 // with things like origin vs destination based tax booleans
 
+// IMPORTANT: If you add a country to this list, you must also add it
+// to ../../my-sites/sidebar/sidebar.jsx in the allowedCountryCodes
+
 export const getCountries = () => {
 	return [
 		US(),

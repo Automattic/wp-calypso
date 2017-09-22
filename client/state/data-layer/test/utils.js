@@ -6,13 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { local } from '../utils';
+import { bypassDataLayer } from '../utils';
 
 describe( 'Data Layer', () => {
 	describe( '#local', () => {
 		it( 'should wrap an action with the bypass flag', () => {
 			const action = { type: 'ADD_SPLINE', id: 42 };
-			const localAction = local( action );
+			const localAction = bypassDataLayer( action );
 
 			expect( localAction ).to.have.deep.property( 'meta.dataLayer.doBypass', true );
 		} );
@@ -27,7 +27,7 @@ describe( 'Data Layer', () => {
 					}
 				}
 			};
-			const localAction = local( action );
+			const localAction = bypassDataLayer( action );
 
 			expect( localAction ).to.have.deep.property( 'meta.oceanName', 'ARCTIC' );
 			expect( localAction ).to.have.deep.property( 'meta.dataLayer.forceRefresh', true );

@@ -1,4 +1,5 @@
-.order__container {
+.order__container,
+.order-create__container {
 	padding-bottom: 0;
 
 	@include breakpoint( ">660px" ) {
@@ -10,16 +11,16 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 
-		.order__details {
+		.order-details {
 			flex: 1 1 100%;
 		}
 
-		.order__activity-log {
+		.order-notes {
 			flex: 2;
 			margin-right: 16px;
 		}
 
-		.order__customer-info {
+		.order-customer {
 			flex: 1;
 		}
 	}
@@ -35,144 +36,14 @@
 	}
 }
 
-.order__status {
-	display: inline-flex;
-	padding: 0px 12px;
-	line-height: 32px;
-	background: lighten( $gray, 20% );
-	border-radius: 4px;
-
-	&.is-failed {
-		background: lighten( $alert-red, 20% );
-		color: darken( $alert-red, 30% );
-	}
-
-	&.is-cancelled,
-	&.is-refunded,
-	&.is-completed {
-		background: $gray-light;
-		color: $gray-dark;
-	}
-
-	&.is-on-hold {
-		background: lighten( $alert-yellow, 20% );
-		color: darken( $alert-yellow, 30% );
-	}
-}
-
-.order__details-card {
+.order-details__card {
 	padding-top: 0;
 	padding-bottom: 0;
 }
 
-.order__details-table {
-	margin: 0 -24px;
-	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 30% );
-
-	.order__detail-item-cost,
-	.order__detail-item-quantity,
-	.order__detail-item-total {
-		text-align: right;
-
-		input {
-			width: 5em;
-		}
-	}
-
-	.order__detail-item-sku {
-		display: block;
-		margin-top: 6px;
-		color: $gray-text-min;
-		font-size: 11px;
-		text-transform: uppercase;
-	}
-
-	thead .table-heading {
-		border-bottom: 1px solid lighten( $gray, 30% );
-	}
-
-	.table-row {
-		&:hover {
-			background: transparent;
-		}
-	}
-}
-
-&.order__refund-dialog {
-	max-width: 720px;
-	max-height: 85%;
-	display: flex;
-	flex-direction: column;
-	padding: 0;
-
-	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
-		padding: 16px;
-		box-sizing: border-box;
-		color: $gray-text-min;
-
-		@include breakpoint( ">960px" ) {
-			padding: 24px;
-		}
-	}
-
-	.order__detail-header,
-	.order__details-total {
-		color: $gray-dark;
-	}
-
-	.form-text-input,
-	.form-text-input-with-affixes input {
-		text-align: right;
-	}
-
-	.form-label {
-		.form-text-input-with-affixes {
-			font-weight: normal;
-		}
-	}
-}
-
-.order__details-totals {
-	padding: 24px 0;
-	text-align: right;
-	font-size: 14px;
-
-	.order__details-total-discount,
-	.order__details-total-shipping,
-	.order__details-total-refund,
-	.order__details-total {
-		margin-bottom: 8px;
-		display: flex;
-		align-items: center;
-
-		.order__details-totals-label {
-			width: 75%;
-		}
-
-		.order__details-totals-value {
-			width: 25%;
-
-			.form-text-input-with-affixes {
-				width: 85%;
-			}
-		}
-	}
-
-	& > div:last-child {
-		margin-bottom: 0;
-	}
-
-	.order__details-total .order__details-totals-label,
-	.order__details-total .order__details-totals-value {
-		font-weight: 600;
-	}
-}
-
-.order__details-refund,
-.order__details-fulfillment {
+.order-created,
+.order-payment,
+.order-fulfillment {
 	margin: 0 -16px;
 	padding: 16px;
 	border-top: 1px solid lighten( $gray, 30% );
@@ -184,19 +55,25 @@
 		padding: 24px;
 	}
 
-	.order__details-refund-label,
-	.order__details-fulfillment-label {
+	.order-created__label,
+	.order-payment__label,
+	.order-fulfillment__label {
 		display: flex;
 		align-items: center;
 		flex-grow: 1;
 	}
 
-	.order__details-refund-label .gridicon {
+	.order-created__label .gridicon,
+	.order-fulfillment__label .gridicon {
+		color: $gray;
+	}
+
+	.order-payment__label .gridicon {
 		color: $alert-green;
 	}
 
-	.order__details-refund-action,
-	.order__details-fulfillment-action {
+	.order-payment__action,
+	.order-fulfillment__action {
 		flex-grow: 0;
 
 		.button {
@@ -216,135 +93,9 @@
 	}
 }
 
-.order__details-fulfillment {
-	background: lighten( $blue-light, 25% );
-
-	&.is-completed {
-		background: transparent;
-
-		.order__details-fulfillment-label .gridicon {
-			color: $alert-green;
-		}
-	}
-}
-
-.order__customer-info-container {
-	display: flex;
-}
-
-.order__customer-billing {
-	width: 50%;
-}
-
-.order__customer-info {
-	.order__billing-details,
-	.order__shipping-details {
-		margin-bottom: 16px;
-		color: $gray-text-min;
-		font-size: 12px;
-		text-transform: uppercase;
-	}
-
-	h4 {
-		font-weight: bold;
-	}
-
-	.order__customer-shipping {
-		.order__shipping-address {
-			margin-bottom: 0;
-		}
-	}
-}
-
-.order__billing-address,
-.order__shipping-address {
-	margin-bottom: 1.5em;
-
-	p {
-		margin-bottom: 0;
-	}
-}
-
-
 &.dialog__content {
-	@include breakpoint( ">960px" ) {
-		width: 720px;
-	}
-
 	.form-text-input,
 	.form-text-input-with-affixes input {
 		text-align: right;
 	}
-
-	.order__refund-actions,
-	.order__fulfillment-actions {
-		margin: 0 -24px;
-		padding: 24px 24px 0;
-		min-width: 100%;
-		border-top: 1px solid lighten( $gray, 30% );
-		text-align: right;
-
-		button + button {
-			margin-left: 8px;
-		}
-	}
-
-	&.order__fulfillment {
-		.form-text-input {
-			text-align: left;
-		}
-	}
-}
-
-.order__refund-container {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	margin: 0 -24px -24px;
-	padding: 24px;
-	border-top: 1px solid lighten( $gray, 30% );
-	background: lighten( $gray, 35% );
-
-	.order__refund-note,
-	.order__refund-details {
-		flex: 1;
-	}
-
-	.order__refund-note {
-		margin-bottom: 16px;
-
-		.form-textarea {
-			margin-top: 8px;
-		}
-	}
-
-	.order__refund-details {
-		margin-left: 50px;
-	}
-
-	.order__refund-amount {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		padding-bottom: 16px;
-		margin-bottom: 16px;
-		border-bottom: 1px solid lighten( $gray, 30% );
-
-		.order__refund-amount-label,
-		.order__refund-amount-value {
-			flex: 1;
-		}
-	}
-
-	.order__refund-method h3 {
-		font-size: 11px;
-		text-transform: uppercase;
-		margin-bottom: 8px;
-		color: $gray-text-min;
-	}
-}
-
-.order__fulfillment-tracking,
-.order__fulfillment-email {
-	margin: 0 0 24px;
 }

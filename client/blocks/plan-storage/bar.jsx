@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import filesize from 'filesize';
@@ -58,7 +59,6 @@ class PlanStorageBar extends Component {
 		return (
 			<div className={ classes }>
 				<ProgressBar
-					className="plan-storage__bar"
 					value={ percent }
 					total={ 100 }
 					compact={ true } />

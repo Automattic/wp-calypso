@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -139,10 +140,10 @@ Shipping.propTypes = {
 };
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		const zone = loaded && getCurrentlyEditingShippingZone( state );
-		const isRestOfTheWorld = zone && 0 === zone.id;
+		const isRestOfTheWorld = 0 === Number( ownProps.params.zone );
 
 		return {
 			siteId: getSelectedSiteId( state ),

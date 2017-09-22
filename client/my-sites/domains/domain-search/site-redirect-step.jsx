@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import notices from 'notices';
+import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import upgradesActions from 'lib/upgrades/actions';
@@ -87,13 +87,13 @@ class SiteRedirectStep extends React.Component {
 		this.props.recordFormSubmit( domain );
 
 		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
-			notices.error( this.getValidationErrorMessage( domain, { code: 'already_in_cart' } ) );
+			this.props.errorNotice( this.getValidationErrorMessage( domain, { code: 'already_in_cart' } ) );
 			return;
 		}
 
 		canRedirect( this.props.selectedSite.ID, domain, function( error ) {
 			if ( error ) {
-				notices.error( this.getValidationErrorMessage( domain, error ) );
+				this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
 				return;
 			}
 
@@ -161,8 +161,9 @@ const recordFormSubmit = ( searchBoxValue ) => recordGoogleEvent(
 export default connect(
 	null,
 	{
+		errorNotice,
 		recordInputFocus,
 		recordGoButtonClick,
-		recordFormSubmit
+		recordFormSubmit,
 	}
 )( localize( SiteRedirectStep ) );

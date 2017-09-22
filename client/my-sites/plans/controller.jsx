@@ -8,7 +8,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import { renderWithReduxStore } from 'lib/react-helpers';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { isValidFeatureKey } from 'lib/plans';
 
 export default {

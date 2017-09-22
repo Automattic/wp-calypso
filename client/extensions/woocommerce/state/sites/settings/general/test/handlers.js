@@ -80,7 +80,7 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action, noop );
+			handleSettingsGeneral( { dispatch, getState }, action );
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
 	} );
@@ -93,7 +93,7 @@ describe( 'handlers', () => {
 			const response = { data: settingsData };
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralSuccess( store, action, noop, response );
+			handleSettingsGeneralSuccess( store, action, response );
 
 			expect( store.dispatch ).calledWith( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -110,7 +110,7 @@ describe( 'handlers', () => {
 			};
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralError( store, action, noop, 'rest_no_route' );
+			handleSettingsGeneralError( store, action, 'rest_no_route' );
 
 			expect( store.dispatch ).to.have.been.calledWithMatch( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,

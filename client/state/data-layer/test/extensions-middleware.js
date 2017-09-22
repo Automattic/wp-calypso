@@ -8,7 +8,7 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
-import { local } from '../utils';
+import { bypassDataLayer } from '../utils';
 
 describe( 'Calypso Extensions Data Layer Middleware', () => {
 	let next;
@@ -47,7 +47,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
 		addHandlers( 'my-extension', handlers, config );
-		const action = local( { type: 'ADD' } );
+		const action = bypassDataLayer( { type: 'ADD' } );
 
 		config.middleware( store )( next )( action );
 
@@ -105,7 +105,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 	} );
 
 	it( 'should allow continuing the action down the chain', () => {
-		const adder = spy( ( _store, _action, _next ) => _next( _action ) );
+		const adder = spy( () => {} );
 
 		const handlers = {
 			[ 'ADD' ]: [ adder ],
@@ -118,7 +118,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		config.middleware( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
-		expect( next ).to.have.been.calledWith( local( action ) );
+		expect( next ).to.have.been.calledWith( bypassDataLayer( action ) );
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 

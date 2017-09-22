@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +25,7 @@ const CommentActions = ( {
 	showModerationTools,
 	translate,
 	activeEditCommentId,
-	activeReplyCommentID,
+	activeReplyCommentId,
 	commentId,
 	handleReply,
 	onReplyCancel,
@@ -33,9 +35,11 @@ const CommentActions = ( {
 	spamComment,
 	editComment,
 	editCommentCancel,
- } ) => {
+	showReadMore,
+	onReadMore,
+} ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-	const showCancelReplyButton = activeReplyCommentID === commentId;
+	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const showCancelEditButton = activeEditCommentId === commentId;
 	const isApproved = status === 'approved';
 
@@ -46,22 +50,32 @@ const CommentActions = ( {
 
 	return (
 		<div className="comments__comment-actions">
-			{ showReplyButton &&
+			{ showReadMore && (
+				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
+					<Gridicon
+						icon="chevron-down"
+						size={ 18 }
+						className="comments__comment-actions-read-more-icon"
+					/>
+					{ translate( 'Read More' ) }
+				</button>
+			) }
+			{ showReplyButton && (
 				<button className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</button>
-			}
-			{ showCancelReplyButton &&
+			) }
+			{ showCancelReplyButton && (
 				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
 				</button>
-			}
-			{ showCancelEditButton &&
+			) }
+			{ showCancelEditButton && (
 				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
 					{ translate( 'Cancel' ) }
 				</button>
-			}
+			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
 				tagName="button"
@@ -69,7 +83,7 @@ const CommentActions = ( {
 				postId={ post.ID }
 				commentId={ commentId }
 			/>
-			{ showModerationTools &&
+			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
 					<button className="comments__comment-actions-trash" onClick={ trashComment }>
@@ -87,32 +101,41 @@ const CommentActions = ( {
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
 							className={ classnames( 'comments__comment-actions-approve', {
-								'is-approved': isApproved
+								'is-approved': isApproved,
 							} ) }
 							icon="checkmark"
-							onClick={ ! isApproved ? approveComment : unapproveComment }>
+							onClick={ ! isApproved ? approveComment : unapproveComment }
+						>
 							{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
 						</PopoverMenuItem>
-						<PopoverMenuItem icon="trash" onClick={ trashComment }>{ translate( 'Trash' ) }</PopoverMenuItem>
-						<PopoverMenuItem icon="spam" onClick={ spamComment }>{ translate( 'Spam' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="trash" onClick={ trashComment }>
+							{ translate( 'Trash' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem icon="spam" onClick={ spamComment }>
+							{ translate( 'Spam' ) }
+						</PopoverMenuItem>
 						<PopoverMenuSeparator />
-						<PopoverMenuItem icon="pencil" onClick={ editComment }>{ translate( 'Edit' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="pencil" onClick={ editComment }>
+							{ translate( 'Edit' ) }
+						</PopoverMenuItem>
 					</EllipsisMenu>
 				</div>
-			}
+			) }
 		</div>
 	);
 };
 
+CommentActions.defaultProps = {
+	onReadMore: noop,
+};
+
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const {
-		post: { site_ID: siteId, ID: postId },
-		commentId
-	} = ownProps;
+	const { post: { site_ID: siteId, ID: postId }, commentId } = ownProps;
 
 	return {
 		approveComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'approved' ) ),
-		unapproveComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'unapproved' ) ),
+		unapproveComment: () =>
+			dispatch( changeCommentStatus( siteId, postId, commentId, 'unapproved' ) ),
 		trashComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'trash' ) ),
 		spamComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'spam' ) ),
 	};

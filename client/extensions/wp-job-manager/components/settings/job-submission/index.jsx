@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FormSection, formValueSelector, reduxForm } from 'redux-form';
+import { change, formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { ProtectFormGuard } from 'lib/protect-form';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -21,36 +22,60 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
+const form = 'extensions.wpJobManager.submission';
+
 class JobSubmission extends Component {
 	static propTypes = {
+		change: PropTypes.func,
+		dirty: PropTypes.bool,
 		enableRegistration: PropTypes.bool,
+		generateUsername: PropTypes.bool,
 		handleSubmit: PropTypes.func,
-		isDisabled: PropTypes.bool,
-		isSaving: PropTypes.bool,
+		isFetching: PropTypes.bool,
 		onSubmit: PropTypes.func,
+		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
-	save = section => data => this.props.onSubmit( data[ section ] );
+	componentWillReceiveProps( nextProps ) {
+		const { generateUsername } = nextProps;
+
+		if ( generateUsername === this.props.generateUsername ) {
+			return;
+		}
+
+		if ( ! generateUsername ) {
+			return;
+		}
+
+		this.props.change( 'account.sendPassword', generateUsername );
+	}
+
+	save = section => data => this.props.onSubmit( form, data[ section ] );
 
 	render() {
 		const {
+			dirty,
 			enableRegistration,
+			generateUsername,
 			handleSubmit,
-			isDisabled,
-			isSaving,
+			isFetching,
 			submissionDuration,
+			submitting,
 			translate,
 		} = this.props;
+		const isDisabled = isFetching || submitting;
 
 		return (
 			<div>
 				<form>
+					<ProtectFormGuard isChanged={ dirty } />
+
 					<FormSection name="account">
 						<SectionHeader label={ translate( 'Account' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'account' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -65,21 +90,35 @@ class JobSubmission extends Component {
 
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="generateUsername"
-									text="Generate usernames from email addresses" />
-								<FormSettingExplanation isIndented>
-									{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
-										'email address. If this is not enabled, a "username" field will display instead.' ) }
-								</FormSettingExplanation>
-
-								<ReduxFormToggle
-									disabled={ isDisabled }
 									name="enableRegistration"
 									text={ translate( 'Enable account creation during submission' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'Includes account creation on the listing submission form, to allow ' +
 										'non-registered users to create an account and submit a job listing simultaneously.' ) }
 								</FormSettingExplanation>
+
+								{ enableRegistration &&
+									<div>
+										<ReduxFormToggle
+											disabled={ isDisabled }
+											name="generateUsername"
+											text="Generate usernames from email addresses" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
+												'email address. If this is not enabled, a "username" field will display instead.' ) }
+										</FormSettingExplanation>
+
+										<ReduxFormToggle
+											disabled={ isDisabled || generateUsername }
+											name="sendPassword"
+											text="Email new users a link to set a password" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Sends an email to the user with their username and a link to set ' +
+												'their password. If this is not enabled, a "password" field will display instead, ' +
+												'and their email address won\'t be verified.' ) }
+										</FormSettingExplanation>
+									</div>
+								}
 							</FormFieldset>
 
 							{ enableRegistration &&
@@ -115,7 +154,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Approval' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'approval' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -146,7 +185,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Listing Duration' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'duration' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -181,7 +220,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Application Method' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'method' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -228,21 +267,21 @@ class JobSubmission extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const selector = formValueSelector( 'submission', () => state.extensions.wpJobManager.form );
+const selector = formValueSelector( form );
 
-		return {
-			enableRegistration: selector( state, 'account.enableRegistration' ),
-			submissionDuration: selector( state, 'duration.submissionDuration' ),
-		};
-	}
+const connectComponent = connect(
+	state => ( {
+		dirty: isDirty( form ),
+		enableRegistration: selector( state, 'account.enableRegistration' ),
+		generateUsername: selector( state, 'account.generateUsername' ),
+		submissionDuration: selector( state, 'duration.submissionDuration' ),
+	} ),
+	{ change }
 );
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'submission',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(

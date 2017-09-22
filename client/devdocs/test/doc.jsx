@@ -44,7 +44,7 @@ describe( 'SingleDoc', () => {
 
 			it( 'should render html with marked text', () => {
 				renderedSingleDoc.setState( { body: fetchResponse } );
-				let html = ReactDom.findDOMNode( renderedSingleDoc.refs.body ).innerHTML;
+				const html = ReactDom.findDOMNode( renderedSingleDoc.refs.body ).innerHTML;
 				expect( html ).to.equal( '<div><p>something <mark>hello</mark></p></div>' );
 			} );
 		} );

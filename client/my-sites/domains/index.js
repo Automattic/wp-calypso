@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-const page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const controller = require( 'my-sites/controller' ),
-	domainsController = require( './controller' ),
-	domainManagementController = require( './domain-management/controller' ),
-	SiftScience = require( 'lib/siftscience' ),
-	config = require( 'config' ),
-	paths = require( './paths' );
+import controller from 'my-sites/controller';
+import domainsController from './controller';
+import domainManagementController from './domain-management/controller';
+import SiftScience from 'lib/siftscience';
+import config from 'config';
+import paths from './paths';
 
 function registerMultiPage( { paths, handlers } ) {
 	paths.forEach( path => page( path, ...handlers ) );
@@ -34,7 +34,7 @@ function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJ
 	return handlers;
 }
 
-module.exports = function() {
+export default function() {
 	SiftScience.recordUser();
 
 	page(
@@ -237,4 +237,4 @@ module.exports = function() {
 		controller.jetPackWarning,
 		domainManagementController.domainManagementIndex
 	);
-};
+}

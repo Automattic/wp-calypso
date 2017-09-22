@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -110,10 +111,10 @@ const ShippingZoneMethodDialog = ( {
 			onClose={ onCancel } >
 			<div className="shipping-zone__method-dialog-header">
 				{ isNew ? translate( 'Add shipping method' ) : translate( 'Edit shipping method' ) }
+				<FormFieldSet className="shipping-zone__enable">
+					<FormToggle checked={ enabled } onChange={ onEnabledChange }>{ translate( 'Enabled' ) }</FormToggle>
+				</FormFieldSet>
 			</div>
-			<FormFieldSet className="shipping-zone__enable">
-				<FormToggle checked={ enabled } onChange={ onEnabledChange }>{ translate( 'Enabled' ) }</FormToggle>
-			</FormFieldSet>
 			<FormFieldSet>
 				<FormFieldSet>
 					<FormLabel>{ translate( 'Method' ) }</FormLabel>

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const SetupHeader = ( { imageSource, imageWidth, subtitle, title, children } ) => {
 	return (
@@ -18,7 +19,7 @@ SetupHeader.propTypes = {
 	imageSource: PropTypes.string,
 	imageWidth: PropTypes.number,
 	title: PropTypes.string.isRequired,
-	subtitle: PropTypes.string,
+	subtitle: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string ] ),
 };
 
 export default SetupHeader;

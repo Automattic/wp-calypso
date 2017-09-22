@@ -4,6 +4,11 @@
 	padding: 0;
 	transition: margin .15s linear;
 
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		z-index: z-index( 'root', '.comment-detail.card.accessible-focus:focus' );
+	}
+
 	&.is-expanded {
 		margin: 16px auto;
 
@@ -12,9 +17,11 @@
 		}
 	}
 
-	&.is-collapsed:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
-		z-index: 1;
+	&.is-collapsed {
+		&:hover {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+			z-index: z-index( 'root', '.comment-detail.card.is-collapsed:hover' );
+		}
 	}
 
 	// If the comment is unapproved and collapsed, color it yellow.
@@ -46,6 +53,7 @@
 
 	strong {
 		color: $gray-text;
+		float: left;
 		margin-right: 8px;
 	}
 
@@ -70,24 +78,39 @@
 	display: flex;
 	flex-flow: row nowrap;
 
+	.comment-detail__header-content {
+		display: flex;
+		flex-wrap: nowrap;
+		width: calc( 100% - 36px );
+
+		@supports( -webkit-line-clamp: 2 ) {
+			align-items: center;
+		}
+	}
+
 	&.is-preview {
 		cursor: pointer;
 		padding: 12px 8px;
 
 		@include breakpoint( "<960px" ) {
-			flex-wrap: wrap;
+			.comment-detail__header-content {
+				flex-wrap: wrap;
+			}
 		}
 	}
 
 	&.is-bulk-edit {
+		.comment-detail__header-content {
+			width: 100%;
+		}
+
 		.comment-detail__checkbox {
-			padding-left: 8px;
+			padding-right: 12px;
 			.form-checkbox {
 				margin: 0;
 			}
 		}
 		.comment-detail__author-preview {
-			padding: 0 12px;
 			.external-link:hover,
 			.external-link:focus {
 				outline: none;
@@ -95,7 +118,32 @@
 		}
 	}
 
-	.button.is-borderless {
+	.comment-detail__action-collapse .gridicon {
+		fill: $gray;
+		transform: rotate( 180deg );
+		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+	}
+	.comment-detail__action-collapse:hover .gridicon {
+		fill: $blue-medium;
+	}
+
+	&.is-preview {
+		&:hover .comment-detail__action-collapse .gridicon {
+			fill: $blue-medium;
+		}
+		.comment-detail__action-collapse {
+			flex: none;
+			margin-top: -6px;
+			text-align: center;
+			width: 36px;
+
+			.gridicon {
+				transform: rotate( 0deg );
+			}
+		}
+	}
+
+	&:not( .is-preview ) .button.is-borderless {
 		padding: 12px 8px;
 
 		.gridicon {
@@ -105,8 +153,8 @@
 
 		&.comment-detail__action-collapse {
 			flex-grow: 1;
-			padding-left: 12px;
-			text-align: left;
+			padding-right: 12px;
+			text-align: right;
 		}
 	}
 
@@ -181,7 +229,7 @@
 
 .comment-detail__actions {
 	color: $gray;
-	padding-right: 4px;
+	padding-left: 4px;
 	user-select: none;
 
 	.button.is-borderless {
@@ -232,6 +280,17 @@
 	}
 }
 
+.comment-detail__header-edit-mode {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+	.comment-detail__header-edit-title {
+		color: lighten( $gray-dark, 30% );
+		padding: 0 16px;
+	}
+}
 
 .comment-detail__post {
 	border-bottom: 1px solid lighten( $gray, 30% );
@@ -325,7 +384,6 @@
 	display: flex;
 	flex-flow: row nowrap;
 	padding: 0 16px;
-	transition: padding-bottom .3s linear;
 
 	.gravatar {
 		height: 32px;
@@ -464,6 +522,7 @@ a.comment-detail__author-more-element {
 
 		&:not( :focus ) {
 			border-color: $white;
+			padding-right: 16px;
 			resize: none;
 		}
 
@@ -474,6 +533,9 @@ a.comment-detail__author-more-element {
 
 		&::placeholder {
 			color: $gray-text-min;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		&.has-scrollbar {
@@ -503,6 +565,44 @@ a.comment-detail__author-more-element {
 	}
 }
 
+.comment-detail__edit {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 16px 8px;
+
+	.form-fieldset {
+		padding: 0 8px;
+		width: 50%;
+	}
+
+	.form-textarea {
+		margin: 0px 8px 20px 8px;
+		transition: none;
+		width: 100%;
+	}
+
+	input[ type="text" ],
+	textarea {
+		font-size: 14px;
+	}
+
+	.comment-detail__edit-jetpack-update-notice {
+		color: $alert-red;
+		margin-left: 8px;
+		margin-right: 8px;
+	}
+	.comment-detail__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
+	}
+
+	.comment-detail__edit-buttons {
+		padding: 0 8px;
+		width: 100%;
+	}
+}
+
 .comment-detail__placeholder {
 	@include placeholder();
 
@@ -512,26 +612,39 @@ a.comment-detail__author-more-element {
 		background-color: lighten( $gray, 30% );
 		color: transparent;
 		height: 32px;
-		margin: 0 8px;
 		&:after {
 			background: transparent;
 		}
 	}
 
-	&.is-expanded .comment-detail__header {
-		border: none;
+	.comment-detail__header.is-preview {
+		cursor: default;
 	}
 
 	.gravatar {
 		width: 32px;
 	}
 
+	.comment-detail__author-preview {
+		margin-left: 8px;
+		padding: 3px 0;
+		width: 40px;
+	}
+
 	.comment-detail__author-info {
-		text-overflow: initial;
+		display: none;
 	}
 
 	.comment-detail__comment-preview {
+		margin: 0 8px;
 		width: 100%;
+	}
+
+
+	@include breakpoint( "<960px" ) {
+		.comment-detail__header.is-preview {
+			flex-wrap: nowrap;
+		}
 	}
 }
 

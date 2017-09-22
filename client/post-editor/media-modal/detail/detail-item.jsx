@@ -4,11 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
+import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,6 +26,7 @@ import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isPrivateSite } from 'state/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -91,10 +91,6 @@ class EditorMediaModalDetailItem extends Component {
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
 	enableVideoEditing( item ) {
-		if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
-			return false;
-		}
-
 		const {
 			isJetpack,
 			isVideoPressEnabled,
@@ -128,6 +124,10 @@ class EditorMediaModalDetailItem extends Component {
 		} = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
+			return null;
+		}
+
+		if ( this.props.isPrivateSite ) {
 			return null;
 		}
 
@@ -358,6 +358,7 @@ const connectComponent = connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+			isPrivateSite: isPrivateSite( state, siteId ),
 			siteId,
 		};
 	}

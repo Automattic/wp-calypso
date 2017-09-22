@@ -1,11 +1,7 @@
 /**
  * Exernal dependencies
  */
-import isEmpty from 'lodash/isEmpty';
-import find from 'lodash/find';
-import indexOf from 'lodash/indexOf';
-import pick from 'lodash/pick';
-import merge from 'lodash/merge';
+import { find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +11,8 @@ import steps from 'signup/config/steps';
 import flows from 'signup/config/flows';
 import { defaultFlowName } from 'signup/config/flows';
 import formState from 'lib/form-state';
-const user = require( 'lib/user' )();
+import userFactory from 'lib/user';
+const user = userFactory();
 
 function getFlowName( parameters ) {
 	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
@@ -78,7 +75,7 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 }
 
 function getValidPath( parameters ) {
-	var locale = getLocale( parameters ),
+	const locale = getLocale( parameters ),
 		flowName = getFlowName( parameters ),
 		currentFlowSteps = flows.getFlow( flowName ).steps,
 		stepName = getStepName( parameters ) || currentFlowSteps[ 0 ],
@@ -114,7 +111,7 @@ function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
-function mergeFormWithValue( { form, fieldName, fieldValue} ) {
+function mergeFormWithValue( { form, fieldName, fieldValue } ) {
 	if ( ! formState.getFieldValue( form, fieldName ) ) {
 		return merge( form, {
 			[ fieldName ]: { value: fieldValue }
@@ -125,6 +122,15 @@ function mergeFormWithValue( { form, fieldName, fieldValue} ) {
 
 function getDestination( destination, dependencies, flowName ) {
 	return flows.filterDestination( destination, dependencies, flowName );
+}
+
+function getThemeForDesignType( designType ) {
+	switch ( designType ) {
+		case 'blog': return 'pub/independent-publisher-2';
+		case 'grid': return 'pub/altofocus';
+		case 'page': return 'pub/dara';
+		default: return 'pub/twentyseventeen';
+	}
 }
 
 export default {
@@ -139,5 +145,6 @@ export default {
 	getNextStepName: getNextStepName,
 	getValueFromProgressStore: getValueFromProgressStore,
 	getDestination: getDestination,
-	mergeFormWithValue: mergeFormWithValue
+	mergeFormWithValue: mergeFormWithValue,
+	getThemeForDesignType: getThemeForDesignType
 };

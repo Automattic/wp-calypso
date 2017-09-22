@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**

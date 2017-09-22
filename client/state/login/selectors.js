@@ -168,6 +168,16 @@ export const getRememberMe = ( state ) => {
 };
 
 /***
+ * Retrieves whether the login form should be disabled due to actions.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Login form disabled flag
+ */
+export const isFormDisabled = ( state ) => {
+	return get( state, 'login.isFormDisabled', false );
+};
+
+/***
  * Tells us if we're in a process of creating a social account
  *
  * @param  {Object}   state  Global state tree
@@ -206,3 +216,35 @@ export const getCreateSocialAccountError = ( state ) => get( state, 'login.socia
  * @return {?Object}         Error for the get social account request.
  */
 export const getRequestSocialAccountError = ( state ) => get( state, 'login.socialAccount.requestError', null );
+
+/***
+ * Gets social account linking status
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Boolean describing social account linking status
+ */
+export const getSocialAccountIsLinking = ( state ) => get( state, 'login.socialAccountLink.isLinking', null );
+
+/***
+ * Gets social account linking email
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         wpcom email that is being linked
+ */
+export const getSocialAccountLinkEmail = ( state ) => get( state, 'login.socialAccountLink.email', null );
+
+/***
+ * Gets social account linking service
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         service name that is being linked
+ */
+export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.authInfo.service', null );
+
+/***
+ * Gets the auth information of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Email address of the social account.
+ */
+export const getSocialAccountLinkAuthInfo = ( state ) => get( state, 'login.socialAccountLink.authInfo', null );

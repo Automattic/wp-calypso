@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
 	noop,
@@ -9,36 +10,45 @@ import {
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import {
-	getImageEditorAspectRatio,
+	AspectRatios,
+	MinimumImageDimensions,
+} from 'state/ui/editor/image-editor/constants';
+import {
+	getImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
-class ImageEditorToolbar extends Component {
+export class ImageEditorToolbar extends Component {
 	static propTypes = {
 		aspectRatio: PropTypes.string,
 		imageEditorRotateCounterclockwise: PropTypes.func,
 		imageEditorFlip: PropTypes.func,
 		setImageEditorAspectRatio: PropTypes.func,
-		allowedAspectRatios: PropTypes.array
+		allowedAspectRatios: PropTypes.array,
+		onShowNotice: PropTypes.func,
+		isAspectRatioDisabled: PropTypes.bool
 	};
 
 	static defaultProps = {
 		imageEditorRotateCounterclockwise: noop,
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
-		allowedAspectRatios: objectValues( AspectRatios )
+		allowedAspectRatios: objectValues( AspectRatios ),
+		onShowNotice: noop,
+		isAspectRatioDisabled: false
 	};
 
 	constructor( props ) {
@@ -65,6 +75,28 @@ class ImageEditorToolbar extends Component {
 
 	onAspectOpen( event ) {
 		event.preventDefault();
+
+		const {
+			isAspectRatioDisabled,
+			onShowNotice,
+			translate
+		} = this.props;
+
+		if ( isAspectRatioDisabled ) {
+			const noticeText = translate(
+				'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.',
+				{
+					args: {
+						width: MinimumImageDimensions.WIDTH,
+						height: MinimumImageDimensions.HEIGHT
+					},
+					components: {
+						strong: <strong />
+					}
+				} );
+			onShowNotice( noticeText );
+			return;
+		}
 
 		this.setState( { showAspectPopover: true } );
 	}
@@ -152,7 +184,8 @@ class ImageEditorToolbar extends Component {
 	renderButtons() {
 		const {
 			translate,
-			allowedAspectRatios
+			allowedAspectRatios,
+			isAspectRatioDisabled
 		} = this.props;
 
 		const buttons = [
@@ -167,9 +200,10 @@ class ImageEditorToolbar extends Component {
 				: {
 					tool: 'aspect',
 					ref: this.setAspectMenuContext,
-					icon: 'layout',
-					text: translate( 'Aspect' ),
-					onClick: this.onAspectOpen
+					icon: 'crop',
+					text: translate( 'Crop' ),
+					onClick: this.onAspectOpen,
+					disabled: isAspectRatioDisabled
 				},
 			{
 				tool: 'flip-vertical',
@@ -179,21 +213,24 @@ class ImageEditorToolbar extends Component {
 			}
 		];
 
-		return buttons.map( button =>
-			button
+		return buttons.map( button => {
+			const buttonClasses = classNames( 'image-editor__toolbar-button', {
+				'is-disabled': button && button.disabled
+			} );
+			return button
 				? (
 					<button
 						key={ 'image-editor-toolbar-' + button.tool }
 						ref={ button.ref }
-						className={ 'image-editor__toolbar-button' }
+						className={ buttonClasses }
 						onClick={ button.onClick }
 					>
 						<Gridicon icon={ button.icon } />
 						<span>{ button.text }</span>
 					</button>
 				)
-				: null
-		);
+				: null;
+		} );
 	}
 
 	render() {
@@ -207,9 +244,15 @@ class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => ( {
-		aspectRatio: getImageEditorAspectRatio( state )
-	} ),
+	( state ) => {
+		const aspectRatio = getImageEditorAspectRatio( state );
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
+
+		return {
+			aspectRatio,
+			isAspectRatioDisabled: ! isGreaterThanMinimumDimensions
+		};
+	},
 	{
 		imageEditorRotateCounterclockwise,
 		imageEditorFlip,

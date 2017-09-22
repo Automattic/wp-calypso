@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -48,8 +49,14 @@ class SettingsPaymentsMethodList extends Component {
 	}
 
 	renderMethodItem = ( method ) => {
+		const { site } = this.props;
+		// Disable BACS and Cheque payment for now until #16630 and #16629 are fixed.
+		if ( 'bacs' === method.id ) {
+			return null;
+		}
+
 		return (
-			<PaymentMethodItem method={ method } key={ method.title } />
+			<PaymentMethodItem method={ method } key={ method.title } site={ site } />
 		);
 	}
 

@@ -64,6 +64,17 @@ class ManageMenu extends PureComponent {
 
 		const items = [
 			{
+				name: 'page',
+				label: this.props.translate( 'Site Pages' ),
+				capability: 'edit_pages',
+				queryable: true,
+				config: 'manage/pages',
+				link: '/pages',
+				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
+				wpAdminLink: 'edit.php?post_type=page',
+				showOnAllMySites: true,
+			},
+			{
 				name: 'post',
 				label: this.props.translate( 'Blog Posts' ),
 				capability: 'edit_posts',
@@ -73,17 +84,6 @@ class ManageMenu extends PureComponent {
 				paths: [ '/posts', '/posts/my' ],
 				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
 				wpAdminLink: 'edit.php',
-				showOnAllMySites: true,
-			},
-			{
-				name: 'page',
-				label: this.props.translate( 'Pages' ),
-				capability: 'edit_pages',
-				queryable: true,
-				config: 'manage/pages',
-				link: '/pages',
-				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
-				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
 		];
@@ -104,14 +104,14 @@ class ManageMenu extends PureComponent {
 
 		if ( config.isEnabled( 'comments/management' ) ) {
 			items.push( {
-				name: 'conversations',
-				label: this.props.translate( 'Conversations' ),
-				capability: 'edit_posts',
+				name: 'comments',
+				label: this.props.translate( 'Comments' ),
+				capability: 'moderate_comments',
 				queryable: true,
 				config: 'comments/management',
 				link: '/comments',
 				wpAdminLink: 'edit-comments.php',
-				showOnAllMySites: true,
+				showOnAllMySites: false,
 			} );
 		}
 
@@ -166,7 +166,7 @@ class ManageMenu extends PureComponent {
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
 			case 'media': icon = 'image'; break;
-			case 'conversations': icon = 'chat'; break;
+			case 'comments': icon = 'chat'; break;
 			default: icon = 'custom-post-type';
 		}
 

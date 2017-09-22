@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -15,12 +16,15 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue, translate } ) => {
 	const classes = classNames( 'card', 'process-orders-widget__container', className );
 	const currencyValue = currency && currency.value || '';
+	const orderCountPhrase = translate( 'New order', 'New orders', {
+		count: orders.length
+	} );
 	return (
 		<div className={ classes } >
 			<div>
 				<span>{ orders.length }</span>
 				<span className="process-orders-widget__order-label">
-					{ translate( '✨ New orders' ) }
+					✨ { orderCountPhrase }
 				</span>
 			</div>
 			<div>

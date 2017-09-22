@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import moment from 'moment';
 import { spy, stub } from 'sinon';
 import { noop } from 'lodash';
 
@@ -50,7 +51,7 @@ describe( 'middleware', () => {
 		let connection;
 		let dispatch, getState;
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
@@ -145,14 +146,64 @@ describe( 'middleware', () => {
 			}
 		};
 
+		const previousWindow = global.window;
+		const previousScreen = global.screen;
+		const previousNavigator = global.navigator;
+
+		before( () => {
+			global.window = {
+				innerWidth: 'windowInnerWidth',
+				innerHeight: 'windowInnerHeight',
+			};
+			global.screen = {
+				width: 'screenWidth',
+				height: 'screenHeight',
+			};
+			global.navigator = {
+				userAgent: 'navigatorUserAgent'
+			};
+		} );
+
+		after( () => {
+			global.window = previousWindow;
+			global.screen = previousScreen;
+			global.navigator = previousNavigator;
+		} );
+
 		it( 'should send relevant browser information to the connection', () => {
+			const expectedInfo = {
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+				siteId: 'siteId',
+				siteUrl: 'siteUrl',
+				localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
+				screenSize: {
+					width: 'screenWidth',
+					height: 'screenHeight',
+				},
+				browserSize: {
+					width: 'windowInnerWidth',
+					height: 'windowInnerHeight',
+				},
+				userAgent: 'navigatorUserAgent',
+				geoLocation: state.happychat.geoLocation
+			};
+
 			const getState = () => state;
-			const connection = { info: spy() };
-			const action = { type: HAPPYCHAT_SEND_USER_INFO, siteUrl: 'http://butt.holdings/' };
+			const connection = { sendInfo: spy() };
+			const action = {
+				type: HAPPYCHAT_SEND_USER_INFO,
+				site: {
+					ID: 'siteId',
+					URL: 'siteUrl'
+				},
+				howCanWeHelp: 'howCanWeHelp',
+				howYouFeel: 'howYouFeel',
+			};
 			sendInfo( connection, { getState }, action );
 
-			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
+			expect( connection.sendInfo ).to.have.been.calledOnce;
+			expect( connection.sendInfo ).to.have.been.calledWithMatch( expectedInfo );
 		} );
 	} );
 
@@ -163,7 +214,7 @@ describe( 'middleware', () => {
 		// without errors. It may be worth pulling each of these helpers out into their
 		// own modules, so that we can stub them and simplify our tests.
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
@@ -271,6 +322,7 @@ describe( 'middleware', () => {
 				},
 				currentUser: {
 					locale: 'en',
+					capabilities: {}
 				},
 				sites: {
 					items: {
@@ -290,6 +342,7 @@ describe( 'middleware', () => {
 			const state = {
 				currentUser: {
 					locale: 'en',
+					capabilities: {}
 				},
 				sites: {
 					items: {

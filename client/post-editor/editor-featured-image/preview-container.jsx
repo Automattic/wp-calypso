@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies

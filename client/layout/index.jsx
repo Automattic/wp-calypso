@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
+import { property, sortBy } from 'lodash';
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
-	classnames = require( 'classnames' ),
-	property = require( 'lodash/property' ),
-	sortBy = require( 'lodash/sortBy' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -40,6 +39,7 @@ import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
+import AppBanner from 'blocks/app-banner';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -167,6 +167,8 @@ Layout = React.createClass( {
 					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ 'development' === process.env.NODE_ENV && <AsyncLoad require="components/webpack-build-monitor" /> }
+				<AppBanner />
 			</div>
 		);
 	}

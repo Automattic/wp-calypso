@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,11 +33,14 @@ const POST_ID = 287;
 describe( 'actions', () => {
 	describe( '#requestPostComments()', () => {
 		useSandbox( sandbox => {
-			sandbox.stub( config, 'isEnabled' ).withArgs( 'comments/filters-in-posts' ).returns( true );
+			sandbox
+				.stub( config, 'isEnabled' )
+				.withArgs( 'comments/filters-in-posts' )
+				.returns( true );
 		} );
 
 		it( 'should return a comment request action', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, 'trash' );
+			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: 'trash' } );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
@@ -47,16 +51,18 @@ describe( 'actions', () => {
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
 				},
+				direction: 'before',
 			} );
 		} );
 
 		it( 'should return a comment request action with a default status of approved', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, undefined );
+			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: undefined } );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
 				siteId: SITE_ID,
 				postId: POST_ID,
+				direction: 'before',
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,

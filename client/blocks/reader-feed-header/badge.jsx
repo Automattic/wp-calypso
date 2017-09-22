@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -19,7 +21,7 @@ const ReaderFeedHeaderSiteBadge = ( { site } ) => {
 };
 
 ReaderFeedHeaderSiteBadge.propTypes = {
-	site: React.PropTypes.object,
+	site: PropTypes.object,
 };
 
 export default ReaderFeedHeaderSiteBadge;

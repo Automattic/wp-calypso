@@ -1,10 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +16,11 @@ import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+
+/**
+ * Module constants
+ */
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 class ActivityLogDay extends Component {
 	static propTypes = {
@@ -24,6 +32,10 @@ class ActivityLogDay extends Component {
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
+
+		// Connected props
+		isToday: PropTypes.bool.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -61,13 +73,14 @@ class ActivityLogDay extends Component {
 	 * @param {string} type Whether the button will be a primary or not.
 	 * @returns { object } Button to display.
 	 */
-	getRewindButton( type = '' ) {
+	renderRewindButton( type = '' ) {
 		const {
 			disableRestore,
 			hideRestore,
+			isToday,
 		} = this.props;
 
-		if ( hideRestore ) {
+		if ( hideRestore || isToday ) {
 			return null;
 		}
 
@@ -91,24 +104,37 @@ class ActivityLogDay extends Component {
 	 *
 	 * @returns { object } Heading to display with date and number of events
 	 */
-	getEventsHeading() {
+	renderEventsHeading() {
 		const {
 			applySiteOffset,
+			isToday,
 			logs,
 			moment,
 			translate,
 			tsEndOfSiteDay,
 		} = this.props;
 
+		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
+		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
+
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
-				<div className="activity-log-day__events">{
-					translate( '%d Event', '%d Events', {
-						args: logs.length,
-						count: logs.length,
-					} )
-				}</div>
+				<div className="activity-log-day__day">
+					{ isToday
+						? translate( '%s — Today', {
+							args: formattedDate,
+							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+						} )
+						: formattedDate }
+				</div>
+				<div className="activity-log-day__events">
+					{ isEmpty( logs )
+						? noActivityText
+						: translate( '%d Event', '%d Events', {
+							args: logs.length,
+							count: logs.length,
+						} ) }
+				</div>
 			</div>
 		);
 	}
@@ -118,37 +144,50 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			hideRestore,
+			isToday,
 			logs,
 			requestRestore,
 			siteId,
 		} = this.props;
 
+		const hasLogs = ! isEmpty( logs );
+
 		return (
-			<div className="activity-log-day">
+			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
 				<FoldableCard
-					clickableHeader
-					expandedSummary={ this.getRewindButton() }
-					header={ this.getEventsHeading() }
+					clickableHeader={ hasLogs }
+					expanded={ hasLogs && isToday }
+					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
+					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
-					summary={ this.getRewindButton( 'primary' ) }
+					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 				>
-					{ logs.map( ( log, index ) => (
-						<ActivityLogItem
-							applySiteOffset={ applySiteOffset }
-							disableRestore={ disableRestore }
-							hideRestore={ hideRestore }
-							key={ index }
-							log={ log }
-							requestRestore={ requestRestore }
-							siteId={ siteId }
-						/>
-					) ) }
+					{ hasLogs &&
+						map( logs, log =>
+							<ActivityLogItem
+								applySiteOffset={ applySiteOffset }
+								disableRestore={ disableRestore }
+								hideRestore={ hideRestore }
+								key={ log.activityId }
+								log={ log }
+								requestRestore={ requestRestore }
+								siteId={ siteId }
+							/>
+						) }
 				</FoldableCard>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( ActivityLogDay ) );
+export default connect(
+	( state, { tsEndOfSiteDay } ) => {
+		const now = Date.now();
+		return {
+			isToday: now <= tsEndOfSiteDay && tsEndOfSiteDay - DAY_IN_MILLISECONDS <= now,
+		};
+	},
+	{
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( ActivityLogDay ) );

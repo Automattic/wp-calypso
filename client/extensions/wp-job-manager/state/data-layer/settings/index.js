@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
 
 /**
  * Internal dependencies
@@ -9,7 +10,7 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { fetchError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
+import { fetchError, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
 import { fromApi, toApi } from './utils';
 
@@ -25,15 +26,16 @@ export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) =>
+export const updateExtensionSettings = ( { dispatch }, { siteId }, { data } ) =>
 	dispatch( updateSettings( siteId, fromApi( data ) ) );
 
 export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
 	dispatch( fetchError( siteId ) );
 
-export const saveSettings = ( { dispatch, getState }, action ) => {
-	const { data, siteId } = action;
+export const saveSettings = ( { dispatch }, action ) => {
+	const { data, form, siteId } = action;
 
+	dispatch( startSave( form ) );
 	dispatch( removeNotice( 'wpjm-settings-save' ) );
 	dispatch( http( {
 		method: 'POST',
@@ -46,16 +48,20 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 	}, action ) );
 };
 
-export const announceSuccess = ( { dispatch }, { siteId } ) => {
-	dispatch( saveSuccess( siteId ) );
+export const announceSuccess = ( { dispatch }, { form, siteId }, { data } ) => {
+	const updatedData = fromApi( data );
+
+	dispatch( stopSave( form ) );
+	dispatch( initialize( form, updatedData ) );
+	dispatch( updateSettings( siteId, updatedData ) );
 	dispatch( successNotice( translate(
 		'Settings saved!' ),
 		{ id: 'wpjm-settings-save' }
 	) );
 };
 
-export const announceFailure = ( { dispatch }, { siteId } ) => {
-	dispatch( saveError( siteId ) );
+export const announceFailure = ( { dispatch }, { form } ) => {
+	dispatch( stopSave( form ) );
 	dispatch( errorNotice(
 		translate( 'There was a problem saving your changes. Please try again.' ),
 		{ id: 'wpjm-settings-save' }

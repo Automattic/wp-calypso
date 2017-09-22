@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import {
@@ -94,21 +95,10 @@ if ( ! Array.prototype.fill ) {
 
 // The below is a `require()` statement becuase it needs to
 // be loaded in after the polyfills are created.
-const {
-	CompositeDecorator,
-	Editor,
-	EditorState,
-	Entity,
-	Modifier,
-	SelectionState,
-} = require( 'draft-js' );
+import { CompositeDecorator, Editor, EditorState, Entity, Modifier, SelectionState } from 'draft-js';
 
 // Parser also requires draft-js. Lets load it after the polyfills are created too.
-const {
-	fromEditor,
-	mapTokenTitleForEditor,
-	toEditor,
-} = require( './parser' );
+import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';

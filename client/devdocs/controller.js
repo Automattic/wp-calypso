@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import qs from 'qs';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import page from 'page';
 import url from 'url';
 
@@ -23,6 +23,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import WizardComponent from './wizard-component';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
@@ -105,6 +106,14 @@ const devdocs = {
 		);
 	},
 
+	wizard: function( context ) {
+		renderWithReduxStore(
+			<WizardComponent stepName={ context.params.stepName } />,
+			'primary',
+			context.store
+		);
+	},
+
 	// App Blocks
 	blocks: function( context ) {
 		renderWithReduxStore(
@@ -174,4 +183,4 @@ const devdocs = {
 	}
 };
 
-module.exports = devdocs;
+export default devdocs;

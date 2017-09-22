@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,21 +39,21 @@ class RecommendedPostsEmptyContent extends React.Component {
 					{ this.props.translate( 'Back to Following' ) }
 				</a>
 			),
-			secondaryAction = isDiscoverEnabled()
-				? <a
-						className="empty-content__action button"
-						onClick={ this.recordSecondaryAction }
-						href="/discover"
-					>
-						{ this.props.translate( 'Explore Discover' ) }
-					</a>
-				: null;
+			secondaryAction = isDiscoverEnabled() ? (
+				<a
+					className="empty-content__action button"
+					onClick={ this.recordSecondaryAction }
+					href="/discover"
+				>
+					{ this.props.translate( 'Explore Discover' ) }
+				</a>
+			) : null;
 
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'No Post Recommendations yet' ) }
 				line={ this.props.translate(
-					'Posts we recommend based on your WordPress.com activity will appear here.',
+					'Posts we recommend based on your WordPress.com activity will appear here.'
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }

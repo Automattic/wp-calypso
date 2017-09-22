@@ -11,7 +11,6 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -22,10 +21,10 @@ export default {
 		const basePath = context.path;
 		const accountPasswordData = require( 'lib/account-password-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Password', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		if ( context.query && context.query.updated === 'password' ) {
-			notices.success( i18n.translate( 'Your password was saved successfully.' ), { displayOnNextPage: true } );
+			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+				displayOnNextPage: true,
+			} );
 
 			page.replace( window.location.pathname );
 		}
@@ -50,8 +49,6 @@ export default {
 			basePath = context.path,
 			appPasswordsData = require( 'lib/application-passwords-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
 		renderWithReduxStore(
@@ -72,8 +69,6 @@ export default {
 			basePath = context.path,
 			connectedAppsData = require( 'lib/connected-applications-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
 		renderWithReduxStore(
@@ -93,19 +88,35 @@ export default {
 		const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
 			basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Account Recovery', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
 		renderWithReduxStore(
 			React.createElement( AccountRecoveryComponent,
 				{
 					userSettings: userSettings,
-					path: context.path
+					path: basePath
 				}
 			),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
+
+	socialLogin( context ) {
+		const SocialLoginComponent = require( 'me/social-login' );
+		const basePath = context.path;
+
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Social Login' );
+
+		renderWithReduxStore(
+			React.createElement( SocialLoginComponent,
+				{
+					userSettings: userSettings,
+					path: basePath
+				}
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
 };

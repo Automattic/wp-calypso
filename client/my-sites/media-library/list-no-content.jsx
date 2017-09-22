@@ -21,8 +21,16 @@ class MediaLibraryListNoContent extends Component {
 	getLabel() {
 		const {
 			filter,
+			source,
 			translate,
 		} = this.props;
+
+		//TODO: handle each service with individual messages
+		if ( 'google_photos' === source ) {
+			return translate( 'You don\'t have any photos in your Google library.', {
+				comment: 'Media no results'
+			} );
+		}
 
 		switch ( filter ) {
 			case 'this-post':
@@ -67,6 +75,8 @@ class MediaLibraryListNoContent extends Component {
 					{ this.props.translate( 'Upload Media' ) }
 				</UploadButton>
 			);
+		} else if ( this.props.source ) {
+			line = this.props.translate( 'New photos may take a few minutes to appear.' );
 		}
 
 		return (

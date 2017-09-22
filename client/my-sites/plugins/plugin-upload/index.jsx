@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +15,12 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import UploadDropZone from 'blocks/upload-drop-zone';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import EligibilityWarnings from 'blocks/eligibility-warnings';
+import EmptyContent from 'components/empty-content';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
+import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getPluginUploadError,
@@ -23,9 +29,21 @@ import {
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
 } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer
+} from 'state/automated-transfer/selectors';
 
 class PluginUpload extends React.Component {
+	state = {
+		showEligibility: this.props.showEligibility,
+	}
 
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
@@ -38,6 +56,10 @@ class PluginUpload extends React.Component {
 			! inProgress && this.props.clearPluginUpload( siteId );
 		}
 
+		if ( nextProps.showEligibility !== this.props.showEligibility ) {
+			this.setState( { showEligibility: nextProps.showEligibility } );
+		}
+
 		if ( nextProps.complete ) {
 			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
 		}
@@ -47,13 +69,18 @@ class PluginUpload extends React.Component {
 		page.back();
 	}
 
+	onProceedClick = () => {
+		this.setState( { showEligibility: false } );
+	}
+
 	renderUploadCard() {
 		const { inProgress, complete, isJetpack } = this.props;
+
+		const uploadAction = isJetpack ? this.props.uploadPlugin : this.props.initiateAutomatedTransferWithPluginZip;
+
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone
-					doUpload={ this.props.uploadPlugin }
-					disabled={ ! isJetpack } /> }
+				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
 				{ inProgress && this.renderProgressBar() }
 			</Card>
 		);
@@ -79,13 +106,43 @@ class PluginUpload extends React.Component {
 		);
 	}
 
+	renderNotAvailableForMultisite() {
+		const { translate, siteAdminUrl } = this.props;
+
+		return (
+			<EmptyContent
+				title={ translate( 'Visit WP Admin to install your plugin.' ) }
+				action={ translate( 'Go to WP Admin' ) }
+				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
+				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+			/>
+		);
+	}
+
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			isJetpackMultisite,
+			upgradeJetpack,
+			siteId,
+			siteSlug,
+		} = this.props;
+		const { showEligibility } = this.state;
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
-				{ this.renderUploadCard() }
+				{ upgradeJetpack && <JetpackManageErrorPage
+					template="updateJetpack"
+					siteId={ siteId }
+					featureExample={ this.renderUploadCard() }
+					version="5.1" /> }
+				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
+				{ showEligibility && <EligibilityWarnings
+					backUrl={ `/plugins/${ siteSlug }` }
+					onProceed={ this.onProceedClick } /> }
+				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -96,10 +153,21 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
+		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+		// Use this selector to take advantage of eligibility card placeholders
+		// before data has loaded.
+		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+		const hasEligibilityMessages = ! (
+			isEmpty( eligibilityHolds ) &&
+			isEmpty( eligibilityWarnings )
+		);
+
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
 			inProgress: isPluginUploadInProgress( state, siteId ),
 			complete: isPluginUploadComplete( state, siteId ),
 			failed: !! error,
@@ -107,8 +175,12 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
+			upgradeJetpack: isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			isJetpackMultisite,
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
+			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		};
 	},
-	{ uploadPlugin, clearPluginUpload }
+	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip }
 )( localize( PluginUpload ) );
 

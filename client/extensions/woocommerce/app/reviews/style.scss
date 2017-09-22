@@ -1,0 +1,282 @@
+.reviews__placeholder {
+	display: inline-block;
+	width: 100%;
+	padding: 12px 0px;
+	@include placeholder();
+}
+
+.reviews__list {
+	font-size: 14px;
+	.pagination {
+		margin-top: 16px;
+	}
+}
+
+.reviews__card {
+	margin: 0 auto;
+	padding: 0;
+
+	&.is-unapproved.is-collapsed {
+		background: mix( $alert-yellow, $white, 8.5% );
+	}
+
+	&.is-expanded {
+		margin: 16px auto;
+
+		.reviews__header {
+			justify-content: space-between;
+			border-bottom: 1px solid lighten( $gray, 30% );
+		}
+	}
+
+	&.is-collapsed {
+		padding: 12px 8px;
+
+		.reviews__content {
+			overflow: hidden;
+			padding: 0 16px;
+			width: 50%;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.reviews__header {
+		display: flex;
+
+		&.is-preview {
+			cursor: pointer;
+			padding: 12px 8px;
+		}
+
+		.reviews__action-collapse .gridicon {
+			fill: $gray;
+			transform: rotate( 180deg );
+			transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+		}
+
+		.reviews__action-collapse:hover .gridicon {
+			fill: $blue-medium;
+		}
+
+		&.is-preview {
+			&:hover .reviews__action-collapse .gridicon {
+				fill: $blue-medium;
+			}
+			.reviews__action-collapse {
+				flex: none;
+				margin-top: -6px;
+				text-align: center;
+				width: 36px;
+
+				.gridicon {
+					transform: rotate( 0deg );
+				}
+			}
+		}
+
+		&:not( .is-preview ) .button.is-borderless {
+			padding: 12px 8px;
+
+			&.reviews__action-collapse {
+				flex-grow: 1;
+				padding-right: 12px;
+				text-align: right;
+			}
+		}
+	}
+
+	.reviews__info {
+		margin-left: 16px;
+		width: 20%;
+	}
+
+	.reviews__author-name {
+		font-weight: 600;
+
+		.gridicon {
+			padding: 4px 8px;
+			position: absolute;
+		}
+	}
+
+	.reviews__date {
+		color: $gray-text-min;
+	}
+
+	.reviews__rating {
+		width: 20%;
+		margin-top: 12px;
+	}
+
+	.reviews__author-gravatar {
+		padding-left: 8px;
+	}
+
+	.reviews__author-gravatar img {
+		margin-top: 8px;
+	}
+
+	.reviews__product {
+		height: 40px;
+		width: 50px;
+		overflow: hidden;
+		position: relative;
+		margin-right: 16px;
+
+		&.is-placeholder {
+			background: $gray-light;
+		}
+
+		img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			height: 100%;
+			width: auto;
+			-webkit-transform: translate( -50%, -50% );
+			transform: translate( -50%, -50% );
+		}
+	}
+
+	.reviews__verified-label {
+		align-self: flex-start;
+		border-radius: 9px;
+		font-size: 12px;
+		padding: 0 10px;
+		background: lighten( $alert-green, 18% );
+
+		.gridicon {
+			padding-top: 4px;
+		}
+
+		span {
+			padding: 4px;
+			vertical-align: 25%;
+		}
+	}
+}
+
+.reviews__actions {
+	color: $gray;
+	padding-left: 4px;
+	user-select: none;
+
+	.button.is-borderless {
+		span {
+			display: none;
+			font-weight: normal;
+			margin-left: 4px;
+
+			@include breakpoint( ">960px" ) {
+				display: inline;
+			}
+		}
+
+		&.reviews__action-approve {
+			&:focus,
+			&:hover {
+				color: $alert-green;
+			}
+		}
+
+		&.reviews__action-spam,
+		&.reviews__action-trash,
+		&.reviews__action-delete {
+			&:focus,
+			&:hover {
+				color: $alert-red;
+			}
+		}
+
+		&.is-approved {
+			color: $alert-green;
+		}
+		&.is-spam {
+			color: $alert-red;
+		}
+		&.is-trash {
+			color: $gray-dark;
+		}
+	}
+}
+
+.reviews__expanded-card-details {
+	display: flex;
+	flex-flow: row nowrap;
+	padding: 16px;
+
+	.reviews__rating {
+		align-self: flex-start;
+		margin-left: auto;
+	}
+}
+
+.reviews__expanded-card {
+	.reviews__content {
+		padding: 16px;
+	}
+}
+
+.reviews__reply {
+	border-top: 1px solid lighten( $gray, 30% );
+
+	.reviews__reply-content {
+		padding: 16px;
+	}
+}
+
+.reviews__reply-textarea {
+	line-height: 0;
+	position: relative;
+
+	textarea {
+		font-size: 14px;
+		height: 47px;
+		line-height: 21px;
+		min-height: 47px;
+		overflow: hidden;
+		padding: 12px 70px 12px 16px;
+		position: relative;
+		resize: vertical;
+		transition: min-height .15s linear;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		border-left: 0;
+		border-right: 0;
+		border-bottom: 0;
+
+		&::placeholder {
+			color: $gray-text-min;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+	.reviews__reply-submit {
+		color: $gray;
+		font-size: 12px;
+		font-weight: 600;
+		padding: 4px;
+		position: absolute;
+		right: 18px;
+		top: 11px;
+		text-transform: uppercase;
+		transition: opacity 0.2s ease-in-out;
+	}
+}
+.reviews__reply-bar {
+	display: flex;
+	flex-flow: row nowrap;
+	padding: 16px;
+
+	.reviews__reply-actions {
+		align-self: flex-start;
+		margin-left: auto;
+
+		.button {
+			margin-left: 32px;
+		}
+	}
+}

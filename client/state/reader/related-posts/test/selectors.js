@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -23,8 +24,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1,
-				),
+					1
+				)
 			).to.be.true;
 		} );
 		it( 'should return false if key present', () => {
@@ -41,8 +42,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1,
-				),
+					1
+				)
 			).to.be.false;
 		} );
 
@@ -60,8 +61,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1,
-				),
+					1
+				)
 			).to.be.false;
 		} );
 	} );
@@ -80,8 +81,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1,
-				),
+					1
+				)
 			).to.eql( [ 1, 2 ] );
 		} );
 
@@ -98,8 +99,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1,
-				),
+					1
+				)
 			).to.be.undefined;
 		} );
 	} );

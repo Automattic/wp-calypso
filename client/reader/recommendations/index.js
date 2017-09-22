@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +38,7 @@ export default function() {
 					sidebar,
 					recommendedPosts,
 				] );
-			},
+			}
 		);
 	}
 }

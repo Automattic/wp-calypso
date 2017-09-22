@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -50,8 +51,12 @@ describe( 'actions', () => {
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
 		useNock( nock => {
-			nock( vimeoSuccessApiUrl ).get( '' ).reply( 200, deepFreeze( sampleVimeoResponse ) );
-			nock( vimeoFailureApiUrl ).get( '' ).reply( 500, deepFreeze( {} ) );
+			nock( vimeoSuccessApiUrl )
+				.get( '' )
+				.reply( 200, deepFreeze( sampleVimeoResponse ) );
+			nock( vimeoFailureApiUrl )
+				.get( '' )
+				.reply( 500, deepFreeze( {} ) );
 		} );
 
 		it( 'vimeo: should dispatch properly when receiving a valid response', () => {

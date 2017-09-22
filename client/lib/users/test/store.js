@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import findIndex from 'lodash/findIndex';
-import some from 'lodash/some';
-import isUndefined from 'lodash/isUndefined';
+import { findIndex, isUndefined, some } from 'lodash';
 /**
  * Internal dependencies
  */

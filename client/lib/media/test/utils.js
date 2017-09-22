@@ -12,7 +12,7 @@ import mockery from 'mockery';
 import JetpackSite from 'lib/site/jetpack';
 import useMockery from 'test/helpers/use-mockery';
 
-const UNIQUEID = 'media-1';
+const UNIQUEID = 'media-13';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {
@@ -44,6 +44,7 @@ const EXPECTED_FILE_OBJECT = {
 	mime_type: 'image/jpeg',
 	guid: DUMMY_FILENAME,
 	URL: DUMMY_FILENAME,
+	external: true,
 };
 
 describe( 'MediaUtils', function() {
@@ -53,8 +54,8 @@ describe( 'MediaUtils', function() {
 	useMockery();
 
 	before( () => {
-		mockery.registerMock( 'lodash/uniqueId', function() {
-			return UNIQUEID;
+		mockery.registerMock( 'lib/impure-lodash', {
+			uniqueId: () => UNIQUEID,
 		} );
 
 		MediaUtils = require( '../utils' );
@@ -312,30 +313,6 @@ describe( 'MediaUtils', function() {
 		} );
 	} );
 
-	describe( '#isSiteAllowedFileTypesToBeTrusted()', function() {
-		it( 'should return false for versions of Jetpack where option is not synced', function() {
-			var site = new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.0'
-				}
-			} );
-
-			expect( MediaUtils.isSiteAllowedFileTypesToBeTrusted( site ) ).to.be.false;
-		} );
-
-		it( 'should return true for versions of Jetpack where option is synced', function() {
-			var site = new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.1'
-				}
-			} );
-
-			expect( MediaUtils.isSiteAllowedFileTypesToBeTrusted( site ) ).to.be.true;
-		} );
-	} );
-
 	describe( '#getAllowedFileTypesForSite()', function() {
 		it( 'should return an empty array for a falsey site', function() {
 			var extensions = MediaUtils.getAllowedFileTypesForSite();
@@ -387,18 +364,6 @@ describe( 'MediaUtils', function() {
 			} ) );
 
 			expect( isSupported ).to.be.true;
-		} );
-
-		it( 'should return false for versions of Jetpack where option is synced and extension is not supported', function() {
-			var isSupported = MediaUtils.isSupportedFileTypeForSite( { extension: 'exe' }, new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.1',
-					allowed_file_types: [ 'pdf', 'gif' ]
-				}
-			} ) );
-
-			expect( isSupported ).to.be.false;
 		} );
 
 		it( 'should return true if the site supports the item\'s extension', function() {

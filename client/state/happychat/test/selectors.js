@@ -27,6 +27,7 @@ import {
 	getGeoLocation,
 	getGroups,
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP
@@ -92,23 +93,21 @@ describe( 'selectors', () => {
 			HAPPYCHAT_CHAT_STATUS_NEW,
 		];
 
-		it( 'should return false if Happychat is unavailable', () => {
+		it( 'should return false if Happychat is not connected', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'uninitialized',
-					isAvailable: false,
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW
 				}
 			} );
 			expect( canUserSendMessages( state ) ).to.be.false;
 		} );
 
-		it( "should return false if Happychat is available but the chat status doesn't allow messaging", () => {
+		it( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
 			messagingDisabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						isAvailable: true,
 						chatStatus: status
 					}
 				} );
@@ -116,30 +115,30 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return true if Happychat is available but client is not connected', () => {
-			messagingEnabledChatStatuses.forEach( status => {
-				const state = deepFreeze( {
-					happychat: {
-						connectionStatus: 'uninitialized',
-						isAvailable: true,
-						chatStatus: status
-					}
-				} );
-				expect( canUserSendMessages( state ) ).to.be.false;
-			} );
-		} );
-
-		it( 'should return true if Happychat is available and the chat status allows messaging', () => {
+		it( 'should return true if Happychat is connected and the chat status allows messaging', () => {
 			messagingEnabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						isAvailable: true,
 						chatStatus: status
 					}
 				} );
 				expect( canUserSendMessages( state ) ).to.be.true;
 			} );
+		} );
+
+		it( 'should return true even when isAvailable is false', () => {
+			// This test is here to prevent a code regression — isAvailable is supposed to
+			// determine whether Happychat is capable of starting new chats, and should not be
+			// a factor when determining if a user should be able to send messages to the service.
+			const state = deepFreeze( {
+				happychat: {
+					connectionStatus: 'connected',
+					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
+					isAvailable: false,
+				}
+			} );
+			expect( canUserSendMessages( state ) ).to.be.true;
 		} );
 	} );
 
@@ -291,6 +290,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -302,6 +302,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no siteId', () => {
 			const siteId = undefined;
 			const state = {
+				...userState,
 				sites: {
 					items: {
 						1: {}
@@ -315,6 +316,7 @@ describe( 'selectors', () => {
 		it( 'should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				currentUser: {
 					id: 1,
 					capabilities: {
@@ -342,6 +344,7 @@ describe( 'selectors', () => {
 		it( 'should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				currentUser: {
 					id: 1,
 					capabilities: {

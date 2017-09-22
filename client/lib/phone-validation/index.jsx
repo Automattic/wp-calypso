@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-var phone = require( 'phone' ),
-	i18n = require( 'i18n-calypso' );
+import phone from 'phone';
+import i18n from 'i18n-calypso';
 
-module.exports = function( phoneNumber ) {
-	var phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
+export default function( phoneNumber ) {
+	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {
 		return {
@@ -35,16 +35,15 @@ module.exports = function( phoneNumber ) {
 		};
 	}
 
-	if ( phone( phoneNumber ).length ) {
-		return {
-			info: 'phone_number_valid',
-			message: i18n.translate( 'Valid phone number' )
-		};
-	} else {
+	if ( ! phone( phoneNumber ).length ) {
 		return {
 			error: 'phone_number_invalid',
 			message: i18n.translate( 'That phone number does not appear to be valid' )
 		};
 	}
 
-};
+	return {
+		info: 'phone_number_valid',
+		message: i18n.translate( 'Valid phone number' )
+	};
+}

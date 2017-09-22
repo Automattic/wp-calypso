@@ -11,13 +11,15 @@ import React, { Component } from 'react';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
+import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
-import OrderCustomerInfo from './order-customer-info';
+import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
+import OrderNotes from './order-notes';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class Order extends Component {
@@ -32,12 +34,17 @@ class Order extends Component {
 
 		if ( siteId ) {
 			this.props.fetchOrder( siteId, orderId );
+			this.props.fetchNotes( siteId, orderId );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
 			this.props.fetchOrder( newProps.siteId, newProps.orderId );
+			this.props.fetchNotes( newProps.siteId, newProps.orderId );
+		} else if ( newProps.order && this.props.order && newProps.order.status !== this.props.order.status ) {
+			// A status change should force a notes refresh
+			this.props.fetchNotes( newProps.siteId, newProps.orderId, true );
 		}
 	}
 
@@ -54,14 +61,14 @@ class Order extends Component {
 	}
 
 	render() {
-		const { className, isSaving, order, site, translate } = this.props;
+		const { className, isSaving, order, orderId, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
 		const breadcrumbs = [
 			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
-			( <span>{ translate( 'Order Details' ) }</span> ),
+			( <span>{ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ orderId }` } } ) }</span> ),
 		];
 		return (
 			<Main className={ className }>
@@ -71,7 +78,8 @@ class Order extends Component {
 
 				<div className="order__container">
 					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
-					<OrderCustomerInfo order={ order } />
+					<OrderNotes orderId={ order.id } siteId={ site.ID } />
+					<OrderCustomer order={ order } />
 				</div>
 			</Main>
 		);
@@ -94,5 +102,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrder, updateOrder }, dispatch )
+	dispatch => bindActionCreators( { fetchNotes, fetchOrder, updateOrder }, dispatch )
 )( localize( Order ) );

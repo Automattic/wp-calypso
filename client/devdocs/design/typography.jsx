@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -10,10 +9,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import Main from 'components/main';
 
-export default React.createClass( {
-	displayName: 'Typography',
-
-	mixins: [ PureRenderMixin ],
+export default class Typography extends React.PureComponent {
+	static displayName = 'Typography';
 
 	render() {
 		const interfaceTitle = {
@@ -92,4 +89,4 @@ export default React.createClass( {
 			</Main>
 		);
 	}
-} );
+}

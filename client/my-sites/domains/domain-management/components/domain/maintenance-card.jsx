@@ -20,7 +20,7 @@ const MaintenanceCard = ( { selectedDomainName, translate } ) => {
 				args: { tld }
 			} ) }
 			line={ translate( 'No changes are allowed during that time. Please check back shortly.' ) }
-			illustration={ '/calypso/images/drake/drake-whoops.svg' } />
+			illustration={ '/calypso/images/illustrations/whoops.svg' } />
 	);
 };
 

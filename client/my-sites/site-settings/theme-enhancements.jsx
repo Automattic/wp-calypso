@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -132,7 +133,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
-					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones' ) }
+					label={ translate( 'Enable the Jetpack Mobile theme' ) }
 					disabled={ formPending }
 					/>
 

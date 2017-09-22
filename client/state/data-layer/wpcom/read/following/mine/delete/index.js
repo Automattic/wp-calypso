@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +16,7 @@ import { follow } from 'state/reader/follows/actions';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -30,7 +31,7 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 
 	// build up a notice to show
@@ -43,14 +44,14 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 			translate( "You're no longer following %(siteTitle)s", { args: { siteTitle } } ),
 			{
 				duration: 5000,
-			},
-		),
+			}
+		)
 	);
 }
 
-export function receiveUnfollow( store, action, next, response ) {
+export function receiveUnfollow( store, action, response ) {
 	if ( response && ! response.subscribed ) {
-		store.dispatch( local( action ) );
+		store.dispatch( bypassDataLayer( action ) );
 	} else {
 		unfollowError( store, action );
 	}
@@ -67,10 +68,10 @@ export function unfollowError( { dispatch, getState }, action ) {
 				args: {
 					siteTitle,
 				},
-			} ),
-		),
+			} )
+		)
 	);
-	dispatch( local( follow( action.payload.feedUrl ) ) );
+	dispatch( bypassDataLayer( follow( action.payload.feedUrl ) ) );
 }
 
 export default {

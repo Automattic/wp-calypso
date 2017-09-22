@@ -23,7 +23,7 @@ import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 
-	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_CHANGE_STATUS,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
@@ -113,7 +113,13 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
-	const groups = getGroups( state );
+	let groups = getGroups( state );
+
+	// update the chat locale and groups when happychat is initialized
+	const selectedSite = getHelpSelectedSite( state );
+	if ( selectedSite && selectedSite.ID ) {
+		groups = getGroups( state, selectedSite.ID );
+	}
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -124,14 +130,6 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 	connection
 		.on( 'connected', () => {
 			dispatch( setConnected() );
-
-			// update the chat locale and groups after happychat connection is established
-			// this was added just to make sure the proper operators are targeted if the customer
-			// selects a different site in the help dropdown before happychat is connected
-			const selectedHelpSite = getHelpSelectedSite( getState() );
-			if ( selectedHelpSite && selectedHelpSite.ID ) {
-				updateChatPreferences( connection, { getState }, selectedHelpSite.ID );
-			}
 
 			// TODO: There's no need to dispatch a separate action to request a transcript.
 			// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
@@ -180,24 +178,46 @@ const sendMessage = ( connection, message ) => {
 	connection.notTyping();
 };
 
-export const sendInfo = ( connection, { getState }, siteUrl ) => {
-	const siteHelp = `\nSite I need help with: ${ siteUrl }`;
-	const screenRes = ( typeof screen === 'object' ) && `\nScreen Resolution: ${ screen.width }x${ screen.height }`;
-	const browserSize = ( typeof window === 'object' ) && `\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }`;
-	const userAgent = ( typeof navigator === 'object' ) && `\nUser Agent: ${ navigator.userAgent }`;
-	const localDateTime = `\nLocal Date: ${ moment().format( 'h:mm:ss a, MMMM Do YYYY' ) }`;
-
-	// Geo location
-	const state = getState();
-	const geoLocation = getGeoLocation( state );
-	const userLocation = ( null !== geoLocation ) ? `\nLocation: ${ geoLocation.city }, ${ geoLocation.country_long }` : '';
-
-	const msg = {
-		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent } ${ localDateTime } ${ userLocation }`,
+export const sendInfo = ( connection, { getState }, action ) => {
+	const { howCanWeHelp, howYouFeel, site } = action;
+	const info = {
+		howCanWeHelp,
+		howYouFeel,
+		siteId: site.ID,
+		siteUrl: site.URL,
+		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
 	};
 
-	debug( 'sending info message', msg );
-	connection.info( msg );
+	// add screen size
+	if ( 'object' === typeof ( screen ) ) {
+		info.screenSize = {
+			width: screen.width,
+			height: screen.height
+		};
+	}
+
+	// add browser size
+	if ( 'object' === typeof ( window ) ) {
+		info.browserSize = {
+			width: window.innerWidth,
+			height: window.innerHeight
+		};
+	}
+
+	// add user agent
+	if ( 'object' === typeof ( navigator ) ) {
+		info.userAgent = navigator.userAgent;
+	}
+
+	//  add geo location
+	const state = getState();
+	const geoLocation = getGeoLocation( state );
+	if ( geoLocation ) {
+		info.geoLocation = geoLocation;
+	}
+
+	debug( 'sending info message', info );
+	connection.sendInfo( info );
 };
 
 export const connectIfRecentlyActive = ( connection, store ) => {
@@ -219,7 +239,7 @@ export const getEventMessageFromActionData = ( action ) => {
 	// Below we've stubbed in the actions we think we'll care about, so that we can
 	// start incrementally adding messages for them.
 	switch ( action.type ) {
-		case COMMENTS_CHANGE_STATUS_SUCESS:
+		case COMMENTS_CHANGE_STATUS:
 			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
 			return 'Export completed';
@@ -332,13 +352,13 @@ export default function( connection = null ) {
 			case HAPPYCHAT_INITIALIZE:
 				connectIfRecentlyActive( connection, store );
 				break;
-        
+
 			case HELP_CONTACT_FORM_SITE_SELECT:
 				updateChatPreferences( connection, store, action.siteId );
 				break;
 
 			case HAPPYCHAT_SEND_USER_INFO:
-				sendInfo( connection, store, action.siteUrl );
+				sendInfo( connection, store, action );
 				break;
 
 			case HAPPYCHAT_SEND_MESSAGE:

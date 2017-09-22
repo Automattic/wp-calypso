@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert,
-	range = require( 'lodash/range' );
+import { range } from 'lodash';
+const assert = require( 'chai' ).assert;
 
 /**
  * Internal dependencies

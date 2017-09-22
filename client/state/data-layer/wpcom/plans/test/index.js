@@ -47,7 +47,7 @@ describe( 'wpcom-api', () => {
 				const action = plansReceiveAction( plans );
 				const dispatch = spy();
 
-				receivePlans( { dispatch }, action, null, plans );
+				receivePlans( { dispatch }, action, plans );
 
 				expect( dispatch ).to.have.been.calledTwice;
 				expect( dispatch ).to.have.been.calledWith( plansRequestSuccessAction() );
@@ -61,7 +61,7 @@ describe( 'wpcom-api', () => {
 				const action = plansRequestFailureAction( error );
 				const dispatch = spy();
 
-				receiveError( { dispatch }, action, null, error );
+				receiveError( { dispatch }, action, error );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( plansRequestFailureAction( error ) );

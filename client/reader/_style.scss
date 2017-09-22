@@ -20,12 +20,6 @@
 	}
 }
 
-.is-reader-page .follow-button {
-	border: 0;
-	border-radius: 0;
-	float: right;
-}
-
 .is-reader-page .reader-full-post__story-content {
 	margin-top: 0;
 }
@@ -394,10 +388,10 @@
 	margin-top: 0;
 }
 
-/* = Infinite scroll end (shown at end of streams)
+/* = List end (shown at end of streams)
  --------------------------------------------------------------- */
 
-.is-reader-page .infinite-scroll-end {
+.is-reader-page .list-end {
 	&:before {
 		border-bottom: none;
 	}

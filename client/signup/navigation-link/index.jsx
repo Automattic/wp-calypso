@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import find from 'lodash/find';
-import findIndex from 'lodash/findIndex';
-import get from 'lodash/get';
+import { find, findIndex, get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	isEqual = require( 'lodash/isEqual' );
+import { assign, isEqual } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -64,7 +63,7 @@ module.exports = React.createClass( {
 			query.search = props.search;
 		}
 
-		if ( props.filter ) {
+		if ( props.filter && ! props.source ) {
 			if ( props.filter === 'this-post' ) {
 				if ( props.postId ) {
 					query.post_ID = props.postId;

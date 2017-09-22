@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
 
@@ -19,6 +20,7 @@ import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
 import SectionHeader from 'components/section-header';
+import JetpackColophon from 'components/jetpack-colophon';
 import {
 	sparkWidgets,
 	topProducts,
@@ -139,6 +141,7 @@ class StoreStats extends Component {
 						);
 					} ) }
 				</div>
+				<JetpackColophon />
 			</Main>
 		);
 	}

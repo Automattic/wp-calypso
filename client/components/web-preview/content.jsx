@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop } from 'lodash';
+import { noop, isFunction } from 'lodash';
 import page from 'page';
-import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -16,23 +16,23 @@ import addQueryArgs from 'lib/route/add-query-args';
  */
 import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
-import Spinner from 'components/spinner';
+import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreviewContent extends Component {
+export class WebPreviewContent extends PureComponent {
 	previewId = uuid();
 	_hasTouch = false;
-	_isMobile = false;
 
 	state = {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
-		loaded: false
+		loaded: false,
+		isLoadingSubpage: false
 	};
 
 	setIframeInstance = ( ref ) => {
@@ -42,7 +42,6 @@ export class WebPreviewContent extends Component {
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = touchDetect.hasTouch();
-		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
@@ -59,10 +58,6 @@ export class WebPreviewContent extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return shallowCompare( this, nextProps, nextState );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -109,6 +104,43 @@ export class WebPreviewContent extends Component {
 			case 'partially-loaded':
 				this.setLoaded();
 				return;
+			case 'location-change':
+				this.handleLocationChange( data.payload );
+				return;
+			case 'focus':
+				this.removeSelection();
+				// we will fake a click here to close the dropdown
+				this.wrapperElementRef && this.wrapperElementRef.click();
+				return;
+			case 'loading':
+				this.setState( { isLoadingSubpage: true } );
+				return;
+		}
+	}
+
+	handleLocationChange = ( payload ) => {
+		this.props.onLocationUpdate( payload.pathname );
+		this.setState( { isLoadingSubpage: false } );
+	}
+
+	setWrapperElement = ( el ) => {
+		this.wrapperElementRef = el;
+	}
+
+	removeSelection = () => {
+		// remove all textual selections when user gives focus to preview iframe
+		// they might be confusing
+		if ( global.window ) {
+			if ( isFunction( window.getSelection ) ) {
+				const selection = window.getSelection();
+				if ( isFunction( selection.empty ) ) {
+					selection.empty();
+				} else if ( isFunction( selection.removeAllRanges ) ) {
+					selection.removeAllRanges();
+				}
+			} else if ( document.selection && isFunction( document.selection.empty ) ) {
+				document.selection.empty();
+			}
 		}
 	}
 
@@ -169,7 +201,7 @@ export class WebPreviewContent extends Component {
 	}
 
 	setLoaded = () => {
-		if ( this.state.loaded ) {
+		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
 		}
@@ -183,7 +215,7 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		this.setState( { loaded: true } );
+		this.setState( { loaded: true, isLoadingSubpage: false } );
 
 		this.focusIfNeeded();
 	}
@@ -202,24 +234,32 @@ export class WebPreviewContent extends Component {
 			'is-loaded': this.state.loaded,
 		} );
 
+		const showLoadingMessage = (
+			! this.state.loaded &&
+			this.props.loadingMessage &&
+			( this.props.showPreview || ! this.props.isModalWindow ) &&
+			this.state.device !== 'seo'
+		);
+
 		return (
-			<div className={ className }>
+			<div className={ className } ref={ this.setWrapperElement }>
 				<Toolbar setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
+					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					selectSeoPreview={ this.selectSEO }
+					isLoading={ this.state.isLoadingSubpage }
 				/>
+				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) &&
+					<SpinnerLine />
+				}
 				<div className="web-preview__placeholder">
-					{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
+					{ showLoadingMessage &&
 						<div className="web-preview__loading-message-wrapper">
-							<Spinner />
-							{ this.props.loadingMessage &&
-								<span className="web-preview__loading-message">
-									{ this.props.loadingMessage }
-								</span>
-							}
+							<span className="web-preview__loading-message">
+								{ this.props.loadingMessage }
+							</span>
 						</div>
 					}
 					<div
@@ -277,6 +317,8 @@ WebPreviewContent.propTypes = {
 	// The function to call when the iframe is loaded. Will be passed the iframe document object.
 	// Only called if using previewMarkup.
 	onLoad: PropTypes.func,
+	// Called when the iframe's location updates
+	onLocationUpdate: PropTypes.func,
 	// Called when the preview is closed, either via the 'X' button or the escape key
 	onClose: PropTypes.func,
 	// Called when the edit button is clicked
@@ -286,13 +328,13 @@ WebPreviewContent.propTypes = {
 	// The iframe's title element, used for accessibility purposes
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
-	hasSidebar: React.PropTypes.bool,
+	hasSidebar: PropTypes.bool,
 	// Called after user switches device
-	onDeviceUpdate: React.PropTypes.func,
+	onDeviceUpdate: PropTypes.func,
 	// Flag that differentiates modal window from inline embeds
-	isModalWindow: React.PropTypes.bool,
+	isModalWindow: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: React.PropTypes.string,
+	frontPageMetaDescription: PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
@@ -305,6 +347,7 @@ WebPreviewContent.defaultProps = {
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,
+	onLocationUpdate: noop,
 	onClose: noop,
 	onEdit: noop,
 	onDeviceUpdate: noop,

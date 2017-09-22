@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isVipSite } from 'state/selectors';
+import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -52,12 +52,14 @@ class SiteTools extends Component {
 			showDeleteContent,
 			showDeleteSite,
 			showThemeSetup,
+			showManageConnection,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
+		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
 		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const changeSiteAddress = translate( 'Change your site address' );
@@ -71,6 +73,10 @@ class SiteTools extends Component {
 		const deleteSiteText = translate(
 			'Delete all your posts, pages, media and data, ' +
 			'and give up your site\'s address.'
+		);
+		const manageConnectionTitle = translate( 'Manage your connection' );
+		const manageConnectionText = translate(
+			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 		);
 
 		const importTitle = translate( 'Import' );
@@ -129,6 +135,13 @@ class SiteTools extends Component {
 						isWarning
 					/>
 				}
+				{ showManageConnection &&
+					<SiteToolsLink
+						href={ manageConnectionLink }
+						title={ manageConnectionTitle }
+						description={ manageConnectionText }
+					/>
+				}
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog } />
@@ -168,6 +181,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
@@ -189,6 +203,7 @@ export default connect(
 			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 			showDeleteContent: ! isJetpack && ! isVip,
 			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
+			showManageConnection: isJetpack && ! isAtomic,
 		};
 	}
 )( localize( SiteTools ) );

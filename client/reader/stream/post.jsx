@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -88,11 +89,13 @@ class ReaderPostCardAdapter extends React.Component {
 				showSiteName={ this.props.showSiteName }
 				isDiscoverStream={ this.props.isDiscoverStream }
 				postKey={ this.props.postKey }
+				compact={ this.props.compact }
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ discoverPickSiteId &&
-					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
+				{ discoverPickSiteId && (
+					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } />
+				) }
 			</ReaderPostCard>
 		);
 	}

@@ -2,9 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import upperFirst from 'lodash/upperFirst';
-import camelCase from 'lodash/camelCase';
-import kebabCase from 'lodash/kebabCase';
+import { camelCase, kebabCase, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies

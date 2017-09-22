@@ -7,7 +7,7 @@ import TestUtils from 'react-addons-test-utils';
 import sinon from 'sinon';
 import mockery from 'mockery';
 import { expect } from 'chai';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies

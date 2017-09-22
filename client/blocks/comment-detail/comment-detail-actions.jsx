@@ -11,10 +11,11 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { isEnabled } from 'config';
 
 const commentActions = {
-	unapproved: [ 'like', 'approve', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'spam', 'trash' ],
+	unapproved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 };
@@ -22,11 +23,11 @@ const commentActions = {
 const hasAction = ( status, action ) => includes( commentActions[ status ], action );
 
 export const CommentDetailActions = ( {
-	edit,
 	commentIsLiked,
 	commentStatus,
 	deleteCommentPermanently,
 	toggleApprove,
+	toggleEditMode,
 	toggleLike,
 	toggleSpam,
 	toggleTrash,
@@ -68,11 +69,11 @@ export const CommentDetailActions = ( {
 				</Button>
 			}
 
-			{ hasAction( commentStatus, 'edit' ) &&
+			{ hasAction( commentStatus, 'edit' ) && isEnabled( 'comments/management/edit' ) &&
 				<Button
 					borderless
 					className="comment-detail__action-edit"
-					onClick={ edit }
+					onClick={ toggleEditMode }
 				>
 					<Gridicon icon="pencil" />
 					<span>{ translate( 'Edit' ) }</span>

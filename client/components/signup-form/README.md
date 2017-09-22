@@ -7,7 +7,7 @@ This component renders a Signup Form. It magically handles email, username, and 
 
 A Signup Form instance expects `save` and `submitForm` properties, `save` is called `onBlur` of each field. `submitForm` is called when the form is submitted.
 Optional:
-getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
+redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
 disabled={ this.isDisabled() }
 submitting={ this.isSubmitting() }
 
@@ -18,7 +18,7 @@ render: function() {
 	return (
 		<SignupForm
 			{ ...this.props }
-			getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
+			redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl }
 			disabled={ this.isDisabled() }
 			submitting={ this.isSubmitting() }
 			save={ this.save }

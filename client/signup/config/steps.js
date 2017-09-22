@@ -7,6 +7,7 @@ import i18n from 'i18n-calypso';
 /**
 * Internal dependencies
 */
+import config from 'config';
 import stepActions from 'lib/signup/step-actions';
 
 export default {
@@ -20,6 +21,33 @@ export default {
 
 	themes: {
 		stepName: 'themes',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	'blog-themes': {
+		stepName: 'blog-themes',
+		props: {
+			designType: 'blog'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	'website-themes': {
+		stepName: 'website-themes',
+		props: {
+			designType: 'page'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	'portfolio-themes': {
+		stepName: 'portfolio-themes',
+		props: {
+			designType: 'grid'
+		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
@@ -46,12 +74,12 @@ export default {
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	'design-type-with-store': {
 		stepName: 'design-type-with-store',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
 	site: {
@@ -60,21 +88,24 @@ export default {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	'rebrand-cities-welcome': {
+		stepName: 'rebrand-cities-welcome',
+		apiRequestFunction: stepActions.createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
+		delayApiRequestUntilComplete: true
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
-	},
-
-	'user-social': {
-		stepName: 'user-social',
-		apiRequestFunction: stepActions.createAccount,
-		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
+		unstorableDependencies: [ 'bearer_token' ],
 		props: {
-			headerText: i18n.translate( 'Create your account.' ),
-			isSocialSignupEnabled: true
+			isSocialSignupEnabled: config.isEnabled( 'signup/social' )
 		},
 	},
 
@@ -124,6 +155,16 @@ export default {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	'oauth2-user': {
+		stepName: 'oauth2-user',
+		apiRequestFunction: stepActions.createAccount,
+		props: {
+			oauth2Signup: true
+		},
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ]
 	},
 
 	'get-dot-blog-plans': {

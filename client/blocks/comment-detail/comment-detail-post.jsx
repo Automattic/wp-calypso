@@ -2,23 +2,31 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
 export const CommentDetailPost = ( {
+	commentId,
 	parentCommentAuthorAvatarUrl,
 	parentCommentAuthorDisplayName,
 	parentCommentContent,
-	parentCommentUrl,
 	postAuthorDisplayName,
 	postTitle,
 	postUrl,
+	recordReaderArticleOpened,
+	recordReaderCommentOpened,
 	siteId,
 	translate,
 } ) => {
@@ -37,12 +45,16 @@ export const CommentDetailPost = ( {
 				<div className="comment-detail__post-info">
 					{ parentCommentAuthorDisplayName &&
 						<span>
-							{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+							<Emojify>
+								{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+							</Emojify>
 						</span>
 					}
-					<ExternalLink href={ parentCommentUrl }>
-						{ parentCommentContent }
-					</ExternalLink>
+					<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ recordReaderCommentOpened }>
+						<Emojify>
+							{ parentCommentContent }
+						</Emojify>
+					</a>
 				</div>
 			</div>
 		);
@@ -54,15 +66,30 @@ export const CommentDetailPost = ( {
 			<div className="comment-detail__post-info">
 				{ postAuthorDisplayName &&
 					<span>
-						{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
+						<Emojify>
+							{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
+						</Emojify>
 					</span>
 				}
-				<a href={ postUrl }>
-					{ postTitle || translate( 'Untitled' ) }
+				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
+					<Emojify>
+						{ postTitle || translate( 'Untitled' ) }
+					</Emojify>
 				</a>
 			</div>
 		</div>
 	);
 };
 
-export default localize( CommentDetailPost );
+const mapDispatchToProps = dispatch => ( {
+	recordReaderArticleOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_article_opened' ),
+		bumpStat( 'calypso_comment_management', 'article_opened' )
+	) ),
+	recordReaderCommentOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_comment_opened' ),
+		bumpStat( 'calypso_comment_management', 'comment_opened' )
+	) ),
+} );
+
+export default connect( null, mapDispatchToProps )( localize( CommentDetailPost ) );

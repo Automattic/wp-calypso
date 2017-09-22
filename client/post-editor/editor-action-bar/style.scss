@@ -5,7 +5,7 @@
 	flex-shrink: 0;	// Safari fix for min-height
 	align-items: center;
 	margin-bottom: 24px;
-	padding: 12px 16px 8px;
+	padding: 12px 16px;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 8px;
@@ -74,6 +74,10 @@
 	}
 }
 
+.editor-sidebar.is-nested-sidebar-focused .editor-action-bar {
+	display: none;
+}
+
 .editor-action-bar .button {
 	color: darken( $gray, 10% );
 	background: transparent;
@@ -88,6 +92,10 @@
 
 	@include breakpoint( ">660px" ) {
 		color: lighten( $gray, 20% );
+	}
+
+	.gridicon {
+		top: 4px;
 	}
 }
 

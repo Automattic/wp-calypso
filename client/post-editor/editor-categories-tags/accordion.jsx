@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, toArray } from 'lodash';
+import { get, toArray, unescape as unescapeString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import TermSelector from 'post-editor/editor-term-selector';
 import TermTokenField from 'post-editor/term-token-field';
-import unescapeString from 'lodash/unescape';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { addSiteFragment } from 'lib/route';

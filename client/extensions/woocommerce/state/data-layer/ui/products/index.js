@@ -71,10 +71,10 @@ export function handleProductActionListCreate( store, action ) {
 	const { successAction, failureAction } = action;
 	const rootState = store.getState();
 	const siteId = getSelectedSiteId( rootState );
-	const onSuccess = ( dispatch, { productIdMapping } ) => {
-		const products = Object.values( productIdMapping ).map( ( productId ) => getProduct( store.getState(), productId ) );
+	const onSuccess = ( dispatch, { updatedProductIds } ) => {
+		const products = Object.values( updatedProductIds ).map( ( productId ) => getProduct( store.getState(), productId ) );
 		if ( isFunction( successAction ) ) {
-			return dispatch( successAction( products, productIdMapping ) );
+			return dispatch( successAction( products, updatedProductIds ) );
 		}
 		return dispatch( successAction );
 	};
@@ -190,15 +190,31 @@ function getCategoryIdsForProduct( product ) {
 	} );
 }
 
+const variationSuccess = ( actionList, productId ) => ( dispatch ) => {
+	const productIds = actionList.updatedProductIds && [ ...actionList.updatedProductIds ] || [];
+	productIds.push( productId );
+
+	const newActionList = {
+		...actionList,
+		updatedProductIds: productIds,
+	};
+
+	dispatch( actionListStepSuccess( newActionList ) );
+};
+
 const productSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
 		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
 	};
 
+	const updatedProductIds = actionList.updatedProductIds && [ ...actionList.updatedProductIds ] || [];
+	updatedProductIds.push( receivedData.id );
+
 	const newActionList = {
 		...actionList,
 		productIdMapping,
+		updatedProductIds,
 	};
 
 	dispatch( actionListStepSuccess( newActionList ) );
@@ -322,12 +338,13 @@ function variationCreateStep( siteId, productId, variation ) {
 		description: translate( 'Creating variation' ),
 		onStep: ( dispatch, actionList ) => {
 			const newProduct = isObject( productId );
+			const realProductId = ( newProduct ? actionList.productIdMapping[ productId.placeholder ] : productId );
 
 			dispatch( createProductVariation(
 				siteId,
-				( newProduct ? actionList.productIdMapping[ productId.placeholder ] : productId ),
+				realProductId,
 				variation,
-				actionListStepSuccess( actionList ),
+				variationSuccess( actionList, realProductId ),
 				actionListStepFailure( actionList ),
 			) );
 		},
@@ -342,7 +359,7 @@ function variationUpdateStep( siteId, productId, variation ) {
 				siteId,
 				productId,
 				variation,
-				actionListStepSuccess( actionList ),
+				variationSuccess( actionList, productId ),
 				actionListStepFailure( actionList ),
 			) );
 		},

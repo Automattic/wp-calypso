@@ -104,6 +104,15 @@ var Notices = React.createClass( {
 						</NoticeAction>
 					</Notice>
 				</div>
+				<div>
+					<Notice
+						status="is-error"
+						showDismiss={ true }
+						text="I'm an always dismissable error notice."
+						isCompact={ this.state.compactNotices ? true : null }>
+						<NoticeAction href="#">More</NoticeAction>
+					</Notice>
+				</div>
 			</div>
 		);
 	},

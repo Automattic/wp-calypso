@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 
@@ -9,6 +11,8 @@ import page from 'page';
  * Internal dependencies
  */
 import PlansGrid from './plans-grid';
+import PlansSkipButton from './plans-skip-button';
+import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
@@ -49,7 +53,7 @@ class PlansLanding extends Component {
 		}
 	}
 
-	storeSelectedPlan = ( cartItem ) => {
+	storeSelectedPlan = cartItem => {
 		const { url } = this.props;
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
@@ -58,7 +62,7 @@ class PlansLanding extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
-			plan: cartItem ? cartItem.product_slug : 'free'
+			plan: cartItem ? cartItem.product_slug : 'free',
 		} );
 		this.props.selectPlanInAdvance( cartItem ? cartItem.product_slug : 'free', '*' );
 
@@ -67,11 +71,16 @@ class PlansLanding extends Component {
 		}, 25 );
 	};
 
+	handleSkipButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+
+		this.storeSelectedPlan( null );
+	};
+
 	render() {
-		const {
-			basePlansPath,
-			interval,
-		} = this.props;
+		const { basePlansPath, interval } = this.props;
+		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
+
 		return (
 			<div>
 				<QueryPlans />
@@ -79,11 +88,13 @@ class PlansLanding extends Component {
 				<PlansGrid
 					basePlansPath={ basePlansPath }
 					calypsoStartedConnection={ true }
-					hideFreePlan={ false }
+					hideFreePlan={ hideFreePlanTest }
 					interval={ interval }
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
-				/>
+				>
+					{ hideFreePlanTest && <PlansSkipButton onClick={ this.handleSkipButtonClick } /> }
+				</PlansGrid>
 			</div>
 		);
 	}

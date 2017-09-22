@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -97,7 +98,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				},
+				}
 			);
 		} else {
 			label = this.props.translate(
@@ -112,7 +113,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				},
+				}
 			);
 		}
 		return label;
@@ -133,21 +134,22 @@ class CrossPost extends PureComponent {
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
 					{ index + 2 < array.length && <span>, </span> }
-					{ index + 2 === array.length &&
+					{ index + 2 === array.length && (
 						<span>
 							{' '}
 							{ this.props.translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
 							} ) }{' '}
-						</span> }
+						</span>
+					) }
 				</span>
 			);
 		} );
 	};
 
 	render() {
-		const { post, postKey, site, feed } = this.props;
+		const { post, postKey, site, feed, translate } = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -163,6 +165,10 @@ class CrossPost extends PureComponent {
 		let xpostTitle = post.title;
 		xpostTitle = xpostTitle.replace( /x-post:/i, '' );
 
+		if ( ! xpostTitle ) {
+			xpostTitle = `(${ translate( 'no title' ) })`;
+		}
+
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
 				<ReaderAvatar
@@ -173,7 +179,7 @@ class CrossPost extends PureComponent {
 					isCompact={ true }
 				/>
 				<div className="reader__x-post">
-					{ post.title &&
+					{ post.title && (
 						<h1 className="reader__post-title">
 							<a
 								className="reader__post-title-link"
@@ -184,7 +190,8 @@ class CrossPost extends PureComponent {
 							>
 								{ xpostTitle }
 							</a>
-						</h1> }
+						</h1>
+					) }
 					{ this.getDescription( post.author.first_name ) }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

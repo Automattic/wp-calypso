@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
@@ -22,11 +23,11 @@ export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 			body: {}, // have to have the empty body for now to make the middleware happy
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
-export function receiveCommentEmailUnsubscription( store, action, next, response ) {
+export function receiveCommentEmailUnsubscription( store, action, response ) {
 	// validate that it worked
 	// if it did, just swallow this response, as we don't need to pass it along.
 	const subscribed = !! ( response && response.subscribed );
@@ -39,9 +40,9 @@ export function receiveCommentEmailUnsubscription( store, action, next, response
 
 export function receiveCommentEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
 	);
-	dispatch( local( subscribeToNewCommentEmail( action.payload.blogId ) ) );
+	dispatch( bypassDataLayer( subscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
 export default {
@@ -49,7 +50,7 @@ export default {
 		dispatchRequest(
 			requestCommentEmailUnsubscription,
 			receiveCommentEmailUnsubscription,
-			receiveCommentEmailUnsubscriptionError,
+			receiveCommentEmailUnsubscriptionError
 		),
 	],
 };

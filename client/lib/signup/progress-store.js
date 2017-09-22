@@ -1,14 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup-progress-store' ), // eslint-disable-line no-unused-vars
-	store = require( 'store' ),
-	assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	find = require( 'lodash/find' ),
-	map = require( 'lodash/map' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	clone = require( 'lodash/clone' );
+import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
+const debug = require( 'debug' )( 'calypso:signup-progress-store' );
+const store = require( 'store' );
 
 /**
  * Internal dependencies
@@ -132,6 +127,18 @@ function handleChange() {
 	store.set( STORAGE_KEY, omitUserData( signupProgress ) );
 }
 
+function addStorableDependencies( step, action ) {
+	const unstorableDependencies = get( steps, [ step.stepName, 'unstorableDependencies' ] );
+
+	if ( isEmpty( action.providedDependencies ) ) {
+		return step;
+	}
+
+	const providedDependencies = omit( action.providedDependencies, unstorableDependencies );
+
+	return { ...step, providedDependencies };
+}
+
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action,
 		step = addTimestamp( action.data );
@@ -147,18 +154,18 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 			loadProgressFromCache();
 			break;
 		case 'SAVE_SIGNUP_STEP':
-			saveStep( step );
+			saveStep( addStorableDependencies( step, action ) );
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
 			debug( 'submit step' );
-			submitStep( step );
+			submitStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESS_SIGNUP_STEP':
-			processStep( step );
+			processStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESSED_SIGNUP_STEP':
 			debug( 'complete step' );
-			completeStep( step );
+			completeStep( addStorableDependencies( step, action ) );
 			break;
 	}
 } );

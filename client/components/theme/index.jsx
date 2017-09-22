@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -17,51 +18,58 @@ import PulsingDot from 'components/pulsing-dot';
 /**
  * Component
  */
-export const Theme = React.createClass( {
-
-	propTypes: {
-		theme: React.PropTypes.shape( {
+export class Theme extends Component {
+	static propTypes = {
+		theme: PropTypes.shape( {
 			// Theme ID (theme-slug)
-			id: React.PropTypes.string.isRequired,
+			id: PropTypes.string.isRequired,
 			// Theme name
-			name: React.PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
 			// Theme screenshot URL
-			screenshot: React.PropTypes.string,
-			author: React.PropTypes.string,
-			author_uri: React.PropTypes.string,
-			demo_uri: React.PropTypes.string,
-			stylesheet: React.PropTypes.string
+			screenshot: PropTypes.string,
+			author: PropTypes.string,
+			author_uri: PropTypes.string,
+			demo_uri: PropTypes.string,
+			stylesheet: PropTypes.string
 		} ),
 		// If true, highlight this theme as active
-		active: React.PropTypes.bool,
+		active: PropTypes.bool,
 		// Theme price (pre-formatted string) -- empty string indicates free theme
-		price: React.PropTypes.string,
+		price: PropTypes.string,
 		// If true, the theme is being installed
-		installing: React.PropTypes.bool,
+		installing: PropTypes.bool,
 		// If true, render a placeholder
-		isPlaceholder: React.PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
 		// URL the screenshot link points to
-		screenshotClickUrl: React.PropTypes.string,
+		screenshotClickUrl: PropTypes.string,
 		// Called when theme screenshot is clicked
-		onScreenshotClick: React.PropTypes.func,
+		onScreenshotClick: PropTypes.func,
 		// Called when the more button is clicked
-		onMoreButtonClick: React.PropTypes.func,
+		onMoreButtonClick: PropTypes.func,
 		// Options to populate the 'More' button popover menu with
-		buttonContents: React.PropTypes.objectOf(
-			React.PropTypes.shape( {
-				label: React.PropTypes.string,
-				header: React.PropTypes.string,
-				action: React.PropTypes.func,
-				getUrl: React.PropTypes.func
+		buttonContents: PropTypes.objectOf(
+			PropTypes.shape( {
+				label: PropTypes.string,
+				header: PropTypes.string,
+				action: PropTypes.func,
+				getUrl: PropTypes.func
 			} )
 		),
 		// Index of theme in results list
-		index: React.PropTypes.number,
+		index: PropTypes.number,
 		// Label to show on screenshot hover.
-		actionLabel: React.PropTypes.string,
+		actionLabel: PropTypes.string,
 		// Translate function,
-		translate: React.PropTypes.func,
-	},
+		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		isPlaceholder: false,
+		buttonContents: {},
+		onMoreButtonClick: noop,
+		actionLabel: '',
+		active: false
+	};
 
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
@@ -72,31 +80,21 @@ export const Theme = React.createClass( {
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
-	},
+	}
 
-	getDefaultProps() {
-		return ( {
-			isPlaceholder: false,
-			buttonContents: {},
-			onMoreButtonClick: noop,
-			actionLabel: '',
-			active: false
-		} );
-	},
-
-	onScreenshotClick() {
+	onScreenshotClick = () => {
 		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return (
 			<Card className="theme is-placeholder">
 				<div className="theme__content" />
 			</Card>
 		);
-	},
+	};
 
-	renderHover() {
+	renderHover = () => {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a className="theme__active-focus"
@@ -108,9 +106,9 @@ export const Theme = React.createClass( {
 				</a>
 			);
 		}
-	},
+	};
 
-	renderInstalling() {
+	renderInstalling = () => {
 		if ( this.props.installing ) {
 			return (
 				<div className="theme__installing" >
@@ -118,7 +116,7 @@ export const Theme = React.createClass( {
 				</div>
 			);
 		}
-	},
+	};
 
 	render() {
 		const {
@@ -192,6 +190,6 @@ export const Theme = React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
 
 export default localize( Theme );

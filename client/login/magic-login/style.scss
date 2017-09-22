@@ -1,19 +1,3 @@
-.magic-login__description {
-	margin: 0 auto 1.5em;
-	max-width: 400px;
-	text-align: center;
-
-	@media ( max-width: 480px ) {
-		& {
-			font-size: 90%;
-			margin: auto;
-			max-width: 340px;
-			min-width: 110px;
-			padding: 0 16px 16px;
-		}
-	}
-}
-
 @media ( max-height: 450px ) {
 	.magic-login__handle-link, .magic-login__check-email, .magic-login__link-expired {
 		img {
@@ -45,8 +29,17 @@
 	margin: 10px 0;
 }
 
+.magic-login__form-label {
+	color: $gray-dark;
+	display: block;
+	font-size: 14px;
+	line-height: 1.5;
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
 .magic-login__form-action {
-	margin-top: 10px;
+	margin-top: 20px;
 	overflow: auto;
 
 	button {
@@ -75,4 +68,9 @@
 	.gridicon {
 		vertical-align: text-bottom;
 	}
+}
+
+.magic-login__check-email-image {
+	display: block;
+	margin: 0 auto 1.5em;
 }

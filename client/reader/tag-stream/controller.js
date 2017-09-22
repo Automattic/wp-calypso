@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,7 +53,7 @@ export const tagListing = context => {
 				basePath,
 				fullAnalyticsPageTitle,
 				analyticsPageTitle,
-				mcKey,
+				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
 			showBack={ !! context.lastRoute }
@@ -60,6 +61,6 @@ export const tagListing = context => {
 			followSource={ TAG_PAGE }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 };

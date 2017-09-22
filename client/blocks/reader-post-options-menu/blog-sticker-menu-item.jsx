@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -13,9 +15,9 @@ import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/act
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	static propTypes = {
-		blogId: React.PropTypes.number,
-		blogStickerName: React.PropTypes.string,
-		hasSticker: React.PropTypes.bool,
+		blogId: PropTypes.number,
+		blogStickerName: PropTypes.string,
+		hasSticker: PropTypes.bool,
 	};
 
 	toggleSticker = () => {
@@ -43,5 +45,5 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 }
 
 export default connect( null, { addBlogSticker, removeBlogSticker } )(
-	ReaderPostOptionsMenuBlogStickerMenuItem,
+	ReaderPostOptionsMenuBlogStickerMenuItem
 );

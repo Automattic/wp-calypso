@@ -5,9 +5,7 @@ import React from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import filter from 'lodash/filter';
-import range from 'lodash/range';
-import get from 'lodash/get';
+import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,13 +23,12 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import analytics from 'lib/analytics';
-import JetpackSite from 'lib/site/jetpack';
 import support from 'lib/url/support';
 import utils from 'lib/site/utils';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
+import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
 import { hasInitializedSites } from 'state/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -126,7 +123,7 @@ const PlansSetup = React.createClass( {
 		if ( site &&
 			site.jetpack &&
 			site.canUpdateFiles &&
-			site.canManage() &&
+			site.canManage &&
 			this.allPluginsHaveWporgData() &&
 			! this.props.isInstalling &&
 			this.props.nextPlugin
@@ -140,7 +137,7 @@ const PlansSetup = React.createClass( {
 		if ( ! site ||
 			! site.jetpack ||
 			! site.canUpdateFiles ||
-			! site.canManage() ||
+			! site.canManage ||
 			this.props.isFinished
 		) {
 			return;
@@ -202,7 +199,7 @@ const PlansSetup = React.createClass( {
 		} else if ( ! site.hasMinimumJetpackVersion ) {
 			reason = translate( 'You need to update your version of Jetpack.' );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', { jetpack_version: site.options.jetpack_version } );
-		} else if ( ! site.isMainNetworkSite() ) {
+		} else if ( ! site.isMainNetworkSite ) {
 			reason = translate( 'We can\'t install plugins on multisite sites.' );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
 		} else if ( site.options.is_multi_network ) {
@@ -245,26 +242,30 @@ const PlansSetup = React.createClass( {
 		return plugins.map( ( item, i ) => {
 			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
 
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<CompactCard className="plugin-item" key={ i }>
 					<span className="plugin-item__link">
 						<PluginIcon image={ plugin.icon } />
-						<div className="plugin-item__title">
-							{ plugin.name }
+						<div className="plugin-item__info">
+							<div className="plugin-item__title">
+								{ plugin.name }
+							</div>
+							{ hidden
+								? <Notice
+									key={ 0 }
+									isCompact={ true }
+									showDismiss={ false }
+									icon="plugins"
+									text={ this.props.translate( 'Waiting to install' ) } />
+								: this.renderStatus( plugin )
+							}
 						</div>
-						{ hidden
-							? <Notice
-								key={ 0 }
-								isCompact={ true }
-								showDismiss={ false }
-								icon="plugins"
-								text={ this.props.translate( 'Waiting to install' ) } />
-							: this.renderStatus( plugin )
-						}
 					</span>
 					{ this.renderActions( plugin ) }
 				</CompactCard>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		} );
 	},
 
@@ -503,8 +504,8 @@ const PlansSetup = React.createClass( {
 		}
 
 		let turnOnManage;
-		if ( site && ! site.canManage() ) {
-			const manageUrl = site.getRemoteManagementURL() + '&section=plugins-setup';
+		if ( site && ! site.canManage ) {
+			const manageUrl = this.props.remoteManagementUrl + '&section=plugins-setup';
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
@@ -547,13 +548,8 @@ const PlansSetup = React.createClass( {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
+		const selectedSite = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
-
-		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
-		const selectedSite = site && isJetpackSite( state, siteId )
-			? JetpackSite( getRawSite( state, siteId ) )
-			: site;
 
 		return {
 			wporg: state.plugins.wporg.items,
@@ -566,6 +562,7 @@ export default connect(
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
+			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			sitesInitialized: hasInitializedSites( state ),
 			siteId
 		};

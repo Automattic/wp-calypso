@@ -37,6 +37,9 @@ const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		const parsed = url.parse( location.href, true );
 
+		// Decode the pathname by default (now disabled in page.js)
+		context.pathname = decodeURIComponent( context.pathname );
+
 		context.store = reduxStore;
 
 		// Break routing and do full load for logout link in /me
@@ -79,13 +82,17 @@ const loggedOutMiddleware = currentUser => {
 		return;
 	}
 
-	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+	if ( config.isEnabled( 'desktop' ) ) {
 		page( '/', () => {
 			if ( config.isEnabled( 'oauth' ) ) {
 				page.redirect( '/authorize' );
 			} else {
-				page.redirect( '/devdocs/start' );
+				page.redirect( '/log-in' );
 			}
+		} );
+	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+		page( '/', () => {
+			page.redirect( '/devdocs/start' );
 		} );
 	}
 

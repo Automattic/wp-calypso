@@ -1,12 +1,18 @@
-const expect = require( 'chai' ).expect,
-	url = require( 'url' );
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import url from 'url';
 
-const useFakeDom = require( 'test/helpers/use-fake-dom' ),
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
+/**
+ * Internal dependencies
+ */
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 function logImageLoads() {
-	var imagesLoaded = [],
-		originalImage;
+	const imagesLoaded = [];
+	let originalImage;
 
 	before( function spyOnImage() {
 		imagesLoaded.length = 0;

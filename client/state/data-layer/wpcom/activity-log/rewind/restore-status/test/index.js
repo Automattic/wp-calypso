@@ -30,7 +30,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 describe( 'receiveRestoreProgress', () => {
 	it( 'should dispatch updateRewindRestoreProgress', () => {
 		const dispatch = sinon.spy();
-		receiveRestoreProgress( { dispatch }, { siteId, timestamp, restoreId }, null, FINISHED_RESPONSE );
+		receiveRestoreProgress( { dispatch }, { siteId, timestamp, restoreId }, FINISHED_RESPONSE );
 		const expectedAction = updateRewindRestoreProgress(
 			siteId, timestamp, restoreId, {
 				errorCode: '',

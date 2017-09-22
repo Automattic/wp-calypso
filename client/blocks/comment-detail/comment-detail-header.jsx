@@ -13,6 +13,7 @@ import { noop } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import CommentDetailActions from './comment-detail-actions';
+import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
@@ -27,11 +28,12 @@ export const CommentDetailHeader = ( {
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
-	edit,
 	isBulkEdit,
+	isEditMode,
 	isExpanded,
 	postTitle,
 	toggleApprove,
+	toggleEditMode,
 	toggleExpanded,
 	toggleLike,
 	toggleSelected,
@@ -39,69 +41,103 @@ export const CommentDetailHeader = ( {
 	toggleTrash,
 	translate,
 } ) => {
-	if ( isExpanded ) {
-		return (
-			<div className="comment-detail__header">
-				<Button
-					borderless
-					className="comment-detail__action-collapse"
-					onClick={ toggleExpanded }
-				>
-					<Gridicon icon="cross" />
-				</Button>
-
-				<CommentDetailActions
-					edit={ edit }
-					commentIsLiked={ commentIsLiked }
-					commentStatus={ commentStatus }
-					deleteCommentPermanently={ deleteCommentPermanently }
-					toggleApprove={ toggleApprove }
-					toggleLike={ toggleLike }
-					toggleSpam={ toggleSpam }
-					toggleTrash={ toggleTrash }
-				/>
-			</div>
-		);
-	}
-
 	const author = {
 		avatar_URL: authorAvatarUrl,
 		display_name: authorDisplayName,
 	};
 
+	const classes = classNames( 'comment-detail__header', {
+		'is-preview': ! isExpanded,
+		'is-bulk-edit': isBulkEdit,
+	} );
+
+	const handleFullHeaderClick = isBulkEdit ? toggleSelected : toggleExpanded;
+
 	return (
 		<div
-			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
-			onClick={ isBulkEdit ? toggleSelected : toggleExpanded }
+			className={ classes }
+			onClick={ isExpanded ? noop : handleFullHeaderClick }
 		>
-			{ isBulkEdit &&
-				<label className="comment-detail__checkbox">
-					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
-				</label>
+			{ isExpanded && ! isEditMode &&
+				<CommentDetailActions
+					commentIsLiked={ commentIsLiked }
+					commentStatus={ commentStatus }
+					deleteCommentPermanently={ deleteCommentPermanently }
+					toggleApprove={ toggleApprove }
+					toggleEditMode={ toggleEditMode }
+					toggleLike={ toggleLike }
+					toggleSpam={ toggleSpam }
+					toggleTrash={ toggleTrash }
+				/>
 			}
-			<div className="comment-detail__author-preview">
-				<Gravatar user={ author } />
-				<div className="comment-detail__author-info">
-					<div className="comment-detail__author-info-element">
-						<strong>
-							{ authorDisplayName }
-						</strong>
-						<span>
-							{ urlToDomainAndPath( authorUrl ) }
-						</span>
+
+			{ isExpanded && isEditMode &&
+				<div className="comment-detail__header-edit-mode">
+					<div className="comment-detail__header-edit-title">
+						<Gridicon icon="pencil" />
+						<span>{ translate( 'Edit Comment' ) }</span>
 					</div>
-					<div className="comment-detail__author-info-element">
-						{ translate( 'on %(postTitle)s', { args: {
-							postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-						} } ) }
+					<Button
+						borderless
+						className="comment-detail__action-collapse"
+						onClick={ toggleEditMode }
+					>
+						<Gridicon icon="cross" />
+					</Button>
+				</div>
+			}
+
+			{ ! isExpanded &&
+				<div className="comment-detail__header-content">
+					<div className="comment-detail__author-preview">
+						{ isBulkEdit &&
+							<label className="comment-detail__checkbox">
+								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
+							</label>
+						}
+						<Gravatar user={ author } />
+						<div className="comment-detail__author-info">
+							<div className="comment-detail__author-info-element">
+								<strong>
+									<Emojify>
+										{ authorDisplayName }
+									</Emojify>
+								</strong>
+								<span>
+									<Emojify>
+										{ urlToDomainAndPath( authorUrl ) }
+									</Emojify>
+								</span>
+							</div>
+							<div className="comment-detail__author-info-element">
+								<Emojify>
+									{ translate( 'on %(postTitle)s', { args: {
+										postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+									} } ) }
+								</Emojify>
+							</div>
+						</div>
 					</div>
+					<AutoDirection>
+						<div className="comment-detail__comment-preview">
+							<Emojify>
+								{ decodeEntities( stripHTML( commentContent ) ) }
+							</Emojify>
+						</div>
+					</AutoDirection>
 				</div>
-			</div>
-			<AutoDirection>
-				<div className="comment-detail__comment-preview">
-					{ decodeEntities( stripHTML( commentContent ) ) }
-				</div>
-			</AutoDirection>
+			}
+
+			{ ! isBulkEdit && ! isEditMode &&
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					disabled={ isEditMode }
+					onClick={ isExpanded ? toggleExpanded : noop }
+				>
+					<Gridicon icon="chevron-down" />
+				</Button>
+			}
 		</div>
 	);
 };

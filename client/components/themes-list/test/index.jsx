@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +17,8 @@ describe( 'ThemesList', function() {
 	useMockery( mockery => {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		mockery.registerMock( 'components/pulsing-dot', React.createClass( { render: () => <div/> } ) );
-		mockery.registerMock( './more-button', React.createClass( { render: () => <div/> } ) );
+		mockery.registerMock( 'components/pulsing-dot', () => <div /> );
+		mockery.registerMock( './more-button', () => <div /> );
 		ThemesList = require( '../' ).ThemesList;
 	} );
 
@@ -55,7 +55,7 @@ describe( 'ThemesList', function() {
 
 	describe( 'rendering', function() {
 		beforeEach( function() {
-			var shallowRenderer = TestUtils.createRenderer();
+			const shallowRenderer = TestUtils.createRenderer();
 
 			shallowRenderer.render( this.themesList );
 			this.themesListElement = shallowRenderer.getRenderOutput();
@@ -68,7 +68,7 @@ describe( 'ThemesList', function() {
 
 		context( 'when no themes are found', function() {
 			beforeEach( function() {
-				var shallowRenderer = TestUtils.createRenderer();
+				const shallowRenderer = TestUtils.createRenderer();
 				this.props.themes = [];
 				this.themesList = React.createElement( ThemesList, this.props );
 

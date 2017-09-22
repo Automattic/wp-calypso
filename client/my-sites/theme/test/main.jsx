@@ -6,7 +6,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import {
 	receiveTheme,
 	themeRequestFailure,

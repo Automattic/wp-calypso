@@ -1,14 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import union from 'lodash/union';
-import filter from 'lodash/filter';
-import get from 'lodash/get';
-import omit from 'lodash/omit';
-import find from 'lodash/find';
-import includes from 'lodash/includes';
+import { filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
 
 /**
  * Internal dependencies

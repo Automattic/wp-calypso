@@ -11,6 +11,8 @@ import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { COMMENTS_RECEIVE } from 'state/action-types';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -91,6 +93,15 @@ export function receivePage( id, error, data ) {
 					postId: post.ID
 				} );
 			}
+			if ( post.comments ) {
+				// conversations!
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
+				} );
+			}
 		} );
 	}
 
@@ -103,6 +114,20 @@ export function receivePage( id, error, data ) {
 }
 
 export function receiveUpdates( id, error, data ) {
+	if ( ! error && data && data.posts ) {
+		forEach( data.posts, post => {
+			if ( post.comments ) {
+				// conversations!
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
+				} );
+			}
+		} );
+	}
+
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_UPDATES,
 		id,

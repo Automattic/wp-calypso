@@ -1,9 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
-import assign from 'lodash/assign';
-import partial from 'lodash/partial';
-import map from 'lodash/map';
+import { assign, map, partial } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -25,12 +24,12 @@ export const items = createReducer(
 			state = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId, action.payload.scope ) ]: map(
 					action.payload.posts,
-					'global_ID',
+					'global_ID'
 				),
 			} );
 			return state;
 		},
-	},
+	}
 );
 
 function setRequestFlag( val, state, action ) {
@@ -46,7 +45,7 @@ export const queuedRequests = createReducer(
 		[ READER_RELATED_POSTS_REQUEST ]: partial( setRequestFlag, true ),
 		[ READER_RELATED_POSTS_REQUEST_SUCCESS ]: partial( setRequestFlag, false ),
 		[ READER_RELATED_POSTS_REQUEST_FAILURE ]: partial( setRequestFlag, false ),
-	},
+	}
 );
 
 export default combineReducers( {

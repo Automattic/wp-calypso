@@ -1,46 +1,46 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' );
-
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { debounce, isEqual, omit } from 'lodash';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Post = require( './post' ),
-	PostPlaceholder = require( './post-placeholder' ),
-	actions = require( 'lib/posts/actions' ),
-	EmptyContent = require( 'components/empty-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	NoResults = require( 'my-sites/no-results' ),
-	route = require( 'lib/route' ),
-	mapStatus = route.mapPostStatus;
-
+import PostListFetcher from 'components/post-list-fetcher';
+import Post from './post';
+import PostPlaceholder from './post-placeholder';
+import actions from 'lib/posts/actions';
+import EmptyContent from 'components/empty-content';
+import InfiniteList from 'components/infinite-list';
+import NoResults from 'my-sites/no-results';
+import { mapPostStatus as mapStatus, sectionify } from 'lib/route';
+import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-var GUESSED_POST_HEIGHT = 250;
+const debug = debugFactory( 'calypso:my-sites:posts' );
 
-var PostList = React.createClass( {
+const GUESSED_POST_HEIGHT = 250;
 
-	mixins: [ PureRenderMixin ],
+class PostList extends PureComponent {
+	static propTypes = {
+		context: PropTypes.object,
+		search: PropTypes.string,
+		category: PropTypes.string,
+		tag: PropTypes.string,
+		hasSites: PropTypes.bool,
+		statusSlug: PropTypes.string,
+		siteId: PropTypes.number,
+		author: PropTypes.number
+	};
 
-	propTypes: {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		hasSites: React.PropTypes.bool,
-		statusSlug: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		author: React.PropTypes.number
-	},
-
-	render: function() {
+	render() {
 		return (
 			<PostListFetcher
 				siteId={ this.props.siteId }
@@ -48,62 +48,60 @@ var PostList = React.createClass( {
 				author={ this.props.author }
 				withImages={ true }
 				withCounts={ true }
-				search={ this.props.search }>
+				search={ this.props.search }
+				category={ this.props.category }
+				tag={ this.props.tag }
+			>
 				<Posts
 					{ ...omit( this.props, 'children' ) }
 				/>
 			</PostListFetcher>
 		);
 	}
-} );
+}
 
-var Posts = React.createClass( {
+const Posts = localize( class extends React.Component {
+	static propTypes = {
+		author: PropTypes.number,
+		context: PropTypes.object.isRequired,
+		hasRecentError: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		postImages: PropTypes.object.isRequired,
+		posts: PropTypes.array.isRequired,
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		hasSites: PropTypes.bool.isRequired,
+		statusSlug: PropTypes.string,
+		trackScrollPage: PropTypes.func.isRequired
+	};
 
-	propTypes: {
-		author: React.PropTypes.number,
-		context: React.PropTypes.object.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		postImages: React.PropTypes.object.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		hasSites: React.PropTypes.bool.isRequired,
-		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
-	},
+	static defaultProps = {
+		hasRecentError: false,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		postImages: {},
+		posts: [],
+		trackScrollPage: function() {}
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasRecentError: false,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			postImages: {},
-			posts: [],
-			trackScrollPage: function() {}
-		};
-	},
+	state = {
+		postsAtFullWidth: window.innerWidth >= 960
+	};
 
-	getInitialState: function() {
-		return {
-			postsAtFullWidth: window.innerWidth >= 960
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'Posts React component mounted.' );
 		this.debouncedAfterResize = debounce( this.afterResize, 300 );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate( nextProps ) {
 		if ( nextProps.loading !== this.props.loading ) {
 			return true;
 		}
@@ -120,19 +118,19 @@ var Posts = React.createClass( {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	afterResize: function() {
-		var arePostsAtFullWidth = window.innerWidth >= 960;
+	afterResize = () => {
+		const arePostsAtFullWidth = window.innerWidth >= 960;
 
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
 			this.setState( {
 				postsAtFullWidth: arePostsAtFullWidth
 			} );
 		}
-	},
+	};
 
-	fetchPosts: function( options ) {
+	fetchPosts = options => {
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
@@ -140,62 +138,65 @@ var Posts = React.createClass( {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		actions.fetchNextPage();
-	},
+	};
 
-	getNoContentMessage: function() {
-		var attributes, newPostLink;
+	getNoContentMessage = () => {
+		const { hasRecentError, siteId, search, statusSlug, translate } = this.props;
+		let attributes;
 
-		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/posts/illustration-posts.svg"
-				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
-						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} )	}
-			/>;
-		} else {
-			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
+		if ( search ) {
+			return (
+				<NoResults
+					image="/calypso/images/posts/illustration-posts.svg"
+					text={
+						translate( 'No posts match your search for {{searchTerm/}}.', {
+							components: {
+								searchTerm: <em>{ search }</em>
+							}
+						} )	}
+				/>
+			);
+		}
 
-			if ( this.props.hasRecentError ) {
+		const newPostLink = siteId ? '/post/' + siteId : '/post';
+
+		if ( hasRecentError ) {
+			attributes = {
+				title: translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+				line: translate( 'Please check your internet connection.' )
+			};
+		}
+
+		switch ( statusSlug ) {
+			case 'drafts':
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: translate( 'You don\'t have any drafts.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Post' ),
+					actionURL: newPostLink
 				};
-			} else {
-				switch ( this.props.statusSlug ) {
-					case 'drafts':
-						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-						break;
-					case 'scheduled':
-						attributes = {
-							title: this.translate( 'You don\'t have any scheduled posts.' ),
-							line: this.translate( 'Would you like to schedule a draft to publish?' ),
-							action: this.translate( 'Edit Drafts' ),
-							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
-						};
-						break;
-					case 'trashed':
-						attributes = {
-							title: this.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
-						};
-						break;
-					default:
-						attributes = {
-							title: this.translate( 'You haven\'t published any posts yet.' ),
-							line: this.translate( 'Would you like to publish your first post?' ),
-							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
-						};
-				}
-			}
+				break;
+			case 'scheduled':
+				attributes = {
+					title: translate( 'You don\'t have any scheduled posts.' ),
+					line: translate( 'Would you like to schedule a draft to publish?' ),
+					action: translate( 'Edit Drafts' ),
+					actionURL: ( siteId ) ? '/posts/drafts/' + siteId : '/posts/drafts'
+				};
+				break;
+			case 'trashed':
+				attributes = {
+					title: translate( 'You don\'t have any posts in your trash folder.' ),
+					line: translate( 'Everything you write is solid gold.' )
+				};
+				break;
+			default:
+				attributes = {
+					title: translate( 'You haven\'t published any posts yet.' ),
+					line: translate( 'Would you like to publish your first post?' ),
+					action: translate( 'Start a Post' ),
+					actionURL: newPostLink
+				};
 		}
 
 		attributes.illustration = '/calypso/images/posts/illustration-posts.svg';
@@ -209,19 +210,19 @@ var Posts = React.createClass( {
 			illustration={ attributes.illustration }
 			illustrationWidth={ attributes.illustrationWidth }
 		/>;
-	},
+	};
 
-	getPostRef: function( post ) {
+	getPostRef = post => {
 		return post.global_ID;
-	},
+	};
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders = () => {
 		return (
 			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
 		);
-	},
+	};
 
-	renderPost: function( post, index ) {
+	renderPost = ( post, index ) => {
 		const postImages = this.props.postImages[ post.global_ID ];
 		const renderedPost = (
 			<Post
@@ -230,7 +231,7 @@ var Posts = React.createClass( {
 				post={ post }
 				postImages={ postImages }
 				fullWidthPost={ this.state.postsAtFullWidth }
-				path={ route.sectionify( this.props.context.pathname ) }
+				path={ sectionify( this.props.context.pathname ) }
 			/>
 		);
 
@@ -238,23 +239,22 @@ var Posts = React.createClass( {
 			return (
 				<div key={ post.global_ID }>
 					<UpgradeNudge
-						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-						message={ this.translate( 'Prevent ads from showing on your site.' ) }
+						title={ this.props.translate( 'No Ads with WordPress.com Premium' ) }
+						message={ this.props.translate( 'Prevent ads from showing on your site.' ) }
 						feature="no-adverts"
 						event="published_posts_no_ads"
 					/>
 					{ renderedPost }
 				</div>
 			);
-		} else {
-			return renderedPost;
 		}
-	},
+		return renderedPost;
+	};
 
-	render: function() {
-		var posts = this.props.posts,
-			placeholderCount = 1,
-			placeholders = [],
+	render() {
+		const { posts } = this.props;
+		const placeholderCount = 1;
+		let placeholders = [],
 			postList,
 			i;
 
@@ -293,7 +293,7 @@ var Posts = React.createClass( {
 		return (
 			<div>
 				{ postList }
-				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
+				{ this.props.lastPage && posts.length ? <ListEnd /> : null }
 			</div>
 		);
 	}

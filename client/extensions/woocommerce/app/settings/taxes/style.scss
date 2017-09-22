@@ -4,4 +4,47 @@
 		font-size: 14px;
 		margin-right: 8px;
 	}
+
+	.taxes__taxes-calculate {
+		color: $alert-green;
+		margin-bottom: 1.5em;
+	}
+
+	.taxes__taxes-calculate .gridicon {
+		color: $alert-green;
+		vertical-align: top;
+		margin-right: 4px;
+	}
+
+	.taxes__taxes-calculate-label {
+		margin-top: 2px;
+		display: inline-block;
+		color: $gray;
+	}
+
+	.notice.is-error {
+		margin-bottom: 0;
+	}
+
+	a.external-link {
+		margin-left: 8px;
+	}
+	
+	a.external-link .gridicons-external {
+		margin-left: 4px;
+	}
+}
+
+.taxes__taxes-options {
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.taxes__taxes-rates-table {
+	.table-row {
+		&:hover {
+			background-color: transparent;
+		}
+	}
 }

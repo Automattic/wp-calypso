@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import mockery from 'mockery';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies

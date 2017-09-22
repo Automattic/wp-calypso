@@ -111,6 +111,18 @@
 		line-height: (32 / 24) * 1em;
 		font-family: $serif;
 		font-weight: 700;
+		clear: right;
+	}
+
+
+	.post-format__icon {
+		float: left;
+		margin-top: 4px;
+
+		.gridicon {
+			color: $gray-text-min;
+			margin-right: 6px;
+		}
 	}
 
 	.post__excerpt {
@@ -376,11 +388,11 @@
 	animation: appear .3s ease-in-out;
 }
 
-.post .comments__comment-timestamp {
-	margin-top: -4px;
+.post .comments__comment-author .gravatar{
+	top: 5px;
 }
 
-.post .comments__view-earlier {
+.post .comments__view-more {
 	margin-top: 15px;
 }
 
@@ -505,8 +517,8 @@
 	@include breakpoint( ">1600px" ) {
 		max-width: 600px;
 
-		.post-item.is-mini.card.is-compact {
-			padding: 16px 24px;
+		.post-item__card.is-mini.card.is-compact {
+			padding: 8px 24px;
 
 			.post-item__meta {
 				display: block;

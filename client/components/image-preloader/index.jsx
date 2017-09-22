@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import omit from 'lodash/omit';
-import noop from 'lodash/noop';
+import { noop, omit } from 'lodash';
 
 /**
  * Constants

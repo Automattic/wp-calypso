@@ -10,6 +10,7 @@
 }
 
 .reader-full-post__content {
+	margin: 0 auto;
 
 	@include breakpoint( ">1280px" ) {
 		width: 720px;
@@ -31,8 +32,6 @@
 		width: auto;
 		padding: 0 20px;
 	}
-
-	margin: 0 auto;
 }
 
 .reader-full-post__back-container {
@@ -151,8 +150,6 @@
 
 .reader-full-post__story {
 	max-width: 720px;
-	font-size: 17px;
-	line-height: 28px;
 
 	@include breakpoint( "<480px" ) {
 		font-size: 15px;
@@ -166,6 +163,8 @@
 
 .reader-full-post__story-content {
 	color: $gray-dark;
+	font-size: 17px;
+	line-height: 28px;
 }
 
 .reader-full-post__story-content img {

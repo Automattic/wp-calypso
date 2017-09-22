@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import keyBy from 'lodash/keyBy';
+import { keyBy } from 'lodash';
 
 /**
  * Internal dependencies

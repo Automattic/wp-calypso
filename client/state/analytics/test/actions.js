@@ -11,11 +11,13 @@ import { spy } from 'sinon';
 import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_STAT_BUMP,
+	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
 import {
 	composeAnalytics,
 	withAnalytics,
-	bumpStat
+	bumpStat,
+	setTracksAnonymousUserId,
 } from '../actions.js';
 
 describe( 'middleware', () => {
@@ -79,6 +81,18 @@ describe( 'middleware', () => {
 			)();
 
 			expect( composite.meta.analytics ).to.have.lengthOf( 2 );
+		} );
+
+		it( 'should allow setting Tracks anonymous ID', () => {
+			const tracksAction = setTracksAnonymousUserId( 'abcd1234' );
+			const expected = [
+				{
+					type: ANALYTICS_TRACKS_ANONID_SET,
+					payload: 'abcd1234'
+				}
+			];
+			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
+			expect( tracksAction.meta.analytics ).to.deep.equal( expected );
 		} );
 	} );
 } );

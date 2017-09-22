@@ -2,8 +2,7 @@
  * External dependencies
  */
 import Debug from 'debug';
-import isEmpty from 'lodash/isEmpty';
-import get from 'lodash/get';
+import { get, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

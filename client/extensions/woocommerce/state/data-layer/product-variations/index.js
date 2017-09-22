@@ -56,7 +56,7 @@ export function handleProductVariationCreate( store, action ) {
 		return;
 	}
 
-	const updatedAction = ( dispatch, getState, data ) => {
+	const updatedAction = ( dispatch, getState, { data } ) => {
 		dispatch( productVariationUpdated( siteId, productId, data, action ) );
 
 		const props = { productId, sentData: variation, receivedData: data };
@@ -79,7 +79,7 @@ export function handleProductVariationUpdate( store, action ) {
 		return;
 	}
 
-	const updatedAction = ( dispatch, getState, data ) => {
+	const updatedAction = ( dispatch, getState, { data } ) => {
 		dispatch( productVariationUpdated( siteId, productId, data, action ) );
 
 		const props = { productId: productId, sentData: variation, receivedData: data };

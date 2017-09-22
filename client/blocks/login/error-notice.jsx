@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -36,7 +37,7 @@ class ErrorNotice extends Component {
 		) {
 			window.scrollTo( 0, 0 );
 		}
-	}
+	};
 
 	getCreateAccountError() {
 		const { createAccountError } = this.props;
@@ -58,6 +59,14 @@ class ErrorNotice extends Component {
 		const error = this.getError();
 
 		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
+			return null;
+		}
+
+		/*
+		 * The user_exists error is caught in SocialLoginForm.
+		 * The relevant messages are displayed inline in LoginForm.
+		*/
+		if ( error.code === 'user_exists' ) {
 			return null;
 		}
 

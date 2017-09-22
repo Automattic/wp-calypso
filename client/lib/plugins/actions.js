@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -127,52 +127,6 @@ const recordEvent = ( eventType, plugin, site, error ) => {
 	analytics.mc.bumpStat( eventType, 'succeeded' );
 };
 
-// Updates a plugin without launching the events that notifies
-// the user that an update is going on.
-// Used for updating plugins automatically on the background.
-const autoupdatePlugin = ( site, plugin ) => {
-	Dispatcher.handleViewAction( {
-		type: 'AUTOUPDATE_PLUGIN',
-		action: 'AUTOUPDATE_PLUGIN',
-		site: site,
-		plugin: plugin
-	} );
-
-	analytics.tracks.recordEvent( 'calypso_plugin_update_automatic', {
-		site: site.ID,
-		plugin: plugin.slug
-	} );
-
-	analytics.mc.bumpStat( 'calypso_plugin_update_automatic' );
-
-	const boundEnableAU = getPluginBoundMethod( site, plugin.id, 'updateVersion' );
-	queueSitePluginAction( boundEnableAU, site.ID, plugin.id, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_AUTOUPDATE_PLUGIN',
-			action: 'AUTOUPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-			data: data,
-			error: error
-		} );
-		recordEvent( 'calypso_plugin_updated_automatic', plugin, site, error );
-	} );
-};
-
-const processAutoupdates = ( site, plugins ) => {
-	if ( site.canAutoupdateFiles &&
-		site.jetpack &&
-		site.canManage() &&
-		utils.userCan( 'manage_options', site )
-	) {
-		plugins.forEach( plugin => {
-			if ( plugin.update && plugin.autoupdate ) {
-				autoupdatePlugin( site, plugin );
-			}
-		} );
-	}
-};
-
 const PluginsActions = {
 	removePluginsNotices: logs => {
 		Dispatcher.handleViewAction( {
@@ -202,9 +156,6 @@ const PluginsActions = {
 				data: data,
 				error: error
 			} );
-			if ( ! error ) {
-				processAutoupdates( site, data.plugins );
-			}
 		};
 
 		if ( site.jetpack ) {
@@ -305,7 +256,8 @@ const PluginsActions = {
 
 		const manageError = error => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
-				if ( site.isMainNetworkSite() ) {
+				//TODO: compatibility with old site object (for now, remove when not needed)
+				if ( typeof site.isMainNetworkSite === 'function' ? site.isMainNetworkSite() : site.isMainNetworkSite ) {
 					return update( plugin )
 						.then( autoupdate )
 						.then( manageSuccess )
@@ -330,8 +282,8 @@ const PluginsActions = {
 		};
 
 		dispatchMessage( 'INSTALL_PLUGIN' );
-
-		if ( site.isMainNetworkSite() ) {
+		//TODO: compatibility with old site object (for now, remove when not needed)
+		if ( typeof site.isMainNetworkSite === 'function' ? site.isMainNetworkSite() : site.isMainNetworkSite ) {
 			return install()
 				.then( autoupdate )
 				.then( manageSuccess )

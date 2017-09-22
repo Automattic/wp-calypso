@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, forEach, map, mapKeys, mapValues, omit, pick } from 'lodash';
+import { flow, forEach, get, map, mapKeys, mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import {
 } from 'state/posts/revisions/actions';
 
 /**
- * Normalize a WP REST API Post Revisions ressource for consumption in Calypso
+ * Normalize a WP REST API Post Revisions resource for consumption in Calypso
  *
  * @param {Object} revision Raw revision from the API
  * @returns {Object} the normalized revision
@@ -50,11 +50,10 @@ export function normalizeRevision( revision ) {
  * @param {Object} action Redux action
  * @param {String} action.siteId of the revisions
  * @param {String} action.postId of the revisions
- * @param {Function} next dispatches to next middleware in chain
  * @param {Object} rawError from HTTP request
  * @returns {Object} the dispatched action
  */
-export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError ) =>
+export const receiveError = ( { dispatch }, { siteId, postId }, rawError ) =>
 	dispatch( receivePostRevisionsFailure( siteId, postId, rawError ) );
 
 /**
@@ -64,16 +63,16 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  * @param {Object} action Redux action
  * @param {String} action.siteId of the revisions
  * @param {String} action.postId of the revisions
- * @param {Function} next dispatches to next middleware in chain
  * @param {Array} revisions raw data from post revisions API
  */
-export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
+export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) => {
 	const normalizedRevisions = map( revisions, normalizeRevision );
 
 	forEach( normalizedRevisions, ( revision, index ) => {
-		revision.changes = index === normalizedRevisions.length - 1
-			? { added: 0, removed: 0 }
-			: countDiffWords( diffWords( normalizedRevisions[ index + 1 ].content, revision.content ) );
+		revision.changes = countDiffWords( diffWords(
+			get( normalizedRevisions, [ index + 1, 'content' ], '' ),
+			revision.content
+		) );
 	} );
 
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
@@ -87,9 +86,10 @@ export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revision
  * @param {Object} action Redux action
  */
 export const fetchPostRevisions = ( { dispatch }, action ) => {
-	const { siteId, postId } = action;
+	const { siteId, postId, postType } = action;
+	const resourceName = postType === 'page' ? 'pages' : 'posts';
 	dispatch( http( {
-		path: `/sites/${ siteId }/posts/${ postId }/revisions`,
+		path: `/sites/${ siteId }/${ resourceName }/${ postId }/revisions`,
 		method: 'GET',
 		query: {
 			apiNamespace: 'wp/v2',

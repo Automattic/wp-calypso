@@ -562,5 +562,12 @@ describe( 'route', function() {
 				).to.equal( '/stats/day' );
 			} );
 		} );
+		describe( 'for special paths', function() {
+			it( 'should remove the site when the fragment is passed explicitly', function() {
+				expect(
+					route.sectionify( '/domains/manage/not-a-site', 'not-a-site' )
+				).to.equal( '/domains/manage' );
+			} );
+		} );
 	} );
 } );

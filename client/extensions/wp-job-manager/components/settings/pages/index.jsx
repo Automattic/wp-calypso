@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FormSection, reduxForm } from 'redux-form';
+import { FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { ProtectFormGuard } from 'lib/protect-form';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -21,24 +22,35 @@ import SectionHeader from 'components/section-header';
 import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+const form = 'extensions.wpJobManager.pages';
 const query = { type: 'page' };
 
 class Pages extends Component {
 	static propTypes = {
-		isDisabled: PropTypes.bool,
-		isRequesting: PropTypes.bool,
+		dirty: PropTypes.bool,
+		handleSubmit: PropTypes.func,
+		isFetching: PropTypes.bool,
+		isFetchingPages: PropTypes.bool,
+		onSubmit: PropTypes.func,
 		siteId: PropTypes.number,
+		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
+	save = section => data => this.props.onSubmit( form, data[ section ] );
+
 	render() {
 		const {
-			isRequesting,
+			dirty,
+			handleSubmit,
+			isFetching,
+			isFetchingPages,
 			siteId,
+			submitting,
 			translate,
 		} = this.props;
 
-		const isDisabled = this.props.isDisabled || isRequesting;
+		const isDisabled = isFetching || isFetchingPages || submitting;
 
 		return (
 			<div>
@@ -47,10 +59,14 @@ class Pages extends Component {
 				}
 
 				<form>
+					<ProtectFormGuard isChanged={ dirty } />
+
 					<FormSection name="pages">
 						<SectionHeader label={ translate( 'Pages' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ submitting }
+								onClick={ handleSubmit( this.save( 'pages' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
@@ -103,11 +119,12 @@ class Pages extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequesting: isRequestingSitePostsForQuery( state, siteId, query ),
+			dirty: isDirty( form ),
+			isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
 			siteId,
 		};
 	}
@@ -115,8 +132,7 @@ const connectComponent = connect(
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'pages',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(

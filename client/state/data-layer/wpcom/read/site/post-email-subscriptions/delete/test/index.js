@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +15,7 @@ import {
 } from '../';
 import { subscribeToNewPostEmail, unsubscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailUnsubscription', () => {
@@ -30,7 +31,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -38,22 +39,28 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receivePostEmailUnsubscription', () => {
 		it( 'should do nothing if successful', () => {
 			const dispatch = spy();
-			receivePostEmailUnsubscription( { dispatch }, null, null, { subscribed: false } );
+			receivePostEmailUnsubscription( { dispatch }, null, { subscribed: false } );
 			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
 			const dispatch = spy();
-			receivePostEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
-				subscribed: true,
-			} );
+			receivePostEmailUnsubscription(
+				{ dispatch },
+				{ payload: { blogId: 1234 } },
+				{
+					subscribed: true,
+				}
+			);
 
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewPostEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( subscribeToNewPostEmail( 1234 ) )
+			);
 		} );
 	} );
 
@@ -66,7 +73,9 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewPostEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( subscribeToNewPostEmail( 1234 ) )
+			);
 		} );
 	} );
 } );

@@ -58,9 +58,9 @@ export const EditorBasicsTour = makeTour(
 				{ translate( 'Write your post in the content area.' ) }
 			</p>
 			<img
-				src="https://en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
+				src="https://i0.wp.com/en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
 				style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
-				/>
+			/>
 			<ButtonRow>
 				<Next step="add-image" />
 				<Quit />
@@ -80,6 +80,32 @@ export const EditorBasicsTour = makeTour(
 							icon: <Gridicon icon="add-outline" />,
 						}
 					} )
+				}
+			</p>
+			<ButtonRow>
+				<Next step="add-other" />
+				<Quit />
+			</ButtonRow>
+		</Step>
+		<Step
+			name="add-other"
+			arrow="top-left"
+			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
+			placement="below"
+			style={ { marginLeft: '22px', zIndex: 'auto' } }
+		>
+			<p>
+				{
+					translate(
+						'The {{icon/}} lets you add other things, like a contact form. ' +
+						'If your site is on the Premium or Business plan, you can even add {{strong}}payment buttons{{/strong}}!',
+						{
+							components: {
+								strong: <strong />,
+								icon: <Gridicon icon="chevron-down" />,
+							}
+						}
+					)
 				}
 			</p>
 			<ButtonRow>
@@ -115,7 +141,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="publish"
 			arrow="right-top"
-			target=".editor-ground-control__publish-combo"
+			target=".editor-ground-control__publish-button"
 			placement="beside"
 			style={ { marginTop: '-17px' } }
 		>

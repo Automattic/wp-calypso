@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +16,10 @@ import { getPostTotalCommentsCount } from 'state/comments/selectors';
 class CommentButton extends Component {
 
 	static propTypes = {
-		onClick: React.PropTypes.func,
-		tagName: React.PropTypes.string,
-		commentCount: React.PropTypes.number,
-		showLabel: React.PropTypes.bool
+		onClick: PropTypes.func,
+		tagName: PropTypes.string,
+		commentCount: PropTypes.number,
+		showLabel: PropTypes.bool
 	};
 
 	static defaultProps = {

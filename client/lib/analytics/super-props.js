@@ -3,11 +3,8 @@
  */
 import config from 'config';
 import { assign } from 'lodash';
-/**
- * Internal dependencies
- */
 
-module.exports = {
+export default {
 	getAll: function( selectedSite, siteCount ) {
 		let siteProps = {};
 		const defaultProps = {

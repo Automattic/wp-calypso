@@ -1,12 +1,21 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { defaults, isEqual, noop, toInteger } from 'lodash';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import debugFactory from 'debug';
+import {
+	castArray,
+	defaults,
+	get,
+	identity,
+	isEmpty,
+	isString,
+	map,
+	noop
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,113 +26,85 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
-import FormCountrySelect from 'components/forms/form-country-select';
 import FormTextInput from 'components/forms/form-text-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-
-// We use this for basic birth date validation.
-// Twill need to be updated once Ray gets us to the singularity.
-const currentPlausibleHumanLifespan = 140;
-const minimumLegalAge = 13;
+import FormInputValidation from 'components/forms/form-input-validation';
+import validateContactDetails from './fr-validate-contact-details';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
+let defaultRegistrantType;
+
+/*
+ * Sanitize a string by removing everything except digits
+ */
+function onlyNumericCharacters( string ) {
+	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
+}
 
 // If we set a field to null, react decides it's uncontrolled and complains
 // and we don't particularly want to make the parent remember all our fields
 // so we use these values to plug missing.
 const emptyValues = {
-	countryOfBirth: '',
-	placeOfBirth: '',
-	postalCodeOfBirth: '',
 	registrantVatId: '',
 	sirenSiret: '',
 	trademarkNumber: '',
 };
 
+function renderValidationError( message ) {
+	return <FormInputValidation isError key={ message } text={ message } />;
+}
+
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
-		countriesList: PropTypes.object.isRequired,
+		children: PropTypes.node,
+		contactDetails: PropTypes.object,
+		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-	}
+		translate: PropTypes.func,
+		updateContactDetailsCache: PropTypes.func,
+	};
 
 	static defaultProps = {
-		countriesList: { data: [] },
 		isVisible: true,
 		onSubmit: noop,
-	}
+	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			dobDays: '',
-			dobMonths: '',
-			dobYears: '',
-		};
-	}
+	sanitizeFunctions = {
+		sirenSiret: onlyNumericCharacters,
+		trademarkNumber: onlyNumericCharacters,
+	};
 
 	componentWillMount() {
 		// We're pushing props out into the global state here because:
-		// 1) We want to use these values if the user immediately hits submit
+		// 1) We want to use these values if the user navigates unexpectedly then returns
 		// 2) We want to use the tld specific forms to manage the tld specific
 		//    fields so we can keep them together in one place
+		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
+
 		this.props.updateContactDetailsCache( { extra: {
-			registrantType: this.props.contactDetails.organization ? 'organization' : 'individual',
-			countryOfBirth: this.props.contactDetails.countryCode || 'FR'
+			registrantType: defaultRegistrantType
 		} } );
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		const dateOfBirth = this.compileDateOfBirth();
-
-		if ( dateOfBirth && ! isEqual( prevState, this.state ) ) {
-			this.setDateOfBirth( dateOfBirth );
-		}
-	}
-
-	compileDateOfBirth() {
-		const { dobYears, dobMonths, dobDays } = this.state;
-
-		if ( ! dobYears || ! dobMonths || ! dobDays ) {
-			return false;
-		}
-
-		const dateOfBirth = [ dobYears, dobMonths, dobDays ].join( '-' );
-
-		if ( ! dateOfBirth || ! moment( dateOfBirth, 'YYYY-MM-DD' ).isValid() ) {
-			// @todo: set error state
-			return false;
-		}
-
-		const yearDiff = new Date().getFullYear() - toInteger( dobYears );
-
-		if ( yearDiff > currentPlausibleHumanLifespan || yearDiff < minimumLegalAge ) {
-			// @todo: set error state
-			return false;
-		}
-
-		return dateOfBirth;
-	}
-
-	setDateOfBirth( dateOfBirth ) {
-		debug( 'Setting dateOfBirth to ' + dateOfBirth );
-		this.props.updateContactDetailsCache( { extra: { dateOfBirth } } );
-	}
-
-	handleDobChangeEvent = ( event ) => {
-		this.setState( { [ event.target.id ]: event.target.value } );
-	}
-
 	handleChangeEvent = ( event ) => {
-		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
+		const field = event.target.id;
+		const value = this.sanitizeField( event.target.value, field );
+
+		debug( 'Setting ' + field + ' to ' + value );
 		this.props.updateContactDetailsCache( {
-			extra: { [ event.target.id ]: event.target.value },
+			extra: { [ field ]: value },
 		} );
 	}
 
 	render() {
-		const translate = this.props.translate;
-		const registrantType = this.props.contactDetails.extra.registrantType;
+		const {
+			contactDetails,
+			contactDetailsValidationErrors,
+			translate,
+		} = this.props;
+		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const formIsValid = isEmpty( contactDetailsValidationErrors );
+
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
@@ -153,136 +134,55 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					</FormLabel>
 				</FormFieldset>
 
-				{ 'individual' === registrantType
-					? this.renderPersonalFields()
-					: this.renderOrganizationFields() }
+				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ this.props.children }
+				{ formIsValid
+					? this.props.children
+					: map(
+						castArray( this.props.children ),
+						( child ) =>
+							child.props.className.match( /submit-button/ )
+								? React.cloneElement( child, {
+									disabled: true
+								} )
+								: child	) }
 			</form>
 		);
 	}
 
-	renderPersonalFields() {
-		const screenReaderText = 'screen-reader-text';
-		const translate = this.props.translate;
-		const { dobYears, dobMonths, dobDays } = this.state;
-		const {
-			countryOfBirth,
-			placeOfBirth,
-			postalCodeOfBirth,
-		} = defaults( {}, this.props.contactDetails.extra, emptyValues );
-
-		return (
-			<div>
-				<FormFieldset>
-					<FormLabel htmlFor="countryOfBirth">
-						{ translate( 'Country of Birth' ) }
-					</FormLabel>
-					<FormCountrySelect
-						id="countryOfBirth"
-						value={ countryOfBirth }
-						countriesList={ this.props.countriesList }
-						className="registrant-extra-info__form-country-select"
-						onChange={ this.handleChangeEvent } />
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>
-						{ translate( 'Date of Birth' ) }
-					</FormLegend>
-					<div className="registrant-extra-info__dob-inputs">
-						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobYears" className={ screenReaderText }>
-								{ translate( 'Year' ) }
-							</FormLabel>
-							<FormTextInput className="registrant-extra-info__dob-year"
-								id="dobYears"
-								value={ dobYears }
-								type="number"
-								placeholder={ translate( 'YYYY', {
-									comment: 'Placeholder text for the year part of a date input. Indicates that the user should enter a year as a 4 digit value', // eslint-disable-line max-len
-								} ) }
-								onChange={ this.handleDobChangeEvent } />
-						</div>
-						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobMonths" className={ screenReaderText }>
-								{ translate( 'Month' ) }
-							</FormLabel>
-							<FormTextInput className="registrant-extra-info__dob-month"
-								id="dobMonths"
-								value={ dobMonths }
-								max="2"
-								type="number"
-								placeholder={ translate( 'MM', {
-									comment: 'Placeholder text for the month part of a date input. Indicates that the user should enter a month as a 2 digit value', // eslint-disable-line max-len
-								} ) }
-								onChange={ this.handleDobChangeEvent } />
-						</div>
-						<div className="registrant-extra-info__dob-column">
-							<FormLabel htmlFor="dobDays" className={ screenReaderText }>
-								{ translate( 'Day' ) }
-							</FormLabel>
-							<FormTextInput className="registrant-extra-info__dob-day"
-								id="dobDays"
-								value={ dobDays }
-								max="2"
-								type="number"
-								placeholder={ translate( 'DD', {
-									comment: 'Placeholder text for the day part of a date input. Indicates that the user should enter a day as a 2 digit value', // eslint-disable-line max-len
-								} ) }
-								onChange={ this.handleDobChangeEvent } />
-						</div>
-					</div>
-					<FormSettingExplanation>{
-						translate( 'Year/Month/Day - e.g. 1970/12/31', {
-							comment: 'This is describing a date format with fixed fields, so please do not ' +
-								'alter the numbers (Year, Month, Day). Please translate e.g("For example") if appropriate and also ' +
-								'the words, Year, Month, Day, individually.',
-						} )
-					}</FormSettingExplanation>
-				</FormFieldset>
-
-				{ countryOfBirth === 'FR' && (
-					<FormFieldset>
-						<FormLabel htmlFor="placeOfBirth">
-							{ translate( 'City of Birth' ) }
-						</FormLabel>
-						<FormTextInput
-							id="placeOfBirth"
-							value={ placeOfBirth }
-							placeholder={ translate( 'City of Birth' ) }
-							onChange={ this.handleChangeEvent } />
-					</FormFieldset>
-				) }
-
-				{ countryOfBirth === 'FR' && (
-					<FormFieldset>
-						<FormLabel htmlFor="postalCodeOfBirth">
-							{ translate( 'Postal Code of Birth' ) }
-						</FormLabel>
-						<FormTextInput
-							id="postalCodeOfBirth"
-							value={ postalCodeOfBirth }
-							type="number"
-							autoCapitalize="off"
-							autoComplete="off"
-							autoCorrect="off"
-							placeholder={ translate( 'ex. 75008' ) }
-							onChange={ this.handleChangeEvent } />
-					</FormFieldset>
-				) }
-			</div>
-		);
-	}
-
 	renderOrganizationFields() {
-		const translate = this.props.translate;
-		const { extra } = this.props.contactDetails;
+		const {
+			contactDetails,
+			contactDetailsValidationErrors,
+			translate,
+		} = this.props;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = defaults( {}, extra, emptyValues );
+		} = defaults( {}, contactDetails.extra, emptyValues );
+		const validationErrors = get( contactDetailsValidationErrors, 'extra', {} );
+		const registrantVatIdValidationMessage = validationErrors.registrantVatId &&
+			renderValidationError(
+				translate( 'The VAT Number field is a pattern ' +
+					'of letters and numbers that depends on the country, ' +
+					'but it always includes a 2 letter country code' ) );
+
+		const sirenSiretValidationMessage = validationErrors.sirenSiret &&
+			renderValidationError(
+				translate( 'The SIREN/SIRET field must be either a ' +
+					'9 digit SIREN number, or a 14 digit SIRET number' ) );
+
+		const trademarkNumberStrings = {
+			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
+			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
+		};
+
+		const trademarkNumberValidationMessage = map(
+				validationErrors.trademarkNumber,
+				( error ) =>
+					renderValidationError( trademarkNumberStrings[ error ] )
+			);
 
 		return (
 			<div>
@@ -298,8 +198,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex. XX123456789' ) }
-						onChange={ this.handleChangeEvent } />
+						placeholder={ translate( 'ex. FRXX123456789' ) }
+						onChange={ this.handleChangeEvent }
+						isError={ Boolean( registrantVatIdValidationMessage ) } />
+						{ registrantVatIdValidationMessage }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -311,6 +213,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
+						type="text"
+						inputMode="numeric"
+						pattern="[0-9]*"
 						placeholder={
 							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -319,7 +224,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
+						isError={ Boolean( sirenSiretValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
+						{ sirenSiretValidationMessage }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -331,16 +238,20 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="number"
+						type="text"
+						inputMode="numeric"
+						pattern="[0-9]*"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={
-							translate( 'ex. 123456789',
+							translate( 'ex. 012345678',
 								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
 							)
 						}
+						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
 						onChange={ this.handleChangeEvent } />
+					{ trademarkNumberValidationMessage }
 				</FormFieldset>
 			</div>
 		);
@@ -351,9 +262,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			<span className="registrant-extra-info__optional-label">{ this.props.translate( 'Optional' ) }</span>
 		);
 	}
+
+	sanitizeField( value, field ) {
+		return ( this.sanitizeFunctions[ field ] || identity )( value );
+	}
 }
 
 export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoFrForm ) );

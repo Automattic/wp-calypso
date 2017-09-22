@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -38,7 +38,9 @@ export const getUserPurchases = ( state, userId ) => (
  * @param {Object} state - current state object
  * @return {Object} an error object from the server
  */
-export const getPurchasesError = state => state.purchases.error;
+export const getPurchasesError = state => (
+	get( state, 'purchases.error', '' )
+);
 
 /**
  * Returns a Purchase object from the state using its id

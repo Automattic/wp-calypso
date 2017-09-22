@@ -10,7 +10,7 @@ import { spy } from 'sinon';
 import { requestBlogStickerAdd, receiveBlogStickerAdd, receiveBlogStickerAddError } from '../';
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { local } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'blog-sticker-add', () => {
 	describe( 'requestBlogStickerAdd', () => {
@@ -37,7 +37,6 @@ describe( 'blog-sticker-add', () => {
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				null,
 				{ success: true },
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -52,12 +51,11 @@ describe( 'blog-sticker-add', () => {
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				null,
 				{
 					success: false,
 				},
 			);
-			expect( dispatch ).to.have.been.calledWith( local( removeBlogSticker( 123, 'broken-in-reader' ) ) );
+			expect( dispatch ).to.have.been.calledWith( bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) ) );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					status: 'is-error',
@@ -78,7 +76,7 @@ describe( 'blog-sticker-add', () => {
 					status: 'is-error',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( removeBlogSticker( 123, 'broken-in-reader' ) ) );
+			expect( dispatch ).to.have.been.calledWith( bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) ) );
 		} );
 	} );
 } );

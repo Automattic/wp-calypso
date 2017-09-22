@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size } from 'lodash';
+import { each, find, get, map, noop, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -13,34 +14,39 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
 	changeCommentStatus,
 	deleteComment,
+	editComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
 } from 'state/comments/actions';
-import { createNotice, removeNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
-import getSiteComments from 'state/selectors/get-site-comments';
+import { removeNotice, successNotice } from 'state/notices/actions';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteComments from 'components/data/query-site-comments';
-import { hasSiteComments } from 'state/selectors';
+import QuerySiteCommentsList from 'components/data/query-site-comments-list';
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 
-const COMMENTS_PER_PAGE = 2;
+const COMMENTS_PER_PAGE = 20;
 
 export class CommentList extends Component {
 	static propTypes = {
 		changeCommentStatus: PropTypes.func,
 		comments: PropTypes.array,
-		commentsCount: PropTypes.number,
-		commentsPage: PropTypes.number,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
+		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
-		setCommentsPage: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -48,26 +54,37 @@ export class CommentList extends Component {
 		unlikeComment: PropTypes.func,
 	};
 
-	static defaultProps = {
-		commentsCount: 0,
-		commentsPage: 1,
-	};
-
 	state = {
 		isBulkEdit: false,
-		selectedComments: {},
+		// TODO: replace with [] when adding back Bulk Actions
+		lastUndo: null,
+		page: 1,
+		persistedComments: [],
+		selectedComments: [],
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.status !== nextProps.status ) {
-			this.setState( { selectedComments: {} } );
+		const { siteId, status } = this.props;
+		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
+			this.setState( {
+				isBulkEdit: false,
+				lastUndo: null,
+				page: 1,
+				persistedComments: [],
+				selectedComments: [],
+			} );
 		}
 	}
 
 	changePage = page => {
-		this.setState( { selectedComments: {} } );
-		this.props.setCommentsPage( page );
-	}
+		const total = Math.ceil( ( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE );
+		this.props.recordChangePage( page, total );
+
+		this.setState( {
+			page,
+			selectedComments: [],
+		} );
+	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -75,7 +92,19 @@ export class CommentList extends Component {
 		this.props.deleteComment( commentId, postId );
 	}
 
-	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
+	editComment = ( commentId, postId, commentData, undoCommentData, showNotice = true ) => {
+		this.props.editComment( commentId, postId, commentData );
+		if ( showNotice ) {
+			this.showEditNotice( commentId, postId, undoCommentData );
+		}
+	}
+
+	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
+
+	getCommentsPage = ( comments, page ) => {
+		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
+		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+	};
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -83,7 +112,7 @@ export class CommentList extends Component {
 		const defaultLine = translate( 'Your queue is clear.' );
 
 		return get( {
-			unapproved: [ translate( 'No new comments yet.' ), defaultLine ],
+			unapproved: [ translate( 'No pending comments.' ), defaultLine ],
 			approved: [ translate( 'No approved comments.' ), defaultLine ],
 			spam: [ translate( 'No spam comments.' ), defaultLine ],
 			trash: [ translate( 'No deleted comments.' ), defaultLine ],
@@ -91,13 +120,32 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
-	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
+	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
-	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
+	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
-	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
+	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+
+	isSelectedAll = () => {
+		const { page, selectedComments } = this.state;
+		const visibleComments = this.getCommentsPage( this.getComments(), page );
+		return selectedComments.length && ( selectedComments.length === visibleComments.length );
+	};
+
+	removeFromPersistedComments = commentId => this.setState(
+		( { persistedComments } ) => ( {
+			persistedComments: persistedComments.filter( c => c !== commentId ),
+		} )
+	);
+
+	replyComment = ( commentText, parentComment ) => {
 		const { translate } = this.props;
-		const { alsoApprove } = options;
+		const {
+			commentId: parentCommentId,
+			postId,
+			status,
+		} = parentComment;
+		const alsoApprove = 'approved' !== status;
 
 		this.props.removeNotice( `comment-notice-${ parentCommentId }` );
 
@@ -112,154 +160,223 @@ export class CommentList extends Component {
 		};
 
 		if ( alsoApprove ) {
-			this.setCommentStatus( parentCommentId, postId, 'approved', { showNotice: false } );
+			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
-		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
-		this.props.replyComment( commentText, postId, parentCommentId );
+		this.props.successNotice( noticeMessage, noticeOptions );
+		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
 	setBulkStatus = status => () => {
+		const { status: listStatus } = this.props;
 		this.props.removeNotice( 'comment-notice-bulk' );
 
-		this.props.setBulkStatus( keys( this.state.selectedComments ), status );
+		// Only persist comments if they toggle between approved and unapproved
+		const doPersist = ( 'approved' === listStatus && 'unapproved' === status ) ||
+			( 'unapproved' === listStatus && 'approved' === status );
 
-		this.showBulkNotice( status, this.state.selectedComments );
+		each( this.state.selectedComments, comment => {
+			if ( 'delete' === status ) {
+				this.props.deleteComment( comment.commentId, comment.postId, { showSuccessNotice: false } );
+				return;
+			}
 
-		this.setState( {
-			isBulkEdit: false,
-			selectedComments: {},
+			this.setCommentStatus( comment, status, {
+				isUndo: false,
+				doPersist,
+				showNotice: false,
+			} );
 		} );
+
+		this.showBulkNotice( status );
+
+		this.setState( { isBulkEdit: false, selectedComments: [] } );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { showNotice: true } ) => {
-		// TODO: Replace with Redux getComment()
-		const comment = this.getComment( commentId );
+	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
+		const {
+			commentId,
+			postId,
+			isLiked,
+			status: previousStatus,
+		} = comment;
+		const { isUndo, doPersist, showNotice } = options;
+		const alsoUnlikeComment = isLiked && ( 'approved' !== status );
 
-		if ( comment && status === comment.status ) {
-			return;
+		if ( isUndo ) {
+			this.setState( { lastUndo: commentId } );
+		} else {
+			this.setState( { lastUndo: null } );
+		}
+
+		if ( doPersist ) {
+			this.updatePersistedComments( commentId, isUndo );
+		} else {
+			this.removeFromPersistedComments( commentId );
 		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
-		if ( options.showNotice ) {
-			this.showNotice( commentId, postId, status, comment.status );
+		if ( showNotice ) {
+			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status );
+		this.props.changeCommentStatus( commentId, postId, status, {
+			alsoUnlike: alsoUnlikeComment,
+			isUndo,
+			previousStatus,
+		} );
 
 		// If the comment is not approved anymore, also remove the like
-		if ( 'approved' !== status ) {
+		if ( alsoUnlikeComment ) {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
 
-	showBulkNotice = ( newStatus, selectedComments ) => {
+	showEditNotice = ( commentId, postId, undoCommentData ) => {
 		const { translate } = this.props;
 
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
-			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
-			spam: [ 'is-warning', translate( 'All selected comments marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
-			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
-		}, newStatus, [ null, null ] );
+		const message = translate( 'Your comment has been updated.' );
 
-		if ( ! type ) {
-			return;
-		}
-
-		const options = Object.assign(
-			{
-				duration: 5000,
-				id: 'comment-notice-bulk',
-				isPersistent: true,
-			},
-			'delete' !== newStatus && {
-				button: translate( 'Undo' ),
-				onClick: () => this.undoBulkStatus( selectedComments ),
-			}
-		);
-
-		this.props.createNotice( type, message, options );
-	}
-
-	showNotice = ( commentId, postId, newStatus, previousStatus ) => {
-		const { translate } = this.props;
-
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'Comment approved.' ) ],
-			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
-			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
-		}, newStatus, [ null, null ] );
-
-		if ( ! type ) {
-			return;
-		}
-
-		const options = {
+		const noticeOptions = {
 			button: translate( 'Undo' ),
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
+			onClick: () => {
+				this.editComment( commentId, postId, undoCommentData, false );
+				this.props.removeNotice( `comment-notice-${ commentId }` );
+			},
 		};
 
-		this.props.createNotice( type, message, options );
-	}
+		this.props.successNotice( message, noticeOptions );
+	};
 
-	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
+	showBulkNotice = newStatus => {
+		const { translate } = this.props;
 
-	toggleCommentLike = ( commentId, postId ) => {
-		// TODO: Replace with Redux getComment()
-		const comment = find( this.props.comments, [ 'ID', commentId ] );
+		const message = get( {
+			approved: translate( 'All selected comments approved.' ),
+			unapproved: translate( 'All selected comments unapproved.' ),
+			spam: translate( 'All selected comments marked as spam.' ),
+			trash: translate( 'All selected comments moved to trash.' ),
+			'delete': translate( 'All selected comments deleted permanently.' ),
+		}, newStatus );
 
-		if ( 'unapproved' === comment.status ) {
-			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved' );
+		if ( ! message ) {
+			return;
 		}
 
-		if ( comment.i_like ) {
+		const noticeOptions = {
+			duration: 5000,
+			id: 'comment-notice-bulk',
+			isPersistent: true,
+		};
+
+		this.props.successNotice( message, noticeOptions );
+	};
+
+	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
+		const { translate } = this.props;
+		const {
+			commentId,
+			isLiked: previousIsLiked,
+			postId,
+			status: previousStatus,
+		} = comment;
+
+		const message = get( {
+			approved: translate( 'Comment approved.' ),
+			unapproved: translate( 'Comment unapproved.' ),
+			spam: translate( 'Comment marked as spam.' ),
+			trash: translate( 'Comment moved to trash.' ),
+		}, newStatus );
+
+		if ( ! message ) {
+			return;
+		}
+
+		const noticeOptions = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+			onClick: () => {
+				const updatedComment = {
+					...comment,
+					status: newStatus,
+				};
+				this.setCommentStatus( updatedComment, previousStatus, {
+					isUndo: true,
+					doPersist: options.doPersist,
+					showNotice: false,
+				} );
+				if ( previousIsLiked ) {
+					this.props.likeComment( commentId, postId );
+				} else if ( ! previousIsLiked && 'approved' !== previousStatus ) {
+					this.props.unlikeComment( commentId, postId );
+				}
+			},
+		};
+
+		this.props.successNotice( message, noticeOptions );
+	}
+
+	toggleBulkEdit = () => {
+		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
+	}
+
+	toggleCommentLike = comment => {
+		const { commentId, isLiked, postId, status } = comment;
+
+		if ( isLiked ) {
 			this.props.unlikeComment( commentId, postId );
-		} else {
-			this.props.likeComment( commentId, postId );
+			return;
+		}
+
+		const alsoApprove = 'unapproved' === status;
+
+		this.props.likeComment( commentId, postId, { alsoApprove } );
+
+		if ( alsoApprove ) {
+			this.props.removeNotice( `comment-notice-${ commentId }` );
+			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: true } );
+			this.updatePersistedComments( commentId );
 		}
 	}
 
-	toggleCommentSelected = commentId => {
-		// TODO: Replace with Redux getComment()
-		const { i_like, status } = this.getComment( commentId );
-		const { selectedComments } = this.state;
-
-		this.setState( {
-			selectedComments: this.isCommentSelected( commentId )
-				? omit( selectedComments, commentId )
-				: {
-					...selectedComments,
-					[ commentId ]: { i_like, status },
-				},
-		} );
+	toggleCommentSelected = comment => {
+		if ( this.isCommentSelected( comment.commentId ) ) {
+			return this.setState(
+				( { selectedComments } ) => ( {
+					selectedComments: selectedComments.filter( ( { commentId } ) => comment.commentId !== commentId ),
+				} )
+			);
+		}
+		this.setState(
+			( { selectedComments } ) => ( {
+				selectedComments: selectedComments.concat( comment ),
+			} )
+		);
 	}
 
-	toggleSelectAll = () => {
-		this.setState( {
-			selectedComments: this.isSelectedAll()
-				? {}
-				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
-		} );
-	}
+	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
-	undoBulkStatus = selectedComments => {
-		this.props.removeNotice( 'comment-notice-bulk' );
-		this.props.undoBulkStatus( selectedComments );
+	updatePersistedComments = ( commentId, isUndo ) => {
+		if ( isUndo ) {
+			this.removeFromPersistedComments( commentId );
+		} else if ( ! this.isCommentPersisted( commentId ) ) {
+			this.setState(
+				( { persistedComments } ) => ( {
+					persistedComments: persistedComments.concat( commentId ),
+				} )
+			);
+		}
 	}
 
 	render() {
 		const {
-			comments,
-			commentsCount,
-			commentsPage,
+			isJetpack,
 			isLoading,
 			siteId,
 			siteFragment,
@@ -267,24 +384,40 @@ export class CommentList extends Component {
 		} = this.props;
 		const {
 			isBulkEdit,
+			page,
 			selectedComments,
 		} = this.state;
 
-		const zeroComments = size( comments ) <= 0;
-		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
-		const showEmptyContent = zeroComments && ! showPlaceholder;
+		const comments = this.getComments();
+		const commentsCount = comments.length;
+		const commentsPage = this.getCommentsPage( comments, page );
+
+		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
+		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
 		return (
 			<div className="comment-list">
-				<QuerySiteComments siteId={ siteId } status={ status } />
+				{ isJetpack &&
+					<QuerySiteCommentsList
+						number={ 100 }
+						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
+						siteId={ siteId }
+						status={ status }
+					/>
+				}
+				{ ! isJetpack &&
+					<QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				}
 
 				<CommentNavigation
+					commentsPage={ commentsPage }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
+					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
 					toggleBulkEdit={ this.toggleBulkEdit }
@@ -296,13 +429,15 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( comments, comment =>
+					{ map( commentsPage, commentId =>
 						<CommentDetail
-							comment={ comment }
+							commentId={ commentId }
+							commentIsSelected={ this.isCommentSelected( commentId ) }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
+							editComment={ this.editComment }
 							isBulkEdit={ isBulkEdit }
-							commentIsSelected={ this.isCommentSelected( comment.ID ) }
-							key={ `comment-${ siteId }-${ comment.ID }` }
+							key={ `comment-${ siteId }-${ commentId }` }
+							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
@@ -320,43 +455,102 @@ export class CommentList extends Component {
 						line={ emptyMessageLine }
 						title={ emptyMessageTitle }
 					/> }
-
-					{ ! showPlaceholder && ! showEmptyContent &&
-						<Pagination
-							key="comment-list-pagination"
-							page={ commentsPage }
-							pageClick={ this.changePage }
-							perPage={ COMMENTS_PER_PAGE }
-							total={ commentsCount }
-						/>
-					}
 				</ReactCSSTransitionGroup>
+
+				{ ! showPlaceholder && ! showEmptyContent &&
+					<Pagination
+						key="comment-list-pagination"
+						page={ page }
+						pageClick={ this.changePage }
+						perPage={ COMMENTS_PER_PAGE }
+						total={ commentsCount }
+					/>
+				}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status, order } ) => {
-	const comments = getSiteComments( state, siteId, status, order );
-	const isLoading = ! hasSiteComments( state, siteId );
+const mapStateToProps = ( state, { siteId, status } ) => {
+	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
+	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
+		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
-		notices: getNotices( state ),
 		siteId,
 	};
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
-	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
-	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
+	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_change_status', {
+				also_unlike: analytics.alsoUnlike,
+				is_undo: analytics.isUndo,
+				previous_status: analytics.previousStatus,
+				status,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+		),
+		changeCommentStatus( siteId, postId, commentId, status )
+	) ),
+
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+
+	deleteComment: ( commentId, postId, options = { showSuccessNotice: true } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_delete' ),
+			bumpStat( 'calypso_comment_management', 'comment_deleted' )
+		),
+		deleteComment( siteId, postId, commentId, options )
+	) ),
+
+	editComment: ( commentId, postId, comment ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_edit' ),
+			bumpStat( 'calypso_comment_management', 'comment_updated' )
+		),
+		editComment( siteId, postId, commentId, comment )
+	) ),
+
+	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_like', {
+				also_approve: analytics.alsoApprove,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_liked' )
+		),
+		likeComment( siteId, postId, commentId )
+	) ),
+
+	recordChangePage: ( page, total ) => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_change_page', { page, total } ),
+		bumpStat( 'calypso_comment_management', 'change_page' )
+	) ),
+
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
+
+	replyComment: ( commentText, postId, parentCommentId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_reply', {
+				also_approve: analytics.alsoApprove,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_reply' )
+		),
+		replyComment( commentText, siteId, postId, parentCommentId )
+	) ),
+
 	setBulkStatus: noop,
 	undoBulkStatus: noop,
-	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
+
+	unlikeComment: ( commentId, postId ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_unlike' ),
+			bumpStat( 'calypso_comment_management', 'comment_unliked' )
+		),
+		unlikeComment( siteId, postId, commentId )
+	) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );

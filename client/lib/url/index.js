@@ -5,7 +5,7 @@ import {
 	format as formatUrl,
 	parse as parseUrl,
 } from 'url';
-import { omit, startsWith } from 'lodash';
+import { has, isString, omit, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -132,6 +132,10 @@ function urlToDomainAndPath( urlToConvert ) {
  * @return {Boolean} Does it appear to be a URL?
  */
 function resemblesUrl( query ) {
+	if ( ! query ) {
+		return false;
+	}
+
 	let parsedUrl = parseUrl( query );
 
 	// Make sure the query has a protocol - hostname ends up blank otherwise
@@ -176,7 +180,43 @@ function omitUrlParams( url, paramsToOmit ) {
 	return formatUrl( parsed );
 }
 
+/**
+ * Wrap decodeURI in a try / catch block to prevent `URIError` on invalid input
+ * Passing a non-string value will return an empty string.
+ * @param  {String} encodedURI URI to attempt to decode
+ * @return {String}            Decoded URI (or passed in value on error)
+ */
+function decodeURIIfValid( encodedURI ) {
+	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
+		return '';
+	}
+	try {
+		return decodeURI( encodedURI );
+	} catch ( e ) {
+		return encodedURI;
+	}
+}
+
+/**
+ * Wrap decodeURIComponent in a try / catch block to prevent `URIError` on invalid input
+ * Passing a non-string value will return an empty string.
+ * @param  {String} encodedURIComponent URI component to attempt to decode
+ * @return {String}            Decoded URI component (or passed in value on error)
+ */
+function decodeURIComponentIfValid( encodedURIComponent ) {
+	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
+		return '';
+	}
+	try {
+		return decodeURIComponent( encodedURIComponent );
+	} catch ( e ) {
+		return encodedURIComponent;
+	}
+}
+
 export default {
+	decodeURIIfValid,
+	decodeURIComponentIfValid,
 	isOutsideCalypso,
 	isExternal,
 	isHttps,

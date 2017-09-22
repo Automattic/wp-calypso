@@ -1,4 +1,7 @@
-import defer from 'lodash/defer';
+/**
+ * External dependencies
+ */
+import { defer } from 'lodash';
 
 function fakeLoader( url, callback ) {
 	fakeLoader.urlsLoaded.push( url );
@@ -9,4 +12,4 @@ function fakeLoader( url, callback ) {
 
 fakeLoader.urlsLoaded = [];
 
-module.exports = { loadScript: fakeLoader };
+export default { loadScript: fakeLoader };

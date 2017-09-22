@@ -1,11 +1,14 @@
 /**
+ * External dependencies
+ */
+import { isEqual, throttle } from 'lodash';
+
+/**
  * Internal dependencies
  */
 const Dispatcher = require( 'dispatcher' ),
 	scrollStore = require( 'lib/infinite-list/scroll-store' ),
-	positionsStore = require( 'lib/infinite-list/positions-store' ),
-	isEqual = require( 'lodash/isEqual' ),
-	throttle = require( 'lodash/throttle' );
+	positionsStore = require( 'lib/infinite-list/positions-store' );
 
 /**
  * Module variables

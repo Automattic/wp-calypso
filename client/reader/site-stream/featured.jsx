@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -115,9 +116,7 @@ export default localize(
 								onClick={ this.handleClick.bind( this, postData ) }
 							>
 								<div className="reader__featured-post-image" style={ style } />
-								<h2 className="reader__featured-post-title">
-									{ post.title }
-								</h2>
+								<h2 className="reader__featured-post-title">{ post.title }</h2>
 							</div>
 						);
 				}
@@ -134,19 +133,15 @@ export default localize(
 			return (
 				<Card className="reader__featured-card">
 					<div className="reader__featured-header">
-						<div className="reader__featured-title">
-							{ this.props.translate( 'Highlights' ) }
-						</div>
+						<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
 						<div className="reader__featured-description">
 							{ this.props.translate( 'What we’re reading this week.' ) }
 						</div>
 					</div>
 
-					<div className="reader__featured-posts">
-						{ this.renderPosts() }
-					</div>
+					<div className="reader__featured-posts">{ this.renderPosts() }</div>
 				</Card>
 			);
 		}
-	},
+	}
 );

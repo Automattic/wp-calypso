@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -11,7 +11,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 /**
  * Internal dependencies
  */
-var TrackInputChanges = require( '../' );
+import TrackInputChanges from '../';
 
 /**
  * Module variables
@@ -22,19 +22,19 @@ const spies = {
 	onBlur: null
 };
 
-const DummyInput = React.createClass( {
-	triggerChange( value ) {
+class DummyInput extends Component {
+	triggerChange = value => {
 		this.props.onChange( { target: this, value } );
-	},
+	};
 
-	triggerBlur() {
+	triggerBlur = () => {
 		this.props.onBlur( { target: this } );
-	},
+	};
 
 	render() {
 		return <div />;
 	}
-} );
+}
 
 describe( 'TrackInputChanges#onNewValue', function() {
 	let tree, dummyInput, container;
@@ -50,7 +50,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	beforeEach( function() {
-		for ( let spy in spies ) {
+		for ( const spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
 		tree = ReactDom.render(

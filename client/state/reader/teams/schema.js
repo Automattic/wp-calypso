@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'array',
 	items: {

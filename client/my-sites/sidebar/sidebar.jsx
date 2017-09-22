@@ -7,6 +7,8 @@ import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -33,8 +35,9 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import {
 	canCurrentUser,
+	canCurrentUserManagePlugins,
 	getPrimarySiteId,
-	getSites,
+	hasJetpackSites,
 	isDomainOnlySite,
 	isSiteAutomatedTransfer
 } from 'state/selectors';
@@ -82,6 +85,27 @@ export class MySitesSidebar extends Component {
 			event.preventDefault();
 			this.props.setLayoutFocus( 'preview' );
 		}
+	};
+
+	onViewSiteClick = ( event ) => {
+		const {
+			isPreviewable,
+			siteSuffix,
+		} = this.props;
+
+		if ( ! isPreviewable ) {
+			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
+			return;
+		}
+
+		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
+			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
+			return;
+		}
+
+		event.preventDefault();
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Calypso' );
+		page( '/view' + siteSuffix );
 	};
 
 	itemLinkClass = ( paths, existingClasses ) => {
@@ -148,21 +172,29 @@ export class MySitesSidebar extends Component {
 	}
 
 	preview() {
-		if ( ! this.props.siteId ) {
+		const {
+			isPreviewable,
+			site,
+			siteId,
+			translate,
+		} = this.props;
+
+		if ( ! siteId ) {
 			return null;
 		}
 
-		const { site, isPreviewable } = this.props;
+		const siteUrl = site && site.URL || '';
 
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
-				label={ this.props.translate( 'View Site' ) }
+				label={ translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ isPreviewable ? '/view' + this.props.siteSuffix : site.URL }
-				onNavigate={ this.onNavigate }
+				link={ siteUrl }
+				onNavigate={ this.onViewSiteClick }
 				icon="computer"
 				preloadSectionName="preview"
+				forceInternalLink={ isPreviewable }
 			/>
 		);
 	}
@@ -222,20 +254,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	plugins() {
-		const { site } = this.props;
-		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		let pluginsLink = '/plugins' + this.props.siteSuffix;
-
-		// TODO: we can probably rip this out
-		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! site ) {
-				return null;
-			}
-
-			if ( site.options ) {
-				pluginsLink = site.options.admin_url + 'plugins.php';
-			}
-		}
+		const pluginsLink = '/plugins' + this.props.siteSuffix;
+		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
 
 		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
@@ -247,18 +267,22 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const manageButton = this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites )
+			? <SidebarButton href={ managePluginsLink }>
+					{ this.props.translate( 'Manage' ) }
+				</SidebarButton>
+			: null;
+
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
-				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
+				className={ this.itemLinkClass( [ '/extensions', '/plugins' ], 'plugins' ) }
 				link={ pluginsLink }
 				onNavigate={ this.onNavigate }
 				icon="plugins"
 				preloadSectionName="plugins"
 			>
-				<SidebarButton href={ addPluginsLink }>
-					{ this.props.translate( 'Add' ) }
-				</SidebarButton>
+				{ manageButton }
 			</SidebarItem>
 		);
 	}
@@ -345,19 +369,34 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
+		// IMPORTANT: If you add a country to this list, you must also add it
+		// to ../../extensions/woocommerce/lib/countries in the getCountries function
+		const allowedCountryCodes = [ 'US', 'CA' ];
+		const { currentUser, canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
-			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
+			site && isJetpack && canUserManageOptions &&
+			( config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) || this.props.isSiteAutomatedTransfer );
+
+		if ( ! showStoreLink ) {
+			return null;
+		}
+
+		const countryCode = currentUser.user_ip_country_code;
+		const isCountryAllowed =
+			includes( allowedCountryCodes, countryCode ) ||
+			( 'development' === config( 'env' ) );
 
 		return (
-			showStoreLink &&
+			isCountryAllowed &&
 			<SidebarItem
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
-			/>
+			>
+				<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+			</SidebarItem>
 		);
 	}
 
@@ -625,23 +664,14 @@ function mapStateToProps( state ) {
 	const site = getSite( state, siteId );
 
 	const isJetpack = isJetpackSite( state, siteId );
-	// FIXME: Fun with Boolean algebra :-)
-	const isSharingEnabledOnJetpackSite = ! (
-		! isJetpackModuleActive( state, siteId, 'publicize' ) &&
-		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, siteId, '3.4-dev' ) )
-	);
-	// FIXME: Turn into dedicated selector
-	const canManagePlugins = !! getSites( state ).some( ( s ) => (
-		( s.capabilities && s.capabilities.manage_options )
-	) );
 
-	// FIXME: Turn into dedicated selector
-	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
+	const isSharingEnabledOnJetpackSite = isJetpackModuleActive( state, siteId, 'publicize' ) ||
+		( isJetpackModuleActive( state, siteId, 'sharedaddy' ) && ! isJetpackMinimumVersion( state, siteId, '3.4-dev' ) );
 
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
 	return {
-		canManagePlugins,
+		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
@@ -649,7 +679,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
-		hasJetpackSites,
+		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),

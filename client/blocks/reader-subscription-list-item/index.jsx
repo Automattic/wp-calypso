@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -112,11 +113,9 @@ function ReaderSubscriptionListItem( {
 						</a>
 					}
 				</span>
-				<div className="reader-subscription-list-item__site-excerpt">
-					{ siteExcerpt }
-				</div>
+				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isMultiAuthor &&
-					! isEmpty( authorName ) &&
+				! isEmpty( authorName ) && (
 					<span className="reader-subscription-list-item__by-text">
 						{ translate( 'by {{author/}}', {
 							components: {
@@ -131,8 +130,9 @@ function ReaderSubscriptionListItem( {
 								),
 							},
 						} ) }
-					</span> }
-				{ siteUrl &&
+					</span>
+				) }
+				{ siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
 						<a
 							href={ siteUrl }
@@ -143,11 +143,13 @@ function ReaderSubscriptionListItem( {
 						>
 							{ formatUrlForDisplay( siteUrl ) }
 						</a>
-						{ showLastUpdatedDate &&
+						{ showLastUpdatedDate && (
 							<span className="reader-subscription-list-item__timestamp">
 								{ feed && feed.last_update && translate( 'updated %s', { args: lastUpdatedDate } ) }
-							</span> }
-					</div> }
+							</span>
+						) }
+					</div>
+				) }
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton

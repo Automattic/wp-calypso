@@ -108,6 +108,9 @@ const getStatesOwnedByOtherZone = createSelector(
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
+	},
+	( state, siteId, countryCode ) => {
+		return [ siteId, countryCode ].join();
 	}
 );
 
@@ -151,7 +154,7 @@ export const getShippingZoneLocations = createSelector(
 		const loaded = areShippingZonesLoaded( state, siteId );
 		return [
 			loaded,
-			loaded && getRawShippingZoneLocations( state, siteId )[ zoneId ],
+			loaded && getRawShippingZoneLocations( state, siteId ),
 		];
 	},
 	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
@@ -284,10 +287,13 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 		return [
 			loaded,
 			zone,
-			zone && getRawShippingZoneLocations( state, siteId ),
+			zone && getShippingZoneLocations( state, zone.id, siteId ),
 			zone && getShippingZonesEdits( state, siteId ),
 			zone && getCountriesOwnedByOtherZone( state, siteId ),
 		];
+	},
+	( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
+		return [ siteId, overlayTemporalEdits ].join();
 	}
 );
 
@@ -537,7 +543,7 @@ export const getShippingZoneLocationsList = createSelector(
 		const locations = getShippingZoneLocations( state, zoneId, siteId );
 		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
 	},
-	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+	( state, zoneId, maxCountries, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocations( state, zoneId, siteId ),
 		];
@@ -561,11 +567,14 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 		const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
 		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
 	},
-	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+	( state, maxCountries, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId, false ),
 		];
-	}
+	},
+	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		return [ maxCountries, siteId ].join();
+	},
 );
 
 /**

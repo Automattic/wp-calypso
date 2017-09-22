@@ -4,6 +4,7 @@
 import page from 'page';
 import React from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -49,7 +50,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getSubscribedMessage() {
-		return this.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
+		return this.props.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -60,7 +61,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getUnsubscribedMessage() {
-		return this.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
+		return this.props.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -71,7 +72,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getSubscribedErrorMessage() {
-		return this.translate( 'Error subscribing to {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
+		return this.props.translate( 'Error subscribing to {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -82,7 +83,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getUnsubscribedErrorMessage() {
-		return this.translate( 'Error unsubscribing from {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
+		return this.props.translate( 'Error unsubscribing from {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -94,13 +95,13 @@ const MainComponent = React.createClass( {
 
 	getCategoryName() {
 		if ( 'marketing' === this.props.category ) {
-			return this.translate( 'Suggestions' );
+			return this.props.translate( 'Suggestions' );
 		} else if ( 'research' === this.props.category ) {
-			return this.translate( 'Research' );
+			return this.props.translate( 'Research' );
 		} else if ( 'community' === this.props.category ) {
-			return this.translate( 'Community' );
+			return this.props.translate( 'Community' );
 		} else if ( 'digest' === this.props.category ) {
-			return this.translate( 'Digests' );
+			return this.props.translate( 'Digests' );
 		}
 
 		return this.props.category;
@@ -108,13 +109,13 @@ const MainComponent = React.createClass( {
 
 	getCategoryDescription() {
 		if ( 'marketing' === this.props.category ) {
-			return this.translate( 'Tips for getting the most out of WordPress.com.' );
+			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
 		} else if ( 'research' === this.props.category ) {
-			return this.translate( 'Opportunities to participate in WordPress.com research & surveys.' );
+			return this.props.translate( 'Opportunities to participate in WordPress.com research and surveys.' );
 		} else if ( 'community' === this.props.category ) {
-			return this.translate( 'Information on WordPress.com courses and events (online & in-person).' );
+			return this.props.translate( 'Information on WordPress.com courses and events (online and in-person).' );
 		} else if ( 'digest' === this.props.category ) {
-			return this.translate( 'Reading & writing digests, tailored for you.' );
+			return this.props.translate( 'Popular content from the blogs you follow, and reports on your own site and its performance.' );
 		}
 
 		return null;
@@ -143,12 +144,13 @@ const MainComponent = React.createClass( {
 	},
 
 	render() {
+		const translate = this.props.translate;
 		var headingLabel = this.state.isSubscribed
-								? this.translate( 'You\'re subscribed' )
-								: this.translate( 'We\'ve unsubscribed your email.' ),
+								? translate( 'You\'re subscribed' )
+								: translate( 'We\'ve unsubscribed your email.' ),
 			messageLabel = this.state.isSubscribed
-								? this.translate( 'We\'ll send you updates for this mailing list.' )
-								: this.translate( 'You will no longer receive updates for this mailing list.' );
+								? translate( 'We\'ll send you updates for this mailing list.' )
+								: translate( 'You will no longer receive updates for this mailing list.' );
 
 		return(
 			<div className="mailing-lists">
@@ -165,14 +167,22 @@ const MainComponent = React.createClass( {
 					<h4>{ this.getCategoryName() }</h4>
 					<p>{ this.getCategoryDescription() }</p>
 					{ this.state.isSubscribed
-						? <button className="button is-primary" onClick={ this.onUnsubscribeClick }>{ this.translate( 'Unsubscribe' ) }</button>
-						: <button className="button" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button> }
+						? <button className="mailing-lists__unsubscribe-button button is-primary" onClick={ this.onUnsubscribeClick }>
+							{ translate( 'Unsubscribe' ) }
+						</button>
+						: <button className="mailing-lists__resubscribe-button button" onClick={ this.onResubscribeClick }>
+							{ translate( 'Resubscribe' ) }
+						</button> }
 				</Card>
 
-				<p className="mailing-lists__manage-link"><button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your email subscriptions' ) }</button></p>
+				<p className="mailing-lists__manage-link">
+					<button className="mailing-lists__manage-button button is-link" onClick={ this.onManageUpdatesClick }>
+						{ translate( 'Manage all your email subscriptions' ) }
+					</button>
+				</p>
 			</div>
 		);
 	}
 } );
 
-export default MainComponent;
+export default localize( MainComponent );

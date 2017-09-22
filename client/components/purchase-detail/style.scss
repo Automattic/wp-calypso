@@ -1,7 +1,8 @@
 .purchase-detail {
-	border-top: 1px solid lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
 	box-sizing: border-box;
-	color: $gray;
+	color: $gray-text-min;
 	position: relative;
 
 	&:last-child {
@@ -9,15 +10,10 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		border: 1px solid lighten( $gray, 30% );
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
 		text-align: left;
-
-		&:last-child {
-			border: 1px solid lighten( $gray, 30% );
-		}
 
 		.button:not(.clipboard-button) {
 			width: auto;

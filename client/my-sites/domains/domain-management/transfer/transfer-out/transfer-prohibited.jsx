@@ -1,6 +1,6 @@
 /** External Dependencies */
 import React from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,7 +9,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
 
-const TransferProhibited = () => (
+const TransferProhibited = ( { translate } ) => (
 	<div>
 		<SectionHeader label={ translate( 'Transfer Domain' ) } />
 		<Card className="transfer-card">
@@ -20,7 +20,7 @@ const TransferProhibited = () => (
 					'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						components: {
-							learnMoreLink: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer"/>
+							learnMoreLink: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer" />
 						}
 					}
 				) }
@@ -29,4 +29,4 @@ const TransferProhibited = () => (
 	</div>
 );
 
-export default TransferProhibited;
+export default localize( TransferProhibited );

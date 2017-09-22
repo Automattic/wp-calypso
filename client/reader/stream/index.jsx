@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,6 +26,7 @@ import {
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
+import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
@@ -63,7 +65,7 @@ function getDistanceBetweenRecs( totalSubs ) {
 	const distance = clamp(
 		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
 		MIN_DISTANCE_BETWEEN_RECS,
-		MAX_DISTANCE_BETWEEN_RECS,
+		MAX_DISTANCE_BETWEEN_RECS
 	);
 	return distance;
 }
@@ -86,6 +88,7 @@ class ReaderStream extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
+		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
 	};
@@ -103,6 +106,7 @@ class ReaderStream extends React.Component {
 		shouldCombineCards: true,
 		transformStreamItems: identity,
 		isMain: true,
+		useCompactCards: false,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -279,7 +283,7 @@ class ReaderStream extends React.Component {
 
 	isPostFullScreen() {
 		return !! window.location.pathname.match(
-			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i,
+			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i
 		);
 	}
 
@@ -405,7 +409,7 @@ class ReaderStream extends React.Component {
 			selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId )
-		 );
+		);
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = args =>
@@ -434,6 +438,7 @@ class ReaderStream extends React.Component {
 				index={ index }
 				selectedPostKey={ selectedPostKey }
 				recStoreId={ recStoreId }
+				compact={ this.props.useCompactCards }
 			/>
 		);
 	};
@@ -470,19 +475,16 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ this.props.isMain &&
-					this.props.showMobileBackToSidebar &&
+				this.props.showMobileBackToSidebar && (
 					<MobileBackToSidebar>
-						<h1>
-							{ this.props.translate( 'Streams' ) }
-						</h1>
-					</MobileBackToSidebar> }
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+				) }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
-				{ showingStream && store.isLastPage() && this.state.posts.length
-					? <div className="infinite-scroll-end" />
-					: null }
+				{ showingStream && store.isLastPage() && this.state.posts.length ? <ListEnd /> : null }
 			</TopLevel>
 		);
 	}
@@ -494,6 +496,6 @@ export default localize(
 			blockedSites: getBlockedSites( state ),
 			totalSubs: getReaderFollows( state ).length,
 		} ),
-		{ resetCardExpansions },
-	)( ReaderStream ),
+		{ resetCardExpansions }
+	)( ReaderStream )
 );

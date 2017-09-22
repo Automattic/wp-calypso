@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -22,12 +23,14 @@ import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
+import PaymentMethodCheque from './payment-method-cheque';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
@@ -45,6 +48,9 @@ class PaymentMethodItem extends Component {
 			informationUrl: PropTypes.string,
 		} ),
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
+		site: PropTypes.shape( {
+			title: PropTypes.string,
+		} ),
 	};
 
 	onEditHandler = () => {
@@ -95,8 +101,23 @@ class PaymentMethodItem extends Component {
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
 	}
 
+	onDoneAndEnable = () => {
+		const { method, site } = this.props;
+		this.props.closeEditingPaymentMethod( site.ID, method.id );
+		if ( ! method.enabled ) {
+			this.props.changePaymentMethodEnabled(
+				site.ID,
+				method.id,
+				true
+			);
+			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
+				payment_method: method.id,
+			} );
+		}
+	}
+
 	outputEditComponent = () => {
-		const { currentlyEditingMethod, method } = this.props;
+		const { currentlyEditingMethod, method, site } = this.props;
 		if ( method.id === 'paypal' ) {
 			return (
 				<PaymentMethodPaypal
@@ -112,6 +133,16 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
+					onDone={ this.onDoneAndEnable }
+					site={ site } />
+			);
+		}
+		if ( method.id === 'cheque' ) {
+			return (
+				<PaymentMethodCheque
+					method={ currentlyEditingMethod }
+					onCancel={ this.onCancel }
+					onEditField={ this.onEditField }
 					onDone={ this.onDone } />
 			);
 		}
@@ -124,13 +155,21 @@ class PaymentMethodItem extends Component {
 		);
 	}
 
-	renderEnabledField = ( isEnabled ) => {
-		return (
-			<PaymentMethodEditFormToggle
-				checked={ isEnabled }
-				name="enabled"
-				onChange={ this.onChangeEnabled } />
-		);
+	renderEnabledField = ( method ) => 	{
+		const { translate } = this.props;
+		let showEnableField = true;
+		if ( method.id === 'stripe' ) {
+			showEnableField = hasStripeKeyPairForMode( method );
+		}
+
+		return showEnableField &&
+			<div>
+				<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+				<PaymentMethodEditFormToggle
+					checked={ method.enabled }
+					name="enabled"
+					onChange={ this.onChangeEnabled } />
+			</div>;
 	}
 
 	render() {
@@ -138,6 +177,9 @@ class PaymentMethodItem extends Component {
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
+		if ( method.id === 'stripe' && hasStripeKeyPairForMode( method ) ) {
+			editButtonText = translate( 'Manage' );
+		}
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
 		}
@@ -171,10 +213,7 @@ class PaymentMethodItem extends Component {
 				</ListItemField>
 				<ListItemField className="payments__method-enable-container">
 					<FormFieldset className="payments__method-enable">
-						<div>
-							<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
-							{ this.renderEnabledField( method.enabled ) }
-						</div>
+						{ this.renderEnabledField( method ) }
 					</FormFieldset>
 				</ListItemField>
 				<ListItemField className="payments__method-action-container">

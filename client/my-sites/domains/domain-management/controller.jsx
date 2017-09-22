@@ -34,7 +34,7 @@ export default {
 
 		renderWithReduxStore(
 			<DomainManagementData
-				component={ DomainManagement.List.default }
+				component={ DomainManagement.List }
 				context={ pageContext }
 				productsList={ productsList }
 			/>,

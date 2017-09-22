@@ -282,8 +282,9 @@ PluginsStore = {
 			if ( ! site.visible ) {
 				return false;
 			}
-
-			if ( site.jetpack && site.isSecondaryNetworkSite() ) {
+			//TODO: compatibility with old site object (for now, remove when not needed)
+			if ( site.jetpack &&
+				( typeof site.isSecondaryNetworkSite === 'function' ? site.isSecondaryNetworkSite() : site.isSecondaryNetworkSite ) ) {
 				return false;
 			}
 

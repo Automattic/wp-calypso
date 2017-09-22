@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -189,7 +190,8 @@ export class EditGravatar extends Component {
 			<div
 				className={
 					classnames( 'edit-gravatar',
-						{ 'is-unverified': ! user.email_verified }
+						{ 'is-unverified': ! user.email_verified },
+						{ 'is-uploading': isUploading }
 					)
 				}
 			>
@@ -230,13 +232,15 @@ export class EditGravatar extends Component {
 					</FilePicker>
 				</div>
 				<div>
-					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
+					<p className="edit-gravatar__explanation">
+						{ translate( 'Your profile photo is public.' ) }
+					</p>
 					<InfoPopover
 						className="edit-gravatar__pop-over"
 						position="left" >
 						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
 							'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-							'(it stands or "Global Avatar," get it?).{{/p}}' +
+							'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
 							'{{p}}Your image may also appear on other sites using Gravatar ' +
 							"whenever you're logged in with your email address %(email)s.{{/p}}",
 							{

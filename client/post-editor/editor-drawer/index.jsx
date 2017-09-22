@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -72,16 +73,19 @@ const POST_TYPE_SUPPORTS = {
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		post: React.PropTypes.object,
-		canJetpackUseTaxonomies: React.PropTypes.bool,
-		typeObject: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
-		onSave: React.PropTypes.func,
-		isPostPrivate: React.PropTypes.bool,
+		site: PropTypes.object,
+		savedPost: PropTypes.object,
+		post: PropTypes.object,
+		canJetpackUseTaxonomies: PropTypes.bool,
+		typeObject: PropTypes.object,
+		isNew: PropTypes.bool,
+		type: PropTypes.string,
+		setPostDate: PropTypes.func,
+		onSave: PropTypes.func,
+		isPostPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
+		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -330,6 +334,9 @@ const EditorDrawer = React.createClass( {
 					site={ this.props.site }
 					status={ postStatus }
 					isPostPrivate={ this.props.isPostPrivate }
+					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
+					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);

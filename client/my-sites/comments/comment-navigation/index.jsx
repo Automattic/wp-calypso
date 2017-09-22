@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { includes, map } from 'lodash';
+import { get, includes, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,12 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
+import { getSiteComment } from 'state/selectors';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -35,6 +42,15 @@ export class CommentNavigation extends Component {
 		selectedCount: 0,
 		status: 'unapproved',
 	};
+
+	bulkDeletePermanently = () => {
+		const { setBulkStatus, translate } = this.props;
+		if ( isUndefined( window ) || window.confirm( translate( 'Delete these comments permanently?' ) ) ) {
+			setBulkStatus( 'delete' )();
+		}
+	}
+
+	changeFilter = status => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate } = this.props;
@@ -68,6 +84,14 @@ export class CommentNavigation extends Component {
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
+	toggleSelectAll = () => {
+		if ( this.props.isSelectedAll ) {
+			return this.props.toggleSelectAll( [] );
+		}
+
+		return this.props.toggleSelectAll( this.props.visibleComments );
+	}
+
 	render() {
 		const {
 			doSearch,
@@ -79,7 +103,6 @@ export class CommentNavigation extends Component {
 			setBulkStatus,
 			status: queryStatus,
 			toggleBulkEdit,
-			toggleSelectAll,
 			translate,
 		} = this.props;
 
@@ -91,7 +114,7 @@ export class CommentNavigation extends Component {
 				<CommentNavigationTab className="comment-navigation__bulk-count">
 					<FormCheckbox
 						checked={ isSelectedAll }
-						onChange={ toggleSelectAll }
+						onChange={ this.toggleSelectAll }
 					/>
 					<Count count={ selectedCount } />
 				</CommentNavigationTab>
@@ -142,7 +165,7 @@ export class CommentNavigation extends Component {
 								compact
 								scary
 								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'delete' ) }
+								onClick={ this.bulkDeletePermanently }
 							>
 								{ translate( 'Delete' ) }
 							</Button>
@@ -164,6 +187,7 @@ export class CommentNavigation extends Component {
 					{ map( navItems, ( { label }, status ) =>
 						<NavItem
 							key={ status }
+							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
 						>
@@ -194,4 +218,26 @@ export class CommentNavigation extends Component {
 	}
 }
 
-export default localize( UrlSearch( CommentNavigation ) );
+const mapStateToProps = ( state, { commentsPage, siteId } ) => {
+	const visibleComments = map( commentsPage, commentId => {
+		const comment = getSiteComment( state, siteId, commentId );
+		if ( comment ) {
+			return {
+				commentId,
+				isLiked: get( comment, 'i_like' ),
+				postId: get( comment, 'post.ID' ),
+				status: get( comment, 'status' ),
+			};
+		}
+	} );
+	return { visibleComments };
+};
+
+const mapDispatchToProps = {
+	recordChangeFilter: status => composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
+		bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
+	),
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UrlSearch( CommentNavigation ) ) );

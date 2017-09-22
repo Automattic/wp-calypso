@@ -167,6 +167,84 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	.reader-post-actions {
 		margin: 4px 0 0;
 	}
+
+	&.is-compact {
+
+		.reader-post-card__byline-details {
+			display: flex;
+			flex-direction: row;
+			max-height: 16px * 1.4;
+			max-width: calc( 100% - 40px );
+			overflow: hidden;
+			position: relative;
+
+			&::after {
+				@include long-content-fade( $size: 10% );
+			}
+		}
+
+		.reader-post-card__byline-author-site {
+			flex: 0 0 auto;
+			width: auto;
+		}
+
+		.reader-post-card__timestamp-and-tag {
+			margin-top: 0;
+			margin-left: 0;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 5px;
+			}
+		}
+
+		.reader-post-card__byline-author-site,
+		.reader-post-card__timestamp-and-tag {
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.reader-post-card__timestamp-link {
+			color: $gray;
+		}
+
+		.reader-post-options-menu {
+			position: absolute;
+				right: 14px;
+				top: 0;
+		}
+
+		.reader-featured-image {
+			height: auto;
+			margin-bottom: 0;
+			margin-right: 15px;
+			max-width: 100px;
+			min-width: 100px;
+		}
+
+		.reader-post-card__post {
+			margin-top: 0;
+
+			@include breakpoint( "<960px" ) {
+				flex-direction: row;
+			}
+		}
+
+		.reader-post-card__post-details {
+			margin-top: 0;
+		}
+
+		.reader-post-card__post-details .reader-excerpt {
+			font-size: 15px;
+			font-weight: 100;
+			margin-top: 4px;
+			max-height: 16px * 1.4;
+			overflow: hidden;
+			position: relative;
+			word-wrap: break-word;
+		}
+	}
 }
 
 .reader-post-card__photo {
@@ -238,14 +316,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	width: 100%;
 }
 
-/* Fix for IE11 unable to handle nested flexbox min-height.
- * See issue: https://github.com/Automattic/wp-calypso/issues/9412
- */
+// Fix for IE11 unable to handle nested flexbox min-height.
+// See issue: https://github.com/Automattic/wp-calypso/issues/9412
 .is-reader-page .reader-post-card.is-gallery .reader-post-card__post-details {
 	flex: inherit;
 }
 
 .reader-post-card__byline-author-site {
+	font-family: $sans;
+	font-weight: 500;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -261,9 +340,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__timestamp-and-tag {
+	align-items: flex-start;
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	font-family: $sans;
 	margin-top: -2px;
 }
 
@@ -429,7 +509,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 	.reader-excerpt {
 		overflow: hidden;
-		max-height: 15px * 1.6 * 3;
+		max-height: 15px * 1.6 * 3.2;
 
 
 		// Clamp to 2 lines on wider viewports
@@ -462,10 +542,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover):not(.is-compact) {
 
 	.reader-excerpt {
-		max-height: 15px * 1.6 * 3;
+		max-height: 15px * 1.6 * 3.2;
 		overflow: hidden;
 	}
 }
@@ -476,7 +556,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 22px;
 
 	&.reader-post-actions__visit {
-		margin-left: -2px;
 
 		.gridicon {
 			position: relative;
@@ -489,12 +568,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-right: -2px;
 	}
 
+	.reader-share__button .gridicon {
+		position: relative;
+		top: 1px;
+	}
+
 	.like-button .gridicon {
 		top: 5px;
 	}
 
 	.like-button__label {
-		margin: -4px 0 0 -5px;
+		margin: -3px 0 0 -5px;
 	}
 
 	.comment-button {
@@ -502,7 +586,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	.comment-button .gridicon {
-		top: 2px;
+		top: 4px;
 		margin-right: 2px;
 	}
 
@@ -675,10 +759,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@include breakpoint( ">960px" ) {
 		height: 130px;
 	}
-}
-
-.reader-post-card.card .daily-post-button {
-	margin-bottom: 10px;
 }
 
 .reader-post-card__blocked-description {

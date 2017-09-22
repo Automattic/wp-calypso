@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 
@@ -77,7 +78,7 @@ class TwoFactorActions extends Component {
 				{ isAuthenticatorAvailable && (
 					<p>
 						<a href="#" onClick={ this.recordAuthenticatorLinkClick }>
-							{ translate( 'Your Authenticator app' ) }
+							{ translate( 'Your authenticator app' ) }
 						</a>
 					</p>
 				) }

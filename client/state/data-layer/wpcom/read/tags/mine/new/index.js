@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,11 +24,11 @@ export function requestFollowTag( store, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
-export function receiveFollowTag( store, action, next, apiResponse ) {
+export function receiveFollowTag( store, action, apiResponse ) {
 	if ( apiResponse.subscribed === false ) {
 		receiveError( store, action );
 		return;
@@ -42,11 +43,11 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 	store.dispatch(
 		receiveTagsAction( {
 			payload: [ followedTag ],
-		} ),
+		} )
 	);
 }
 
-export function receiveError( store, action, next, error ) {
+export function receiveError( store, action, error ) {
 	// exit early and do nothing if the error is that the user is already following the tag
 	if ( error && error.error === 'already_subscribed' ) {
 		return;

@@ -166,11 +166,14 @@
 	}
 
 	fieldset.site-icon-setting {
+		padding-bottom: 16px;
+
 		@include breakpoint( ">660px" ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
 			padding-right: 24px;
+			padding-bottom: 24px;
 		}
 	}
 
@@ -213,7 +216,8 @@
 .site-settings__general-settings,
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
-.site-settings__security-settings {
+.site-settings__security-settings,
+.manage-connection {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -273,10 +277,14 @@
 }
 
 .site-settings__site-options {
-	padding-bottom: 24px;
-
 	@include breakpoint( ">660px" ) {
 		display: flex;
+	}
+
+	&:last-child {
+		.site-icon-setting {
+			padding-bottom: 0;
+		}
 	}
 }
 
@@ -443,4 +451,15 @@
 
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
+}
+
+.site-settings__videopress-storage {
+	.plan-storage__bar {
+		margin-top: 24px;
+	}
+
+	// Necessary additional specificity
+	.site-settings__videopress-storage-used.form-setting-explanation {
+		margin-left: 36px;
+	}
 }

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -67,9 +69,7 @@ class MagicLogin extends React.Component {
 			</div>
 		);
 
-		const classes = classNames( 'magic-login', {
-			'magic-login__request-link': ! showCheckYourEmail,
-		} );
+		const classes = classNames( 'magic-login', 'magic-login__request-link' );
 
 		return (
 			<Main className={ classes }>

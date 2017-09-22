@@ -20,8 +20,7 @@
  */
 import tinymce from 'tinymce/tinymce';
 import qs from 'querystring';
-import find from 'lodash/find';
-import throttle from 'lodash/throttle';
+import { find, throttle } from 'lodash';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 
 /**

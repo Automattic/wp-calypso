@@ -8,7 +8,7 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 
-const ListItemPlaceholder = React.createClass( {
+class ListItemPlaceholder extends React.PureComponent {
 	render() {
 		return (
 			<CompactCard className="domain-management-list-item is-placeholder">
@@ -21,6 +21,6 @@ const ListItemPlaceholder = React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}
 
 export default ListItemPlaceholder;

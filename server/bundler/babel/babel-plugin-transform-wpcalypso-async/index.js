@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const kebabCase = require( 'lodash/kebabCase' );
+const kebabCase = require( 'lodash' ).kebabCase;
 
 module.exports = ( { types: t } ) => {
 	/**

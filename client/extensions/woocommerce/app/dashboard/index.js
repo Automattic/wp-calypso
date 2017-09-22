@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -53,7 +54,7 @@ class Dashboard extends Component {
 
 		if ( selectedSite && selectedSite.ID ) {
 			this.props.fetchSetupChoices( selectedSite.ID );
-			this.props.fetchOrders( selectedSite.ID, 1 );
+			this.props.fetchOrders( selectedSite.ID );
 
 			if ( ! productsLoaded ) {
 				this.props.fetchProducts( selectedSite.ID, 1 );
@@ -69,7 +70,7 @@ class Dashboard extends Component {
 
 		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
-			this.props.fetchOrders( newSiteId, 1 );
+			this.props.fetchOrders( newSiteId );
 
 			if ( ! productsLoaded ) {
 				this.props.fetchProducts( newSiteId, 1 );
@@ -88,7 +89,7 @@ class Dashboard extends Component {
 		} = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
-			return translate( 'Installing Plugins' );
+			return translate( 'Store' );
 		}
 
 		if ( ! finishedPageSetup && ! hasProducts ) {

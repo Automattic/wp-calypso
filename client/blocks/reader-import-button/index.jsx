@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -16,7 +18,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 
 class ReaderImportButton extends React.Component {
 	static propTypes = {
-		onProgress: React.PropTypes.func,
+		onProgress: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -72,7 +74,7 @@ class ReaderImportButton extends React.Component {
 			{
 				args: { name: feedImport.fileName },
 				components: { em: <em /> },
-			},
+			}
 		);
 		this.props.successNotice( message );
 	};
@@ -86,7 +88,7 @@ class ReaderImportButton extends React.Component {
 			'Whoops, something went wrong. %(message)s Please try again.',
 			{
 				args: { message: error.message ? error.message + '.' : null },
-			},
+			}
 		);
 		this.props.errorNotice( message );
 	};
@@ -96,9 +98,7 @@ class ReaderImportButton extends React.Component {
 			<div className="reader-import-button">
 				<FilePicker accept=".xml,.opml" onClick={ this.onClick } onPick={ this.onPick }>
 					<Gridicon icon="cloud-upload" className="reader-import-button__icon" />
-					<span className="reader-import-button__label">
-						{ this.props.translate( 'Import' ) }
-					</span>
+					<span className="reader-import-button__label">{ this.props.translate( 'Import' ) }</span>
 				</FilePicker>
 			</div>
 		);
