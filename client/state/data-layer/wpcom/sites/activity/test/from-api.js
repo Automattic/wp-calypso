@@ -49,6 +49,7 @@ const VALID_API_ITEM = deepFreeze( {
 	},
 	gridicon: 'posts',
 	activity_id: 'foobarbaz',
+	status: 'warning',
 } );
 
 const API_RESPONSE_BODY = deepFreeze( {
@@ -117,6 +118,7 @@ describe( 'fromApi', () => {
 					'activityIcon',
 					'activityId',
 					'activityName',
+					'activityStatus',
 					'activityTitle',
 					'activityTs',
 					'actorAvatarUrl',

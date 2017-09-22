@@ -120,6 +120,7 @@ export const logItemsSchema = {
 							'widget__reordered',
 						],
 					},
+					activityStatus: { type: 'string' },
 					activityTitle: { type: 'string' },
 					activityTs: { type: 'integer' },
 					actorAvatarUrl: { type: 'string' },

@@ -98,6 +98,7 @@ export function processItemBase( item ) {
 		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
 		activityId: get( item, 'activity_id' ),
 		activityName: get( item, 'name' ),
+		activityStatus: get( item, 'status' ),
 		activityTitle: get( item, 'summary', '' ),
 		activityTs: Date.parse( published ),
 	};
