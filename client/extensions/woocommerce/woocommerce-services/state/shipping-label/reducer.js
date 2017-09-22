@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import _ from 'lodash';
+import { each, find, findIndex, get, includes, mapValues, omit, round, sortBy, sumBy, without } from 'lodash';
 import { keyedReducer } from 'state/utils';
 
 /**
@@ -65,9 +65,6 @@ const generateUniqueBoxId = ( keyBase, boxIds ) => {
 		}
 	}
 };
-
-/* Irons out floating point arithmetic artifacts */
-const round = ( n ) => _.round( n, 8 );
 
 const reducers = {};
 
@@ -278,7 +275,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ] = ( state, { originPac
 	newPackages[ originPackageId ] = {
 		...newPackages[ originPackageId ],
 		items: originItems,
-		weight: round( newPackages[ originPackageId ].weight - movedItem.weight ),
+		weight: round( newPackages[ originPackageId ].weight - movedItem.weight, 8 ),
 	};
 
 	if ( 'individual' === targetPackageId ) {
@@ -309,7 +306,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ] = ( state, { originPac
 		newPackages[ targetPackageId ] = {
 			...newPackages[ targetPackageId ],
 			items: targetItems,
-			weight: round( newPackages[ targetPackageId ].weight + movedItem.weight ),
+			weight: round( newPackages[ targetPackageId ].weight + movedItem.weight, 8 ),
 		};
 	}
 
@@ -334,7 +331,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ] = ( state, { originPac
 			},
 			rates: {
 				...state.form.rates,
-				values: _.mapValues( newPackages, () => '' ),
+				values: mapValues( newPackages, () => '' ),
 				available: {},
 			},
 		},
@@ -375,9 +372,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM ] = ( state, { sour
 	let newItemIndices;
 	if ( added ) {
 		const itemIndices = state.addedItems[ sourcePackageId ] || [];
-		newItemIndices = _.includes( itemIndices, movedItemIndex ) ? itemIndices : [ ...itemIndices, movedItemIndex ];
+		newItemIndices = includes( itemIndices, movedItemIndex ) ? itemIndices : [ ...itemIndices, movedItemIndex ];
 	} else {
-		newItemIndices = _.without( state.addedItems[ sourcePackageId ], movedItemIndex );
+		newItemIndices = without( state.addedItems[ sourcePackageId ], movedItemIndex );
 	}
 
 	return {
@@ -388,10 +385,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM ] = ( state, { sour
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPackageId } ) => {
 	// For each origin package
-	_.each( state.addedItems, ( itemIndices, originPackageId ) => {
+	each( state.addedItems, ( itemIndices, originPackageId ) => {
 		// Move items in reverse order of index, to maintain validity as items are removed.
 		// e.g. when index 0 is removed from the package, index 1 would become index 0
-		_.sortBy( itemIndices, ( i ) => -i ).forEach( ( movedItemIndex ) => {
+		sortBy( itemIndices, ( i ) => -i ).forEach( ( movedItemIndex ) => {
 			state =
 				reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM ]( state, { originPackageId, movedItemIndex, targetPackageId } );
 		} );
@@ -432,7 +429,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state ) => {
 			},
 			rates: {
 				...state.form.rates,
-				values: _.mapValues( newPackages, () => '' ),
+				values: mapValues( newPackages, () => '' ),
 				available: {},
 			},
 		},
@@ -463,7 +460,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE ] = ( state, { pack
 			},
 			rates: {
 				...state.form.rates,
-				values: _.mapValues( newPackages, () => '' ),
+				values: mapValues( newPackages, () => '' ),
 				available: {},
 			},
 		},
@@ -476,14 +473,16 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { pa
 
 	const box = state.form.packages.all[ boxTypeId ];
 	const weight = round(
-		oldPackage.isUserSpecifiedWeight ? oldPackage.weight
-			: ( box ? box.box_weight : 0 ) + _.sumBy( oldPackage.items, 'weight' )
+		oldPackage.isUserSpecifiedWeight
+			? oldPackage.weight
+			: ( box ? box.box_weight : 0 ) + sumBy( oldPackage.items, 'weight' ),
+		8
 	);
 
 	if ( 'not_selected' === boxTypeId ) {
 		// This is when no box is selected
 		newPackages[ packageId ] = {
-			..._.omit( oldPackage, 'service_id' ),
+			...omit( oldPackage, 'service_id' ),
 			height: 0,
 			length: 0,
 			width: 0,
@@ -493,7 +492,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { pa
 	} else {
 		const { length, width, height } = getBoxDimensions( box );
 		newPackages[ packageId ] = {
-			..._.omit( oldPackage, 'service_id' ),
+			...omit( oldPackage, 'service_id' ),
 			height,
 			length,
 			width,
@@ -514,7 +513,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { pa
 			},
 			rates: {
 				...state.form.rates,
-				values: _.mapValues( newPackages, () => '' ),
+				values: mapValues( newPackages, () => '' ),
 				available: {},
 			},
 		},
@@ -603,9 +602,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } )
 	return { ...state,
 		form: { ...state.form,
 			rates: {
-				values: _.mapValues( rates, ( rate ) => {
-					const selected = _.find(
-						_.get( rate, 'rates', [] ),
+				values: mapValues( rates, ( rate ) => {
+					const selected = find(
+						get( rate, 'rates', [] ),
 						( r ) => r.is_selected
 					);
 
@@ -664,7 +663,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE ] = ( state, { lab
 		response = {};
 	}
 
-	const labelIndex = _.findIndex( state.labels, { label_id: labelId } );
+	const labelIndex = findIndex( state.labels, { label_id: labelId } );
 	const labelData = {
 		...state.labels[ labelIndex ],
 		...response,
@@ -697,7 +696,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE ] = ( state, { res
 		};
 	}
 
-	const labelIndex = _.findIndex( state.labels, { label_id: state.refundDialog.labelId } );
+	const labelIndex = findIndex( state.labels, { label_id: state.refundDialog.labelId } );
 	const labelData = {
 		...state.labels[ labelIndex ],
 		refund: response,

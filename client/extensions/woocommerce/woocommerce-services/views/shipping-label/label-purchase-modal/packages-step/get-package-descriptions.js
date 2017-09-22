@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { mapValues } from 'lodash';
 
 export default ( selected, all, addNames ) => {
 	let pckgCount = 0;
 
-	return _.mapValues( selected, ( pckg ) => {
+	return mapValues( selected, ( pckg ) => {
 		if ( 'individual' === pckg.box_id ) {
 			return pckg.items[ 0 ].name;
 		}

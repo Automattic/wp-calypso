@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -59,7 +59,7 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 		return { isError: true };
 	}
 	if ( isNormalized ) {
-		return _.isEqual( values, normalized ) ? { isSuccess: true } : { isWarning: true };
+		return isEqual( values, normalized ) ? { isSuccess: true } : { isWarning: true };
 	}
 	return {};
 };

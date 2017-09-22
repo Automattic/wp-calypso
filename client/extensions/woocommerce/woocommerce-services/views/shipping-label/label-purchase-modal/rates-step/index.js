@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { find, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,8 +34,8 @@ const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, pac
 	if ( 1 === packageIds.length ) {
 		const packageId = packageIds[ 0 ];
 		const selectedRate = selectedRates[ packageId ];
-		const packageRates = _.get( availableRates, [ packageId, 'rates' ], [] );
-		const rateInfo = _.find( packageRates, [ 'service_id', selectedRate ] );
+		const packageRates = get( availableRates, [ packageId, 'rates' ], [] );
+		const rateInfo = find( packageRates, [ 'service_id', selectedRate ] );
 
 		if ( rateInfo ) {
 			return __( '%(serviceName)s: %(currencySymbol)s%(rate).2f', {
@@ -68,7 +68,7 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 		return { isError: true };
 	}
 
-	if ( _.isEmpty( available ) ) {
+	if ( isEmpty( available ) ) {
 		return {};
 	}
 
