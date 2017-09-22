@@ -149,7 +149,7 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, postKey, site, feed } = this.props;
+		const { post, postKey, site, feed, translate } = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -164,6 +164,10 @@ class CrossPost extends PureComponent {
 		// TODO: maybe add xpost metadata, so we can remove this regex
 		let xpostTitle = post.title;
 		xpostTitle = xpostTitle.replace( /x-post:/i, '' );
+
+		if ( ! xpostTitle ) {
+			xpostTitle = `(${ translate( 'no title' ) })`;
+		}
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
