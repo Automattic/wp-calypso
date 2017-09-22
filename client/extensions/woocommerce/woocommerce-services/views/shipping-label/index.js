@@ -124,7 +124,7 @@ class ShippingLabelRootView extends Component {
 		}
 
 		return (
-			<div className="shipping-label__container">
+			<div className="shipping-label">
 				<QueryLabels orderId={ this.props.orderId } />
 				<GlobalNotices id="notices" notices={ notices.list } />
 				{ this.renderPurchaseLabelFlow() }

@@ -1,5 +1,5 @@
 @import './label-purchase-modal/style';
-.shipping-label__container {
+.shipping-label {
 	margin-bottom: 0;
 	text-align: center;
 
@@ -8,11 +8,11 @@
 		margin-top: 8px;
 	}
 
-	.shipping-label__item, .label-item {
+	.shipping-label__item {
 		padding: 16px;
 		border-bottom: 1px solid #eee;
 
-		.label-item__created {
+		.shipping-label__item-created {
 			color: $gray;
 			font-size: 12px;
 		}
@@ -25,7 +25,7 @@
 			margin-bottom: 3px;
 			text-align: left;
 
-			&.label-item__tracking {
+			&.shipping-label__item-tracking {
 				margin-bottom: 16px;
 				font-size: 12px;
 
@@ -35,7 +35,7 @@
 				}
 			}
 
-			& .label-item__detail {
+			& .shipping-label__item-detail {
 				font-weight: bold;
 				font-size: 14px;
 				color: $gray-dark;
@@ -51,7 +51,7 @@
 			margin-top: 16px;
 		}
 
-		.label-item__actions {
+		.shipping-label__item-actions {
 			display: flex;
 			justify-content: space-between;
 			font-size: 12px;
@@ -101,7 +101,7 @@
 }
 
 &.dialog.card.label-reprint-modal {
-	.label-reprint-modal__notice {
+	.shipping-label__reprint-modal-notice {
 		color: darken($gray, 10);
 		font-style: italic;
 	}
