@@ -1,3 +1,4 @@
+/** @format */
 /* Header */
 .reader-combined-card__header {
 	font-size: 13px;
@@ -115,13 +116,13 @@
 		&::before {
 			content: '';
 			position: absolute;
-				top: -2px;
-				bottom: 2px;
-				left: -8px;
-				width: 2px;
+			top: -2px;
+			bottom: 2px;
+			left: -8px;
+			width: 2px;
 			background: $blue-wordpress;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				left: -16px;
 			}
 		}
@@ -180,17 +181,17 @@
 	position: relative;
 	margin-top: 3px;
 
-	&:not( .is-placeholder )::after {
+	&:not(.is-placeholder)::after {
 		@include long-content-fade( $size: 20% );
 	}
 }
 
 .reader-combined-card .reader-visit-link {
-	margin-left: -9px; // override gridicon margin
+	margin-left: 0;
 	margin-right: 26px;
 
 	.reader-visit-link__label {
-		margin-left: 4px;
+		margin-left: -4px;
 	}
 }
 
@@ -222,7 +223,7 @@
 	margin-top: 4px;
 	white-space: nowrap;
 
-	&:not( .is-placeholder )::after {
+	&:not(.is-placeholder)::after {
 		@include long-content-fade( $size: 10% );
 	}
 }
@@ -242,27 +243,27 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid lighten($gray, 20%);
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;
 	position: relative;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0;
 	}
 }
 
 // Follow button for stream cards - copied and pasted from reader-post-card.
-// TODO: consolidate somewhere. preferabley reader/follow-button
+// TODO: consolidate somewhere. preferably reader/follow-button
 .reader-combined-card__header .follow-button {
 	border: 0;
 	border-radius: 0;
 	float: right;
 	padding: 0;
 	position: absolute;
-		right: 0;
-		top: 13px;
+	right: 0;
+	top: 13px;
 
 	.gridicon {
 		fill: $blue-medium;
@@ -273,7 +274,6 @@
 	}
 
 	&.is-following {
-
 		.gridicon {
 			fill: $alert-green;
 		}
@@ -291,7 +291,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}
