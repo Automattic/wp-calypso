@@ -473,8 +473,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { pa
 
 	const box = state.form.packages.all[ boxTypeId ];
 	const weight = round(
-		oldPackage.isUserSpecifiedWeight ? oldPackage.weight
-			: ( box ? box.box_weight : 0 ) + sumBy( oldPackage.items, 'weight' )
+		oldPackage.isUserSpecifiedWeight
+			? oldPackage.weight
+			: ( box ? box.box_weight : 0 ) + sumBy( oldPackage.items, 'weight' ),
+		8
 	);
 
 	if ( 'not_selected' === boxTypeId ) {
