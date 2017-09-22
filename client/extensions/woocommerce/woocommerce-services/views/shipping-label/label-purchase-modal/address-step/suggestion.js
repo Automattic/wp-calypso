@@ -73,10 +73,11 @@ const AddressSuggestion = ( {
 		countriesData,
 	} ) => {
 	const onToggleSelectNormalizedAddress = ( value ) => () => selectNormalizedAddress( value );
+	const errorClass = 'error-notice';
 	return (
 		<div>
 			<Notice
-				className="error-notice"
+				className={ errorClass }
 				status="is-warning"
 				showDismiss={ false } >
 				{ __( 'We have slightly modified the address entered. ' +

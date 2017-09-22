@@ -36,7 +36,7 @@ const ReprintDialog = ( props ) => {
 			<p>
 				{ __( 'If there was a printing error when you purchased the label, you can print it again.' ) }
 			</p>
-			<p className="label-reprint-modal__notice">
+			<p className="shipping-label__reprint-modal-notice">
 				{ __( 'NOTE: If you already used the label in a package, printing and using it again ' +
 					'is a violation of our terms of service and may result in criminal charges.' ) }
 			</p>

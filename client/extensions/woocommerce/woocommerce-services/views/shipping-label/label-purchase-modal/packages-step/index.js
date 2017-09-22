@@ -103,10 +103,12 @@ const PackagesStep = ( props ) => {
 
 	const renderWarning = () => {
 		if ( ! hasAnyPackagesConfigured ) {
+			const className = 'error-notice';
+
 			return <Notice
-			className="error-notice"
-			status="is-warning"
-			showDismiss={ false } >
+				className={ className }
+				status="is-warning"
+				showDismiss={ false } >
 				<span>{ __(
 					'There are no packages configured. The items have been packed individually. ' +
 					'You can add or enable packages using the {{a}}Packaging Manager{{/a}}.',

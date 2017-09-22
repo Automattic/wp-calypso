@@ -111,7 +111,7 @@ class LabelItem extends Component {
 		}
 
 		return (
-			<span className="label-item__detail">
+			<span className="shipping-label__item-detail">
 				{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
 			</span>
 		);
@@ -131,8 +131,8 @@ class LabelItem extends Component {
 		const purchased = moment( label.created ).fromNow();
 
 		return (
-			<div key={ label.label_id } className="label-item" >
-				<p className="label-item__created">
+			<div key={ label.label_id } className="shipping-label__item" >
+				<p className="shipping-label__item-created">
 					{ __( '{{labelDetails/}} purchased {{purchasedAt/}}', {
 						components: {
 							labelDetails: this.renderLabelDetails( label ),
@@ -140,10 +140,10 @@ class LabelItem extends Component {
 						}
 					} ) }
 				</p>
-				<p className="label-item__tracking">
+				<p className="shipping-label__item-tracking">
 					{ __( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
 				</p>
-				<p className="label-item__actions" >
+				<p className="shipping-label__item-actions" >
 					{ this.renderRefund( label ) }
 					{ this.renderReprint( label ) }
 				</p>
