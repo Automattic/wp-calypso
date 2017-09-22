@@ -42,6 +42,10 @@ This is saved on a per-site basis.
 
 ## Selectors
 
+### `getCurrentlyEditingOrderId = ( state, [siteId] )`
+
+Gets the ID of the current order, or object placeholder, if a new order. Defaults to null, if no order is being edited.
+
 ### `getOrdersCurrentPage( state, [siteId] )`
 
 Gets the current page being shown to the user. Defaults to 1.
@@ -49,3 +53,15 @@ Gets the current page being shown to the user. Defaults to 1.
 ### `getOrdersCurrentSearch( state, [siteId] )`
 
 Gets the current search term being shown to the user. Defaults to "".
+
+### `getOrderEdits( state, [siteId] )`
+
+Gets the local edits made to the current order. Defaults to {} if no order is being edited.
+
+### `getOrderWithEdits( state, [siteId] )`
+
+Merges the existing order with the local changes, or just the "changes" if a newly created order. Defaults to {} if no order is being edited.
+
+### `isCurrentlyEditingOrder( state, [siteId] )`
+
+Whether the given site (or current site) has changes pending for an order (or new order).
