@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { every, fill, find, flatten, isEmpty, isEqual, map, noop, pick, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,11 +105,11 @@ const getNextErroneousStep = ( form, errors, currentStep ) => {
 	const firstStepToCheck = FORM_STEPS[ FORM_STEPS.indexOf( currentStep ) + 1 ];
 	switch ( firstStepToCheck ) {
 		case 'origin':
-			if ( ! form.origin.isNormalized || ! _.isEqual( form.origin.values, form.origin.normalized ) ) {
+			if ( ! form.origin.isNormalized || ! isEqual( form.origin.values, form.origin.normalized ) ) {
 				return 'origin';
 			}
 		case 'destination':
-			if ( ! form.destination.isNormalized || ! _.isEqual( form.destination.values, form.destination.normalized ) ) {
+			if ( ! form.destination.isNormalized || ! isEqual( form.destination.values, form.destination.normalized ) ) {
 				return 'destination';
 			}
 		case 'packages':
@@ -148,7 +148,7 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 };
 
 const convertToApiPackage = ( pckg ) => {
-	return _.pick( pckg, [ 'id', 'box_id', 'service_id', 'length', 'width', 'height', 'weight' ] );
+	return pick( pckg, [ 'id', 'box_id', 'service_id', 'length', 'width', 'height', 'weight' ] );
 };
 
 export const clearAvailableRates = ( orderId, siteId ) => {
@@ -163,7 +163,7 @@ const getLabelRates = ( orderId, siteId, dispatch, getState, handleResponse ) =>
 		packages,
 	} = formState;
 
-	return getRates( orderId, siteId, dispatch, origin.values, destination.values, _.map( packages.selected, convertToApiPackage ) )
+	return getRates( orderId, siteId, dispatch, origin.values, destination.values, map( packages.selected, convertToApiPackage ) )
 		.then( handleResponse )
 		.catch( ( error ) => {
 			console.error( error );
@@ -215,10 +215,10 @@ export const openPrintingFlow = ( orderId, siteId ) => (
 		// If origin and destination are normalized, get rates
 		if (
 			form.origin.isNormalized &&
-			_.isEqual( form.origin.values, form.origin.normalized ) &&
+			isEqual( form.origin.values, form.origin.normalized ) &&
 			form.destination.isNormalized &&
-			_.isEqual( form.destination.values, form.destination.normalized ) &&
-			_.isEmpty( form.rates.available ) &&
+			isEqual( form.destination.values, form.destination.normalized ) &&
+			isEmpty( form.rates.available ) &&
 			form.packages.all && Object.keys( form.packages.all ).length &&
 			! hasNonEmptyLeaves( errors.packages )
 		) {
@@ -227,7 +227,7 @@ export const openPrintingFlow = ( orderId, siteId ) => (
 
 		// Otherwise, just expand the next errant step unless the
 		// user already interacted with the form
-		if ( _.some( FORM_STEPS.map( ( step ) => form[ step ].expanded ) ) ) {
+		if ( some( FORM_STEPS.map( ( step ) => form[ step ].expanded ) ) ) {
 			return;
 		}
 
@@ -325,7 +325,7 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => ( dis
 		}
 		const { values, normalized, expanded } = shippingLabel.form[ group ];
 
-		if ( _.isEqual( values, normalized ) ) {
+		if ( isEqual( values, normalized ) ) {
 			if ( expanded ) {
 				dispatch( toggleStep( orderId, siteId, group ) );
 			}
@@ -358,7 +358,7 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => ( dis
 		}
 		state = getShippingLabel( getState(), orderId, siteId ).form[ group ];
 	}
-	if ( state.isNormalized && _.isEqual( state.values, state.normalized ) ) {
+	if ( state.isNormalized && isEqual( state.values, state.normalized ) ) {
 		handleNormalizeResponse( true );
 		return;
 	}
@@ -550,18 +550,18 @@ const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error ) 
 		dispatch( NoticeActions.errorNotice( error.toString() ) );
 		//re-request the rates on failure to avoid attempting repurchase of the same shipment id
 		dispatch( clearAvailableRates( orderId, siteId ) );
-		getLabelRates( orderId, siteId, dispatch, getState, _.noop, { orderId } );
+		getLabelRates( orderId, siteId, dispatch, getState, noop, { orderId } );
 	}
 };
 
 const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) => {
-	const errorLabel = _.find( labels, { status: 'PURCHASE_ERROR' } );
+	const errorLabel = find( labels, { status: 'PURCHASE_ERROR' } );
 	if ( errorLabel ) {
 		handleLabelPurchaseError( orderId, siteId, dispatch, getState, errorLabel.error, orderId );
 		return;
 	}
 
-	if ( ! _.every( labels, { status: 'PURCHASED' } ) ) {
+	if ( ! every( labels, { status: 'PURCHASED' } ) ) {
 		setTimeout( () => {
 			const statusTasks = labels.map( ( label ) => (
 				api.get( siteId, api.url.labelStatus( orderId, label.label_id ) )
@@ -644,7 +644,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	}
 
 	Promise.all( addressNormalizationQueue ).then( ( normalizationResults ) => {
-		if ( ! _.every( normalizationResults ) ) {
+		if ( ! every( normalizationResults ) ) {
 			return;
 		}
 		const state = getShippingLabel( getState(), orderId, siteId );
@@ -653,8 +653,8 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			async: true,
 			origin: form.origin.selectNormalized ? form.origin.normalized : form.origin.values,
 			destination: form.destination.selectNormalized ? form.destination.normalized : form.destination.values,
-			packages: _.map( form.packages.selected, ( pckg, pckgId ) => {
-				const rate = _.find( form.rates.available[ pckgId ].rates, { service_id: form.rates.values[ pckgId ] } );
+			packages: map( form.packages.selected, ( pckg, pckgId ) => {
+				const rate = find( form.rates.available[ pckgId ].rates, { service_id: form.rates.values[ pckgId ] } );
 				return {
 					...convertToApiPackage( pckg ),
 					shipment_id: form.rates.available[ pckgId ].shipment_id,
@@ -662,7 +662,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 					service_id: form.rates.values[ pckgId ],
 					carrier_id: rate.carrier_id,
 					service_name: rate.title,
-					products: _.flatten( pckg.items.map( ( item ) => _.fill( new Array( item.quantity ), item.product_id ) ) ),
+					products: flatten( pckg.items.map( ( item ) => fill( new Array( item.quantity ), item.product_id ) ) ),
 				};
 			} ),
 		};

@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import { omit } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -18,7 +18,7 @@ import StepConfirmationButton from '../step-confirmation-button';
 const RadioButton = ( props ) => {
 	return (
 		<FormLabel className={ classNames( 'address-step__suggestion', { 'is-selected': props.checked } ) }>
-			<FormRadio { ..._.omit( props, 'children' ) } />
+			<FormRadio { ...omit( props, 'children' ) } />
 			{ props.children }
 		</FormLabel>
 	);
