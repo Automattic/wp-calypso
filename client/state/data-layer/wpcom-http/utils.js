@@ -70,18 +70,24 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// level of properties are pruned
 	const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
 
-	// the actual parser
-	return responseData => {
-		if ( ! validator( responseData ) ) {
+	const validate = data => {
+		if ( ! validator( data ) ) {
 			throw new SchemaError( validator.errors );
 		}
 
+		return filter( data );
+	};
+
+	const transform = data => {
 		try {
-			return transformer( filter( responseData ) );
+			return transformer( data );
 		} catch ( e ) {
-			throw new TransformerError( e, transformer, responseData );
+			throw new TransformerError( e, transformer, data );
 		}
 	};
+
+	// the actual parser
+	return data => transform( validate( data ) );
 };
 
 /**
