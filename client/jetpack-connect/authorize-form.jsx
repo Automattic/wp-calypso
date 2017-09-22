@@ -33,7 +33,8 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import { requestSites } from 'state/sites/actions';
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
+import { isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { urlToSlug } from 'lib/url';
@@ -50,7 +51,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		goToXmlrpcErrorFallbackUrl: PropTypes.func,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
-		isFetchingSites: PropTypes.bool,
+		hasLoadedSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
@@ -164,7 +165,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
-			isFetchingSites: isRequestingSites( state ),
+			hasLoadedSites: hasLoadedSites( state ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			requestHasExpiredSecretError,
 			requestHasXmlrpcError,

@@ -21,7 +21,7 @@ import {
 	getConnectingSite,
 	getJetpackSiteByUrl
 } from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -108,7 +108,7 @@ class JetpackConnectMain extends Component {
 			return this.props.goToPlans( this.state.currentUrl );
 		}
 
-		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
+		if ( this.state.waitingForSites && this.props.hasLoadedSites ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { waitingForSites: false } );
 			this.checkUrl( this.state.currentUrl );
@@ -158,7 +158,7 @@ class JetpackConnectMain extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		if ( this.props.isRequestingSites ) {
+		if ( ! this.props.hasLoadedSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
 			this.checkUrl( this.state.currentUrl );
@@ -477,7 +477,7 @@ const connectComponent = connect(
 	state => ( {
 		jetpackConnectSite: getConnectingSite( state ),
 		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-		isRequestingSites: isRequestingSites( state ),
+		hasLoadedSites: hasLoadedSites( state ),
 		selectedPlan: getGlobalSelectedPlan( state )
 	} ),
 	{
