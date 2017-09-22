@@ -9,5 +9,5 @@ export default {
 	"name": "A Reviewer",
 	"email": "woo@woo.local",
 	"verified": false,
-	"approved": true
+	"status": "approved",
 }

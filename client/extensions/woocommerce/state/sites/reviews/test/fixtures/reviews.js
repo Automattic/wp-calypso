@@ -10,7 +10,7 @@ export default [
 		"name": "A Reviewer",
 		"email": "woo@woo.local",
 		"verified": false,
-		"approved": true
+		"status": "approved",
 	},
 	{
 		"id": 105,
@@ -22,6 +22,6 @@ export default [
 		"name": "A Reviewer",
 		"email": "woo@woo.local",
 		"verified": false,
-		"approved": false
+		"status": "pending",
 	}
 ]
