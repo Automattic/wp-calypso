@@ -25,7 +25,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
-module.exports = formBase( protectForm( React.createClass( {
+module.exports = protectForm( formBase( React.createClass( {
 	displayName: 'NotificationSubscriptions',
 
 	mixins: [ LinkedStateMixin, eventRecorder ],

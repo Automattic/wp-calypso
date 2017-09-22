@@ -28,7 +28,7 @@ import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
-export default formBase( protectForm( React.createClass( {
+export default protectForm( formBase( React.createClass( {
 
 	displayName: 'Profile',
 
