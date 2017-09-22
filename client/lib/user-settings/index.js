@@ -10,7 +10,6 @@ var debug = require( 'debug' )( 'calypso:user:settings' ),
  */
 var emitterClass = require( 'lib/mixins/emitter' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
-	user = require( 'lib/user' )(),
 	userUtils = require( 'lib/user/utils' );
 /*
  * Decodes entities in those specific user settings properties
@@ -143,9 +142,6 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 			}
 
 			this.emit( 'change' );
-
-			// Refetch the user data after saving user settings
-			user.fetch();
 		}
 
 		// Let the form know whether the save was successful or not

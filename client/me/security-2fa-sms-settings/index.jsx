@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 
@@ -19,11 +20,12 @@ import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
 import { forSms } from 'lib/countries-list';
+import { requestUser } from 'state/users/actions';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
 
-module.exports = protectForm( React.createClass( {
+const Security2faSMSSettings = React.createClass( {
 
 	displayName: 'Security2faSMSSettings',
 
@@ -36,7 +38,7 @@ module.exports = protectForm( React.createClass( {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
-	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ) ],
+	mixins: [ LinkedStateMixin, observe( 'userSettings' ) ],
 
 	propTypes: {
 		onCancel: PropTypes.func.isRequired,
@@ -67,7 +69,7 @@ module.exports = protectForm( React.createClass( {
 	},
 
 	getSubmitDisabled: function() {
-		if ( this.getDisabledState() ) {
+		if ( this.props.getDisabledState() ) {
 			return true;
 		}
 
@@ -138,6 +140,8 @@ module.exports = protectForm( React.createClass( {
 			this.setState( { lastError: error } );
 			return;
 		}
+
+		this.props.requestUser();
 
 		if ( this.verifyByApp ) {
 			this.props.onVerifyByApp();
@@ -242,4 +246,11 @@ module.exports = protectForm( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+} );
+
+export default connect(
+	null,
+	{
+		requestUser,
+	},
+)( formBase( protectForm( Security2faSMSSettings ) ) );

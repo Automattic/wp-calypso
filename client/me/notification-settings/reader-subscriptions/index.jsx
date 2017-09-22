@@ -22,14 +22,13 @@ import FormSelect from 'components/forms/form-select';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
-module.exports = protectForm( React.createClass( {
+module.exports = formBase( protectForm( React.createClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, eventRecorder ],
 
 	getDeliveryHourLabel( hour ) {
 		return this.translate(
@@ -53,7 +52,7 @@ module.exports = protectForm( React.createClass( {
 				<Navigation path={ this.props.path } />
 
 				<Card className="me-notification-settings">
-					<form id="notification-settings" onChange={ this.props.markChanged } onSubmit={ this.submitForm } >
+					<form id="notification-settings" onChange={ this.props.markChanged } onSubmit={ this.props.submitForm } >
 						<FormSectionHeading>{ this.translate( 'Subscriptions Delivery' ) }</FormSectionHeading>
 						<p>
 							{ this.translate( '{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
@@ -68,11 +67,11 @@ module.exports = protectForm( React.createClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_email_default">{ this.translate( 'Default Email Delivery' ) }</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_email_default"
 								name="subscription_delivery_email_default"
 								onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_email_default' ) } >
+								valueLink={ this.props.valueLink( 'subscription_delivery_email_default' ) } >
 								<option value="never">{ this.translate( 'Never send email' ) }</option>
 								<option value="instantly">{ this.translate( 'Send email instantly' ) }</option>
 								<option value="daily">{ this.translate( 'Send email daily' ) }</option>
@@ -84,8 +83,8 @@ module.exports = protectForm( React.createClass( {
 							<FormLegend>{ this.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checkedLink={ this.valueLink( 'subscription_delivery_jabber_default' ) }
-									disabled={ this.getDisabledState() }
+									checkedLink={ this.props.valueLink( 'subscription_delivery_jabber_default' ) }
+									disabled={ this.props.getDisabledState() }
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) } />
@@ -96,11 +95,11 @@ module.exports = protectForm( React.createClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_mail_option">{ this.translate( 'Email Delivery Format' ) }</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
 								onFocus={ this.recordFocusEvent( 'Email Delivery Format' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_mail_option' ) } >
+								valueLink={ this.props.valueLink( 'subscription_delivery_mail_option' ) } >
 								<option value="html">{ this.translate( 'HTML' ) }</option>
 								<option value="text">{ this.translate( 'Plain Text' ) }</option>
 							</FormSelect>
@@ -109,12 +108,12 @@ module.exports = protectForm( React.createClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_day">{ this.translate( 'Email Delivery Window' ) }</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								className="me-notification-settings__delivery-window"
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
 								onFocus={ this.recordFocusEvent( 'Email Delivery Window Day' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_day' ) } >
+								valueLink={ this.props.valueLink( 'subscription_delivery_day' ) } >
 								<option value="0">{ this.translate( 'Sunday' ) }</option>
 								<option value="1">{ this.translate( 'Monday' ) }</option>
 								<option value="2">{ this.translate( 'Tuesday' ) }</option>
@@ -125,11 +124,11 @@ module.exports = protectForm( React.createClass( {
 							</FormSelect>
 
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_hour"
 								name="subscription_delivery_hour"
 								onFocus={ this.recordFocusEvent( 'Email Delivery Window Time' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_hour' ) } >
+								valueLink={ this.props.valueLink( 'subscription_delivery_hour' ) } >
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
 								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
 								<option value="4">{ this.getDeliveryHourLabel( 4 ) }</option>
@@ -153,8 +152,8 @@ module.exports = protectForm( React.createClass( {
 							<FormLegend>{ this.translate( 'Block Emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checkedLink={ this.valueLink( 'subscription_delivery_email_blocked' ) }
-									disabled={ this.getDisabledState() }
+									checkedLink={ this.props.valueLink( 'subscription_delivery_email_blocked' ) }
+									disabled={ this.props.getDisabledState() }
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
 									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }/>
@@ -163,14 +162,14 @@ module.exports = protectForm( React.createClass( {
 						</FormFieldset>
 
 						<FormButton
-							isSubmitting={ this.state.submittingForm }
-							disabled={ this.getDisabledState() }
+							isSubmitting={ this.props.submittingForm }
+							disabled={ this.props.getDisabledState() }
 							onClick={ this.recordClickEvent( 'Save Notification Settings Button' ) } >
-							{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Notification Settings' ) }
+							{ this.props.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Notification Settings' ) }
 						</FormButton>
 					</form>
 				</Card>
 			</Main>
 		);
 	}
-} ) );
+} ) ) );

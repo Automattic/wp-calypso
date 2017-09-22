@@ -8,7 +8,7 @@ import {
 	head,
 	isEmpty
 } from 'lodash';
-import { bindActionCreators } from 'redux';
+
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
@@ -19,6 +19,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 import { ProtectFormGuard } from 'lib/protect-form';
+import { requestUser } from 'state/users/actions';
 var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormPasswordInput = require( 'components/forms/form-password-input' ),
@@ -106,6 +107,7 @@ const AccountPassword = React.createClass( {
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
 
+					this.props.requestUser();
 					// Since changing a user's password invalidates the session, we reload.
 					window.location = window.location.pathname + '?updated=password';
 				}
@@ -188,7 +190,10 @@ const AccountPassword = React.createClass( {
 export default compose(
 	connect(
 		null,
-		dispatch => bindActionCreators( { errorNotice }, dispatch ),
+		{
+			errorNotice,
+			requestUser,
+		},
 	),
 	localize,
 )( AccountPassword );

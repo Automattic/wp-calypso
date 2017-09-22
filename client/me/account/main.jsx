@@ -15,7 +15,6 @@ import {
 	update,
 } from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -50,6 +49,7 @@ import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
+import { requestUser } from 'state/users/actions';
 
 import _user from 'lib/user';
 
@@ -65,8 +65,7 @@ const Account = React.createClass( {
 	displayName: 'Account',
 
 	mixins: [
-		formBase,
-		observe( 'userSettings', 'username' ),
+		observe( 'username' ),
 		eventRecorder
 	],
 
@@ -74,6 +73,10 @@ const Account = React.createClass( {
 		userSettings: PropTypes.object.isRequired,
 		username: PropTypes.object.isRequired,
 		showNoticeInitially: PropTypes.bool,
+	},
+
+	getInitialState() {
+		return {};
 	},
 
 	componentWillMount() {
@@ -171,7 +174,7 @@ const Account = React.createClass( {
 						<FormCheckbox
 							checked={ this.getUserSetting( 'enable_translator' ) }
 							onChange={ this.updateUserSettingCheckbox }
-							disabled={ this.getDisabledState() }
+							disabled={ this.props.getDisabledState() }
 							id="enable_translator"
 							name="enable_translator"
 							onClick={ this.recordCheckboxEvent( 'Community Translator' ) }
@@ -268,7 +271,7 @@ const Account = React.createClass( {
 
 	submitUsernameForm() {
 		const username = this.getUserSetting( 'user_login' );
-		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
+		const action = null === this.props.usernameAction ? 'none' : this.props.usernameAction;
 
 		this.setState( { submittingForm: true } );
 		this.props.username.change( username, action, ( error ) => {
@@ -277,6 +280,7 @@ const Account = React.createClass( {
 				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
 			} else {
 				this.props.markSaved();
+				this.props.requestUser();
 
 				// We reload here to refresh cookies, user object, and user settings.
 				// @TODO: Do not require reload here.
@@ -317,7 +321,7 @@ const Account = React.createClass( {
 					<FormCheckbox
 						checked={ this.getUserSetting( 'holidaysnow' ) }
 						onChange={ this.updateUserSettingCheckbox }
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						id="holidaysnow"
 						name="holidaysnow"
 						onClick={ this.recordCheckboxEvent( 'Holiday Snow' ) }
@@ -487,14 +491,14 @@ const Account = React.createClass( {
 		const { translate, userSettings } = this.props;
 
 		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() ||
-			this.getDisabledState() || this.hasEmailValidationError();
+			this.props.getDisabledState() || this.hasEmailValidationError();
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
 					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
+						disabled={ this.props.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
 						name="user_email"
 						isError={ !! this.state.emailValidationError }
@@ -517,7 +521,7 @@ const Account = React.createClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						id="user_URL"
 						name="user_URL"
 						onFocus={ this.recordFocusEvent( 'Web Address Field' ) }
@@ -532,7 +536,7 @@ const Account = React.createClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguagePicker
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						languages={ config( 'languages' ) }
 						onClick={ this.recordClickEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
@@ -559,11 +563,11 @@ const Account = React.createClass( {
 				{ this.renderHolidaySnow() }
 
 				<FormButton
-					isSubmitting={ this.state.submittingForm }
+					isSubmitting={ this.props.submittingForm }
 					disabled={ isSubmitButtonDisabled }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
-					{ this.state.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
+					{ this.props.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
 				</FormButton>
 			</div>
 		);
@@ -593,7 +597,7 @@ const Account = React.createClass( {
 								onChange={ this.handleRadioChange }
 								onClick={ this.recordRadioEvent( 'Username Change Blog Action' ) }
 								value={ key }
-								checked={ key === this.state.usernameAction }
+								checked={ key === this.props.usernameAction }
 							/>
 							<span>{ message }</span>
 						</FormLabel>
@@ -610,7 +614,7 @@ const Account = React.createClass( {
 		const { translate, username } = this.props;
 
 		const isSaveButtonDisabled = ( this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ) ||
-			! username.isUsernameValid() || this.state.submittingForm;
+			! username.isUsernameValid() || this.props.submittingForm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
@@ -701,13 +705,13 @@ const Account = React.createClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.submitForm } >
+					<form onChange={ markChanged } onSubmit={ this.props.submitForm } >
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 								<FormTextInput
 									autoComplete="off"
 									className="account__username"
-									disabled={ this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' ) }
+									disabled={ this.props.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' ) }
 									id="user_login"
 									name="user_login"
 									onFocus={ this.recordFocusEvent( 'Username Field' ) }
@@ -738,8 +742,13 @@ export default compose(
 		( state ) => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 		} ),
-		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ),
+		{
+			requestUser,
+			successNotice,
+			errorNotice,
+		}
 	),
 	localize,
 	protectForm,
+	formBase,
 )( Account );

@@ -99,16 +99,18 @@ const invitationUtils = {
 	activate: function() {
 		debug( 'activated' );
 		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_accepted', analyticsProperties() );
-		userSettings.saveSettings( function( error, response ) {
-			if ( error || ! response || ! response.enable_translator ) {
-				debug( 'Error saving settings: ' + JSON.stringify( error ), 'response:', response );
-				notices.error( 'There was a problem enabling the Community Translator' );
-				return;
-			}
-			translator.toggle();
-			permanentlyDisableInvitation();
-		}, { enable_translator: true }
-		);
+		return new Promise( ( resolve, reject ) => {
+			userSettings.saveSettings( function( error, response ) {
+				if ( error || ! response || ! response.enable_translator ) {
+					debug( 'Error saving settings: ' + JSON.stringify( error ), 'response:', response );
+					notices.error( 'There was a problem enabling the Community Translator' );
+					return reject( error );
+				}
+				translator.toggle();
+				permanentlyDisableInvitation();
+				resolve();
+			}, { enable_translator: true } );
+		} );
 	},
 	recordDocsEvent: function() {
 		debug( 'docs' );
