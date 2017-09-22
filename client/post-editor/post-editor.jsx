@@ -464,6 +464,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
+							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }

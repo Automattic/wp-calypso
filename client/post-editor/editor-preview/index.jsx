@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import { omitUrlParams } from 'lib/url';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
+import { isEnabled } from 'config';
 
 const EditorPreview = React.createClass( {
 
@@ -83,6 +84,12 @@ const EditorPreview = React.createClass( {
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
 		parsed.query.revision = String( this.props.revision );
+		if (
+			this.props.postId &&
+			isEnabled( 'post-editor/preview-scroll-to-content' )
+		) {
+			parsed.hash = 'post-' + this.props.postId;
+		}
 		delete parsed.search;
 		return url.format( parsed );
 	},
