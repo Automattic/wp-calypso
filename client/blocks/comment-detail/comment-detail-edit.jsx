@@ -76,9 +76,11 @@ export class CommentDetailEdit extends Component {
 					<FormLabel htmlFor="author">
 						{ translate( 'Name' ) }
 					</FormLabel>
-					<InfoPopover>
-						{ translate( 'This user is registered, the name can\'t be edited.' ) }
-					</InfoPopover>
+					{ isAuthorRegistered &&
+						<InfoPopover>
+							{ translate( 'This user is registered, the name can\'t be edited.' ) }
+						</InfoPopover>
+					}
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
@@ -90,9 +92,11 @@ export class CommentDetailEdit extends Component {
 					<FormLabel htmlFor="author_url">
 						{ translate( 'URL' ) }
 					</FormLabel>
-					<InfoPopover>
-						{ translate( 'This user is registered, the URL can\'t be edited.' ) }
-					</InfoPopover>
+					{ isAuthorRegistered &&
+						<InfoPopover>
+							{ translate( 'This user is registered, the URL can\'t be edited.' ) }
+						</InfoPopover>
+					}
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }
