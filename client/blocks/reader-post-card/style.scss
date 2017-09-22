@@ -36,10 +36,10 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 		&::before {
 			content: '';
 			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: -8px;
-			width: 2px;
+				top: 0;
+				bottom: 0;
+				left: -8px;
+				width: 2px;
 			background: $blue-wordpress;
 
 			@include breakpoint( '>660px' ) {
@@ -95,13 +95,13 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 				color: $white;
 				font-family: $sans;
 				position: relative;
-				bottom: 30px;
-				left: 20px;
+					bottom: 30px;
+					left: 20px;
 				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-				width: calc(100% - 44px);
+				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
 				overflow: hidden;
-				z-index: z-index('root', '.reader-post-card__title');
+				z-index: z-index( 'root', '.reader-post-card__title' );
 				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
 				height: 19px;
 				white-space: nowrap;
@@ -167,7 +167,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 			display: flex;
 			flex-direction: row;
 			max-height: 16px * 1.4;
-			max-width: calc(100% - 40px);
+			max-width: calc( 100% - 40px );
 			overflow: hidden;
 			position: relative;
 
@@ -249,7 +249,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 	margin-right: 20px;
 	cursor: pointer;
 	position: relative;
-	top: 0;
+		top: 0;
 	height: 225px;
 	margin-right: 0;
 	margin-bottom: 0;
@@ -281,8 +281,8 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 		height: 80px;
 		opacity: 0.4;
 		position: absolute;
-		bottom: 0;
-		left: 0;
+			bottom: 0;
+			left: 0;
 		width: 100%;
 	}
 }
@@ -324,14 +324,14 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 	overflow: hidden;
 	position: relative;
 	height: 20px;
-	width: calc(100% - 25px);
+	width: calc( 100% - 25px );
 
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
 
 	@include breakpoint( '>660px' ) {
-		width: calc(100% - 90px);
+		width: calc( 100% - 90px );
 	}
 }
 
@@ -355,7 +355,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 	margin-left: 10px;
 	overflow: hidden;
 	position: relative;
-	width: calc(100% - 140px);
+	width: calc( 100% - 140px );
 
 	@include breakpoint( '<480px' ) {
 		max-width: 500px;
@@ -517,7 +517,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 		}
 	}
 
-	.reader-excerpt[direction='rtl'] {
+	.reader-excerpt[direction=rtl] {
 		&::before {
 			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -525,7 +525,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 		}
 	}
 
-	.reader-excerpt[direction='ltr'] {
+	.reader-excerpt[direction=ltr] {
 		&::before {
 			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -550,8 +550,8 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 	&.reader-post-actions__visit {
 		.gridicon {
 			position: relative;
-			left: -2px;
-			top: -1px;
+				left: -2px;
+				top: -1px;
 		}
 	}
 

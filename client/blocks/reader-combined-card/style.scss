@@ -116,10 +116,10 @@
 		&::before {
 			content: '';
 			position: absolute;
-			top: -2px;
-			bottom: 2px;
-			left: -8px;
-			width: 2px;
+				top: -2px;
+				bottom: 2px;
+				left: -8px;
+				width: 2px;
 			background: $blue-wordpress;
 
 			@include breakpoint( '>660px' ) {
@@ -223,7 +223,7 @@
 	margin-top: 4px;
 	white-space: nowrap;
 
-	&:not(.is-placeholder)::after {
+	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 10% );
 	}
 }
@@ -243,7 +243,7 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid lighten($gray, 20%);
+	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;
@@ -262,8 +262,8 @@
 	float: right;
 	padding: 0;
 	position: absolute;
-	right: 0;
-	top: 13px;
+		right: 0;
+		top: 13px;
 
 	.gridicon {
 		fill: $blue-medium;
