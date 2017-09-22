@@ -5,7 +5,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, noop, size, slice, uniq } from 'lodash';
+import {
+	each,
+	find,
+	get,
+	map,
+	noop,
+	orderBy,
+	size,
+	slice,
+	uniq
+} from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -38,7 +48,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import {
 	COMMENTS_PER_PAGE,
 	NEWEST_FIRST,
-	OLDEST_FIRST,
 } from '../constants';
 
 export class CommentList extends Component {
@@ -106,16 +115,7 @@ export class CommentList extends Component {
 	getComments = () => {
 		const comments = uniq( [ ...this.state.persistedComments, ...this.props.comments ] );
 
-		// While sorting we are relying on the fact that newer comments will have larger ID values.
-		switch ( this.state.sortOrder ) {
-			case NEWEST_FIRST:
-				return comments.sort( ( a, b ) => b - a );
-			case OLDEST_FIRST:
-				return comments.sort( ( a, b ) => a - b );
-			default:
-				// Default to showing newest comments first.
-				return comments.sort( ( a, b ) => b - a );
-		}
+		return orderBy( comments, null, this.state.sortOrder );
 	};
 
 	getCommentsPage = ( comments, page ) => {
