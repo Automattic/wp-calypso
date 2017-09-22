@@ -125,13 +125,15 @@ export const CommentDetailHeader = ( {
 							</div>
 						</div>
 					</div>
-					<AutoDirection>
-						<div className="comment-detail__comment-preview">
-							<Emojify>
-								{ decodeEntities( stripHTML( commentContent ) ) }
-							</Emojify>
-						</div>
-					</AutoDirection>
+					{ ! commentIsPing &&
+						<AutoDirection>
+							<div className="comment-detail__comment-preview">
+								<Emojify>
+									{ decodeEntities( stripHTML( commentContent ) ) }
+								</Emojify>
+							</div>
+						</AutoDirection>
+					}
 				</div>
 			}
 
