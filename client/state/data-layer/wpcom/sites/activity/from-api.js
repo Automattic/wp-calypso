@@ -2,28 +2,18 @@
 /**
  * External dependencies
  */
-import {
-	concat,
-	get,
-	has,
-	head,
-	map,
-	overEvery,
-	partial,
-	partialRight,
-	reduce,
-	split,
-} from 'lodash';
+import validator from 'is-my-json-valid';
+import { concat, get, head, reduce, split } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import warn from 'lib/warn';
+import { itemSchema } from './schema';
 
 /**
  * Module constants
  */
-export const ACTIVITY_REQUIRED_PROPS = [ 'activity_id', 'name', 'published', 'summary' ];
 export const DEFAULT_GRAVATAR_URL = 'https://www.gravatar.com/avatar/0';
 export const DEFAULT_GRIDICON = 'info-outline';
 
@@ -45,9 +35,14 @@ export default function fromApi( apiResponse ) {
  * @param  {object}  item Activity item
  * @return {boolean}      True if the item appears to be valid, otherwise false.
  */
-export const validateItem = overEvery(
-	map( ACTIVITY_REQUIRED_PROPS, partial( partialRight, has ) )
-);
+export function validateItem( item ) {
+	const validate = validator( itemSchema );
+	const valid = validate( item );
+	if ( ! valid ) {
+		warn( 'Invalid item found and ignored:', item, 'with reason:', validate.errors );
+	}
+	return valid;
+}
 
 /**
  * Reducer which recieves an array of processed items and an item to process and returns a new array
@@ -59,7 +54,6 @@ export const validateItem = overEvery(
  */
 export function itemsReducer( validProcessedItems, item ) {
 	if ( ! validateItem( item ) ) {
-		warn( 'Activity item fails validation and has been omitted: %o', item );
 		return validProcessedItems;
 	}
 
