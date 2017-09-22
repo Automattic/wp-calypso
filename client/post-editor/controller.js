@@ -15,6 +15,7 @@ import { map, pick, reduce, startsWith } from 'lodash';
  * Internal dependencies
  */
 import actions from 'lib/posts/actions';
+import loadCSS from 'lib/css-load';
 import route from 'lib/route';
 import User from 'lib/user';
 import userUtils from 'lib/user/utils';
@@ -174,7 +175,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 
 		// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
 		const metadata = reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
-			newMetadata[ key ] = value;
+			newMetadata[ key ] = value;
 			return newMetadata;
 		}, {} );
 
@@ -193,6 +194,8 @@ module.exports = {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
 		const postToCopyId = context.query.copy;
+
+		loadCSS( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
 		function startEditing( siteId ) {
 			const isCopy = context.query.copy ? true : false;
