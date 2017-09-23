@@ -449,6 +449,14 @@ class SimplePaymentsDialog extends Component {
 							shouldDisplay={ this.returnTrue }
 						/>
 					}
+					secondaryAction={
+						<a
+							className="empty-content__action button"
+							href="https://support.wordpress.com/simple-payments/"
+						>
+							{ this.props.translate( 'Learn more about Simple Payments' ) }
+						</a>
+					}
 				/>,
 				true
 			);
