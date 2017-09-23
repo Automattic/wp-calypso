@@ -4,6 +4,8 @@
 import React from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { flow } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:me:sidebar' );
 
@@ -193,10 +195,17 @@ const MeSidebar = React.createClass( {
 	}
 } );
 
-function mapStateToProps( state ) {
-	return {
-		currentUser: getCurrentUser( state ),
-	};
-}
+const enhance = flow(
+	localize,
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{
+			logoutUser,
+			setNextLayoutFocus
+		}
+	)
+);
 
-export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( MeSidebar );
+export default enhance( MeSidebar );
