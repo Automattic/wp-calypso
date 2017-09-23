@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import buildUrl from 'lib/mixins/url-search/build-url';
+import buildUrl from 'lib/build-url';
 import page from 'page';
 
 const debug = require( 'debug' )( 'calypso:search-url' );

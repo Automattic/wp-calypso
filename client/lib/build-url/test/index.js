@@ -6,7 +6,7 @@ var expect = require( 'chai' ).expect;
 /**
  * Internal dependencies
  */
-var buildUrl = require( '../build-url' );
+var buildUrl = require( '..' );
 
 describe( 'build-url', function() {
 	it( 'should accept a path without existing query parameters', function() {
