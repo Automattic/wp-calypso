@@ -353,7 +353,7 @@ class JetpackThankYouCard extends Component {
 		if ( reasons && reasons.length > 0 ) {
 			reason = translate( 'We can\'t modify files on your site.' );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
-		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
+		} else if ( selectedSite.hasMinimumJetpackVersion === false ) {
 			reason = translate(
 				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
 				'Please upgrade Jetpack.'
