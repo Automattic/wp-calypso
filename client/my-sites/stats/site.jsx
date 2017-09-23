@@ -17,6 +17,7 @@ import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
+import PostAnniversaries from './stats-post-anniversaries';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import StatsFirstView from './stats-first-view';
@@ -187,6 +188,10 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink />
 							{ podcastList }
+							<PostAnniversaries
+								path="anniversaries"
+								period={ this.props.period }
+							/>
 						</div>
 					</div>
 				</div>
