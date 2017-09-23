@@ -76,8 +76,9 @@ const PostTypeFilter = React.createClass( {
 			}
 
 			return memo.concat( {
-				count: ( ! siteId || jetpack ) ? null : count, // Hide count in all sites and Jetpack modes
+				// Hide count in all sites mode; and in Jetpack mode for non-posts
 				key: `filter-${ status }`,
+				count: ( ! siteId || ( jetpack && query.type !== 'post' ) ) ? null : count,
 				path: compact( [
 					query.type === 'post'
 						? '/posts'
