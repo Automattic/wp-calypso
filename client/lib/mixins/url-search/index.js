@@ -7,7 +7,7 @@ var debug = require( 'debug' )( 'calypso:url-search' ),
 /**
  * Internal dependencies
  */
-var buildUrl = require( './build-url' );
+import buildUrl from 'lib/build-url';
 
 module.exports = {
 
