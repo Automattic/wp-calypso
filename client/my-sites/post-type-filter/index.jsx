@@ -41,7 +41,7 @@ const PostTypeFilter = React.createClass( {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
-			if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
+			if ( ! query.type === 'post' && ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
 				return memo;
 			}
 
