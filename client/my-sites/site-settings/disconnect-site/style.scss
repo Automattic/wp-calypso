@@ -1,10 +1,18 @@
+.disconnect-site {
+	&.site-settings {
+	position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+	}
+}
+
 .disconnect-site__card {
-		width: 70%;
-		margin: auto;
+		position: relative;
+		padding: 24px;
 
 		@include breakpoint( "<480px" ) {
-			padding: 24px;
-			width: 300px;
+			max-width: 300px;
 		}
 
 		@include breakpoint( "<660px" ) {

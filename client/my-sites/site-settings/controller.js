@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -124,6 +125,7 @@ const controller = {
 	},
 
 	disconnectSite( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		renderPage(
 			context,
 			<DisconnectSite />

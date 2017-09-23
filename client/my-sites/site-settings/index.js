@@ -1,8 +1,7 @@
- /**
+/**
  * External dependencies
  */
 import page from 'page';
-
 /**
  * Internal dependencies
  */
@@ -61,7 +60,6 @@ module.exports = function() {
 		page(
 			'/settings/disconnect-site/:site_id',
 			mySitesController.siteSelection,
-			mySitesController.navigation,
 			settingsController.setScroll,
 			controller.disconnectSite
 		);
