@@ -15,6 +15,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorRevisionsList from 'post-editor/editor-revisions-list';
+import EditorShareADraft from 'post-editor/editor-share-a-draft';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from './constants';
 
 export default class EditorSidebar extends Component {
@@ -96,6 +97,7 @@ export default class EditorSidebar extends Component {
 						setNestedSidebar={ setNestedSidebar }
 						selectRevision={ selectRevision }
 					/>
+					<EditorShareADraft siteId={ site.ID } postId={ post ? post.ID : null } />
 				</SidebarRegion>
 				<SidebarRegion className="editor-sidebar__nested-region">
 					{ nestedSidebar === NESTED_SIDEBAR_REVISIONS &&
