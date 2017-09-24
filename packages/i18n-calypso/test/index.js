@@ -28,13 +28,79 @@ function stripReactAttributes( string ) {
 describe( 'I18n', function() {
 	useFakeDom();
 
-	before( function() {
+	beforeEach( function() {
 		i18n.setLocale( data.locale );
-		moment.locale( 'de' );
 	} );
 
-	after( () => {
-		moment.locale( 'en' );
+	afterEach( function() {
+		i18n.configure(); // ensure everything is reset
+	} );
+
+	describe( 'setLocale()', function() {
+		describe( 'adding a new locale source from the same language', function () {
+			beforeEach( function() {
+				i18n.setLocale( {
+					'': data.locale[''],
+					'test1': [
+						null,
+						'translation1-1'
+					],
+					'test2': [
+						null,
+						'translation2'
+					],
+					'new translation': [
+						null,
+						'Neue Übersetzung'
+					]
+				} );
+			} );
+
+			it( 'should make the new translations available', function () {
+				assert.equal( 'Neue Übersetzung', translate( 'new translation' ) );
+			} );
+			it( 'should keep the original translations available as well', function () {
+				assert.equal( 'Aktivieren', translate( 'Activate' ) );
+			} );
+			it( 'should replace existing translations with the new version', function () {
+				assert.equal( 'translation1-1', translate( 'test1' ) );
+				assert.equal( 'translation2', translate( 'test2' ) );
+			} );
+		} );
+
+		describe( 'adding a new locale source from a different language', function () {
+			beforeEach( function() {
+				i18n.setLocale( {
+					'': Object.assign( {}, data.locale[''], {
+						localeSlug: 'fr',
+						'Plural-Forms': 'nplurals=2; plural=n > 1;'
+					} ),
+					'test1': [
+						null,
+						'traduction1'
+					],
+					'test2': [
+						null,
+						'traduction2'
+					],
+					'new translation': [
+						null,
+						'nouvelle traduction'
+					]
+				} );
+			} );
+
+			it( 'should make replace previous locale translations', function () {
+				assert.notEqual( 'translation1', translate( 'test1' ) );
+				assert.equal( 'traduction1', translate( 'test1' ) );
+			} );
+			it( 'should make old translations unavailable', function () {
+				assert.equal( 'Activate', translate( 'Activate' ) );
+			} );
+			it( 'should make new translations available', function () {
+				assert.equal( 'nouvelle traduction', translate( 'new translation' ) );
+			} );
+		} );
 	} );
 
 	describe( 'translate()', function() {

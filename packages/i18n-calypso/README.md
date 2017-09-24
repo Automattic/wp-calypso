@@ -39,7 +39,7 @@ The following attributes can be set in the options object to alter the translati
 If you pass a single string into `translate`, it will trigger a simple translation without any context, pluralization, sprintf arguments, or comments. You would call it like this.
 
 ```js
-var i18n = require( 'i18n' );
+var i18n = require( 'i18n-calypso' );
 var translation = i18n.translate( 'Some content to translate' );
 ```
 
@@ -224,7 +224,7 @@ var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' 
 And you can use it from outside of React like this.
 
 ```js
-var i18n = require( 'i18n' );
+var i18n = require( 'i18n-calypso' );
 var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
 ```
 

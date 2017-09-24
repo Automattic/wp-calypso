@@ -167,30 +167,30 @@ I18N.prototype.configure = function( options ) {
 };
 
 I18N.prototype.setLocale = function( localeData ) {
-	var localeSlug;
-
-	// if localeData is not given, assumes default locale
+	// if localeData is not given, assumes default locale and reset
 	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
-		localeData = { '': { localeSlug: this.defaultLocaleSlug } }
+		this.state.locale = { '': { localeSlug: this.defaultLocaleSlug } };
+	} else if ( localeData[ '' ].localeSlug === this.state.localeSlug ) {
+		// Exit if same data as current (comparing references only)
+		if ( localeData === this.state.locale ) {
+			return;
+		}
+
+		// merge new data into existing one
+		assign( this.state.locale, localeData );
+	} else {
+		this.state.locale = assign( {}, localeData );
 	}
 
-	localeSlug = localeData[ '' ].localeSlug;
-
-	// Don't change if same locale as current, except for default locale
-	if ( localeSlug !== this.defaultLocaleSlug && localeSlug === this.state.localeSlug ) {
-		return;
-	}
-
-	this.state.localeSlug = localeSlug;
-	this.state.locale = localeData;
+	this.state.localeSlug = this.state.locale[ '' ].localeSlug;
 
 	this.state.jed = new Jed( {
 		locale_data: {
-			messages: localeData
+			messages: this.state.locale
 		}
 	} );
 
-	moment.locale( localeSlug );
+	moment.locale( this.state.localeSlug );
 
 	// Updates numberFormat preferences with settings from translations
 	this.state.numberFormatSettings.decimal_point = getTranslationFromJed(
