@@ -2,6 +2,7 @@
  * External dependencies
  */
 import page from 'page';
+
 /**
  * Internal dependencies
  */

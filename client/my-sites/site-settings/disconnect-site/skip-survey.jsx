@@ -20,7 +20,7 @@ class SkipSurvey extends Component {
 
 		//placeholder for redirection to the Confirm Disconnection page
 		if ( siteSlug ) {
-			page( '/settings/general/' + siteSlug );
+			page( '/settings/manage-connection/' + siteSlug );
 		}
 	};
 
