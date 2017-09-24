@@ -113,7 +113,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
 							labelIndex: index,
-							amount: label.refund.amount,
+							amount: label.refundable_amount,
 							currency: label.currency,
 						} );
 				}
