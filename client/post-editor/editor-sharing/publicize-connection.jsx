@@ -73,7 +73,10 @@ class EditorSharingPublicizeConnection extends Component {
 		return (
 			<Notice isCompact className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
 				{ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
-				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
+				<NoticeAction onClick={ this.props.onRefresh }>
+					{ translate( 'Reconnect' ) }
+					<Gridicon icon="external" size={ 18 } />
+				</NoticeAction>
 			</Notice>
 		);
 	}
