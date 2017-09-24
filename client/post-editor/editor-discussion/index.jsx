@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { get, pick } from 'lodash';
-const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	PostActions = require( 'lib/posts/actions' ),
-	InfoPopover = require( 'components/info-popover' ),
-	stats = require( 'lib/posts/stats' );
+const EditorFieldset = require( 'post-editor/editor-fieldset' );
+const FormCheckbox = require( 'components/forms/form-checkbox' );
+const PostActions = require( 'lib/posts/actions' );
+const InfoPopover = require( 'components/info-popover' );
+const stats = require( 'lib/posts/stats' );
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -21,22 +23,19 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-export default React.createClass( {
-	displayName: 'EditorDiscussion',
+class EditorDiscussion extends Component {
 
-	propTypes: {
-		isNew: React.PropTypes.bool,
-		post: React.PropTypes.object,
-		site: React.PropTypes.object
-	},
+	static propTypes = {
+		isNew: PropTypes.bool,
+		post: PropTypes.object,
+		site: PropTypes.object,
+	};
 
-	getDefaultProps: function() {
-		return {
-			isNew: false
-		};
-	},
+	static defaultProps = {
+		isNew: false,
+	};
 
-	getDiscussionSetting: function() {
+	getDiscussionSetting() {
 		if ( this.props.post && this.props.post.discussion ) {
 			return this.props.post.discussion;
 		}
@@ -54,14 +53,14 @@ export default React.createClass( {
 		}
 
 		return {};
-	},
+	}
 
-	onChange: function( event ) {
-		var discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
-			newStatus = booleanToStatus( event.target.checked ),
-			discussionType = event.target.name,
-			statName,
-			gaEvent;
+	onChange = ( event ) => {
+		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
+		const newStatus = booleanToStatus( event.target.checked );
+		const discussionType = event.target.name;
+		let statName;
+		let gaEvent;
 
 		discussion[ discussionType ] = newStatus;
 
@@ -81,13 +80,14 @@ export default React.createClass( {
 		PostActions.edit( {
 			discussion: discussion
 		} );
-	},
+	}
 
-	render: function() {
-		var discussion = this.getDiscussionSetting();
+	render() {
+		const { translate } = this.props;
+		const discussion = this.getDiscussionSetting();
 
 		return (
-			<EditorFieldset legend={ this.translate( 'Discussion' ) }>
+			<EditorFieldset legend={ translate( 'Discussion' ) }>
 				<label>
 					<FormCheckbox
 						name="comment_status"
@@ -95,9 +95,9 @@ export default React.createClass( {
 						disabled={ ! this.props.post }
 						onChange={ this.onChange } />
 					<span>
-						{ this.translate( 'Allow comments' ) }
+						{ translate( 'Allow comments' ) }
 						<InfoPopover position="top right" className="editor-comment_status__info" gaEventCategory="Editor" popoverName="CommentStatus">
-							{ this.translate( 'Provide a comment section to give readers the ability to respond.' ) }
+							{ translate( 'Provide a comment section to give readers the ability to respond.' ) }
 						</InfoPopover>
 					</span>
 				</label>
@@ -106,10 +106,15 @@ export default React.createClass( {
 						name="ping_status"
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }
-						onChange={ this.onChange } />
-					<span>{ this.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
+						onChange={ this.onChange }
+					/>
+					<span>{ translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
 		);
 	}
-} );
+}
+
+EditorDiscussion.displayName = 'EditorDiscussion';
+
+export default localize( EditorDiscussion );
