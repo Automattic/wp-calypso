@@ -43,13 +43,13 @@ class EditorMediaModalDetail extends Component {
 	}
 
 	preloadImages() {
-		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-			var src = MediaUtils.url( image, {
+		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( ( image ) => {
+			const src = MediaUtils.url( image, {
 				photon: this.props.site && ! this.props.site.is_private
 			} );
 
 			preloadImage( src );
-		}, this );
+		} );
 	}
 
 	incrementIndex = () => this.props.onSelectedIndexChange( this.props.selectedIndex + 1 )
