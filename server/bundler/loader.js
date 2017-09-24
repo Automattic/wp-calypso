@@ -167,10 +167,7 @@ function singleEnsure( chunkName ) {
 
 function sectionsWithCSSUrls( sections ) {
 	return sections.map( section => Object.assign( {}, section, section.css && {
-		cssUrls: {
-			ltr: utils.getHashedUrl( 'sections/' + section.css + '.css' ),
-			rtl: utils.getHashedUrl( 'sections-rtl/' + section.css + '.rtl.css' ),
-		}
+		cssUrls: utils.getCssUrls( section.css )
 	} ) );
 }
 

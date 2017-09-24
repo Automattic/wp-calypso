@@ -57,10 +57,18 @@ function getHashedUrl( filename ) {
 	return getUrl( filename, hashFile( process.cwd() + SERVER_BASE_PATH + '/' + filename ) );
 }
 
+function getCssUrls( css ) {
+	return {
+		ltr: getHashedUrl( 'sections/' + css + '.css' ),
+		rtl: getHashedUrl( 'sections-rtl/' + css + '.rtl.css' ),
+	};
+}
+
 module.exports = {
 	getAssets: getAssets,
 	pathToRegExp: pathToRegExp,
 	hashFile: hashFile,
 	getUrl: getUrl,
-	getHashedUrl: getHashedUrl
+	getHashedUrl: getHashedUrl,
+	getCssUrls: getCssUrls,
 };

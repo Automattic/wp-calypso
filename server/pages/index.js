@@ -150,8 +150,9 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context.sectionCss ) {
-		sectionCss = utils.getHashedUrl( 'sections/' + request.context.sectionCss + '.css' );
-		sectionCssRtl = utils.getHashedUrl( 'sections-rtl/' + request.context.sectionCss + '.rtl.css' );
+		const urls = utils.getCssUrls( request.context.sectionCss );
+		sectionCss = urls.ltr;
+		sectionCssRtl = urls.rtl;
 	}
 
 	const context = Object.assign( {}, request.context, {
