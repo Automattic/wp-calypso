@@ -4,6 +4,7 @@
 const path = require( 'path' ),
 	build = require( 'build' ),
 	config = require( 'config' ),
+	chalk = require( 'chalk' ),
 	express = require( 'express' ),
 	cookieParser = require( 'cookie-parser' ),
 	userAgent = require( 'express-useragent' ),
@@ -38,6 +39,23 @@ function setup() {
 
 		// setup logger
 		app.use( morgan( 'dev' ) );
+
+		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+			if ( config( 'wordpress_logged_in_cookie' ) ) {
+				const username = config( 'wordpress_logged_in_cookie' ).split( '%7C' )[ 0 ];
+				console.info( chalk.cyan( '\nYour logged in cookie set to user: ' + username ) );
+
+				app.use( function( req, res, next ) {
+					if ( ! req.cookies.wordpress_logged_in ) {
+						req.cookies.wordpress_logged_in = config( 'wordpress_logged_in_cookie' );
+					}
+					next();
+				} );
+			} else {
+				console.info( chalk.red( '\nYou need to set `wordpress_logged_in_cookie` in secrets.json' +
+					' for wpcom-user-bootstrap to work in development.' ) );
+			}
+		}
 	} else {
 		require( 'bundler/assets' )( app );
 

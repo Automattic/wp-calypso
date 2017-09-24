@@ -278,7 +278,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
-		user( req.get( 'Cookie' ), function( error, data ) {
+		user( req.cookies.wordpress_logged_in, function( error, data ) {
 			let searchParam, errorMessage;
 
 			if ( error ) {
