@@ -68,7 +68,7 @@ export function setSection( section ) {
 	return ( context, next = noop ) => {
 		context.store.dispatch( setSectionAction( section ) );
 
-		loadSectionCSS( context, next );
+		next();
 	};
 }
 
