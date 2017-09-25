@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -11,17 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import ActivityIcon from '../activity-log-item/activity-icon';
 import Button from 'components/button';
+import Card from 'components/card';
 import Gridicon from 'gridicons';
 
 class ActivityLogConfirmDialog extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
-		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onConfirm: PropTypes.func.isRequired,
-		siteTitle: PropTypes.string,
 		timestamp: PropTypes.number,
 
 		// Localize
@@ -29,14 +26,26 @@ class ActivityLogConfirmDialog extends Component {
 		moment: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = {
-		isVisible: false,
-	};
-
 	renderButtons() {
 		const { onClose, onConfirm, translate } = this.props;
 		return (
 			<div>
+				<a
+					className="activity-log-confirm-dialog__more-info-link"
+					href="https://help.vaultpress.com/one-click-restore/"
+				>
+					{ translate( '{{icon /}} More info', {
+						components: { icon: <Gridicon icon={ 'notice' } /> },
+					} ) }
+				</a>
+				<a
+					className="activity-log-confirm-dialog__more-info-link"
+					href="https://help.vaultpress.com/one-click-restore/"
+				>
+					{ translate( '{{icon /}} Any Questions?', {
+						components: { icon: <Gridicon icon={ 'chat' } /> },
+					} ) }
+				</a>
 				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
 				<Button primary scary onClick={ onConfirm }>
 					{ translate( 'Restore' ) }
@@ -46,45 +55,43 @@ class ActivityLogConfirmDialog extends Component {
 	}
 
 	render() {
-		const { applySiteOffset, isVisible, moment, siteTitle, timestamp, translate } = this.props;
+		const { applySiteOffset, moment, timestamp, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Dialog additionalClassNames="activity-log-confirm-dialog" isVisible={ isVisible }>
-				<h1>{ translate( 'Restore Site' ) }</h1>
-				<p className="activity-log-confirm-dialog__highlight">
-					{ translate( 'To proceed please confirm this restore on your site %(siteTitle)s', {
-						args: { siteTitle },
-					} ) }
-				</p>
-
-				<div className="activity-log-confirm-dialog__line">
-					<Gridicon icon={ 'history' } />
-					{ timestamp ? (
-						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
-							args: {
-								time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
-							},
-							components: { b: <b /> },
-						} )
-					) : (
-						' '
-					) }
+			<div className="activity-log-item activity-log-item__restore-confirm">
+				<div className="activity-log-item__type">
+					<ActivityIcon activityIcon={ 'history' } />
 				</div>
-				<div className="activity-log-confirm-dialog__line">
-					<Gridicon icon={ 'notice' } />
-					{ translate( 'This will remove all content and options created or changed since then.' ) }
-				</div>
+				<Card className="activity-log-item__card">
+					<h1>{ translate( 'Rewind Site' ) }</h1>
 
-				<div className="activity-log-confirm-dialog__button-wrap">{ this.renderButtons() }</div>
+					<p className="activity-log-confirm-dialog__highlight">
+						{ translate(
+							'This is the selected point for your site Rewind.' +
+								'Are you sure you want to rewind your site back to ' +
+								'{{b}}%(time)s{{/b}}?',
+							{
+								args: {
+									time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
+								},
+								components: { b: <b /> },
+							}
+						) }
+					</p>
 
-				<a
-					className="activity-log-confirm-dialog__more-info-link"
-					href="https://help.vaultpress.com/one-click-restore/"
-				>
-					{ translate( 'Read more about site restores' ) }
-				</a>
-			</Dialog>
+					<p>
+						<Gridicon icon={ 'notice' } />
+						{ translate(
+							'This will remove all content and options created or changed since then.'
+						) }
+					</p>
+
+					<div className="activity-log-confirm-dialog__button-wrap">{ this.renderButtons() }</div>
+				</Card>
+			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
