@@ -33,6 +33,12 @@ for MOD in "${MODS[@]}"; do
 
 	"./bin/codemods/$MOD" $TARGET
 
+	# sort-imports needs to be run twice sometimes
+	# see https://github.com/Automattic/wp-calypso/pull/18070
+	if [[ $MOD == 'sort-imports' ]]; then
+		"./bin/codemods/$MOD" $TARGET
+	fi
+
 	# Check for changes
 	if [[ -n "$( git diff --name-only )" ]]; then
 		# Try to fix lint issues (but don't fail on lint errors)
