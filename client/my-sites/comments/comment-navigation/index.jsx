@@ -16,6 +16,10 @@ import ControlItem from 'components/segmented-control/item';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
+import {
+	isJetpackMinimumVersion,
+	isJetpackSite
+} from 'state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
@@ -104,6 +108,7 @@ export class CommentNavigation extends Component {
 			doSearch,
 			hasSearch,
 			isBulkEdit,
+			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
 			selectedCount,
@@ -205,8 +210,8 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				{ isEnabled( 'manage/comments/bulk-actions' ) &&
-					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+					{ isEnabled( 'comments/management/sorting' ) && isCommentsTreeSupported &&
 						<SegmentedControl compact className="comment-navigation__sort-buttons">
 							<ControlItem
 								onClick={ setSortOrder( NEWEST_FIRST ) }
@@ -227,11 +232,14 @@ export class CommentNavigation extends Component {
 								) }
 							</ControlItem>
 						</SegmentedControl>
+					}
+
+					{ isEnabled( 'manage/comments/bulk-actions' ) &&
 						<Button compact onClick={ toggleBulkEdit }>
 							{ translate( 'Bulk Edit' ) }
 						</Button>
-					</CommentNavigationTab>
-				}
+					}
+				</CommentNavigationTab>
 
 				{ hasSearch &&
 					<Search
@@ -259,7 +267,11 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 			};
 		}
 	} );
-	return { visibleComments };
+
+	return {
+		visibleComments,
+		isCommentsTreeSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+	};
 };
 
 const mapDispatchToProps = {

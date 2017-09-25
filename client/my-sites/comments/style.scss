@@ -51,11 +51,16 @@
 }
 
 .comment-navigation__actions {
+	display: flex;
 	padding: 11px 16px;
 
 	.button-group {
 		margin-right: 16px;
 	}
+}
+
+.comment-navigation__open-bulk .button {
+	margin-left: 16px;
 }
 
 .comment-navigation__close-bulk {
@@ -66,11 +71,6 @@
 		display: inline-block;
 		padding: 10px 16px;
 	}
-}
-
-.comment-navigation__sort-buttons {
-	margin-right: 16px;
-	float: left;
 }
 
 .comment-list .pagination {
