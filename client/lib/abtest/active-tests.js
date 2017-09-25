@@ -113,4 +113,12 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	jetpackBillingButtonTextI1: {
+		datestamp: '20170925',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
 };
