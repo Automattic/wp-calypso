@@ -32,3 +32,24 @@ This is saved on a per-site basis.
 	}
 }
 ```
+## Selectors
+
+### `getCurrentlyEditingReviewReplyId( state, [siteId] )`
+
+Gets the ID of the review reply, or object placeholder (if a new reply). Defaults to null, if no reply is being edited.
+
+### `getCurrentlyEditingReviewId( state, [siteId] )`
+
+Gets The ID of the review that a reply edit is associated with.
+
+### `getReviewReplyEdits( state, [siteId] )`
+
+Gets the local edits made to the reply. Defaults to {} if no reply is being edited.
+
+### `getReviewReplyWithEdits( state, [siteId] )`
+
+Merges the existing reply with the local changes, or just the "changes" if a new reply.
+
+### `isCurrentlyEditingReviewReply( state, [siteId] )`
+
+Whether the given site (or current site) has changes pending.
