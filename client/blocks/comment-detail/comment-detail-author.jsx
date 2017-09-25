@@ -60,11 +60,6 @@ export class CommentDetailAuthor extends Component {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
 	};
 
-	getAuthorObject = () => ( {
-		avatar_URL: this.props.authorAvatarUrl,
-		display_name: this.props.authorDisplayName,
-	} );
-
 	getFormattedDate = () => convertDateToUserLocation(
 		( this.props.commentDate || new Date() ),
 		timezone( this.props.site ),
@@ -143,7 +138,7 @@ export class CommentDetailAuthor extends Component {
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
 					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<Gravatar user={ this.getAuthorObject() } />
+						<Gridicon icon="user-circle" />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
@@ -228,7 +223,10 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<Gravatar user={ this.getAuthorObject() } />
+					<Gravatar user={ {
+						avatar_URL: this.props.authorAvatarUrl,
+						display_name: this.props.authorDisplayName,
+					} } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>
