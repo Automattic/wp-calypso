@@ -178,7 +178,9 @@ class OrderCustomerCard extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLegend>{ translate( 'Billing Details' ) }</FormLegend>
+					<FormLegend className="order-create__billing-details">
+						{ translate( 'Billing Details' ) }
+					</FormLegend>
 					<div className="order-create__fieldset">
 						<div className="order-create__field">
 							<FormLabel htmlFor="firstName">{ translate( 'First Name' ) }</FormLabel>
@@ -215,7 +217,9 @@ class OrderCustomerCard extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLegend>{ translate( 'Shipping Details' ) }</FormLegend>
+					<FormLegend className="order-create__shipping-details">
+						{ translate( 'Shipping Details' ) }
+					</FormLegend>
 					<FormLabel>
 						<FormCheckbox checked={ ! this.state.showShipping } onChange={ this.toggleShipping } />
 						<span>{ translate( 'Same as billing details' ) }</span>
