@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact } from 'lodash';
 
 /***
  * Internal dependencies
@@ -21,7 +21,7 @@ import {
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentForm from 'blocks/comments/form';
-import { requestPostComments } from 'state/comments/actions';
+import { requestPostComments, requestComment } from 'state/comments/actions';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -42,6 +42,7 @@ import { requestPostComments } from 'state/comments/actions';
  * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost
  */
 
+const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
@@ -102,18 +103,83 @@ export class ConversationCommentList extends React.Component {
 		this.reqMoreComments();
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { hiddenComments, commentsTree, siteId } = nextProps;
+
+		// if we are running low on comments to expand then fetch more
+		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
+			this.reqMoreComments();
+		}
+
+		// if we are missing any comments in the hierarchy towards a comment that should be shown,
+		// then load them one at a time. This is not the most efficient method, ideally we could
+		// load a subtree
+		const inaccessible = this.getInaccessibleParentsIds(
+			commentsTree,
+			Object.keys( this.getCommentsToShow() )
+		);
+		inaccessible.forEach( commentId => {
+			nextProps.requestComment( {
+				commentId,
+				siteId,
+			} );
+		} );
+	}
+
+	getParentId = ( commentsTree, childId ) =>
+		get( commentsTree, [ childId, 'data', 'parent', 'ID' ] );
+	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
+	commentParentIsLoaded = ( commentsTree, childId ) =>
+		get( commentsTree, this.getParentId( commentsTree, childId ), false );
+
+	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
+		// base case
+		if ( size( commentIds ) === 0 ) {
+			return [];
+		}
+
+		const withParents = filter( commentIds, id => this.commentHasParent( commentsTree, id ) );
+		const accessible = map(
+			filter( withParents, id => this.commentParentIsLoaded( commentsTree, id ) ),
+			id => this.getParentId( commentsTree, id )
+		);
+		const inaccessible = map(
+			filter( withParents, id => ! this.commentParentIsLoaded( commentsTree, id ) ),
+			id => this.getParentId( commentsTree, id )
+		);
+
+		return inaccessible.concat( this.getInaccessibleParentsIds( commentsTree, accessible ) );
+	};
+
+	getCommentsToShow = () => {
+		const { commentIds, expansions, commentsTree } = this.props;
+
+		const parentIds = compact( map( commentIds, id => this.getParentId( commentsTree, id ) ) );
+		const commentExpansions = fill(
+			Array( commentIds.length ),
+			POST_COMMENT_DISPLAY_TYPES.excerpt
+		);
+		const parentExpansions = fill(
+			Array( parentIds.length ),
+			POST_COMMENT_DISPLAY_TYPES.singleLine
+		);
+
+		const startingExpanded = zipObject(
+			commentIds.concat( parentIds ),
+			commentExpansions.concat( parentExpansions )
+		);
+
+		return { ...startingExpanded, ...expansions };
+	};
+
 	render() {
-		const { commentIds, commentsTree, post, expansions, enableCaterpillar } = this.props;
+		const { commentsTree, post, enableCaterpillar } = this.props;
 
 		if ( ! post ) {
 			return null;
 		}
 
-		const startingExpanded = zipObject(
-			commentIds,
-			fill( Array( commentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt )
-		);
-		const commentsToShow = { ...startingExpanded, ...expansions };
+		const commentsToShow = this.getCommentsToShow();
 		const showCaterpillar =
 			enableCaterpillar && size( commentsToShow ) < post.discussion.comment_count;
 
@@ -121,7 +187,11 @@ export class ConversationCommentList extends React.Component {
 			<div className="conversations__comment-list">
 				<ul className="conversations__comment-list-ul">
 					{ showCaterpillar && (
-						<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } />
+						<ConversationCaterpillar
+							blogId={ post.site_ID }
+							postId={ post.ID }
+							commentCount={ post.discussion.comment_count }
+						/>
 					) }
 					{ map( commentsTree.children, commentId => {
 						return (
@@ -177,7 +247,7 @@ const ConnectedConversationCommentList = connect(
 			hiddenComments: getHiddenCommentsForPost( state, siteId, postId ),
 		};
 	},
-	{ requestPostComments }
+	{ requestPostComments, requestComment }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;
