@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import { forEach } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { recommendedPosts } from './controller';
-import { preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 import config from 'config';
+import { preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 
 export default function() {
 	// Cold Start no longer exists - redirect to /

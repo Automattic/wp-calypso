@@ -1,14 +1,13 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarTeamsListItem from './list-item';
 

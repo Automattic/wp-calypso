@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
-
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { stringify } from 'qs';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
 import analytics from 'lib/analytics';
+import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
 
 export class Suggestion extends Component {
 	static propTypes = {

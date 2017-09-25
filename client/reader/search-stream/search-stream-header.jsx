@@ -1,19 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop, values } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
 
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 

@@ -2,8 +2,8 @@
 /**
  * Internal dependencies
  */
-import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
+import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
 
 const exported = {
 	formatUrlForDisplay: function( url ) {

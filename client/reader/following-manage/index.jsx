@@ -1,49 +1,37 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { trim, debounce, random, take, reject, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { trim, debounce, random, take, reject, includes } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
-
 import qs from 'qs';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import FollowingManageEmptyContent from './empty';
+import FollowingManageSearchFeedsResults from './feed-search-results';
+import FollowingManageSubscriptions from './subscriptions';
+import RecommendedSites from 'blocks/reader-recommended-sites';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import ReaderMain from 'components/reader-main';
-import {
-	getReaderFeedsForQuery,
-	getReaderFeedsCountForQuery,
-	getReaderRecommendedSites,
-	getReaderRecommendedSitesPagingOffset,
-	getBlockedSites,
-	getReaderAliasedFollowFeedUrl,
-} from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
-import RecommendedSites from 'blocks/reader-recommended-sites';
-import FollowingManageSubscriptions from './subscriptions';
-import FollowingManageSearchFeedsResults from './feed-search-results';
-import FollowingManageEmptyContent from './empty';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import ReaderMain from 'components/reader-main';
+import SearchInput from 'components/search';
 import { addQueryArgs } from 'lib/url';
-import FollowButton from 'reader/follow-button';
-import {
-	READER_FOLLOWING_MANAGE_URL_INPUT,
-	READER_FOLLOWING_MANAGE_RECOMMENDATION,
-} from 'reader/follow-button/follow-sources';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
-import { getReaderFollowsCount } from 'state/selectors';
+import FollowButton from 'reader/follow-button';
+import { READER_FOLLOWING_MANAGE_URL_INPUT, READER_FOLLOWING_MANAGE_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
+import { getReaderFeedsForQuery, getReaderFeedsCountForQuery, getReaderRecommendedSites, getReaderRecommendedSitesPagingOffset, getBlockedSites, getReaderAliasedFollowFeedUrl } from 'state/selectors';
+import { getReaderFollowsCount } from 'state/selectors';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );

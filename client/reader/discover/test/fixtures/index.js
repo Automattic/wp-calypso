@@ -1,5 +1,4 @@
 /** @format */
-/* eslint-disable max-len, quote-props*/
 /**
  * External dependencies
  */

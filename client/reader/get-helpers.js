@@ -1,17 +1,17 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import url from 'url';
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 import i18n from 'i18n-calypso';
+import { trim } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
 import { isSiteDescriptionBlacklisted } from 'reader/lib/site-description-blacklist';
+import url from 'url';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.

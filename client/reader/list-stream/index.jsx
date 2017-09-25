@@ -2,27 +2,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
-import ListMissing from './missing';
 import ListStreamHeader from './header';
-import { followList, unfollowList } from 'state/reader/lists/actions';
-import {
-	getListByOwnerAndSlug,
-	isSubscribedByOwnerAndSlug,
-	isMissingByOwnerAndSlug,
-} from 'state/reader/lists/selectors';
+import ListMissing from './missing';
+import DocumentHead from 'components/data/document-head';
 import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import Stream from 'reader/stream';
+import { followList, unfollowList } from 'state/reader/lists/actions';
+import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
 
 class ListStream extends React.Component {
 	toggleFollowing = isFollowRequested => {

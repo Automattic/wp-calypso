@@ -1,20 +1,20 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Card from 'components/card';
-import page from 'page';
+import cssSafeUrl from 'lib/css-safe-url';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import cssSafeUrl from 'lib/css-safe-url';
 
 export default localize(
 	class extends React.PureComponent {

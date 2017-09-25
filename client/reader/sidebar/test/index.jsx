@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { shallow } from 'enzyme';
+import { noop } from 'lodash';
+import React from 'react';
 import { stub } from 'sinon';
 
 /**

@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 

@@ -1,30 +1,29 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { defer, omit, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import PostStore from 'lib/feed-post-store';
-import PostStoreActions from 'lib/feed-post-store/actions';
+import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import Post from './post';
 import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
-import ListGap from 'reader/list-gap';
-import CrossPost from './x-post';
-import { shallowEquals } from 'reader/utils';
 import RecommendedPosts from './recommended-posts';
-import XPostHelper, { isXPost } from 'reader/xpost-helper';
-import PostBlocked from 'blocks/reader-post-card/blocked';
-import Post from './post';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import CrossPost from './x-post';
 import CombinedCard from 'blocks/reader-combined-card';
+import PostBlocked from 'blocks/reader-post-card/blocked';
+import PostStore from 'lib/feed-post-store';
+import PostStoreActions from 'lib/feed-post-store/actions';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
-import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import ListGap from 'reader/list-gap';
+import { shallowEquals } from 'reader/utils';
+import XPostHelper, { isXPost } from 'reader/xpost-helper';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 

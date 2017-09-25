@@ -2,17 +2,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class SearchEmptyContent extends React.Component {
 	static propTypes = {
