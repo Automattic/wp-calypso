@@ -52,6 +52,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
+	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
 	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
 	QUORA_URL = 'https://a.quora.com/qevents.js',
 	TRACKING_IDS = {
@@ -222,6 +223,9 @@ function loadTrackingScripts( callback ) {
 			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
+			loadScript.loadScript( YANDEX_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
 			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
 		},
 		function( onComplete ) {
@@ -240,6 +244,9 @@ function loadTrackingScripts( callback ) {
 
 			// init Twitter's tracking global
 			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+
+			// init Yandex counter
+			window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
 
 			// init Media Wallah tracking
 			initMediaWallah();
@@ -327,6 +334,9 @@ function retarget() {
 		qacct: TRACKING_IDS.quantcast,
 		event: 'refresh'
 	} );
+
+	// Yandex
+	window.yaCounter45268389.hit( document.location.href );
 
 	// One by AOL
 	new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
@@ -508,19 +518,6 @@ function recordProduct( product, orderId ) {
 			}
 		);
 
-		// Bing
-		if ( isSupportedCurrency( product.currency ) ) {
-			const bingParams = {
-				ec: 'purchase',
-				gv: costUSD
-			};
-			if ( isJetpackPlan ) {
-				// `el` must be included only for jetpack plans
-				bingParams.el = 'jetpack';
-			}
-			window.uetq.push( bingParams );
-		}
-
 		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
@@ -549,7 +546,26 @@ function recordProduct( product, orderId ) {
 			currency: product.currency
 		} );
 
+		// Yandex Goal
+		window.yaCounter45268389.reachGoal( 'ProductPurchase', {
+			order_id: orderId,
+			product_slug: product.product_slug,
+			order_price: product.cost,
+			currency: product.currency
+		} );
+
 		if ( isSupportedCurrency( product.currency ) ) {
+			// Bing
+			const bingParams = {
+				ec: 'purchase',
+				gv: costUSD
+			};
+			if ( isJetpackPlan ) {
+				// `el` must be included only for jetpack plans
+				bingParams.el = 'jetpack';
+			}
+			window.uetq.push( bingParams );
+
 			// Quantcast
 			// Note that all properties have to be strings or they won't get tracked
 			window._qevents.push( {
