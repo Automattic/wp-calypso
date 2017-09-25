@@ -135,7 +135,7 @@ class PluginAutomatedTransfer extends Component {
 	pollSiteData() {
 		const { siteId } = this.props;
 
-		return this.props.requestSite( siteId );
+		this.props.requestSite( siteId );
 	}
 
 	render() {
@@ -166,7 +166,7 @@ class PluginAutomatedTransfer extends Component {
 				</Notice>
 				{
 					this.state.transferComplete &&
-					<Interval onTick={ this.pollSiteData() } period={ EVERY_SECOND } /> &&
+					<Interval onTick={ this.pollSiteData } period={ EVERY_SECOND } /> &&
 					<WpAdminAutoLogin site={ this.props.site } />
 				}
 			</div>
