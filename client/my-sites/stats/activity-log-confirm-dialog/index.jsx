@@ -13,6 +13,7 @@ import ActivityIcon from '../activity-log-item/activity-icon';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
+import HappychatButton from 'components/happychat/button';
 
 class ActivityLogConfirmDialog extends Component {
 	static propTypes = {
@@ -38,14 +39,14 @@ class ActivityLogConfirmDialog extends Component {
 						components: { icon: <Gridicon icon={ 'notice' } /> },
 					} ) }
 				</a>
-				<a
+				<HappychatButton
 					className="activity-log-confirm-dialog__more-info-link"
 					href="https://help.vaultpress.com/one-click-restore/"
 				>
 					{ translate( '{{icon /}} Any Questions?', {
 						components: { icon: <Gridicon icon={ 'chat' } /> },
 					} ) }
-				</a>
+				</HappychatButton>
 				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
 				<Button primary scary onClick={ onConfirm }>
 					{ translate( 'Restore' ) }
