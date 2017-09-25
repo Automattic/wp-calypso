@@ -4,7 +4,6 @@
 import debugFactory from 'debug';
 import { includes, isEqual, omit, partition } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

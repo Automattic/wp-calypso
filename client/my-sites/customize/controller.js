@@ -12,7 +12,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import analytics from 'lib/analytics';
 import { sectionify } from 'lib/route/path';
 import CustomizeComponent from 'my-sites/customize/main';
-
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export function customize( context ) {

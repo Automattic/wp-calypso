@@ -3,7 +3,6 @@
  */
 import { translate } from 'i18n-calypso';
 import { noop } from 'lodash';
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';

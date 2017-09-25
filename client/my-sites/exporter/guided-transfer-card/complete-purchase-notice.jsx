@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
 import React from 'react';
 import { connect } from 'react-redux';
 

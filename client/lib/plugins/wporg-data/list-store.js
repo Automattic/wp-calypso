@@ -10,7 +10,6 @@ import localStore from 'store';
 import PluginsDataActions from './actions';
 import config from 'config';
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 
 /**

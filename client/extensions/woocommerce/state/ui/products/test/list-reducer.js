@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import { productsDeleteSuccess, productsRequest, productsRequestSuccess } from '../list-reducer';
 import { WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS, WOOCOMMERCE_PRODUCTS_REQUEST, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
-
 import product from 'woocommerce/state/sites/products/test/fixtures/product';
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
 

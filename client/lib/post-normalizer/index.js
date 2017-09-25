@@ -14,22 +14,16 @@ import makeEmbedsSafe from './rule-content-make-embeds-safe';
 import makeImagesSafe from './rule-content-make-images-safe';
 import removeElementsBySelector from './rule-content-remove-elements-by-selector';
 import removeStyles from './rule-content-remove-styles';
-
 import createBetterExcerpt from './rule-create-better-excerpt';
 import decodeEntities from './rule-decode-entities';
-
 import keepValidImages from './rule-keep-valid-images';
 import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';
-
 import pickCanonicalImage from './rule-pick-canonical-image';
 import pickPrimaryTag from './rule-pick-primary-tag';
-
 import preventWidows from './rule-prevent-widows';
 import safeImageProperties from './rule-safe-image-properties';
-
 import stripHtml from './rule-strip-html';
 import waitForImagesToLoad from './rule-wait-for-images-to-load';
-
 import withContentDOM from './rule-with-content-dom';
 const debug = debugFactory( 'calypso:post-normalizer' );
 /**

@@ -8,7 +8,6 @@ import { groupBy, pickBy, forIn } from 'lodash';
  */
 import { countries } from '../data';
 import { findCountryFromNumber, formatNumber, makeTemplate, findPattern, toIcannFormat, DIGIT_PLACEHOLDER, applyTemplate, toE164 } from '../phone-number';
-
 import { equal, ok } from 'assert';
 
 describe( 'metadata:', () => {

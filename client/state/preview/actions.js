@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import * as customizationSaveFunctions from './save-functions';
 import wpcom from 'lib/wp';
-
 import * as ActionTypes from 'state/action-types';
 
 const debug = debugFactory( 'calypso:preview-actions' );

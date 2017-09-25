@@ -12,7 +12,6 @@ import sinon from 'sinon';
  */
 import { isSyncingFollows, requestPage, requestPageAction, receivePage, receiveError, syncReaderFollows, resetSyncingFollows, updateSeenOnFollow } from '../';
 import { subscriptionsFromApi } from '../utils';
-
 import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';

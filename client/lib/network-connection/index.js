@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-
 import request from 'superagent';
 
 /**
@@ -11,7 +10,6 @@ import request from 'superagent';
  */
 import config from 'config';
 import PollerPool from 'lib/data-poller';
-
 import Emitter from 'lib/mixins/emitter';
 import { connectionLost, connectionRestored } from 'state/application/actions';
 

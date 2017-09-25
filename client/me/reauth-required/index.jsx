@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
@@ -19,7 +18,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTelInput from 'components/forms/form-tel-input';
 import Notice from 'components/notice';
-
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';

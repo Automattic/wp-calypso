@@ -14,7 +14,6 @@ import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import { setValidationKey, validateRequest, clearResetMethod } from 'state/account-recovery/reset/actions';
-
 import { getAccountRecoveryResetUserData, getAccountRecoveryResetSelectedMethod, getAccountRecoveryValidationError, isValidatingAccountRecoveryKey } from 'state/selectors';
 
 class ResetPasswordSmsForm extends Component {

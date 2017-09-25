@@ -11,7 +11,6 @@ import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import MediaComponent from 'my-sites/media/main';
-
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 

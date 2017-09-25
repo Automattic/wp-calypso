@@ -4,7 +4,6 @@
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import page from 'page';
-
 import React from 'react';
 import titlecase from 'to-title-case';
 
@@ -15,10 +14,8 @@ import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import trackScrollPage from 'lib/track-scroll-page';
-
 import Posts from 'my-sites/posts/main';
 import { getCurrentUserId } from 'state/current-user/selectors';
-
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';

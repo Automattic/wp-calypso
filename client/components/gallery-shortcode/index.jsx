@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import debugModule from 'debug';
 import { assign, omit, pick } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**

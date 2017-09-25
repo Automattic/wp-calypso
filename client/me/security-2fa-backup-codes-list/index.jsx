@@ -6,10 +6,8 @@ import Clipboard from 'clipboard';
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import ReactDom from 'react-dom';
 
 /**
@@ -24,7 +22,6 @@ import FormLabel from 'components/forms/form-label';
 import Notice from 'components/notice';
 import Tooltip from 'components/tooltip';
 import config from 'config';
-
 import analytics from 'lib/analytics';
 import userFactory from 'lib/user';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );

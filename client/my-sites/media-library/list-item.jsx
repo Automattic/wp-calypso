@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { assign, isEqual, noop, omit } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
@@ -17,7 +16,6 @@ import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import Spinner from 'components/spinner';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
-
 import MediaUtils from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 

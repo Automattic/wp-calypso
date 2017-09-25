@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import { trim, debounce, random, take, reject, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import qs from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';

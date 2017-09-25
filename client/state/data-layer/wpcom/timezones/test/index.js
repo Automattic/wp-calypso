@@ -10,7 +10,6 @@ import { spy } from 'sinon';
  */
 import { addTimezones, fetchTimezones, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
 import { timezonesReceive } from 'state/timezones/actions';
 
 describe( 'timezones request', () => {

@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { find } from 'lodash';
-
 import store from 'store';
 
 const debug = debugFactory( 'calypso:stats-data:local-list' );

@@ -11,7 +11,6 @@ import React from 'react';
  */
 import ButtonsLabelEditor from './label-editor';
 import ButtonsPreviewAction from './preview-action';
-
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsTray from './tray';
 import analytics from 'lib/analytics';

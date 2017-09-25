@@ -12,7 +12,6 @@ import MediaStore from './store';
 import MediaUtils from './utils';
 import MediaValidationStore from './validation-store';
 import Dispatcher from 'dispatcher';
-
 import PostEditStore from 'lib/posts/post-edit-store';
 import wpcom from 'lib/wp';
 const debug = debugFactory( 'calypso:media' );

@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { partial, noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import shallowEqual from 'react-pure-render/shallowEqual';

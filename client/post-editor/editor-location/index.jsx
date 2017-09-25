@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
@@ -11,10 +10,8 @@ import React from 'react';
  */
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
-
 import PostActions from 'lib/posts/actions';
 import stats from 'lib/posts/stats';
-
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import qs from 'querystring';
 

@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -12,7 +11,6 @@ import React from 'react';
  */
 import Button from 'components/button';
 import analyticsMixin from 'lib/mixins/analytics';
-
 import paths from 'my-sites/domains/paths';
 
 const PrimaryDomainButton = React.createClass( {

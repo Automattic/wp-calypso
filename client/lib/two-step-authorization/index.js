@@ -11,7 +11,6 @@ import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';
 import emitter from 'lib/mixins/emitter';
 import profileLinks from 'lib/user-profile-links';
-
 import userSettings from 'lib/user-settings';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );

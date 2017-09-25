@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import { getTheme, getCanonicalTheme, getThemeRequestErrors, isRequestingTheme, getThemesForQuery, getLastThemeQuery, isRequestingThemesForQuery, getThemesFoundForQuery, getThemesLastPageForQuery, isThemesLastPageForQuery, getThemesForQueryIgnoringPage, isRequestingThemesForQueryIgnoringPage, getThemeDetailsUrl, getThemeSupportUrl, getThemeHelpUrl, getThemePurchaseUrl, getThemeCustomizeUrl, getThemeSignupUrl, getThemeDemoUrl, getThemeForumUrl, getActiveTheme, isRequestingActiveTheme, isWporgTheme, isWpcomTheme, isThemeActive, isActivatingTheme, hasActivatedTheme, isInstallingTheme, isThemePremium, isThemePurchased, isPremiumThemeAvailable, isThemeAvailableOnJetpackSite, getWpcomParentThemeId } from '../selectors';
 import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
-
 import ThemeQueryManager from 'lib/query-manager/theme';
 
 const twentyfifteen = {

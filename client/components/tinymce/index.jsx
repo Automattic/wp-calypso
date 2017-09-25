@@ -16,7 +16,6 @@ import 'tinymce/plugins/paste/plugin.js';
 import 'tinymce/plugins/tabfocus/plugin.js';
 import 'tinymce/plugins/textcolor/plugin.js';
 import 'tinymce/themes/modern/theme.js';
-
 import tinymce from 'tinymce/tinymce';
 
 /**
@@ -51,7 +50,6 @@ import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import userFactory from 'lib/user';
-
 import viewport from 'lib/viewport';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 

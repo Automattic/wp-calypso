@@ -8,7 +8,6 @@ import page from 'page';
  */
 import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-
 import route from 'lib/route';
 
 let singleton;

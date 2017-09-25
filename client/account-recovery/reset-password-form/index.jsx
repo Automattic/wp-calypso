@@ -16,7 +16,6 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import { setResetMethod, requestReset } from 'state/account-recovery/reset/actions';
-
 import { getAccountRecoveryResetUserData, getAccountRecoveryResetOptions, getAccountRecoveryResetRequestError, isRequestingAccountRecoveryReset } from 'state/selectors';
 
 export class ResetPasswordFormComponent extends Component {

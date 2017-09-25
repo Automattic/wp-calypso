@@ -3,7 +3,6 @@
  */
 import config from 'config';
 import extensions from 'extensions';
-
 import fs from 'fs';
 import path from 'path';
 

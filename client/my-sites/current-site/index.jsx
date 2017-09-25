@@ -19,7 +19,6 @@ import Card from 'components/card';
 import config from 'config';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-
 import CartStore from 'lib/cart/store';
 import DomainsStore from 'lib/domains/store';
 import UpgradesActions from 'lib/upgrades/actions';

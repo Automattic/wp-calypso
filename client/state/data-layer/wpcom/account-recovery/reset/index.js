@@ -3,7 +3,6 @@
  */
 import { ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST, ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS, ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 export const resetPassword = ( { dispatch }, action ) => {

@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import page from 'page';
-
 import store from 'store';
 
 /**

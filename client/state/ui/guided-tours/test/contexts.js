@@ -9,7 +9,6 @@ import { moment } from 'i18n-calypso';
  */
 import contexts from '../contexts';
 import { SOURCE_GOOGLE_DOCS, SOURCE_UNKNOWN } from 'components/tinymce/plugins/wpcom-track-paste/sources';
-
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';

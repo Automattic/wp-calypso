@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import React from 'react';
 
 /**

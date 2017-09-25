@@ -6,7 +6,6 @@ import clickOutside from 'click-outside';
 import debugFactory from 'debug';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';

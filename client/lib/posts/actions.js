@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { assign, clone, defer, fromPairs } from 'lodash';
-
 import store from 'store';
 
 /**

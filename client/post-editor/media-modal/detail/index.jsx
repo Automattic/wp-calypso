@@ -4,7 +4,6 @@
 import { localize } from 'i18n-calypso';
 import { noop, partial } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -14,7 +13,6 @@ import { connect } from 'react-redux';
 import preloadImage from '../preload-image';
 import DetailItem from './detail-item';
 import HeaderCake from 'components/header-cake';
-
 import MediaUtils from 'lib/media/utils';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';

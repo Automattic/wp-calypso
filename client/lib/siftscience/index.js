@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import loadScript from 'lib/load-script';
-
 import user from 'lib/user';
 
 const debug = debugFactory( 'calypso:siftscience' );

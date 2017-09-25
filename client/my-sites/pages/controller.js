@@ -10,11 +10,9 @@ import titlecase from 'to-title-case';
  */
 import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
-
 import route from 'lib/route';
 import trackScrollPage from 'lib/track-scroll-page';
 import Pages from 'my-sites/pages/main';
-
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const controller = {

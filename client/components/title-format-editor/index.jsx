@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { CompositeDecorator, Editor, EditorState, Entity, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
-
 import { get, head, map, max, min, noop } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';

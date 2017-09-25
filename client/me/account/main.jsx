@@ -38,7 +38,6 @@ import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import _user from 'lib/user';
-
 import eventRecorder from 'me/event-recorder';
 import formBase from 'me/form-base';
 import ReauthRequired from 'me/reauth-required';

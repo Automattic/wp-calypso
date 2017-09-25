@@ -11,7 +11,6 @@ import store from 'store';
  */
 import SignupActions from './actions';
 import SignupDependencyStore from './dependency-store';
-
 import SignupProgressStore from './progress-store';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';

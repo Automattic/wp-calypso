@@ -3,7 +3,6 @@
  */
 import LocaleSuggestionActions from './actions';
 import Dispatcher from 'dispatcher';
-
 import Emitter from 'lib/mixins/emitter';
 
 let localeSuggestions = null;

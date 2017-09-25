@@ -8,7 +8,6 @@ import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
  */
 import { itemsSchema } from './schema';
 import { SITE_RECEIVE, SITES_RECEIVE, SITES_UPDATE, SITE_UPDATES_RECEIVE, SITE_UPDATES_REQUEST, SITE_UPDATES_REQUEST_SUCCESS, SITE_UPDATES_REQUEST_FAILURE, SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS, SITE_WORDPRESS_UPDATE_REQUEST_FAILURE } from 'state/action-types';
-
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 const receiveUpdatesForSites = ( state, sites ) => {

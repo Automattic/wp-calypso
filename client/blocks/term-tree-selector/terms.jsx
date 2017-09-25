@@ -6,7 +6,6 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { debounce, difference, includes, isEqual, filter, map, memoize, range, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import List from 'react-virtualized/List';

@@ -8,7 +8,6 @@ import inherits from 'inherits';
  */
 import config from 'config';
 import Site from 'lib/site';
-
 import SiteUtils from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
 

@@ -11,7 +11,6 @@ import titleCase from 'to-title-case';
  */
 import tableRows from './table-rows';
 import TransactionsHeader from './transactions-header';
-
 import SearchCard from 'components/search-card';
 import { capitalPDangit } from 'lib/formatting';
 

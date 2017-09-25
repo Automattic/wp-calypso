@@ -12,7 +12,6 @@ import { getDeserializedThemesQueryDetails, getNormalizedThemesQuery, getSeriali
 import config from 'config';
 import createSelector from 'lib/create-selector';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-
 import { getSitePurchases } from 'state/purchases/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSiteSlug, getSiteOption, isJetpackSite, canJetpackSiteManage, hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSiteMultiSite } from 'state/sites/selectors';

@@ -17,7 +17,6 @@ import touchDetect from 'lib/touch-detect';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import qs from 'querystring';
 import sections from 'sections';
-
 import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { receiveUser } from 'state/users/actions';

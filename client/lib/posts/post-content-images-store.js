@@ -8,7 +8,6 @@ import { isEqual, pick } from 'lodash';
  */
 import PostsStore from './posts-store';
 import utils from './utils';
-
 import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 

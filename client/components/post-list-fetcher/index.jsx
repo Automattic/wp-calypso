@@ -10,7 +10,6 @@ import React from 'react';
 import Dispatcher from 'dispatcher';
 import pollers from 'lib/data-poller';
 import actions from 'lib/posts/actions';
-
 import PostContentImagesStore from 'lib/posts/post-content-images-store';
 import postListStoreFactory from 'lib/posts/post-list-store-factory';
 

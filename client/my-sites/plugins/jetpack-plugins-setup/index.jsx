@@ -22,7 +22,6 @@ import Spinner from 'components/spinner';
 import analytics from 'lib/analytics';
 import PluginsStore from 'lib/plugins/store';
 import utils from 'lib/site/utils';
-
 import support from 'lib/url/support';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';

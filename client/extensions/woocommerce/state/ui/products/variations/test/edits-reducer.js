@@ -11,7 +11,6 @@ import { editProduct, editProductAttribute } from '../../actions';
 import { editProductVariation, clearProductVariationEdits } from '../actions';
 import reducer from '../edits-reducer';
 import { actionAppendProductVariations } from 'woocommerce/state/data-layer/ui/products';
-
 import { createProductVariation, updateProductVariation, productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
 import { createProduct, productUpdated } from 'woocommerce/state/sites/products/actions';
 

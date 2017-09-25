@@ -8,7 +8,6 @@ import { forOwn } from 'lodash';
  */
 import PreferencesConstants from './constants';
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 
 /**

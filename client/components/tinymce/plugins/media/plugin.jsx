@@ -18,7 +18,6 @@ import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import config from 'config';
 import { ipcRenderer as ipc } from 'electron';
-
 import { deserialize } from 'lib/media-serialization';
 import MediaActions from 'lib/media/actions';
 import * as MediaConstants from 'lib/media/constants';

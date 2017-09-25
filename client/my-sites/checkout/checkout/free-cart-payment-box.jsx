@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
@@ -11,7 +10,6 @@ import React from 'react';
  */
 import CartToggle from './cart-toggle';
 import PayButton from './pay-button';
-
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 

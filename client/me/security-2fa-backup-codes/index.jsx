@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-
 import React from 'react';
 
 /**
@@ -12,7 +11,6 @@ import React from 'react';
 import Button from 'components/button';
 import Card from 'components/card';
 import Notice from 'components/notice';
-
 import SectionHeader from 'components/section-header';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import eventRecorder from 'me/event-recorder';

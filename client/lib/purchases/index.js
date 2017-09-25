@@ -3,7 +3,6 @@
  */
 import i18n from 'i18n-calypso';
 import { find, includes } from 'lodash';
-
 import moment from 'moment';
 
 /**

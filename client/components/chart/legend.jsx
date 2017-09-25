@@ -3,7 +3,6 @@
  */
 import { find, noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent, Component } from 'react';
 
 /**

@@ -3,7 +3,6 @@
  */
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -14,7 +13,6 @@ import ReactDom from 'react-dom';
  */
 import Buttons from './buttons';
 import FormFieldset from 'components/forms/form-fieldset';
-
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';

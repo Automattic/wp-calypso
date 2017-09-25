@@ -9,7 +9,6 @@ import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
  */
 import { decodeEntities } from 'lib/formatting';
 import emitterClass from 'lib/mixins/emitter';
-
 import userFactory from 'lib/user';
 import userUtils from 'lib/user/utils';
 

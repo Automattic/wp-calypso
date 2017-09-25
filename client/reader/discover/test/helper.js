@@ -10,7 +10,6 @@ import { get, omit } from 'lodash';
  */
 import * as fixtures from './fixtures';
 import useFakeDom from 'test/helpers/use-fake-dom';
-
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'helper', () => {

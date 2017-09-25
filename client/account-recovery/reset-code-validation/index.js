@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  */
 import ErrorScreen from 'account-recovery/error-screen';
 import { updatePasswordResetUserData, setResetMethod, validateRequest, validateRequestError } from 'state/account-recovery/reset/actions';
-
 import { getAccountRecoveryValidationError, getAccountRecoveryValidationKey } from 'state/selectors';
 
 class ResetPasswordEmailValidation extends Component {

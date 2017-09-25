@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
  */
 import { defaultStandardPlugins } from './default-plugins';
 import StandardPluginsPanel from './standard-plugins-panel';
-
 import HeaderCake from 'components/header-cake';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSiteSlug } from 'state/sites/selectors';

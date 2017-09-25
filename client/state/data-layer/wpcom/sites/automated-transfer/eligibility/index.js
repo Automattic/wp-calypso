@@ -8,7 +8,6 @@ import { get, identity, isEmpty, map } from 'lodash';
  */
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-
 import { updateEligibility } from 'state/automated-transfer/actions';
 import { eligibilityHolds } from 'state/automated-transfer/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';

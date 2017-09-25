@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import Dispatcher from 'dispatcher';
 import FollowersStore from 'lib/followers/store';
-
 import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:followers-actions' );

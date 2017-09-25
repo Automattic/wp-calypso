@@ -11,7 +11,6 @@ import React from 'react';
  */
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
-
 import analytics from 'lib/analytics';
 import { preventWidows } from 'lib/formatting';
 

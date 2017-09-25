@@ -9,7 +9,6 @@ import { assign, filter, isEqual, pickBy, without } from 'lodash';
  */
 import utils from './utils';
 import Dispatcher from 'dispatcher';
-
 import { decodeEntities } from 'lib/formatting';
 import emitter from 'lib/mixins/emitter';
 

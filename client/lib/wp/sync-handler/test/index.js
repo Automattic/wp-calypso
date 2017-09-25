@@ -14,7 +14,6 @@ import * as testData from './data';
 import localforageMock from './mock/localforage';
 import wpcomUndocumented from 'lib/wpcom-undocumented';
 import querystring from 'querystring';
-
 import useMockery from 'test/helpers/use-mockery';
 
 let wpcom, SyncHandler, hasPaginationChanged, syncOptOut, responseData, cacheIndex;

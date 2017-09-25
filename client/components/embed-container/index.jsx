@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { assign, filter, forEach, forOwn, noop } from 'lodash';
-
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 

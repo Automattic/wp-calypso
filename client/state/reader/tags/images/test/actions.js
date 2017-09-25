@@ -11,7 +11,6 @@ import sinon from 'sinon';
  */
 import { receiveTagImages, requestTagImages } from '../actions';
 import sampleSuccessResponse from './sample-responses.json';
-
 import { READER_TAG_IMAGES_REQUEST, READER_TAG_IMAGES_REQUEST_SUCCESS, READER_TAG_IMAGES_RECEIVE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 

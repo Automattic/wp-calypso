@@ -14,7 +14,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'state';
 import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
 import EmptyComponent from 'test/helpers/react/empty-component';
-
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'main', function() {

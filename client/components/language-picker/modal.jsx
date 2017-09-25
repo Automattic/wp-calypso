@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, map, noop, partial } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 
 /**

@@ -16,7 +16,6 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import PostActions from 'lib/posts/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { editPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';

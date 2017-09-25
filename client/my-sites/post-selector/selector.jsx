@@ -6,7 +6,6 @@ import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { localize } from 'i18n-calypso';
 import { debounce, memoize, get, map, reduce, filter, range, difference, isEqual, includes } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import AutoSizer from 'react-virtualized/AutoSizer';

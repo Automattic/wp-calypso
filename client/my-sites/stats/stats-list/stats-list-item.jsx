@@ -5,10 +5,8 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import page from 'page';
 import React from 'react';
-
 import titlecase from 'to-title-case';
 
 /**
@@ -16,7 +14,6 @@ import titlecase from 'to-title-case';
  */
 import Follow from './action-follow';
 import OpenLink from './action-link';
-
 import Page from './action-page';
 import Spam from './action-spam';
 import Emojify from 'components/emojify';

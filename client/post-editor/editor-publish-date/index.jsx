@@ -6,7 +6,6 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';

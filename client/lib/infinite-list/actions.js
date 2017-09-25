@@ -8,7 +8,6 @@ import { isEqual, throttle } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import positionsStore from 'lib/infinite-list/positions-store';
-
 import scrollStore from 'lib/infinite-list/scroll-store';
 
 /**

@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import reducer, { syncStatus, fullSyncRequest } from '../reducer';
 import { getExpectedResponseKeys } from '../utils';
-
 import { JETPACK_SYNC_STATUS_REQUEST, JETPACK_SYNC_STATUS_SUCCESS, JETPACK_SYNC_STATUS_ERROR, JETPACK_SYNC_START_REQUEST, JETPACK_SYNC_START_SUCCESS, JETPACK_SYNC_START_ERROR } from 'state/action-types';
 
 const successfulSyncStatusRequest = {

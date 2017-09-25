@@ -8,7 +8,6 @@ import { filter } from 'lodash';
  */
 import { bucketedTimeSpentOnCurrentView, getConfigForCurrentView } from './selectors';
 import { FIRST_VIEW_HIDE } from 'state/action-types';
-
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';

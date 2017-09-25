@@ -9,7 +9,6 @@ import React from 'react';
  */
 import renderField from './preview-fields';
 import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
-
 import shortcodeUtils from 'lib/shortcode';
 
 export default localize( React.createClass( {

@@ -10,7 +10,6 @@ import React from 'react';
  */
 import CheckoutData from 'components/data/checkout';
 import { isValidFeatureKey } from 'lib/plans';
-
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Plans from 'my-sites/plans/main';
 

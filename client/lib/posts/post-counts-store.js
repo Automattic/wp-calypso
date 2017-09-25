@@ -11,7 +11,6 @@ import PostListStoreFactory from './post-list-store-factory';
 import PostsStore from './posts-store';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-
 import postUtils from 'lib/posts/utils';
 const debug = debugFactory( 'calypso:posts:post-counts-store' );
 

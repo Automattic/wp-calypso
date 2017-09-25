@@ -5,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import Immutable from 'immutable';
 import { includes, zip } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 
 /**

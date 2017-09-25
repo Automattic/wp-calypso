@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import createReactClass from 'create-react-class';
 import { property, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 

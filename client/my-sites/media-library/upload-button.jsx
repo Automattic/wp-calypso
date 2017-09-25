@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { noop, uniq } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import ReactDom from 'react-dom';
 

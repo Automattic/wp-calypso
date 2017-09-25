@@ -12,7 +12,6 @@ import React from 'react';
 import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
 import * as ShortcodesActions from 'lib/shortcodes/actions';
-
 import ShortcodesStore from 'lib/shortcodes/store';
 
 export default React.createClass( {

@@ -4,7 +4,6 @@
 import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-
 import titlecase from 'to-title-case';
 
 /**

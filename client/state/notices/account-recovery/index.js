@@ -8,7 +8,6 @@ import { translate } from 'i18n-calypso';
  */
 import { dispatchError } from '../utils';
 import { getAccountRecoveryPhone, getAccountRecoveryEmail } from 'state/account-recovery/settings/selectors';
-
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 const getUpdateSuccessMessage = ( target, getState ) => {

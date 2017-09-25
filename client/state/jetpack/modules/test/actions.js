@@ -10,7 +10,6 @@ import sinon from 'sinon';
  */
 import { activateModule, deactivateModule, fetchModuleList } from '../actions';
 import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
-
 import { JETPACK_MODULE_ACTIVATE, JETPACK_MODULE_ACTIVATE_SUCCESS, JETPACK_MODULE_ACTIVATE_FAILURE, JETPACK_MODULE_DEACTIVATE, JETPACK_MODULE_DEACTIVATE_SUCCESS, JETPACK_MODULE_DEACTIVATE_FAILURE, JETPACK_MODULES_RECEIVE, JETPACK_MODULES_REQUEST, JETPACK_MODULES_REQUEST_SUCCESS, JETPACK_MODULES_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 

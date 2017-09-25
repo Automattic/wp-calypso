@@ -5,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import update from 'react-addons-update';
 
@@ -18,7 +17,6 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Notice from 'components/notice';
-
 import { cartItems } from 'lib/cart-values';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import googleAppsLibrary from 'lib/domains/google-apps-users';

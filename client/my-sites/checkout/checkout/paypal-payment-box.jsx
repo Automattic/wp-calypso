@@ -15,7 +15,6 @@ import PaymentChatButton from './payment-chat-button';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import config from 'config';
-
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';

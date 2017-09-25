@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 

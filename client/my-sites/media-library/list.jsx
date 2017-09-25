@@ -5,7 +5,6 @@ import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 

@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 const TokenInput = React.createClass( {

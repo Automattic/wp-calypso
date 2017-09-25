@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import debugFactory from 'debug';
-
 import { localize } from 'i18n-calypso';
 import React from 'react';
 

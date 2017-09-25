@@ -21,7 +21,6 @@ import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { updateAccountRecoveryEmail, updateAccountRecoveryPhone, deleteAccountRecoveryPhone, deleteAccountRecoveryEmail, resendAccountRecoveryEmailValidation, resendAccountRecoveryPhoneValidation, validateAccountRecoveryPhone } from 'state/account-recovery/settings/actions';
-
 import { getAccountRecoveryEmail, getAccountRecoveryPhone, isAccountRecoveryEmailActionInProgress, isAccountRecoveryPhoneActionInProgress, isValidatingAccountRecoveryPhone, isAccountRecoveryEmailValidated, isAccountRecoveryPhoneValidated, hasSentAccountRecoveryEmailValidation, hasSentAccountRecoveryPhoneValidation, shouldPromptAccountRecoveryEmailValidationNotice, shouldPromptAccountRecoveryPhoneValidationNotice } from 'state/account-recovery/settings/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 

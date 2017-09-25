@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import Dispatcher from 'dispatcher';
 import UsersStore from 'lib/users/store';
-
 import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:users:actions' );

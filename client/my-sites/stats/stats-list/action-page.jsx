@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
-
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';

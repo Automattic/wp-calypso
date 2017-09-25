@@ -9,7 +9,6 @@ import update from 'react-addons-update';
  */
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { PLAN_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY } from 'lib/plans/constants';
-
 import productsValues from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 

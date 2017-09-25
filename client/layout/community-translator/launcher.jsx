@@ -3,10 +3,8 @@
  */
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 import localStorageHelper from 'store';
 

@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { get } from 'lodash';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';

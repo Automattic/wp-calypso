@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import { setChatAvailability, operatorsAvailable, operatorsAway } from '../actions';
 import olarkActions from '../actions';
-
 import { OLARK_TIMEOUT_MS } from '../constants';
 import { OLARK_REQUEST, OLARK_TIMEOUT, OLARK_OPERATORS_AVAILABLE, OLARK_OPERATORS_AWAY, OLARK_SET_AVAILABILITY } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';

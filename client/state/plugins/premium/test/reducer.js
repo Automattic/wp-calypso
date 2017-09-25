@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
  */
 import { isRequesting, plugins } from '../reducer';
 import { initSite, installingSite, activatingSite, configuringSite, finishedPluginSite, siteWithError } from './examples';
-
 import { PLUGIN_SETUP_INSTRUCTIONS_FETCH, PLUGIN_SETUP_INSTRUCTIONS_RECEIVE, PLUGIN_SETUP_INSTALL, PLUGIN_SETUP_ACTIVATE, PLUGIN_SETUP_CONFIGURE, PLUGIN_SETUP_FINISH, PLUGIN_SETUP_ERROR } from 'state/action-types';
 
 describe( 'premium reducer', () => {

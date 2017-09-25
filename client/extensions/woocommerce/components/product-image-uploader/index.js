@@ -19,7 +19,6 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
-
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class ProductImageUploader extends Component {

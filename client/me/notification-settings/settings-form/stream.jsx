@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import Immutable from 'immutable';
 import { size, first } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 

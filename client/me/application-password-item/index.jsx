@@ -4,7 +4,6 @@
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,7 +13,6 @@ import { bindActionCreators } from 'redux';
  */
 import Button from 'components/button';
 import eventRecorder from 'me/event-recorder';
-
 import { errorNotice } from 'state/notices/actions';
 const debug = debugFactory( 'calypso:application-password-item' );
 

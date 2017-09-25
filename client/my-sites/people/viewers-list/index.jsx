@@ -3,7 +3,6 @@
  */
 import { localize } from 'i18n-calypso';
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**

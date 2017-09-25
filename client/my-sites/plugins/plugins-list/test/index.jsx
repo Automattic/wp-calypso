@@ -11,7 +11,6 @@ import ReactClass from 'react/lib/ReactClass';
  */
 import { sites } from './fixtures';
 import { createReduxStore } from 'state';
-
 import emptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';

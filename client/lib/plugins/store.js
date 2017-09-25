@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
-
 import localStore from 'store';
 
 /**
@@ -11,7 +10,6 @@ import localStore from 'store';
  */
 import config from 'config';
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 import PluginsActions from 'lib/plugins/actions';
 import PluginUtils from 'lib/plugins/utils';

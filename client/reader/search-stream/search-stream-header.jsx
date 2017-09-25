@@ -5,7 +5,6 @@
 import { localize } from 'i18n-calypso';
 import { noop, values } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 
 /**

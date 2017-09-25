@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-
 import React, { Component } from 'react';
 
 /**

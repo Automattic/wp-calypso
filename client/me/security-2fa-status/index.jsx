@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-
 import React from 'react';
 
 const debug = debugFactory( 'calypso:me:security:2fa-status' );

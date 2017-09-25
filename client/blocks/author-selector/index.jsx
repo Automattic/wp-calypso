@@ -4,7 +4,6 @@
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
 import { trim } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';

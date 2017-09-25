@@ -6,7 +6,6 @@ import { map, range, flatten, max, keys, zipObject, times, size, concat, merge }
 import numeral from 'numeral';
 import page from 'page';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 
 /**

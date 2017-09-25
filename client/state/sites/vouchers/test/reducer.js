@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
 import vouchersReducer, { items, requesting as requestReducer, errors as errorsReducer } from '../reducer';
 import { SITE_ID_0 as firstSiteId, SITE_ID_1 as secondSiteId, VOUCHER_0 as firstVoucher, VOUCHER_1 as secondVoucher, CREDITS as oneOfOurServiceTypesArray, AD_CREDITS_0 as firstAdCredits, AD_CREDITS_1 as secondAdCredits, ERROR_OBJECT as errorObject, SERVICE_TYPE as oneOfOurServiceTypes } from './fixture';
 import { SITE_VOUCHERS_ASSIGN_RECEIVE, SITE_VOUCHERS_ASSIGN_REQUEST, SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS, SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE, SITE_VOUCHERS_RECEIVE, SITE_VOUCHERS_REQUEST, SITE_VOUCHERS_REQUEST_SUCCESS, SITE_VOUCHERS_REQUEST_FAILURE } from 'state/action-types';
-
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 

@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
  */
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 import ActionsList from './publicize-actions-list';
-
 import SharingPreviewModal from './sharing-preview-modal';
 import CalendarButton from 'blocks/calendar-button';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';

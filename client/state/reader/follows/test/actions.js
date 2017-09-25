@@ -10,7 +10,6 @@ import sinon from 'sinon';
  */
 import { recordFollowError } from '../actions';
 import actions from '../actions';
-
 import { READER_RECORD_FOLLOW, READER_RECORD_UNFOLLOW, READER_FOLLOW_ERROR } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 

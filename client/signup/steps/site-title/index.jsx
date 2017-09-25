@@ -3,7 +3,6 @@
  */
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
 import SignupSiteTitle from 'components/signup-site-title';
 import SiteTitleExample from 'components/site-title-example';
 import SignupActions from 'lib/signup/actions';
-
 import StepWrapper from 'signup/step-wrapper';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 

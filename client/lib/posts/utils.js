@@ -9,7 +9,6 @@ import { includes } from 'lodash';
  */
 import { getFeaturedImageId } from './utils-ssr-ready';
 import postNormalizer from 'lib/post-normalizer';
-
 import sitesFactory from 'lib/sites-list';
 import moment from 'moment-timezone';
 import url from 'url';

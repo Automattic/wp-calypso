@@ -3,7 +3,6 @@
  */
 import { siteTitleSchema } from './schema';
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';
-
 import { createReducer } from 'state/utils';
 
 export default createReducer( '',

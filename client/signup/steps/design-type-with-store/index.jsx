@@ -17,7 +17,6 @@ import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import { getThemeForDesignType } from 'signup/utils';
-
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 

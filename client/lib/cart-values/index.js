@@ -10,7 +10,6 @@ import update from 'react-addons-update';
  */
 import cartItems from './cart-items';
 import config from 'config';
-
 import productsValues from 'lib/products-values';
 
 /**

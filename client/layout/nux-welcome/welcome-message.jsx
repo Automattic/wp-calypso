@@ -9,7 +9,6 @@ import React from 'react';
  */
 import config from 'config';
 import analytics from 'lib/analytics';
-
 import route from 'lib/route';
 
 function recordEvent( eventAction ) {

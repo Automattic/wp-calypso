@@ -8,7 +8,6 @@ import { find, isEqual, reject } from 'lodash';
  */
 import ListStore from './lists';
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 
 let lists = null,

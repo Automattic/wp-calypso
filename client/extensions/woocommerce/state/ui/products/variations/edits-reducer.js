@@ -10,7 +10,6 @@ import { editProductAttribute } from '../edits-reducer';
 import { createReducer } from 'state/utils';
 import generateVariations from 'woocommerce/lib/generate-variations';
 import { WOOCOMMERCE_PRODUCT_CREATE, WOOCOMMERCE_PRODUCT_EDIT, WOOCOMMERCE_PRODUCT_UPDATED, WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT, WOOCOMMERCE_PRODUCT_VARIATION_CREATE, WOOCOMMERCE_PRODUCT_VARIATION_EDIT, WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR, WOOCOMMERCE_PRODUCT_VARIATION_UPDATE, WOOCOMMERCE_PRODUCT_VARIATION_UPDATED } from 'woocommerce/state/action-types';
-
 import { getBucket } from 'woocommerce/state/ui/helpers';
 
 export default createReducer( null, {

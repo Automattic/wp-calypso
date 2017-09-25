@@ -3,7 +3,6 @@
  */
 import Gridicon from 'gridicons';
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
