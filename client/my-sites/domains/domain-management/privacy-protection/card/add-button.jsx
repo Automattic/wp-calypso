@@ -1,7 +1,10 @@
+import page from 'page';
+
 /**
  * External dependencies
  */
-import page from 'page';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -14,10 +17,10 @@ import upgradesActions from 'lib/upgrades/actions';
 
 class AddButton extends React.PureComponent {
 	static propTypes = {
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -18,9 +20,9 @@ const noop = () => {};
 
 export default localize( React.createClass( {
 	propTypes: {
-		date: React.PropTypes.object,
-		inputChronoDisplayed: React.PropTypes.bool,
-		onDateChange: React.PropTypes.func,
+		date: PropTypes.object,
+		inputChronoDisplayed: PropTypes.bool,
+		onDateChange: PropTypes.func,
 	},
 
 	getDefaultProps() {

@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import classNames from 'classnames';
@@ -11,12 +13,12 @@ import classNames from 'classnames';
 const SegmentedControlItem = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.node.isRequired,
-		path: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		title: React.PropTypes.string,
-		value: React.PropTypes.string,
-		onClick: React.PropTypes.func
+		children: PropTypes.node.isRequired,
+		path: PropTypes.string,
+		selected: PropTypes.bool,
+		title: PropTypes.string,
+		value: PropTypes.string,
+		onClick: PropTypes.func
 	},
 
 	getDefaultProps: function() {

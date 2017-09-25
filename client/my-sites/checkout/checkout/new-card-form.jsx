@@ -1,8 +1,11 @@
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -17,9 +20,9 @@ export default localize( React.createClass( {
 	displayName: 'NewCardForm',
 
 	propTypes: {
-		countriesList: React.PropTypes.object.isRequired,
-		hasStoredCards: React.PropTypes.bool.isRequired,
-		transaction: React.PropTypes.object.isRequired
+		countriesList: PropTypes.object.isRequired,
+		hasStoredCards: PropTypes.bool.isRequired,
+		transaction: PropTypes.object.isRequired
 	},
 
 	isFieldInvalid: function( fieldName ) {

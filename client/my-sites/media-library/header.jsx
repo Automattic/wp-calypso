@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -27,9 +29,9 @@ export default localize( React.createClass( {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
-		onMediaScaleChange: React.PropTypes.func,
+		onMediaScaleChange: PropTypes.func,
 		onAddMedia: PropTypes.func,
-		sticky: React.PropTypes.bool,
+		sticky: PropTypes.bool,
 	},
 
 	getInitialState() {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 
 /**
@@ -10,10 +12,10 @@ import PaginationPage from './pagination-page';
 
 class Pagination extends Component {
 	static propTypes = {
-		page: React.PropTypes.number.isRequired,
-		perPage: React.PropTypes.number.isRequired,
-		total: React.PropTypes.number,
-		pageClick: React.PropTypes.func.isRequired,
+		page: PropTypes.number.isRequired,
+		perPage: PropTypes.number.isRequired,
+		total: PropTypes.number,
+		pageClick: PropTypes.func.isRequired,
 	}
 
 	getPageList = ( page, pageCount ) => {

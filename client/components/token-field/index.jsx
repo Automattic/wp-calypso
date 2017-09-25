@@ -1,7 +1,10 @@
+import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+
 /**
  * External dependencies
  */
-import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -18,17 +21,17 @@ import TokenInput from './token-input';
 
 const TokenField = React.createClass( {
 	propTypes: {
-		suggestions: React.PropTypes.array,
-		maxSuggestions: React.PropTypes.number,
-		displayTransform: React.PropTypes.func,
-		saveTransform: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		isBorderless: React.PropTypes.bool,
-		maxLength: React.PropTypes.number,
-		onFocus: React.PropTypes.func,
-		disabled: React.PropTypes.bool,
-		tokenizeOnSpace: React.PropTypes.bool,
-		placeholder: React.PropTypes.string,
+		suggestions: PropTypes.array,
+		maxSuggestions: PropTypes.number,
+		displayTransform: PropTypes.func,
+		saveTransform: PropTypes.func,
+		onChange: PropTypes.func,
+		isBorderless: PropTypes.bool,
+		maxLength: PropTypes.number,
+		onFocus: PropTypes.func,
+		disabled: PropTypes.bool,
+		tokenizeOnSpace: PropTypes.bool,
+		placeholder: PropTypes.string,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {

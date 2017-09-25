@@ -1,10 +1,13 @@
-/**
- * External dependencies
- */
 import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
 import ReactDom from 'react-dom';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -29,22 +32,22 @@ export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		media: React.PropTypes.arrayOf( React.PropTypes.object ),
-		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
-		filter: React.PropTypes.string,
-		filterRequiresUpgrade: React.PropTypes.bool.isRequired,
-		search: React.PropTypes.string,
-		containerWidth: React.PropTypes.number,
-		rowPadding: React.PropTypes.number,
-		mediaScale: React.PropTypes.number.isRequired,
-		thumbnailType: React.PropTypes.string,
-		mediaHasNextPage: React.PropTypes.bool,
-		mediaFetchingNextPage: React.PropTypes.bool,
-		mediaOnFetchNextPage: React.PropTypes.func,
-		single: React.PropTypes.bool,
-		scrollable: React.PropTypes.bool,
-		onEditItem: React.PropTypes.func
+		site: PropTypes.object,
+		media: PropTypes.arrayOf( PropTypes.object ),
+		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
+		filter: PropTypes.string,
+		filterRequiresUpgrade: PropTypes.bool.isRequired,
+		search: PropTypes.string,
+		containerWidth: PropTypes.number,
+		rowPadding: PropTypes.number,
+		mediaScale: PropTypes.number.isRequired,
+		thumbnailType: PropTypes.string,
+		mediaHasNextPage: PropTypes.bool,
+		mediaFetchingNextPage: PropTypes.bool,
+		mediaOnFetchNextPage: PropTypes.func,
+		single: PropTypes.bool,
+		scrollable: PropTypes.bool,
+		onEditItem: PropTypes.func
 	},
 
 	getInitialState: function() {

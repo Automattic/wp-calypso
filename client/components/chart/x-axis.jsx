@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { throttle } from 'lodash';
 
@@ -13,8 +15,8 @@ export default class extends React.Component {
 	static displayName = 'ModuleChartXAxis';
 
 	static propTypes = {
-		labelWidth: React.PropTypes.number.isRequired,
-		data: React.PropTypes.array.isRequired
+		labelWidth: PropTypes.number.isRequired,
+		data: PropTypes.array.isRequired
 	};
 
 	state = {

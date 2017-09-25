@@ -2,6 +2,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -45,15 +47,15 @@ export const ExpandableSidebarMenu = props => {
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] )
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
 		.isRequired,
-	count: React.PropTypes.number,
-	addLabel: React.PropTypes.string,
-	addPlaceholder: React.PropTypes.string,
-	onAddSubmit: React.PropTypes.func,
-	onAddClick: React.PropTypes.func,
-	onClick: React.PropTypes.func,
-	hideAddButton: React.PropTypes.bool,
+	count: PropTypes.number,
+	addLabel: PropTypes.string,
+	addPlaceholder: PropTypes.string,
+	onAddSubmit: PropTypes.func,
+	onAddClick: PropTypes.func,
+	onClick: PropTypes.func,
+	hideAddButton: PropTypes.bool,
 };
 
 ExpandableSidebarMenu.defaultProps = {

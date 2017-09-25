@@ -1,8 +1,11 @@
+import { throttle } from 'lodash';
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import { throttle } from 'lodash';
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -15,9 +18,9 @@ export default React.createClass( {
 	displayName: 'StickyPanel',
 
 	propTypes: {
-		minLimit: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.number,
+		minLimit: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.number,
 		] ),
 	},
 

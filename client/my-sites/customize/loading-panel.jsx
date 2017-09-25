@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
@@ -14,7 +16,7 @@ export default localize( React.createClass( {
 	displayName: 'CustomizerLoadingPanel',
 
 	propTypes: {
-		isLoaded: React.PropTypes.bool,
+		isLoaded: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {

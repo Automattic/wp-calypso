@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -17,9 +19,9 @@ export default class extends React.Component {
 	static displayName = 'ModuleChartLabel';
 
 	static propTypes = {
-		width: React.PropTypes.number.isRequired,
-		x: React.PropTypes.number.isRequired,
-		label: React.PropTypes.string.isRequired
+		width: PropTypes.number.isRequired,
+		x: PropTypes.number.isRequired,
+		label: PropTypes.string.isRequired
 	};
 
 	render() {

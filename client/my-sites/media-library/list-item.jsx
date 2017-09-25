@@ -1,7 +1,10 @@
+import { assign, isEqual, noop, omit } from 'lodash';
+
 /**
  * External dependencies
  */
-import { assign, isEqual, noop, omit } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -24,15 +27,15 @@ export default React.createClass( {
 	displayName: 'MediaLibraryListItem',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number.isRequired,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
-		showGalleryHelp: React.PropTypes.bool,
-		selectedIndex: React.PropTypes.number,
-		onToggle: React.PropTypes.func,
-		onEditItem: React.PropTypes.func,
-		style: React.PropTypes.object,
+		media: PropTypes.object,
+		scale: PropTypes.number.isRequired,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
+		showGalleryHelp: PropTypes.bool,
+		selectedIndex: PropTypes.number,
+		onToggle: PropTypes.func,
+		onEditItem: PropTypes.func,
+		style: PropTypes.object,
 	},
 
 	getDefaultProps: function() {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -26,7 +28,7 @@ import support from 'lib/url/support';
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
-		initialShowForm: React.PropTypes.bool
+		initialShowForm: PropTypes.bool
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],

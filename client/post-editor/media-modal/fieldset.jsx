@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import classNames from 'classnames';
@@ -9,9 +11,9 @@ export default React.createClass( {
 	displayName: 'EditorMediaModalFieldset',
 
 	propTypes: {
-		legend: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
+		legend: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.element
 		] ).isRequired
 	},
 

@@ -1,8 +1,11 @@
+import { assign } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -15,11 +18,11 @@ import { maskField, unmaskField } from 'lib/credit-card-details';
 
 class CreditCardFormFields extends React.Component {
 	static propTypes = {
-		card: React.PropTypes.object.isRequired,
-		countriesList: React.PropTypes.object.isRequired,
-		eventFormName: React.PropTypes.string.isRequired,
-		isFieldInvalid: React.PropTypes.func.isRequired,
-		onFieldChange: React.PropTypes.func.isRequired
+		card: PropTypes.object.isRequired,
+		countriesList: PropTypes.object.isRequired,
+		eventFormName: PropTypes.string.isRequired,
+		isFieldInvalid: PropTypes.func.isRequired,
+		onFieldChange: PropTypes.func.isRequired
 	};
 
 	field = ( fieldName, componentClass, props ) => {

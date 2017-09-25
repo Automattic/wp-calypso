@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -61,7 +63,7 @@ export default localize( React.createClass( {
 	},
 
 	propTypes: {
-		onNextStep: React.PropTypes.func.isRequired
+		onNextStep: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {

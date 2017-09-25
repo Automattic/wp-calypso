@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -19,15 +21,15 @@ import Site from 'blocks/site';
 
 const PluginSiteJetpack = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		allowedActions: React.PropTypes.shape( {
-			activation: React.PropTypes.bool,
-			autoupdate: React.PropTypes.bool,
-			remove: React.PropTypes.bool,
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		allowedActions: PropTypes.shape( {
+			activation: PropTypes.bool,
+			autoupdate: PropTypes.bool,
+			remove: PropTypes.bool,
 		} ),
-		isAutoManaged: React.PropTypes.bool,
+		isAutoManaged: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {

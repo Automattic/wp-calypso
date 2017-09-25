@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -30,10 +32,10 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		imageSize: React.PropTypes.number,
-		title: React.PropTypes.string.isRequired,
-		url: React.PropTypes.string.isRequired,
-		slug: React.PropTypes.string.isRequired
+		imageSize: PropTypes.number,
+		title: PropTypes.string.isRequired,
+		url: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired
 	},
 
 	renderRemove() {

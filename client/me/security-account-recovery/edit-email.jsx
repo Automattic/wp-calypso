@@ -1,9 +1,11 @@
-/**
- * External dependencies
- */
 import ReactDom from 'react-dom';
 
 import { localize } from 'i18n-calypso';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
 
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -25,10 +27,10 @@ export default localize( React.createClass( {
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		storedEmail: React.PropTypes.string,
-		onSave: React.PropTypes.func,
-		onCancel: React.PropTypes.func,
-		onDelete: React.PropTypes.func
+		storedEmail: PropTypes.string,
+		onSave: PropTypes.func,
+		onCancel: PropTypes.func,
+		onDelete: PropTypes.func
 	},
 
 	getDefaultProps: function() {

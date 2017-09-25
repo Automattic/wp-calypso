@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -14,9 +16,9 @@ export default class extends React.Component {
 	static displayName = 'BulkSelect';
 
 	static propTypes = {
-		totalElements: React.PropTypes.number.isRequired,
-		selectedElements: React.PropTypes.number.isRequired,
-		onToggle: React.PropTypes.func.isRequired
+		totalElements: PropTypes.number.isRequired,
+		selectedElements: PropTypes.number.isRequired,
+		onToggle: PropTypes.func.isRequired
 	};
 
 	getStateIcon = () => {

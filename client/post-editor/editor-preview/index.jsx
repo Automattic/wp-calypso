@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import url from 'url';
 import classNames from 'classnames';
@@ -18,15 +20,15 @@ const EditorPreview = React.createClass( {
 	_hasTouch: false,
 
 	propTypes: {
-		showPreview: React.PropTypes.bool,
-		isSaving: React.PropTypes.bool,
-		isLoading: React.PropTypes.bool,
-		isFullScreen: React.PropTypes.bool,
-		previewUrl: React.PropTypes.string,
-		editUrl: React.PropTypes.string,
-		onClose: React.PropTypes.func,
-		postId: React.PropTypes.number,
-		revision: React.PropTypes.number,
+		showPreview: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		isLoading: PropTypes.bool,
+		isFullScreen: PropTypes.bool,
+		previewUrl: PropTypes.string,
+		editUrl: PropTypes.string,
+		onClose: PropTypes.func,
+		postId: PropTypes.number,
+		revision: PropTypes.number,
 	},
 
 	getInitialState() {

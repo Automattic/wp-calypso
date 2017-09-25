@@ -1,10 +1,13 @@
-/**
- * External dependencies
- */
 import { connect } from 'react-redux';
 import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -57,9 +60,9 @@ const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
 
 	propTypes: {
-		cards: React.PropTypes.array.isRequired,
-		couponCode: React.PropTypes.string,
-		selectedFeature: React.PropTypes.string
+		cards: PropTypes.array.isRequired,
+		couponCode: PropTypes.string,
+		selectedFeature: PropTypes.string
 	},
 
 	getInitialState: function() {

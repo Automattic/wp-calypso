@@ -1,8 +1,11 @@
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 
@@ -23,11 +26,11 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 
 const Plans = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
-		context: React.PropTypes.object.isRequired,
-		intervalType: React.PropTypes.string,
-		selectedSite: React.PropTypes.object,
-		displayJetpackPlans: React.PropTypes.bool
+		cart: PropTypes.object.isRequired,
+		context: PropTypes.object.isRequired,
+		intervalType: PropTypes.string,
+		selectedSite: PropTypes.object,
+		displayJetpackPlans: PropTypes.bool
 	},
 
 	getDefaultProps() {

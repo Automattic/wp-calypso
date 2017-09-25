@@ -1,8 +1,11 @@
+import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import update from 'react-addons-update';
 import page from 'page';
@@ -36,8 +39,8 @@ const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
 
 	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string
+		domains: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string
 	},
 
 	getInitialState() {

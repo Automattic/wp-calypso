@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -25,10 +27,10 @@ export default localize( React.createClass( {
 	displayName: 'PluginSiteNetwork',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		secondarySites: React.PropTypes.array,
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		secondarySites: PropTypes.array,
 	},
 
 	renderInstallButton: function() {

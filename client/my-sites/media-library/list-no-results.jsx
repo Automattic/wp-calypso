@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -14,8 +16,8 @@ export default localize( React.createClass( {
 	displayName: 'MediaLibraryListNoResults',
 
 	propTypes: {
-		filter: React.PropTypes.string,
-		search: React.PropTypes.string
+		filter: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	getDefaultProps: function() {

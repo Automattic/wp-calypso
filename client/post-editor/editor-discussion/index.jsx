@@ -1,8 +1,11 @@
+import { get, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { get, pick } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -27,9 +30,9 @@ export default localize( React.createClass( {
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
-		isNew: React.PropTypes.bool,
-		post: React.PropTypes.object,
-		site: React.PropTypes.object
+		isNew: PropTypes.bool,
+		post: PropTypes.object,
+		site: PropTypes.object
 	},
 
 	getDefaultProps: function() {

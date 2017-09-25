@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get, find, defer } from 'lodash';
@@ -41,9 +43,9 @@ const SecurePaymentForm = React.createClass( {
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
-		handleCheckoutCompleteRedirect: React.PropTypes.func.isRequired,
-		products: React.PropTypes.object.isRequired,
-		redirectTo: React.PropTypes.func.isRequired,
+		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		products: PropTypes.object.isRequired,
+		redirectTo: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {

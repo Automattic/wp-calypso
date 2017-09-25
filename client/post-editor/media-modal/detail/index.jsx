@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -19,13 +21,13 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
 export const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number,
-		onSelectedIndexChange: React.PropTypes.func,
-		onReturnToList: React.PropTypes.func,
-		onEdit: React.PropTypes.func,
-		onRestore: React.PropTypes.func,
+		site: PropTypes.object,
+		items: PropTypes.array,
+		selectedIndex: PropTypes.number,
+		onSelectedIndexChange: PropTypes.func,
+		onReturnToList: PropTypes.func,
+		onEdit: PropTypes.func,
+		onRestore: PropTypes.func,
 	},
 
 	getDefaultProps: function() {

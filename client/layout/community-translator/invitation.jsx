@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -15,7 +17,7 @@ export default localize( React.createClass( {
 	displayName: 'CommunityTranslatorInvitation',
 
 	propTypes: {
-		isVisible: React.PropTypes.bool
+		isVisible: PropTypes.bool
 	},
 
 	render: function() {

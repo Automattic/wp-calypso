@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -30,11 +32,11 @@ const DeleteUser = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		isMultisite: React.PropTypes.bool,
-		isJetpack: React.PropTypes.bool,
-		siteId: React.PropTypes.number,
-		user: React.PropTypes.object,
-		currentUser: React.PropTypes.object,
+		isMultisite: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		siteId: PropTypes.number,
+		user: PropTypes.object,
+		currentUser: PropTypes.object,
 	},
 
 	getInitialState: function() {

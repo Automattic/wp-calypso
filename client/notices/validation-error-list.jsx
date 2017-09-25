@@ -1,15 +1,18 @@
+import { map } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { map } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 export default localize( React.createClass( {
 	displayName: 'ValidationErrorList',
 
 	propTypes: {
-		messages: React.PropTypes.array.isRequired
+		messages: PropTypes.array.isRequired
 	},
 
 	render: function() {

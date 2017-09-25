@@ -1,8 +1,11 @@
+import { assign, filter, find } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { assign, filter, find } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -18,14 +21,14 @@ export default localize( React.createClass( {
 	displayName: 'SharingButtonsTray',
 
 	propTypes: {
-		buttons: React.PropTypes.array,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		visibility: React.PropTypes.oneOf( [ 'visible', 'hidden' ] ),
-		onButtonsChange: React.PropTypes.func,
-		onButtonChange: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		active: React.PropTypes.bool,
-		limited: React.PropTypes.bool
+		buttons: PropTypes.array,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		visibility: PropTypes.oneOf( [ 'visible', 'hidden' ] ),
+		onButtonsChange: PropTypes.func,
+		onButtonChange: PropTypes.func,
+		onClose: PropTypes.func,
+		active: PropTypes.bool,
+		limited: PropTypes.bool
 	},
 
 	getInitialState: function() {

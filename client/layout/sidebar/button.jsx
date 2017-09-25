@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -15,10 +17,10 @@ export default localize( React.createClass( {
 	displayName: 'SidebarButton',
 
 	propTypes: {
-		href: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		preloadSectionName: React.PropTypes.string,
-		children: React.PropTypes.node
+		href: PropTypes.string,
+		onClick: PropTypes.func,
+		preloadSectionName: PropTypes.string,
+		children: PropTypes.node
 	},
 
 	_preloaded: false,

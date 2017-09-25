@@ -1,8 +1,11 @@
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 
 /**
  * Internal dependecies

@@ -1,9 +1,12 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 
 /**
@@ -13,10 +16,10 @@ import Button from 'components/button';
 
 class PaginationPage extends Component {
 	static propTypes = {
-		pageNumber: React.PropTypes.node.isRequired,
-		currentPage: React.PropTypes.number.isRequired,
-		totalPages: React.PropTypes.number.isRequired,
-		pageClick: React.PropTypes.func.isRequired,
+		pageNumber: PropTypes.node.isRequired,
+		currentPage: PropTypes.number.isRequired,
+		totalPages: PropTypes.number.isRequired,
+		pageClick: PropTypes.func.isRequired,
 	}
 
 	clickHandler = ( event ) => {

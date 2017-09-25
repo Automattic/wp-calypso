@@ -1,8 +1,11 @@
+import page from 'page';
+
 /**
  * External Dependencies
  */
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { moment } from 'i18n-calypso';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';

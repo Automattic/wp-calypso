@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -19,8 +21,8 @@ export default localize( React.createClass( {
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
 	propTypes: {
-		showingForm: React.PropTypes.bool,
-		showPopoverMenu: React.PropTypes.bool
+		showingForm: PropTypes.bool,
+		showPopoverMenu: PropTypes.bool
 	},
 
 	getDefaultProps() {

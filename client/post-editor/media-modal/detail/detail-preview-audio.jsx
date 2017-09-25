@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -13,8 +15,8 @@ export default React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewAudio',
 
 	propTypes: {
-		className: React.PropTypes.string,
-		item: React.PropTypes.object.isRequired
+		className: PropTypes.string,
+		item: PropTypes.object.isRequired
 	},
 
 	render: function() {

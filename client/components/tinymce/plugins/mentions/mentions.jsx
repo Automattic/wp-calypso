@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
 import { escapeRegExp, findIndex, get, head, includes, last, pick } from 'lodash';

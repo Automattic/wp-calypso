@@ -1,7 +1,10 @@
+import { map } from 'lodash';
+
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -9,12 +12,12 @@ import scrollIntoView from 'dom-scroll-into-view';
 
 const SuggestionsList = React.createClass( {
 	propTypes: {
-		isExpanded: React.PropTypes.bool,
-		match: React.PropTypes.string,
-		displayTransform: React.PropTypes.func.isRequired,
-		onSelect: React.PropTypes.func,
-		suggestions: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number
+		isExpanded: PropTypes.bool,
+		match: PropTypes.string,
+		displayTransform: PropTypes.func.isRequired,
+		onSelect: PropTypes.func,
+		suggestions: PropTypes.array,
+		selectedIndex: PropTypes.number
 	},
 
 	getDefaultProps: function() {

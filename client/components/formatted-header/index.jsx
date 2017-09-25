@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import classNames from 'classnames';
 
 /**
@@ -28,7 +30,7 @@ function FormattedHeader( { headerText, subHeaderText } ) {
 
 FormattedHeader.propTypes = {
 	headerText: PropTypes.string,
-	subHeaderText: React.PropTypes.node,
+	subHeaderText: PropTypes.node,
 };
 
 export default FormattedHeader;

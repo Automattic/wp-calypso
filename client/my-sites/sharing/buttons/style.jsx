@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -14,9 +16,9 @@ export default localize( React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {
-		onChange: React.PropTypes.func,
-		value: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		onChange: PropTypes.func,
+		value: PropTypes.string,
+		disabled: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

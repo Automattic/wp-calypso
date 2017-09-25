@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import chrono from 'chrono-node';
@@ -16,10 +18,10 @@ export default localize( React.createClass( {
 	focused: false,
 
 	propTypes: {
-		value: React.PropTypes.string,
-		lang: React.PropTypes.string,
-		onSet: React.PropTypes.func,
-		placeholder: React.PropTypes.string
+		value: PropTypes.string,
+		lang: PropTypes.string,
+		onSet: PropTypes.func,
+		placeholder: PropTypes.string
 	},
 
 	getDefaultProps() {

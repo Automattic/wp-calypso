@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
@@ -22,9 +24,9 @@ const EditorSticky = React.createClass( {
 	displayName: 'EditorSticky',
 
 	propTypes: {
-		postId: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		sticky: React.PropTypes.bool
+		postId: PropTypes.number,
+		siteId: PropTypes.number,
+		sticky: PropTypes.bool
 	},
 
 	getInitialState: function() {

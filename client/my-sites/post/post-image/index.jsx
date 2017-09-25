@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -14,22 +16,22 @@ const PostImage = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		postImages: React.PropTypes.shape( {
-			featured_image: React.PropTypes.string,
-			canonical_image: React.PropTypes.shape( {
-				uri: React.PropTypes.string.isRequired,
-				width: React.PropTypes.number,
-				height: React.PropTypes.number,
+		postImages: PropTypes.shape( {
+			featured_image: PropTypes.string,
+			canonical_image: PropTypes.shape( {
+				uri: PropTypes.string.isRequired,
+				width: PropTypes.number,
+				height: PropTypes.number,
 			} ),
-			content_images: React.PropTypes.arrayOf( React.PropTypes.shape( {
-				src: React.PropTypes.string.isRequired,
-				width: React.PropTypes.number,
-				height: React.PropTypes.number
+			content_images: PropTypes.arrayOf( PropTypes.shape( {
+				src: PropTypes.string.isRequired,
+				width: PropTypes.number,
+				height: PropTypes.number
 			} ) ),
-			images: React.PropTypes.arrayOf( React.PropTypes.shape( {
-				src: React.PropTypes.string.isRequired,
-				width: React.PropTypes.number,
-				height: React.PropTypes.number
+			images: PropTypes.arrayOf( PropTypes.shape( {
+				src: PropTypes.string.isRequired,
+				width: PropTypes.number,
+				height: PropTypes.number
 			} ) )
 		} )
 	},

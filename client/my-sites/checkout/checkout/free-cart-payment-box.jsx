@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -17,7 +19,7 @@ import CartToggle from './cart-toggle';
 
 const FreeCartPaymentBox = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired
+		products: PropTypes.object.isRequired
 	},
 
 	content: function() {

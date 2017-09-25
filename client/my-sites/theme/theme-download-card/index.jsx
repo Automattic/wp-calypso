@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -14,7 +16,7 @@ import { localize } from 'i18n-calypso';
 class ThemeDownloadCard extends React.PureComponent {
 
 	static propTypes = {
-		href: React.PropTypes.string
+		href: PropTypes.string
 	}
 
 	render() {

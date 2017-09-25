@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -16,10 +18,10 @@ export default React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
+		media: PropTypes.object,
+		scale: PropTypes.number,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
 	},
 
 	getDefaultProps: function() {

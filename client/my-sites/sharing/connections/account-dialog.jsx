@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
@@ -17,7 +19,7 @@ import { warningNotice } from 'state/notices/actions';
 
 class AccountDialog extends Component {
 	static propTypes = {
-		accounts: PropTypes.arrayOf( React.PropTypes.object ),
+		accounts: PropTypes.arrayOf( PropTypes.object ),
 		isVisible: PropTypes.bool,
 		onAccountSelected: PropTypes.func,
 		service: PropTypes.object,

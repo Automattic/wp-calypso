@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { localize } from 'i18n-calypso';
@@ -26,13 +28,13 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
-		domain: React.PropTypes.string.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		onAddGoogleApps: React.PropTypes.func.isRequired,
-		onClickSkip: React.PropTypes.func.isRequired,
-		onGoBack: React.PropTypes.func,
-		analyticsSection: React.PropTypes.string,
-		initialGoogleAppsCartItem: React.PropTypes.object
+		domain: PropTypes.string.isRequired,
+		productsList: PropTypes.object.isRequired,
+		onAddGoogleApps: PropTypes.func.isRequired,
+		onClickSkip: PropTypes.func.isRequired,
+		onGoBack: PropTypes.func,
+		analyticsSection: PropTypes.string,
+		initialGoogleAppsCartItem: PropTypes.object
 	};
 
 	state = {

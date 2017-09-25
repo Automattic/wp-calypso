@@ -1,8 +1,11 @@
+import { filter, map } from 'lodash';
+import ReactDom from 'react-dom';
+
 /**
  * External dependencies
  */
-import { filter, map } from 'lodash';
-import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -21,16 +24,16 @@ let _instance = 1;
  */
 const SegmentedControl = React.createClass( {
 	propTypes: {
-		initialSelected: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		style: React.PropTypes.object,
-		onSelect: React.PropTypes.func,
-		options: React.PropTypes.arrayOf(
-			React.PropTypes.shape( {
-				value: React.PropTypes.string.isRequired,
-				label: React.PropTypes.string.isRequired,
-				path: React.PropTypes.string
+		initialSelected: PropTypes.string,
+		compact: PropTypes.bool,
+		className: PropTypes.string,
+		style: PropTypes.object,
+		onSelect: PropTypes.func,
+		options: PropTypes.arrayOf(
+			PropTypes.shape( {
+				value: PropTypes.string.isRequired,
+				label: PropTypes.string.isRequired,
+				path: PropTypes.string
 			} )
 		)
 	},

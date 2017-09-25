@@ -1,7 +1,10 @@
+import { property, sortBy } from 'lodash';
+
 /**
  * External dependencies
  */
-import { property, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -59,20 +62,20 @@ Layout = createReactClass( {
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
 
 	propTypes: {
-		primary: React.PropTypes.element,
-		secondary: React.PropTypes.element,
-		user: React.PropTypes.object,
-		nuxWelcome: React.PropTypes.object,
-		translatorInvitation: React.PropTypes.object,
-		focus: React.PropTypes.object,
+		primary: PropTypes.element,
+		secondary: PropTypes.element,
+		user: PropTypes.object,
+		nuxWelcome: PropTypes.object,
+		translatorInvitation: PropTypes.object,
+		focus: PropTypes.object,
 		// connected props
-		isLoading: React.PropTypes.bool,
-		isSupportUser: React.PropTypes.bool,
-		section: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object,
+		isLoading: PropTypes.bool,
+		isSupportUser: PropTypes.bool,
+		section: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object,
 		] ),
-		isOffline: React.PropTypes.bool,
+		isOffline: PropTypes.bool,
 	},
 
 	closeWelcome: function() {

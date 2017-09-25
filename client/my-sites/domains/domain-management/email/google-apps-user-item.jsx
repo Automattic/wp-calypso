@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -12,8 +14,8 @@ import ExternalLink from 'components/external-link';
 
 const GoogleAppsUserItem = React.createClass( {
 	propTypes: {
-		user: React.PropTypes.object.isRequired,
-		onClick: React.PropTypes.func
+		user: PropTypes.object.isRequired,
+		onClick: PropTypes.func
 	},
 
 	shouldComponentUpdate( nextProps ) {

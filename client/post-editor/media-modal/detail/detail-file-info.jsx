@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -17,7 +19,7 @@ export default localize( React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',
 
 	propTypes: {
-		item: React.PropTypes.object
+		item: PropTypes.object
 	},
 
 	getItemValue( attribute ) {

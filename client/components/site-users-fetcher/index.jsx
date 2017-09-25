@@ -1,7 +1,10 @@
+import { includes, isEqual, omit, partition } from 'lodash';
+
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, partition } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:site-users-fetcher' );
@@ -26,10 +29,10 @@ export default React.createClass( {
 	displayName: 'SiteUsersFetcher',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired,
-		exclude: React.PropTypes.oneOfType( [
-			React.PropTypes.arrayOf( React.PropTypes.number ),
-			React.PropTypes.func
+		fetchOptions: PropTypes.object.isRequired,
+		exclude: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.number ),
+			PropTypes.func
 		] )
 	},
 

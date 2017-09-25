@@ -1,10 +1,13 @@
+import { forEach } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /* eslint-disable no-multi-spaces */
 
 /**
  * External dependencies
  */
-import { forEach } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -17,9 +20,9 @@ import FormButton from 'components/forms/form-button';
 const HelpModal = React.createClass( {
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		macosx: React.PropTypes.bool,
-		showDialog: React.PropTypes.bool
+		onClose: PropTypes.func,
+		macosx: PropTypes.bool,
+		showDialog: PropTypes.bool
 	},
 
 	defaultShortcuts() {

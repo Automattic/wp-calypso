@@ -1,8 +1,11 @@
+import { filter, some } from 'lodash';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import { filter, some } from 'lodash';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -20,14 +23,14 @@ export default localize( React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {
-		isPrivateSite: React.PropTypes.bool,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		label: React.PropTypes.string,
-		buttons: React.PropTypes.array,
-		showLike: React.PropTypes.bool,
-		showReblog: React.PropTypes.bool,
-		onLabelChange: React.PropTypes.func,
-		onButtonsChange: React.PropTypes.func
+		isPrivateSite: PropTypes.bool,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		label: PropTypes.string,
+		buttons: PropTypes.array,
+		showLike: PropTypes.bool,
+		showReblog: PropTypes.bool,
+		onLabelChange: PropTypes.func,
+		onButtonsChange: PropTypes.func
 	},
 
 	getInitialState: function() {

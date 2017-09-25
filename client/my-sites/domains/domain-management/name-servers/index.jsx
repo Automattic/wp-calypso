@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -27,12 +29,12 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 
 class NameServers extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		nameservers: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		nameservers: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired
 	};
 

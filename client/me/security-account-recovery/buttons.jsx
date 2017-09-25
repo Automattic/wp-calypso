@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -17,12 +19,12 @@ export default localize( React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',
 
 	propTypes: {
-		isSavable: React.PropTypes.bool,
-		isDeletable: React.PropTypes.bool,
-		saveText: React.PropTypes.string,
-		onSave: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired,
-		onDelete: React.PropTypes.func.isRequired
+		isSavable: PropTypes.bool,
+		isDeletable: PropTypes.bool,
+		saveText: PropTypes.string,
+		onSave: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
+		onDelete: PropTypes.func.isRequired
 	},
 
 	render: function() {

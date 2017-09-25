@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -21,10 +23,10 @@ import QueryWhois from 'components/data/query-whois';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
-		contactDetails: React.PropTypes.object,
-		explanationContext: React.PropTypes.string,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSiteSlug: React.PropTypes.string.isRequired,
+		contactDetails: PropTypes.object,
+		explanationContext: PropTypes.string,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string.isRequired,
 	};
 
 	state = {

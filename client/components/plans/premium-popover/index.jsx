@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -24,11 +26,11 @@ let exclusiveViewLock = null;
 
 const PremiumPopover = React.createClass( {
 	propTypes: {
-		className: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.object, React.PropTypes.array ] ),
-		onClose: React.PropTypes.func,
-		isVisible: React.PropTypes.bool,
-		position: React.PropTypes.string.isRequired,
-		textLabel: React.PropTypes.string
+		className: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] ),
+		onClose: PropTypes.func,
+		isVisible: PropTypes.bool,
+		position: PropTypes.string.isRequired,
+		textLabel: PropTypes.string
 	},
 	getInitialState() {
 		return {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
@@ -57,8 +59,8 @@ export default class PlanIcon extends Component {
 }
 
 PlanIcon.propTypes = {
-	classNames: React.PropTypes.string,
-	plan: React.PropTypes.oneOf( [
+	classNames: PropTypes.string,
+	plan: PropTypes.oneOf( [
 		PLAN_FREE,
 		PLAN_PREMIUM,
 		PLAN_BUSINESS,

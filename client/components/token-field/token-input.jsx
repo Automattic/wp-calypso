@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import PureRenderMixin from 'react-pure-render/mixin';
 
 const TokenInput = React.createClass( {
 	propTypes: {
-		onChange: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		onChange: PropTypes.func,
+		onBlur: PropTypes.func,
+		value: PropTypes.string,
+		placeholder: PropTypes.string,
+		disabled: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

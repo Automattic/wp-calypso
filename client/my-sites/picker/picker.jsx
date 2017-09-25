@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { noop } from 'lodash';
@@ -19,10 +21,10 @@ const SitePicker = React.createClass( {
 	displayName: 'SitePicker',
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		currentLayoutFocus: React.PropTypes.string,
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
+		onClose: PropTypes.func,
+		currentLayoutFocus: PropTypes.string,
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {

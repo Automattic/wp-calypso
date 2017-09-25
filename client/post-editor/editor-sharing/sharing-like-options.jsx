@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -18,11 +20,11 @@ import { isJetpackModuleActive } from 'state/sites/selectors';
 
 const SharingLikeOptions = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		isSharingButtonsEnabled: React.PropTypes.bool,
-		isLikesEnabled: React.PropTypes.bool,
-		isNew: React.PropTypes.bool
+		site: PropTypes.object,
+		post: PropTypes.object,
+		isSharingButtonsEnabled: PropTypes.bool,
+		isLikesEnabled: PropTypes.bool,
+		isNew: PropTypes.bool
 	},
 
 	isShowingSharingButtons: function() {

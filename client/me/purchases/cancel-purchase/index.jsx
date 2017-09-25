@@ -1,9 +1,12 @@
-/**
- * External Dependencies
- */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+
+/**
+ * External Dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -44,10 +47,10 @@ const user = userFactory();
 
 const CancelPurchase = localize( React.createClass( {
 	propTypes: {
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
 	componentWillMount() {

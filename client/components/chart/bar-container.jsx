@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -19,11 +21,11 @@ export default class extends React.Component {
 	static displayName = 'ModuleChartBarContainer';
 
 	static propTypes = {
-		isTouch: React.PropTypes.bool,
-		data: React.PropTypes.array,
-		yAxisMax: React.PropTypes.number,
-		width: React.PropTypes.number,
-		barClick: React.PropTypes.func
+		isTouch: PropTypes.bool,
+		data: PropTypes.array,
+		yAxisMax: PropTypes.number,
+		width: PropTypes.number,
+		barClick: PropTypes.func
 	};
 
 	buildBars = max => {

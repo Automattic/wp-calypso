@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -30,8 +32,8 @@ export default localize( React.createClass( {
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
+		onPrintAgain: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

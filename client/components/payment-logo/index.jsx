@@ -1,13 +1,16 @@
+import classNames from 'classnames';
+
 /**
  * External dependencies
  */
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 const PaymentLogo = React.createClass( {
 	propTypes: {
-		type: React.PropTypes.string.isRequired,
-		isCompact: React.PropTypes.bool
+		type: PropTypes.string.isRequired,
+		isCompact: PropTypes.bool
 	},
 
 	render: function() {

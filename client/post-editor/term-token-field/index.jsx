@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
@@ -92,13 +94,13 @@ class TermTokenField extends React.Component {
 }
 
 TermTokenField.propTypes = {
-	siteId: React.PropTypes.number,
-	postId: React.PropTypes.number,
-	postTerms: React.PropTypes.object,
-	taxonomyName: React.PropTypes.string,
-	taxonomyLabel: React.PropTypes.string,
-	terms: React.PropTypes.arrayOf( React.PropTypes.object ),
-	editPost: React.PropTypes.func,
+	siteId: PropTypes.number,
+	postId: PropTypes.number,
+	postTerms: PropTypes.object,
+	taxonomyName: PropTypes.string,
+	taxonomyLabel: PropTypes.string,
+	terms: PropTypes.arrayOf( PropTypes.object ),
+	editPost: PropTypes.func,
 };
 
 export default connect(

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -17,10 +19,10 @@ export default localize( React.createClass( {
 	displayName: 'StatusLabel',
 
 	propTypes: {
-		onClick: React.PropTypes.func,
-		post: React.PropTypes.object,
-		type: React.PropTypes.string,
-		advancedStatus: React.PropTypes.bool
+		onClick: PropTypes.func,
+		post: PropTypes.object,
+		type: PropTypes.string,
+		advancedStatus: PropTypes.bool
 	},
 
 	mixins: [ PureRenderMixin ],

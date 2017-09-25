@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -21,9 +23,9 @@ const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 );
 
 ExpandableSidebarHeading.propTypes = {
-	title: React.PropTypes.string.isRequired,
-	count: React.PropTypes.number,
-	onClick: React.PropTypes.func,
+	title: PropTypes.string.isRequired,
+	count: PropTypes.number,
+	onClick: PropTypes.func,
 };
 
 ExpandableSidebarHeading.defaultProps = {

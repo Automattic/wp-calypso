@@ -1,9 +1,11 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
 
 import qs from 'querystring';
 
@@ -27,7 +29,7 @@ export default localize( React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
-		label: React.PropTypes.string,
+		label: PropTypes.string,
 		coordinates: function( props, propName ) {
 			const prop = props[ propName ];
 			if ( prop && ( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length ) ) {

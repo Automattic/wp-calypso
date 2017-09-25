@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { noop, omit } from 'lodash';
 
@@ -18,11 +20,11 @@ export default React.createClass( {
 	displayName: 'ImagePreloader',
 
 	propTypes: {
-		src: React.PropTypes.string,
-		placeholder: React.PropTypes.element.isRequired,
-		children: React.PropTypes.node,
-		onLoad: React.PropTypes.func,
-		onError: React.PropTypes.func
+		src: PropTypes.string,
+		placeholder: PropTypes.element.isRequired,
+		children: PropTypes.node,
+		onLoad: PropTypes.func,
+		onError: PropTypes.func
 	},
 
 	getInitialState() {

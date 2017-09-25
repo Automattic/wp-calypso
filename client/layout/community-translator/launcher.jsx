@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -21,8 +23,8 @@ export default localize( React.createClass( {
 	displayName: 'TranslatorLauncher',
 
 	propTypes: {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
+		isActive: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired
 	},
 
 	mixins: [ PureRenderMixin ],

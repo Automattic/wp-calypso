@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -8,6 +5,12 @@ import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-enable' );
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import QRCode from 'qrcode.react';
 import classNames from 'classnames';
 
@@ -42,9 +45,9 @@ export default localize( React.createClass( {
 	},
 
 	propTypes: {
-		doSMSFlow: React.PropTypes.bool,
-		onCancel: React.PropTypes.func.isRequired,
-		onSuccess: React.PropTypes.func.isRequired,
+		doSMSFlow: PropTypes.bool,
+		onCancel: PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {

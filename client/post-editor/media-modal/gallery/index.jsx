@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -21,11 +23,11 @@ import { isModuleActive } from 'lib/site/utils';
 
 const EditorMediaModalGallery = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		settings: React.PropTypes.object,
-		onUpdateSettings: React.PropTypes.func,
-		onReturnToList: React.PropTypes.func
+		site: PropTypes.object,
+		items: PropTypes.array,
+		settings: PropTypes.object,
+		onUpdateSettings: PropTypes.func,
+		onReturnToList: PropTypes.func
 	},
 
 	getInitialState() {

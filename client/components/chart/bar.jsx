@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -14,13 +16,13 @@ export default class extends React.Component {
 	static displayName = 'ModuleChartBar';
 
 	static propTypes = {
-		isTouch: React.PropTypes.bool,
-		tooltipPosition: React.PropTypes.string,
-		className: React.PropTypes.string,
-		clickHandler: React.PropTypes.func,
-		data: React.PropTypes.object.isRequired,
-		max: React.PropTypes.number,
-		count: React.PropTypes.number
+		isTouch: PropTypes.bool,
+		tooltipPosition: PropTypes.string,
+		className: PropTypes.string,
+		clickHandler: PropTypes.func,
+		data: PropTypes.object.isRequired,
+		max: PropTypes.number,
+		count: PropTypes.number
 	};
 
 	static defaultProps = {

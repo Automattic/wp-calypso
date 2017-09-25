@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -28,16 +30,16 @@ class AllSites extends Component {
 	};
 
 	static propTypes = {
-		onSelect: React.PropTypes.func,
-		href: React.PropTypes.string,
-		isSelected: React.PropTypes.bool,
-		isHighlighted: React.PropTypes.bool,
-		showCount: React.PropTypes.bool,
-		count: React.PropTypes.number,
-		title: React.PropTypes.string,
-		domain: React.PropTypes.string,
-		onMouseEnter: React.PropTypes.func,
-		onMouseLeave: React.PropTypes.func
+		onSelect: PropTypes.func,
+		href: PropTypes.string,
+		isSelected: PropTypes.bool,
+		isHighlighted: PropTypes.bool,
+		showCount: PropTypes.bool,
+		count: PropTypes.number,
+		title: PropTypes.string,
+		domain: PropTypes.string,
+		onMouseEnter: PropTypes.func,
+		onMouseLeave: PropTypes.func
 	};
 
 	onSelect = ( event ) => {

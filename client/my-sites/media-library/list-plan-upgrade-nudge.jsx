@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -48,7 +50,7 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 MediaLibraryUpgradeNudge.propTypes = {
 	site: PropTypes.object,
 	translate: PropTypes.func,
-	filter: React.PropTypes.string
+	filter: PropTypes.string
 };
 
 MediaLibraryUpgradeNudge.defaultProps = {

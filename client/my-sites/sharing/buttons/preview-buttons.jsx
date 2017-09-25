@@ -1,9 +1,12 @@
-/**
- * External dependencies
- */
 import { filter, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -20,12 +23,12 @@ const SharingButtonsPreviewButtons = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',
 
 	propTypes: {
-		buttons: React.PropTypes.array,
-		visibility: React.PropTypes.oneOf( [ 'hidden', 'visible' ] ),
-		style: React.PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
-		onButtonClick: React.PropTypes.func,
-		showMore: React.PropTypes.bool,
-		forceMorePreviewVisible: React.PropTypes.bool
+		buttons: PropTypes.array,
+		visibility: PropTypes.oneOf( [ 'hidden', 'visible' ] ),
+		style: PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
+		onButtonClick: PropTypes.func,
+		showMore: PropTypes.bool,
+		forceMorePreviewVisible: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

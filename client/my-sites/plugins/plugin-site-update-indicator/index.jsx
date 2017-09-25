@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -18,13 +20,13 @@ export default localize( React.createClass( {
 	displayName: 'PluginSiteUpdateIndicator',
 
 	propTypes: {
-		site: React.PropTypes.shape( {
-			canUpdateFiles: React.PropTypes.bool.isRequired,
-			ID: React.PropTypes.number.isRequired
+		site: PropTypes.shape( {
+			canUpdateFiles: PropTypes.bool.isRequired,
+			ID: PropTypes.number.isRequired
 		} ),
-		plugin: React.PropTypes.shape( { slug: React.PropTypes.string } ),
-		notices: React.PropTypes.object.isRequired,
-		expanded: React.PropTypes.bool
+		plugin: PropTypes.shape( { slug: PropTypes.string } ),
+		notices: PropTypes.object.isRequired,
+		expanded: PropTypes.bool
 	},
 
 	getDefaultProps: function() {

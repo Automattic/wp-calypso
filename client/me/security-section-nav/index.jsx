@@ -1,7 +1,10 @@
+import { find } from 'lodash';
+
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -15,7 +18,7 @@ import SectionNav from 'components/section-nav';
 
 export default React.createClass( {
 	propTypes: {
-		path: React.PropTypes.string.isRequired
+		path: PropTypes.string.isRequired
 	},
 
 	getNavtabs: function() {

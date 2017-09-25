@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -93,25 +95,25 @@ function shouldQueryPosts( props, nextProps ) {
 PostListFetcher = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.element.isRequired,
-		type: React.PropTypes.string,
-		status: React.PropTypes.string,
-		author: React.PropTypes.number,
-		search: React.PropTypes.string,
-		category: React.PropTypes.string,
-		tag: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		withImages: React.PropTypes.bool,
-		withCounts: React.PropTypes.bool,
-		excludeTree: React.PropTypes.number,
-		orderBy: React.PropTypes.oneOf(
+		children: PropTypes.element.isRequired,
+		type: PropTypes.string,
+		status: PropTypes.string,
+		author: PropTypes.number,
+		search: PropTypes.string,
+		category: PropTypes.string,
+		tag: PropTypes.string,
+		siteId: PropTypes.number,
+		withImages: PropTypes.bool,
+		withCounts: PropTypes.bool,
+		excludeTree: PropTypes.number,
+		orderBy: PropTypes.oneOf(
 			[ 'title', 'date', 'modified', 'comment_count', 'ID' ]
 		),
-		order: React.PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
-		number: React.PropTypes.number,
-		before: React.PropTypes.string,
-		after: React.PropTypes.string,
-		postListStoreId: React.PropTypes.string
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		number: PropTypes.number,
+		before: PropTypes.string,
+		after: PropTypes.string,
+		postListStoreId: PropTypes.string
 	},
 
 	getDefaultProps: function() {

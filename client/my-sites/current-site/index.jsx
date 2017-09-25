@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -36,14 +38,14 @@ import { cartItems } from 'lib/cart-values';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		isJetpack: React.PropTypes.bool,
-		isPreviewShowing: React.PropTypes.bool,
-		siteCount: React.PropTypes.number.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		selectedSiteId: React.PropTypes.number,
-		selectedSite: React.PropTypes.object,
-		translate: React.PropTypes.func.isRequired,
-		anySiteSelected: React.PropTypes.array
+		isJetpack: PropTypes.bool,
+		isPreviewShowing: PropTypes.bool,
+		siteCount: PropTypes.number.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		selectedSiteId: PropTypes.number,
+		selectedSite: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		anySiteSelected: PropTypes.array
 	};
 
 	state = {

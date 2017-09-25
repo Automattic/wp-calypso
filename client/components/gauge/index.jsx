@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 export default class extends React.PureComponent {
 	static displayName = 'Gauge';
 
 	static propTypes = {
-		percentage: React.PropTypes.number.isRequired,
-		width: React.PropTypes.number,
-		height: React.PropTypes.number,
-		colors: React.PropTypes.array,
-		lineWidth: React.PropTypes.number,
-		metric: React.PropTypes.string.isRequired
+		percentage: PropTypes.number.isRequired,
+		width: PropTypes.number,
+		height: PropTypes.number,
+		colors: PropTypes.array,
+		lineWidth: PropTypes.number,
+		metric: PropTypes.string.isRequired
 	};
 
 	static defaultProps = {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -12,7 +14,7 @@ import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 const DomainsSelect = React.createClass( {
 	propTypes: {
-		domains: React.PropTypes.object.isRequired
+		domains: PropTypes.object.isRequired
 	},
 
 	render() {

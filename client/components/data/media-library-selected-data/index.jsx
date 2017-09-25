@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -20,7 +22,7 @@ export default React.createClass( {
 	displayName: 'MediaLibrarySelectedData',
 
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired
+		siteId: PropTypes.number.isRequired
 	},
 
 	getInitialState: function() {

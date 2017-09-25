@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -13,9 +15,9 @@ import { userCan } from 'lib/site/utils';
 
 class MediaLibraryListNoContent extends Component {
 	static propTypes = {
-		site: React.PropTypes.object,
-		filter: React.PropTypes.string,
-		source: React.PropTypes.string,
+		site: PropTypes.object,
+		filter: PropTypes.string,
+		source: PropTypes.string,
 	};
 
 	getLabel() {

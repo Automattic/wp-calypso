@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 export default React.createClass( {
@@ -12,8 +14,8 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		rating: React.PropTypes.number,
-		size: React.PropTypes.number
+		rating: PropTypes.number,
+		size: PropTypes.number
 	},
 
 	getStars: function() {
