@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull, pick } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -117,7 +117,8 @@ class ActivityLog extends Component {
 	}
 
 	getStartMoment() {
-		return getStartMoment( pick( this.props, [ 'gmtOffset', 'startDate', 'timezone' ] ) );
+		const { gmtOffset, startDate, timezone } = this.props;
+		return getStartMoment( { gmtOffset, startDate, timezone } );
 	}
 
 	handlePeriodChange = ( { date, direction } ) => {
