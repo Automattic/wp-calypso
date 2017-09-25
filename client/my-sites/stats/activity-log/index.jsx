@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import { adjustMoment } from './utils';
+import { adjustMoment, getStartMoment } from './utils';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -53,6 +53,21 @@ import {
  */
 const debug = debugFactory( 'calypso:activity-log' );
 const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
+
+function getActivityLogQuery( { gmtOffset, startDate, timezone } ) {
+	const startMoment = getStartMoment( { gmtOffset, startDate, timezone } );
+	return {
+		dateEnd: startMoment
+			.clone()
+			.endOf( 'month' )
+			.valueOf(),
+		dateStart: startMoment
+			.clone()
+			.startOf( 'month' )
+			.valueOf(),
+		number: 1000,
+	};
+}
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -102,24 +117,7 @@ class ActivityLog extends Component {
 	}
 
 	getStartMoment() {
-		const { gmtOffset, moment, startDate, timezone } = this.props;
-
-		if ( timezone ) {
-			if ( ! startDate ) {
-				return moment().tz( timezone );
-			}
-
-			return moment.tz( startDate, timezone );
-		}
-
-		if ( null !== gmtOffset ) {
-			return moment
-				.utc( startDate )
-				.subtract( gmtOffset, 'hours' )
-				.utcOffset( gmtOffset );
-		}
-
-		return moment.utc( startDate );
+		return getStartMoment( pick( this.props, [ 'gmtOffset', 'startDate', 'timezone' ] ) );
 	}
 
 	handlePeriodChange = ( { date, direction } ) => {
@@ -275,7 +273,7 @@ class ActivityLog extends Component {
 
 		if ( isNull( logs ) ) {
 			return (
-				<section className="activity-log__wrapper" key="logs">
+				<section className="activity-log__wrapper">
 					<ActivityLogDayPlaceholder />
 					<ActivityLogDayPlaceholder />
 					<ActivityLogDayPlaceholder />
@@ -365,11 +363,14 @@ class ActivityLog extends Component {
 	render() {
 		const {
 			canViewActivityLog,
+			gmtOffset,
 			isPressable,
 			isRewindActive,
 			siteId,
 			siteTitle,
 			slug,
+			startDate,
+			timezone,
 			translate,
 		} = this.props;
 
@@ -385,20 +386,14 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const startMoment = this.getStartMoment();
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
-
-		const queryStart = startMoment.startOf( 'month' ).valueOf();
-		const queryEnd = startMoment.endOf( 'month' ).valueOf();
 
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog
 					siteId={ siteId }
-					dateStart={ queryStart }
-					dateEnd={ queryEnd }
-					number={ 1000 }
+					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
@@ -426,20 +421,26 @@ class ActivityLog extends Component {
 }
 
 export default connect(
-	state => {
+	( state, { startDate } ) => {
 		const siteId = getSelectedSiteId( state );
+		const gmtOffset = getSiteGmtOffset( state, siteId );
+		const timezone = getSiteTimezoneValue( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
-			gmtOffset: getSiteGmtOffset( state, siteId ),
+			gmtOffset,
 			isRewindActive: isRewindActiveSelector( state, siteId ),
-			logs: getActivityLogs( state, siteId ),
+			logs: getActivityLogs(
+				state,
+				siteId,
+				getActivityLogQuery( { gmtOffset, startDate, timezone } )
+			),
 			restoreProgress: getRestoreProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
-			timezone: getSiteTimezoneValue( state, siteId ),
+			timezone,
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
