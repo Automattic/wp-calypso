@@ -62,8 +62,8 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 	);
 };
 
-export const receiveActivityLog = ( { dispatch }, { siteId }, data ) => {
-	dispatch( activityLogUpdate( siteId, fromApi( data ) ) );
+export const receiveActivityLog = ( { dispatch }, action, data ) => {
+	dispatch( activityLogUpdate( action.siteId, fromApi( data ), data.totalItems, action.params ) );
 };
 
 export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
