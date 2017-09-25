@@ -142,7 +142,7 @@ class OrderCustomerCard extends Component {
 				<FormFieldset>
 					<FormLegend>{ translate( 'Shipping Details' ) }</FormLegend>
 					<FormLabel>
-						<FormCheckbox checked={ ! this.state.showShipping } onClick={ this.toggleShipping } />
+						<FormCheckbox checked={ ! this.state.showShipping } onChange={ this.toggleShipping } />
 						<span>{ translate( 'Same as billing details' ) }</span>
 					</FormLabel>
 				</FormFieldset>
