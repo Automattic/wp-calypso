@@ -26,20 +26,27 @@ describe( 'api', function() {
 		sandbox.restore();
 	} );
 
-	it( 'should return package version', function( done ) {
+	it( 'should return package version', () => {
 		const version = require( '../../../package.json' ).version;
 
-		localRequest.get( '/version' ).expect( 200, { version: version }, done );
+		return localRequest
+			.get( '/version' )
+			.then( ( { body, status } ) => {
+				expect( status ).toBe( 200 );
+				expect( body ).toEqual( { version } );
+			} );
 	} );
 
-	it( 'should clear oauth cookie and redirect to login_url', function( done ) {
-		localRequest
+	it( 'should clear oauth cookie and redirect to login_url', () => {
+		return localRequest
 			.get( '/logout' )
 			.redirects( 0 )
 			.set( 'cookie', 'wpcom_token=test' )
-			.expect( 'location', config( 'login_url' ) )
-			.expect( 'set-cookie', 'wpcom_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' )
-			.expect( 302, done );
+			.then( ( { header, status } ) => {
+				expect( status ).toBe( 302 );
+				expect( header.location ).toBe( config( 'login_url' ) );
+				expect( header[ 'set-cookie' ] ).toEqual( [ 'wpcom_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ] );
+			} );
 	} );
 
 	let maybeIt = it;
