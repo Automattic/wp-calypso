@@ -48,8 +48,8 @@ class ActivityLogConfirmDialog extends Component {
 					} ) }
 				</HappychatButton>
 				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-				<Button primary scary onClick={ onConfirm }>
-					{ translate( 'Restore' ) }
+				<Button primary onClick={ onConfirm }>
+					{ translate( 'Confirm Rewind' ) }
 				</Button>
 			</div>
 		);
