@@ -98,7 +98,7 @@ describe( 'reducer', () => {
 						items: {
 							[ ACTIVITY_ID ]: {
 								...ACTIVITY_ITEM,
-								activityName: 'an unknown name',
+								activityId: null,
 							},
 						},
 						queries: {},

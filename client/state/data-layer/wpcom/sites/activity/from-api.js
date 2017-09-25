@@ -9,7 +9,8 @@ import { concat, get, head, reduce, split } from 'lodash';
  * Internal dependencies
  */
 import warn from 'lib/warn';
-import { itemSchema } from './schema';
+import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import { itemSchema, responseSchema } from './schema';
 
 /**
  * Module constants
@@ -24,7 +25,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @param  {array}  apiResponse.current.orderedItems Array of item objects
  * @return {array}                                   Array of proccessed item objects
  */
-export default function fromApi( apiResponse ) {
+export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
 	return reduce( orderedItems, itemsReducer, [] );
 }
@@ -97,3 +98,6 @@ export function processItemBase( item ) {
 		activityTs: Date.parse( published ),
 	};
 }
+
+// fromApi default export
+export default makeParser( responseSchema, {}, transformer );

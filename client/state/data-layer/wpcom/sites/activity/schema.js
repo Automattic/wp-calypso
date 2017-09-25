@@ -1,4 +1,46 @@
 /** @format */
+
+/**
+ * The response schema does not describes the expected shape of the response.
+ * It intentionally does not describe items in detail. This allows the parser to validate items
+ * in the transform step, discarding only those which do not adhere to the itemSchema.
+ */
+export const responseSchema = {
+	additionalProperties: false,
+	type: 'object',
+	required: [ 'current', 'itemsPerPage', 'page', 'totalItems', 'totalPages' ],
+	properties: {
+		'@context': { type: 'string' },
+		first: { type: 'string' },
+		id: { type: 'string' },
+		itemsPerPage: { type: 'integer' },
+		last: { type: 'string' },
+		page: { type: 'integer' },
+		summary: { type: 'string' },
+		totalItems: { type: 'integer' },
+		totalPages: { type: 'integer' },
+		type: { type: 'string' },
+		current: {
+			additionalProperties: false,
+			type: 'object',
+			required: [ 'orderedItems', 'totalItems' ],
+			properties: {
+				id: { type: 'string' },
+				next: { type: 'string' },
+				prev: { type: 'string' },
+				orderedItems: {
+					type: 'array',
+					items: {
+						type: 'object',
+					},
+				},
+				totalItems: { type: 'integer' },
+				type: { type: 'string' },
+			},
+		},
+	},
+};
+
 export const itemSchema = {
 	type: 'object',
 	required: [ 'activity_id', 'name', 'published', 'summary' ],
