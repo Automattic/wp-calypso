@@ -20,7 +20,6 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import Interval, { EVERY_SECOND } from 'lib/interval';
 import { requestSite } from 'state/sites/actions';
 
 class PluginAutomatedTransfer extends Component {
@@ -59,7 +58,12 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		clearInterval( this.interval );
+	}
+
 	componentWillReceiveProps( nextProps ) {
+		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
 		const newState = {};
@@ -69,9 +73,11 @@ class PluginAutomatedTransfer extends Component {
 		}
 
 		if ( COMPLETE === nextProps.transferState ) {
+			this.interval = this.interval || setInterval( () => this.props.requestSite( siteId ), 1000 );
+
 			newState.transferComplete = true;
 			if ( ! transferComplete ) {
-				newState.shouldDisplay = true;
+				newState.shouldDisplay = false;
 			}
 		} else if ( ! transferComplete ) {
 			newState.shouldDisplay = nextProps.isTransferring || nextProps.isFailedTransfer;
@@ -132,12 +138,6 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
-	pollSiteData() {
-		const { siteId } = this.props;
-
-		this.props.requestSite( siteId );
-	}
-
 	render() {
 		const { CONFLICTS } = transferStates;
 		const { transferState, translate } = this.props;
@@ -146,6 +146,7 @@ class PluginAutomatedTransfer extends Component {
 		if ( ! shouldDisplay ) {
 			return null;
 		}
+
 
 		return (
 			<div>
@@ -164,15 +165,10 @@ class PluginAutomatedTransfer extends Component {
 						</NoticeAction>
 					}
 				</Notice>
-				{
-					this.state.transferComplete &&
-					<Interval onTick={ this.pollSiteData } period={ EVERY_SECOND } /> &&
-					<WpAdminAutoLogin site={ this.props.site } />
-				}
+				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
 			</div>
 		);
 	}
-
 }
 
 const mapStateToProps = state => {
