@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,7 +10,6 @@ import { DEFAULT_THEME_QUERY } from './constants';
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
-
 	/**
 	 * A sorting function that defines the sort order of items under
 	 * consideration of the specified query.
