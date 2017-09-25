@@ -26,7 +26,6 @@ import { isAncestor } from 'blocks/comments/utils';
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
 
-/* @todo: Pagination */
 class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
@@ -82,10 +81,14 @@ class ConversationCaterpillarComponent extends React.Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, parentCommentId, comments } = this.props;
 		const allExpandableComments = this.getExpandableComments();
 		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
-		const commentCount = size( allExpandableComments );
+		const isRoot = ! parentCommentId;
+		const numberUnfetchedComments = this.props.commentCount - size( comments );
+		const commentCount = isRoot
+			? numberUnfetchedComments + size( allExpandableComments )
+			: size( allExpandableComments );
 
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'ID' );
