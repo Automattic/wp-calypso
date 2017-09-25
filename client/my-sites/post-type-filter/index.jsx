@@ -8,8 +8,9 @@ import { compact, find, includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
+import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { mapPostStatus } from 'lib/route/path';
 import UrlSearch from 'lib/mixins/url-search';
@@ -24,6 +25,7 @@ const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],
 
 	propTypes: {
+		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
 		query: PropTypes.object,
 		jetpack: PropTypes.bool,
@@ -94,7 +96,7 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	render() {
-		const { jetpack, query, siteId, statusSlug } = this.props;
+		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
@@ -114,7 +116,7 @@ const PostTypeFilter = React.createClass( {
 					selectedText={
 						<span>
 							<span>{ selectedItem.children }</span>
-							<small>{ query.author ? scopes.me : scopes.everyone }</small>
+							{ ! authorToggleHidden && <small>{ query.author ? scopes.me : scopes.everyone }</small> }
 						</span>
 					}
 					selectedCount={ selectedItem.count }>
@@ -126,7 +128,7 @@ const PostTypeFilter = React.createClass( {
 							selectedCount={ selectedItem.count }>
 							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
 						</NavTabs>,
-						query.type === 'post' && <AuthorSegmented
+						! authorToggleHidden && <AuthorSegmented
 							key="author"
 							author={ query.author }
 							siteId={ siteId }
@@ -147,8 +149,20 @@ const PostTypeFilter = React.createClass( {
 
 export default connect( ( state, { query } ) => {
 	const siteId = getSelectedSiteId( state );
+	let authorToggleHidden = false;
+	if ( query.type === 'post' ) {
+		if ( siteId ) {
+			authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+		} else {
+			authorToggleHidden = areAllSitesSingleUser( state );
+		}
+	} else { // Hide for Custom Post Types
+		authorToggleHidden = true;
+	}
+
 	const props = {
 		siteId,
+		authorToggleHidden,
 		jetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId )
 	};
