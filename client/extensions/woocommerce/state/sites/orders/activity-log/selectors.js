@@ -63,8 +63,10 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
  * @return {boolean} Whether the activity log for a given order is currently being retrieved from the server.
  */
 export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	return areOrderNotesLoading( state, orderId, siteId ) &&
-		( ! config.isEnabled( 'woocommerce/extension-wcservices' ) || areShippingLabelsLoading( state, orderId, siteId ) );
+	if ( config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
+		return areOrderNotesLoading( state, orderId, siteId ) || areShippingLabelsLoading( state, orderId, siteId );
+	}
+	return areOrderNotesLoading( state, orderId, siteId );
 };
 
 /**
@@ -94,7 +96,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
 							labelIndex: index,
-							amount: label.refund.amount,
+							amount: parseFloat( label.refund.amount ),
 							currency: label.currency,
 						} );
 						break;
@@ -113,7 +115,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
 							labelIndex: index,
-							amount: label.refundable_amount,
+							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
 							currency: label.currency,
 						} );
 				}
@@ -128,6 +130,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				productNames: label.product_names,
 				packageName: label.package_name,
 				tracking: label.tracking,
+				amount: label.rate,
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
