@@ -4,8 +4,8 @@ import percentageFactory from 'percentage-regex';
 const percentageRegex = percentageFactory( { exact: true } );
 const isPercentage = val => percentageRegex.test( val );
 
-var embedsConfig = {
-	default: {
+const embedsConfig = {
+	'default': {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
 			let { aspectRatio, width, height } = embed;
 
@@ -32,7 +32,7 @@ var embedsConfig = {
 	},
 	spotify: {
 		sizingFunction: function spotifyEmbedSizingFunction( embed, availableWidth ) {
-			var height;
+			let height;
 
 			// Spotify can handle maximum height of : width + 80, if our resulted height
 			// from aspectRatio calculation will be larger, we'll use availableWidth + 80
@@ -51,7 +51,7 @@ var embedsConfig = {
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
-			var aspectRatio = embed.aspectRatio || 1,
+			let aspectRatio = embed.aspectRatio || 1,
 				height = '100%';
 
 			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
@@ -68,14 +68,14 @@ var embedsConfig = {
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	var urlRegex = new RegExp( 'src="([^"]+)"' ),
+	let urlRegex = new RegExp( 'src="([^"]+)"' ),
 		res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }
 
 function resolveEmbedConfig( embed ) {
-	var embedType, url;
+	let embedType, url;
 
 	// if there's type, easiest way just to use it
 	if ( embedsConfig.hasOwnProperty( embed.type ) ) {
@@ -100,7 +100,7 @@ function resolveEmbedConfig( embed ) {
 
 const exported = {
 	getEmbedSizingFunction: function getEmbedSizingFunction( embed ) {
-		var embedConfig = resolveEmbedConfig( embed );
+		const embedConfig = resolveEmbedConfig( embed );
 
 		return embedConfig.sizingFunction.bind( embedConfig, embed );
 	},

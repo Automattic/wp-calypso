@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -16,8 +18,8 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class ListMissing extends React.Component {
 	static propTypes = {
-		owner: React.PropTypes.string.isRequired,
-		slug: React.PropTypes.string.isRequired,
+		owner: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 	};
 
 	recordAction = () => {

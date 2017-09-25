@@ -19,12 +19,12 @@ class PostUnavailable extends React.PureComponent {
 					' ' +
 					'Please request membership to display these posts in Reader.'
 			),
-			default: this.props.translate( 'An error occurred loading this post.' ),
+			'default': this.props.translate( 'An error occurred loading this post.' ),
 		};
 	}
 
 	render() {
-		var errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
+		const errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
 
 		if ( this.props.post.statusCode === 404 ) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.
