@@ -156,16 +156,14 @@ export function fetchProduct( siteId, productId, successAction, failureAction ) 
 	};
 }
 
-export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
+export const fetchProducts = ( siteId, params ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
 
-	const params = {
-		page,
-		per_page: 10,
-	};
+	// Default per_page to 10.
+	params.per_page = params.per_page || 10;
 
 	if ( areProductsLoading( state, params, siteId ) ) {
 		return;

@@ -57,7 +57,7 @@ class Dashboard extends Component {
 			this.props.fetchOrders( selectedSite.ID );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( selectedSite.ID, 1 );
+				this.props.fetchProducts( selectedSite.ID, { page: 1 } );
 			}
 		}
 	}
@@ -73,7 +73,7 @@ class Dashboard extends Component {
 			this.props.fetchOrders( newSiteId );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
+				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
 	}

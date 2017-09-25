@@ -56,7 +56,7 @@ describe( 'actions', () => {
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			fetchProducts( siteId, 1 )( dispatch, getState );
+			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith(
 				{ type: WOOCOMMERCE_PRODUCTS_REQUEST, siteId, params: { page: 1, per_page: 10 } }
 			);
@@ -65,7 +65,7 @@ describe( 'actions', () => {
 		it( 'should dispatch a success action with products list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchProducts( siteId, 1 )( dispatch, getState );
+			const response = fetchProducts( siteId, { page: 1 } )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 		it( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchProducts( 234, 'invalid' )( dispatch, getState );
+			const response = fetchProducts( 234, { page: 'invalid' } )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWithMatch( {
@@ -109,7 +109,7 @@ describe( 'actions', () => {
 				}
 			} );
 			const dispatch = spy();
-			fetchProducts( siteId, 1 )( dispatch, getState );
+			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
 	} );
