@@ -3,11 +3,13 @@
  * External dependencies
  */
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, intersection, pick } from 'lodash';
+import { get, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,24 +64,28 @@ function getInitialServerState( serializedServerState ) {
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
+const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
+const getAssets = ( () => {
+	let assets;
+	return () => {
+		if ( ! assets ) {
+			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
+		}
+		return assets;
+	};
+} )();
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
- * @param {Object} request A request to check for assets
+ *
  * @returns {Object} Map of asset names to urls
  **/
-function generateStaticUrls( request ) {
+function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
 
-	const assets = request.app.get( 'assets' );
-
-	assets.forEach( function( asset ) {
-		const name = asset.name;
-		urls[ name ] = asset.url;
-		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
-		}
-	} );
+	const assets = getAssets();
+	forEach( assets, ( asset, name ) => ( urls[ name ] = asset.js ) );
 
 	return urls;
 }
@@ -164,7 +170,7 @@ function getDefaultContext( request ) {
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
-		urls: generateStaticUrls( request ),
+		urls: generateStaticUrls(),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
@@ -345,7 +351,7 @@ function setUpRoute( req, res, next ) {
 
 function render404( request, response ) {
 	response.status( 404 ).render( '404.jade', {
-		urls: generateStaticUrls( request ),
+		urls: generateStaticUrls(),
 	} );
 }
 
@@ -450,8 +456,8 @@ module.exports = function() {
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( path => {
-				const pathRegex = utils.pathToRegExp( path );
+			section.paths.forEach( sectionPath => {
+				const pathRegex = utils.pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );

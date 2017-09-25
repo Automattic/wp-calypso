@@ -6,21 +6,6 @@ const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
 
-function getAssets( stats ) {
-	const chunks = stats.chunks;
-
-	return chunks.map( function( chunk ) {
-		const filename = chunk.files[ 0 ];
-		return {
-			name: chunk.names[ 0 ],
-			hash: chunk.hash,
-			file: filename,
-			url: stats.publicPath + filename,
-			size: chunk.size
-		};
-	} );
-}
-
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
 function pathToRegExp( path ) {
@@ -65,7 +50,6 @@ function getCssUrls( css ) {
 }
 
 module.exports = {
-	getAssets: getAssets,
 	pathToRegExp: pathToRegExp,
 	hashFile: hashFile,
 	getUrl: getUrl,
