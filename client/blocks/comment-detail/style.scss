@@ -377,6 +377,10 @@
 
 .comment-detail__author {
 	padding: 16px 0 0;
+
+	&.is-expanded {
+		padding: 16px 0;
+	}
 }
 
 .comment-detail__author-preview {
@@ -403,11 +407,16 @@
 	padding-bottom: 16px;
 }
 
+.comment-detail__author-preview-actions {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin-left: auto;
+}
+
 .comment-detail__status-label {
-	align-self: flex-start;
 	border-radius: 9px;
 	font-size: 12px;
-	margin-left: auto;
 	padding: 0 10px;
 
 	&.is-unapproved {
@@ -425,7 +434,7 @@
 	display: block;
 	fill: $gray;
 	height: 24px;
-	margin-left: auto;
+	margin-left: 8px;
 	&:focus,
 	&:hover {
 		color: $blue-wordpress;
@@ -435,10 +444,15 @@
 
 .comment-detail__author-more-info {
 	border-bottom: 1px solid lighten( $gray, 30% );
-	color: $gray;
+	color: $gray-text-min;
 	display: none;
 	transform: scaleY( 0 );
 	transform-origin: top;
+
+	.gridicon {
+		color: $gray;
+		fill: $gray;
+	}
 }
 .comment-detail__author.is-expanded .comment-detail__author-more-info {
 	animation: comment-detail__author-more-info .15s linear;
@@ -470,17 +484,6 @@
 	}
 }
 
-a.comment-detail__author-more-element {
-	color: $gray;
-	cursor: pointer;
-	fill: $gray;
-	&:focus,
-	&:hover {
-		color: $blue-wordpress;
-		fill: $blue-wordpress;
-	}
-}
-
 .comment-detail__author-more-element-author {
 	display: flex;
 	flex-flow: row nowrap;
@@ -493,14 +496,21 @@ a.comment-detail__author-more-element {
 	.comment-detail__author-info {
 		line-height: 1.2;
 		overflow: hidden;
-		padding-left: 8px;
 		text-overflow: ellipsis;
+	}
+
+	strong {
+		float: none;
 	}
 }
 
-.comment-detail__author-more-element-block-user.is-blocked .gridicon {
-	color: $alert-red;
-	fill: $alert-red;
+.comment-detail.card .comment-detail__author-more-element-block-user .gridicon {
+	vertical-align: baseline;
+}
+
+.comment-detail__author-more-element-block-anonymous-user {
+	white-space: normal;
+	width: 100%;
 }
 
 .comment-detail__reply {
