@@ -28,7 +28,6 @@ import analytics from 'lib/analytics';
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
-import { abtest } from 'lib/abtest';
 import { cartItems } from 'lib/cart-values';
 
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -54,7 +53,7 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+		if ( domainItem ) {
 			domainChoiceCart.push(
 				cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
@@ -135,7 +134,7 @@ function createSiteWithCart( callback, dependencies, {
 		};
 		const addToCartAndProceed = () => {
 			let privacyItem = null;
-			if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+			if ( domainItem ) {
 				privacyItem = cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
 					source: 'signup'
