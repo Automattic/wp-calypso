@@ -45,6 +45,7 @@ export class CommentDetailAuthor extends Component {
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
+		commentType: PropTypes.string,
 		commentUrl: PropTypes.string,
 		currentUserEmail: PropTypes.string,
 		siteBlacklist: PropTypes.string,
@@ -66,7 +67,9 @@ export class CommentDetailAuthor extends Component {
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
-	showMoreInfo = () => some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
+	showMoreInfo = () =>
+		( 'comment' === this.props.commentType ) &&
+		some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
 
 	toggleBlockUser = () => {
 		const {
@@ -115,7 +118,7 @@ export class CommentDetailAuthor extends Component {
 
 	authorMoreInfo() {
 		if ( ! this.showMoreInfo() ) {
-			return;
+			return null;
 		}
 
 		const {
@@ -211,6 +214,7 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
+			commentType,
 			commentUrl,
 			translate,
 		} = this.props;
@@ -223,10 +227,19 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<Gravatar user={ {
-						avatar_URL: this.props.authorAvatarUrl,
-						display_name: this.props.authorDisplayName,
-					} } />
+					<div className="comment-detail__author-avatar">
+						<div className="comment-detail__author-avatar">
+							{ 'comment' === commentType &&
+								<Gravatar user={ {
+									avatar_URL: this.props.authorAvatarUrl,
+									display_name: this.props.authorDisplayName,
+								} } />
+							}
+							{ 'comment' !== commentType &&
+								<Gridicon icon="link" size={ 24 } />
+							}
+						</div>
+					</div>
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>

@@ -206,6 +206,7 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentRawContent,
 			commentStatus,
+			commentType,
 			commentUrl,
 			editComment,
 			isBulkEdit,
@@ -267,6 +268,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
+					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
@@ -324,6 +326,7 @@ export class CommentDetail extends Component {
 									commentDate={ commentDate }
 									commentId={ commentId }
 									commentStatus={ commentStatus }
+									commentType={ commentType }
 									commentUrl={ commentUrl }
 									repliedToComment={ repliedToComment }
 									siteBlacklist={ siteBlacklist }
@@ -363,12 +366,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
+	const authorName = decodeEntities( get( comment, 'author.name' ) );
+
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
 		authorIp: get( comment, 'author.ip_address' ),
-		authorName: get( comment, 'author.name' ),
+		authorName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		commentContent: get( comment, 'content' ),
@@ -377,6 +382,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
+		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
 		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isLoading,
