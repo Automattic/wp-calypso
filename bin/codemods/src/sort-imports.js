@@ -13,7 +13,8 @@ const _ = require( 'lodash' );
  */
 const nodeJsDeps = require( 'repl' )._builtinLibs;
 const packageJson = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
-const packageJsonDeps = nodeJsDeps
+const packageJsonDeps = []
+	.concat( nodeJsDeps )
 	.concat( Object.keys( packageJson.dependencies ) )
 	.concat( Object.keys( packageJson.devDependencies ) );
 
