@@ -33,7 +33,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import { adjustMoment, getStartMoment } from './utils';
+import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -53,21 +53,6 @@ import {
  */
 const debug = debugFactory( 'calypso:activity-log' );
 const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
-
-function getActivityLogQuery( { gmtOffset, startDate, timezone } ) {
-	const startMoment = getStartMoment( { gmtOffset, startDate, timezone } );
-	return {
-		dateEnd: startMoment
-			.clone()
-			.endOf( 'month' )
-			.valueOf(),
-		dateStart: startMoment
-			.clone()
-			.startOf( 'month' )
-			.valueOf(),
-		number: 1000,
-	};
-}
 
 class ActivityLog extends Component {
 	static propTypes = {
