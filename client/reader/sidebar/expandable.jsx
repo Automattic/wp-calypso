@@ -4,7 +4,6 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
@@ -47,8 +46,7 @@ export const ExpandableSidebarMenu = props => {
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
-		.isRequired,
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	addLabel: PropTypes.string,
 	addPlaceholder: PropTypes.string,
