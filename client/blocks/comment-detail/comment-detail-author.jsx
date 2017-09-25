@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,7 +71,7 @@ export class CommentDetailAuthor extends Component {
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
-	showMoreInfo = () => !! this.props.authorEmail || !! this.props.authorIp || !! this.props.authorUrl;
+	showMoreInfo = () => some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
 
 	toggleBlockUser = () => {
 		const {

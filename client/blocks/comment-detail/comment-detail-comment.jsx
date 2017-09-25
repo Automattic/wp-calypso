@@ -38,6 +38,7 @@ export class CommentDetailComment extends Component {
 			authorAvatarUrl,
 			authorDisplayName,
 			authorEmail,
+			authorId,
 			authorIp,
 			authorIsBlocked,
 			authorUrl,
@@ -60,6 +61,7 @@ export class CommentDetailComment extends Component {
 						authorAvatarUrl={ authorAvatarUrl }
 						authorDisplayName={ authorDisplayName }
 						authorEmail={ authorEmail }
+						authorId={ authorId }
 						authorIp={ authorIp }
 						authorIsBlocked={ authorIsBlocked }
 						authorUrl={ authorUrl }
