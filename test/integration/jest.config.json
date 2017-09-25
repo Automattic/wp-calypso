@@ -12,5 +12,6 @@
 		"**/client/**/integration/*.js",
 		"**/server/**/integration/*.js"
 	],
+	"setupTestFrameworkScriptFile": "<rootDir>/test/integration/setup-test-framework.js",
 	"verbose": true
 }
