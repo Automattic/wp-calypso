@@ -6,7 +6,7 @@ function returnSelf() {
 	return this;
 }
 
-module.exports = {
+export default {
 	site: returnSelf,
 	post: returnSelf,
 	undocumented: returnSelf,

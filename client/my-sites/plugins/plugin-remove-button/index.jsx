@@ -15,7 +15,7 @@ import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginRemoveButton',
 

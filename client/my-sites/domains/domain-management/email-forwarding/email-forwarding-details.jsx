@@ -33,4 +33,4 @@ const EmailForwardingDetails = React.createClass( {
 	}
 } );
 
-module.exports = EmailForwardingDetails;
+export default EmailForwardingDetails;

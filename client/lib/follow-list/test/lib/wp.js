@@ -17,7 +17,7 @@ successRequestStub = function() {
 	args[ 0 ].apply( undefined, [ null, { some: 'data' } ] );
 };
 
-module.exports = {
+export default {
 	site: function() {
 		return {
 			follow: function() {

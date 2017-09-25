@@ -65,4 +65,4 @@ TrophiesData.prototype.hasLoadedFromServer = function() {
 	return this.initialized;
 };
 
-module.exports = new TrophiesData();
+export default new TrophiesData();

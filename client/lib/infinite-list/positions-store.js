@@ -46,4 +46,4 @@ InfiniteListPositionsStore.dispatchToken = Dispatcher.register( function( payloa
 	}
 } );
 
-module.exports = InfiniteListPositionsStore;
+export default InfiniteListPositionsStore;

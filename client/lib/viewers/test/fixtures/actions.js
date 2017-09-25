@@ -2,7 +2,7 @@ import site from './site';
 import viewerData from './viewers-1';
 import moreViewerData from './viewers-2';
 
-module.exports = {
+export default {
 	fetchedViewersEmpty: {
 		type: 'RECEIVE_VIEWERS',
 		siteId: site.ID,

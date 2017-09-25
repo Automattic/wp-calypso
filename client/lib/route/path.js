@@ -138,7 +138,7 @@ function externalRedirect( url ) {
 	window.location = url;
 }
 
-module.exports = {
+export default {
 	getSiteFragment: getSiteFragment,
 	addSiteFragment: addSiteFragment,
 	getStatsDefaultSitePage: getStatsDefaultSitePage,

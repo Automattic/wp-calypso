@@ -62,4 +62,4 @@ Emitter( nuxWelcome );
 /**
  * Expose `nuxWelcome` singleton
  */
-module.exports = nuxWelcome;
+export default nuxWelcome;

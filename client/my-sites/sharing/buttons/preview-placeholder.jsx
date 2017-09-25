@@ -8,7 +8,7 @@ import React from 'react';
  */
 import ButtonsPreviewAction from './preview-action';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsPreviewPlaceholder',
 
 	render: function() {

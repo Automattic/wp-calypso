@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	earnings: {
 		total_amount_owed: '100.00',
 		total_earnings: '300.00',

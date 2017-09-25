@@ -60,4 +60,4 @@ const LoadingError = React.createClass( {
 
 } );
 
-module.exports = LoadingError;
+export default LoadingError;

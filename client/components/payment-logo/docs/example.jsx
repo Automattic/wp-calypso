@@ -26,4 +26,4 @@ const PaymentLogoExamples = React.createClass( {
 	}
 } );
 
-module.exports = PaymentLogoExamples;
+export default PaymentLogoExamples;

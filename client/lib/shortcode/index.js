@@ -234,4 +234,4 @@ Shortcode.next = function( tag, text, index ) {
 	return result;
 };
 
-module.exports = Shortcode;
+export default Shortcode;

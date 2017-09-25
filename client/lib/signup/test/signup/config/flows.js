@@ -29,7 +29,7 @@ const flows = {
 	}
 };
 
-module.exports = {
+export default {
 	defaultFlowName: 'simple_flow',
 
 	getFlow: function( flowName ) {

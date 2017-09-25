@@ -157,4 +157,4 @@ PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {
 // Add the Store to the emitter so we can emit change events.
 emitter( PluginsListsStore );
 
-module.exports = PluginsListsStore;
+export default PluginsListsStore;

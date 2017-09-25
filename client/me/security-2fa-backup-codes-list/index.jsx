@@ -27,7 +27,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faBackupCodesList',
 

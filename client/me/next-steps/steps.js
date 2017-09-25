@@ -20,7 +20,7 @@ function buildCustomizeButtonURL( site ) {
 	return '/customize/';
 }
 
-module.exports = {
+export default {
 
 	// You can define which steps, and in which order, they should appear.
 	defaultSequence: [ 'customize', 'theme', 'plans', 'post', 'page' ],

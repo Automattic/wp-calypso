@@ -21,7 +21,7 @@ import constants from 'me/constants';
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
 

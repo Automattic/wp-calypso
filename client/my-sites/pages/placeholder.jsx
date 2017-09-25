@@ -10,7 +10,7 @@ import CompactCard from 'components/card/compact';
 
 import SiteIcon from 'blocks/site-icon';
 
-module.exports = {
+export default {
 	Page: React.createClass( {
 		displayName: 'PagePlaceholder',
 

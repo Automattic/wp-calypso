@@ -2,7 +2,7 @@ import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-module.exports = function humanDate( dateOrMoment ) {
+export default function humanDate( dateOrMoment ) {
 	const now = i18n.moment();
 	dateOrMoment = i18n.moment( dateOrMoment );
 
@@ -46,4 +46,4 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	return dateOrMoment.format( 'll' );
-};
+}

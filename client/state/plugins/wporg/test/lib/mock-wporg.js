@@ -1,7 +1,7 @@
 let fetchPluginInformationCalls = 0,
 	lastRequestParams = null;
 
-module.exports = {
+export default {
 	deactivatedCallbacks: false,
 	reset: function() {
 		fetchPluginInformationCalls = 0;

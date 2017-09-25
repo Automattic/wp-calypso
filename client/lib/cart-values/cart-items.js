@@ -809,7 +809,7 @@ function hasStaleItem( cart ) {
 	} );
 }
 
-module.exports = {
+export default {
 	add,
 	addPrivacyToAllDomains,
 	businessPlan,

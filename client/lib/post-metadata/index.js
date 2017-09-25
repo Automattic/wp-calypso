@@ -133,4 +133,4 @@ PostMetadata = {
 	}
 };
 
-module.exports = PostMetadata;
+export default PostMetadata;

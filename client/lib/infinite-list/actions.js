@@ -22,7 +22,7 @@ const THROTTLE_OPTIONS = {
 	leading: false
 };
 
-module.exports = {
+export default {
 	storePositions: throttle( function( url, positions ) {
 		if ( ! _lastCalledPositions ) {
 			setTimeout( () => {

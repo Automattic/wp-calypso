@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	render: function() {
 		return <div className="plugin-action" onClick={ this.props.action }></div>;
 	}

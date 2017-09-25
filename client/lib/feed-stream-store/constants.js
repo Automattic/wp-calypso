@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	action: {
 		FETCH_NEXT_PAGE: 'FETCH_NEXT_FEED_STREAM_PAGE',
 		RECEIVE_PAGE: 'RECEIVE_FEED_STREAM_PAGE',

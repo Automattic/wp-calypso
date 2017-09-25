@@ -156,4 +156,4 @@ class ModuleChartExport extends React.Component {
 	}
 }
 
-module.exports = localize( ModuleChartExport );
+export default localize( ModuleChartExport );

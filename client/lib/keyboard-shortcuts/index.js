@@ -185,4 +185,4 @@ KeyboardShortcuts.prototype.setNotificationsOpen = function( isOpen ) {
 Emitter( KeyboardShortcuts.prototype );
 
 // Return a single instance of KeyboardShortcuts, which will be cached by webpack
-module.exports = new KeyboardShortcuts( flatKeyBindings );
+export default new KeyboardShortcuts( flatKeyBindings );

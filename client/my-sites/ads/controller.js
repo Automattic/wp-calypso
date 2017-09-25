@@ -41,7 +41,7 @@ function _getLayoutTitle( context ) {
 	}
 }
 
-module.exports = {
+export default {
 
 	redirect: function( context ) {
 		page.redirect( '/ads/earnings/' + context.params.site_id );

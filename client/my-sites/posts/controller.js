@@ -26,7 +26,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 
 import Posts from 'my-sites/posts/main';
 
-module.exports = {
+export default {
 
 	posts: function( context ) {
 		const state = context.store.getState();

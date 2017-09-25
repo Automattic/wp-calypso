@@ -17,7 +17,7 @@ import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HelpSearch',
 
 	mixins: [ PureRenderMixin ],

@@ -15,4 +15,4 @@ makeSafe.undoReturns = function() {
 	returnValue = undefined;
 };
 
-module.exports = makeSafe;
+export default makeSafe;

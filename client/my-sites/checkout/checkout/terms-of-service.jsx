@@ -11,7 +11,7 @@ import analytics from 'lib/analytics';
 import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TermsOfService',
 
 	recordTermsAndConditionsClick: function() {

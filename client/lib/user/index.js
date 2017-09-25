@@ -10,12 +10,12 @@ import { action as InvitesActionTypes } from 'lib/invites/constants';
 import User from './user';
 let _user = false;
 
-module.exports = function() {
+export default function() {
 	if ( ! _user ) {
 		_user = new User();
 	}
 	return _user;
-};
+}
 
 User.dispatchToken = Dispatcher.register( function( payload ) {
 	const action = payload.action;

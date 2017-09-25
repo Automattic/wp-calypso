@@ -13,7 +13,7 @@ import FormButton from 'components/forms/form-button';
 
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faInitialSetup',
 

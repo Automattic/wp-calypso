@@ -30,4 +30,4 @@ const CheckoutData = React.createClass( {
 	}
 } );
 
-module.exports = CheckoutData;
+export default CheckoutData;

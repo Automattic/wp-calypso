@@ -67,4 +67,4 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = SignupDependencyStore;
+export default SignupDependencyStore;

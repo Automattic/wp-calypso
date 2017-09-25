@@ -166,7 +166,7 @@ function recordPlaceholderNode( node ) {
 	}
 }
 
-module.exports = function() {
+export default function() {
 	if ( ! initialized ) {
 		const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
@@ -176,4 +176,4 @@ module.exports = function() {
 
 		initialized = true;
 	}
-};
+}

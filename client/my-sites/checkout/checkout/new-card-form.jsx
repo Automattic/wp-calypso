@@ -12,7 +12,7 @@ import CreditCardFormFields from 'components/credit-card-form-fields';
 
 import upgradesActions from 'lib/upgrades/actions';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'NewCardForm',
 
 	propTypes: {

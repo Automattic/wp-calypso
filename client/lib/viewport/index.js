@@ -64,7 +64,7 @@ function getWindowInnerWidth() {
 	return global.window ? global.window.innerWidth : 769;
 }
 
-module.exports = {
+export default {
 	isMobile: isMobile,
 	isDesktop: isDesktop,
 	isWithinBreakpoint: isWithinBreakpoint,

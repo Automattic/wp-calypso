@@ -62,4 +62,4 @@ const FollowersActions = {
 	}
 };
 
-module.exports = FollowersActions;
+export default FollowersActions;

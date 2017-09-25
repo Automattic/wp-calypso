@@ -74,4 +74,4 @@ function Searchable( prototype, searchNodes ) {
 /**
  * Expose `Searchable`
  */
-module.exports = Searchable;
+export default Searchable;

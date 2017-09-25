@@ -44,4 +44,4 @@ const DomainsSelect = React.createClass( {
 	}
 } );
 
-module.exports = DomainsSelect;
+export default DomainsSelect;

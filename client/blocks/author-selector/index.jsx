@@ -230,7 +230,7 @@ const SwitcherShell = React.createClass( {
 	}
 } );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'AuthorSelector',
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,

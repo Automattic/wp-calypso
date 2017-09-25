@@ -50,4 +50,4 @@ PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
 /**
  * Expose `PaygateLoader`
  */
-module.exports = new PaygateLoader();
+export default new PaygateLoader();

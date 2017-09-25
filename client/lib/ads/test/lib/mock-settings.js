@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	settings: {
 		paypal: 'foo@bar.com',
 		who_owns: 'person',

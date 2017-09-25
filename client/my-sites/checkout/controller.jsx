@@ -32,7 +32,7 @@ import CheckoutThankYouComponent from './checkout-thank-you';
  */
 const productsList = productsFactory();
 
-module.exports = {
+export default {
 	checkout: function( context ) {
 		let basePath = route.sectionify( context.path ), product = context.params.product, selectedFeature = context.params.feature;
 

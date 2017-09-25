@@ -3,7 +3,7 @@
  */
 import keyMirror from 'key-mirror';
 
-module.exports.action = keyMirror( {
+export const action = keyMirror( {
 	CART_COUPON_APPLY: null,
 	CART_DISABLE: null,
 	CART_ITEMS_ADD: null,

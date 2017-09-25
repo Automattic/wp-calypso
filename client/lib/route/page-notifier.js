@@ -22,10 +22,10 @@ page.callbacks.unshift( route.middleware( function( context, next ) {
 // Export a function that attaches a listener to the location change event
 // If a page has already been rendered the listener will be called with
 // the current page's context.
-module.exports = function observe( listener ) {
+export default function observe( listener ) {
 	location.on( 'change', listener );
 	if ( currentContext ) {
 		listener( currentContext );
 	}
 	return location;
-};
+}

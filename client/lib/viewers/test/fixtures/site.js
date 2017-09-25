@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	ID: 1234,
 	URL: 'http://example.com',
 	canUpdateFiles: true,

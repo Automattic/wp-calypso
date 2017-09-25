@@ -14,7 +14,7 @@ import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'KeyboardShortcutsMenu',
 
 	componentDidMount: function() {

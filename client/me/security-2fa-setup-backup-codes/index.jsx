@@ -18,7 +18,7 @@ import support from 'lib/url/support';
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faSetupBackupCodes',
 

@@ -14,7 +14,7 @@ function isSpecialStream( id ) {
 	return /^following|a8c|likes|conversations/.test( id );
 }
 
-module.exports = {
+export default {
 	get: function( id ) {
 		if ( isSpecialStream( id ) ) {
 			return specialCache[ id ];

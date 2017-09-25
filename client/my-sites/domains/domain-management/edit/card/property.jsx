@@ -18,4 +18,4 @@ const Property = React.createClass( {
 	}
 } );
 
-module.exports = Property;
+export default Property;

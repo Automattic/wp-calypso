@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Rating from 'components/rating';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Rating',
 
 	mixins: [ PureRenderMixin ],

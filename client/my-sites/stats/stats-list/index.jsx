@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:stats:list' );
  */
 import StatsListItem from './stats-list-item';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsList',
 
 	getInitialState: function() {

@@ -152,7 +152,7 @@ function isPayPalExpressEnabled( cart ) {
 			0 <= cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' );
 }
 
-module.exports = {
+export default {
 	applyCoupon,
 	canRemoveFromCart,
 	cartItems,

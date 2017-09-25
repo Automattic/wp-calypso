@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import classNames from 'classnames';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faProgressItem',
 

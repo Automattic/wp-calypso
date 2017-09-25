@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-observe' );
 
-module.exports = function() {
+export default function() {
 	const propNames = Array.prototype.slice.call( arguments );
 
 	return {
@@ -47,4 +47,4 @@ module.exports = function() {
 		}
 
 	};
-};
+}

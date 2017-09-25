@@ -63,7 +63,7 @@ function handleVisibilityChange() {
 	}
 }
 
-module.exports = {
+export default {
 	add: add,
 	remove: remove,
 	pauseAll: pauseAll,

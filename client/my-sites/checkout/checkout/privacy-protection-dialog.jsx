@@ -11,7 +11,7 @@ import Dialog from 'components/dialog';
 import PrivacyProtectionExample from './privacy-protection-example';
 import getProtectedContactInformation from 'lib/domains/whois/protected-contact-information';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PrivacyProtectionDialog',
 
 	getDefaultProps: function() {

@@ -30,7 +30,7 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PaypalPaymentBox',
 
 	getInitialState: function() {

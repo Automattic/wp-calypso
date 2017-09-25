@@ -62,4 +62,4 @@ PostContentImagesStore.dispatchToken = Dispatcher.register( function( payload ) 
 	}
 } );
 
-module.exports = PostContentImagesStore;
+export default PostContentImagesStore;

@@ -180,4 +180,4 @@ FollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( FollowersStore );
 
-module.exports = FollowersStore;
+export default FollowersStore;

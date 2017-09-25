@@ -35,4 +35,4 @@ const MySitesNavigation = React.createClass( {
 	}
 } );
 
-module.exports = MySitesNavigation;
+export default MySitesNavigation;

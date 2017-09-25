@@ -11,7 +11,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 import CompactCard from 'components/card/compact';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HelpResult',
 
 	mixins: [ PureRenderMixin ],

@@ -8,7 +8,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {

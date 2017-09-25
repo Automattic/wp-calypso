@@ -81,4 +81,4 @@ const CreditsPaymentBox = React.createClass( {
 	}
 } );
 
-module.exports = CreditsPaymentBox;
+export default CreditsPaymentBox;

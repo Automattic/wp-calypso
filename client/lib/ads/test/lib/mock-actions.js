@@ -2,7 +2,7 @@ import site from './mock-site';
 import earnings from './mock-earnings';
 import settings from './mock-settings';
 
-module.exports = {
+export default {
 	fetchedEarnings: {
 		type: 'RECEIVE_EARNINGS',
 		site: site,

@@ -241,4 +241,4 @@ const RenderVisualizerMixin = {
 	}
 };
 
-module.exports = RenderVisualizerMixin;
+export default RenderVisualizerMixin;

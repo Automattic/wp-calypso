@@ -526,4 +526,4 @@ const TokenField = React.createClass( {
 	}
 } );
 
-module.exports = TokenField;
+export default TokenField;

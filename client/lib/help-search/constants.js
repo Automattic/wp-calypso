@@ -1,5 +1,5 @@
 import keyMirror from 'key-mirror';
 
-module.exports.action = keyMirror( {
+export const action = keyMirror( {
 	SET_HELP_LINKS: null
 } );

@@ -11,7 +11,7 @@ import page from 'page';
  */
 import buildUrl from 'lib/build-url';
 
-module.exports = {
+export default {
 
 	getInitialState: function() {
 		return {

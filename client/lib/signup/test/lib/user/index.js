@@ -2,10 +2,10 @@
  * User stub
  */
 
-module.exports = function() {
+export default function() {
 	return {
 		get: function() {
 			return false;
 		}
 	};
-};
+}

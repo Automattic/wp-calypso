@@ -11,7 +11,7 @@ import { omit } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PeopleProfile',
 
 	mixins: [ PureRenderMixin ],

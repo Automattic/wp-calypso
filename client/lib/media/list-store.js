@@ -291,4 +291,4 @@ MediaListStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = MediaListStore;
+export default MediaListStore;

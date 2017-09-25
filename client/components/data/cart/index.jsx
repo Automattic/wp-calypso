@@ -28,4 +28,4 @@ const CartData = React.createClass( {
 	}
 } );
 
-module.exports = CartData;
+export default CartData;

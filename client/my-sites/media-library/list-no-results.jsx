@@ -8,7 +8,7 @@ import React from 'react';
  */
 import NoResults from 'my-sites/no-results';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListNoResults',
 
 	propTypes: {

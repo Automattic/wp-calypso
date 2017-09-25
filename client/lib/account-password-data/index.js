@@ -113,4 +113,4 @@ AccountPasswordData.prototype.generate = function() {
 	return chars.join( '' );
 };
 
-module.exports = new AccountPasswordData();
+export default new AccountPasswordData();

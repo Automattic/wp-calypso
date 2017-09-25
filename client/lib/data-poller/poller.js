@@ -101,4 +101,4 @@ Poller.prototype.stopOnNoChangeListeners = function( event ) {
 	}
 };
 
-module.exports = Poller;
+export default Poller;

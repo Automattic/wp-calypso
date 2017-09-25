@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	ID: 8,
 	avatar_URL: 'https://1.gravatar.com/avatar',
 	email: 'test8@example.com',

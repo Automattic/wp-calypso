@@ -9,7 +9,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	recordEvent: function() {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
 		analytics.tracks.recordEvent( 'calypso_me_next_click', {

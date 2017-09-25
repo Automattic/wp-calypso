@@ -15,7 +15,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 import MediaComponent from 'my-sites/media/main';
 
-module.exports = {
+export default {
 
 	media: function( context ) {
 		let filter = context.params.filter, search = context.query.s, baseAnalyticsPath = route.sectionify( context.path );

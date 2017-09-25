@@ -4,7 +4,7 @@ import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
 
-module.exports = {
+export default {
 	// Fetch Data
 	fetched: {
 		type: 'RECEIVE_PLUGINS',

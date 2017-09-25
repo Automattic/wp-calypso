@@ -53,4 +53,4 @@ const CartTotal = React.createClass( {
 	}
 } );
 
-module.exports = CartTotal;
+export default CartTotal;

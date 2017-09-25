@@ -2,7 +2,7 @@ import site from './mock-site';
 import followerData from './mock-email-followers';
 import moreFollowerData from './mock-more-email-followers';
 
-module.exports = {
+export default {
 	fetchedFollowers: {
 		type: 'RECEIVE_EMAIL_FOLLOWERS',
 		fetchOptions: {

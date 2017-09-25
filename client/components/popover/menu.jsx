@@ -169,4 +169,4 @@ const PopoverMenu = React.createClass( {
 	},
 } );
 
-module.exports = PopoverMenu;
+export default PopoverMenu;

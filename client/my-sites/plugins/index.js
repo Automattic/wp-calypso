@@ -22,7 +22,7 @@ const nonJetpackRedirectTo = path => ( context, next ) => {
 	next();
 };
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page( '/plugins/setup',
 			controller.siteSelection,
@@ -117,4 +117,4 @@ module.exports = function() {
 			next();
 		} );
 	}
-};
+}

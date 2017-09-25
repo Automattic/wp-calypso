@@ -53,4 +53,4 @@ const CustomizeActions = {
 	}
 };
 
-module.exports = CustomizeActions;
+export default CustomizeActions;

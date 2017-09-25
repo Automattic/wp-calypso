@@ -8,7 +8,7 @@ import React from 'react';
  */
 import ListItemFileDetails from './list-item-file-details';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemDocument',
 
 	render: function() {

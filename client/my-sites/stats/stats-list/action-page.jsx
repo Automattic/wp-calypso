@@ -14,7 +14,7 @@ import analytics from 'lib/analytics';
 
 import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsActionPage',
 
 	clickHandler: function( event ) {

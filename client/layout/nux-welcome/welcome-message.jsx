@@ -15,7 +15,7 @@ function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'NuxWelcomeMessage',
 

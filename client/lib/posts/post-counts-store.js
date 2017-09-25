@@ -234,4 +234,4 @@ function changeCounts( post, original, counts ) {
 /**
  * Expose module
  */
-module.exports = PostCountsStore;
+export default PostCountsStore;

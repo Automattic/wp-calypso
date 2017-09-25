@@ -19,10 +19,11 @@ let SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js',
 if ( ! window._sift ) {
 	window._sift = [];
 }
+
 /**
  * Expose `SiftScience`
  */
-module.exports = {
+export default {
 	recordUser: function() {
 		if ( ! hasLoaded ) {
 			window._sift.push( [ '_setAccount', config( 'siftscience_key' ) ] );

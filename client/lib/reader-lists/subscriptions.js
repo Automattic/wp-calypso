@@ -143,4 +143,4 @@ ReaderListStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = ReaderListStore;
+export default ReaderListStore;

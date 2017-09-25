@@ -15,7 +15,7 @@ import ButtonsTray from './tray';
 import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {

@@ -11,7 +11,7 @@ import controller from 'my-sites/controller';
 import statsController from './controller';
 import config from 'config';
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'jetpack/activity-log' ) ) {
 		page( '/stats/activity/:site_id', controller.siteSelection, controller.navigation, statsController.activityLog );
 	}
@@ -55,4 +55,4 @@ module.exports = function() {
 		// Anything else should require site-selection
 		page( '/stats/(.*)', controller.siteSelection, controller.navigation, statsController.redirectToDefaultSitePage, controller.sites );
 	}
-};
+}

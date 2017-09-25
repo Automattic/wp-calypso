@@ -3,7 +3,7 @@
  */
 import keyMirror from 'key-mirror';
 
-module.exports = {
+export default {
 	actions: keyMirror( {
 		AUTH_LOGIN: null,
 		RECEIVE_AUTH_LOGIN: null,

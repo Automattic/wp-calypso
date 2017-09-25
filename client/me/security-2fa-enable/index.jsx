@@ -25,7 +25,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faEnable',
 

@@ -45,4 +45,4 @@ var Selects = React.createClass( {
 	}
 } );
 
-module.exports = Selects;
+export default Selects;

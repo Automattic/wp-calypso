@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PostRelativeTime',
 

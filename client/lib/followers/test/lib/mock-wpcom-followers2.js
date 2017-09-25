@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	page: 1,
 	pages: 2,
 	total: 4,

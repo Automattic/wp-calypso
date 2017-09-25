@@ -130,4 +130,4 @@ const EditorPreview = React.createClass( {
 	}
 } );
 
-module.exports = localize( EditorPreview );
+export default localize( EditorPreview );

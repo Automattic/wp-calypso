@@ -64,7 +64,7 @@ const config = data => key => {
 const isEnabled = data => feature =>
 	data.features && !! data.features[ feature ] || false;
 
-module.exports = data => {
+export default data => {
 	const configApi = config( data );
 	configApi.isEnabled = isEnabled( data );
 

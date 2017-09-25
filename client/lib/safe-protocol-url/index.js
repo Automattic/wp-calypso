@@ -4,7 +4,7 @@
 import { assign, pick } from 'lodash';
 import urls from 'url';
 
-module.exports = function( url ) {
+export default function( url ) {
 	let bits,
 		formatKeys = [
 			'host',
@@ -35,4 +35,4 @@ module.exports = function( url ) {
 			{ protocol: 'http' }
 		)
 	);
-};
+}

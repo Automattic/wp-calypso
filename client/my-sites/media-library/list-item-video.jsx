@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',
 
 	propTypes: {

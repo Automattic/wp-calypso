@@ -355,7 +355,7 @@ function isSpaceUpgrade( product ) {
 		'100gb_space_upgrade' === product.product_slug;
 }
 
-module.exports = {
+export default {
 	formatProduct,
 	getDomainProductRanking,
 	includesProduct,

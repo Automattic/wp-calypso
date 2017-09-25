@@ -305,4 +305,4 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	} );
 }
 
-module.exports = AddEmailAddressesCard;
+export default AddEmailAddressesCard;

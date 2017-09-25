@@ -1,4 +1,4 @@
-module.exports = [
+export default [
 	{
 		title: 'Help link 1 title',
 		description: 'Help link 1 description',

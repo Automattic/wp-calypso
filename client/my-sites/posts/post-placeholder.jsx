@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PostPlaceholder',
 

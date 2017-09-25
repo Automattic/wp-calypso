@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import viewport from 'lib/viewport';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StickyPanel',
 
 	propTypes: {

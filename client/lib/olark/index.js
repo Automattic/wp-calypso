@@ -255,4 +255,4 @@ const olark = {
 
 emitter( olark );
 
-module.exports = olark;
+export default olark;

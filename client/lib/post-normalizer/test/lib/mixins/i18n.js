@@ -9,4 +9,4 @@ I18n.translate = function( string ) {
 	return string;
 };
 
-module.exports = I18n;
+export default I18n;

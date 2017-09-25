@@ -75,4 +75,4 @@ PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = PostsStore;
+export default PostsStore;

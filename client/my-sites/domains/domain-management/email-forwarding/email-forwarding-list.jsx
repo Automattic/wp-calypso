@@ -35,4 +35,4 @@ const EmailForwardingList = React.createClass( {
 	}
 } );
 
-module.exports = EmailForwardingList;
+export default EmailForwardingList;

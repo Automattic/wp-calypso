@@ -3,7 +3,7 @@
  */
 import analytics from 'lib/analytics';
 
-module.exports = {
+export default {
 	recordEvent: function( eventAction ) {
 		analytics.ga.recordEvent( 'Me', eventAction );
 	},

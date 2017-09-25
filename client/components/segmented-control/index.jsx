@@ -226,4 +226,4 @@ const SegmentedControl = React.createClass( {
 	}
 } );
 
-module.exports = SegmentedControl;
+export default SegmentedControl;

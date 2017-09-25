@@ -96,4 +96,4 @@ const PostImage = React.createClass( {
 
 } );
 
-module.exports = PostImage;
+export default PostImage;

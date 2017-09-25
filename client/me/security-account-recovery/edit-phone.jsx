@@ -17,7 +17,7 @@ import Buttons from './buttons';
  */
 const countriesList = require( 'lib/countries-list' ).forSms();
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
 	propTypes: {

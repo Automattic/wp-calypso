@@ -16,7 +16,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 

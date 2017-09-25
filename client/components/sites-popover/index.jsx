@@ -12,7 +12,7 @@ import Popover from 'components/popover';
 import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SitesPopover',
 
 	propTypes: {

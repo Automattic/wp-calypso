@@ -320,4 +320,4 @@ MediaActions.sourceChanged = function( siteId ) {
 	} );
 };
 
-module.exports = MediaActions;
+export default MediaActions;

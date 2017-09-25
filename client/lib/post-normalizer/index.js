@@ -127,4 +127,4 @@ normalizePost.content = {
 	detectPolls
 };
 
-module.exports = normalizePost;
+export default normalizePost;

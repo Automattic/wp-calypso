@@ -89,4 +89,4 @@ TreeConvert.prototype.removeOrderProperty = function( itemTrees ) {
 	} ] );
 };
 
-module.exports = TreeConvert;
+export default TreeConvert;

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
 	{
 		active: false,
 		author: 'Matt Mullenweg',

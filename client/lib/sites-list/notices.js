@@ -6,7 +6,7 @@ import notices from 'notices';
 import SitesLog from 'lib/sites-list/log-store';
 import SitesListActions from 'lib/sites-list/actions';
 
-module.exports = {
+export default {
 	getInitialState: function() {
 		return { notices: this.refreshSiteNotices() };
 	},

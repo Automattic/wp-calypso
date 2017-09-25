@@ -301,4 +301,4 @@ function markPostSeen( post, site ) {
 	}
 }
 
-module.exports = FeedPostStore;
+export default FeedPostStore;

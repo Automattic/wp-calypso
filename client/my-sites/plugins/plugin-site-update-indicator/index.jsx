@@ -11,7 +11,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteUpdateIndicator',
 

@@ -17,7 +17,7 @@ import productsValues from 'lib/products-values';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 

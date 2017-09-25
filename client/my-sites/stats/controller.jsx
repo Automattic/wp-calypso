@@ -81,7 +81,7 @@ function getSiteFilters( siteId ) {
 	return filters;
 }
 
-module.exports = {
+export default {
 	resetFirstView( context ) {
 		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
 	},

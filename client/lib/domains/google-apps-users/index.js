@@ -52,7 +52,7 @@ function validate( { users, fields } ) {
 	};
 }
 
-module.exports = {
+export default {
 	validate,
 	filter
 };

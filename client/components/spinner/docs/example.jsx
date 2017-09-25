@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Spinner from 'components/spinner';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Spinner',
 
 	mixins: [ PureRenderMixin ],

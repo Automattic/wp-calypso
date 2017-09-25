@@ -50,4 +50,4 @@ FakeWPCOM.prototype.getRequest = function( index ) {
 	return this._requests[ index ];
 };
 
-module.exports = FakeWPCOM;
+export default FakeWPCOM;

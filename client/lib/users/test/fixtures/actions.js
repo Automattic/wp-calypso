@@ -6,7 +6,7 @@ import updatedUserData from './updated-single-user';
 import singleUserData from './single-user';
 import pollingUsersData from './polling-users';
 
-module.exports = {
+export default {
 	fetched: {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {

@@ -109,4 +109,4 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = TransactionStore;
+export default TransactionStore;

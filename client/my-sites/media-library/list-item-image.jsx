@@ -12,7 +12,7 @@ import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
 	propTypes: {

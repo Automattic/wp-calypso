@@ -13,7 +13,7 @@ import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsTray',
 
 	propTypes: {

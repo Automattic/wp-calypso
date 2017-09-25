@@ -67,4 +67,4 @@ const StatUpdateIndicator = React.createClass( {
 	}
 } );
 
-module.exports = StatUpdateIndicator;
+export default StatUpdateIndicator;

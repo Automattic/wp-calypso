@@ -143,4 +143,4 @@ const PayButton = React.createClass( {
 	}
 } );
 
-module.exports = PayButton;
+export default PayButton;

@@ -124,4 +124,4 @@ var Notices = React.createClass( {
 	}
 } );
 
-module.exports = Notices;
+export default Notices;

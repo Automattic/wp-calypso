@@ -212,4 +212,4 @@ Site.prototype.isCustomizable = function() {
 	return !! ( this.capabilities && this.capabilities.edit_theme_options );
 };
 
-module.exports = Site;
+export default Site;

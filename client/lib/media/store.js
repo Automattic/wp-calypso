@@ -156,4 +156,4 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = MediaStore;
+export default MediaStore;

@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:me:form-base' );
  */
 import notices from 'notices';
 
-module.exports = {
+export default {
 	componentDidMount: function() {
 		this.props.userSettings.getSettings();
 	},

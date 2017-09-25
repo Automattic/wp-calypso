@@ -2,7 +2,7 @@ import site from './mock-site';
 import followerData from './mock-wpcom-followers1';
 import moreFollowerData from './mock-wpcom-followers2';
 
-module.exports = {
+export default {
 	fetchedFollowers: {
 		type: 'RECEIVE_FOLLOWERS',
 		fetchOptions: {

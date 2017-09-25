@@ -37,4 +37,4 @@ HelpSearchStore.getHelpLinks = function() {
 	return HelpSearchStore.get();
 };
 
-module.exports = HelpSearchStore;
+export default HelpSearchStore;

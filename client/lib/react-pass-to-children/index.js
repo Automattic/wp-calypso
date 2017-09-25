@@ -4,7 +4,7 @@
 import { assign } from 'lodash';
 import React from 'react';
 
-module.exports = function( element, additionalProps ) {
+export default function( element, additionalProps ) {
 	let props = assign( {}, element.props, additionalProps ),
 		childElements;
 
@@ -23,4 +23,4 @@ module.exports = function( element, additionalProps ) {
 	}
 
 	return React.cloneElement( element.props.children, props );
-};
+}

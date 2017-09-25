@@ -10,7 +10,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Gauge from 'components/gauge';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Gauge',
 
 	mixins: [ PureRenderMixin ],

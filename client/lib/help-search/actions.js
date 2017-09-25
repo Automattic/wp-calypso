@@ -33,4 +33,4 @@ const HelpSearchActions = {
 	}
 };
 
-module.exports = HelpSearchActions;
+export default HelpSearchActions;
