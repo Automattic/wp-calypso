@@ -5,7 +5,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,9 +25,9 @@ export const CommentDetailHeader = ( {
 	authorUrl,
 	commentContent,
 	commentIsLiked,
-	commentIsPing,
 	commentIsSelected,
 	commentStatus,
+	commentType,
 	deleteCommentPermanently,
 	isBulkEdit,
 	isEditMode,
@@ -46,6 +46,8 @@ export const CommentDetailHeader = ( {
 		avatar_URL: authorAvatarUrl,
 		display_name: authorDisplayName,
 	};
+
+	const commentIsPing = includes( [ 'pingback', 'trackback' ], commentType );
 
 	const classes = classNames( 'comment-detail__header', {
 		'is-preview': ! isExpanded,
@@ -125,15 +127,13 @@ export const CommentDetailHeader = ( {
 							</div>
 						</div>
 					</div>
-					{ ! commentIsPing &&
-						<AutoDirection>
-							<div className="comment-detail__comment-preview">
-								<Emojify>
-									{ decodeEntities( stripHTML( commentContent ) ) }
-								</Emojify>
-							</div>
-						</AutoDirection>
-					}
+					<AutoDirection>
+						<div className="comment-detail__comment-preview">
+							<Emojify>
+								{ decodeEntities( stripHTML( commentContent ) ) }
+							</Emojify>
+						</div>
+					</AutoDirection>
 				</div>
 			}
 

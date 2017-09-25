@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { some } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,8 +44,8 @@ export class CommentDetailAuthor extends Component {
 		canUserBlacklist: PropTypes.bool,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
-		commentIsPing: PropTypes.bool,
 		commentStatus: PropTypes.string,
+		commentType: PropTypes.string,
 		commentUrl: PropTypes.string,
 		currentUserEmail: PropTypes.string,
 		siteBlacklist: PropTypes.string,
@@ -115,7 +115,7 @@ export class CommentDetailAuthor extends Component {
 	}
 
 	authorMoreInfo() {
-		if ( ! this.showMoreInfo() || this.props.commentIsPing ) {
+		if ( ! this.showMoreInfo() || 'comment' !== this.props.commentType ) {
 			return null;
 		}
 
@@ -211,12 +211,14 @@ export class CommentDetailAuthor extends Component {
 		const {
 			authorDisplayName,
 			authorUrl,
-			commentIsPing,
 			commentStatus,
+			commentType,
 			commentUrl,
 			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
+
+		const commentIsPing = includes( [ 'pingback', 'trackback' ], commentType );
 
 		const classes = classNames( 'comment-detail__author', {
 			'is-expanded': isExpanded,

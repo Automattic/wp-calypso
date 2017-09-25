@@ -27,8 +27,8 @@ export class CommentDetailComment extends Component {
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
-		commentIsPing: PropTypes.bool,
 		commentStatus: PropTypes.string,
+		commentType: PropTypes.string,
 		commentUrl: PropTypes.string,
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
@@ -47,8 +47,8 @@ export class CommentDetailComment extends Component {
 			commentContent,
 			commentDate,
 			commentId,
-			commentIsPing,
 			commentStatus,
+			commentType,
 			commentUrl,
 			repliedToComment,
 			siteBlacklist,
@@ -70,8 +70,8 @@ export class CommentDetailComment extends Component {
 						authorUsername={ authorUsername }
 						commentDate={ commentDate }
 						commentId={ commentId }
-						commentIsPing={ commentIsPing }
 						commentStatus={ commentStatus }
+						commentType={ commentType }
 						commentUrl={ commentUrl }
 						siteBlacklist={ siteBlacklist }
 						siteId={ siteId }
