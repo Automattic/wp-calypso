@@ -3,6 +3,7 @@
  */
 import { property, sortBy } from 'lodash';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -52,7 +53,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
 
-Layout = React.createClass( {
+Layout = createReactClass( {
 	displayName: 'Layout',
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],

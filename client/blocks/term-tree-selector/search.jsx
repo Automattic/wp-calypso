@@ -5,13 +5,13 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-export default localize( React.createClass( {
-	displayName: 'TermTreeSelectorSearch',
+export default localize( class extends React.Component {
+	static displayName = 'TermTreeSelectorSearch';
 
-	propTypes: {
+	static propTypes = {
 		searchTerm: PropTypes.string,
 		onSearch: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
 		return (
@@ -24,4 +24,4 @@ export default localize( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+} );

@@ -2,6 +2,7 @@
  *	External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classnames from 'classnames';
 import { assign, isArray, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -156,7 +157,8 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollble
 
 const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-export const Timeline = React.createClass( {
+export const Timeline = createReactClass( {
+	displayName: 'Timeline',
 	mixins: [ autoscroll, scrollbleed ],
 
 	getDefaultProps() {

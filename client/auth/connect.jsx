@@ -15,11 +15,10 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WordPressLogo from 'components/wordpress-logo';
 
-const Connect = React.createClass( {
-
-	getCreateAccountUrl() {
+class Connect extends React.Component {
+	getCreateAccountUrl = () => {
 		return config.isEnabled( 'devdocs' ) ? 'https://wordpress.com/start/developer' : 'https://wordpress.com/start';
-	},
+	};
 
 	render() {
 		return (
@@ -48,6 +47,6 @@ const Connect = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 export default localize( Connect );

@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 /**
@@ -34,7 +35,8 @@ const preventDefault = call( 'preventDefault' );
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-export const Composer = React.createClass( {
+export const Composer = createReactClass( {
+	displayName: 'Composer',
 	mixins: [ scrollbleed ],
 
 	render() {

@@ -5,8 +5,8 @@ import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-const FollowButton = React.createClass( {
-	propTypes: {
+class FollowButton extends React.Component {
+	static propTypes = {
 		following: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
 		iconSize: PropTypes.number,
@@ -14,26 +14,24 @@ const FollowButton = React.createClass( {
 		disabled: PropTypes.bool,
 		followLabel: PropTypes.string,
 		followingLabel: PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			following: false,
-			onFollowToggle: noop,
-			iconSize: 20,
-			tagName: 'button',
-			disabled: false,
-		};
-	},
+	static defaultProps = {
+		following: false,
+		onFollowToggle: noop,
+		iconSize: 20,
+		tagName: 'button',
+		disabled: false,
+	};
 
 	componentWillMount() {
 		this.strings = {
 			FOLLOW: this.props.translate( 'Follow' ),
 			FOLLOWING: this.props.translate( 'Following' ),
 		};
-	},
+	}
 
-	toggleFollow( event ) {
+	toggleFollow = event => {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -45,7 +43,7 @@ const FollowButton = React.createClass( {
 		if ( this.props.onFollowToggle ) {
 			this.props.onFollowToggle( ! this.props.following );
 		}
-	},
+	};
 
 	render() {
 		let label = this.props.followLabel ? this.props.followLabel : this.strings.FOLLOW;
@@ -100,7 +98,7 @@ const FollowButton = React.createClass( {
 			},
 			[ followingIcon, followIcon, followLabelElement ]
 		);
-	},
-} );
+	}
+}
 
 export default localize( FollowButton );

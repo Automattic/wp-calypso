@@ -21,44 +21,40 @@ import EmptyContent from 'components/empty-content';
  */
 const log = debug( 'calypso:layout' );
 
-const LoadingError = React.createClass( {
+class LoadingError extends React.Component {
+	static isRetry() {
+		const parsed = url.parse( location.href, true );
+		return parsed.query.retry === '1';
+	}
 
-	statics: {
-		isRetry: function() {
-			const parsed = url.parse( location.href, true );
-			return parsed.query.retry === '1';
-		},
+	static retry( chunkName ) {
+		let parsed;
+		if ( ! LoadingError.isRetry() ) {
+			parsed = url.parse( location.href, true );
 
-		retry: function( chunkName ) {
-			let parsed;
-			if ( ! LoadingError.isRetry() ) {
-				parsed = url.parse( location.href, true );
+			analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
 
-				analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
-
-				// Trigger a full page load which should include script tags for the current chunk
-				window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
-			}
-		},
-
-		show: function( chunkName ) {
-			log( 'Chunk %s could not be loaded', chunkName );
-			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-			ReactDom.render(
-				React.createElement( LoadingError, {} ),
-				document.getElementById( 'primary' )
-			);
+			// Trigger a full page load which should include script tags for the current chunk
+			window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
 		}
-	},
+	}
 
-	render: function() {
+	static show( chunkName ) {
+		log( 'Chunk %s could not be loaded', chunkName );
+		analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
+		ReactDom.render(
+			React.createElement( LoadingError, {} ),
+			document.getElementById( 'primary' )
+		);
+	}
+
+	render() {
 		return (
 		    <EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
 				title={ this.props.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
 		);
 	}
-
-} );
+}
 
 export default localize( LoadingError );

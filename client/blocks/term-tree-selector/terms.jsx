@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -41,7 +42,8 @@ const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 25;
 
-const TermTreeSelectorList = React.createClass( {
+const TermTreeSelectorList = createReactClass( {
+	displayName: 'TermTreeSelectorList',
 
 	propTypes: {
 		hideTermAndChildren: PropTypes.number,

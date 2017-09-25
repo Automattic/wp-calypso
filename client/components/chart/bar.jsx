@@ -10,10 +10,10 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
-	displayName: 'ModuleChartBar',
+export default class extends React.Component {
+	static displayName = 'ModuleChartBar';
 
-	propTypes: {
+	static propTypes = {
 		isTouch: React.PropTypes.bool,
 		tooltipPosition: React.PropTypes.string,
 		className: React.PropTypes.string,
@@ -21,17 +21,15 @@ export default React.createClass( {
 		data: React.PropTypes.object.isRequired,
 		max: React.PropTypes.number,
 		count: React.PropTypes.number
-	},
+	};
 
-	getDefaultProps: () => ( {
+	static defaultProps = {
 		max: Infinity,
-	} ),
+	};
 
-	getInitialState: function() {
-		return { showPopover: false };
-	},
+	state = { showPopover: false };
 
-	buildSections: function() {
+	buildSections = () => {
 		const { active, data, max } = this.props;
 		const { nestedValue, value } = data;
 
@@ -69,23 +67,23 @@ export default React.createClass( {
 		sections.push( <div key="label" className="chart__bar-label">{ this.props.label }</div> );
 
 		return sections;
-	},
+	};
 
-	clickHandler: function() {
+	clickHandler = () => {
 		if ( 'function' === typeof( this.props.clickHandler ) ) {
 			this.props.clickHandler( this.props.data );
 		}
-	},
+	};
 
-	mouseEnter: function() {
+	mouseEnter = () => {
 		this.setState( { showPopover: true } );
-	},
+	};
 
-	mouseLeave: function() {
+	mouseLeave = () => {
 		this.setState( { showPopover: false } );
-	},
+	};
 
-	renderTooltip() {
+	renderTooltip = () => {
 		if (
 			! this.props.data.tooltipData ||
 			! this.props.data.tooltipData.length ||
@@ -130,9 +128,9 @@ export default React.createClass( {
 				</ul>
 			</Tooltip>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const barClass = classNames( 'chart__bar', this.props.className );
 		const count = this.props.count || 1;
 		const barStyle = {
@@ -153,4 +151,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

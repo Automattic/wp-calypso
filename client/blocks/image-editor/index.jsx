@@ -43,8 +43,8 @@ import {
 	getDefaultAspectRatio
 } from './utils';
 
-const ImageEditor = React.createClass( {
-	propTypes: {
+class ImageEditor extends React.Component {
+	static propTypes = {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
@@ -62,27 +62,23 @@ const ImageEditor = React.createClass( {
 		setImageEditorDefaultAspectRatio: PropTypes.func,
 		translate: PropTypes.func,
 		isImageLoaded: PropTypes.bool
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			media: null,
-			onDone: noop,
-			onCancel: null,
-			onReset: noop,
-			isImageLoaded: false,
-			defaultAspectRatio: AspectRatios.FREE,
-			allowedAspectRatios: AspectRatiosValues,
-			setImageEditorDefaultAspectRatio: noop
-		};
-	},
+	static defaultProps = {
+		media: null,
+		onDone: noop,
+		onCancel: null,
+		onReset: noop,
+		isImageLoaded: false,
+		defaultAspectRatio: AspectRatios.FREE,
+		allowedAspectRatios: AspectRatiosValues,
+		setImageEditorDefaultAspectRatio: noop
+	};
 
-	getInitialState() {
-		return {
-			noticeText: null,
-			noticeStatus: 'is-info'
-		};
-	},
+	state = {
+		noticeText: null,
+		noticeStatus: 'is-info'
+	};
 
 	componentWillReceiveProps( newProps ) {
 		const {
@@ -96,15 +92,15 @@ const ImageEditor = React.createClass( {
 
 			this.setDefaultAspectRatio();
 		}
-	},
+	}
 
 	componentDidMount() {
 		this.updateFileInfo( this.props.media );
 
 		this.setDefaultAspectRatio();
-	},
+	}
 
-	setDefaultAspectRatio() {
+	setDefaultAspectRatio = () => {
 		const {
 			defaultAspectRatio,
 			allowedAspectRatios
@@ -113,9 +109,9 @@ const ImageEditor = React.createClass( {
 		this.props.setImageEditorDefaultAspectRatio(
 			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
 		);
-	},
+	};
 
-	updateFileInfo( media ) {
+	updateFileInfo = media => {
 		const {	site } = this.props;
 
 		let src,
@@ -137,9 +133,9 @@ const ImageEditor = React.createClass( {
 
 		this.props.resetImageEditorState();
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
-	},
+	};
 
-	convertBlobToImage( blob ) {
+	convertBlobToImage = blob => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob
@@ -166,9 +162,9 @@ const ImageEditor = React.createClass( {
 		};
 
 		transientImage.src = transientImageUrl;
-	},
+	};
 
-	onDone() {
+	onDone = () => {
 		const { isImageLoaded, onDone } = this.props;
 
 		if ( ! isImageLoaded ) {
@@ -179,19 +175,19 @@ const ImageEditor = React.createClass( {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
 		canvasComponent.toBlob( this.convertBlobToImage );
-	},
+	};
 
-	onCancel() {
+	onCancel = () => {
 		this.props.onCancel( this.getImageEditorProps() );
-	},
+	};
 
-	onReset() {
+	onReset = () => {
 		this.props.resetImageEditorState();
 
 		this.props.onReset( this.getImageEditorProps() );
-	},
+	};
 
-	getImageEditorProps() {
+	getImageEditorProps = () => {
 		const {
 			src,
 			fileName,
@@ -215,23 +211,23 @@ const ImageEditor = React.createClass( {
 		}
 
 		return imageProperties;
-	},
+	};
 
-	showNotice( noticeText, noticeStatus = 'is-info' ) {
+	showNotice = ( noticeText, noticeStatus = 'is-info' ) => {
 		this.setState( {
 			noticeText,
 			noticeStatus
 		} );
-	},
+	};
 
-	clearNoticeState() {
+	clearNoticeState = () => {
 		this.setState( {
 			noticeText: null,
 			noticeStatus: 'is-info'
 		} );
-	},
+	};
 
-	renderNotice() {
+	renderNotice = () => {
 		if ( ! this.state.noticeText ) {
 			return null;
 		}
@@ -247,15 +243,15 @@ const ImageEditor = React.createClass( {
 				onDismissClick={ this.clearNoticeState }
 				className="image-editor__notice" />
 		);
-	},
+	};
 
-	onLoadCanvasError() {
+	onLoadCanvasError = () => {
 		const { translate } = this.props;
 		this.showNotice(
 			translate( 'Sorry, there was a problem loading the image. Please close this editor and try selecting the image again.' ),
 			'is-error'
 		);
-	},
+	};
 
 	render() {
 		const {
@@ -301,7 +297,7 @@ const ImageEditor = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, ownProps ) => {

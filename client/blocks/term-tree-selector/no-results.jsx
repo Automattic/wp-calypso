@@ -3,16 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
-export default localize( React.createClass( {
-	displayName: 'TermTreeSelectorNoResults',
+export default localize( class extends React.PureComponent {
+	static displayName = 'TermTreeSelectorNoResults';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		createLink: PropTypes.string
-	},
+	};
 
 	render() {
 		const { createLink } = this.props;
@@ -35,4 +32,4 @@ export default localize( React.createClass( {
 			</span>
 		);
 	}
-} ) );
+} );

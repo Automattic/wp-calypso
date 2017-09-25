@@ -13,16 +13,16 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import Input from 'my-sites/domains/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
 
-const CreditCardFormFields = React.createClass( {
-	propTypes: {
+class CreditCardFormFields extends React.Component {
+	static propTypes = {
 		card: React.PropTypes.object.isRequired,
 		countriesList: React.PropTypes.object.isRequired,
 		eventFormName: React.PropTypes.string.isRequired,
 		isFieldInvalid: React.PropTypes.func.isRequired,
 		onFieldChange: React.PropTypes.func.isRequired
-	},
+	};
 
-	field: function( fieldName, componentClass, props ) {
+	field = ( fieldName, componentClass, props ) => {
 		return React.createElement( componentClass, assign( {}, props, {
 			additionalClasses: 'credit-card-form-fields__field',
 			eventFormName: this.props.eventFormName,
@@ -33,13 +33,13 @@ const CreditCardFormFields = React.createClass( {
 			value: this.getFieldValue( fieldName ),
 			autoComplete: 'off'
 		} ) );
-	},
+	};
 
-	getFieldValue: function( fieldName ) {
+	getFieldValue = fieldName => {
 		return this.props.card[ fieldName ];
-	},
+	};
 
-	handleFieldChange: function( event ) {
+	handleFieldChange = event => {
 		const { name: fieldName, value: nextValue } = event.target;
 
 		const previousValue = this.getFieldValue( fieldName );
@@ -53,9 +53,9 @@ const CreditCardFormFields = React.createClass( {
 		};
 
 		this.props.onFieldChange( rawDetails, maskedDetails );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 		    <div className="credit-card-form-fields">
 				{ this.field( 'name', Input, {
@@ -106,6 +106,6 @@ const CreditCardFormFields = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( CreditCardFormFields );
