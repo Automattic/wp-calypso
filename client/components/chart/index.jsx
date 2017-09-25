@@ -52,7 +52,7 @@ class ModuleChartExport extends React.Component {
 		}
 	}
 
-	resize() {
+	resize = () => {
 		const node = this.refs.chart;
 		let width = node.clientWidth - 82,
 			maxBars;
@@ -70,7 +70,7 @@ class ModuleChartExport extends React.Component {
 		} );
 	}
 
-	getYAxisMax( values ) {
+	getYAxisMax = ( values ) => {
 		const max = Math.max.apply( null, values ),
 			operand = Math.pow( 10, ( Math.floor( max ).toString().length - 1 ) );
 		let rounded = ( Math.ceil( ( max + 1 ) / operand ) * operand );
@@ -82,7 +82,7 @@ class ModuleChartExport extends React.Component {
 		return rounded;
 	}
 
-	getData() {
+	getData = () => {
 		let data = this.props.data;
 
 		data = data.slice( 0 - this.state.maxBars );
@@ -90,7 +90,7 @@ class ModuleChartExport extends React.Component {
 		return data;
 	}
 
-	getValues() {
+	getValues = () => {
 		let data = this.getData();
 
 		data = data.map( function( item ) {
@@ -100,7 +100,7 @@ class ModuleChartExport extends React.Component {
 		return data;
 	}
 
-	isEmptyChart( values ) {
+	isEmptyChart = ( values ) => {
 		return ! some( values, ( value ) => value > 0 );
 	}
 
