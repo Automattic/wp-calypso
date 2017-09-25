@@ -52,6 +52,15 @@ class OrderCustomerCard extends Component {
 		this.updateOrder( event.target.name, event.target.value );
 	};
 
+	/**
+	 * Create an object with structure matching the order properties, which contains
+	 * the updates to be pushed into the UI redux state (and eventually saved to
+	 * the remote site). The input name needs to be mapped to a tree structure,
+	 * see http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties
+	 *
+	 * @param  {string} name  The field being edited, from the input name
+	 * @param  {string} value The input value, which should be saved
+	 */
 	updateOrder = ( name, value ) => {
 		let updateOrder;
 		switch ( name ) {
