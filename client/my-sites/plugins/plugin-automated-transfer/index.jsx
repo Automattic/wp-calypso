@@ -77,7 +77,7 @@ class PluginAutomatedTransfer extends Component {
 
 			newState.transferComplete = true;
 			if ( ! transferComplete ) {
-				newState.shouldDisplay = false;
+				newState.shouldDisplay = true;
 			}
 		} else if ( ! transferComplete ) {
 			newState.shouldDisplay = nextProps.isTransferring || nextProps.isFailedTransfer;
