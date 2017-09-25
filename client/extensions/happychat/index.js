@@ -10,8 +10,10 @@ import React from 'react';
 import { renderPage } from 'lib/react-helpers';
 import controller from 'me/controller';
 import Happychat from './happychat';
+import { initialize } from './state/actions' ;
 
 const render = ( context ) => {
+	context.store.dispatch( initialize() );
 	renderPage( context, <Happychat /> );
 };
 

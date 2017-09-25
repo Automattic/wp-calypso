@@ -14,7 +14,6 @@ const React = require( 'react' ),
 const config = require( 'config' ),
 	abtestModule = require( 'lib/abtest' ), // used by error logger
 	getSavedVariations = abtestModule.getSavedVariations, // used by logger
-	initializeHappychat = require( 'extensions/happychat/state/actions' ).initialize,
 	analytics = require( 'lib/analytics' ),
 	reduxBridge = require( 'lib/redux-bridge' ),
 	route = require( 'lib/route' ),
@@ -206,8 +205,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	if ( currentUser.get() && config.isEnabled( 'olark' ) ) {
 		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
-
-	reduxStore.dispatch( initializeHappychat() );
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 		require( 'lib/keyboard-shortcuts/global' )();
