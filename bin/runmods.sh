@@ -17,6 +17,8 @@ MODS=(
   'i18n-mixin'
   'react-create-class'
   'react-prop-types'
+  'sort-imports'
+  'sort-imports'
   # 'combine-reducer-with-persistence'
   # 'combine-state-utils-imports'
   # 'merge-lodash-imports'
@@ -26,9 +28,9 @@ MODS=(
 )
 
 for MOD in "${MODS[@]}"; do
+	echo
 	echo "Running $MOD on $TARGET"
 	echo
-	read -p "Press any key to continue."
 
 	"./bin/codemods/$MOD" $TARGET
 
@@ -44,3 +46,5 @@ for MOD in "${MODS[@]}"; do
 		git commit -nm "Apply codemod $MOD"
 	fi
 done
+
+npm run reformat-files
