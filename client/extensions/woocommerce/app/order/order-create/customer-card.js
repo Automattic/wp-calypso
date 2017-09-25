@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,13 +25,13 @@ class OrderCustomerCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		editOrder: PropTypes.func.isRequired,
-	}
+	};
 
 	state = {
-		showShipping: false
-	}
+		showShipping: false,
+	};
 
-	getAddressViewFormat = ( address ) => {
+	getAddressViewFormat = address => {
 		return {
 			street: address.address_1 || '',
 			street2: address.address_2 || '',
@@ -39,17 +40,17 @@ class OrderCustomerCard extends Component {
 			country: address.country || '',
 			postcode: address.postcode || '',
 		};
-	}
+	};
 
 	onAddressChange = ( type = 'billing' ) => {
-		return ( event ) => {
+		return event => {
 			this.updateOrder( `${ type }_${ event.target.name }`, event.target.value );
 		};
-	}
+	};
 
-	onChange = ( event ) => {
+	onChange = event => {
 		this.updateOrder( event.target.name, event.target.value );
-	}
+	};
 
 	updateOrder = ( name, value ) => {
 		let updateOrder;
@@ -108,13 +109,13 @@ class OrderCustomerCard extends Component {
 			updateOrder.id = this.props.order.id;
 		}
 		this.props.editOrder( updateOrder );
-	}
+	};
 
 	toggleShipping = () => {
 		this.setState( state => ( {
-			showShipping: ! state.showShipping
+			showShipping: ! state.showShipping,
 		} ) );
-	}
+	};
 
 	renderShipping = () => {
 		const { order, translate } = this.props;
@@ -131,7 +132,8 @@ class OrderCustomerCard extends Component {
 							id="shippingFirstName"
 							name="shippingFirstName"
 							value={ get( order, [ 'shipping', 'first_name' ], '' ) }
-							onChange={ this.onChange } />
+							onChange={ this.onChange }
+						/>
 					</div>
 					<div className="order-create__field">
 						<FormLabel htmlFor="shippingLastName">{ translate( 'Last Name' ) }</FormLabel>
@@ -139,16 +141,18 @@ class OrderCustomerCard extends Component {
 							id="shippingLastName"
 							name="shippingLastName"
 							value={ get( order, [ 'shipping', 'last_name' ], '' ) }
-							onChange={ this.onChange } />
+							onChange={ this.onChange }
+						/>
 					</div>
 				</div>
 				<AddressView
 					isEditable
 					onChange={ this.onAddressChange( 'shipping' ) }
-					address={ this.getAddressViewFormat( get( order, [ 'shipping' ], {} ) ) } />
+					address={ this.getAddressViewFormat( get( order, [ 'shipping' ], {} ) ) }
+				/>
 			</FormFieldset>
 		);
-	}
+	};
 
 	render() {
 		const { order, translate } = this.props;
@@ -161,7 +165,8 @@ class OrderCustomerCard extends Component {
 						id="customerEmail"
 						name="customerEmail"
 						value={ get( order, [ 'billing', 'email' ], '' ) }
-						onChange={ this.onChange } />
+						onChange={ this.onChange }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLegend>{ translate( 'Billing Details' ) }</FormLegend>
@@ -172,7 +177,8 @@ class OrderCustomerCard extends Component {
 								id="firstName"
 								name="firstName"
 								value={ get( order, [ 'billing', 'first_name' ], '' ) }
-								onChange={ this.onChange } />
+								onChange={ this.onChange }
+							/>
 						</div>
 						<div className="order-create__field">
 							<FormLabel htmlFor="lastName">{ translate( 'Last Name' ) }</FormLabel>
@@ -180,7 +186,8 @@ class OrderCustomerCard extends Component {
 								id="lastName"
 								name="lastName"
 								value={ get( order, [ 'billing', 'last_name' ], '' ) }
-								onChange={ this.onChange } />
+								onChange={ this.onChange }
+							/>
 						</div>
 						<div className="order-create__field">
 							<FormLabel htmlFor="phoneNumber">{ translate( 'Phone Number' ) }</FormLabel>
@@ -188,13 +195,15 @@ class OrderCustomerCard extends Component {
 								id="phoneNumber"
 								name="phoneNumber"
 								value={ get( order, [ 'billing', 'phone' ], '' ) }
-								onChange={ this.onChange } />
+								onChange={ this.onChange }
+							/>
 						</div>
 					</div>
 					<AddressView
 						isEditable
 						onChange={ this.onAddressChange( 'billing' ) }
-						address={ this.getAddressViewFormat( get( order, [ 'billing' ], {} ) ) } />
+						address={ this.getAddressViewFormat( get( order, [ 'billing' ], {} ) ) }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLegend>{ translate( 'Shipping Details' ) }</FormLegend>
@@ -209,8 +218,6 @@ class OrderCustomerCard extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		order: getOrderWithEdits( state ),
-	} )
-)( localize( OrderCustomerCard ) );
+export default connect( state => ( {
+	order: getOrderWithEdits( state ),
+} ) )( localize( OrderCustomerCard ) );

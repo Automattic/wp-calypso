@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,18 +22,18 @@ import { ProtectFormGuard } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
 
 class OrderCreate extends Component {
-	editOrder = ( order ) => {
+	editOrder = order => {
 		const { site } = this.props;
 		if ( site && site.ID ) {
 			this.props.editOrder( site.ID, order );
 		}
-	}
+	};
 
 	render() {
 		const { className, site, translate } = this.props;
 		const breadcrumbs = [
-			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
-			( <span>{ translate( 'New Order' ) }</span> ),
+			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
+			<span>{ translate( 'New Order' ) }</span>,
 		];
 		return (
 			<Main className={ className }>
@@ -66,7 +67,7 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 
 		return {
-			site
+			site,
 		};
 	},
 	dispatch => bindActionCreators( { editOrder }, dispatch )

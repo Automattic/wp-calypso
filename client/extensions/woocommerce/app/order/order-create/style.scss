@@ -1,7 +1,8 @@
+/** @format */
 .order-create__container {
 	padding-bottom: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 58px;
 	}
 
@@ -19,8 +20,8 @@
 	}
 
 	.order-create__field {
-		flex: 0 1 calc( 50% - 10px );
-		max-width: calc( 50% - 10px );
+		flex: 0 1 calc(50% - 10px);
+		max-width: calc(50% - 10px);
 		margin-bottom: 20px;
 	}
 }
