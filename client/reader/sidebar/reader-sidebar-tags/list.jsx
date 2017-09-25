@@ -1,15 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { identity, map } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarTagsListItem from './list-item';
 

@@ -2,47 +2,47 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
 import closest from 'component-closest';
-import page from 'page';
-import url from 'url';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { defer, startsWith, identity, every } from 'lodash';
-import store from 'store';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { defer, startsWith, identity, every } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import store from 'store';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderListsStore from 'lib/reader-lists/lists';
+import ReaderSidebarHelper from './helper';
+import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarTags from './reader-sidebar-tags';
+import ReaderSidebarTeams from './reader-sidebar-teams';
+import AppPromo from 'blocks/app-promo';
+import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderTeams from 'components/data/query-reader-teams';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import ReaderSidebarTags from './reader-sidebar-tags';
-import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarTeams from './reader-sidebar-teams';
-import ReaderSidebarHelper from './helper';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
-import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
-import QueryReaderLists from 'components/data/query-reader-lists';
-import QueryReaderTeams from 'components/data/query-reader-teams';
 import observe from 'lib/mixins/data-observe';
-import config from 'config';
+import ReaderListsStore from 'lib/reader-lists/lists';
 import userSettings from 'lib/user-settings';
-import AppPromo from 'blocks/app-promo';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
-import { localize } from 'i18n-calypso';
-import { getTagStreamUrl } from 'reader/route';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { getSubscribedLists } from 'state/reader/lists/selectors';
+import { getReaderTeams } from 'state/selectors';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import url from 'url';
 
 export const ReaderSidebar = createReactClass( {
 	displayName: 'ReaderSidebar',
