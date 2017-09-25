@@ -26,6 +26,7 @@ import { isAncestor } from 'blocks/comments/utils';
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
 
+/* @todo: Pagination */
 class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
