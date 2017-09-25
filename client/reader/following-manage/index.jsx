@@ -27,10 +27,20 @@ import SearchInput from 'components/search';
 import { addQueryArgs } from 'lib/url';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import FollowButton from 'reader/follow-button';
-import { READER_FOLLOWING_MANAGE_URL_INPUT, READER_FOLLOWING_MANAGE_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import {
+	READER_FOLLOWING_MANAGE_URL_INPUT,
+	READER_FOLLOWING_MANAGE_RECOMMENDATION,
+} from 'reader/follow-button/follow-sources';
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
-import { getReaderFeedsForQuery, getReaderFeedsCountForQuery, getReaderRecommendedSites, getReaderRecommendedSitesPagingOffset, getBlockedSites, getReaderAliasedFollowFeedUrl } from 'state/selectors';
+import {
+	getReaderFeedsForQuery,
+	getReaderFeedsCountForQuery,
+	getReaderRecommendedSites,
+	getReaderRecommendedSitesPagingOffset,
+	getBlockedSites,
+	getReaderAliasedFollowFeedUrl,
+} from 'state/selectors';
 import { getReaderFollowsCount } from 'state/selectors';
 
 const PAGE_SIZE = 4;

@@ -8,7 +8,7 @@ const percentageRegex = percentageFactory( { exact: true } );
 const isPercentage = val => percentageRegex.test( val );
 
 const embedsConfig = {
-	'default': {
+	default: {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
 			let { aspectRatio, width, height } = embed;
 

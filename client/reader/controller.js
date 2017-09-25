@@ -10,7 +10,13 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+	setPageTitle,
+} from './controller-helper';
 import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import feedLookup from 'lib/feed-lookup';

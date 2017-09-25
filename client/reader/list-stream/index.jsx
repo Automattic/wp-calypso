@@ -18,7 +18,11 @@ import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import Stream from 'reader/stream';
 import { followList, unfollowList } from 'state/reader/lists/actions';
-import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
+import {
+	getListByOwnerAndSlug,
+	isSubscribedByOwnerAndSlug,
+	isMissingByOwnerAndSlug,
+} from 'state/reader/lists/selectors';
 
 class ListStream extends React.Component {
 	toggleFollowing = isFollowRequested => {
