@@ -117,7 +117,7 @@ export class CommentDetailAuthor extends Component {
 	}
 
 	authorMoreInfo() {
-		if ( ! this.showMoreInfo() || 'comment' !== this.props.commentType ) {
+		if ( ! this.showMoreInfo() ) {
 			return null;
 		}
 
