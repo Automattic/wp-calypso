@@ -7,22 +7,10 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	ticketSupportConfigurationRequest,
-	ticketSupportConfigurationRequestSuccess,
-	ticketSupportConfigurationRequestFailure,
-	ticketSupportConfigurationDismissError,
-} from '../actions';
-
-import {
-	HELP_TICKET_CONFIGURATION_REQUEST,
-	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
-} from 'state/action-types';
-
+import { ticketSupportConfigurationRequest, ticketSupportConfigurationRequestSuccess, ticketSupportConfigurationRequestFailure, ticketSupportConfigurationDismissError } from '../actions';
 import { dummyConfiguration, dummyError } from './test-data';
 
+import { HELP_TICKET_CONFIGURATION_REQUEST, HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS, HELP_TICKET_CONFIGURATION_REQUEST_FAILURE, HELP_TICKET_CONFIGURATION_DISMISS_ERROR } from 'state/action-types';
 import { useNock } from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

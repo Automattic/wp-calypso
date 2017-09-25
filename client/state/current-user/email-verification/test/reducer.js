@@ -6,16 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	EMAIL_VERIFY_REQUEST,
-	EMAIL_VERIFY_REQUEST_SUCCESS,
-	EMAIL_VERIFY_REQUEST_FAILURE,
-	EMAIL_VERIFY_STATE_RESET,
-} from 'state/action-types';
-import reducer, {
-	status,
-	errorMessage,
-} from '../reducer';
+import reducer, { status, errorMessage } from '../reducer';
+import { EMAIL_VERIFY_REQUEST, EMAIL_VERIFY_REQUEST_SUCCESS, EMAIL_VERIFY_REQUEST_FAILURE, EMAIL_VERIFY_STATE_RESET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'exports expected reducer keys', () => {

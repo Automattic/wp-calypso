@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
-import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import { getLink } from 'woocommerce/lib/nav-utils';
 
 const ProductsListRow = ( { site, product } ) => {
 	// The first returned image from the API is the featured image.

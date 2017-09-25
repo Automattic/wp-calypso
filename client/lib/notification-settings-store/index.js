@@ -1,7 +1,5 @@
-/*eslint-disable new-cap */
-
 /**
- * External Dependencies
+ * External dependencies
  */
 import Immutable from 'immutable';
 

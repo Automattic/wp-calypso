@@ -7,15 +7,11 @@ import { isString, tap } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { fetchResetOptionsSuccess, fetchResetOptionsError, updatePasswordResetUserData } from 'state/account-recovery/reset/actions';
 import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
-import {
-	fetchResetOptionsSuccess,
-	fetchResetOptionsError,
-	updatePasswordResetUserData,
-} from 'state/account-recovery/reset/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 export const fromApi = data => [
 	{

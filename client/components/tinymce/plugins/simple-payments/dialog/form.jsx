@@ -1,25 +1,23 @@
 /** @format */
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
+import emailValidator from 'email-validator';
+import { localize } from 'i18n-calypso';
+import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
-import { localize } from 'i18n-calypso';
-import emailValidator from 'email-validator';
-import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import UploadImage from 'blocks/upload-image';
 import ExternalLink from 'components/external-link';
+import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
-import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';

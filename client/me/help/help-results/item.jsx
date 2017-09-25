@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import Gridicon from 'gridicons';
-import { decodeEntities } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import { decodeEntities } from 'lib/formatting';
 
 export default React.createClass( {
 	displayName: 'HelpResult',

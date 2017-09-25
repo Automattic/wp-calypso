@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 
 export function requestCommentEmailSubscription( { dispatch }, action ) {
 	dispatch(

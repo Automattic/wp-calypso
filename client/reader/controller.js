@@ -1,33 +1,27 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
+import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
-import route from 'lib/route';
 import feedLookup from 'lib/feed-lookup';
 import feedStreamFactory from 'lib/feed-stream-store';
-import {
-	ensureStoreLoading,
-	trackPageLoad,
-	trackUpdatesLoaded,
-	trackScrollPage,
-	setPageTitle,
-} from './controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
 import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 

@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import * as plans from 'lib/plans/constants';
 import * as steps from '../steps';
+import * as plans from 'lib/plans/constants';
+import useMockery from 'test/helpers/use-mockery';
 
 const DEFAULT_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_HAPPYCHAT = [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];

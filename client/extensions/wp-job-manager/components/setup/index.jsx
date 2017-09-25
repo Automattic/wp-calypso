@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from './constants';
 import Confirmation from './confirmation';
-import DocumentHead from 'components/data/document-head';
+import { SetupPath, Steps } from './constants';
 import Intro from './intro';
-import Main from 'components/main';
 import PageSetup from './page-setup';
+import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
 import Wizard from 'components/wizard';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 

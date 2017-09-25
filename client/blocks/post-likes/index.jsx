@@ -1,18 +1,18 @@
 /**
  * External dependencies
- **/
+ */
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
 import QueryPostLikes from 'components/data/query-post-likes';
-import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
+import Gravatar from 'components/gravatar';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
 
 export const PostLikes = props => {
 	const { countLikes, isRequesting, likes, postId, postType, siteId, translate } = props;

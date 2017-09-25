@@ -1,23 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Plugin from './plugin';
+import PurchaseButton from './purchase-button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import PurchaseButton from './purchase-button';
 import { recordTracksEvent } from 'state/analytics/actions';
-
-import Plugin from './plugin';
 
 export const BusinessPluginsPanel = ( {
 	isActive = false,

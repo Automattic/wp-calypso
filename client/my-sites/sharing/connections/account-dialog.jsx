@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import { filter, find, identity, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
+import Notice from 'components/notice';
 import { warningNotice } from 'state/notices/actions';
 
 class AccountDialog extends Component {

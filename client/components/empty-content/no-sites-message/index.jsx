@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import EmptyContent from 'components/empty-content';
+import config from 'config';
 
 const NoSitesMessage = ( { translate } ) => {
 	return (

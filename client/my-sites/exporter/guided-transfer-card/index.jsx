@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,15 +12,12 @@ import Gridicon from 'gridicons';
 import CompactCard from 'components/card/compact';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import Button from 'components/forms/form-button';
-import {
-	isGuidedTransferAvailableForAllSites,
-	isRequestingGuidedTransferStatus,
-} from 'state/sites/guided-transfer/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
 import SUPPORT_URLS from 'lib/url/support';
+import { getProductDisplayCost } from 'state/products-list/selectors';
+import { isGuidedTransferAvailableForAllSites, isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Feature = ( { children } ) =>
 	<li className="guided-transfer-card__feature-list-item">

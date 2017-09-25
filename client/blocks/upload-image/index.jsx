@@ -1,39 +1,34 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop, uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import path from 'path';
-import Gridicon from 'gridicons';
-import { noop, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	ALLOWED_FILE_EXTENSIONS,
-	ERROR_UNSUPPORTED_FILE,
-	ERROR_IMAGE_EDITOR_DONE,
-	ERROR_UPLOADING_IMAGE,
-} from './constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaItem } from 'state/selectors';
-import Dialog from 'components/dialog';
-import FilePicker from 'components/file-picker';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import Spinner from 'components/spinner';
+import { ALLOWED_FILE_EXTENSIONS, ERROR_UNSUPPORTED_FILE, ERROR_IMAGE_EDITOR_DONE, ERROR_UPLOADING_IMAGE } from './constants';
 import ImageEditor from 'blocks/image-editor';
+import Button from 'components/button';
+import Dialog from 'components/dialog';
 import DropZone from 'components/drop-zone';
+import FilePicker from 'components/file-picker';
+import Spinner from 'components/spinner';
 import MediaActions from 'lib/media/actions';
+import { ValidationErrors } from 'lib/media/constants';
 import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
-import { ValidationErrors } from 'lib/media/constants';
-import Button from 'components/button';
+import path from 'path';
+import { getMediaItem } from 'state/selectors';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class UploadImage extends Component {
 	state = {

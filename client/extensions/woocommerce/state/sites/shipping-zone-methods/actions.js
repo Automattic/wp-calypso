@@ -3,19 +3,8 @@
  */
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CREATE,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETE,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATE,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
-	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST,
-	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import {
-	areShippingZoneMethodsLoaded,
-	areShippingZoneMethodsLoading,
-} from './selectors';
+import { areShippingZoneMethodsLoaded, areShippingZoneMethodsLoading } from './selectors';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_CREATE, WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETE, WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED, WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATE, WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED, WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST, WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchShippingZoneMethodsSuccess = ( siteId, zoneId, data ) => {
 	return {

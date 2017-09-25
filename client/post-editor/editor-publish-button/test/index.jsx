@@ -2,18 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { identity, noop } from 'lodash';
+import mockery from 'mockery';
 import moment from 'moment';
 import React from 'react';
 import sinon from 'sinon';
-import mockery from 'mockery';
-import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables

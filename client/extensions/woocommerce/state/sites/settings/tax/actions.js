@@ -1,19 +1,11 @@
 /**
  * Internal dependencies
  */
-import {
-	areTaxSettingsLoaded,
-	areTaxSettingsLoading,
-} from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST,
-	WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_SETTINGS_TAX_REQUEST,
-	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { areTaxSettingsLoaded, areTaxSettingsLoading } from './selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST, WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST_SUCCESS, WOOCOMMERCE_SETTINGS_TAX_REQUEST, WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchTaxSettings = ( siteId ) => ( dispatch, getState ) => {
 	if (

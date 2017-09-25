@@ -7,15 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-
-import timezonesReducer, {
-	byContinents,
-	labels,
-	rawOffsets,
-} from '../reducer';
-
 import { timezonesReceive } from '../actions';
+import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
+
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;

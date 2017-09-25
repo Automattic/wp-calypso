@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import { map } from 'lodash';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies

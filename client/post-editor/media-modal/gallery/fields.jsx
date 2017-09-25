@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { assign, fromPairs, includes, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { assign, fromPairs, includes, noop, times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EditorMediaModalFieldset from '../fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
 import SelectDropdown from 'components/select-dropdown';
 import SelectDropdownItem from 'components/select-dropdown/item';
-import FormCheckbox from 'components/forms/form-checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 import { isModuleActive } from 'lib/site/utils';
 

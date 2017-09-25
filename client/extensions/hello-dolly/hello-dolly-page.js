@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Main from 'components/main';
+import { nextLyric } from './state/actions';
+import getLyric from './state/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import getLyric from './state/selectors';
-import { nextLyric } from './state/actions';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
 
 class HelloDollyPage extends Component {
 	static propTypes = {

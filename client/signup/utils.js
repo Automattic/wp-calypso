@@ -1,17 +1,17 @@
 /**
- * Exernal dependencies
+ * External dependencies
  */
 import { find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import formState from 'lib/form-state';
 import i18nUtils from 'lib/i18n-utils';
-import steps from 'signup/config/steps';
+import userFactory from 'lib/user';
 import flows from 'signup/config/flows';
 import { defaultFlowName } from 'signup/config/flows';
-import formState from 'lib/form-state';
-import userFactory from 'lib/user';
+import steps from 'signup/config/steps';
 const user = userFactory();
 
 function getFlowName( parameters ) {

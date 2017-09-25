@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
 import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
+
 /**
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID

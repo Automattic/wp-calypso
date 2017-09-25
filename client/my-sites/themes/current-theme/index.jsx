@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { map, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { map, pickBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CurrentThemeButton from './button';
-import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
+import { connectOptions } from '../theme-options';
+import CurrentThemeButton from './button';
+import Card from 'components/card';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 
 /*
  * Show current active theme for a site, with

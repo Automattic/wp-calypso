@@ -1,30 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import {
-	camelCase,
-	difference,
-	isEmpty,
-	keys,
-	map,
-	pick,
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getContactDetailsExtraCache } from 'state/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { getContactDetailsExtraCache } from 'state/selectors';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {

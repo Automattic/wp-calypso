@@ -3,8 +3,8 @@
  */
 import { expect } from 'chai';
 import { noop, toArray } from 'lodash';
-import React from 'react';
 import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies

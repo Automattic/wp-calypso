@@ -6,12 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingGeo,
-	getGeo,
-	getGeoCountry,
-	getGeoCountryShort
-} from '../selectors';
+import { isRequestingGeo, getGeo, getGeoCountry, getGeoCountryShort } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingGeo()', () => {

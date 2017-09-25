@@ -1,16 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	compact,
-	get,
-	head,
-	isEqual,
-	sortBy,
-	toPairs,
-	unionWith,
-} from 'lodash';
 import debugFactory from 'debug';
+import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**

@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
-import classnames from 'classnames';
 
 /**
  * Main

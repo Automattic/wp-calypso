@@ -1,16 +1,14 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
-* Internal dependencies
-*/
-import NoticeAction from 'components/notice/notice-action';
-
+ * Internal dependencies
+ */
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 var Notices = React.createClass( {
 	mixins: [ PureRenderMixin ],

@@ -1,16 +1,8 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
-import {
-	isLoaded,
-	getByDomain,
-	getBySite
-} from '../selectors';
+import { isLoaded, getByDomain, getBySite } from '../selectors';
+import assert from 'assert';
 
 describe( 'selectors', () => {
 	describe( '#isLoaded()', () => {

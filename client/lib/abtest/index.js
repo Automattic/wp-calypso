@@ -2,16 +2,16 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import { every, get, includes, isArray, keys, map, reduce, some } from 'lodash';
 import store from 'store';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
-import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 

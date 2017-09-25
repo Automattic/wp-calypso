@@ -1,7 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assert } from 'chai';
+
+/**
+ * Internal dependencies
+ */
 import olarkStore from 'lib/olark-store';
 
 describe( 'index', function() {

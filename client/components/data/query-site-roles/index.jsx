@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSiteRoles } from 'state/site-roles/selectors';
 import { requestSiteRoles } from 'state/site-roles/actions';
+import { isRequestingSiteRoles } from 'state/site-roles/selectors';
 
 class QuerySiteRoles extends Component {
 	static propTypes = {

@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { noop } from 'lodash';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
 import { USER_SETTING_KEY, LOCALSTORAGE_KEY } from '../constants';
-import { useSandbox } from 'test/helpers/use-sinon';
 import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
  * Constants

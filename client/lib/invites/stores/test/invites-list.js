@@ -7,7 +7,6 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import constants from 'lib/invites/constants';
 
 describe( 'List Invites Store', function() {

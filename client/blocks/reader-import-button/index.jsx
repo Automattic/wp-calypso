@@ -2,18 +2,18 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import FilePicker from 'components/file-picker';
+import wpcom from 'lib/wp';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 class ReaderImportButton extends React.Component {

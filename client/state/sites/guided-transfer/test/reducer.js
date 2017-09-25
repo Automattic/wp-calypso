@@ -7,23 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer, { status, isFetching, isSaving } from '../reducer';
+import { DESERIALIZE, GUIDED_TRANSFER_HOST_DETAILS_SAVE, GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE, GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS, GUIDED_TRANSFER_STATUS_RECEIVE, GUIDED_TRANSFER_STATUS_REQUEST, GUIDED_TRANSFER_STATUS_REQUEST_FAILURE, GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	DESERIALIZE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-	GUIDED_TRANSFER_STATUS_RECEIVE,
-	GUIDED_TRANSFER_STATUS_REQUEST,
-	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-	SERIALIZE,
-} from 'state/action-types';
-import reducer, {
-	status,
-	isFetching,
-	isSaving,
-} from '../reducer';
 
 describe( 'reducer', () => {
 	const testSiteId = 100658273;

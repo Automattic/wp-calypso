@@ -1,23 +1,22 @@
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import classNames from 'classnames';
 import { some, times } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSite, isRequestingSite } from 'state/sites/selectors';
-import { isJetpackPlan } from 'lib/products-values';
-import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+import QuerySites from 'components/data/query-sites';
+import { isJetpackPlan } from 'lib/products-values';
+import { getSite, isRequestingSite } from 'state/sites/selectors';
 
 const PurchasesSite = ( {
 	hasLoadedSite,

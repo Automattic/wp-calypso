@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import assert from 'assert';
 import { isFunction, fromPairs, partial } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import assert from 'assert';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'wrap-es6-functions', () => {

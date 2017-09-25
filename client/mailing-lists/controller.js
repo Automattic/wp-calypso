@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { omit } from 'lodash';
 import React from 'react';
-import { setSection } from 'state/ui/actions';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import MainComponent from './main';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setSection } from 'state/ui/actions';
 
 export default {
 	unsubscribe( context ) {

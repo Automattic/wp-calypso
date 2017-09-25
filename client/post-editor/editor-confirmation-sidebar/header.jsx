@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
 import utils from 'lib/posts/utils';
+import { getPostTypes } from 'state/post-types/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorConfirmationSidebarHeader extends PureComponent {
 	static propTypes = {

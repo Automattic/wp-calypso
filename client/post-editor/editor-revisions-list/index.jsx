@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,15 +14,11 @@ import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
-import { getEditedPostValue } from 'state/posts/selectors';
-import {
-	getPostRevision,
-	getPostRevisions,
-	getPostRevisionsAuthorsId,
-} from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isWithinBreakpoint } from 'lib/viewport';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getPostRevision, getPostRevisions, getPostRevisionsAuthorsId } from 'state/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {

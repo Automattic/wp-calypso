@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import mockery from 'mockery';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies

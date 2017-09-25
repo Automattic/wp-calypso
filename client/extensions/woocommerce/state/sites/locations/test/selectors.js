@@ -6,15 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	areLocationsLoaded,
-	areLocationsLoading,
-	getContinents,
-	getCountries,
-	getCountryName,
-	getStates,
-	hasStates,
-} from '../selectors';
+import { areLocationsLoaded, areLocationsLoading, getContinents, getCountries, getCountryName, getStates, hasStates } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const locations = [

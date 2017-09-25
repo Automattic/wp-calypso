@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
+import config from 'config';
 
 const ResetPasswordSucceeded = ( props ) => {
 	const { translate } = props;

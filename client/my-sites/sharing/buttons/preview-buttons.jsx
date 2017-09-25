@@ -1,23 +1,20 @@
-import { filter, isEqual } from 'lodash';
-import { localize } from 'i18n-calypso';
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { filter, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
-
-import ResizableIframe from 'components/resizable-iframe';
 import previewWidget from './preview-widget';
+import ResizableIframe from 'components/resizable-iframe';
 import touchDetect from 'lib/touch-detect';
+import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
 
 const SharingButtonsPreviewButtons = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',

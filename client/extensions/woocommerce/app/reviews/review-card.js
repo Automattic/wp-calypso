@@ -1,26 +1,26 @@
 /**
- * External depedencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import Gravatar from './gravatar';
+import ReviewActionsBar from './review-actions-bar';
+import ReviewReplies from './review-replies';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import Card from 'components/card';
 import Emojify from 'components/emojify';
-import Gravatar from './gravatar';
-import humanDate from 'lib/human-date';
 import Rating from 'components/rating';
-import ReviewActionsBar from './review-actions-bar';
-import ReviewReplies from './review-replies';
 import { stripHTML, decodeEntities } from 'lib/formatting';
+import humanDate from 'lib/human-date';
 
 class ReviewCard extends Component {
 	static propTypes = {

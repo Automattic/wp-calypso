@@ -3,33 +3,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { map, forEach } from 'lodash';
 import deepFreeze from 'deep-freeze';
+import { map, forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	items,
-	expansions,
-	totalCommentsCount,
-	fetchStatus,
-	fetchStatusInitialState,
-	treesInitialized,
-} from '../reducer';
-import {
-	COMMENTS_LIKE,
-	COMMENTS_UNLIKE,
-	COMMENTS_ERROR,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_COUNT_RECEIVE,
-	COMMENTS_RECEIVE,
-	COMMENTS_DELETE,
-	COMMENTS_TREE_SITE_ADD,
-	COMMENTS_EDIT,
-} from '../../action-types';
-import { PLACEHOLDER_STATE } from '../constants';
+import { COMMENTS_LIKE, COMMENTS_UNLIKE, COMMENTS_ERROR, COMMENTS_COUNT_INCREMENT, COMMENTS_COUNT_RECEIVE, COMMENTS_RECEIVE, COMMENTS_DELETE, COMMENTS_TREE_SITE_ADD, COMMENTS_EDIT } from '../../action-types';
 import { expandComments } from '../actions';
+import { PLACEHOLDER_STATE } from '../constants';
+import { items, expansions, totalCommentsCount, fetchStatus, fetchStatusInitialState, treesInitialized } from '../reducer';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, content: 'eleven', date: '2016-01-31T10:07:18-08:00' },

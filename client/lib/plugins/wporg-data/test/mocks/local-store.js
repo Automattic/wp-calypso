@@ -1,4 +1,7 @@
 
+/**
+ * External dependencies
+ */
 import sinon from 'sinon';
 
 const get = sinon.spy(),

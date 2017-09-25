@@ -1,23 +1,14 @@
 /**
- * Adapted from the WordPress wp TinyMCE plugin.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
-*/
-
-/**
  * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
-
 import { translate } from 'i18n-calypso';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
-import formatting from 'lib/formatting';
-
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
+import formatting from 'lib/formatting';
 
 /* eslint-disable */
 function wpcomPlugin( editor ) {
@@ -662,4 +653,4 @@ function wpcomPlugin( editor ) {
 export default function() {
 	// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
 	tinymce.PluginManager.add( 'wpcom', wpcomPlugin );
-};
+}

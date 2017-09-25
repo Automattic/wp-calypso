@@ -1,59 +1,46 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Main from 'components/main';
+import HelpUnverifiedWarning from '../help-unverified-warning';
 import Card from 'components/card';
-import Notice from 'components/notice';
-import OlarkChatbox from 'components/olark-chatbox';
-import olarkStore from 'lib/olark-store';
-import olarkActions from 'lib/olark-store/actions';
-import olarkEvents from 'lib/olark-events';
-import HelpContactForm from 'me/help/help-contact-form';
-import HelpContactClosed from 'me/help/help-contact-closed';
-import HelpContactConfirmation from 'me/help/help-contact-confirmation';
-import HeaderCake from 'components/header-cake';
-import wpcomLib from 'lib/wp';
-import notices from 'notices';
-import analytics from 'lib/analytics';
-import { isOlarkTimedOut } from 'state/ui/olark/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { isHappychatAvailable } from 'state/happychat/selectors';
-import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSupportRequestError } from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
-import HelpUnverifiedWarning from '../help-unverified-warning';
-import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
-import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import {
-	getCurrentUser,
-	getCurrentUserLocale,
-	getCurrentUserSiteCount,
-} from 'state/current-user/selectors';
-import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
-import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
-import {
-	hasUserAskedADirectlyQuestion,
-	isDirectlyFailed,
-	isDirectlyReady,
-	isDirectlyUninitialized,
-} from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import HappychatConnection from 'components/happychat/connection';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import OlarkChatbox from 'components/olark-chatbox';
+import config from 'config';
+import analytics from 'lib/analytics';
+import olarkEvents from 'lib/olark-events';
+import olarkStore from 'lib/olark-store';
+import olarkActions from 'lib/olark-store/actions';
+import { PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
+import wpcomLib from 'lib/wp';
+import HelpContactClosed from 'me/help/help-contact-closed';
+import HelpContactConfirmation from 'me/help/help-contact-confirmation';
+import HelpContactForm from 'me/help/help-contact-form';
+import notices from 'notices';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale, getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
+import { isHappychatAvailable } from 'state/happychat/selectors';
+import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import {
-	PLAN_BUSINESS,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSupportRequestError } from 'state/help/ticket/selectors';
+import { hasUserAskedADirectlyQuestion, isDirectlyFailed, isDirectlyReady, isDirectlyUninitialized } from 'state/selectors';
+import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+import { openChat as openHappychat } from 'state/ui/happychat/actions';
+import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 
 /**
  * Module variables

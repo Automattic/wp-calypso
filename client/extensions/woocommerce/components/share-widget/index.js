@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import config from 'config';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import SocialLogo from 'social-logos';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
 import url from 'url';
 
 class ShareWidget extends Component {

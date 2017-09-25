@@ -6,16 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SITE_PLANS_FETCH,
-	SITE_PLANS_FETCH_COMPLETED,
-	SITE_PLANS_FETCH_FAILED,
-	SITE_PLANS_TRIAL_CANCEL,
-	SITE_PLANS_TRIAL_CANCEL_FAILED,
-	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-	SITE_PLANS_REMOVE,
-} from 'state/action-types';
 import { plans } from '../reducer';
+import { SITE_PLANS_FETCH, SITE_PLANS_FETCH_COMPLETED, SITE_PLANS_FETCH_FAILED, SITE_PLANS_TRIAL_CANCEL, SITE_PLANS_TRIAL_CANCEL_FAILED, SITE_PLANS_TRIAL_CANCEL_COMPLETED, SITE_PLANS_REMOVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {

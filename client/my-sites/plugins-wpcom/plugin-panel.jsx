@@ -1,31 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import {
-	getSelectedSite,
-	getSelectedSiteId
-} from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
-import {
-	isPremium,
-	isBusiness,
-	isEnterprise
-} from 'lib/products-values';
 import JetpackPluginsPanel from './jetpack-plugins-panel';
+import Banner from 'components/banner';
+import EmptyContent from 'components/empty-content';
+import MainComponent from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
-import Banner from 'components/banner';
-import MainComponent from 'components/main';
-import EmptyContent from 'components/empty-content';
+import { isPremium, isBusiness, isEnterprise } from 'lib/products-values';
+import { canCurrentUser } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export const PluginPanel = ( {
 	plan,

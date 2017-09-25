@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getOAuth2Client,
-} from '../selectors';
+import { getOAuth2Client } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getOAuth2Client()', () => {

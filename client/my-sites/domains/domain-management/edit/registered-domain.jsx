@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
-import Notice from 'components/notice';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
-import paths from 'my-sites/domains/paths';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
+import Card from 'components/card/compact';
+import Notice from 'components/notice';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import analyticsMixin from 'lib/mixins/analytics';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import paths from 'my-sites/domains/paths';
 
 const RegisteredDomain = localize( React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],

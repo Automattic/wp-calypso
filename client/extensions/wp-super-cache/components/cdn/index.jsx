@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { get, pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
@@ -16,7 +17,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
 
 const CdnTab = ( {
 	fields: {

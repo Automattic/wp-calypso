@@ -1,22 +1,4 @@
 /**
- * Adapted from the WordPress wptextpattern TinyMCE plugin.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
- *
- * Text pattern plugin for TinyMCE
- *
- * @since 4.3.0
- *
- * This plugin can automatically format text patterns as you type. It includes two patterns:
- *  - Unordered list (`* ` and `- `).
- *  - Ordered list (`1. ` and `1) `).
- *
- * If the transformation in unwanted, the user can undo the change by pressing backspace,
- * using the undo shortcut, or the undo button in the toolbar.
- */
-
-/**
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';

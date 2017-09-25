@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export const Count = ( { count, numberFormat, primary, ...inheritProps } ) => (
 	// Omit props passed from the `localize` higher-order component that we don't need.

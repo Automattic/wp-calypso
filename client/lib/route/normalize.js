@@ -1,5 +1,12 @@
-import untrailingslashit from './untrailingslashit';
+/**
+ * External dependencies
+ */
 import page from 'page';
+
+/**
+ * Internal dependencies
+ */
+import untrailingslashit from './untrailingslashit';
 
 function appendQueryString( basepath, querystring ) {
 	return basepath + ( querystring ? '?' + querystring : '' );

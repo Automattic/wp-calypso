@@ -1,5 +1,8 @@
-import { Dispatcher } from 'flux';
+/**
+ * External dependencies
+ */
 import debugFactory from 'debug';
+import { Dispatcher } from 'flux';
 const debug = debugFactory( 'calypso:dispatcher' );
 
 const AppDispatcher = Object.assign( new Dispatcher(), {

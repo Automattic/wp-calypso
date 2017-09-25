@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import striptags from 'striptags';
 import { trim, toArray, forEach } from 'lodash';
+import striptags from 'striptags';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { domForHtml } from './utils';
 

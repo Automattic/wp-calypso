@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import { endsWith, omit } from 'lodash';
-import deterministicStringify from 'json-stable-stringify';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wpcom-followers-store' );
+import deterministicStringify from 'json-stable-stringify';
+import { endsWith, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:wpcom-followers-store' );
 
 let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects

@@ -6,12 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	arePaymentMethodsLoaded,
-	arePaymentMethodsLoading,
-	getPaymentMethods,
-	getPaymentMethod,
-} from '../selectors';
+import { arePaymentMethodsLoaded, arePaymentMethodsLoading, getPaymentMethods, getPaymentMethod } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {

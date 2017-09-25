@@ -2,15 +2,15 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import ms from 'ms';
 import { difference, filter, matchesProperty, negate } from 'lodash';
+import ms from 'ms';
 
 /**
  * Internal dependencies
  */
-import localforage from 'lib/localforage';
-import { generatePageSeriesKey } from './utils';
 import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
+import { generatePageSeriesKey } from './utils';
+import localforage from 'lib/localforage';
 
 /**
  * Module variables

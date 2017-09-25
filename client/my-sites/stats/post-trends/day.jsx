@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**

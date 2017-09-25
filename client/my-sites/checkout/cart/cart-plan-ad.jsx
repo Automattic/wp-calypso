@@ -1,25 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
-import {
-	get,
-} from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 import { isPlan } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { isDomainOnlySite } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class CartPlanAd extends Component {
 	addToCartAndRedirect = ( event ) => {

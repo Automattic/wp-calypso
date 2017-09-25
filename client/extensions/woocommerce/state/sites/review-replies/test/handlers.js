@@ -7,19 +7,11 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchReviewReplies,
-} from 'woocommerce/state/sites/review-replies/actions';
-import {
-	handleReviewRepliesRequest,
-	handleReviewRepliesRequestSuccess,
-	handleReviewRepliesRequestError,
-} from '../handlers.js';
+import { handleReviewRepliesRequest, handleReviewRepliesRequestSuccess, handleReviewRepliesRequestError } from '../handlers.js';
 import reviewReplies from './fixtures/review-replies';
-import {
-	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
-} from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WOOCOMMERCE_REVIEW_REPLIES_UPDATED } from 'woocommerce/state/action-types';
+import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewRepliesRequest', () => {

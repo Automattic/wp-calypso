@@ -1,37 +1,32 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 import ShippingZoneHeader from './shipping-zone-header';
 import ShippingZoneLocationList from './shipping-zone-location-list';
 import ShippingZoneMethodList from './shipping-zone-method-list';
 import ShippingZoneName from './shipping-zone-name';
-import {
-	addNewShippingZone,
-	openShippingZoneForEdit,
-	createShippingZoneSaveActionList,
-	createShippingZoneDeleteActionList,
-} from 'woocommerce/state/ui/shipping/zones/actions';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Main from 'components/main';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSaveZoneActionListSteps } from 'woocommerce/state/data-layer/ui/shipping-zones';
+import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
+import { addNewShippingZone, openShippingZoneForEdit, createShippingZoneSaveActionList, createShippingZoneDeleteActionList } from 'woocommerce/state/ui/shipping/zones/actions';
+import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class Shipping extends Component {
 	constructor() {

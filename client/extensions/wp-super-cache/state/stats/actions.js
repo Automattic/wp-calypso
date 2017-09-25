@@ -1,20 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { WP_SUPER_CACHE_DELETE_FILE, WP_SUPER_CACHE_DELETE_FILE_FAILURE, WP_SUPER_CACHE_DELETE_FILE_SUCCESS, WP_SUPER_CACHE_GENERATE_STATS, WP_SUPER_CACHE_GENERATE_STATS_FAILURE, WP_SUPER_CACHE_GENERATE_STATS_SUCCESS } from '../action-types';
 import wp from 'lib/wp';
-import {
-	WP_SUPER_CACHE_DELETE_FILE,
-	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
-	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
-	WP_SUPER_CACHE_GENERATE_STATS,
-	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
-	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-} from '../action-types';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 

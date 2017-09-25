@@ -6,12 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	NOT_SUBMITTED,
-	SUBMITTING,
-	SUBMIT_FAILURE,
-	SUBMITTED,
-} from './constants';
+import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import { getSectionName } from 'state/ui/selectors';
 
 const SECTION_NAME_WHITELIST = [

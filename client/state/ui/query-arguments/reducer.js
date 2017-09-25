@@ -6,11 +6,8 @@ import { isEqual, omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { ROUTE_SET } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-
-import {
-	ROUTE_SET,
-} from 'state/action-types';
 
 const timestamped = ( query ) => ( {
 	...query,

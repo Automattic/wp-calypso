@@ -2,11 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	THEME_SETUP_TOGGLE_DIALOG,
-	THEME_SETUP_REQUEST,
-	THEME_SETUP_RESULT,
-} from 'state/action-types';
+import { THEME_SETUP_TOGGLE_DIALOG, THEME_SETUP_REQUEST, THEME_SETUP_RESULT } from 'state/action-types';
 
 export function toggleDialog() {
 	return {

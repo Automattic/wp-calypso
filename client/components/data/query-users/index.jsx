@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Component } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

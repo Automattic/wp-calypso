@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { assign, noop, pick } from 'lodash';
 import Immutable from 'immutable';
+import { assign, noop, pick } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import FeedPostStore from './';
 

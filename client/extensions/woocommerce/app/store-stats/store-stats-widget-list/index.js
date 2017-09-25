@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { findIndex } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
+import { findIndex } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Delta from 'woocommerce/components/delta';
 import { formatValue, getDelta } from '../utils';
-import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getPeriodFormat } from 'state/stats/lists/utils';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
+import Delta from 'woocommerce/components/delta';
 import Sparkline from 'woocommerce/components/sparkline';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsWidgetList extends Component {
 

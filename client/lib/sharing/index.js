@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import PopupMonitor from 'lib/popup-monitor';
 
 const requestExternalAccess = ( url, cb ) => {

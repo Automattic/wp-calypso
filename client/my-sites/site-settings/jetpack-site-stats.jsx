@@ -1,39 +1,34 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
+import ExternalLink from 'components/external-link';
+import FoldableCard from 'components/foldable-card';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLegend from 'components/forms/form-legend';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import InfoPopover from 'components/info-popover';
+import SectionHeader from 'components/section-header';
 import { getStatsPathForTab } from 'lib/route/path';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
-import {
-	isActivatingJetpackModule,
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
-} from 'state/selectors';
+import { isActivatingJetpackModule, isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import { getSiteRoles } from 'state/site-roles/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {

@@ -1,19 +1,17 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-
 import FormButton from 'components/forms/form-button';
-import Gridicon from 'gridicons';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 export default localize( React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',

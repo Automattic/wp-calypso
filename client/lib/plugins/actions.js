@@ -7,8 +7,8 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Dispatcher from 'dispatcher';
+import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 import wpcom from 'lib/wp';
 

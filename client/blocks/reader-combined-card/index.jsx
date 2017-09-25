@@ -1,26 +1,26 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get, size, filter, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, size, filter, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Card from 'components/card';
-import { getStreamUrl } from 'reader/route';
+import ReaderCombinedCardPost from './post';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
-import QueryReaderSite from 'components/data/query-reader-site';
+import Card from 'components/card';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import { recordTrack } from 'reader/stats';
-import { getSiteName } from 'reader/get-helpers';
+import QueryReaderSite from 'components/data/query-reader-site';
+import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
 import FollowButton from 'reader/follow-button';
+import { getSiteName } from 'reader/get-helpers';
+import { getStreamUrl } from 'reader/route';
+import { recordTrack } from 'reader/stats';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {

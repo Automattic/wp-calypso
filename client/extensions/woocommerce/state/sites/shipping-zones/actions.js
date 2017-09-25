@@ -2,22 +2,11 @@
  * Internal dependencies
  */
 import request from '../request';
-import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_CREATE,
-	WOOCOMMERCE_SHIPPING_ZONE_DELETE,
-	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
-	WOOCOMMERCE_SHIPPING_ZONE_UPDATE,
-	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
-	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
-	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import {
-	areShippingZonesLoaded,
-	areShippingZonesLoading,
-} from './selectors';
-import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
 import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';
+import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
+import { setError } from '../status/wc-api/actions';
+import { areShippingZonesLoaded, areShippingZonesLoading } from './selectors';
+import { WOOCOMMERCE_SHIPPING_ZONE_CREATE, WOOCOMMERCE_SHIPPING_ZONE_DELETE, WOOCOMMERCE_SHIPPING_ZONE_DELETED, WOOCOMMERCE_SHIPPING_ZONE_UPDATE, WOOCOMMERCE_SHIPPING_ZONE_UPDATED, WOOCOMMERCE_SHIPPING_ZONES_REQUEST, WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchShippingZonesSuccess = ( siteId, data ) => {
 	return {

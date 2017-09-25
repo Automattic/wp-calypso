@@ -1,13 +1,10 @@
-// Here be dragons...
-/* eslint-disable react/no-danger */
-
 /**
  * External dependencies
  */
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import createFragment from 'react-addons-create-fragment';
 import { mapValues } from 'lodash';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 /**
  * Constants

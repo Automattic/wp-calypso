@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 import formatCurrency from 'lib/format-currency';
+import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 
 export const UpgradeToPremiumNudge = props => {
 	const {

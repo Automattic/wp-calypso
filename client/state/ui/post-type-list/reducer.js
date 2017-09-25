@@ -6,10 +6,7 @@ import { without } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	POST_TYPE_LIST_SHARE_PANEL_HIDE,
-	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
-} from 'state/action-types';
+import { POST_TYPE_LIST_SHARE_PANEL_HIDE, POST_TYPE_LIST_SHARE_PANEL_TOGGLE } from 'state/action-types';
 
 const initialState = {
 	activeSharePanels: [],

@@ -1,24 +1,23 @@
-import page from 'page';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import { errorNotice } from 'state/notices/actions';
-import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
+import { cartItems } from 'lib/cart-values';
+import { canRedirect } from 'lib/domains';
 import upgradesActions from 'lib/upgrades/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { errorNotice } from 'state/notices/actions';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {

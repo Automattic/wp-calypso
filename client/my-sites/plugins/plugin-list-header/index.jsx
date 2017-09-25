@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
-import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { findDOMNode } from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
+import BulkSelect from 'components/bulk-select';
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import SectionHeader from 'components/section-header';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
-import BulkSelect from 'components/bulk-select';
 import analytics from 'lib/analytics';
 
 // Constants help determine if the action bar should be a dropdown

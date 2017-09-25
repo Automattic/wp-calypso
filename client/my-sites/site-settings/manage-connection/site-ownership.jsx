@@ -1,29 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import SectionHeader from 'components/section-header';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSiteConnected, isJetpackSiteInDevelopmentMode, isJetpackUserMaster } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	isJetpackSiteConnected,
-	isJetpackSiteInDevelopmentMode,
-	isJetpackUserMaster,
-} from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {

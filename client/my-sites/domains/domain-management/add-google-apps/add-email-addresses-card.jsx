@@ -1,39 +1,37 @@
-import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import update from 'react-addons-update';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-
+import DomainsSelect from './domains-select';
 import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import Notice from 'components/notice';
+
 import { cartItems } from 'lib/cart-values';
-import paths from 'my-sites/domains/paths';
-import ValidationErrorList from 'notices/validation-error-list';
-import upgradesActions from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import googleAppsLibrary from 'lib/domains/google-apps-users';
-import DomainsSelect from './domains-select';
+import analyticsMixin from 'lib/mixins/analytics';
+import upgradesActions from 'lib/upgrades/actions';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import paths from 'my-sites/domains/paths';
+import ValidationErrorList from 'notices/validation-error-list';
 
 /**
  * Internal dependencies
  */
 const validateUsers = googleAppsLibrary.validate, filterUsers = googleAppsLibrary.filter;
-
-import Notice from 'components/notice';
 
 const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],

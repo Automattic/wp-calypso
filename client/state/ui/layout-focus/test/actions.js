@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { LAYOUT_FOCUS_SET, LAYOUT_NEXT_FOCUS_SET, LAYOUT_NEXT_FOCUS_ACTIVATE } from 'state/action-types';
 import { setLayoutFocus, setNextLayoutFocus, activateNextLayoutFocus } from '../actions';
+import { LAYOUT_FOCUS_SET, LAYOUT_NEXT_FOCUS_SET, LAYOUT_NEXT_FOCUS_ACTIVATE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setLayoutFocus', () => {

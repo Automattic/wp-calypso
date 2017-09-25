@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
 import TaxonomyManager from 'blocks/taxonomy-manager';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
 	const goBack = () => {

@@ -1,43 +1,17 @@
 /**
  * External dependencies
  */
-import {
-	concat,
-	filter,
-	find,
-	map,
-	get,
-	sortBy,
-	takeRight,
-} from 'lodash';
 import validator from 'is-my-json-valid';
+import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	SERIALIZE,
-	DESERIALIZE,
-	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_DISCONNECTED,
-	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_SET_GEO_LOCATION,
-} from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import {
-	HAPPYCHAT_CHAT_STATUS_DEFAULT,
-} from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
 import { timelineSchema, geoLocationSchema } from './schema';
+import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
+import { SERIALIZE, DESERIALIZE, HAPPYCHAT_SEND_MESSAGE, HAPPYCHAT_SET_AVAILABLE, HAPPYCHAT_SET_MESSAGE, HAPPYCHAT_RECEIVE_EVENT, HAPPYCHAT_BLUR, HAPPYCHAT_CONNECTING, HAPPYCHAT_CONNECTED, HAPPYCHAT_DISCONNECTED, HAPPYCHAT_FOCUS, HAPPYCHAT_RECONNECTING, HAPPYCHAT_SET_CHAT_STATUS, HAPPYCHAT_TRANSCRIPT_RECEIVE, HAPPYCHAT_SET_GEO_LOCATION } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Returns a timeline event from the redux action

@@ -1,18 +1,14 @@
 /**
  * External dependencies
  */
-import {
-	fromPairs,
-	map,
-	mapValues,
-} from 'lodash';
+import { fromPairs, map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { TIMEZONES_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'state/action-types';
 import { timezonesReceive } from 'state/timezones/actions';
 
 /**

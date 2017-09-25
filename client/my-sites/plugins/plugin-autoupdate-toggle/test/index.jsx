@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { mount } from 'enzyme';
+import mockery from 'mockery';
+import React from 'react';
 import { spy } from 'sinon';
 
 /**

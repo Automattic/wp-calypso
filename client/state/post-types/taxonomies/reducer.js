@@ -6,16 +6,9 @@ import { keyBy, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	POST_TYPES_TAXONOMIES_RECEIVE,
-	POST_TYPES_TAXONOMIES_REQUEST,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
+import { POST_TYPES_TAXONOMIES_RECEIVE, POST_TYPES_TAXONOMIES_REQUEST, POST_TYPES_TAXONOMIES_REQUEST_FAILURE, POST_TYPES_TAXONOMIES_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

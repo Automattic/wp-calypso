@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import PostSuggestions from './post-suggestions';
 import Card from 'components/card';
 import Search from 'components/search';
-import PostSuggestions from './post-suggestions';
 
 class SearchAutocomplete extends Component {
 	static propTypes = {

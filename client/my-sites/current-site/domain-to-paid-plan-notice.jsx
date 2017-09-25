@@ -1,25 +1,22 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { endsWith, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import {
-	endsWith,
-	noop,
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import { isDomainOnlySite } from 'state/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const impressionEventName = 'calypso_upgrade_nudge_impression';
 const clickEventName = 'calypso_upgrade_nudge_cta_click';

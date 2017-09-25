@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import { last, map, range, uniq } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import React from 'react';
-import closest from 'component-closest';
 import classNames from 'classnames';
+import closest from 'component-closest';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { last, map, range, uniq } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
-
 import eventRecorder from 'me/event-recorder';
 
 export default localize( React.createClass( {

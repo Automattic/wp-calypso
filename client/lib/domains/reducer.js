@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import update from 'react-addons-update';
 import { sortBy } from 'lodash';
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 import { getSelectedDomain, isInitialized } from './';
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 
 const debug = debugFactory( 'calypso:lib:domains:store' );
 

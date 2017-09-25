@@ -7,41 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	THEME_REQUEST,
-	THEME_REQUEST_SUCCESS,
-	THEME_REQUEST_FAILURE,
-	THEMES_REQUEST,
-	THEMES_REQUEST_FAILURE,
-	THEMES_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE,
-	THEME_ACTIVATE_SUCCESS,
-	THEME_ACTIVATE_FAILURE,
-	THEME_CLEAR_ACTIVATED,
-	THEME_INSTALL,
-	THEME_INSTALL_SUCCESS,
-	THEME_INSTALL_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import reducer, {
-	queryRequests,
-	queryRequestErrors,
-	queries,
-	lastQuery,
-	themeRequests,
-	themeRequestErrors,
-	activeThemes,
-	activationRequests,
-	activeThemeRequests,
-	themeInstalls,
-	completedActivationRequests,
-} from '../reducer';
+import reducer, { queryRequests, queryRequestErrors, queries, lastQuery, themeRequests, themeRequestErrors, activeThemes, activationRequests, activeThemeRequests, themeInstalls, completedActivationRequests } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
+import { THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE, THEMES_REQUEST, THEMES_REQUEST_FAILURE, THEMES_REQUEST_SUCCESS, ACTIVE_THEME_REQUEST, ACTIVE_THEME_REQUEST_SUCCESS, ACTIVE_THEME_REQUEST_FAILURE, THEME_ACTIVATE, THEME_ACTIVATE_SUCCESS, THEME_ACTIVATE_FAILURE, THEME_CLEAR_ACTIVATED, THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const twentysixteen = {
 	id: 'twentysixteen',

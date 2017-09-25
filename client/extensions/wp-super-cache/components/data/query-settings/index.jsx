@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSettings } from '../../../state/settings/selectors';
 import { requestSettings } from '../../../state/settings/actions';
+import { isRequestingSettings } from '../../../state/settings/selectors';
 
 class QuerySettings extends Component {
 	componentWillMount() {

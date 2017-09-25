@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { some } from 'lodash';
 import classNames from 'classnames';
+import { some } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { generateGalleryShortcode } from 'lib/media/utils';
 import GalleryShortcode from 'components/gallery-shortcode';
+import { generateGalleryShortcode } from 'lib/media/utils';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryPreviewShortcode',

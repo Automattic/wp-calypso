@@ -6,10 +6,10 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import site from './fixtures/site';
 import actions from './fixtures/actions';
+import site from './fixtures/site';
 import userActions from 'lib/users/test/fixtures/actions';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Viewers Store', () => {
 	let Dispatcher, PeopleLogStore;

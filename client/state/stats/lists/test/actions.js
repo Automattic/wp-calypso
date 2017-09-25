@@ -1,23 +1,15 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveSiteStats, requestSiteStats } from '../actions';
+import { SITE_STATS_RECEIVE, SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE, SITE_STATS_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	SITE_STATS_RECEIVE,
-	SITE_STATS_REQUEST,
-	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS
-} from 'state/action-types';
-import {
-	receiveSiteStats,
-	requestSiteStats
-} from '../actions';
 
 const SITE_ID = 2916284;
 const STAT_TYPE = 'statsStreak';

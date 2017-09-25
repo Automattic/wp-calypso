@@ -8,11 +8,10 @@ import { get, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-
-import useMockery from 'test/helpers/use-mockery';
+import * as fixtures from './fixtures';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
-import * as fixtures from './fixtures';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;

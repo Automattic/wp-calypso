@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './site';
 
 export default {

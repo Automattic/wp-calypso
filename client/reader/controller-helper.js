@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import moment from 'moment';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import feedStreamFactory from 'lib/feed-stream-store';
+import { fetchNextPage } from 'lib/feed-stream-store/actions';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { fetchNextPage } from 'lib/feed-stream-store/actions';
-import feedStreamFactory from 'lib/feed-stream-store';
 
 let storeId;
 export function setLastStoreId( id ) {

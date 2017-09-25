@@ -1,17 +1,13 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
-import {
-	STORED_CARDS_ADD_COMPLETED,
-	STORED_CARDS_DELETE,
-	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED,
-	STORED_CARDS_FETCH,
-	STORED_CARDS_FETCH_COMPLETED,
-	STORED_CARDS_FETCH_FAILED
-} from 'state/action-types';
+/**
+ * Internal dependencies
+ */
 import wp from 'lib/wp';
+import { STORED_CARDS_ADD_COMPLETED, STORED_CARDS_DELETE, STORED_CARDS_DELETE_COMPLETED, STORED_CARDS_DELETE_FAILED, STORED_CARDS_FETCH, STORED_CARDS_FETCH_COMPLETED, STORED_CARDS_FETCH_FAILED } from 'state/action-types';
 
 export const addStoredCard = paygateToken => dispatch => {
 	return new Promise( ( resolve, reject ) => {

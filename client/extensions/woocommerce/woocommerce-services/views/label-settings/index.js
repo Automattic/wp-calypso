@@ -1,31 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isBoolean } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle';
+import { fetchSettings, setFormDataValue } from '../../state/label-settings/actions';
+import { getLabelSettingsFormData, getLabelSettingsFormMeta, getLabelSettingsStoreOptions } from '../../state/label-settings/selectors';
 import LabelSettings from './label-settings';
-import {
-	fetchSettings,
-	setFormDataValue,
-} from '../../state/label-settings/actions';
+import Card from 'components/card';
+import FormToggle from 'components/forms/form-toggle';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getLabelSettingsFormData,
-	getLabelSettingsFormMeta,
-	getLabelSettingsStoreOptions
-} from '../../state/label-settings/selectors';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 
 class AccountSettingsRootView extends Component {
 

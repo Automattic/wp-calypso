@@ -6,14 +6,9 @@ import { get, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import { items as itemSchemas } from './schema';
-import {
-	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
-	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS
-} from 'state/action-types';
+import { POST_STATS_RECEIVE, POST_STATS_REQUEST, POST_STATS_REQUEST_FAILURE, POST_STATS_REQUEST_SUCCESS } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

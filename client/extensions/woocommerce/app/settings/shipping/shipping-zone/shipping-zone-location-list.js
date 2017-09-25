@@ -1,29 +1,29 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ShippingZoneLocationDialog from './shipping-zone-location-dialog';
 import Button from 'components/button';
+import { decodeEntities } from 'lib/formatting';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import List from 'woocommerce/components/list/list';
-import ListItem from 'woocommerce/components/list/list-item';
 import ListHeader from 'woocommerce/components/list/list-header';
+import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import LocationFlag from 'woocommerce/components/location-flag';
-import ShippingZoneLocationDialog from './shipping-zone-location-dialog';
-import { decodeEntities } from 'lib/formatting';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
+import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
+import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
 const ShippingZoneLocationList = ( { siteId, loaded, fetchError, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {

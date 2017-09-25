@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
+import { assign, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 class ExternalLink extends Component {
 	static defaultProps = {

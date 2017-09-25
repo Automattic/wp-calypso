@@ -3,6 +3,10 @@
  */
 import tinymce from 'tinymce/tinymce';
 import twemoji from 'twemoji';
+
+/**
+ * Internal dependencies
+ */
 import config from 'config';
 
 /**

@@ -7,12 +7,7 @@ import { get, map, reject, unionBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_CHANGE_STATUS,
-	COMMENTS_DELETE,
-	COMMENTS_RECEIVE,
-	COMMENTS_TREE_SITE_ADD,
-} from 'state/action-types';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_RECEIVE, COMMENTS_TREE_SITE_ADD } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
 const convertToTree = comments =>

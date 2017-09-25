@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import NotificationsComponent from 'me/notification-settings/main';
+import userSettings from 'lib/user-settings';
 import CommentSettingsComponent from 'me/notification-settings/comment-settings';
-import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
+import NotificationsComponent from 'me/notification-settings/main';
 import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
+import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

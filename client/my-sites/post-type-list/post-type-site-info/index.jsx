@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import SiteIcon from 'blocks/site-icon';
 import { getPost } from 'state/posts/selectors';
 import { getSite, getSiteTitle } from 'state/sites/selectors';
-import SiteIcon from 'blocks/site-icon';
 
 function PostTypeSiteInfo( { site, siteTitle } ) {
 	if ( ! site ) {

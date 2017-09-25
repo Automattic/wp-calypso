@@ -2,18 +2,18 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { hasJetpackSites } from 'state/selectors';
 
 class SiteSelectorAddSite extends Component {

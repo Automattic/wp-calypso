@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

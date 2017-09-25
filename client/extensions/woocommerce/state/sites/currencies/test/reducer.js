@@ -6,12 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
+import { WOOCOMMERCE_CURRENCIES_REQUEST, WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_CURRENCIES_REQUEST,
-	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	it( 'should mark the currencies array as being "loading"', () => {

@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	compact,
-	pick,
-} from 'lodash';
+import { compact, pick } from 'lodash';
 
 /**
  * Internal dependencies

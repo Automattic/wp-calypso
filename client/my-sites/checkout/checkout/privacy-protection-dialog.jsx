@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { transform } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import PrivacyProtectionExample from './privacy-protection-example';
+import Dialog from 'components/dialog';
 import getProtectedContactInformation from 'lib/domains/whois/protected-contact-information';
 
 export default localize( React.createClass( {

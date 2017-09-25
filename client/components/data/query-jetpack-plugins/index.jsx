@@ -2,11 +2,11 @@
 /**
  * External dependencies
  */
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies

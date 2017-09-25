@@ -1,30 +1,23 @@
 /**
  * Internal dependencies
  */
-import {
-	SELECTED_SITE_SET,
-	SECTION_SET,
-	PREVIEW_IS_SHOWING,
-	SERIALIZE,
-	DESERIALIZE,
-	NOTIFICATIONS_PANEL_TOGGLE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import editor from './editor/reducer';
+import actionLog from './action-log/reducer';
 import dropZone from './drop-zone/reducer';
+import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
-import queryArguments from './query-arguments/reducer';
-import reader from './reader/reducer';
+import happychat from './happychat/reducer';
+import layoutFocus from './layout-focus/reducer';
+import mediaModal from './media-modal/reducer';
+import npsSurveyNotice from './nps-survey-notice/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
 import olark from './olark/reducer';
-import actionLog from './action-log/reducer';
-import layoutFocus from './layout-focus/reducer';
-import preview from './preview/reducer';
-import happychat from './happychat/reducer';
-import mediaModal from './media-modal/reducer';
-import themeSetup from './theme-setup/reducers';
-import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
+import preview from './preview/reducer';
+import queryArguments from './query-arguments/reducer';
+import reader from './reader/reducer';
+import themeSetup from './theme-setup/reducers';
+import { SELECTED_SITE_SET, SECTION_SET, PREVIEW_IS_SHOWING, SERIALIZE, DESERIALIZE, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Tracks the currently selected site ID.

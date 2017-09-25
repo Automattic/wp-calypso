@@ -1,60 +1,48 @@
-import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
-import page from 'page';
-
 /**
  * External dependencies
  */
+import i18n, { localize } from 'i18n-calypso';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-
-import { cartItems } from 'lib/cart-values';
-import { clearSitePlans } from 'state/sites/plans/actions';
-import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import { domainMapping } from 'lib/cart-values/cart-items';
-import { fetchReceiptCompleted } from 'state/receipts/actions';
-import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/store-transactions';
-import notices from 'notices';
-import observe from 'lib/mixins/data-observe';
-import purchasePaths from 'me/purchases/paths';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryGeo from 'components/data/query-geo';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
-import supportPaths from 'lib/url/support';
-import { themeItem } from 'lib/cart-values/cart-items';
-import transactionStepTypes from 'lib/store-transactions/step-types';
-import upgradesActions from 'lib/upgrades/actions';
-import { getStoredCards } from 'state/stored-cards/selectors';
-import {
-	isValidFeatureKey,
-	getUpgradePlanSlugFromPath
-} from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import QueryGeo from 'components/data/query-geo';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import analytics from 'lib/analytics';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
-import { requestSite } from 'state/sites/actions';
-import {
-	isDomainOnlySite,
-	getCurrentUserPaymentMethods
-} from 'state/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
+import { cartItems } from 'lib/cart-values';
+import { domainMapping } from 'lib/cart-values/cart-items';
+import { themeItem } from 'lib/cart-values/cart-items';
+import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { getExitCheckoutUrl } from 'lib/checkout';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
+import observe from 'lib/mixins/data-observe';
+import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
+import { hasDomainDetails } from 'lib/store-transactions';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+import upgradesActions from 'lib/upgrades/actions';
+import supportPaths from 'lib/url/support';
+import purchasePaths from 'me/purchases/paths';
+import notices from 'notices';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { clearPurchases } from 'state/purchases/actions';
+import { fetchReceiptCompleted } from 'state/receipts/actions';
+import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
+import { requestSite } from 'state/sites/actions';
+import { clearSitePlans } from 'state/sites/plans/actions';
+import { getStoredCards } from 'state/stored-cards/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],

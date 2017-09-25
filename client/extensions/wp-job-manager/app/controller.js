@@ -1,18 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { get } from 'lodash';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
-import { getSiteFragment, sectionify } from 'lib/route';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 import SetupWizard from '../components/setup';
+import analytics from 'lib/analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSiteFragment, sectionify } from 'lib/route';
 
 export const renderTab = ( component, tab = '' ) => ( context ) => {
 	const siteId = getSiteFragment( context.path );

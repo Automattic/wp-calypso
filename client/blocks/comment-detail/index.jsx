@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailEdit from './comment-detail-edit';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
+import Card from 'components/card';
+import QueryComment from 'components/data/query-comment';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';

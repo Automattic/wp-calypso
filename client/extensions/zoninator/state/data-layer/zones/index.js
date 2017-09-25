@@ -1,27 +1,22 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { merge, reduce } from 'lodash';
+import page from 'page';
+import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
  */
+import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
+import { getZone } from '../../zones/selectors';
+import { fromApi } from './utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getZone } from '../../zones/selectors';
-import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
-import { fromApi } from './utils';
-import {
-	ZONINATOR_ADD_ZONE,
-	ZONINATOR_DELETE_ZONE,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_SAVE_ZONE,
-} from 'zoninator/state/action-types';
+import { ZONINATOR_ADD_ZONE, ZONINATOR_DELETE_ZONE, ZONINATOR_REQUEST_ZONES, ZONINATOR_SAVE_ZONE } from 'zoninator/state/action-types';
 
 const settingsPath = '/extensions/zoninator';
 

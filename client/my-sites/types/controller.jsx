@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import page from 'page';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Types from './main';
 import { mapPostStatus } from 'lib/route/path';

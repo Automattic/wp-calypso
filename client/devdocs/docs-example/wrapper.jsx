@@ -2,10 +2,9 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 
 const renderTitle = ( unique, name, url ) => unique
 	? <span className="docs-example__wrapper-header-title">

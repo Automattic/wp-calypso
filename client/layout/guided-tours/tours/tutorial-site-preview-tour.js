@@ -1,29 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { overEvery as and } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Quit,
-	Continue,
-} from 'layout/guided-tours/config-elements';
-import {
-	isNewUser,
-	isEnabled,
-	isSelectedSitePreviewable,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Quit, Continue } from 'layout/guided-tours/config-elements';
+import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
 import { isPreviewShowing } from 'state/ui/selectors';
 
 export const TutorialSitePreviewTour = makeTour(

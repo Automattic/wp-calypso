@@ -1,46 +1,15 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receivePost, receivePosts, requestSitePosts, requestSitePost, requestPosts, editPost, savePost, savePostSuccess, trashPost, deletePost, restorePost, addTermForPost } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
-import {
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
-	POST_EDIT,
-	POST_REQUEST,
-	POST_REQUEST_SUCCESS,
-	POST_REQUEST_FAILURE,
-	POST_RESTORE,
-	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-	POST_SAVE,
-	POST_SAVE_SUCCESS,
-	POST_SAVE_FAILURE,
-	POSTS_RECEIVE,
-	POSTS_REQUEST,
-	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE
-} from 'state/action-types';
-import {
-	receivePost,
-	receivePosts,
-	requestSitePosts,
-	requestSitePost,
-	requestPosts,
-	editPost,
-	savePost,
-	savePostSuccess,
-	trashPost,
-	deletePost,
-	restorePost,
-	addTermForPost
-} from '../actions';
+import { POST_DELETE, POST_DELETE_SUCCESS, POST_DELETE_FAILURE, POST_EDIT, POST_REQUEST, POST_REQUEST_SUCCESS, POST_REQUEST_FAILURE, POST_RESTORE, POST_RESTORE_FAILURE, POST_RESTORE_SUCCESS, POST_SAVE, POST_SAVE_SUCCESS, POST_SAVE_FAILURE, POSTS_RECEIVE, POSTS_REQUEST, POSTS_REQUEST_SUCCESS, POSTS_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

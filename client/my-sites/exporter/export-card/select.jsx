@@ -1,22 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FormSelect from 'components/forms/form-select';
-import {
-	getPostTypeFieldOptions,
-	getPostTypeFieldValue,
-} from 'state/site-settings/exporter/selectors';
-import {
-	setPostTypeFieldValue,
-} from 'state/site-settings/exporter/actions';
-import { localize } from 'i18n-calypso';
+import { setPostTypeFieldValue } from 'state/site-settings/exporter/actions';
+import { getPostTypeFieldOptions, getPostTypeFieldValue } from 'state/site-settings/exporter/selectors';
 
 class Select extends Component {
 	constructor( props ) {

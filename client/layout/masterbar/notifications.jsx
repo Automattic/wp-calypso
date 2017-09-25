@@ -1,25 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { partial } from 'lodash';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
 import MasterbarItem from './item';
 import Notifications from 'notifications';
-import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	toggleNotificationsPanel,
-} from 'state/ui/actions';
 import { isNotificationsOpen } from 'state/selectors';
+import { toggleNotificationsPanel } from 'state/ui/actions';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {

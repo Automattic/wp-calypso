@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-zone/shipping-methods/utils';
+import Button from 'components/button';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
 const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, isValid, site } ) => {
 	if ( ! loaded ) {

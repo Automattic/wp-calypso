@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+
+/**
+ * Internal dependencies
+ */
 import { truncateArticleContent } from '../helpers';
 
 export class GooglePlusSharePreview extends PureComponent {

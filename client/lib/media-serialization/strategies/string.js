@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
 import { deserialize as _recurse } from '../';
 import createElementFromString from '../create-element-from-string';
+import Shortcode from 'lib/shortcode';
 
 /**
  * Given a media string, attempts to parse as a shortcode and returns an

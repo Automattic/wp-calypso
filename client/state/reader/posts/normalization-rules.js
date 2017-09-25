@@ -1,41 +1,34 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { filter, flow } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import DISPLAY_TYPES from './display-types';
-
-/**
- * Rules
- */
-import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
+import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
+import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
+import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
-import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
-import {
-	disableAutoPlayOnMedia,
-	disableAutoPlayOnEmbeds,
-} from 'lib/post-normalizer/rule-content-disable-autoplay';
+import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
+import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
+import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
-import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
+import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
+import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
+import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
 import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
-import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
-import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
-import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
-import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
-import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
+import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 
 /**
  * Module vars

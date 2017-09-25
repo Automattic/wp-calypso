@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { noop, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
-import { noop, pick } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import AsyncLoad from 'components/async-load';
+import Button from 'components/button';
 
 class CalendarButton extends Component {
 	static propTypes = {

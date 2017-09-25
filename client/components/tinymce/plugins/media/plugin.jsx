@@ -1,40 +1,40 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import ReactDomServer from 'react-dom/server';
-import React from 'react';
-import tinymce from 'tinymce/tinymce';
-import { assign, debounce, find, findLast, pick, values } from 'lodash';
-import i18n from 'i18n-calypso';
-import Shortcode from 'lib/shortcode';
 import closest from 'component-closest';
 import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
+import { assign, debounce, find, findLast, pick, values } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
+import ReactDomServer from 'react-dom/server';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
-import SiteListFactory from 'lib/sites-list';
-import PostActions from 'lib/posts/actions';
-import PostEditStore from 'lib/posts/post-edit-store';
-import * as MediaConstants from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
-import MediaMarkup from 'post-editor/media-modal/markup';
-import MediaStore from 'lib/media/store';
-import EditorMediaModal from 'post-editor/editor-media-modal';
-import notices from 'notices';
+import advanced from './advanced';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
-import advanced from './advanced';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
+import { ipcRenderer as ipc } from 'electron';
+
+import { deserialize } from 'lib/media-serialization';
+import MediaActions from 'lib/media/actions';
+import * as MediaConstants from 'lib/media/constants';
+import MediaStore from 'lib/media/store';
+import MediaUtils from 'lib/media/utils';
+import PostActions from 'lib/posts/actions';
+import PostEditStore from 'lib/posts/post-edit-store';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import Shortcode from 'lib/shortcode';
+import SiteListFactory from 'lib/sites-list';
+import notices from 'notices';
+import EditorMediaModal from 'post-editor/editor-media-modal';
+import MediaMarkup from 'post-editor/media-modal/markup';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { renderWithReduxStore } from 'lib/react-helpers';
-
-import { ipcRenderer as ipc } from 'electron';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables

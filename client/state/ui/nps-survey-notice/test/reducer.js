@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
 import reducer, { isNpsSurveyDialogShowing } from '../reducer';
+import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

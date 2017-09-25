@@ -6,11 +6,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { NOTIFICATION_SETTINGS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { NOTIFICATION_SETTINGS_REQUEST } from 'state/action-types';
-import { updateNotificationSettings } from 'state/notification-settings/actions';
 import { errorNotice } from 'state/notices/actions';
+import { updateNotificationSettings } from 'state/notification-settings/actions';
 
 /**
  * Dispatches a request to fetch the current user notification settings

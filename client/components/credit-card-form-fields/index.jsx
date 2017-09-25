@@ -1,20 +1,18 @@
-import { assign } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { assign } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CountrySelect from 'my-sites/domains/components/form/country-select';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import Input from 'my-sites/domains/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
+import CountrySelect from 'my-sites/domains/components/form/country-select';
+import Input from 'my-sites/domains/components/form/input';
 
 class CreditCardFormFields extends React.Component {
 	static propTypes = {

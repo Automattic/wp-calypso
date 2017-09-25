@@ -4,21 +4,16 @@
 import debugModule from 'debug';
 import { noop, get } from 'lodash';
 import qs from 'qs';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import config from 'config';
-import store from 'store';
 import localforage from 'lib/localforage';
-import {
-	supportUserTokenFetch,
-	supportUserActivate,
-	supportUserError,
-	supportUserPrefill,
-} from 'state/support/actions';
 import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
+import wpcom from 'lib/wp';
+import { supportUserTokenFetch, supportUserActivate, supportUserError, supportUserPrefill } from 'state/support/actions';
 
 /**
  * Connects the Redux store and the low-level support user functions

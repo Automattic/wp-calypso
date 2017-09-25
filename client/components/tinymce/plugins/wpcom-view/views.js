@@ -8,10 +8,10 @@ import { forEach, map, mapValues, values } from 'lodash';
  * Internal dependencies
  */
 import GalleryView from './gallery-view';
-import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
-import * as VideoView from './views/video';
+import EmbedViewManager from './views/embed';
 import SimplePaymentsView from './views/simple-payments';
+import * as VideoView from './views/video';
 import { isEnabled } from 'config';
 
 /**

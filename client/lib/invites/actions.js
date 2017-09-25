@@ -2,18 +2,18 @@
  * External dependencies
  */
 import Debug from 'debug';
-import { get, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { action as ActionTypes } from 'lib/invites/constants';
 import analytics from 'lib/analytics';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { action as ActionTypes } from 'lib/invites/constants';
+import wpcom from 'lib/wp';
 import { acceptedNotice } from 'my-sites/invites/utils';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { requestSites } from 'state/sites/actions';
 
 /**

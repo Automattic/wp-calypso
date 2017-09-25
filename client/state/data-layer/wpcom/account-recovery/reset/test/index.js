@@ -7,18 +7,10 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import { resetPassword, handleError, handleSuccess } from '../';
+import { ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS, ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR } from 'state/action-types';
 
-import {
-	resetPassword,
-	handleError,
-	handleSuccess,
-} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
-import {
-	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-} from 'state/action-types';
 
 describe( 'account-recovery/reset', () => {
 	describe( '#handleResetPasswordRequest', () => {

@@ -3,21 +3,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { map } from 'lodash';
 import deepFreeze from 'deep-freeze';
+import { map } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	requestTags as requestTagsAction,
-	receiveTags as receiveTagsAction,
-} from 'state/reader/tags/items/actions';
 import { requestTags, receiveTagsSuccess, receiveTagsError } from '../';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { requestTags as requestTagsAction, receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
 
 const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [

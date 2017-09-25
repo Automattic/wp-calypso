@@ -1,15 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	ZONINATOR_ADD_ZONE,
-	ZONINATOR_DELETE_ZONE,
-	ZONINATOR_REQUEST_ERROR,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_SAVE_ZONE,
-	ZONINATOR_UPDATE_ZONE,
-	ZONINATOR_UPDATE_ZONES,
-} from '../action-types';
+import { ZONINATOR_ADD_ZONE, ZONINATOR_DELETE_ZONE, ZONINATOR_REQUEST_ERROR, ZONINATOR_REQUEST_ZONES, ZONINATOR_SAVE_ZONE, ZONINATOR_UPDATE_ZONE, ZONINATOR_UPDATE_ZONES } from '../action-types';
 
 /**
  * Returns an action object to indicate that a request has been made to fetch the zones.

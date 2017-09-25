@@ -1,12 +1,10 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
+import { noop, range } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import { noop, range } from 'lodash';
 
 /**
  * Internal dependencies

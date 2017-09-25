@@ -1,22 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	LinkQuit,
-	Quit,
-} from 'layout/guided-tours/config-elements';
-import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, LinkQuit, Quit } from 'layout/guided-tours/config-elements';
 import analytics from 'lib/analytics';
+import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
 
 const trackUserInterest = () => {
 	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
 import { includes, partial } from 'lodash';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies

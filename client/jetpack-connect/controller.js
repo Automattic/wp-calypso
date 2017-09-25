@@ -1,34 +1,34 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import Debug from 'debug';
+import { translate } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
+import page from 'page';
 import React from 'react';
 import ReactDom from 'react-dom';
-import Debug from 'debug';
-import page from 'page';
-import { get, isEmpty } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import CheckoutData from 'components/data/checkout';
-import i18nUtils from 'lib/i18n-utils';
-import JetpackConnect from './main';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import JetpackNewSite from './jetpack-new-site/index';
-import jetpackSSOForm from './sso';
+import JetpackConnect from './main';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
+import jetpackSSOForm from './sso';
+import CheckoutData from 'components/data/checkout';
+import analytics from 'lib/analytics';
+import i18nUtils from 'lib/i18n-utils';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import userFactory from 'lib/user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 import { setSection } from 'state/ui/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables

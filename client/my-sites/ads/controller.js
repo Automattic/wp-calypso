@@ -1,24 +1,24 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-
 import i18n from 'i18n-calypso';
 import page from 'page';
+import React from 'react';
+
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import route from 'lib/route';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import { canAccessWordads } from 'lib/ads/utils';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { userCan } from 'lib/site/utils';
+import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import route from 'lib/route';
+import { userCan } from 'lib/site/utils';
 import Ads from 'my-sites/ads/main';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	const basePath = route.sectionify( context.path );

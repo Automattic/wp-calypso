@@ -1,31 +1,16 @@
+/**
+ * External dependencies
+ */
 import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	areProductsLoading,
-	areProductSearchResultsLoading,
-	getProductSearchQuery,
-} from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
-	WOOCOMMERCE_PRODUCT_CREATE,
-	WOOCOMMERCE_PRODUCT_DELETE,
-	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
-	WOOCOMMERCE_PRODUCT_REQUEST,
-	WOOCOMMERCE_PRODUCT_UPDATE,
-	WOOCOMMERCE_PRODUCT_UPDATED,
-} from 'woocommerce/state/action-types';
+import { areProductsLoading, areProductSearchResultsLoading, getProductSearchQuery } from './selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_PRODUCTS_REQUEST, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE, WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE, WOOCOMMERCE_PRODUCT_CREATE, WOOCOMMERCE_PRODUCT_DELETE, WOOCOMMERCE_PRODUCT_DELETE_SUCCESS, WOOCOMMERCE_PRODUCT_REQUEST, WOOCOMMERCE_PRODUCT_UPDATE, WOOCOMMERCE_PRODUCT_UPDATED } from 'woocommerce/state/action-types';
 
 /**
  * Action Creator: Create a new product

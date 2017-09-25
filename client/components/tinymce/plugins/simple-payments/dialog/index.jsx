@@ -1,48 +1,40 @@
 /** @format */
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, isNumber, pick, noop, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSimplePayments } from 'state/selectors';
+import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
+import ProductList from './list';
+import Navigation from './navigation';
+import Banner from 'components/banner';
+import Button from 'components/button';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';
-import Button from 'components/button';
-import Notice from 'components/notice';
-import Navigation from './navigation';
-import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
-import ProductList from './list';
-import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
-import wpcom from 'lib/wp';
-import accept from 'lib/accept';
-import {
-	customPostToProduct,
-	productToCustomPost,
-} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
-import {
-	receiveUpdateProduct,
-	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
-import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import Banner from 'components/banner';
+import Notice from 'components/notice';
+import accept from 'lib/accept';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import wpcom from 'lib/wp';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
+import { customPostToProduct, productToCustomPost } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
+import { getSimplePayments } from 'state/selectors';
+import { receiveUpdateProduct, receiveDeleteProduct } from 'state/simple-payments/product-list/actions';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;

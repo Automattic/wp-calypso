@@ -2,19 +2,18 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
-import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
-
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
+import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
 
 export function requestFollowTag( store, action ) {
 	store.dispatch(

@@ -1,31 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
+import { flowRight, get } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import StatsListLegend from '../stats-list/legend';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsList from '../stats-list';
 import ErrorPanel from '../stats-error';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
-	hasSiteStatsQueryFailed
-} from 'state/stats/lists/selectors';
+import SectionHeader from 'components/section-header';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSiteSlug } from 'state/sites/selectors';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData, hasSiteStatsQueryFailed } from 'state/stats/lists/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatModuleFollowers extends Component {
 	state = {

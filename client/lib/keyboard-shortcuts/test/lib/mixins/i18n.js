@@ -1,7 +1,6 @@
 /**
- * Stub i18n
+ * Internal dependencies
  */
-
 import Emitter from 'lib/mixins/emitter';
 
 function I18n() {

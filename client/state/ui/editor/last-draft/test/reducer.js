@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 import reducer, { siteId, postId } from '../reducer';
+import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

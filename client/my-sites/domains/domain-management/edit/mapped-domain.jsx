@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
+import Card from 'components/card/compact';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import analyticsMixin from 'lib/mixins/analytics';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import paths from 'my-sites/domains/paths';
 

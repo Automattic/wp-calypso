@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { getSerializedQuery } from 'state/followers/utils';
+
 /**
  * Returns a list of followers for the given Query.
  *

@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 
-import { localize } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 
 export default localize( React.createClass( {
 	propTypes: {

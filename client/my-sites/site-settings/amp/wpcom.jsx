@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import SectionHeader from 'components/section-header';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class AmpWpcom extends Component {
 	static propTypes = {

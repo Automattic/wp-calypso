@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import { cloneDeep, forEach, noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'SitesList', () => {
 	let SitesList, Site, data;

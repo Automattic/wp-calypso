@@ -1,24 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import {
-	areSetupChoicesLoading,
-	getFinishedInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { areSetupChoicesLoading, getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 
 class TaxSettingsSaveButton extends Component {
 

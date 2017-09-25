@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import EmptyContent from 'components/empty-content';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import config from 'config';
+import { fetchState } from 'lib/importer/actions';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
-import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
-import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
+import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class SiteSettingsImport extends Component {
 	static propTypes = {

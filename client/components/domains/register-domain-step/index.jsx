@@ -1,52 +1,34 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import async from 'async';
-import {
-	compact,
-	find,
-	flatten,
-	includes,
-	isEmpty,
-	noop,
-	reject,
-	startsWith,
-	times,
-	uniqBy,
-} from 'lodash';
-import page from 'page';
-import qs from 'qs';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { compact, find, flatten, includes, isEmpty, noop, reject, startsWith, times, uniqBy } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import qs from 'qs';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainSearchResults from 'components/domains/domain-search-results';
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import Notice from 'components/notice';
+import SearchCard from 'components/search-card';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import SearchCard from 'components/search-card';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSearchResults from 'components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import wpcom from 'lib/wp';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import {
-	getDomainsSuggestions,
-	getDomainsSuggestionsError
-} from 'state/domains/suggestions/selectors';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { getDomainsSuggestions, getDomainsSuggestionsError } from 'state/domains/suggestions/selectors';
 
 const domains = wpcom.domains();
 

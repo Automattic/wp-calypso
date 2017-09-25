@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { tracks } from 'lib/analytics';
-import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import AllTours from 'layout/guided-tours/config';
+import { tracks } from 'lib/analytics';
 import { getLastAction } from 'state/ui/action-log/selectors';
-import { getInitialQueryArguments, getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { nextGuidedTourStep, quitGuidedTour, resetGuidedToursHistory } from 'state/ui/guided-tours/actions';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getInitialQueryArguments, getSectionName, isSectionLoading } from 'state/ui/selectors';
 
 class GuidedTours extends Component {
 	shouldComponentUpdate( nextProps ) {

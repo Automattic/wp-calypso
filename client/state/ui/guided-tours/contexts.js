@@ -6,23 +6,16 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
 import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getAll as getAllMedia } from 'lib/media/store';
-import {
-	getSectionName,
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
-import { getLastAction } from 'state/ui/action-log/selectors';
+import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
-import {
-	hasDefaultSiteTitle,
-	isCurrentPlanPaid,
-} from 'state/sites/selectors';
+import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'state/sites/selectors';
+import { getLastAction } from 'state/ui/action-log/selectors';
+import { getSectionName, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 

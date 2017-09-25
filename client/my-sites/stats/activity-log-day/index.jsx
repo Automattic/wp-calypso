@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

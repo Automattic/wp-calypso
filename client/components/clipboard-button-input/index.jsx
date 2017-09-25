@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
+import { withoutHttp } from 'lib/url';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {

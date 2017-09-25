@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { get, map } from 'lodash';
 import { moment } from 'i18n-calypso';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies

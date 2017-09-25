@@ -1,42 +1,39 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
 import { assign, filter, omit, pick } from 'lodash';
 import page from 'page';
+import React, { Component } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
-import FormLabel from 'components/forms/form-label';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import PeopleProfile from 'my-sites/people/people-profile';
-import UsersStore from 'lib/users/store';
-import UsersActions from 'lib/users/actions';
-import userModule from 'lib/user';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import analytics from 'lib/analytics';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PeopleLog from 'lib/people/log-store';
+import PeopleLogStore from 'lib/people/log-store';
 import { protectForm } from 'lib/protect-form';
+import userModule from 'lib/user';
+import UsersActions from 'lib/users/actions';
+import UsersStore from 'lib/users/store';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
-import PeopleLog from 'lib/people/log-store';
-import analytics from 'lib/analytics';
+import PeopleProfile from 'my-sites/people/people-profile';
 import RoleSelect from 'my-sites/people/role-select';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PeopleLogStore from 'lib/people/log-store';
-import {
-	isJetpackSiteMultiSite,
-	isJetpackSite,
-} from 'state/sites/selectors';
 
 /**
  * Module Variables

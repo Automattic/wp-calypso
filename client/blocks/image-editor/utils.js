@@ -1,17 +1,12 @@
 /**
  * External dependencies
  */
-import {
-	indexOf,
-	get
-} from 'lodash';
+import { indexOf, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	AspectRatiosValues
-} from 'state/ui/editor/image-editor/constants';
+import { AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
 
 /**
  * Returns the default aspect ratio image editor should use.

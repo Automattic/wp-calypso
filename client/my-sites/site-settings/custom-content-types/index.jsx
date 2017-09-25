@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {

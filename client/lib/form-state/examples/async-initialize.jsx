@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies

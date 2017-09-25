@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-import qs from 'querystring';
-
-/**
  * Internal dependencies
  */
+import qs from 'querystring';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**

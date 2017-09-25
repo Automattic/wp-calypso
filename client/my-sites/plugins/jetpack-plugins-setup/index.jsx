@@ -1,52 +1,40 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { filter, get, range } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import FeatureExample from 'components/feature-example';
-import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import analytics from 'lib/analytics';
-import support from 'lib/url/support';
+import PluginsStore from 'lib/plugins/store';
 import utils from 'lib/site/utils';
 
-// Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
-import { hasInitializedSites } from 'state/selectors';
-import { getPlugin } from 'state/plugins/wporg/selectors';
+import support from 'lib/url/support';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import { installPlugin } from 'state/plugins/premium/actions';
+import { getPluginsForSite, getActivePlugin, getNextPlugin, isFinished, isInstalling, isRequesting, hasRequested } from 'state/plugins/premium/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
+import { getPlugin } from 'state/plugins/wporg/selectors';
+import { hasInitializedSites } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
-import {
-	installPlugin,
-} from 'state/plugins/premium/actions';
-import {
-	getPluginsForSite,
-	getActivePlugin,
-	getNextPlugin,
-	isFinished,
-	isInstalling,
-	isRequesting,
-	hasRequested
-} from 'state/plugins/premium/selectors';
-// Store for existing plugins
-import PluginsStore from 'lib/plugins/store';
+import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const helpLinks = {
 	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,

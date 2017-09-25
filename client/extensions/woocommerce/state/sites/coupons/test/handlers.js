@@ -7,12 +7,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { fetchCouponsPage, couponsPageUpdated } from '../actions';
-import {
-	requestCouponsPage,
-	requestCouponsPageSuccess
-} from '../handlers';
+import { requestCouponsPage, requestCouponsPageSuccess } from '../handlers';
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
 describe( 'handlers', () => {
 	const siteId = 123;

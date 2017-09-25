@@ -1,13 +1,12 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import request from 'superagent';
-import {
-	GEO_RECEIVE,
-	GEO_REQUEST,
-	GEO_REQUEST_FAILURE,
-	GEO_REQUEST_SUCCESS
-} from 'state/action-types';
+
+/**
+ * Internal dependencies
+ */
+import { GEO_RECEIVE, GEO_REQUEST, GEO_REQUEST_FAILURE, GEO_REQUEST_SUCCESS } from 'state/action-types';
 
 /**
  * Constants

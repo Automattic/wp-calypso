@@ -6,10 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
-
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
+import controller from 'my-sites/controller';
 
 export default function() {
 	SiftScience.recordUser();

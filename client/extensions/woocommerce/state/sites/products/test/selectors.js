@@ -2,20 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
-import {
-	getProduct,
-	areProductsLoaded,
-	areProductsLoading,
-	getTotalProductsPages,
-	getTotalProducts,
-	areProductSearchResultsLoaded,
-	areProductSearchResultsLoading,
-	getTotalProductSearchResults,
-	getProductSearchQuery,
-} from '../selectors';
+import { getProduct, areProductsLoaded, areProductsLoading, getTotalProductsPages, getTotalProducts, areProductSearchResultsLoaded, areProductSearchResultsLoading, getTotalProductSearchResults, getProductSearchQuery } from '../selectors';
 import products from './fixtures/products';
 
 const preInitializedState = {

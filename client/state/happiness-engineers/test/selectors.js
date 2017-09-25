@@ -1,16 +1,8 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
-import {
-	isRequestingHappinessEngineers,
-	getHappinessEngineers,
-	hasReceivedHappinessEngineers
-} from '../selectors';
+import { isRequestingHappinessEngineers, getHappinessEngineers, hasReceivedHappinessEngineers } from '../selectors';
+import assert from 'assert';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingHappinessEngineers()', () => {

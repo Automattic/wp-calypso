@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import { get, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, partial } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import FeaturedAsset from './featured-asset';
+import ReaderExcerpt from 'blocks/reader-excerpt';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import FeaturedAsset from './featured-asset';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
 	let onVideoThumbnailClick = null;

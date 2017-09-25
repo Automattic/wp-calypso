@@ -1,21 +1,19 @@
-import { assign, filter, find } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+
+import { assign, filter, find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import SortableList from 'components/forms/sortable-list';
-
-import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
+import ButtonsPreviewButtons from './preview-buttons';
+import SortableList from 'components/forms/sortable-list';
 
 export default localize( React.createClass( {
 	displayName: 'SharingButtonsTray',

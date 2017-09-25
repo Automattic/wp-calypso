@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { head } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import Button from 'components/button';
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormWeightInput from 'woocommerce/components/form-weight-input';
 import ImagePreloader from 'components/image-preloader';
+import Spinner from 'components/spinner';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
 import PriceInput from 'woocommerce/components/price-input';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {

@@ -2,21 +2,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import { includes } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
+import { includes } from 'lodash';
+import page from 'page';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { getQueryDate } from './utils';
 import AsyncLoad from 'components/async-load';
+import analytics from 'lib/analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { getQueryDate } from './utils';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 
 function isValidParameters( context ) {
 	const validParameters = {

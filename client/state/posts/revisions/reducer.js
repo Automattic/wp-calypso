@@ -6,12 +6,7 @@ import { keyBy, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	POST_REVISIONS_RECEIVE,
-	POST_REVISIONS_REQUEST,
-	POST_REVISIONS_REQUEST_FAILURE,
-	POST_REVISIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+import { POST_REVISIONS_RECEIVE, POST_REVISIONS_REQUEST, POST_REVISIONS_REQUEST_FAILURE, POST_REVISIONS_REQUEST_SUCCESS } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export function requesting( state = {}, action ) {

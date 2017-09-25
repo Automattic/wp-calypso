@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { isString, reduce, update } from 'lodash';
-import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
+import validatorFactory from 'is-my-json-valid';
+import { isString, reduce, update } from 'lodash';
 
 /**
  * Internal dependencies

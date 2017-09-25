@@ -1,13 +1,13 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
+import Card from 'components/card';
 
 export default React.createClass( {
 	displayName: 'BulkSelects',

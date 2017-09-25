@@ -1,23 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	assign,
-	camelCase,
-	constant,
-	debounce,
-	every,
-	filter,
-	flatten,
-	isEmpty,
-	isUndefined,
-	map,
-	mapValues,
-	pickBy,
-	property,
-	some,
-	uniqueId
-} from 'lodash';
+import { assign, camelCase, constant, debounce, every, filter, flatten, isEmpty, isUndefined, map, mapValues, pickBy, property, some, uniqueId } from 'lodash';
 import update from 'react-addons-update';
 
 function Controller( options ) {

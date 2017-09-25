@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import GoogleIcon from 'components/social-icons/google';
 import Popover from 'components/popover';
+import GoogleIcon from 'components/social-icons/google';
 import { preventWidows } from 'lib/formatting';
+import { loadScript } from 'lib/load-script';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isFormDisabled } from 'state/login/selectors';
 

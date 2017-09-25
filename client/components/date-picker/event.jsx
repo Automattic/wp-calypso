@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import Gridicon from 'gridicons';
-import SocialLogo from 'social-logos';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import React from 'react';
+import SocialLogo from 'social-logos';
 
 const renderIcon = icon => icon &&
 	<span className={ `date-picker__icon-wrapper date-picker__icon-wrapper-${ icon }` }>

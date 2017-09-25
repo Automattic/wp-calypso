@@ -7,8 +7,8 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import DisconnectJetpackDialog from '../';
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 
 class DisconnectJetpackDialogExample extends Component {
 	constructor( props ) {

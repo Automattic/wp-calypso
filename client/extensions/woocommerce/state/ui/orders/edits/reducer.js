@@ -2,15 +2,12 @@
  * External dependencies
  */
 import { merge, omit, uniqueId } from 'lodash';
-import { combineReducers } from 'state/utils';
 
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
-	WOOCOMMERCE_UI_ORDERS_EDIT,
-} from 'woocommerce/state/action-types';
+import { combineReducers } from 'state/utils';
+import { WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT, WOOCOMMERCE_UI_ORDERS_EDIT } from 'woocommerce/state/action-types';
 
 /**
  * Returns the updated state after an action has been dispatched.

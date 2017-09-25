@@ -6,16 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	PUSH_NOTIFICATIONS_API_NOT_READY,
-	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-} from 'state/action-types';
-import {
-	apiNotReady,
-	receiveUnregisterDevice,
-	sendSubscriptionToWPCOM,
-} from '../actions';
+import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
+import { PUSH_NOTIFICATIONS_API_NOT_READY, PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE, PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

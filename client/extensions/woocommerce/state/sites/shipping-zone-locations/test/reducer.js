@@ -6,12 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
+import { WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST, WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	it( 'should mark the zone locations entry as being "loading"', () => {

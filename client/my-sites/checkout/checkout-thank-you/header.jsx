@@ -1,23 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	isChargeback,
-	isDomainMapping,
-	isDomainRegistration,
-	isGoogleApps,
-	isGuidedTransfer,
-	isPlan,
-	isSiteRedirect
-} from 'lib/products-values';
-import { localize } from 'i18n-calypso';
+import { isChargeback, isDomainMapping, isDomainRegistration, isGoogleApps, isGuidedTransfer, isPlan, isSiteRedirect } from 'lib/products-values';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {

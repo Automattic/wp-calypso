@@ -6,8 +6,8 @@ import { get, filter, omit, sumBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSerializedOrdersQuery } from './utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

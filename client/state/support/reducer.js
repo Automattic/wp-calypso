@@ -1,15 +1,8 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
+import { SUPPORT_USER_ACTIVATE, SUPPORT_USER_TOKEN_FETCH, SUPPORT_USER_ERROR, SUPPORT_USER_PREFILL, SUPPORT_USER_SET_USERNAME, SUPPORT_USER_TOGGLE_DIALOG } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import {
-	SUPPORT_USER_ACTIVATE,
-	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_ERROR,
-	SUPPORT_USER_PREFILL,
-	SUPPORT_USER_SET_USERNAME,
-	SUPPORT_USER_TOGGLE_DIALOG,
-} from 'state/action-types';
 
 export function isSupportUser( state = false, { type } ) {
 	switch ( type ) {

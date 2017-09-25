@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import SectionHeader from 'components/section-header';
 import { addQueryArgs } from 'lib/url';
-import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
+import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const AmpJetpack = ( {
 	ampPluginInstalled,

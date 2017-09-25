@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import phoneValidation from '..';
+import assert from 'assert';
 
 describe( 'Phone Validation Library', () => {
 	it( 'should fail an empty number', () => {

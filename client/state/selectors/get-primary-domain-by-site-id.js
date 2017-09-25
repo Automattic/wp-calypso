@@ -1,5 +1,5 @@
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 

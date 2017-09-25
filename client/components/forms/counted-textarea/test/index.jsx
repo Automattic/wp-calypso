@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
+import { expect } from 'chai';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import { expect } from 'chai';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
-import { CountedTextarea } from '../';
+import { CountedTextarea } from '../';
 
 describe( 'index', function() {
 	let renderer;

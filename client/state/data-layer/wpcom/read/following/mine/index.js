@@ -8,19 +8,15 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
-import followingNew from './new';
 import followingDelete from './delete';
-import {
-	READER_FOLLOW,
-	READER_FOLLOWS_SYNC_START,
-	READER_FOLLOWS_SYNC_PAGE,
-} from 'state/action-types';
-import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/reader/follows/actions';
+import followingNew from './new';
+import { isValidApiResponse, subscriptionsFromApi } from './utils';
+import { READER_FOLLOW, READER_FOLLOWS_SYNC_START, READER_FOLLOWS_SYNC_PAGE } from 'state/action-types';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { isValidApiResponse, subscriptionsFromApi } from './utils';
+import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/reader/follows/actions';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;

@@ -1,12 +1,10 @@
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE } from 'woocommerce/state/action-types';
 import { put } from 'woocommerce/state/data-layer/request/actions';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { shippingZoneLocationsUpdated } from 'woocommerce/state/sites/shipping-zone-locations/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
-} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE ]: [

@@ -1,18 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
-import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
 export default localize( React.createClass( {

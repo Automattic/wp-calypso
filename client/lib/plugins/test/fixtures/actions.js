@@ -1,7 +1,10 @@
+/**
+ * Internal dependencies
+ */
+import multiSite from './multi-site';
 import plugins from './plugins';
 import updatePluginsList from './plugins-updated';
 import site from './site';
-import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
 
 export default {

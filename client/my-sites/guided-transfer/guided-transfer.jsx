@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import page from 'page';
-import { get } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
 import TransferUnavailableCard from './transfer-unavailable-card';
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 
 const guidedTransferHosts = {

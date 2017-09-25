@@ -2,26 +2,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
-/***
+/**
  * Internal dependencies
  */
+import { isAncestor } from 'blocks/comments/utils';
+import Card from 'components/card';
 import Gravatar from 'components/gravatar';
-import {
-	getPostCommentsTree,
-	getDateSortedPostComments,
-	getHiddenCommentsForPost,
-} from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
-import { isAncestor } from 'blocks/comments/utils';
+import { getPostCommentsTree, getDateSortedPostComments, getHiddenCommentsForPost } from 'state/comments/selectors';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;

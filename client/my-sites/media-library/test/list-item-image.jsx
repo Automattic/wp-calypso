@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import photon from 'photon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
-import photon from 'photon';
 import resize from 'lib/resize-image-url';
 import ListItemImage from 'my-sites/media-library/list-item-image';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 const WIDTH = 450;
 

@@ -6,10 +6,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 import CourseList, { CourseListPlaceholder } from './course-list';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 
 class Courses extends Component {
 	componentWillMount() {

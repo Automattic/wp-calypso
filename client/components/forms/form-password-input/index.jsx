@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { omit } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

@@ -1,16 +1,14 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-
 import SiteIcon from 'blocks/site-icon';
+import CompactCard from 'components/card/compact';
 
 export default {
 	Page: localize( React.createClass( {

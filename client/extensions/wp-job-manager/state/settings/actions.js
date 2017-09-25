@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
-	WP_JOB_MANAGER_SAVE_SETTINGS,
-	WP_JOB_MANAGER_UPDATE_SETTINGS,
-} from '../action-types';
+import { WP_JOB_MANAGER_FETCH_ERROR, WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS, WP_JOB_MANAGER_UPDATE_SETTINGS } from '../action-types';
 
 /**
  * Returns an action object to indicate that a request has been made to fetch the settings.

@@ -1,78 +1,48 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { get, includes, map, concat } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { get, includes, map, concat } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { isEnabled } from 'config';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import ConnectionsList, { NoConnectionsNotice } from './connections-list';
+import ActionsList from './publicize-actions-list';
+
+import SharingPreviewModal from './sharing-preview-modal';
+import CalendarButton from 'blocks/calendar-button';
+import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
-import NoticeAction from 'components/notice/notice-action';
-import {
-	getPostShareScheduledActions,
-	getPostSharePublishedActions,
-} from 'state/selectors';
-import {
-	isPublicizeEnabled,
-	isSchedulingPublicizeShareAction,
-	getScheduledPublicizeShareActionTime,
-	isSchedulingPublicizeShareActionError,
-} from 'state/selectors';
-import {
-	getSiteSlug,
-	getSitePlanSlug,
-	isJetpackSite,
-} from 'state/sites/selectors';
-import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import {
-	getSiteUserConnections,
-	hasFetchedConnections as siteHasFetchedConnections,
-} from 'state/sharing/publicize/selectors';
-
-import {
-	fetchConnections as requestConnections,
-	sharePost,
-	dismissShareConfirmation,
-} from 'state/sharing/publicize/actions';
-import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
-import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
-import PostMetadata from 'lib/post-metadata';
-import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
-import Notice from 'components/notice';
-import {
-	hasFeature,
-	getSitePlanRawPrice,
-	getPlanDiscountedRawPrice,
-} from 'state/sites/plans/selectors';
-import {
-	FEATURE_REPUBLICIZE,
-	PLAN_PREMIUM,
-	PLAN_JETPACK_PREMIUM
-} from 'lib/plans/constants';
-import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
-
-import SharingPreviewModal from './sharing-preview-modal';
-import ConnectionsList, { NoConnectionsNotice } from './connections-list';
-
-import ActionsList from './publicize-actions-list';
-import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
-
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
+import { isEnabled } from 'config';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { FEATURE_REPUBLICIZE, PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import PostMetadata from 'lib/post-metadata';
+import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
+import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
+import { isPublicizeEnabled, isSchedulingPublicizeShareAction, getScheduledPublicizeShareActionTime, isSchedulingPublicizeShareActionError } from 'state/selectors';
+import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
+import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
+import { getSiteUserConnections, hasFetchedConnections as siteHasFetchedConnections } from 'state/sharing/publicize/selectors';
+import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
+import { hasFeature, getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
+import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
 
 class PostShare extends Component {
 	static propTypes = {

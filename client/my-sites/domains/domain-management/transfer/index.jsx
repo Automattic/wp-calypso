@@ -1,21 +1,21 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { get } from 'lodash';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
-import { localize } from 'i18n-calypso';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
+import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function Transfer( props ) {
 	const { isAutomatedTransfer, isDomainOnly, selectedSite, selectedDomainName, translate } = props;

@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
+import { WP_SUPER_CACHE_RECEIVE_STATUS, WP_SUPER_CACHE_REQUEST_STATUS, WP_SUPER_CACHE_REQUEST_STATUS_FAILURE } from '../action-types';
 import wp from 'lib/wp';
-import {
-	WP_SUPER_CACHE_RECEIVE_STATUS,
-	WP_SUPER_CACHE_REQUEST_STATUS,
-	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
-} from '../action-types';
 
 /**
  * Returns an action object to be used in signalling that status have been received.

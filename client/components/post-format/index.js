@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 const icons = {
 	aside: 'pages',

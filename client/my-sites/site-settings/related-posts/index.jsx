@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import RelatedContentPreview from './related-content-preview';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import RelatedContentPreview from './related-content-preview';
 
 const RelatedPosts = ( {
 	fields,

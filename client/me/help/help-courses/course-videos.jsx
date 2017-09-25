@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import CourseVideo from './course-video';
 import Card from 'components/card';
 

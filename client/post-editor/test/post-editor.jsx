@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import mockery from 'mockery';
 import { expect } from 'chai';
 import { noop } from 'lodash';
+import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies

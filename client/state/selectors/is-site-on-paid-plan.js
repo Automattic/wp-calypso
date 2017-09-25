@@ -2,8 +2,8 @@
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isFreePlan } from 'lib/plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 /**
  * Returns true if site is on a paid plan, false if the site is not

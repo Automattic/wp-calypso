@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
 const FormLegend = ( { className, children, ...otherProps } ) => (
 	<legend { ...otherProps }

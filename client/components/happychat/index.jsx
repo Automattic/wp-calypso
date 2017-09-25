@@ -1,36 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import GridIcon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import {
-	getHappychatConnectionStatus
-} from 'state/happychat/selectors';
-import {
-	openChat,
-	closeChat,
-	minimizeChat,
-	minimizedChat
-} from 'state/ui/happychat/actions';
-import {
-	blur,
-	focus,
-} from 'state/happychat/actions';
-import {
-	isHappychatMinimizing,
-	isHappychatOpen,
-} from 'state/ui/happychat/selectors';
-import HappychatConnection from './connection';
 import Composer from './composer';
+import HappychatConnection from './connection';
 import Notices from './notices';
 import Timeline from './timeline';
+import { blur, focus } from 'state/happychat/actions';
+import { getHappychatConnectionStatus } from 'state/happychat/selectors';
+import { openChat, closeChat, minimizeChat, minimizedChat } from 'state/ui/happychat/actions';
+import { isHappychatMinimizing, isHappychatOpen } from 'state/ui/happychat/selectors';
 
 /**
  * React component for rendering title bar

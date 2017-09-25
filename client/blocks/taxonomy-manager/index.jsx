@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SearchCard from 'components/search-card';
-import Button from 'components/button';
 import TermsList from './list';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import QueryTaxonomies from 'components/data/query-taxonomies';
 import TermFormDialog from 'blocks/term-form-dialog';
+import Button from 'components/button';
+import QueryTaxonomies from 'components/data/query-taxonomies';
+import SearchCard from 'components/search-card';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {

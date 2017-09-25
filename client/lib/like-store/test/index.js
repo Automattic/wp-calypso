@@ -1,8 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {

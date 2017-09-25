@@ -6,16 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getImageEditorTransform,
-	getImageEditorFileInfo,
-	imageEditorHasChanges,
-	getImageEditorCropBounds,
-	getImageEditorCrop,
-	getImageEditorAspectRatio,
-	isImageEditorImageLoaded
-} from '../selectors';
 import { AspectRatios } from '../constants';
+import { getImageEditorTransform, getImageEditorFileInfo, imageEditorHasChanges, getImageEditorCropBounds, getImageEditorCrop, getImageEditorAspectRatio, isImageEditorImageLoaded } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getImageEditorTransform()', () => {

@@ -1,19 +1,15 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import debug from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+
+/**
+ * Internal dependencies
+ */
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
-import {
-	failMediaRequest,
-	failMediaItemRequest,
-	receiveMedia,
-	requestingMedia,
-	requestingMediaItem,
-	successMediaRequest,
-	successMediaItemRequest,
-} from 'state/media/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { failMediaRequest, failMediaItemRequest, receiveMedia, requestingMedia, requestingMediaItem, successMediaRequest, successMediaItemRequest } from 'state/media/actions';
 
 /**
  * Module variables

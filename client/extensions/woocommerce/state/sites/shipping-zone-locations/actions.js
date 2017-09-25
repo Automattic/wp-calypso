@@ -3,16 +3,8 @@
  */
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
-} from 'woocommerce/state/action-types';
-import {
-	areShippingZoneLocationsLoaded,
-	areShippingZoneLocationsLoading,
-} from './selectors';
+import { areShippingZoneLocationsLoaded, areShippingZoneLocationsLoading } from './selectors';
+import { WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST, WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS, WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE, WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED } from 'woocommerce/state/action-types';
 
 export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getState ) => {
 	if ( areShippingZoneLocationsLoaded( getState(), zoneId, siteId ) ||

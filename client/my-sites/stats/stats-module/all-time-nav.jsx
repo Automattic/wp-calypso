@@ -1,21 +1,21 @@
 /**
  * External dependencies
- **/
+ */
+import { localize, moment } from 'i18n-calypso';
+import { flowRight, find, get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight, find, get } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import DatePicker from '../stats-date-picker';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const StatsModuleSummaryLinks = props => {
 	const { translate, path, siteSlug, query, period, children } = props;

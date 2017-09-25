@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import { find, isEqual, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:site' );
 import i18n from 'i18n-calypso';
+import { find, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
-import notices from 'notices';
-import Emitter from 'lib/mixins/emitter';
 import getAttributes from './computed-attributes';
+import Emitter from 'lib/mixins/emitter';
+import wpcom from 'lib/wp';
+import notices from 'notices';
+const debug = debugFactory( 'calypso:site' );
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {

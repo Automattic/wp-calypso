@@ -1,32 +1,31 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import tinymce from 'tinymce/tinymce';
-import { connect } from 'react-redux';
-import { find } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
+import Dialog from 'components/dialog';
+import FormButton from 'components/forms/form-button';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import { decodeEntities } from 'lib/formatting';
 import * as MediaSerialization from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
-import Dialog from 'components/dialog';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import PostSelector from 'my-sites/post-selector';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSitePosts } from 'state/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import PostSelector from 'my-sites/post-selector';
+import { getSitePosts } from 'state/posts/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables

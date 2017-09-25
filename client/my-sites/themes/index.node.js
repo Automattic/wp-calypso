@@ -1,17 +1,10 @@
 /**
  * Internal dependencies
  */
+import { fetchThemeData, fetchThemeFilters, loggedOut, redirectSearchAndType, redirectFilterAndType, redirectToThemeDetails } from './controller';
+import { validateFilters, validateVertical } from './validate-filters';
 import config from 'config';
 import { makeLayout } from 'controller';
-import {
-	fetchThemeData,
-	fetchThemeFilters,
-	loggedOut,
-	redirectSearchAndType,
-	redirectFilterAndType,
-	redirectToThemeDetails
-} from './controller';
-import { validateFilters, validateVertical } from './validate-filters';
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {

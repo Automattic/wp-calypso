@@ -6,19 +6,11 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	DESERIALIZE,
-	TERM_REMOVE,
-	TERMS_RECEIVE,
-	TERMS_REQUEST,
-	TERMS_REQUEST_FAILURE,
-	TERMS_REQUEST_SUCCESS,
-	SERIALIZE
-} from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import TermQueryManager from 'lib/query-manager/term';
-import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
+import { getSerializedTermsQuery } from './utils';
+import TermQueryManager from 'lib/query-manager/term';
+import { DESERIALIZE, TERM_REMOVE, TERMS_RECEIVE, TERMS_REQUEST, TERMS_REQUEST_FAILURE, TERMS_REQUEST_SUCCESS, SERIALIZE } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Returns the updated terms query requesting state after an action has been

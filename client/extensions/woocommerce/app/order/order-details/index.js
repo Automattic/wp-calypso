@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import OrderCreated from '../order-created';
-import OrderDetailsTable from './table';
 import OrderFulfillment from '../order-fulfillment';
 import OrderPaymentCard from '../order-payment';
+import OrderDetailsTable from './table';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
-import SectionHeader from 'components/section-header';
+import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 
 class OrderDetails extends Component {
 	static propTypes = {

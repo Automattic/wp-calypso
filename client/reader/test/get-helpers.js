@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteUrl, getSiteName } from '../get-helpers';
 

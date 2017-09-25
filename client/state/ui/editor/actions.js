@@ -6,16 +6,12 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_PASTE_EVENT,
-	EDITOR_START,
-	EDITOR_STOP,
-} from 'state/action-types';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setMediaModalView } from 'state/ui/media-modal/actions';
+import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { setMediaModalView } from 'state/ui/media-modal/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Constants

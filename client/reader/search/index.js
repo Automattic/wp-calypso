@@ -7,8 +7,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { search } from './controller';
+import config from 'config';
 import { preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 
 export default function() {

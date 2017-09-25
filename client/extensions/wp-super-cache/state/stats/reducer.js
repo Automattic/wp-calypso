@@ -6,18 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
+import { WP_SUPER_CACHE_DELETE_CACHE_SUCCESS, WP_SUPER_CACHE_DELETE_FILE, WP_SUPER_CACHE_DELETE_FILE_FAILURE, WP_SUPER_CACHE_DELETE_FILE_SUCCESS, WP_SUPER_CACHE_GENERATE_STATS, WP_SUPER_CACHE_GENERATE_STATS_FAILURE, WP_SUPER_CACHE_GENERATE_STATS_SUCCESS } from '../action-types';
 import { statsSchema } from './schema';
-import {
-	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_DELETE_FILE,
-	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
-	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
-	WP_SUPER_CACHE_GENERATE_STATS,
-	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
-	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
-} from '../action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated generating state after an action has been dispatched.

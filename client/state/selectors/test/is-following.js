@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import deepfreeze from 'deep-freeze';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import isFollowing from '../is-following';
 

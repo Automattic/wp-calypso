@@ -1,16 +1,16 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
 import StoreStatsNavigationTabs from './navtabs';
 import FollowersCount from 'blocks/followers-count';
+import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
 

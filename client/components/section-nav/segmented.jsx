@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Internal variables

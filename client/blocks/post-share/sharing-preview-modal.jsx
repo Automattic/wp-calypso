@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import SharingPreviewPane from 'blocks/sharing-preview-pane';
+import Dialog from 'components/dialog';
 
 const SharingPreviewModal = ( props ) => {
 	const {

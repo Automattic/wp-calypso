@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { settingsPath } from '../../../app/util';
+import { addZone } from '../../../state/zones/actions';
+import ZoneDetailsForm from '../../forms/zone-details-form';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import ZoneDetailsForm from '../../forms/zone-details-form';
-import { addZone } from '../../../state/zones/actions';
-import { settingsPath } from '../../../app/util';
 
 class ZoneCreator extends PureComponent {
 

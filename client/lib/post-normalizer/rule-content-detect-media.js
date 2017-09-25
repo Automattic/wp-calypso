@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'get-video-id';
+import { map, compact, includes, some, filter } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';

@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import TransactionsTable from './transactions-table';
 import eventRecorder from 'me/event-recorder';
 import purchasesPaths from 'me/purchases/paths';
-import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
+import { isSendingBillingReceiptEmail } from 'state/selectors';
 
 const BillingHistoryTable = React.createClass( {
 	mixins: [ eventRecorder ],

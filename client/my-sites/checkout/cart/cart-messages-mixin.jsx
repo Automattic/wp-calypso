@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { isEmpty } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
 import { getNewMessages } from 'lib/cart-values';
+import notices from 'notices';
 
 export default {
 	componentDidMount() {

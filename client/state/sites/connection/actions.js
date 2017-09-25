@@ -1,13 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	SITE_CONNECTION_STATUS_RECEIVE,
-	SITE_CONNECTION_STATUS_REQUEST,
-	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
 import wp from 'lib/wp';
+import { SITE_CONNECTION_STATUS_RECEIVE, SITE_CONNECTION_STATUS_REQUEST, SITE_CONNECTION_STATUS_REQUEST_FAILURE, SITE_CONNECTION_STATUS_REQUEST_SUCCESS } from 'state/action-types';
 
 /**
  * Request the Jetpack connection status for a certain site.

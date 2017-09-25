@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get } from 'lodash';
 
 /**
  * Matches an expression type

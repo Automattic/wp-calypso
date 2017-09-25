@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import update from 'react-addons-update';
 import { every, reject } from 'lodash';
+import update from 'react-addons-update';
 
 const WPCOM_DEFAULTS = [
 	'ns1.wordpress.com',

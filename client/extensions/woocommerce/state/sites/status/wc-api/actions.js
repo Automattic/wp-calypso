@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_ERROR_CLEAR,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_ERROR_SET, WOOCOMMERCE_ERROR_CLEAR } from 'woocommerce/state/action-types';
 
 export function setError( siteId, originalAction, data, time = Date.now() ) {
 	return {

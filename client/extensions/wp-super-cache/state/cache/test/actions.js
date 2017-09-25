@@ -2,28 +2,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
+import { WP_SUPER_CACHE_DELETE_CACHE, WP_SUPER_CACHE_DELETE_CACHE_FAILURE, WP_SUPER_CACHE_DELETE_CACHE_SUCCESS, WP_SUPER_CACHE_PRELOAD_CACHE, WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, WP_SUPER_CACHE_TEST_CACHE, WP_SUPER_CACHE_TEST_CACHE_FAILURE, WP_SUPER_CACHE_TEST_CACHE_SUCCESS } from '../../action-types';
+import { cancelPreloadCache, deleteCache, preloadCache, testCache } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_DELETE_CACHE,
-	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
-	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_PRELOAD_CACHE,
-	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
-	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
-	WP_SUPER_CACHE_TEST_CACHE,
-	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-} from '../../action-types';
-import {
-	cancelPreloadCache,
-	deleteCache,
-	preloadCache,
-	testCache,
-} from '../actions';
 
 describe( 'actions', () => {
 	let spy;

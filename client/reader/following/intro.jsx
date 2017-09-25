@@ -2,9 +2,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -12,11 +12,11 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import QueryPreferences from 'components/data/query-preferences';
+import { abtest } from 'lib/abtest';
+import { recordTrack } from 'reader/stats';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { recordTrack } from 'reader/stats';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
-import { abtest } from 'lib/abtest';
 
 const abtestVariant = abtest( 'readerIntroIllustration' );
 

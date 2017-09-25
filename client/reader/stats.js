@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import { assign, partial, pick } from 'lodash';
 import debugFactory from 'debug';
+import { assign, partial, pick } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { mc, ga, tracks } from 'lib/analytics';
 

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import FormTelInput from 'components/forms/form-tel-input';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 

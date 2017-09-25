@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
+import support from 'lib/url/support';
 
 export class TransactionIdFormComponent extends Component {
 	static defaultProps = {

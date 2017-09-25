@@ -1,24 +1,16 @@
 /**
  * External dependencies
  */
-import { match } from 'sinon';
 import { expect } from 'chai';
+import { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	GEO_RECEIVE,
-	GEO_REQUEST,
-	GEO_REQUEST_SUCCESS,
-	GEO_REQUEST_FAILURE
-} from 'state/action-types';
-import {
-	receiveGeo,
-	requestGeo
-} from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { receiveGeo, requestGeo } from '../actions';
+import { GEO_RECEIVE, GEO_REQUEST, GEO_REQUEST_SUCCESS, GEO_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

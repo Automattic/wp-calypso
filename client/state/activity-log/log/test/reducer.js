@@ -8,10 +8,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { logItems } from '../reducer';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const logItemsReducer = withSchemaValidation( logItems.schema, logItems );
 

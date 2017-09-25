@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
-import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

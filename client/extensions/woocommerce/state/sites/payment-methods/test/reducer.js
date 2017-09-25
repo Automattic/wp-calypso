@@ -7,12 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../../reducer';
+import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS, WOOCOMMERCE_PAYMENT_METHODS_REQUEST, WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should mark the payment methods tree as "loading"', () => {

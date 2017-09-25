@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import PostEditButton from 'blocks/post-edit-button';
+import Card from 'components/card';
 
 export default class PostEditButtonExample extends React.PureComponent {
 	static displayName = 'PostEditButtonExample';

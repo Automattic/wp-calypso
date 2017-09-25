@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import Popover from 'components/popover';
-import FormCheckbox from 'components/forms/form-checkbox';
 import Button from 'components/button';
+import QueryPreferences from 'components/data/query-preferences';
 
+import FormCheckbox from 'components/forms/form-checkbox';
+import Popover from 'components/popover';
+import { isMobile } from 'lib/viewport';
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getSectionName } from 'state/ui/selectors';
-import QueryPreferences from 'components/data/query-preferences';
 
 const EditorMediaModalGalleryHelp = React.createClass( {
 	displayName: 'EditorMediaModalGalleryHelp',

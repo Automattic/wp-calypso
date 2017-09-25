@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Emojify from '..';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Emojify', function() {
 	useFakeDom();

@@ -2,24 +2,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
 import SiteUrlInput from '../site-url-input';
 import ReaderBack from 'blocks/reader-full-post/back';
-
-import WordPressLogo from 'components/wordpress-logo';
+import Button from 'components/button';
+import Card from 'components/card';
 import JetpackLogo from 'components/jetpack-logo';
+import WordPressLogo from 'components/wordpress-logo';
+import config from 'config';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
 	constructor() {

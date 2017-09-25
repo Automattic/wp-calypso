@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { closePreview } from 'state/ui/preview/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { closePreview } from 'state/ui/preview/actions';
+import { getPreviewUrl } from 'state/ui/preview/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 

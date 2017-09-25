@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyObject } from 'lib/format-currency';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 
 class PriceInput extends Component {
 

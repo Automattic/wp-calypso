@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import CreditCardDelete from './credit-card-delete';
 import Button from 'components/button';
 import Card from 'components/card';
-import config from 'config';
-import CreditCardDelete from './credit-card-delete';
-import {
-	getStoredCards,
-	hasLoadedStoredCardsFromServer,
-	isFetchingStoredCards,
-} from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import { addCreditCard } from 'me/purchases/paths';
 import SectionHeader from 'components/section-header';
+import config from 'config';
+import { addCreditCard } from 'me/purchases/paths';
+import { getStoredCards, hasLoadedStoredCardsFromServer, isFetchingStoredCards } from 'state/stored-cards/selectors';
 
 class CreditCards extends Component {
 	renderCards() {

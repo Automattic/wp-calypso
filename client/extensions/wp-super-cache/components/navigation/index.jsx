@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { Tabs } from '../../app/constants';
 import HeaderCake from 'components/header-cake';
 import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabs from 'components/section-nav/tabs';
 import { addSiteFragment } from 'lib/route/path';
-import { getSiteSlug } from 'state/sites/selectors';
-import { Tabs } from '../../app/constants';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const Navigation = ( { activeTab, siteSlug, translate } ) => (
 	<div>

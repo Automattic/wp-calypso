@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
 import closest from 'component-closest';
-import userModule from 'lib/user';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
 import { recordTinyMCEButtonClick } from 'lib/posts/stats';
+import userModule from 'lib/user';
 
 /**
  * Module variables

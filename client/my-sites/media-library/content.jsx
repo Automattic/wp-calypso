@@ -1,36 +1,31 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import createFragment from 'react-addons-create-fragment';
-import { groupBy, head, mapValues, noop, values } from 'lodash';
-import PropTypes from 'prop-types';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import { groupBy, head, mapValues, noop, values } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import MediaLibraryExternalHeader from './external-media-header';
+import MediaLibraryHeader from './header';
+import MediaLibraryList from './list';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaListData from 'components/data/media-list-data';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import analytics from 'lib/analytics';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import MediaActions from 'lib/media/actions';
-import {
-	ValidationErrors as MediaValidationErrors,
-	MEDIA_IMAGE_PHOTON,
-	MEDIA_IMAGE_RESIZER,
-	MEDIA_IMAGE_THUMBNAIL,
-} from 'lib/media/constants';
-import { getSiteSlug } from 'state/sites/selectors';
-import MediaLibraryHeader from './header';
-import MediaLibraryExternalHeader from './external-media-header';
-import MediaLibraryList from './list';
+import { ValidationErrors as MediaValidationErrors, MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_RESIZER, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class MediaLibraryContent extends React.Component {
 	static propTypes = {

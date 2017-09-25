@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { find, get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isUrlLikelyAnImage } from './utils.js';
 

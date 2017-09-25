@@ -1,33 +1,22 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import {
-	filter,
-	findIndex,
-	findLastIndex,
-	forEach,
-	get,
-	map,
-	noop,
-	some,
-	defer,
-	uniqBy,
-} from 'lodash';
-import moment from 'moment';
 import debugFactory from 'debug';
+import { filter, findIndex, findLastIndex, forEach, get, map, noop, some, defer, uniqBy } from 'lodash';
+import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import FeedPostStore from 'lib/feed-post-store';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
+import { keyToString, keysAreEqual } from './post-key';
 import PollerPool from 'lib/data-poller';
+import FeedPostStore from 'lib/feed-post-store';
+import Emitter from 'lib/mixins/emitter';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
-import { keyToString, keysAreEqual } from './post-key';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 

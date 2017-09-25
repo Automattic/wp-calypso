@@ -1,17 +1,10 @@
 /**
- * Adapted from the WordPress wplink TinyMCE plugin.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
-*/
-
-/**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import tinymce from 'tinymce/tinymce';
 import { translate } from 'i18n-calypso';
+import React from 'react';
+import ReactDom from 'react-dom';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies

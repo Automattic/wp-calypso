@@ -4,7 +4,7 @@
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import safeProtocolUrl from '../';
 

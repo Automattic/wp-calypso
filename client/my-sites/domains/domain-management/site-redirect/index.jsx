@@ -1,36 +1,31 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Header from 'my-sites/domains/domain-management/components/header';
+import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'components/forms/form-label';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Main from 'components/main';
 import Notice from 'components/notice';
-import notices from 'notices';
-import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
-import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import * as upgradesActions from 'lib/upgrades/actions';
 import { withoutHttp } from 'lib/url';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
+import notices from 'notices';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class SiteRedirect extends React.Component {
 	static propTypes = {

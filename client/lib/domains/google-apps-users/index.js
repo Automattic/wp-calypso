@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
-import i18n from 'i18n-calypso';
 import emailValidator from 'email-validator';
+import i18n from 'i18n-calypso';
+import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
 
 function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {

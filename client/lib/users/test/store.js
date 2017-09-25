@@ -3,13 +3,14 @@
  */
 import { assert } from 'chai';
 import { findIndex, isUndefined, some } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import actions from './fixtures/actions';
 import site from './fixtures/site';
 import usersData from './fixtures/users';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Users Store', () => {
 	let Dispatcher, UsersStore, siteId, options;

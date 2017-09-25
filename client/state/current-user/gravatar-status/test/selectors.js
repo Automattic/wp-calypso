@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isCurrentUserUploadingGravatar,
-	getUserTempGravatar,
-} from '../selectors';
+import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isCurrentUserUploadingGravatar', () => {

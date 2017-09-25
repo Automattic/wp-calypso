@@ -1,12 +1,10 @@
 /** @format */
-/* eslint-disable no-console */
-
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
 import { find, startsWith } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

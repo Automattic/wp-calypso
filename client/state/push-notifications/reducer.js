@@ -7,25 +7,10 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { settingsSchema, systemSchema } from './schema';
+import { DESERIALIZE, PUSH_NOTIFICATIONS_API_READY, PUSH_NOTIFICATIONS_AUTHORIZE, PUSH_NOTIFICATIONS_BLOCK, PUSH_NOTIFICATIONS_MUST_PROMPT, PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE, PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE, PUSH_NOTIFICATIONS_TOGGLE_ENABLED, PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS, SERIALIZE } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
-import {
-	settingsSchema,
-	systemSchema,
-} from './schema';
-
-import {
-	DESERIALIZE,
-	PUSH_NOTIFICATIONS_API_READY,
-	PUSH_NOTIFICATIONS_AUTHORIZE,
-	PUSH_NOTIFICATIONS_BLOCK,
-	PUSH_NOTIFICATIONS_MUST_PROMPT,
-	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
-	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
-	SERIALIZE,
-} from 'state/action-types';
 const debug = debugFactory( 'calypso:push-notifications' );
 
 // If you change this, also change the corresponding test

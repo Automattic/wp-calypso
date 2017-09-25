@@ -6,14 +6,10 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { WOOCOMMERCE_SHIPPING_ZONE_CREATE, WOOCOMMERCE_SHIPPING_ZONE_DELETE, WOOCOMMERCE_SHIPPING_ZONE_UPDATE } from 'woocommerce/state/action-types';
 import { post, put, del } from 'woocommerce/state/data-layer/request/actions';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { shippingZoneUpdated, shippingZoneDeleted } from 'woocommerce/state/sites/shipping-zones/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_CREATE,
-	WOOCOMMERCE_SHIPPING_ZONE_DELETE,
-	WOOCOMMERCE_SHIPPING_ZONE_UPDATE,
-} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_SHIPPING_ZONE_CREATE ]: [

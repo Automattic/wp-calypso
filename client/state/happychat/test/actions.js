@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_SET_GEO_LOCATION } from 'state/action-types';
 import { setGeoLocation } from '../actions';
+import { HAPPYCHAT_SET_GEO_LOCATION } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setGeoLocation()', () => {

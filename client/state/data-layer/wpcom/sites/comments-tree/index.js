@@ -7,10 +7,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_TREE_SITE_ADD,
-	COMMENTS_TREE_SITE_REQUEST,
-} from 'state/action-types';
+import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';

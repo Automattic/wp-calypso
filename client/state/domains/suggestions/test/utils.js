@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getSerializedDomainsSuggestionsQuery
-} from '../utils';
+import { getSerializedDomainsSuggestionsQuery } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#getSerializedDomainsSuggestionsQuery()', () => {

@@ -7,14 +7,11 @@ import { isEmpty, keys, merge, noop } from 'lodash';
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
+import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getUnsavedUserSettings } from 'state/selectors';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
-import {
-	USER_SETTINGS_REQUEST,
-	USER_SETTINGS_SAVE,
-} from 'state/action-types';
 
 /*
  * Decodes entities in those specific user settings properties

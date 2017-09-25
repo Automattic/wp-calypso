@@ -1,40 +1,35 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { debounce, isEqual, find } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { debounce, isEqual, find } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import config from 'config';
+import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
+import ChatClosureNotice from '../chat-closure-notice';
+import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import ChatClosureNotice from '../chat-closure-notice';
-import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
-import { selectSiteId } from 'state/help/actions';
-import { getHelpSelectedSite } from 'state/help/selectors';
+import config from 'config';
+import analytics from 'lib/analytics';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
-import {
-	bumpStat,
-	recordTracksEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
+import { selectSiteId } from 'state/help/actions';
+import { getHelpSelectedSite } from 'state/help/selectors';
 
 /**
  * Module variables

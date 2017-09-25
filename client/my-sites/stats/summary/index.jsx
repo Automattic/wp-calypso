@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import page from 'page';
-import { merge } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { merge } from 'lodash';
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import Countries from '../stats-countries';
+import StatsFirstView from '../stats-first-view';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
-import Countries from '../stats-countries';
-import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
-import Main from 'components/main';
-import StatsFirstView from '../stats-first-view';
+import StatsVideoSummary from '../stats-video-summary';
 import QueryMedia from 'components/data/query-media';
+import HeaderCake from 'components/header-cake';
 import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
 import { getMediaItem } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const StatsStrings = statsStringsFactory();
 

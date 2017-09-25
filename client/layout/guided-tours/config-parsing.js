@@ -1,15 +1,8 @@
 /**
  * External dependencies
  */
+import { chunk, fromPairs, flatMap, flow, property, zipObject } from 'lodash';
 import { Children } from 'react';
-import {
-	chunk,
-	fromPairs,
-	flatMap,
-	flow,
-	property,
-	zipObject,
-} from 'lodash';
 
 /*
  * Transforms

@@ -6,22 +6,12 @@ import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_ADD,
-	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
-	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
-	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
-	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
-	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
-	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
-	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
-	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
-} from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
-import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
 import locationsReducer, { initialState as locationsInitialState } from './locations/reducer';
 import { mergeMethodEdits } from './methods/helpers';
+import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
+import { createReducer } from 'state/utils';
+import { WOOCOMMERCE_SHIPPING_ZONE_ADD, WOOCOMMERCE_SHIPPING_ZONE_CANCEL, WOOCOMMERCE_SHIPPING_ZONE_CLOSE, WOOCOMMERCE_SHIPPING_ZONE_DELETED, WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME, WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED, WOOCOMMERCE_SHIPPING_ZONE_OPEN, WOOCOMMERCE_SHIPPING_ZONE_REMOVE, WOOCOMMERCE_SHIPPING_ZONE_UPDATED } from 'woocommerce/state/action-types';
 
 export const initialState = {
 	creates: [],

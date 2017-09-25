@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import xhr from 'wpcom-xhr-request';
 import debugModule from 'debug';
+import xhr from 'wpcom-xhr-request';
 
 /**
  * Module variables

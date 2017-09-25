@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 

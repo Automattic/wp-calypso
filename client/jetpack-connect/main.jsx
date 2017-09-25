@@ -2,46 +2,34 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { flowRight, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import HelpButton from './help-button';
+import JetpackInstallStep from './install-step';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import MainWrapper from './main-wrapper';
+import SiteUrlInput from './site-url-input';
 import Button from 'components/button';
 import Card from 'components/card';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import SiteUrlInput from './site-url-input';
-import {
-	getGlobalSelectedPlan,
-	getConnectingSite,
-	getJetpackSiteByUrl,
-} from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
-import JetpackInstallStep from './install-step';
-import versionCompare from 'lib/version-compare';
-import LocaleSuggestions from 'components/locale-suggestions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
-import HelpButton from './help-button';
+import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import {
-	confirmJetpackInstallStatus,
-	dismissUrl,
-	goToRemoteAuth,
-	goToPluginInstall,
-	goToPlans,
-	goToPluginActivation,
-	checkUrl,
-} from 'state/jetpack-connect/actions';
+import versionCompare from 'lib/version-compare';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { confirmJetpackInstallStatus, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPlans, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
+import { getGlobalSelectedPlan, getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 
 /**
  * Constants

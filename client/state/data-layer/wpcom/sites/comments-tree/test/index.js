@@ -7,16 +7,9 @@ import sinon, { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchCommentsTreeForSite,
-	addCommentsTree,
-	announceFailure,
-} from '../';
+import { fetchCommentsTreeForSite, addCommentsTree, announceFailure } from '../';
+import { COMMENTS_TREE_SITE_ADD, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	COMMENTS_TREE_SITE_ADD,
-	NOTICE_CREATE,
-} from 'state/action-types';
 
 describe( 'comments-tree', () => {
 	const action = { type: 'DUMMY_ACTION', query: { status: 'approved', siteId: 77203074 } };

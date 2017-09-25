@@ -3,15 +3,15 @@
  */
 import { forOwn } from 'lodash';
 import store from 'store';
-const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
 import PreferencesConstants from './constants';
+import Dispatcher from 'dispatcher';
 import userUtils from 'lib/user/utils';
+const wpcom = require( 'lib/wp' ).undocumented();
+
 /**
  * Module variables
  */

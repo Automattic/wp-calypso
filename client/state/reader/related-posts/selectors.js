@@ -1,10 +1,6 @@
 /** @format */
 /**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { key, SCOPE_ALL } from './utils';
 

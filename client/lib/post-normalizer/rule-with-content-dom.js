@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { reduce } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { domForHtml } from './utils';
 

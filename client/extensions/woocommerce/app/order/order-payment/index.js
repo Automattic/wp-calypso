@@ -1,29 +1,29 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { arePaymentMethodsLoaded, getPaymentMethod } from 'woocommerce/state/sites/payment-methods/selectors';
+import OrderDetailsTable from '../order-details/table';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import Notice from 'components/notice';
-import OrderDetailsTable from '../order-details/table';
+import formatCurrency from 'lib/format-currency';
 import PriceInput from 'woocommerce/components/price-input';
-import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
+import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
+import { arePaymentMethodsLoaded, getPaymentMethod } from 'woocommerce/state/sites/payment-methods/selectors';
 
 class OrderPaymentCard extends Component {
 	static propTypes = {

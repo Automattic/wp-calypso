@@ -7,25 +7,10 @@ import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	READER_FOLLOW,
-	READER_UNFOLLOW,
-	READER_FOLLOW_ERROR,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
-	READER_FOLLOWS_SYNC_START,
-	READER_FOLLOWS_SYNC_COMPLETE,
-	READER_FOLLOWS_RECEIVE,
-	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
-	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
-	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
-	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
-	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
+import { prepareComparableUrl } from './utils';
+import { READER_FOLLOW, READER_UNFOLLOW, READER_FOLLOW_ERROR, READER_RECORD_FOLLOW, READER_RECORD_UNFOLLOW, READER_FOLLOWS_SYNC_START, READER_FOLLOWS_SYNC_COMPLETE, READER_FOLLOWS_RECEIVE, READER_SUBSCRIBE_TO_NEW_POST_EMAIL, READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL, READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION, READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL, READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL, SERIALIZE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 function updatePostSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );

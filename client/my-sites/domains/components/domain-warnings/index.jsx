@@ -1,29 +1,28 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import _debug from 'debug';
-import moment from 'moment';
-import { intersection, map, every, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { intersection, map, every, find, get } from 'lodash';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import PendingGappsTosNotice from './pending-gapps-tos-notice';
-import purchasesPaths from 'me/purchases/paths';
-import { type as domainTypes } from 'lib/domains/constants';
-import { isSubdomain } from 'lib/domains';
-import support from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
-import { hasPendingGoogleAppsUsers } from 'lib/domains';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { isSubdomain } from 'lib/domains';
+import { hasPendingGoogleAppsUsers } from 'lib/domains';
+import { type as domainTypes } from 'lib/domains/constants';
+import support from 'lib/url/support';
+import purchasesPaths from 'me/purchases/paths';
+import paths from 'my-sites/domains/paths';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = _debug( 'calypso:domain-warnings' );
 

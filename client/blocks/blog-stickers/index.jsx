@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { connect } from 'react-redux';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
-import { getReaderTeams, getBlogStickers } from 'state/selectors';
 import BlogStickersList from 'blocks/blog-stickers/list';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
+import QueryReaderTeams from 'components/data/query-reader-teams';
 import InfoPopover from 'components/info-popover';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getReaderTeams, getBlogStickers } from 'state/selectors';
 
 const BlogStickers = ( { blogId, teams, stickers } ) => {
 	const isTeamMember = isAutomatticTeamMember( teams );

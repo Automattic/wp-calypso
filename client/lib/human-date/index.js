@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;

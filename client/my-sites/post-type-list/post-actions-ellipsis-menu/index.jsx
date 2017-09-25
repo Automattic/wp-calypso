@@ -2,22 +2,21 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Children, cloneElement } from 'react';
 
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
-import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
+import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
-import PostActionsEllipsisMenuRestore from './restore';
-import PostActionsEllipsisMenuDuplicate from './duplicate';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
 	let actions = [];

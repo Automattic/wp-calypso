@@ -1,19 +1,19 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import SubscriptionListItem from 'blocks/reader-subscription-list-item';
 import connectSite from 'lib/reader-connect-site';
 import userSettings from 'lib/user-settings';
-import SubscriptionListItem from 'blocks/reader-subscription-list-item';
 import { isFollowing as isFollowingSelector } from 'state/selectors';
 
 class ConnectedSubscriptionListItem extends React.Component {

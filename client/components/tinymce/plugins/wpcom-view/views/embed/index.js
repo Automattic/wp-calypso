@@ -3,18 +3,16 @@
  */
 import EventEmitter from 'events/';
 import { defer, uniqueId } from 'lodash';
+
 /**
  * Internal dependencies
  */
+import EmbedView from './view';
+import actions from 'lib/embeds/actions';
 import EmbedsListStore from 'lib/embeds/list-store';
 import EmbedsStore from 'lib/embeds/store';
-import actions from 'lib/embeds/actions';
-import EmbedView from './view';
+import { SELECTED_SITE_SUBSCRIBE, SELECTED_SITE_UNSUBSCRIBE } from 'state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	SELECTED_SITE_SUBSCRIBE,
-	SELECTED_SITE_UNSUBSCRIBE
-} from 'state/action-types';
 
 export default class EmbedViewManager extends EventEmitter {
 	constructor() {

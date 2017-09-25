@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import EditorSticky from 'post-editor/editor-sticky';
-import utils from 'lib/posts/utils';
-import Tooltip from 'components/tooltip';
-import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
+import AsyncLoad from 'components/async-load';
+import Button from 'components/button';
+import Tooltip from 'components/tooltip';
+import utils from 'lib/posts/utils';
 import EditorStatusLabel from 'post-editor/editor-status-label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import EditorSticky from 'post-editor/editor-sticky';
 import { getEditedPost } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorActionBar extends Component {
 

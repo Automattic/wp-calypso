@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { createElement, PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit, uniq, compact } from 'lodash';
+import PropTypes from 'prop-types';
+import { createElement, PureComponent } from 'react';
 
 export default class Button extends PureComponent {
 	static propTypes = {

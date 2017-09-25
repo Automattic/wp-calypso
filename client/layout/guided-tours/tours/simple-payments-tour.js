@@ -1,27 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
+import { overEvery as and } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Link,
-	Quit,
-} from 'layout/guided-tours/config-elements';
-import {
-	isNotNewUser,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Link, Quit } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { isNotNewUser } from 'state/ui/guided-tours/contexts';
 
 export const SimplePaymentsTour = makeTour(
 	<Tour

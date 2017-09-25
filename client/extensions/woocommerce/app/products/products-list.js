@@ -1,29 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ProductsListPagination from './products-list-pagination';
+import ProductsListTable from './products-list-table';
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getTotalProducts,
-	areProductsLoaded,
-} from 'woocommerce/state/sites/products/selectors';
-import {
-	getProductListCurrentPage,
-	getProductListProducts,
-	getProductListRequestedPage,
- } from 'woocommerce/state/ui/products/selectors';
-import ProductsListPagination from './products-list-pagination';
-import ProductsListTable from './products-list-table';
+import { getProductListCurrentPage, getProductListProducts, getProductListRequestedPage } from 'woocommerce/state/ui/products/selectors';
 
 const ProductsList = ( {
 	site,

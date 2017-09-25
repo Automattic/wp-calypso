@@ -7,16 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	HAPPINESS_ENGINEERS_FETCH,
-	HAPPINESS_ENGINEERS_RECEIVE,
-	HAPPINESS_ENGINEERS_FETCH_FAILURE,
-	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
 import reducer, { requesting, items } from '../reducer';
+import { HAPPINESS_ENGINEERS_FETCH, HAPPINESS_ENGINEERS_RECEIVE, HAPPINESS_ENGINEERS_FETCH_FAILURE, HAPPINESS_ENGINEERS_FETCH_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );

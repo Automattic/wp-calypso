@@ -1,24 +1,22 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
-import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import { getSimplePayments } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import formatCurrency from 'lib/format-currency';
-import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
+import QuerySimplePayments from 'components/data/query-simple-payments';
+import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
+import formatCurrency from 'lib/format-currency';
+import shortcodeUtils from 'lib/shortcode';
+import { getSimplePayments } from 'state/selectors';
 import { getMediaItem } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {

@@ -1,30 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
+import FormLabel from 'components/forms/form-label';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import AddressView from 'woocommerce/components/address-view';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getStoreLocation,
-	areSettingsGeneralLoading,
-	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
-import FormLabel from 'components/forms/form-label';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { getStoreLocation, areSettingsGeneralLoading, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
 class StoreAddress extends Component {
 

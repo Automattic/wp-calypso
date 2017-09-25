@@ -1,31 +1,30 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
-import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
-
+import Button from 'components/button';
 import Card from 'components/card';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import FollowersActions from 'lib/followers/actions';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import InfiniteList from 'components/infinite-list';
-import FollowersData from 'components/data/followers-data';
 import EmailFollowersData from 'components/data/email-followers-data';
-import NoResults from 'my-sites/no-results';
+import FollowersData from 'components/data/followers-data';
 import EmptyContent from 'components/empty-content';
-import FollowersStore from 'lib/followers/store';
-import EmailFollowersStore from 'lib/email-followers/store';
+import InfiniteList from 'components/infinite-list';
+import ListEnd from 'components/list-end';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import ListEnd from 'components/list-end';
+import EmailFollowersActions from 'lib/email-followers/actions';
+import EmailFollowersStore from 'lib/email-followers/store';
+import FollowersActions from 'lib/followers/actions';
+import FollowersStore from 'lib/followers/store';
+import NoResults from 'my-sites/no-results';
+import PeopleListItem from 'my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 
 const maxFollowers = 1000;
 

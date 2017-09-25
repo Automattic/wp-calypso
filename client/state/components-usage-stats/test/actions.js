@@ -6,14 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from 'state/action-types';
-import {
-	receiveComponentsUsageStats,
-	requestComponentsUsageStats
-} from '../actions';
+import { receiveComponentsUsageStats, requestComponentsUsageStats } from '../actions';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
 
 describe( 'actions', function() {
 	describe( 'receiveComponentsUsageStats()', function() {

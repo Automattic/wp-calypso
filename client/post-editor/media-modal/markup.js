@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
-import ReactDomServer from 'react-dom/server';
-import React from 'react';
 import classNames from 'classnames';
+import { assign } from 'lodash';
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
-
-import MediaUtils from 'lib/media/utils';
 import MediaSerialization from 'lib/media-serialization';
+import MediaUtils from 'lib/media/utils';
+import Shortcode from 'lib/shortcode';
 
 /**
  * Module variables

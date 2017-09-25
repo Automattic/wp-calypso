@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL, PRIMARY_DOMAIN_REVERT_FAIL, PRIMARY_DOMAIN_REVERT_SUCCESS } from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import {
-	PRIMARY_DOMAIN_CHANGE_SUCCESS,
-	PRIMARY_DOMAIN_CHANGE_FAIL,
-	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS
-} from './constants';
 
 const DomainListNotice = ( { type, domainName, errorMessage, onUndoClick, onDismissClick, translate } ) => {
 	const props = {

@@ -2,10 +2,7 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION, WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST } from 'woocommerce/state/action-types';
 
 const initialState = {
 	requires: '',

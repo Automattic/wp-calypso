@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
 import FormSelect from 'components/forms/form-select';
-import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
+import FormTextarea from 'components/forms/form-textarea';
 import ScreenReaderText from 'components/screen-reader-text';
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
+import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
 
 class CreateOrderNote extends Component {
 	static propTypes = {

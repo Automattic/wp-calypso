@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { findIndex, sortBy } from 'lodash';
-
 import update from 'react-addons-update';
 
 /**

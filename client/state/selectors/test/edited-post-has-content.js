@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import PostQueryManager from 'lib/query-manager/post';
-import { isEmptyContent } from '../edited-post-has-content';
 import { editedPostHasContent } from '../';
+import { isEmptyContent } from '../edited-post-has-content';
+import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'editedPostHasContent()', () => {
 	it( 'should return false if there are no edits and no post', () => {

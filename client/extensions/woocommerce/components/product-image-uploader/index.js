@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { head, find, noop, trim, uniqueId } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { head, find, noop, trim, uniqueId } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { errorNotice as errorNoticeAction } from 'state/notices/actions';
-
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
+import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
+import { errorNotice as errorNoticeAction } from 'state/notices/actions';
+
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class ProductImageUploader extends Component {
 	static propTypes = {

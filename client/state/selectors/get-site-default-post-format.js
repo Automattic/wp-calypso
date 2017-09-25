@@ -1,13 +1,13 @@
 /**
- * External
+ * External dependencies
  */
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getRawSite, getSiteOption } from 'state/sites/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
+import { getRawSite, getSiteOption } from 'state/sites/selectors';
 
 /**
  * Returns the default post format of a site.

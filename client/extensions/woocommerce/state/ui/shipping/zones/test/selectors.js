@@ -6,14 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getShippingZones,
-	getCurrentlyEditingShippingZone,
-	isCurrentlyEditingShippingZone,
-	canChangeShippingZoneTitle,
-	canRemoveShippingZone,
-	canEditShippingZoneLocations
-} from '../selectors';
+import { getShippingZones, getCurrentlyEditingShippingZone, isCurrentlyEditingShippingZone, canChangeShippingZoneTitle, canRemoveShippingZone, canEditShippingZoneLocations } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
 

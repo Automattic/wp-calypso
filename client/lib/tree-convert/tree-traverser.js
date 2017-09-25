@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { findIndex, some } from 'lodash';
 
 /**

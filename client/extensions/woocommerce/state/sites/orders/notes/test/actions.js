@@ -8,17 +8,10 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchNotes, createNote } from '../actions';
+import notes from './fixtures/notes';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_ORDER_NOTE_CREATE,
-	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
-	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
-	WOOCOMMERCE_ORDER_NOTES_REQUEST,
-	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import notes from './fixtures/notes';
+import { WOOCOMMERCE_ORDER_NOTE_CREATE, WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE, WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS, WOOCOMMERCE_ORDER_NOTES_REQUEST, WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE, WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchNotes()', () => {

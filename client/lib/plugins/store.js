@@ -2,25 +2,26 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
+
+import localStore from 'store';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Dispatcher from 'dispatcher';
 
-import localStore from 'store';
 import emitter from 'lib/mixins/emitter';
-import sitesListFactory from 'lib/sites-list';
-const sitesList = sitesListFactory();
 import PluginsActions from 'lib/plugins/actions';
-import versionCompare from 'lib/version-compare';
 import PluginUtils from 'lib/plugins/utils';
-import JetpackSite from 'lib/site/jetpack';
 import Site from 'lib/site';
-import config from 'config';
+import JetpackSite from 'lib/site/jetpack';
+import sitesListFactory from 'lib/sites-list';
+import versionCompare from 'lib/version-compare';
+
+const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
+const sitesList = sitesListFactory();
 
 /*
  * Constants

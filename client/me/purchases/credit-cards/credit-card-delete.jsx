@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { deleteStoredCard } from 'state/stored-cards/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import StoredCard from 'my-sites/checkout/checkout/stored-card';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import { deleteStoredCard } from 'state/stored-cards/actions';
+import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {

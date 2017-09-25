@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getWeightUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
+import { getWeightUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 
 class FormWeightInput extends Component {
 

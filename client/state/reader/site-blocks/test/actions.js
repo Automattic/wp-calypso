@@ -2,27 +2,19 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	READER_SITE_BLOCK_REQUEST,
-	READER_SITE_BLOCK_REQUEST_SUCCESS,
-	READER_SITE_BLOCK_REQUEST_FAILURE,
-	READER_SITE_UNBLOCK_REQUEST,
-	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
-	READER_SITE_UNBLOCK_REQUEST_FAILURE,
-	NOTICE_CREATE,
-} from 'state/action-types';
 import { requestSiteBlock, requestSiteUnblock } from '../actions';
+import sampleFailureResponse from './sample-failure-response.json';
 
 import sampleSuccessResponse from './sample-success-response.json';
-import sampleFailureResponse from './sample-failure-response.json';
+import { READER_SITE_BLOCK_REQUEST, READER_SITE_BLOCK_REQUEST_SUCCESS, READER_SITE_BLOCK_REQUEST_FAILURE, READER_SITE_UNBLOCK_REQUEST, READER_SITE_UNBLOCK_REQUEST_SUCCESS, READER_SITE_UNBLOCK_REQUEST_FAILURE, NOTICE_CREATE } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

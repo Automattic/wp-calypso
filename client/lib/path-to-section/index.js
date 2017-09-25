@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { find, startsWith } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
-import { find, startsWith } from 'lodash';
 
 /**
  * Conditional dependency

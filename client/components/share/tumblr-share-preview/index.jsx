@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 
-/* Internal dependecies */
-import { localize } from 'i18n-calypso';
+/**
+ * Internal dependencies
+ */
 import { truncateArticleContent } from '../helpers';
 
 export class TumblrSharePreview extends PureComponent {

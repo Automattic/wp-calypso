@@ -1,35 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	negate as not,
-	overEvery as and,
-} from 'lodash';
+import { negate as not, overEvery as and } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Next,
-	Quit,
-	Continue,
-	Link,
-} from 'layout/guided-tours/config-elements';
-import {
-	isNewUser,
-	isEnabled,
-	isSelectedSitePreviewable,
-	isSelectedSiteCustomizable,
-} from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
+import { makeTour, Tour, Step, ButtonRow, Next, Quit, Continue, Link } from 'layout/guided-tours/config-elements';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
+import { isNewUser, isEnabled, isSelectedSitePreviewable, isSelectedSiteCustomizable } from 'state/ui/guided-tours/contexts';
+import { isPreviewShowing } from 'state/ui/selectors';
 
 const scrollSidebarToTop = () =>
 	scrollTo( { y: 0, container: getScrollableSidebar() } );

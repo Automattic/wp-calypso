@@ -2,11 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	PRODUCTS_LIST_RECEIVE,
-	PRODUCTS_LIST_REQUEST,
-	PRODUCTS_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
+import { PRODUCTS_LIST_RECEIVE, PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE } from 'state/action-types';
 
 export function receiveProductsList( productsList ) {
 	return {

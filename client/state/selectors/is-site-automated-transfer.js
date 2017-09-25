@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+
 /**
  * Returns true if site is a Automated Transfer site, false if not and null if unknown
  *

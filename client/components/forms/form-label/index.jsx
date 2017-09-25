@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isObject, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const renderRequiredBadge = translate =>
 	<small className="form-label__required">

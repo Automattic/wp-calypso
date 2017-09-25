@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import SidebarButton from 'layout/sidebar/button';
-import config from 'config';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import config from 'config';
+import SidebarButton from 'layout/sidebar/button';
+import SidebarItem from 'layout/sidebar/item';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
-import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
+import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {

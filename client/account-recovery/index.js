@@ -1,16 +1,8 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
-import {
-	lostPassword,
-	forgotUsername,
-	validateResetCode,
-} from './controller';
+import { lostPassword, forgotUsername, validateResetCode } from './controller';
+import config from 'config';
 import { makeLayout, redirectLoggedIn } from 'controller';
 
 export default function( router ) {

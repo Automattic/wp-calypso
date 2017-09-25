@@ -7,8 +7,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
 import { writeReplyComment } from '../';
+import * as Utils from 'state/data-layer/wpcom/sites/utils';
 
 describe( '#writeReplyComment()', () => {
 	const action = {

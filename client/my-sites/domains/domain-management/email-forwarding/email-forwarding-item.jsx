@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
+import analyticsMixin from 'lib/mixins/analytics';
+import * as upgradesActions from 'lib/upgrades/actions';
+import support from 'lib/url/support';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
-import * as upgradesActions from 'lib/upgrades/actions';
 
 const EmailForwardingItem = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],

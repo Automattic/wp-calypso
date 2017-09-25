@@ -1,45 +1,33 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import {
-	areSettingsGeneralLoaded,
-	areTaxCalculationsEnabled,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import {
-	areTaxSettingsLoaded,
-	getPricesIncludeTax,
-	getShippingIsTaxFree,
-} from 'woocommerce/state/sites/settings/tax/selectors';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import {
-	updateTaxesEnabledSetting,
-} from 'woocommerce/state/sites/settings/general/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import {
-	fetchTaxSettings,
-	updateTaxSettings,
-} from 'woocommerce/state/sites/settings/tax/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import TaxSettingsSaveButton from './save-button';
 import SettingsNavigation from '../navigation';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import StoreAddress from 'woocommerce/components/store-address';
+import TaxSettingsSaveButton from './save-button';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
+import Main from 'components/main';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import ActionHeader from 'woocommerce/components/action-header';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import StoreAddress from 'woocommerce/components/store-address';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { updateTaxesEnabledSetting } from 'woocommerce/state/sites/settings/general/actions';
+import { areSettingsGeneralLoaded, areTaxCalculationsEnabled } from 'woocommerce/state/sites/settings/general/selectors';
+import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
+import { areTaxSettingsLoaded, getPricesIncludeTax, getShippingIsTaxFree } from 'woocommerce/state/sites/settings/tax/selectors';
 
 class SettingsTaxes extends Component {
 	constructor( props ) {

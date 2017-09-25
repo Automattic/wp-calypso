@@ -1,28 +1,24 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
+import { get, size, takeRight, delay } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getPostCommentsTree,
-	commentsFetchingStatus,
-	getCommentById,
-} from 'state/comments/selectors';
-import { requestPostComments, requestComment } from 'state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostComment from './post-comment';
-import PostCommentForm from './form';
 import CommentCount from './comment-count';
+import PostCommentForm from './form';
+import PostComment from './post-comment';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { requestPostComments, requestComment } from 'state/comments/actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
+import { getPostCommentsTree, commentsFetchingStatus, getCommentById } from 'state/comments/selectors';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.

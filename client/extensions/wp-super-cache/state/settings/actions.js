@@ -1,26 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
-import {
-	WP_SUPER_CACHE_RECEIVE_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_SAVE_SETTINGS,
-	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-} from '../action-types';
-import { normalizeSettings, sanitizeSettings } from './utils';
+import { WP_SUPER_CACHE_RECEIVE_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE, WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS, WP_SUPER_CACHE_RESTORE_SETTINGS, WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, WP_SUPER_CACHE_SAVE_SETTINGS, WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS } from '../action-types';
 import { requestStatus } from '../status/actions';
+import { normalizeSettings, sanitizeSettings } from './utils';
+import wp from 'lib/wp';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteTitle } from 'state/sites/selectors';
 

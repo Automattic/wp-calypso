@@ -1,18 +1,7 @@
 /**
- * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
- *
- * @see ./README.md for a higher-level overview
- * @see https://cloudup.com/cySVQ9R_O6S for Directly's configuration guide
- */
-
-/**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
+import config from 'config';
 import { loadScript } from 'lib/load-script';
 import wpcom from 'lib/wp';
 

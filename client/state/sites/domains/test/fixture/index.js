@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+import { SITE_DOMAINS_RECEIVE, SITE_DOMAINS_REQUEST, SITE_DOMAINS_REQUEST_SUCCESS, SITE_DOMAINS_REQUEST_FAILURE } from 'state/action-types';
 import { createSiteDomainObject } from 'state/sites/domains/assembler';
 
 // first testing-site ID

@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-
 import analyticsMixin from 'lib/mixins/analytics';
+import support from 'lib/url/support';
 
 const EmailForwardingDetails = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],

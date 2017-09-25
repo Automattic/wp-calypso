@@ -1,14 +1,10 @@
 /**
  * Internal dependencies
  */
+import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
-import {
-	setPosterUrl,
-	showError,
-	showUploadProgress,
-} from 'state/ui/editor/video-editor/actions';
+import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
 
 /**
  * Updates the poster for a video.

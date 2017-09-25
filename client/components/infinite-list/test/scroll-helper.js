@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { range } from 'lodash';
 import { assert } from 'chai';
+import { range } from 'lodash';
 
 /**
  * Internal dependencies

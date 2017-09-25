@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 
-import { localize } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
-import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
+import StreamHeader from './stream-header';
 
 export default localize( React.createClass( {
 	displayName: 'NotificationSettingsFormLabels',

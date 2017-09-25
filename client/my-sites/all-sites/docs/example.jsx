@@ -1,13 +1,13 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
 import Card from 'components/card';
+import AllSites from 'my-sites/all-sites';
 
 const AllSitesExample = () => (
 	<Card style={ { padding: 0 } }>

@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	add, remove,
-	EVERY_SECOND,
-	EVERY_FIVE_SECONDS,
-	EVERY_TEN_SECONDS,
-	EVERY_THIRTY_SECONDS,
-	EVERY_MINUTE
-} from './runner';
+import { add, remove, EVERY_SECOND, EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, EVERY_THIRTY_SECONDS, EVERY_MINUTE } from './runner';
 
 export {
 	EVERY_SECOND,

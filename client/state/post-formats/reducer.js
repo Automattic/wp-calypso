@@ -2,13 +2,8 @@
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
+import { POST_FORMATS_RECEIVE, POST_FORMATS_REQUEST, POST_FORMATS_REQUEST_SUCCESS, POST_FORMATS_REQUEST_FAILURE } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	POST_FORMATS_RECEIVE,
-	POST_FORMATS_REQUEST,
-	POST_FORMATS_REQUEST_SUCCESS,
-	POST_FORMATS_REQUEST_FAILURE
-} from 'state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

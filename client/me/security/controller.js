@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import notices from 'notices';
-import userSettings from 'lib/user-settings';
-import { renderWithReduxStore } from 'lib/react-helpers';
-
-import PasswordComponent from 'me/security/main';
 import accountPasswordData from 'lib/account-password-data';
-import TwoStepComponent from 'me/two-step';
+import analytics from 'lib/analytics';
 import appPasswordsData from 'lib/application-passwords-data';
-import ConnectedAppsComponent from 'me/connected-applications';
 import connectedAppsData from 'lib/connected-applications-data';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import userSettings from 'lib/user-settings';
+import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
+import PasswordComponent from 'me/security/main';
 import SocialLoginComponent from 'me/social-login';
+import TwoStepComponent from 'me/two-step';
+import notices from 'notices';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

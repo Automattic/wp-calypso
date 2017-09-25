@@ -1,12 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
 import classnames from 'classnames';
-import observe from 'lib/mixins/data-observe';
-import { isEmpty, omit } from 'lodash';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
+import { isEmpty, omit } from 'lodash';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import observe from 'lib/mixins/data-observe';
 
 export default localize(
 	createReactClass( {

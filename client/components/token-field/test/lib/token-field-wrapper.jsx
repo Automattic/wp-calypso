@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import TokenField from 'components/token-field';
-
 import { unescapeAndFormatSpaces } from 'lib/formatting';
 
 const suggestions = [

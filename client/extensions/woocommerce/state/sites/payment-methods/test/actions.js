@@ -7,16 +7,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchPaymentMethods,
-} from '../actions';
-import { LOADING } from 'woocommerce/state/constants';
+import { fetchPaymentMethods } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PAYMENT_METHODS_REQUEST, WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {
 	useSandbox();

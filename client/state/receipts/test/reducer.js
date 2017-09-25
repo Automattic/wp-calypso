@@ -6,12 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	RECEIPT_FETCH,
-	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED,
-} from 'state/action-types';
 import { items } from '../reducer';
+import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

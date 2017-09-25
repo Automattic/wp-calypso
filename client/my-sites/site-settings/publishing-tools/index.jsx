@@ -1,35 +1,30 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
+import PressThis from '../press-this';
 import Button from 'components/button';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormLegend from 'components/forms/form-legend';
+import Card from 'components/card';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-	isRegeneratingJetpackPostByEmail
-} from 'state/selectors';
+import FormLegend from 'components/forms/form-legend';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import PressThis from '../press-this';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import SectionHeader from 'components/section-header';
+import config from 'config';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
+import { isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode, isRegeneratingJetpackPostByEmail } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PublishingTools extends Component {
 	componentDidUpdate() {

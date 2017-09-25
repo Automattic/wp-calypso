@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { stubTrue } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

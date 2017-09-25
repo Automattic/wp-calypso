@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
+import getThemes from 'lib/signup/themes';
 
 class SignupThemesList extends Component {
 

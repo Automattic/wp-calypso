@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-
-import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:olark:chatbox' );
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import OlarkEvents from 'lib/olark-events';
+
+const debug = debugFactory( 'calypso:olark:chatbox' );
 
 export default React.createClass( {
 	/**

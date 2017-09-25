@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:application-passwords-data' );
-import makeEmitter from 'lib/mixins/emitter';
+import { filter } from 'lodash';
 import store from 'store';
+
+/**
+ * Internal dependencies
+ */
+import makeEmitter from 'lib/mixins/emitter';
+const debug = debugFactory( 'calypso:application-passwords-data' );
 
 /**
  * Internal dependencies

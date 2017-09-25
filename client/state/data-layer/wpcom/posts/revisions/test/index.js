@@ -8,19 +8,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchPostRevisions,
-	normalizeRevision,
-	receiveSuccess,
-	receiveError,
-} from '../';
-import {
-	receivePostRevisions,
-	receivePostRevisionsSuccess,
-	receivePostRevisionsFailure,
-	requestPostRevisions,
-} from 'state/posts/revisions/actions';
+import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { receivePostRevisions, receivePostRevisionsSuccess, receivePostRevisionsFailure, requestPostRevisions } from 'state/posts/revisions/actions';
 
 const successfulPostRevisionsResponse = [
 	{

@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
-import config from 'config';
 import pluginsController from './controller';
+import config from 'config';
+import controller from 'my-sites/controller';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 

@@ -1,26 +1,24 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-import { find, get } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
-import signupUtils from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-
+import analytics from 'lib/analytics';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
+import signupUtils from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 class SurveyStep extends React.Component {

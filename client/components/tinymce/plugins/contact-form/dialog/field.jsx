@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import FieldEditButton from './field-edit-button';
 import FieldHeader from './field-header';
+import FieldRemoveButton from './field-remove-button';
+import getLabel from './locales';
 import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormTextValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import TokenField from 'components/token-field';
-import FieldRemoveButton from './field-remove-button';
-import FieldEditButton from './field-edit-button';
-import getLabel from './locales';
 
 /**
  *

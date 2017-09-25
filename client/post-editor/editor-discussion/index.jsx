@@ -1,22 +1,19 @@
-import { get, pick } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
-
 import FormCheckbox from 'components/forms/form-checkbox';
-import PostActions from 'lib/posts/actions';
 import InfoPopover from 'components/info-popover';
+import PostActions from 'lib/posts/actions';
 import stats from 'lib/posts/stats';
+import EditorFieldset from 'post-editor/editor-fieldset';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';

@@ -1,31 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { get, includes, isUndefined, map } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import CommentNavigationTab from './comment-navigation-tab';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
-import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
-import UrlSearch from 'lib/url-search';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
 import { isEnabled } from 'config';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import UrlSearch from 'lib/url-search';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getSiteComment } from 'state/selectors';
 
 const bulkActions = {

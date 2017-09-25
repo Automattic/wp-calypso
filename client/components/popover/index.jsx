@@ -1,28 +1,21 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import clickOutside from 'click-outside';
+import debugFactory from 'debug';
+import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
-import classNames from 'classnames';
-import clickOutside from 'click-outside';
-import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { bindWindowListeners, unbindWindowListeners, suggested as suggestPosition, constrainLeft, isElement as isDOMElement, offset } from './util';
 import RootChild from 'components/root-child';
-import {
-	bindWindowListeners,
-	unbindWindowListeners,
-	suggested as suggestPosition,
-	constrainLeft,
-	isElement as isDOMElement,
-	offset
-} from './util';
 import { isRtl as isRtlSelector } from 'state/selectors';
 
 /**

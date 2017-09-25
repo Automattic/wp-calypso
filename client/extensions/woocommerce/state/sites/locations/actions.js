@@ -3,14 +3,8 @@
  */
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_LOCATIONS_REQUEST,
-	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import {
-	areLocationsLoaded,
-	areLocationsLoading,
-} from './selectors';
+import { areLocationsLoaded, areLocationsLoading } from './selectors';
+import { WOOCOMMERCE_LOCATIONS_REQUEST, WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchLocations = ( siteId ) => ( dispatch, getState ) => {
 	if ( areLocationsLoaded( getState(), siteId ) || areLocationsLoading( getState(), siteId ) ) {

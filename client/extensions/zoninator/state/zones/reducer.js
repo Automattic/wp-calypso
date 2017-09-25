@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { ZONINATOR_REQUEST_ERROR, ZONINATOR_REQUEST_ZONES, ZONINATOR_UPDATE_ZONE, ZONINATOR_UPDATE_ZONES } from '../action-types';
 import { itemsSchema } from './schema';
-import {
-	ZONINATOR_REQUEST_ERROR,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_UPDATE_ZONE,
-	ZONINATOR_UPDATE_ZONES,
-} from '../action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const requesting = createReducer( {}, {
 	[ ZONINATOR_REQUEST_ZONES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),

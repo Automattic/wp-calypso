@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import route from 'lib/route';
 import analytics from 'lib/analytics';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { getSelectedSite } from 'state/ui/selectors';
-
+import route from 'lib/route';
 import MediaComponent from 'my-sites/media/main';
+
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export default {
 

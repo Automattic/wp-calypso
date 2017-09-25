@@ -7,15 +7,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-
-import {
-	supportUserToggleDialog,
-	supportUserSetUsername,
-} from 'state/support/actions';
+import { supportUserToggleDialog, supportUserSetUsername } from 'state/support/actions';
 
 class SupportUser extends Component {
 	componentDidMount() {

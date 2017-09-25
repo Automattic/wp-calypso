@@ -3,12 +3,12 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:me:form-base' );
-
 /**
  * Internal dependencies
  */
 import notices from 'notices';
+
+const debug = debugFactory( 'calypso:me:form-base' );
 
 export default {
 	componentDidMount: function() {

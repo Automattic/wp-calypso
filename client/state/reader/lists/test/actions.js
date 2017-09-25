@@ -2,35 +2,15 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	READER_LIST_DISMISS_NOTICE,
-	READER_LIST_REQUEST,
-	READER_LIST_UPDATE,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
-	READER_LISTS_FOLLOW,
-	READER_LISTS_UNFOLLOW,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
-} from 'state/action-types';
+import { receiveLists, requestList, requestSubscribedLists, followList, unfollowList, updateListDetails, dismissListNotice, updateTitle, updateDescription } from '../actions';
+import { READER_LIST_DISMISS_NOTICE, READER_LIST_REQUEST, READER_LIST_UPDATE, READER_LISTS_RECEIVE, READER_LISTS_REQUEST, READER_LISTS_FOLLOW, READER_LISTS_UNFOLLOW, READER_LIST_UPDATE_TITLE, READER_LIST_UPDATE_DESCRIPTION } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	receiveLists,
-	requestList,
-	requestSubscribedLists,
-	followList,
-	unfollowList,
-	updateListDetails,
-	dismissListNotice,
-	updateTitle,
-	updateDescription,
-} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

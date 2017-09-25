@@ -7,46 +7,26 @@ import { find, flatten, isEmpty, isNil, map, omit, some, xor } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getShippingZonesEdits } from 'woocommerce/state/ui/shipping/zones/selectors';
-import {
-	createShippingZone,
-	updateShippingZone,
-	deleteShippingZone,
-} from 'woocommerce/state/sites/shipping-zones/actions';
-import {
-	createShippingZoneMethod,
-	updateShippingZoneMethod,
-	deleteShippingZoneMethod,
-} from 'woocommerce/state/sites/shipping-zone-methods/actions';
-import { updateShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/actions';
-import {
-	actionListStepNext,
-	actionListStepSuccess,
-	actionListStepFailure,
-	actionListClear,
-} from 'woocommerce/state/action-list/actions';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
-	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE,
-	WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
-} from 'woocommerce/state/action-types';
-import {
-	getShippingZoneLocationsWithEdits,
-	areCurrentlyEditingShippingZoneLocationsValid,
-} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
-import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
-import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
-import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 import analytics from 'lib/analytics';
-import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { actionListStepNext, actionListStepSuccess, actionListStepFailure, actionListClear } from 'woocommerce/state/action-list/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE, WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE, WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
 import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
-import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
+import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
+import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
+import { updateShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/actions';
+import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
+import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { createShippingZoneMethod, updateShippingZoneMethod, deleteShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/actions';
+import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
+import { createShippingZone, updateShippingZone, deleteShippingZone } from 'woocommerce/state/sites/shipping-zones/actions';
+import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingZoneLocationsWithEdits, areCurrentlyEditingShippingZoneLocationsValid } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getShippingZonesEdits } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { generateZoneName, generateCurrentlyEditingZoneName } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {

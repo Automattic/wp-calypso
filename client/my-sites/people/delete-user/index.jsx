@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
@@ -9,22 +11,19 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
+import AuthorSelector from 'blocks/author-selector';
 import Card from 'components/card';
-
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import AuthorSelector from 'blocks/author-selector';
-import UsersActions from 'lib/users/actions';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import Gravatar from 'components/gravatar';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
-import Gravatar from 'components/gravatar';
-import { localize } from 'i18n-calypso';
+import UsersActions from 'lib/users/actions';
 
 const DeleteUser = React.createClass( {
 	displayName: 'DeleteUser',

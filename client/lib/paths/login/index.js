@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
+import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { addQueryArgs } from 'lib/url';
 
 export function login( { isNative, locale, redirectTo, twoFactorAuthType, socialConnect, emailAddress } = {} ) {
 	let url = config( 'login_url' );

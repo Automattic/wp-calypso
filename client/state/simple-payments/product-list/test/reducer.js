@@ -6,13 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
-} from 'state/action-types';
-
 import { items } from '../reducer';
+import { SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE, SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE, SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items()', () => {

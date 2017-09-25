@@ -1,29 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import {
-	getSitePlanRawPrice,
-	getPlanDiscountedRawPrice,
-	getPlanRawDiscount,
-	getPlansBySiteId
-} from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
+import { getPlan } from 'lib/plans';
+import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
+import { getSitePlanRawPrice, getPlanDiscountedRawPrice, getPlanRawDiscount, getPlansBySiteId } from 'state/sites/plans/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class DomainToPlanNudge extends Component {
 	static propTypes = {

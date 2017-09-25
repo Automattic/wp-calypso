@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import { map } from 'lodash';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import ConnectedReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
-import ReaderSubscriptionListItemPlaceholder
-	from 'blocks/reader-subscription-list-item/placeholder';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import Card from 'components/card';
 
 const sites = {

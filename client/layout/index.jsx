@@ -1,52 +1,49 @@
-import { property, sortBy } from 'lodash';
-
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import createReactClass from 'create-react-class';
+import { property, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-
-import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import observe from 'lib/mixins/data-observe';
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
-import translator from 'lib/translator-jumpstart';
 import TranslatorInvitation from './community-translator/invitation';
 import TranslatorLauncher from './community-translator/launcher';
-import Welcome from 'my-sites/welcome/welcome';
-import WelcomeMessage from 'layout/nux-welcome/welcome-message';
-import GuidedTours from 'layout/guided-tours';
-import analytics from 'lib/analytics';
-import config from 'config';
-import PulsingDot from 'components/pulsing-dot';
-import SitesListNotices from 'lib/sites-list/notices';
-import OfflineStatus from 'layout/offline-status';
+import AppBanner from 'blocks/app-banner';
+import SitePreview from 'blocks/site-preview';
+import AsyncLoad from 'components/async-load';
+import DocumentHead from 'components/data/document-head';
 import QueryPreferences from 'components/data/query-preferences';
+import QuerySites from 'components/data/query-sites';
+import GlobalNotices from 'components/global-notices';
+import PulsingDot from 'components/pulsing-dot';
+import config from 'config';
+import GuidedTours from 'layout/guided-tours';
+import MasterbarLoggedIn from 'layout/masterbar/logged-in';
+import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import NpsSurveyNotice from 'layout/nps-survey-notice';
+import WelcomeMessage from 'layout/nux-welcome/welcome-message';
+import OfflineStatus from 'layout/offline-status';
+import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
+import SitesListNotices from 'lib/sites-list/notices';
+import translator from 'lib/translator-jumpstart';
+import Welcome from 'my-sites/welcome/welcome';
+import notices from 'notices';
+import { isOffline } from 'state/application/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { hasSidebar } from 'state/ui/selectors';
 
 /**
  * Internal dependencies
  */
 let KeyboardShortcutsMenu, Layout, SupportUser;
-
-import QuerySites from 'components/data/query-sites';
-import { isOffline } from 'state/application/selectors';
-import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
-import SitePreview from 'blocks/site-preview';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
-import AppBanner from 'blocks/app-banner';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );

@@ -1,28 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
+import SiteToolsLink from './link';
+import SectionHeader from 'components/section-header';
 import config from 'config';
 import { tracks } from 'lib/analytics';
-import { localize } from 'i18n-calypso';
-import SectionHeader from 'components/section-header';
-import SiteToolsLink from './link';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	getPurchasesError,
-} from 'state/purchases/selectors';
+import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import notices from 'notices';
+import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
+import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const trackDeleteSiteOption = ( option ) => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {

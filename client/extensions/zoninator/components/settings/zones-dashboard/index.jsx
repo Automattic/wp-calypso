@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { settingsPath } from '../../../app/util';
+import { getZones, isRequestingZones } from '../../../state/zones/selectors';
+import ZoneItem from './zone-item';
+import ZonePlaceholder from './zone-placeholder';
 import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import ZoneItem from './zone-item';
-import ZonePlaceholder from './zone-placeholder';
-import { getZones, isRequestingZones } from '../../../state/zones/selectors';
-import { settingsPath } from '../../../app/util';
 
 const placeholderCount = 5;
 

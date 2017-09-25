@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-import qs from 'querystring';
 import store from 'store';
+
+/**
+ * Internal dependencies
+ */
+import qs from 'querystring';
 
 export const GUEST_TICKET_LOCALFORAGE_KEY = 'guest_sandbox_ticket';
 export const GUEST_TICKET_VALIDITY_DURATION = 1000 * 60 * 60 * 2; // two hours

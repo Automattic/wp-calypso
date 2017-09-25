@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import page from 'page';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
-import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export default {
 	siteSettings( context, next ) {

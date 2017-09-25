@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import CommentDetailActions from './comment-detail-actions';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
-import CommentDetailActions from './comment-detail-actions';
 import Emojify from 'components/emojify';
-import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
+import Gravatar from 'components/gravatar';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 

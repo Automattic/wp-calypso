@@ -1,34 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { defer, endsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { defer, endsWith } from 'lodash';
-import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import MapDomainStep from 'components/domains/map-domain-step';
-import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
-import SignupActions from 'lib/signup/actions';
-import signupUtils from 'signup/utils';
-import StepWrapper from 'signup/step-wrapper';
-import { cartItems } from 'lib/cart-values';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
-import { getUsernameSuggestion } from 'lib/signup/step-actions';
-import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
+import { cartItems } from 'lib/cart-values';
+import productsListFactory from 'lib/products-list';
+import SignupActions from 'lib/signup/actions';
+import { getUsernameSuggestion } from 'lib/signup/step-actions';
+import StepWrapper from 'signup/step-wrapper';
+import signupUtils from 'signup/utils';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
 
 const productsList = productsListFactory();
 

@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	PLANS_RECEIVE,
-	PLANS_REQUEST,
-	PLANS_REQUEST_SUCCESS,
-	PLANS_REQUEST_FAILURE
-} from '../action-types';
+import { PLANS_RECEIVE, PLANS_REQUEST, PLANS_REQUEST_SUCCESS, PLANS_REQUEST_FAILURE } from '../action-types';
 
 /**
  * Action creator function: RECEIVE

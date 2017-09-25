@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-import addQueryArgs from 'lib/route/add-query-args';
 
 /**
  * Internal dependencies
  */
 import Toolbar from './toolbar';
+import SeoPreviewPane from 'components/seo-preview-pane';
+import SpinnerLine from 'components/spinner-line';
+import addQueryArgs from 'lib/route/add-query-args';
 import touchDetect from 'lib/touch-detect';
 import { isWithinBreakpoint } from 'lib/viewport';
-import { localize } from 'i18n-calypso';
-import SpinnerLine from 'components/spinner-line';
-import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );

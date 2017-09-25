@@ -6,11 +6,11 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
+import cartValues from 'lib/cart-values';
+import productsListFactory from 'lib/products-list';
 import wpcom from 'lib/wp';
 
-import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
-import cartValues from 'lib/cart-values';
 
 /**
  * Internal dependencies

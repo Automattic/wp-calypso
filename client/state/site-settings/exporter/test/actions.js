@@ -1,37 +1,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { advancedSettingsFetch, advancedSettingsReceive, advancedSettingsFail, exportStatusFetch, startExport, setPostTypeFieldValue } from '../actions';
+import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_EXPORT_COMPLETE_RESPONSE, SAMPLE_EXPORT_FAILED_RESPONSE } from './data';
+import { EXPORT_ADVANCED_SETTINGS_FETCH, EXPORT_ADVANCED_SETTINGS_FETCH_FAIL, EXPORT_ADVANCED_SETTINGS_RECEIVE, EXPORT_COMPLETE, EXPORT_FAILURE, EXPORT_POST_TYPE_FIELD_SET, EXPORT_START_REQUEST, EXPORT_STARTED, EXPORT_STATUS_FETCH } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	EXPORT_ADVANCED_SETTINGS_FETCH,
-	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
-	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	EXPORT_COMPLETE,
-	EXPORT_FAILURE,
-	EXPORT_POST_TYPE_FIELD_SET,
-	EXPORT_START_REQUEST,
-	EXPORT_STARTED,
-	EXPORT_STATUS_FETCH,
-} from 'state/action-types';
-import {
-	advancedSettingsFetch,
-	advancedSettingsReceive,
-	advancedSettingsFail,
-	exportStatusFetch,
-	startExport,
-	setPostTypeFieldValue,
-} from '../actions';
-import {
-	SAMPLE_ADVANCED_SETTINGS,
-	SAMPLE_EXPORT_COMPLETE_RESPONSE,
-	SAMPLE_EXPORT_FAILED_RESPONSE,
-} from './data';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

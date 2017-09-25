@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
 class PostHeader extends PureComponent {
 	static defaultProps = {

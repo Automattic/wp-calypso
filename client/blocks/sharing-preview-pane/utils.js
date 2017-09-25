@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-import {
-	get,
-	find,
-	identity,
-	trim
-} from 'lodash';
+import { get, find, identity, trim } from 'lodash';
 import striptags from 'striptags';
 
 /**
  * Internal dependencies
  */
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import PostMetadata from 'lib/post-metadata';
 import { parseHtml } from 'lib/formatting';
+import PostMetadata from 'lib/post-metadata';
+import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 

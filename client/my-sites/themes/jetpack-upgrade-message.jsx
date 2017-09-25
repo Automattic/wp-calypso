@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
 const JetpackUpgradeMessage = ( { siteId, translate, adminUrl } ) => (

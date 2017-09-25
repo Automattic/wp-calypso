@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { map } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import request from 'superagent';
-import page from 'page';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import DocsSelectorsResult from './result';
 import EmptyContent from 'components/empty-content';
 import SearchCard from 'components/search-card';
 import { addQueryArgs } from 'lib/url';
-import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSearch extends Component {
 	static propTypes = {

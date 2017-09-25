@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import Card from 'components/card';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import StickyPanel from 'components/sticky-panel';
 import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
-import Card from 'components/card';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import StickyPanel from 'components/sticky-panel';
 
 export default localize( React.createClass( {
 	displayName: 'MediaLibraryHeader',

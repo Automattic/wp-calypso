@@ -6,11 +6,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { WP_JOB_MANAGER_CREATE_PAGES } from '../../action-types';
+import { createPagesError, nextStep } from '../../setup/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { createPagesError, nextStep } from '../../setup/actions';
-import { WP_JOB_MANAGER_CREATE_PAGES } from '../../action-types';
 
 let errorCount;
 let successCount;

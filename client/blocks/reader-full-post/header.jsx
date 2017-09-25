@@ -2,22 +2,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { keys, trim } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { keys, trim } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import ReaderFullPostHeaderTags from './header-tags';
+import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 import AutoDirection from 'components/auto-direction';
 import ExternalLink from 'components/external-link';
-import { recordPermalinkClick } from 'reader/stats';
-import PostTime from 'reader/post-time';
-import ReaderFullPostHeaderTags from './header-tags';
 import { isDiscoverPost } from 'reader/discover/helper';
-import ReaderFullPostHeaderPlaceholder from './placeholders/header';
+import PostTime from 'reader/post-time';
+import { recordPermalinkClick } from 'reader/stats';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	const handlePermalinkClick = ( {} ) => {

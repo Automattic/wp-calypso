@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
+import debugFactory from 'debug';
 
 import { localize } from 'i18n-calypso';
-
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:connected-application-item' );
-import classNames from 'classnames';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import eventRecorder from 'me/event-recorder';
-import ConnectedApplicationIcon from 'me/connected-application-icon';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
+import analytics from 'lib/analytics';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import ConnectedApplicationIcon from 'me/connected-application-icon';
+import eventRecorder from 'me/event-recorder';
+const debug = debugFactory( 'calypso:connected-application-item' );
 
 export default localize( React.createClass( {
 

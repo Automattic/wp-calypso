@@ -6,10 +6,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { getSiteFragment, sectionify } from 'lib/route';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
+import analytics from 'lib/analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSiteFragment, sectionify } from 'lib/route';
 
 export const renderTab = ( component ) => ( context ) => {
 	const siteId = getSiteFragment( context.path );

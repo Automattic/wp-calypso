@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 import { noop } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
 
 class VerticalNavItem extends Component {
 	static propTypes = {

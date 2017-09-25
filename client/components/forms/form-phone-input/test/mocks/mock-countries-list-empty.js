@@ -1,5 +1,5 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
 

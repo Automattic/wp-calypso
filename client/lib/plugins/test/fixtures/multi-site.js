@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import plugins from './plugins';
 
 export default {

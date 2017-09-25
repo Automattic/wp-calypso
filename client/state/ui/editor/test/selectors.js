@@ -6,13 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { getEditorPostId, isEditorNewPost, getEditorNewPostPath, getEditorPath } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
-import {
-	getEditorPostId,
-	isEditorNewPost,
-	getEditorNewPostPath,
-	getEditorPath
-} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {

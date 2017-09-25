@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
 import RootChild from 'components/root-child';
-import { getSectionName } from 'state/ui/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
-import { hideView } from 'state/ui/first-view/actions';
 import { isEnabled } from 'config';
+import { hideView } from 'state/ui/first-view/actions';
+import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
+import { getSectionName } from 'state/ui/selectors';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child

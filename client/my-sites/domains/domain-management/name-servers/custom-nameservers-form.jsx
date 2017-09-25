@@ -1,28 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classnames from 'classnames';
-import { dropRightWhile, negate, identity } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { dropRightWhile, negate, identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
-import { change, remove } from 'lib/domains/nameservers';
+import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
+import { change, remove } from 'lib/domains/nameservers';
 import support from 'lib/url/support';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;

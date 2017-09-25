@@ -1,28 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import page from 'page';
-import { identity, noop } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { identity, noop } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
-import {
-	hasUnreadMessages,
-	isHappychatAvailable,
-	hasActiveHappychatSession,
-} from 'state/happychat/selectors';
-import { connectChat } from 'state/happychat/actions';
-import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
+import viewport from 'lib/viewport';
+import { connectChat } from 'state/happychat/actions';
+import { hasUnreadMessages, isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
+import { openChat } from 'state/ui/happychat/actions';
 
 class HappychatButton extends Component {
 	static propTypes = {

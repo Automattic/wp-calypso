@@ -7,23 +7,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import {
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
-} from 'state/action-types';
-import {
-	getRememberMe,
-	getTwoFactorAuthNonce,
-	getTwoFactorPushPollInProgress,
-	getTwoFactorPushToken,
-	getTwoFactorUserId,
-} from 'state/login/selectors';
-import { http } from 'state/http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE, TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED, TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START, TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/http/actions';
+import { getRememberMe, getTwoFactorAuthNonce, getTwoFactorPushPollInProgress, getTwoFactorPushToken, getTwoFactorUserId } from 'state/login/selectors';
 
 /**
  * Module constants

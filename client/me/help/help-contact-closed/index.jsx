@@ -1,18 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
-import {
-	PLAN_BUSINESS,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
 
 // In the translated dates 7am UTC is 12am/midnight PT
 const closedStartDate = i18n.moment( 'Mon, 11 Sep 2017 07:00:00 +0000' );

@@ -1,29 +1,23 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
-import { isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { isEmpty, get } from 'lodash';
 import moment from 'moment';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderAvatar from 'blocks/reader-avatar';
-import FollowButton from 'reader/follow-button';
-import { getStreamUrl } from 'reader/route';
 import EmailSettings from 'blocks/reader-email-settings';
-import {
-	getSiteName,
-	getSiteDescription,
-	getSiteAuthorName,
-	getFeedUrl,
-	getSiteUrl,
-} from 'reader/get-helpers';
-import untrailingslashit from 'lib/route/untrailingslashit';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
+import untrailingslashit from 'lib/route/untrailingslashit';
+import FollowButton from 'reader/follow-button';
+import { getSiteName, getSiteDescription, getSiteAuthorName, getFeedUrl, getSiteUrl } from 'reader/get-helpers';
+import { getStreamUrl } from 'reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 
 /**

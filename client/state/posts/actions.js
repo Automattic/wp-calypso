@@ -6,28 +6,10 @@ import { isNumber, toArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import { normalizePostForApi } from './utils';
+import wpcom from 'lib/wp';
+import { POST_DELETE, POST_DELETE_SUCCESS, POST_DELETE_FAILURE, POST_EDIT, POST_REQUEST, POST_REQUEST_SUCCESS, POST_REQUEST_FAILURE, POST_RESTORE, POST_RESTORE_FAILURE, POST_RESTORE_SUCCESS, POST_SAVE, POST_SAVE_SUCCESS, POST_SAVE_FAILURE, POSTS_RECEIVE, POSTS_REQUEST, POSTS_REQUEST_SUCCESS, POSTS_REQUEST_FAILURE } from 'state/action-types';
 import { getEditedPost } from 'state/posts/selectors';
-import {
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
-	POST_EDIT,
-	POST_REQUEST,
-	POST_REQUEST_SUCCESS,
-	POST_REQUEST_FAILURE,
-	POST_RESTORE,
-	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-	POST_SAVE,
-	POST_SAVE_SUCCESS,
-	POST_SAVE_FAILURE,
-	POSTS_RECEIVE,
-	POSTS_REQUEST,
-	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE
-} from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a post object has

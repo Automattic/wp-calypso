@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorNewPostPath } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypes, getPostType } from 'state/post-types/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { getPostTypes, getPostType } from 'state/post-types/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getEditorPostId, getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

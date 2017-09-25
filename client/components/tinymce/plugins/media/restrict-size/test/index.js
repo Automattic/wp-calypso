@@ -6,9 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 import restrictSize from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { current } from 'page';
 import i18n from 'i18n-calypso';
+import { current } from 'page';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import config from 'config';
 import stepActions from 'lib/signup/step-actions';
 

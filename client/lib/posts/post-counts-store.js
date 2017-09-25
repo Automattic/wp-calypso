@@ -1,9 +1,18 @@
 /**
  * External dependencies
  */
-
-import { isEqual } from 'lodash';
 import debugFactory from 'debug';
+import { isEqual } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import PostListStoreFactory from './post-list-store-factory';
+import PostsStore from './posts-store';
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+
+import postUtils from 'lib/posts/utils';
 const debug = debugFactory( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
@@ -13,16 +22,7 @@ const sum = obj => {
 		}, 0 );
 };
 
-/**
- * Internal dependencies
- */
-import emitter from 'lib/mixins/emitter';
-
-import PostListStoreFactory from './post-list-store-factory';
 const PostListStore = PostListStoreFactory();
-import PostsStore from './posts-store';
-import postUtils from 'lib/posts/utils';
-import Dispatcher from 'dispatcher';
 
 let _counts = {},
 	PostCountsStore;

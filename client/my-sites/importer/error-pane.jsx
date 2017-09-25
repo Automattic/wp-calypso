@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import Page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
-import Page from 'page';
 
 /**
  * Internal dependencies

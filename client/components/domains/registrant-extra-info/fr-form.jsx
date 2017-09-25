@@ -1,34 +1,25 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { castArray, defaults, get, identity, isEmpty, isString, map, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-import {
-	castArray,
-	defaults,
-	get,
-	identity,
-	isEmpty,
-	isString,
-	map,
-	noop
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
+import validateContactDetails from './fr-validate-contact-details';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import validateContactDetails from './fr-validate-contact-details';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { getContactDetailsCache } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;

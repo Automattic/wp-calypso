@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { map, pickBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import createSelector from 'lib/create-selector';
 
 /**

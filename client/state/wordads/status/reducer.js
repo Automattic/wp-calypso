@@ -1,13 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	WORDADS_STATUS_REQUEST,
-	WORDADS_STATUS_REQUEST_SUCCESS,
-	WORDADS_STATUS_REQUEST_FAILURE
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { wordadsStatusSchema } from './schema';
+import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_REQUEST_SUCCESS, WORDADS_STATUS_REQUEST_FAILURE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const items = createReducer( {}, {
 	[ WORDADS_STATUS_REQUEST_SUCCESS ]: ( state, action ) => Object.assign( {}, state, {

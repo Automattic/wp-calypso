@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingZones } from '../../../state/zones/selectors';
 import { requestZones } from '../../../state/zones/actions';
+import { isRequestingZones } from '../../../state/zones/selectors';
 
 class QueryZones extends Component {
 

@@ -1,22 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { filter, map } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	READER_RELATED_POSTS_REQUEST,
-	READER_RELATED_POSTS_REQUEST_SUCCESS,
-	READER_RELATED_POSTS_REQUEST_FAILURE,
-	READER_RELATED_POSTS_RECEIVE,
-	READER_SITE_UPDATE,
-} from 'state/action-types';
-import { receivePosts } from 'state/reader/posts/actions';
-import wpcom from 'lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
+import wpcom from 'lib/wp';
+import { READER_RELATED_POSTS_REQUEST, READER_RELATED_POSTS_REQUEST_SUCCESS, READER_RELATED_POSTS_REQUEST_FAILURE, READER_RELATED_POSTS_RECEIVE, READER_SITE_UPDATE } from 'state/action-types';
+import { receivePosts } from 'state/reader/posts/actions';
 
 export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 	return function( dispatch ) {

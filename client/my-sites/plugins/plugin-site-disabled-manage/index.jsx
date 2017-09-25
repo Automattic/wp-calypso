@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
+import analytics from 'lib/analytics';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import { getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 

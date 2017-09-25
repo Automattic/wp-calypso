@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import AccordionSection from 'components/accordion/section';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Slug from 'post-editor/editor-slug';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorMoreOptionsSlug extends PureComponent {
 	static propTypes = {

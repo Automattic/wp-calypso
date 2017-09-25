@@ -7,15 +7,10 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	REWIND_RESTORE,
-} from 'state/action-types';
-import {
-	rewindRestoreUpdateError,
-	getRewindRestoreProgress,
-} from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { REWIND_RESTORE } from 'state/action-types';
+import { rewindRestoreUpdateError, getRewindRestoreProgress } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
 

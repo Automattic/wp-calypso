@@ -2,21 +2,21 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { READER_TAGS_REQUEST } from 'state/action-types';
-import { receiveTags } from 'state/reader/tags/items/actions';
-import requestFollowHandler from 'state/data-layer/wpcom/read/tags/mine/new';
-import requestUnfollowHandler from 'state/data-layer/wpcom/read/tags/mine/delete';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import requestUnfollowHandler from 'state/data-layer/wpcom/read/tags/mine/delete';
+import requestFollowHandler from 'state/data-layer/wpcom/read/tags/mine/new';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
+import { receiveTags } from 'state/reader/tags/items/actions';
 
 export function requestTags( store, action ) {
 	const path =

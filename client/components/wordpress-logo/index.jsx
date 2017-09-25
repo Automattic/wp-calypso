@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 export default class WordPressLogo extends PureComponent {
 	static displayName = 'WordPressLogo';

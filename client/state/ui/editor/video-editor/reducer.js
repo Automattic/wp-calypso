@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	VIDEO_EDITOR_SET_POSTER_URL,
-	VIDEO_EDITOR_SHOW_ERROR,
-	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-} from 'state/action-types';
+import { VIDEO_EDITOR_SET_POSTER_URL, VIDEO_EDITOR_SHOW_ERROR, VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 /**

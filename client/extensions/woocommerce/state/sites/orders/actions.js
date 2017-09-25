@@ -1,42 +1,21 @@
 /**
  * External dependencies
  */
-import qs from 'querystring';
+import { translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import { DEFAULT_QUERY, getNormalizedOrdersQuery } from './utils';
-import {
-	areOrdersLoaded,
-	areOrdersLoading,
-	isOrderLoaded,
-	isOrderLoading,
-} from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-	statusWaitingPayment,
-	statusWaitingFulfillment,
-	statusFinished,
-} from 'woocommerce/lib/order-status';
+import { areOrdersLoaded, areOrdersLoading, isOrderLoaded, isOrderLoading } from './selectors';
+import { DEFAULT_QUERY, getNormalizedOrdersQuery } from './utils';
+import qs from 'querystring';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
-import {
-	WOOCOMMERCE_ORDER_REQUEST,
-	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
-	WOOCOMMERCE_ORDER_UPDATE,
-	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
-	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
-	WOOCOMMERCE_ORDERS_REQUEST,
-	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED, statusWaitingPayment, statusWaitingFulfillment, statusFinished } from 'woocommerce/lib/order-status';
+import { WOOCOMMERCE_ORDER_REQUEST, WOOCOMMERCE_ORDER_REQUEST_FAILURE, WOOCOMMERCE_ORDER_REQUEST_SUCCESS, WOOCOMMERCE_ORDER_UPDATE, WOOCOMMERCE_ORDER_UPDATE_FAILURE, WOOCOMMERCE_ORDER_UPDATE_SUCCESS, WOOCOMMERCE_ORDERS_REQUEST, WOOCOMMERCE_ORDERS_REQUEST_FAILURE, WOOCOMMERCE_ORDERS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getState ) => {
 	const state = getState();

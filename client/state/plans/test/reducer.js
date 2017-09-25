@@ -7,30 +7,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import { plansReceiveAction, plansRequestSuccessAction, plansRequestFailureAction, requestPlans } from '../actions';
+import plansReducer, { items, requesting as requestReducer, error as errorReducer } from '../reducer';
+
+import { WPCOM_RESPONSE } from './fixture';
 import { withSchemaValidation } from 'state/utils';
 
-// Reducers
-import plansReducer, {
-	items,
-	requesting as requestReducer,
-	error as errorReducer
-} from '../reducer';
-
-/**
- * Actions creators functions
- */
-import {
-	plansReceiveAction,
-	plansRequestSuccessAction,
-	plansRequestFailureAction,
-	requestPlans,
-} from '../actions';
-
-/**
- * Fixture data
- */
-import { WPCOM_RESPONSE } from './fixture';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const itemsReducer = withSchemaValidation( items.schema, items );
 

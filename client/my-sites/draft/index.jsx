@@ -1,34 +1,33 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classnames from 'classnames';
-import url from 'url';
-import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flow, noop } from 'lodash';
+import photon from 'photon';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import SiteIcon from 'blocks/site-icon';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
-import Gridicon from 'gridicons';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import SiteIcon from 'blocks/site-icon';
-import actions from 'lib/posts/actions';
-import photon from 'photon';
-import touchDetect from 'lib/touch-detect';
 import updatePostStatus from 'components/update-post-status';
+import actions from 'lib/posts/actions';
 import utils from 'lib/posts/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import touchDetect from 'lib/touch-detect';
+import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import url from 'url';
 
 class Draft extends Component {
 	static propTypes = {

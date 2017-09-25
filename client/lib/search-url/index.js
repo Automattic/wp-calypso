@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import page from 'page';
 
- /**
+/**
  * Internal dependencies
  */
 import buildUrl from 'lib/build-url';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:search-url' );
 

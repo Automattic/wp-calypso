@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-
 import { assert } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import mockedWporg from './mocks/wporg';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'WPorg Data Actions', () => {
 	let WPorgActions;

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import { identity } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { ResetPasswordFormComponent } from '..';
 import ResetOptionSet from '../reset-option-set';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'ResetPasswordForm', () => {
 	const exampleResetOptions = [

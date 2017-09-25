@@ -7,12 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { dismissRewindRestoreProgress, rewindRestore, rewindRestoreUpdateError } from '../../actions';
 import { restoreProgress } from '../reducer';
-import {
-	dismissRewindRestoreProgress,
-	rewindRestore,
-	rewindRestoreUpdateError,
-} from '../../actions';
 
 /**
  * Constants

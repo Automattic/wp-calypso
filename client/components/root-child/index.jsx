@@ -1,11 +1,9 @@
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
+import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 
 export default React.createClass( {

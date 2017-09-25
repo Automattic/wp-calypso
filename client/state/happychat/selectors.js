@@ -1,24 +1,15 @@
 /**
  * External dependencies
  */
-import {
-	get,
-	includes,
-	last,
-	map,
-} from 'lodash';
+import { get, includes, last, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import {
-	HAPPYCHAT_GROUP_WPCOM,
-	HAPPYCHAT_GROUP_JPOP,
-	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
-} from './constants';
-import { isJetpackSite, getSite } from 'state/sites/selectors';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP, HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT } from './constants';
 import { isATEnabled } from 'lib/automated-transfer';
+import createSelector from 'lib/create-selector';
+import { isJetpackSite, getSite } from 'state/sites/selectors';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;

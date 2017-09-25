@@ -1,64 +1,16 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import { getRawSite, getSite, getSiteCollisions, isSiteConflicting, isSingleUserSite, isJetpackSite, isJetpackModuleActive, isJetpackMinimumVersion, getSiteSlug, getSiteDomain, getSiteTitle, getSiteThemeShowcasePath, isSitePreviewable, getSiteOption, isRequestingSites, isRequestingSite, getSeoTitleFormats, getSeoTitle, getSiteBySlug, getSiteByUrl, getSitePlan, getSitePlanSlug, isCurrentSitePlan, isCurrentPlanPaid, getSiteFrontPage, getSitePostsPage, getSiteFrontPageType, hasStaticFrontPage, canJetpackSiteManage, canJetpackSiteUpdateFiles, canJetpackSiteAutoUpdateFiles, canJetpackSiteAutoUpdateCore, hasJetpackSiteJetpackThemes, hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSiteMultiSite, isJetpackSiteSecondaryNetworkSite, verifyJetpackModulesActive, getJetpackSiteRemoteManagementUrl, hasJetpackSiteCustomDomain, getJetpackSiteUpdateFilesDisabledReasons, siteHasMinimumJetpackVersion, isJetpackSiteMainNetworkSite, getSiteAdminUrl, getCustomizerUrl, getJetpackComputedAttributes, hasDefaultSiteTitle, siteSupportsJetpackSettingsUi } from '../selectors';
 import config from 'config';
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	getRawSite,
-	getSite,
-	getSiteCollisions,
-	isSiteConflicting,
-	isSingleUserSite,
-	isJetpackSite,
-	isJetpackModuleActive,
-	isJetpackMinimumVersion,
-	getSiteSlug,
-	getSiteDomain,
-	getSiteTitle,
-	getSiteThemeShowcasePath,
-	isSitePreviewable,
-	getSiteOption,
-	isRequestingSites,
-	isRequestingSite,
-	getSeoTitleFormats,
-	getSeoTitle,
-	getSiteBySlug,
-	getSiteByUrl,
-	getSitePlan,
-	getSitePlanSlug,
-	isCurrentSitePlan,
-	isCurrentPlanPaid,
-	getSiteFrontPage,
-	getSitePostsPage,
-	getSiteFrontPageType,
-	hasStaticFrontPage,
-	canJetpackSiteManage,
-	canJetpackSiteUpdateFiles,
-	canJetpackSiteAutoUpdateFiles,
-	canJetpackSiteAutoUpdateCore,
-	hasJetpackSiteJetpackThemes,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite,
-	isJetpackSiteSecondaryNetworkSite,
-	verifyJetpackModulesActive,
-	getJetpackSiteRemoteManagementUrl,
-	hasJetpackSiteCustomDomain,
-	getJetpackSiteUpdateFilesDisabledReasons,
-	siteHasMinimumJetpackVersion,
-	isJetpackSiteMainNetworkSite,
-	getSiteAdminUrl,
-	getCustomizerUrl,
-	getJetpackComputedAttributes,
-	hasDefaultSiteTitle,
-	siteSupportsJetpackSettingsUi
-} from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items => deepFreeze( {

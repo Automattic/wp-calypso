@@ -6,44 +6,13 @@ import { mapValues, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import {
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
-	THEME_ACTIVATE,
-	THEME_ACTIVATE_SUCCESS,
-	THEME_ACTIVATE_FAILURE,
-	THEME_CLEAR_ACTIVATED,
-	THEME_DELETE_SUCCESS,
-	THEME_FILTERS_ADD,
-	THEME_INSTALL,
-	THEME_INSTALL_SUCCESS,
-	THEME_INSTALL_FAILURE,
-	THEME_REQUEST,
-	THEME_REQUEST_SUCCESS,
-	THEME_REQUEST_FAILURE,
-	THEMES_REQUEST,
-	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE,
-	THEME_PREVIEW_OPTIONS,
-	THEME_PREVIEW_STATE,
-} from 'state/action-types';
-import {
-	getSerializedThemesQuery,
-	getThemeIdFromStylesheet
-} from './utils';
-import {
-	queriesSchema,
-	activeThemesSchema,
-	themeFiltersSchema,
-	themeRequestErrorsSchema,
-} from './schema';
+import { queriesSchema, activeThemesSchema, themeFiltersSchema, themeRequestErrorsSchema } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
+import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import ThemeQueryManager from 'lib/query-manager/theme';
+import { ACTIVE_THEME_REQUEST, ACTIVE_THEME_REQUEST_SUCCESS, ACTIVE_THEME_REQUEST_FAILURE, DESERIALIZE, SERIALIZE, THEME_ACTIVATE, THEME_ACTIVATE_SUCCESS, THEME_ACTIVATE_FAILURE, THEME_CLEAR_ACTIVATED, THEME_DELETE_SUCCESS, THEME_FILTERS_ADD, THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE, THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE, THEMES_REQUEST, THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE, THEME_PREVIEW_OPTIONS, THEME_PREVIEW_STATE } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Returns the updated active theme state after an action has been

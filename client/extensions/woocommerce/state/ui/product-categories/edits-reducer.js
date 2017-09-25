@@ -6,14 +6,9 @@ import { compact, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
-	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
-	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
-	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
+import { createReducer } from 'state/utils';
+import { WOOCOMMERCE_PRODUCT_CATEGORY_CREATE, WOOCOMMERCE_PRODUCT_CATEGORY_EDIT, WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR, WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: editProductCategoryAction,

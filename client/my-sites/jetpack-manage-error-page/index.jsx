@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
+import analytics from 'lib/analytics';
 import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
 class JetpackManageErrorPage extends PureComponent {

@@ -1,35 +1,31 @@
 /**
  * External dependencies
  */
+import { flowRight, partialRight, pick, overSome } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
 import Banner from 'components/banner';
+import Button from 'components/button';
+import Card from 'components/card';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import ExternalLink from 'components/external-link';
+import FormTextValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import {
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness
-} from 'lib/products-values';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import SectionHeader from 'components/section-header';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_BUSINESS } from 'lib/plans/constants';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackModuleActive } from 'state/selectors';
+import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );

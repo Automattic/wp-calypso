@@ -1,35 +1,22 @@
 /**
  * External dependencies
  */
-import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
 import i18n from 'i18n-calypso';
-import createSelector from 'lib/create-selector';
+import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import {
-	getSiteSlug,
-	getSiteOption,
-	isJetpackSite,
-	canJetpackSiteManage,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { getCustomizerUrl } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	getDeserializedThemesQueryDetails,
-	getNormalizedThemesQuery,
-	getSerializedThemesQuery,
-	getSerializedThemesQueryWithoutPage,
-	isPremium,
-	oldShowcaseUrl
-} from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
+import { getDeserializedThemesQueryDetails, getNormalizedThemesQuery, getSerializedThemesQuery, getSerializedThemesQueryWithoutPage, isPremium, oldShowcaseUrl } from './utils';
+import config from 'config';
+import createSelector from 'lib/create-selector';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+
+import { getSitePurchases } from 'state/purchases/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSiteSlug, getSiteOption, isJetpackSite, canJetpackSiteManage, hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getCustomizerUrl } from 'state/sites/selectors';
 
 /**
  * Returns a theme object by site ID, theme ID pair.

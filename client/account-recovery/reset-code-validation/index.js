@@ -1,28 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import qs from 'qs';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ErrorScreen from 'account-recovery/error-screen';
+import { updatePasswordResetUserData, setResetMethod, validateRequest, validateRequestError } from 'state/account-recovery/reset/actions';
 
-import {
-	updatePasswordResetUserData,
-	setResetMethod,
-	validateRequest,
-	validateRequestError,
-} from 'state/account-recovery/reset/actions';
-
-import {
-	getAccountRecoveryValidationError,
-	getAccountRecoveryValidationKey,
-} from 'state/selectors';
+import { getAccountRecoveryValidationError, getAccountRecoveryValidationKey } from 'state/selectors';
 
 class ResetPasswordEmailValidation extends Component {
 	getQueryString = () => {

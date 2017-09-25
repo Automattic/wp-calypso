@@ -6,14 +6,10 @@ import { compact, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { processInbound as inboundProcessor, processOutbound as outboundProcessor } from './pipeline';
 import wpcom from 'lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { extendAction } from 'state/utils';
-
-import {
-	processInbound as inboundProcessor,
-	processOutbound as outboundProcessor,
-} from './pipeline';
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method

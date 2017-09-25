@@ -1,5 +1,5 @@
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import AddGoogleApps from './add-google-apps';
 import ContactsPrivacy from './contacts-privacy';
@@ -13,10 +13,10 @@ import NameServers from './name-servers';
 import PrimaryDomain from './primary-domain';
 import PrivacyProtection from './privacy-protection';
 import SiteRedirect from './site-redirect';
+import Transfer from './transfer';
 import TransferOut from './transfer/transfer-out';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
-import Transfer from './transfer';
 
 export default {
 	AddGoogleApps,

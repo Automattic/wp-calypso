@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import { localize } from 'i18n-calypso';
 import { identity, isFunction } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies

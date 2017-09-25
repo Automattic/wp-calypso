@@ -1,39 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle/compact';
-import List from 'woocommerce/components/list/list';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListHeader from 'woocommerce/components/list/list-header';
-import ListItemField from 'woocommerce/components/list/list-item-field';
-import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getMethodSummary } from './shipping-methods/utils';
-import {
-	getShippingMethodNameMap,
-} from 'woocommerce/state/sites/shipping-methods/selectors';
-import {
-	openShippingZoneMethod,
-	addMethodToShippingZone,
-	toggleShippingZoneMethodEnabled,
-} from 'woocommerce/state/ui/shipping/zones/methods/actions';
-import {
-	getCurrentlyEditingShippingZoneMethods,
-	getNewMethodTypeOptions,
-} from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
+import Button from 'components/button';
+import FormToggle from 'components/forms/form-toggle/compact';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import List from 'woocommerce/components/list/list';
+import ListHeader from 'woocommerce/components/list/list-header';
+import ListItem from 'woocommerce/components/list/list-item';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
+import { getShippingMethodNameMap } from 'woocommerce/state/sites/shipping-methods/selectors';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { openShippingZoneMethod, addMethodToShippingZone, toggleShippingZoneMethodEnabled } from 'woocommerce/state/ui/shipping/zones/methods/actions';
+import { getCurrentlyEditingShippingZoneMethods, getNewMethodTypeOptions } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
 const ShippingZoneMethodList = ( {
 		siteId,

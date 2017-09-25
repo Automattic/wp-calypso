@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	VIDEO_EDITOR_SET_POSTER_URL,
-	VIDEO_EDITOR_SHOW_ERROR,
-	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-	VIDEO_EDITOR_UPDATE_POSTER,
-} from 'state/action-types';
+import { VIDEO_EDITOR_SET_POSTER_URL, VIDEO_EDITOR_SHOW_ERROR, VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS, VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 
 /**
  * Returns an action object to indicate that a request has been made to update the video poster.

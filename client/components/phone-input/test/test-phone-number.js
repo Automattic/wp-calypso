@@ -1,24 +1,15 @@
 /**
  * External dependencies
  */
-import { equal, ok } from 'assert';
 import { groupBy, pickBy, forIn } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	findCountryFromNumber,
-	formatNumber,
-	makeTemplate,
-	findPattern,
-	toIcannFormat,
-	DIGIT_PLACEHOLDER,
-	applyTemplate,
-	toE164
-} from '../phone-number';
-
 import { countries } from '../data';
+import { findCountryFromNumber, formatNumber, makeTemplate, findPattern, toIcannFormat, DIGIT_PLACEHOLDER, applyTemplate, toE164 } from '../phone-number';
+
+import { equal, ok } from 'assert';
 
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {

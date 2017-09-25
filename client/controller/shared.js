@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
 import { getLanguage } from 'lib/i18n-utils';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 
 export function makeLayoutMiddleware( LayoutComponent ) {

@@ -7,13 +7,11 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { USER_DEVICES_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import {
-	USER_DEVICES_REQUEST
-} from 'state/action-types';
-import { userDevicesAdd } from 'state/user-devices/actions';
 import { errorNotice } from 'state/notices/actions';
+import { userDevicesAdd } from 'state/user-devices/actions';
 
 const devicesFromApi = devices => keyBy( devices.map(
 	( { device_id, device_name } ) => ( { id: device_id, name: device_name } )

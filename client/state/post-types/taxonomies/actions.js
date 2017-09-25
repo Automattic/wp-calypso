@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	POST_TYPES_TAXONOMIES_RECEIVE,
-	POST_TYPES_TAXONOMIES_REQUEST,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS
-} from 'state/action-types';
+import { POST_TYPES_TAXONOMIES_RECEIVE, POST_TYPES_TAXONOMIES_REQUEST, POST_TYPES_TAXONOMIES_REQUEST_FAILURE, POST_TYPES_TAXONOMIES_REQUEST_SUCCESS } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that post type taxonomies

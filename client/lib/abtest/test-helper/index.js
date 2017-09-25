@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
 import Debug from 'debug';
+import React from 'react';
+import ReactDom from 'react-dom';
+
 /**
  * Internal dependencies
  */

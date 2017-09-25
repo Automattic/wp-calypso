@@ -1,25 +1,17 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	requestPostEmailSubscription,
-	receivePostEmailSubscription,
-	receivePostEmailSubscriptionError,
-} from '../';
-import {
-	subscribeToNewPostEmail,
-	unsubscribeToNewPostEmail,
-	updateNewPostEmailSubscription,
-} from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestPostEmailSubscription, receivePostEmailSubscription, receivePostEmailSubscriptionError } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { subscribeToNewPostEmail, unsubscribeToNewPostEmail, updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailSubscription', () => {

@@ -6,39 +6,14 @@ import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, map
 /**
  * Internal dependencies
  */
-import PostQueryManager from 'lib/query-manager/post';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import {
-	EDITOR_START,
-	EDITOR_STOP,
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
-	POST_EDIT,
-	POST_REQUEST,
-	POST_REQUEST_SUCCESS,
-	POST_REQUEST_FAILURE,
-	POST_RESTORE,
-	POST_RESTORE_FAILURE,
-	POST_SAVE,
-	POST_SAVE_SUCCESS,
-	POSTS_RECEIVE,
-	POSTS_REQUEST,
-	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
-import {
-	getSerializedPostsQuery,
-	isTermsEqual,
-	mergeIgnoringArrays,
-	normalizePostForState
-} from './utils';
 import { itemsSchema, queriesSchema } from './schema';
+import { getSerializedPostsQuery, isTermsEqual, mergeIgnoringArrays, normalizePostForState } from './utils';
+import PostQueryManager from 'lib/query-manager/post';
+import { EDITOR_START, EDITOR_STOP, POST_DELETE, POST_DELETE_SUCCESS, POST_DELETE_FAILURE, POST_EDIT, POST_REQUEST, POST_REQUEST_SUCCESS, POST_REQUEST_FAILURE, POST_RESTORE, POST_RESTORE_FAILURE, POST_SAVE, POST_SAVE_SUCCESS, POSTS_RECEIVE, POSTS_REQUEST, POSTS_REQUEST_SUCCESS, POSTS_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.

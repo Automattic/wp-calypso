@@ -1,16 +1,13 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
+import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import {
-	camelCaseToSlug,
-	getComponentName,
-} from 'devdocs/docs-example/util';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );

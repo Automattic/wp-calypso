@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	USER_SUGGESTIONS_RECEIVE,
-	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
-	USER_SUGGESTIONS_REQUEST_FAILURE,
-} from 'state/action-types';
+import { USER_SUGGESTIONS_RECEIVE, USER_SUGGESTIONS_REQUEST, USER_SUGGESTIONS_REQUEST_SUCCESS, USER_SUGGESTIONS_REQUEST_FAILURE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that user suggestions for a site

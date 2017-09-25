@@ -7,26 +7,18 @@ import { forEach, get, groupBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import likes from './likes';
+import replies from './replies';
+import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE, COMMENT_REQUEST, COMMENTS_ERROR, COMMENTS_TREE_SITE_ADD, COMMENTS_EDIT } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
-import {
-	COMMENTS_CHANGE_STATUS,
-	COMMENTS_LIST_REQUEST,
-	COMMENTS_RECEIVE,
-	COMMENT_REQUEST,
-	COMMENTS_ERROR,
-	COMMENTS_TREE_SITE_ADD,
-	COMMENTS_EDIT,
-} from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import replies from './replies';
-import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
-import { getSiteComment } from 'state/selectors';
-import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
 import { getSite as getReaderSite } from 'state/reader/sites/selectors';
+import { getSiteComment } from 'state/selectors';
+import { getRawSite } from 'state/sites/selectors';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;

@@ -1,9 +1,36 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import async from 'async';
-
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import detectMedia from './rule-content-detect-media';
+import detectPolls from './rule-content-detect-polls';
+import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
+import makeEmbedsSafe from './rule-content-make-embeds-safe';
+import makeImagesSafe from './rule-content-make-images-safe';
+import removeElementsBySelector from './rule-content-remove-elements-by-selector';
+import removeStyles from './rule-content-remove-styles';
+
+import createBetterExcerpt from './rule-create-better-excerpt';
+import decodeEntities from './rule-decode-entities';
+
+import keepValidImages from './rule-keep-valid-images';
+import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';
+
+import pickCanonicalImage from './rule-pick-canonical-image';
+import pickPrimaryTag from './rule-pick-primary-tag';
+
+import preventWidows from './rule-prevent-widows';
+import safeImageProperties from './rule-safe-image-properties';
+
+import stripHtml from './rule-strip-html';
+import waitForImagesToLoad from './rule-wait-for-images-to-load';
+
+import withContentDOM from './rule-with-content-dom';
 const debug = debugFactory( 'calypso:post-normalizer' );
 /**
  * Internal dependencies
@@ -60,30 +87,22 @@ function wrapSync( fn ) {
 	};
 }
 
-import decodeEntities from './rule-decode-entities';
 normalizePost.decodeEntities = wrapSync( decodeEntities );
 
-import stripHtml from './rule-strip-html';
 normalizePost.stripHTML = wrapSync( stripHtml );
 
-import preventWidows from './rule-prevent-widows';
 normalizePost.preventWidows = wrapSync( preventWidows );
 
-import pickCanonicalImage from './rule-pick-canonical-image';
 normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 
-import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';
 normalizePost.makeSiteIDSafeForAPI = wrapSync( makeSiteIDSafeForAPI );
 
-import pickPrimaryTag from './rule-pick-primary-tag';
 normalizePost.pickPrimaryTag = wrapSync( pickPrimaryTag );
 
-import safeImageProperties from './rule-safe-image-properties';
 normalizePost.safeImageProperties = function( maxWidth ) {
 	return wrapSync( safeImageProperties( maxWidth ) );
 };
 
-import waitForImagesToLoad from './rule-wait-for-images-to-load';
 normalizePost.waitForImagesToLoad = function waitForImagesToLoadAdapter( post, callback ) {
 	waitForImagesToLoad( post ).then( () => {
 		callback();
@@ -92,29 +111,18 @@ normalizePost.waitForImagesToLoad = function waitForImagesToLoadAdapter( post, c
 	} );
 };
 
-import keepValidImages from './rule-keep-valid-images';
 normalizePost.keepValidImages = function( minWidth, minHeight ) {
 	return wrapSync( keepValidImages( minWidth, minHeight ) );
 };
 
-import createBetterExcerpt from './rule-create-better-excerpt';
 normalizePost.createBetterExcerpt = wrapSync( createBetterExcerpt );
 
-import withContentDOM from './rule-with-content-dom';
 normalizePost.withContentDOM = function( transforms ) {
 	return function( post, callback ) {
 		withContentDOM( transforms )( post );
 		callback();
 	};
 };
-
-import removeStyles from './rule-content-remove-styles';
-import removeElementsBySelector from './rule-content-remove-elements-by-selector';
-import makeImagesSafe from './rule-content-make-images-safe';
-import makeEmbedsSafe from './rule-content-make-embeds-safe';
-import detectMedia from './rule-content-detect-media';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
-import detectPolls from './rule-content-detect-polls';
 
 normalizePost.content = {
 	removeStyles,

@@ -1,30 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isEqual, toArray, some } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Content from './content';
-import MediaActions from 'lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
-import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
+import filterToMimePrefix from './filter-to-mime-prefix';
 import MediaValidationData from 'components/data/media-validation-data';
 import QueryPreferences from 'components/data/query-preferences';
+import MediaActions from 'lib/media/actions';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaUtils from 'lib/media/utils';
 import searchUrl from 'lib/search-url';
-import {
-	isKeyringConnectionsFetching,
-	getKeyringConnections,
-} from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching, getKeyringConnections } from 'state/sharing/keyring/selectors';
 
 const isConnected = props => props.source === '' || some( props.connectedServices, item => item.service === props.source );
 const needsKeyring = props => ! props.isRequesting && props.source !== '' && props.connectedServices.length === 0;

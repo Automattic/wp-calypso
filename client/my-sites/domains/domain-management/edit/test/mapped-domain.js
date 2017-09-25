@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
-import sinon from 'sinon';
 import { identity } from 'lodash';
+import ReactClass from 'react/lib/ReactClass';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
+import paths from 'my-sites/domains/paths';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-
-import ReactClass from 'react/lib/ReactClass';
-import paths from 'my-sites/domains/paths';
 
 describe( 'mapped-domain', () => {
 	let React,

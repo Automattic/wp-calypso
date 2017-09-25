@@ -1,6 +1,6 @@
 /**
- * Internal Dependencies
- **/
+ * Internal dependencies
+ */
 import PostListStore from './post-list-store';
 
 /**

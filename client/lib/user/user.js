@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
-import store from 'store';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user' );
-import config from 'config';
+import { isEqual } from 'lodash';
 import qs from 'qs';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
+import userUtils from './shared-utils';
+import config from 'config';
+import localforage from 'lib/localforage';
+import Emitter from 'lib/mixins/emitter';
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
 import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
-import userUtils from './shared-utils';
-import localforage from 'lib/localforage';
+const debug = debugFactory( 'calypso:user' );
 
 /**
  * User component

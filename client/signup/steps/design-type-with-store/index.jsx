@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { invoke } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
-import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
-import PressableStoreStep from './pressable-store';
 import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
+import PressableStoreStep from './pressable-store';
+import Card from 'components/card';
 import { abtest } from 'lib/abtest';
-
-import { setDesignType } from 'state/signup/steps/design-type/actions';
-
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
 import { getThemeForDesignType } from 'signup/utils';
+
+import { recordTracksEvent } from 'state/analytics/actions';
+import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {

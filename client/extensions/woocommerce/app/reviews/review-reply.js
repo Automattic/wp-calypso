@@ -1,19 +1,19 @@
 /**
- * External depedencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
 import Gravatar from './gravatar';
+import Button from 'components/button';
 import humanDate from 'lib/human-date';
+import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
 
 class ReviewReply extends Component {
 	static propTypes = {

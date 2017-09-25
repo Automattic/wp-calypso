@@ -1,35 +1,33 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
+import { saveAs } from 'browser-filesaver';
+import Clipboard from 'clipboard';
+import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
-import ReactDom from 'react-dom';
-import Clipboard from 'clipboard';
-import userFactory from 'lib/user';
-import Gridicon from 'gridicons';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import { saveAs } from 'browser-filesaver';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import FormButton from 'components/forms/form-button';
-
-import analytics from 'lib/analytics';
 import FormButtonBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import config from 'config';
 import Notice from 'components/notice';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
 import Tooltip from 'components/tooltip';
+import config from 'config';
+
+import analytics from 'lib/analytics';
+import userFactory from 'lib/user';
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
 
 export default localize( React.createClass( {
 

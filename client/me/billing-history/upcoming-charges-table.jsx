@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
+import purchasesPaths from 'me/purchases/paths';
 import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
 
 class UpcomingChargesTable extends Component {

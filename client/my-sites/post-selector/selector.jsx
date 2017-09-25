@@ -1,45 +1,29 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
+import { localize } from 'i18n-calypso';
+import { debounce, memoize, get, map, reduce, filter, range, difference, isEqual, includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
-import {
-	debounce,
-	memoize,
-	get,
-	map,
-	reduce,
-	filter,
-	range,
-	difference,
-	isEqual,
-	includes
-} from 'lodash';
+import List from 'react-virtualized/List';
 
 /**
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'lib/analytics';
 import Search from './search';
-import { decodeEntities } from 'lib/formatting';
-import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQueryIgnoringPage,
-	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery
-} from 'state/posts/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
+import analytics from 'lib/analytics';
+import { decodeEntities } from 'lib/formatting';
+import { getPostTypes } from 'state/post-types/selectors';
+import { getSitePostsForQueryIgnoringPage, isRequestingSitePostsForQueryIgnoringPage, getSitePostsFoundForQuery, getSitePostsLastPageForQuery } from 'state/posts/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 
 /**
  * Constants

@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { isEmpty, head } from 'lodash';
 import LruCache from 'lru';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isRequestInflight } from 'lib/inflight';
 import wpcom from 'lib/wp';

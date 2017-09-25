@@ -1,27 +1,27 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import page from 'page';
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import DnsData from 'components/data/domain-management/dns' ;
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
-import EmailData from 'components/data/domain-management/email' ;
-import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
+import DnsData from 'components/data/domain-management/dns';
+import EmailData from 'components/data/domain-management/email';
+import EmailForwardingData from 'components/data/domain-management/email-forwarding';
 import NameserversData from 'components/data/domain-management/nameservers';
-import paths from 'my-sites/domains/paths';
-import ProductsList from 'lib/products-list';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
+import analytics from 'lib/analytics';
+import ProductsList from 'lib/products-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import paths from 'my-sites/domains/paths';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const productsList = new ProductsList();
 

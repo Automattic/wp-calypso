@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { assign, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
-import tinymce from 'tinymce/tinymce';
-import 'tinymce/themes/modern/theme.js';
+import { assign, noop, uniqueId } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import 'tinymce/plugins/lists/plugin.js';
+import 'tinymce/themes/modern/theme.js';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
 import i18n from 'components/tinymce/i18n';
-import userFactory from 'lib/user';
-import { wpautop } from 'lib/formatting';
-// TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
+import { wpautop } from 'lib/formatting';
+import userFactory from 'lib/user';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {

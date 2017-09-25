@@ -1,23 +1,23 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
+import { compact, includes, isEmpty, startsWith } from 'lodash';
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
-import LoggedOutComponent from './logged-out';
-import Upload from 'my-sites/themes/theme-upload';
-import trackScrollPage from 'lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import LoggedOutComponent from './logged-out';
+import trackScrollPage from 'lib/track-scroll-page';
+import MultiSiteComponent from 'my-sites/themes/multi-site';
+import SingleSiteComponent from 'my-sites/themes/single-site';
+import Upload from 'my-sites/themes/theme-upload';
 import { getThemeFilters } from 'state/selectors';
+import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { getThemesForQuery } from 'state/themes/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
 

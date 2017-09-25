@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
-import page from 'page';
-import { findIndex } from 'lodash';
 import { moment } from 'i18n-calypso';
+import { findIndex } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Delta from 'woocommerce/components/delta';
-import ElementChart from 'components/chart';
-import formatCurrency from 'lib/format-currency';
-import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
-import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import Card from 'components/card';
+import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
+import analytics from 'lib/analytics';
+import formatCurrency from 'lib/format-currency';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
+import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { getPeriodFormat } from 'state/stats/lists/utils';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
-import analytics from 'lib/analytics';
 import { chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
+import Delta from 'woocommerce/components/delta';
 
 class StoreStatsChart extends Component {
 	static propTypes = {

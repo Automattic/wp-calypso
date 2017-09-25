@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject } from 'lodash';
 import i18n from 'i18n-calypso';
+import { assign, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import config from 'config';
 import stepConfig from './steps';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 import userFactory from 'lib/user';
 
 const user = userFactory();

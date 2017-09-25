@@ -1,38 +1,19 @@
 /**
  * External dependencies
  */
-import {
-	assign,
-	compact,
-	every,
-	filter,
-	find,
-	flowRight as compose,
-	get,
-	has,
-	map,
-	partialRight,
-	some,
-	split,
-	includes,
-	startsWith,
-} from 'lodash';
 import i18n from 'i18n-calypso';
+import { assign, compact, every, filter, find, flowRight as compose, get, has, map, partialRight, some, split, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
-
-/**
- * Internal dependencies
- */
-import createSelector from 'lib/create-selector';
+import { getSiteComputedAttributes } from './utils';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
+import config from 'config';
+import createSelector from 'lib/create-selector';
+import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { getSiteComputedAttributes } from './utils';
 import { isSiteUpgradeable } from 'state/selectors';
 
 /**

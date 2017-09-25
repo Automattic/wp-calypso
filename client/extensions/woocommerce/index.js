@@ -1,22 +1,15 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import App from './app';
-
-import controller from 'my-sites/controller';
 import Dashboard from './app/dashboard';
-import EmptyContent from 'components/empty-content';
-import { navigation, siteSelection } from 'my-sites/controller';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import installActionHandlers from './state/data-layer';
 import Order from './app/order';
 import OrderCreate from './app/order/order-create';
 import Orders from './app/orders';
@@ -28,11 +21,17 @@ import PromotionCreate from './app/promotions/promotion-create';
 import PromotionUpdate from './app/promotions/promotion-update';
 import Reviews from './app/reviews';
 import SettingsPayments from './app/settings/payments';
-import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
+import SettingsTaxes from './app/settings/taxes';
 import StatsController from './app/store-stats/controller';
+import installActionHandlers from './state/data-layer';
 import StoreSidebar from './store-sidebar';
+import EmptyContent from 'components/empty-content';
+import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import controller from 'my-sites/controller';
+import { navigation, siteSelection } from 'my-sites/controller';
 
 function initExtension() {
 	installActionHandlers();

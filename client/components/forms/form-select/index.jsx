@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
 class FormSelect extends React.Component {
 	static defaultProps = {

@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { isPlan } from 'lib/products-values';
-
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
+import { isPlan } from 'lib/products-values';
 
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {

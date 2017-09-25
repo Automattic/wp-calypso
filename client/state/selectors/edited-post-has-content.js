@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { some, trim } from 'lodash';
+import { some, trim } from 'lodash';
 
 /**
  * Internal dependencies

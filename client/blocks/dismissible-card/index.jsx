@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { noop, flow } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, flow } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import GoogleAppsUserItem from './google-apps-user-item';
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import GoogleAppsUserItem from './google-apps-user-item';
 
 const Placeholder = () =>
 	<div className="google-apps-users-card is-placeholder">

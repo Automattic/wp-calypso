@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { delay } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

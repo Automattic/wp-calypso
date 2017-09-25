@@ -7,18 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	KEYRING_SERVICES_RECEIVE,
-	KEYRING_SERVICES_REQUEST,
-	KEYRING_SERVICES_REQUEST_FAILURE,
-	KEYRING_SERVICES_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import reducer, {
-	items,
-	isFetching,
-} from '../reducer';
+import reducer, { items, isFetching } from '../reducer';
+import { KEYRING_SERVICES_RECEIVE, KEYRING_SERVICES_REQUEST, KEYRING_SERVICES_REQUEST_FAILURE, KEYRING_SERVICES_REQUEST_SUCCESS, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalKeyringServices = {

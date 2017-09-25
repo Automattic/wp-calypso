@@ -6,19 +6,9 @@ import { get, merge, omit, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	CURRENT_USER_ID_SET,
-	POST_COUNTS_RECEIVE,
-	POST_COUNTS_REQUEST,
-	POST_COUNTS_REQUEST_SUCCESS,
-	POST_COUNTS_REQUEST_FAILURE,
-	POST_COUNTS_RESET_INTERNAL_STATE,
-	POST_DELETE,
-	POST_SAVE,
-	POSTS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { countsSchema } from './schema';
+import { CURRENT_USER_ID_SET, POST_COUNTS_RECEIVE, POST_COUNTS_REQUEST, POST_COUNTS_REQUEST_SUCCESS, POST_COUNTS_REQUEST_FAILURE, POST_COUNTS_RESET_INTERNAL_STATE, POST_DELETE, POST_SAVE, POSTS_RECEIVE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated post types requesting state after an action has been

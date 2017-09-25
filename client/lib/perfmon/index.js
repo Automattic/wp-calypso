@@ -1,16 +1,15 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+import { debounce, each, remove } from 'lodash';
+import page from 'page';
+
+/**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 
-/**
- * External dependencies
- */
-import { debounce, each, remove } from 'lodash';
-
-import page from 'page';
-
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:perfmon' );
 
 const PLACEHOLDER_CLASSES = [

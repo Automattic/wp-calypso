@@ -2,25 +2,17 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map } from 'lodash';
 import i18n from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:site-plans:actions' );
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createSitePlanObject } from './assembler';
-import {
-	SITE_PLANS_FETCH,
-	SITE_PLANS_FETCH_COMPLETED,
-	SITE_PLANS_FETCH_FAILED,
-	SITE_PLANS_REMOVE,
-	SITE_PLANS_TRIAL_CANCEL,
-	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-	SITE_PLANS_TRIAL_CANCEL_FAILED
-} from 'state/action-types';
 import wpcom from 'lib/wp';
+import { SITE_PLANS_FETCH, SITE_PLANS_FETCH_COMPLETED, SITE_PLANS_FETCH_FAILED, SITE_PLANS_REMOVE, SITE_PLANS_TRIAL_CANCEL, SITE_PLANS_TRIAL_CANCEL_COMPLETED, SITE_PLANS_TRIAL_CANCEL_FAILED } from 'state/action-types';
+
+const debug = debugFactory( 'calypso:site-plans:actions' );
 
 /**
  * Cancels the specified plan trial for the given site.

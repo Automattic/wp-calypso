@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
+import StoreGroundControl from './store-ground-control';
 import Count from 'components/count';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarSeparator from 'layout/sidebar/separator';
-import StoreGroundControl from './store-ground-control';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 
 class StoreSidebar extends Component {
 	static propTypes = {

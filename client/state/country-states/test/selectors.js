@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCountryStates,
-	isCountryStatesFetching,
-} from '../selectors';
+import { getCountryStates, isCountryStatesFetching } from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {

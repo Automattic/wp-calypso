@@ -1,39 +1,34 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { find } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AdsEarnings from 'my-sites/ads/form-earnings';
-import AdsSettings from 'my-sites/ads/form-settings';
-import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import Card from 'components/card';
+import QueryWordadsStatus from 'components/data/query-wordads-status';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
-import Card from 'components/card';
-import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
-import {
-	isRequestingWordAdsApprovalForSite,
-	getWordAdsErrorForSite,
-	getWordAdsSuccessForSite
-} from 'state/wordads/approve/selectors';
+import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
-import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
-import { wordadsUnsafeValues } from 'state/wordads/status/schema';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import AdsEarnings from 'my-sites/ads/form-earnings';
+import AdsSettings from 'my-sites/ads/form-settings';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import { isRequestingWordAdsApprovalForSite, getWordAdsErrorForSite, getWordAdsSuccessForSite } from 'state/wordads/approve/selectors';
+import { wordadsUnsafeValues } from 'state/wordads/status/schema';
+import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 
 class AdsMain extends Component {
 	static propTypes = {

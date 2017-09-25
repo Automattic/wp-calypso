@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-import url from 'url';
+import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
- * Internal dependencies.
+ * Internal dependencies
  */
-import Site from './site';
-
-import Me from './me';
-import MailingList from './mailing-list';
 import AccountRecoveryReset from './account-recovery-reset';
+import MailingList from './mailing-list';
+import Me from './me';
+import Site from './site';
 import config from 'config';
 import i18n from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
+import url from 'url';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets

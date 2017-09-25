@@ -1,15 +1,9 @@
 /**
  * Internal dependencies
  */
+import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
+import { DOCUMENT_HEAD_LINK_SET, DOCUMENT_HEAD_META_SET, DOCUMENT_HEAD_TITLE_SET, DOCUMENT_HEAD_UNREAD_COUNT_SET } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-
-import {
-	DOCUMENT_HEAD_LINK_SET,
-	DOCUMENT_HEAD_META_SET,
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
-} from 'state/action-types';
-import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
 export const title = createReducer( '', {
 	[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => ( action.title )

@@ -1,37 +1,28 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
-import QueryPosts from 'components/data/query-posts';
-import Page from './page';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
-import EmptyContent from 'components/empty-content';
-import NoResults from 'my-sites/no-results';
-import Placeholder from './placeholder';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
-import {
-	hasInitializedSites,
-} from 'state/selectors';
-import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
-	isSitePostsLastPageForQuery,
- } from 'state/posts/selectors';
-import {
-	getSite
-} from 'state/sites/selectors';
+import { sortPagesHierarchically } from './helpers';
+import Page from './page';
+import Placeholder from './placeholder';
+import QueryPosts from 'components/data/query-posts';
+import EmptyContent from 'components/empty-content';
+import ListEnd from 'components/list-end';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import { mapPostStatus as mapStatus } from 'lib/route';
+import NoResults from 'my-sites/no-results';
+import { getSitePostsForQueryIgnoringPage, isRequestingSitePostsForQuery, isSitePostsLastPageForQuery } from 'state/posts/selectors';
+import { hasInitializedSites } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
 
 export default class PageList extends Component {
 	static propTypes = {

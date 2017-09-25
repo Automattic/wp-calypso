@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,8 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import { requestThumbnail } from 'state/reader/thumbnails/actions';
+import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 
 class QueryReaderThumbnails extends Component {
 	componentWillMount() {

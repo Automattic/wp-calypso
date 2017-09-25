@@ -1,8 +1,8 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
 import classnames from 'classnames';
+import React, { Component } from 'react';
 
 export default class Image extends Component {
 	static defaultProps = {

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { keys, omit, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import FormTextInput from 'components/forms/form-text-input';
 
 export default class FormTextInputWithAction extends Component {
 	static propTypes = {

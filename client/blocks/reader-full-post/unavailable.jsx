@@ -2,18 +2,18 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
-import config from 'config';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
-import DocumentHead from 'components/data/document-head';
 import ReaderFullPostBack from './back';
+import DocumentHead from 'components/data/document-head';
+import ReaderMain from 'components/reader-main';
+import config from 'config';
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	return (

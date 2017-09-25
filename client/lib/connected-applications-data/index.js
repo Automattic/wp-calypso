@@ -1,10 +1,15 @@
 /**
  * External dependencies
  */
-import { filter, find } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:connected-applications-data' );
+import { filter, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import Emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:connected-applications-data' );
 
 /**
  * Internal dependencies

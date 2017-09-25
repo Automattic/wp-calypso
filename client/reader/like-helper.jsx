@@ -1,5 +1,7 @@
 /** @format */
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import { isDiscoverPost, isInternalDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
 
 const exported = {

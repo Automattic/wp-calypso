@@ -2,36 +2,36 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { get, noop, some, flatMap } from 'lodash';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { get, noop, some, flatMap } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import PostTime from 'reader/post-time';
-import Gravatar from 'components/gravatar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { getStreamUrl } from 'reader/route';
-import PostCommentContent from './post-comment-content';
-import PostCommentForm from './form';
+import CommentActions from './comment-actions';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE } from 'state/comments/constants';
-import { decodeEntities } from 'lib/formatting';
+import PostCommentForm from './form';
+import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
-import CommentActions from './comment-actions';
-import Emojify from 'components/emojify';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import Emojify from 'components/emojify';
+import Gravatar from 'components/gravatar';
+import { isEnabled } from 'config';
+import { decodeEntities } from 'lib/formatting';
 import withDimensions from 'lib/with-dimensions';
+import PostTime from 'reader/post-time';
+import { getStreamUrl } from 'reader/route';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { expandComments } from 'state/comments/actions';
+import { PLACEHOLDER_STATE } from 'state/comments/constants';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.

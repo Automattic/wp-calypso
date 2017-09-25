@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import request from 'superagent';
 
-import Dispatcher from 'dispatcher';
+/**
+ * Internal dependencies
+ */
 import { actions } from './constants';
+import Dispatcher from 'dispatcher';
 
 let timeout;
 

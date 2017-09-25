@@ -1,36 +1,24 @@
 /**
- *	External dependencies
+ * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
 import classnames from 'classnames';
+import createReactClass from 'create-react-class';
+import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 import { assign, isArray, isEmpty } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- *	Internal dependencies
+ * Internal dependencies
  */
-import {
-	first,
-	when,
-	forEach
-} from './functional';
 import autoscroll from './autoscroll';
-import Emojify from 'components/emojify';
+import { first, when, forEach } from './functional';
 import scrollbleed from './scrollbleed';
-import { translate } from 'i18n-calypso';
+import Emojify from 'components/emojify';
+import { isExternal, addSchemeIfMissing, setUrlScheme } from 'lib/url';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	getHappychatConnectionStatus,
-	getHappychatTimeline
-} from 'state/happychat/selectors';
-import {
-	isExternal,
-	addSchemeIfMissing,
-	setUrlScheme,
-} from 'lib/url';
-
-import debugFactory from 'debug';
+import { getHappychatConnectionStatus, getHappychatTimeline } from 'state/happychat/selectors';
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );

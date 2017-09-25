@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import React from 'react';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { PageViewTracker } from '../';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-import { PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
 	let clock;

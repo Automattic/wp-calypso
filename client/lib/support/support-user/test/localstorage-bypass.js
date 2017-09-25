@@ -7,14 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	key,
-	clear,
-	setItem,
-	getItem,
-	removeItem,
-	length,
-} from '../localstorage-bypass';
+import { key, clear, setItem, getItem, removeItem, length } from '../localstorage-bypass';
 
 describe( 'localstorage-bypass', () => {
 	// Spy on the original localStorage functions

@@ -7,21 +7,14 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE,
-} from 'woocommerce/state/action-types';
-import {
-	actionListStepNext,
-	actionListStepSuccess,
-	actionListStepFailure,
-	actionListClear,
-} from 'woocommerce/state/action-list/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { actionListStepNext, actionListStepSuccess, actionListStepFailure, actionListClear } from 'woocommerce/state/action-list/actions';
+import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
+import { getPaymentMethods, arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
+import { saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
 import { areSettingsGeneralLoaded, getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
-import { getPaymentMethods, arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
-import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
 import { getPaymentMethodsWithEdits } from 'woocommerce/state/ui/payments/methods/selectors';
 
 /**

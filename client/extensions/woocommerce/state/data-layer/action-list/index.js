@@ -3,20 +3,13 @@
  */
 import debugFactor from 'debug';
 
-const debug = debugFactor( 'woocommerce:action-list' );
-
 /**
  * Internal dependencies
  */
-import {
-	actionListStepNext,
-	actionListAnnotate,
-} from 'woocommerce/state/action-list/actions';
-import {
-	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
-	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
-	WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
-} from 'woocommerce/state/action-types';
+import { actionListStepNext, actionListAnnotate } from 'woocommerce/state/action-list/actions';
+import { WOOCOMMERCE_ACTION_LIST_STEP_NEXT, WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS, WOOCOMMERCE_ACTION_LIST_STEP_FAILURE } from 'woocommerce/state/action-types';
+
+const debug = debugFactor( 'woocommerce:action-list' );
 
 export default {
 	[ WOOCOMMERCE_ACTION_LIST_STEP_NEXT ]: [ handleStepNext ],

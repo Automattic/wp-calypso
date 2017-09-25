@@ -8,17 +8,9 @@ import { match } from 'sinon';
  * Internal dependencies
  */
 import { requestSiteMonitorSettings, updateSiteMonitorSettings } from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SITE_MONITOR_SETTINGS_RECEIVE, SITE_MONITOR_SETTINGS_REQUEST, SITE_MONITOR_SETTINGS_REQUEST_FAILURE, SITE_MONITOR_SETTINGS_REQUEST_SUCCESS, SITE_MONITOR_SETTINGS_UPDATE, SITE_MONITOR_SETTINGS_UPDATE_FAILURE, SITE_MONITOR_SETTINGS_UPDATE_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	SITE_MONITOR_SETTINGS_RECEIVE,
-	SITE_MONITOR_SETTINGS_REQUEST,
-	SITE_MONITOR_SETTINGS_REQUEST_FAILURE,
-	SITE_MONITOR_SETTINGS_REQUEST_SUCCESS,
-	SITE_MONITOR_SETTINGS_UPDATE,
-	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
-	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

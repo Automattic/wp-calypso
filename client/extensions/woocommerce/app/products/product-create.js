@@ -1,50 +1,35 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { head } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import {
-	clearProductEdits,
-	editProduct,
-	editProductAttribute,
-	createProductActionList,
-} from 'woocommerce/state/ui/products/actions';
-import {
-	clearProductCategoryEdits,
-	editProductCategory,
-} from 'woocommerce/state/ui/product-categories/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
-import {
-	getCurrentlyEditingId,
-	getProductWithLocalEdits,
-	getProductEdits
-} from 'woocommerce/state/ui/products/selectors';
-import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import {
-	clearProductVariationEdits,
-	editProductVariation,
-} from 'woocommerce/state/ui/products/variations/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
+import Main from 'components/main';
+import { ProtectFormGuard } from 'lib/protect-form';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { clearProductCategoryEdits, editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { clearProductEdits, editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
+import { getCurrentlyEditingId, getProductWithLocalEdits, getProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { clearProductVariationEdits, editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
+import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 
 class ProductCreate extends React.Component {
 	static propTypes = {

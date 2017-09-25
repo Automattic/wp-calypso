@@ -1,19 +1,14 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import itemsSchema from './schema';
+import { POST_LIKES_RECEIVE, POST_LIKES_REQUEST, POST_LIKES_REQUEST_SUCCESS, POST_LIKES_REQUEST_FAILURE } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
-	POST_LIKES_REQUEST_SUCCESS,
-	POST_LIKES_REQUEST_FAILURE
-} from 'state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

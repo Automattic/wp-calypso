@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SectionHeader from 'components/section-header';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import { isJetpackModuleActive } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {

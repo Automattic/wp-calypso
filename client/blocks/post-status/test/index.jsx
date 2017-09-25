@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 import Gridicon from 'gridicons';
+import { identity } from 'lodash';
+import React from 'react';
 
 describe( 'PostStatus', ( ) => {
 	let PostStatus;

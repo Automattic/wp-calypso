@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
-
 import page from 'page';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import analyticsMixin from 'lib/mixins/analytics';
 
 import paths from 'my-sites/domains/paths';
-import Button from 'components/button';
 
 const PrimaryDomainButton = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],

@@ -7,9 +7,9 @@ import { intersection, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { ActionTypes, LoadStatus } from './constants';
 import Dispatcher from 'dispatcher';
 import Shortcode from 'lib/shortcode';
-import { ActionTypes, LoadStatus } from './constants';
 
 class ShortcodesStore extends ReduceStore {
 	getInitialState() {

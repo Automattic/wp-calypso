@@ -1,33 +1,17 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	POST_EDIT,
-	SITE_SETTINGS_UPDATE,
-	TERM_REMOVE,
-	TERMS_RECEIVE,
-	TERMS_REQUEST,
-	TERMS_REQUEST_SUCCESS,
-	TERMS_REQUEST_FAILURE
-} from 'state/action-types';
-import {
-	addTerm,
-	receiveTerm,
-	receiveTerms,
-	removeTerm,
-	requestSiteTerms,
-	updateTerm,
-	deleteTerm
-} from '../actions';
+import { addTerm, receiveTerm, receiveTerms, removeTerm, requestSiteTerms, updateTerm, deleteTerm } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
 import TermQueryManager from 'lib/query-manager/term';
+import { POST_EDIT, SITE_SETTINGS_UPDATE, TERM_REMOVE, TERMS_RECEIVE, TERMS_REQUEST, TERMS_REQUEST_SUCCESS, TERMS_REQUEST_FAILURE } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 /**
  * Module Variables

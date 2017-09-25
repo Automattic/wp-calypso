@@ -2,25 +2,17 @@
  * External dependencies
  */
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
-import createSelector from 'lib/create-selector';
-import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
  */
-import {
-	getNormalizedPostsQuery,
-	getSerializedPostsQuery,
-	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage,
-	mergeIgnoringArrays,
-	normalizePostForEditing,
-	normalizePostForDisplay
-} from './utils';
-import { decodeURIIfValid } from 'lib/url';
-import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
+import { getNormalizedPostsQuery, getSerializedPostsQuery, getDeserializedPostsQueryDetails, getSerializedPostsQueryWithoutPage, mergeIgnoringArrays, normalizePostForEditing, normalizePostForDisplay } from './utils';
+import createSelector from 'lib/create-selector';
 import addQueryArgs from 'lib/route/add-query-args';
+import { decodeURIIfValid } from 'lib/url';
+import moment from 'moment-timezone';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Returns a post object by its global ID.

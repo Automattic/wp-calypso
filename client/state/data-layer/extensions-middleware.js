@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { middleware } from './wpcom-api-middleware';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 const configuration = configureMiddleware( Object.create( null ), Object.create( null ) );
 

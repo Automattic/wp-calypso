@@ -1,8 +1,8 @@
 /**
-* External dependencies
-*/
-import React, { Component } from 'react';
+ * External dependencies
+ */
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import { isJetpackModuleActive } from 'state/selectors';

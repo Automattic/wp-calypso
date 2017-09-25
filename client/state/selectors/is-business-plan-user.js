@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Returns a boolean flag indicating if the current user is a business plan user.

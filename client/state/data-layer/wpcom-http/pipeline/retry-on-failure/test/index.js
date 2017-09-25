@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import deepFreeze from 'deep-freeze';
 import { merge } from 'lodash';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useFakeTimers } from 'test/helpers/use-sinon';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const retryOnFailure = rof();
 const retryWithDelay = delay => rof( () => delay );

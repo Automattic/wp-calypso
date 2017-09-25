@@ -7,13 +7,8 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
 import reducer, { initialClientsData } from '../reducer';
+import { OAUTH2_CLIENT_DATA_REQUEST, OAUTH2_CLIENT_DATA_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	// Uses default data but reduces the size of this data set for tests

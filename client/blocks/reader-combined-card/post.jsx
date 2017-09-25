@@ -1,30 +1,30 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { has } from 'lodash';
-import ReactDom from 'react-dom';
+import classnames from 'classnames';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
+import { has } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import ReaderVisitLink from 'blocks/reader-visit-link';
 import ReaderAuthorLink from 'blocks/reader-author-link';
-import { recordPermalinkClick } from 'reader/stats';
-import PostTime from 'reader/post-time';
+import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
+import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import * as stats from 'reader/stats';
-import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
+import ReaderVisitLink from 'blocks/reader-visit-link';
+import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import PostTime from 'reader/post-time';
+import { recordPermalinkClick } from 'reader/stats';
+import * as stats from 'reader/stats';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {

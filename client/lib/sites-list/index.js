@@ -1,12 +1,12 @@
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import SitesList from './list';
+import Dispatcher from 'dispatcher';
+import PollerPool from 'lib/data-poller';
 import { action as InvitesActionTypes } from 'lib/invites/constants';
 import { JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST } from 'state/action-types';
 
-import SitesList from './list';
-import PollerPool from 'lib/data-poller';
-import Dispatcher from 'dispatcher';
 let	_sites;
 
 export default function() {

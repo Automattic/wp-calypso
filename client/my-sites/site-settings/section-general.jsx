@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import GeneralForm from 'my-sites/site-settings/form-general';
 import SiteTools from './site-tools';
+import GeneralForm from 'my-sites/site-settings/form-general';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const SiteSettingsGeneral = ( { site } ) => {

@@ -1,20 +1,16 @@
 /**
  * External dependencies
  */
-import IO from 'socket.io-client';
+import debugFactory from 'debug';
 import { EventEmitter } from 'events';
-import config from 'config';
+import IO from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
-
-/*
- * Happychat client connection for Socket.IO
- */
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 

@@ -1,51 +1,34 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { findIndex, head, noop, map, flow, partial, some, values, isEmpty, identity, includes, uniqueId } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	findIndex,
-	head,
-	noop,
-	map,
-	flow,
-	partial,
-	some,
-	values,
-	isEmpty,
-	identity,
-	includes,
-	uniqueId,
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import analytics from 'lib/analytics';
-import {
-	recordEvent,
-	recordStat
-} from 'lib/posts/stats';
+import MediaModalDetail from './detail';
 import MediaModalGallery from './gallery';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import Dialog from 'components/dialog';
-import accept from 'lib/accept';
-
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { resetMediaModalView } from 'state/ui/media-modal/actions';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
-import MediaModalDetail from './detail';
+import Dialog from 'components/dialog';
+import accept from 'lib/accept';
+import analytics from 'lib/analytics';
+import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
+import { recordEvent, recordStat } from 'lib/posts/stats';
+import MediaLibrary from 'my-sites/media-library';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { deleteMedia } from 'state/media/actions';
+import { getSite } from 'state/sites/selectors';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { resetMediaModalView } from 'state/ui/media-modal/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { getMediaModalView } from 'state/ui/media-modal/selectors';
 
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return ! isParentReady( mediaItems ) ||

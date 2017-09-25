@@ -1,13 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import page from 'page';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import controller from 'my-sites/controller';
 import postsController from './controller';
+import controller from 'my-sites/controller';
 
 export default function() {
 	page( '/posts/:author?/:status?/:domain?',

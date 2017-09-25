@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
 import Button from 'components/button';
 import Card from 'components/card';
-import upgradesActions from 'lib/upgrades/actions';
-import { errorNotice } from 'state/notices/actions';
-import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
-import { getRegistrantWhois } from 'state/selectors';
 import QueryWhois from 'components/data/query-whois';
+import upgradesActions from 'lib/upgrades/actions';
+import support from 'lib/url/support';
+import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
+import { errorNotice } from 'state/notices/actions';
+import { getRegistrantWhois } from 'state/selectors';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {

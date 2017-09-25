@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import QueryPlans from 'components/data/query-plans';
+import FeatureExample from 'components/feature-example';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
+import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import { isJetpackSite } from 'state/sites/selectors';
-import FeatureExample from 'components/feature-example';
-import Banner from 'components/banner';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS
-} from 'lib/plans/constants';
 
 const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 	return (

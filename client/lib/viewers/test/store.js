@@ -6,9 +6,9 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import actions from './fixtures/actions';
 import site from './fixtures/site';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Viewers Store', () => {
 	const siteId = site.ID;

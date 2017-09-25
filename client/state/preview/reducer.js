@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'state/action-types';
 import { previewSchema } from './schema';
+import * as ActionTypes from 'state/action-types';
 
 const siteInitialState = {
 	previousCustomizations: [],

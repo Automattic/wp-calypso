@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
-
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -10,6 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { actions } from '../constants';
+import Dispatcher from 'dispatcher';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'oAuthStore', function() {

@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, noop } from 'lodash';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import Emojify from 'components/emojify';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
-import Emojify from 'components/emojify';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = ( {} ) => {

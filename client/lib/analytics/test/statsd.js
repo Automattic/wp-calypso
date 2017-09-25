@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import url from 'url';
 
 /**
  * Internal dependencies
  */
 import { statsdTimingUrl } from '../statsd';
+import url from 'url';
 
 describe( 'StatsD Analytics', function() {
 	describe( 'statsdTimingUrl', function() {

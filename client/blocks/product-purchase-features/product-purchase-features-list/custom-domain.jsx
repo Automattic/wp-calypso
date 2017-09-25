@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

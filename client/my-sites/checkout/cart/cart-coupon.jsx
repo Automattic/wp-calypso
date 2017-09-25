@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import upgradesActions from 'lib/upgrades/actions';
 
 export default localize( React.createClass( {

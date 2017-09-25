@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react'; // eslint-disable-line no-unused-vars
-import { flatten, values } from 'lodash';
 import i18n from 'i18n-calypso';
+import { flatten, values } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

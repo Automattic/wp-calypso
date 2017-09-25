@@ -1,28 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import Gridicon from 'gridicons';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Next,
-	Quit,
-	Continue
-} from 'layout/guided-tours/config-elements';
-import {
-	doesSelectedSiteHaveMediaFiles,
-	isNewUser,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Next, Quit, Continue } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { doesSelectedSiteHaveMediaFiles, isNewUser } from 'state/ui/guided-tours/contexts';
 
 export const MediaBasicsTour = makeTour(
 	<Tour

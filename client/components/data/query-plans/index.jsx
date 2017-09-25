@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPlans } from 'state/plans/selectors';
 import { requestPlans } from 'state/plans/actions';
+import { isRequestingPlans } from 'state/plans/selectors';
 
 class QueryPlans extends Component {
 	componentWillMount() {

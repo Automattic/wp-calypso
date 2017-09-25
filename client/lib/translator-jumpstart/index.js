@@ -2,19 +2,19 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import React from 'react';
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import analytics from 'lib/analytics';
 import loadScript from 'lib/load-script';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
-import analytics from 'lib/analytics';
 
 const debug = debugModule( 'calypso:community-translator' );
 

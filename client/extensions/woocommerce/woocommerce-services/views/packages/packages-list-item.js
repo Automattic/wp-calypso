@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const PackagesListItem = ( {
 	isPlaceholder,

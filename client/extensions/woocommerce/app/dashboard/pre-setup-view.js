@@ -1,27 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
-import {
-	areSettingsGeneralLoaded,
-	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { errorNotice } from 'state/notices/actions';
-import { getCountryData, getCountries } from 'woocommerce/lib/countries';
-import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
-import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
+import { errorNotice } from 'state/notices/actions';
+import AddressView from 'woocommerce/components/address-view';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { getCountryData, getCountries } from 'woocommerce/lib/countries';
+import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
+import { areSettingsGeneralLoaded, getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
+import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 
 class PreSetupView extends Component {
 	constructor( props ) {

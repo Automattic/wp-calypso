@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getStatus,
-} from '../selectors';
+import { getStatus } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getStatus()', () => {

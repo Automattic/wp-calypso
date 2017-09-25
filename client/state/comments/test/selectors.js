@@ -4,14 +4,10 @@
  */
 import { expect } from 'chai';
 
-/***
+/**
  * Internal dependencies
  */
-import {
-	getPostOldestCommentDate,
-	getPostMostRecentCommentDate,
-	getCommentLike,
-} from '../selectors';
+import { getPostOldestCommentDate, getPostMostRecentCommentDate, getCommentLike } from '../selectors';
 
 const state = {
 	comments: {

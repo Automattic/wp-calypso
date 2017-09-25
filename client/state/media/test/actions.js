@@ -6,22 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	MEDIA_DELETE,
-	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
-	MEDIA_RECEIVE
-} from 'state/action-types';
-import {
-	receiveMedia,
-	deleteMedia,
-	requestMediaItem,
-	requestingMediaItem,
-	successMediaItemRequest,
-	failMediaItemRequest
-} from '../actions';
+import { receiveMedia, deleteMedia, requestMediaItem, requestingMediaItem, successMediaItemRequest, failMediaItemRequest } from '../actions';
+import { MEDIA_DELETE, MEDIA_ITEM_REQUEST, MEDIA_ITEM_REQUEST_FAILURE, MEDIA_ITEM_REQUEST_SUCCESS, MEDIA_ITEM_REQUESTING, MEDIA_RECEIVE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'receiveMedia()', () => {

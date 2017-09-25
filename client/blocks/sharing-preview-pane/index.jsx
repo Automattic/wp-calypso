@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getPostImage, getExcerptForPost } from './utils';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
 import LinkedinSharePreview from 'components/share/linkedin-share-preview';
-import TwitterSharePreview from 'components/share/twitter-share-preview';
 import TumblrSharePreview from 'components/share/tumblr-share-preview';
+import TwitterSharePreview from 'components/share/twitter-share-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSitePost } from 'state/posts/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { getSeoTitle, getSiteSlug } from 'state/sites/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 const serviceNames = {
 	facebook: 'Facebook',

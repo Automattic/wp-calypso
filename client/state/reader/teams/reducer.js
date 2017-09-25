@@ -1,15 +1,15 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { itemsSchema } from './schema';
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import { itemsSchema } from './schema';
 
 export const items = createReducer(
 	[],

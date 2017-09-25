@@ -6,15 +6,9 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_PAYMENT_METHOD_CANCEL,
-	WOOCOMMERCE_PAYMENT_METHOD_CLOSE,
-	WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD,
-	WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED,
-	WOOCOMMERCE_PAYMENT_METHOD_OPEN,
-} from '../../../action-types';
+import { WOOCOMMERCE_PAYMENT_METHOD_CANCEL, WOOCOMMERCE_PAYMENT_METHOD_CLOSE, WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD, WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED, WOOCOMMERCE_PAYMENT_METHOD_OPEN } from '../../../action-types';
 import { getBucket } from '../../helpers';
+import { createReducer } from 'state/utils';
 
 export const initialState = {
 	creates: [],

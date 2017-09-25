@@ -6,8 +6,8 @@ import { get, isObject, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormInputValidation from 'components/forms/form-input-validation';
 import Buttons from './buttons';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormPhoneInput from 'components/forms/form-phone-input';
 
 /**
  * Internal dependencies

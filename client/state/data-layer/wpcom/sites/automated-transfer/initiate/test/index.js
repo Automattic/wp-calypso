@@ -7,17 +7,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	initiateTransferWithPluginZip,
-	receiveResponse,
-	receiveError,
-	updateUploadProgress,
-} from '../';
+import { initiateTransferWithPluginZip, receiveResponse, receiveError, updateUploadProgress } from '../';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
-import {
-	pluginUploadError,
-	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
+import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
 
 const siteId = 1916284;
 

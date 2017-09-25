@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 export default () => {
 	return (

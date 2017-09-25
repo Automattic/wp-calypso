@@ -7,14 +7,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	deactivateSucceeded,
-	deactivateFailed,
-} from '../';
-import {
-	rewindDeactivateSuccess,
-	rewindDeactivateFailure,
-} from 'state/activity-log/actions';
+import { deactivateSucceeded, deactivateFailed } from '../';
+import { rewindDeactivateSuccess, rewindDeactivateFailure } from 'state/activity-log/actions';
 
 const siteId = 77203074;
 

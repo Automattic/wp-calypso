@@ -9,22 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SpinnerButton from 'components/spinner-button';
-import FoldableCard from 'components/foldable-card';
-import Interval, { EVERY_SECOND } from 'lib/interval';
 import AdvancedSettings from './advanced-settings';
+import FoldableCard from 'components/foldable-card';
+import SpinnerButton from 'components/spinner-button';
+import Interval, { EVERY_SECOND } from 'lib/interval';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import {
-	advancedSettingsFetch,
-	exportStatusFetch,
-	setPostType,
-	startExport,
-} from 'state/site-settings/exporter/actions';
-import {
-	shouldShowProgress,
-	getSelectedPostType,
-	isExporting,
-} from 'state/site-settings/exporter/selectors';
+import { advancedSettingsFetch, exportStatusFetch, setPostType, startExport } from 'state/site-settings/exporter/actions';
+import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/site-settings/exporter/selectors';
 
 class ExportCard extends Component {
 	componentWillMount() {

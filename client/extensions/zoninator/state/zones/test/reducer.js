@@ -7,14 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	ZONINATOR_REQUEST_ERROR,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_UPDATE_ZONE,
-	ZONINATOR_UPDATE_ZONES,
-} from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { ZONINATOR_REQUEST_ERROR, ZONINATOR_REQUEST_ZONES, ZONINATOR_UPDATE_ZONE, ZONINATOR_UPDATE_ZONES } from '../../action-types';
 import reducer, { requesting, items } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

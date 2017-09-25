@@ -8,8 +8,8 @@ import { cloneDeep, includes, omit, range } from 'lodash';
  * Internal dependencies
  */
 import QueryManager from '../';
-import PaginatedQueryKey from './key';
 import { DEFAULT_QUERY, PAGINATION_QUERY_KEYS } from './constants';
+import PaginatedQueryKey from './key';
 
 /**
  * PaginatedQueryManager manages paginated data which can be queried and

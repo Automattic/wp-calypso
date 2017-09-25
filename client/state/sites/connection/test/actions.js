@@ -8,14 +8,9 @@ import { match } from 'sinon';
  * Internal dependencies
  */
 import { requestConnectionStatus } from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SITE_CONNECTION_STATUS_RECEIVE, SITE_CONNECTION_STATUS_REQUEST, SITE_CONNECTION_STATUS_REQUEST_FAILURE, SITE_CONNECTION_STATUS_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	SITE_CONNECTION_STATUS_RECEIVE,
-	SITE_CONNECTION_STATUS_REQUEST,
-	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

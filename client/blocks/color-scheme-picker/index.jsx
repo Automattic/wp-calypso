@@ -2,19 +2,19 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import getColorSchemesData from './constants';
 import QueryPreferences from 'components/data/query-preferences';
+import FormRadiosBar from 'components/forms/form-radios-bar';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import getColorSchemesData from './constants';
-import FormRadiosBar from 'components/forms/form-radios-bar';
 
 class ColorSchemePicker extends PureComponent {
 	static propTypes = {

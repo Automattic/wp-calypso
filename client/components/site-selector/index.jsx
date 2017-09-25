@@ -2,37 +2,32 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import scrollIntoView from 'dom-scroll-into-view';
+import { localize } from 'i18n-calypso';
+import { filter, flow, get, includes, keyBy, noop, size } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classNames from 'classnames';
-import { filter, flow, get, includes, keyBy, noop, size } from 'lodash';
-import scrollIntoView from 'dom-scroll-into-view';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import {
-	areAllSitesSingleUser,
-	getSites,
-	getVisibleSites,
-	isRequestingMissingSites,
-} from 'state/selectors';
-import AllSites from 'my-sites/all-sites';
+import SiteSelectorAddSite from './add-site';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
-import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+import AllSites from 'my-sites/all-sites';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getPreference } from 'state/preferences/selectors';
+import { areAllSitesSingleUser, getSites, getVisibleSites, isRequestingMissingSites } from 'state/selectors';
 import { isPluginActive } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const ALL_SITES = 'ALL_SITES';
 

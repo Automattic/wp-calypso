@@ -6,14 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	repliesUpdated,
-} from '../reducer';
-import reducer from 'woocommerce/state/sites/reducer';
-import {
-	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
-} from 'woocommerce/state/action-types';
+import { repliesUpdated } from '../reducer';
 import reviewReplies from './fixtures/review-replies';
+import { WOOCOMMERCE_REVIEW_REPLIES_UPDATED } from 'woocommerce/state/action-types';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'repliesUpdate', () => {

@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import mockery from 'mockery';
+import { shallow } from 'enzyme';
 import { noop } from 'lodash';
+import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies

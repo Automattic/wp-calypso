@@ -1,9 +1,13 @@
 /**
+ * External dependencies
+ */
+import { snakeCase } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import { type as domainTypes } from 'lib/domains/constants';
-import { snakeCase } from 'lodash';
 
 const getDomainTypeText = function( domain ) {
 	switch ( domain.type ) {

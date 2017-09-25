@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
 import { defer, mapValues, omit } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
+import SiteSelectorModal from 'components/site-selector-modal';
+import Theme from 'components/theme';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors';
+import { getTheme } from 'state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,

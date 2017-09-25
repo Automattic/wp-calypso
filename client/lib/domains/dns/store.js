@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducerStore } from 'lib/store';
 import { getInitialStateForDomain, reducer } from './reducer';
+import { createReducerStore } from 'lib/store';
 
 const DnsStore = createReducerStore( reducer );
 

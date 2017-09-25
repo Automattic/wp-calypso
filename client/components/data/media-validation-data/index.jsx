@@ -2,14 +2,12 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
- * Interanl dependencies
+ * Internal dependencies
  */
 import MediaValidationStore from 'lib/media/validation-store';
-
 import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {

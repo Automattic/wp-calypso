@@ -1,41 +1,32 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { range } from 'lodash';
+import page from 'page';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import formatCurrency from 'lib/format-currency';
-import {
-	areOrdersLoading,
-	areOrdersLoaded,
-	getOrders,
-	getTotalOrders
-} from 'woocommerce/state/sites/orders/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import humanDate from 'lib/human-date';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-} from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
-import OrderStatus from 'woocommerce/components/order-status';
+import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import formatCurrency from 'lib/format-currency';
+import humanDate from 'lib/human-date';
+import OrderStatus from 'woocommerce/components/order-status';
 import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { areOrdersLoading, areOrdersLoaded, getOrders, getTotalOrders } from 'woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 
 class Orders extends Component {
 	componentDidMount() {

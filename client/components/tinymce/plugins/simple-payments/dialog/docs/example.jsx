@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { get, noop } from 'lodash';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies

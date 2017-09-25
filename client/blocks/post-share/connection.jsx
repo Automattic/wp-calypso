@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React from 'react';
-import cssSafeUrl from 'lib/css-safe-url';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import FormToggle from 'components/forms/form-toggle/compact';
-import classNames from 'classnames';
-import SocialLogo from 'social-logos';
+import cssSafeUrl from 'lib/css-safe-url';
 
 const PostShareConnection = ( {
 	connection,

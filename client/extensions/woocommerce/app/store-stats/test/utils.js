@@ -7,15 +7,8 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	calculateDelta,
-	formatValue,
-	getDelta,
-	getEndPeriod,
-	getQueryDate,
-	getUnitPeriod
-} from '../utils';
 import { UNITS } from '../constants';
+import { calculateDelta, formatValue, getDelta, getEndPeriod, getQueryDate, getUnitPeriod } from '../utils';
 
 describe( 'calculateDelta', () => {
 	it( 'should return a correctly formed object', () => {

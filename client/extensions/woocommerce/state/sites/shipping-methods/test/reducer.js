@@ -7,11 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../../reducer';
-import { LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
-} from 'woocommerce/state/action-types';
 import { fetchShippingMethodsSuccess } from '../actions';
+import { WOOCOMMERCE_SHIPPING_METHODS_REQUEST } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'fetch shipping methods', () => {
 	it( 'should mark the shipping methods tree as "loading"', () => {

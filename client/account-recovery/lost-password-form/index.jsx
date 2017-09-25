@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, noop } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import Card from 'components/card';
 import FormButton from 'components/button';
+import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
+import support from 'lib/url/support';
 
 import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
-
-import {
-	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetOptionsError,
-} from 'state/selectors';
+import { isRequestingAccountRecoveryResetOptions, getAccountRecoveryResetOptionsError } from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
 	constructor( props ) {

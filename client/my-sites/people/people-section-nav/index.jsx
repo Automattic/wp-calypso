@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import config from 'config';
-import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find, get, includes } from 'lodash';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import Search from 'components/search';
-
-import UrlSearch from 'lib/mixins/url-search';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import config from 'config';
+import UrlSearch from 'lib/mixins/url-search';
 
 const PeopleSearch = React.createClass( {
 	displayName: 'PeopleSearch',

@@ -2,21 +2,21 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import assert from 'assert';
 import { identity } from 'lodash';
 import moment from 'moment';
-import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
+import support from 'lib/url/support';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import support from 'lib/url/support';
 
 describe( 'index', () => {
 	let DomainWarnings;

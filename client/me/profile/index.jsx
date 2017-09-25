@@ -1,32 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
+import EditGravatar from 'blocks/edit-gravatar';
+import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import EditGravatar from 'blocks/edit-gravatar';
-import ProfileLinks from 'me/profile-links';
-import userProfileLinks from 'lib/user-profile-links';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Card from 'components/card';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
+import observe from 'lib/mixins/data-observe';
+import { protectForm } from 'lib/protect-form';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import userProfileLinks from 'lib/user-profile-links';
+import eventRecorder from 'me/event-recorder';
+import formBase from 'me/form-base';
+import ProfileLinks from 'me/profile-links';
+import ReauthRequired from 'me/reauth-required';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 
 const debug = debugFactory( 'calypso:me:profile' );
 

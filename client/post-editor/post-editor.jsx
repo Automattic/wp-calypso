@@ -1,68 +1,68 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import ReactDom from 'react-dom';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { debounce, throttle, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { debounce, throttle, get } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
-import route from 'lib/route';
-import PostEditStore from 'lib/posts/post-edit-store';
-import EditorActionBar from 'post-editor/editor-action-bar';
-import FeaturedImage from 'post-editor/editor-featured-image';
-import EditorTitle from 'post-editor/editor-title';
-import EditorPageSlug from 'post-editor/editor-page-slug';
-import TinyMCE from 'components/tinymce';
+import EditorPreview from './editor-preview';
+import Site from 'blocks/site';
+import QueryPreferences from 'components/data/query-preferences';
+import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import TinyMCE from 'components/tinymce';
+import analytics from 'lib/analytics';
+import { removep } from 'lib/formatting';
+import actions from 'lib/posts/actions';
+import PostEditStore from 'lib/posts/post-edit-store';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import utils from 'lib/posts/utils';
+import { protectForm } from 'lib/protect-form';
+import route from 'lib/route';
+import { isWithinBreakpoint } from 'lib/viewport';
+import EditorActionBar from 'post-editor/editor-action-bar';
+import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import EditorDocumentHead from 'post-editor/editor-document-head';
+import FeaturedImage from 'post-editor/editor-featured-image';
+import EditorForbidden from 'post-editor/editor-forbidden';
+import EditorGroundControl from 'post-editor/editor-ground-control';
+import EditorNotice from 'post-editor/editor-notice';
+import EditorPageSlug from 'post-editor/editor-page-slug';
+import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
+import EditorSidebar from 'post-editor/editor-sidebar';
+import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import StatusLabel from 'post-editor/editor-status-label';
+import EditorTitle from 'post-editor/editor-title';
+import EditorWordCount from 'post-editor/editor-word-count';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import utils from 'lib/posts/utils';
-import EditorPreview from './editor-preview';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import analytics from 'lib/analytics';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
+import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+import { hasBrokenSiteUserConnection } from 'state/selectors';
+import { editedPostHasContent } from 'state/selectors';
+import { isSitePreviewable } from 'state/sites/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
-import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { hasBrokenSiteUserConnection } from 'state/selectors';
-import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
-import EditorDocumentHead from 'post-editor/editor-document-head';
-import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
-import EditorForbidden from 'post-editor/editor-forbidden';
-import EditorNotice from 'post-editor/editor-notice';
-import EditorWordCount from 'post-editor/editor-word-count';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import QueryPreferences from 'components/data/query-preferences';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { protectForm } from 'lib/protect-form';
-import EditorSidebar from 'post-editor/editor-sidebar';
-import Site from 'blocks/site';
-import StatusLabel from 'post-editor/editor-status-label';
-import { editedPostHasContent } from 'state/selectors';
-import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
-import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
-import { removep } from 'lib/formatting';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 export const PostEditor = localize( React.createClass( {
 	propTypes: {

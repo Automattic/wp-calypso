@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { find } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import page from 'page';
 import request from 'superagent';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import HeaderCake from 'components/header-cake';
 import DocsSelectorsResult from './result';
+import HeaderCake from 'components/header-cake';
+import { addQueryArgs } from 'lib/url';
 
 export default class DocsSelectorsSingle extends Component {
 	static propTypes = {

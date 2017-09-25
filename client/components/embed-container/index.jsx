@@ -1,15 +1,16 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { PureComponent } from 'react';
-import ReactDom from 'react-dom';
+import debugFactory from 'debug';
 import { assign, filter, forEach, forOwn, noop } from 'lodash';
 
+import React, { PureComponent } from 'react';
+import ReactDom from 'react-dom';
+
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );
 

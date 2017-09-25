@@ -1,26 +1,26 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import PlanBillingPeriod from './billing-period';
 import Card from 'components/card';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
 import SectionHeader from 'components/section-header';
-import PlanBillingPeriod from './billing-period';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading } from 'me/purchases/utils';
-import { getName, isExpired } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
+import { getName, isExpired } from 'lib/purchases';
+import { getPurchase, isDataLoading } from 'me/purchases/utils';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 
 class PurchasePlanDetails extends Component {
 	renderPlaceholder() {

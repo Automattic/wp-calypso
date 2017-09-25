@@ -11,10 +11,10 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import config from 'config';
+import { shouldSkipAds } from 'lib/analytics/utils';
 import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
  * Module variables

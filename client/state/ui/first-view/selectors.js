@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { memoize, some, startsWith, takeRightWhile, find, findLast } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { FIRST_VIEW_CONFIG } from './constants';
-import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
+import createSelector from 'lib/create-selector';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
+import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
+import { getActionLog } from 'state/ui/action-log/selectors';
 import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
+import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
 
 const getConfigForPath = memoize( path =>
 	find( FIRST_VIEW_CONFIG, entry =>

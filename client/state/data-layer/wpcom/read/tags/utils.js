@@ -3,6 +3,10 @@
  * External dependencies
  */
 import { map, compact, concat, isObject, isArray } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { decodeEntities } from 'lib/formatting';
 
 /**

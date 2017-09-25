@@ -6,10 +6,10 @@ import { assert, expect } from 'chai';
 /**
  * Internal dependencies
  */
+import userUtilsMock from './mocks/user-utils';
+import wpMock from './mocks/wp';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import wpMock from './mocks/wp';
-import userUtilsMock from './mocks/user-utils';
 
 describe( 'User Settings', () => {
 	let userSettings;

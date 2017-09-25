@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 
 const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;

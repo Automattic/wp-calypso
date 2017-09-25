@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import { size, map, first } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { size, map, first } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getUserDevices } from 'state/selectors';
 import StreamHeader from './stream-header';
 import FormSelect from 'components/forms/form-select';
+import { getUserDevices } from 'state/selectors';
 
 class NotificationSettingsFormDeviceSelector extends PureComponent {
 	static propTypes = {

@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -13,13 +13,9 @@ import SocialLogo from 'social-logos';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import {
-	getSocialAccountLinkAuthInfo,
-	getSocialAccountLinkService,
-	getRedirectTo,
-} from 'state/login/selectors';
-import { connectSocialUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { connectSocialUser } from 'state/login/actions';
+import { getSocialAccountLinkAuthInfo, getSocialAccountLinkService, getRedirectTo } from 'state/login/selectors';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {

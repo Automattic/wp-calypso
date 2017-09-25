@@ -1,11 +1,15 @@
-// External dependencies
-import { decodeEntities } from 'lib/formatting';
-import dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+/**
+ * External dependencies
+ */
 import { isEqual, last } from 'lodash';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import { action as actionTypes } from './constants';
+import dispatcher from 'dispatcher';
+import { decodeEntities } from 'lib/formatting';
+import emitter from 'lib/mixins/emitter';
 
 let lists = {},
 	errors = [],

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -15,10 +15,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormSelect from 'components/forms/form-select';
 import PriceInput from 'woocommerce/components/price-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import {
-	setFreeShippingCondition,
-	setFreeShippingMinCost
-} from 'woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
+import { setFreeShippingCondition, setFreeShippingMinCost } from 'woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
 
 const FreeShippingMethod = ( { id, requires, min_amount, currency, translate, actions } ) => {
 	const onConditionChange = ( event ) => ( actions.setFreeShippingCondition( id, event.target.value ) );

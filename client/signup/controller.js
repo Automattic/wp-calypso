@@ -1,23 +1,23 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
+import { isEmpty } from 'lodash';
 import page from 'page';
 import qs from 'qs';
-import { isEmpty } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import config from 'config';
-import route from 'lib/route';
-import analytics from 'lib/analytics';
 import SignupComponent from './main';
 import utils from './utils';
+import config from 'config';
+import analytics from 'lib/analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
 import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const user = userModule();
 

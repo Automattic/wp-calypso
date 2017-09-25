@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -14,8 +13,8 @@ import { connect } from 'react-redux';
 import CloseOnEscape from 'components/close-on-escape';
 import SiteSelector from 'components/site-selector';
 import { hasTouch } from 'lib/touch-detect';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 
 const SitePicker = React.createClass( {
 	displayName: 'SitePicker',

@@ -1,30 +1,28 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
-import { some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PayButton from './pay-button';
-
+import CartToggle from './cart-toggle';
 import CreditCardSelector from './credit-card-selector';
-import TermsOfService from './terms-of-service';
+import PayButton from './pay-button';
 import PaymentBox from './payment-box';
+import PaymentChatButton from './payment-chat-button';
+import TermsOfService from './terms-of-service';
+import ProgressBar from 'components/progress-bar';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
-import transactionStepTypes from 'lib/store-transactions/step-types';
-
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
-import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-import ProgressBar from 'components/progress-bar';
-import CartToggle from './cart-toggle';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 
 const CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {

@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
 import { buttons, connections, layout } from './controller';
+import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
 
 export default function() {
 	page( /^\/sharing(\/buttons)?$/, siteSelection, sites );

@@ -1,11 +1,12 @@
 /**
+ * External dependencies
+ */
+import request from 'superagent';
+
+/**
  * Internal dependencies
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from '../action-types';
-import request from 'superagent';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '../action-types';
 
 /**
  * Return an action object to signaling that the "usage stats" have been requested

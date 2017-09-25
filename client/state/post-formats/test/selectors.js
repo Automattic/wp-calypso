@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostFormats,
-	getPostFormats
-} from '../selectors';
+import { isRequestingPostFormats, getPostFormats } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostFormats()', () => {

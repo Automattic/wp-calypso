@@ -6,38 +6,18 @@ import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue 
 /**
  * Internal dependencies
  */
-import { plans } from './plans/reducer';
+import blogStickers from './blog-stickers/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
-import monitor from './monitor/reducer';
-import vouchers from './vouchers/reducer';
-import updates from './updates/reducer';
-import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
-import blogStickers from './blog-stickers/reducer';
-import {
-	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
-	SITE_DELETE_RECEIVE,
-	JETPACK_DISCONNECT_RECEIVE,
-	SITE_RECEIVE,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_UPDATE,
-	SITES_RECEIVE,
-	SITES_REQUEST,
-	SITES_REQUEST_FAILURE,
-	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE,
-	THEME_ACTIVATE_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-} from 'state/action-types';
+import monitor from './monitor/reducer';
+import { plans } from './plans/reducer';
 import { sitesSchema } from './schema';
+import sharingButtons from './sharing-buttons/reducer';
+import updates from './updates/reducer';
+import vouchers from './vouchers/reducer';
+import { MEDIA_DELETE, SITE_DELETE, SITE_DELETE_FAILURE, SITE_DELETE_SUCCESS, SITE_DELETE_RECEIVE, JETPACK_DISCONNECT_RECEIVE, SITE_RECEIVE, SITE_REQUEST, SITE_REQUEST_FAILURE, SITE_REQUEST_SUCCESS, SITE_SETTINGS_RECEIVE, SITE_SETTINGS_UPDATE, SITES_RECEIVE, SITES_REQUEST, SITES_REQUEST_FAILURE, SITES_REQUEST_SUCCESS, SITES_UPDATE, THEME_ACTIVATE_SUCCESS, WORDADS_SITE_APPROVE_REQUEST_SUCCESS } from 'state/action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**

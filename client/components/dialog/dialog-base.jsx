@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import Modal from 'react-modal';
 import classnames from 'classnames';
+import React, { Component } from 'react';
+import Modal from 'react-modal';
 
 class DialogBase extends Component {
 	static defaultProps = {

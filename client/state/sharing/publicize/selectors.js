@@ -6,8 +6,8 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { canCurrentUser } from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**

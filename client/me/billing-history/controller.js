@@ -6,10 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
-
 import BillingHistoryComponent from './main';
 import Receipt from './receipt';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 export default {
 	billingHistory( context ) {

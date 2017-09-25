@@ -1,28 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import i18n, { localize } from 'i18n-calypso';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { throttle } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Month from './month';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import SectionHeader from 'components/section-header';
 import { getSiteOption } from 'state/sites/selectors';
+import { getSiteStatsPostStreakData, getSiteStatsMaxPostsByDay, getSiteStatsTotalPostsForStreakQuery } from 'state/stats/lists/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSiteStatsPostStreakData,
-	getSiteStatsMaxPostsByDay,
-	getSiteStatsTotalPostsForStreakQuery
-} from 'state/stats/lists/selectors';
 
 const PostTrends = React.createClass( {
 

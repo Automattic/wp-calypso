@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
+import Button from 'components/button';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { getPlanClass } from 'lib/plans/constants';
+import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
-import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanClass } from 'lib/plans/constants';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import QuerySitePlans from 'components/data/query-site-plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { setAllSitesSelected } from 'state/ui/actions';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {

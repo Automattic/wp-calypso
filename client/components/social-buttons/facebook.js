@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FacebookIcon from 'components/social-icons/facebook';
+import { loadScript } from 'lib/load-script';
 import { isFormDisabled } from 'state/login/selectors';
 
 class FacebookLoginButton extends Component {

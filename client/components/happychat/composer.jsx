@@ -2,30 +2,19 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React from 'react';
 import createReactClass from 'create-react-class';
-import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import {
-	sendChatMessage,
-	setChatMessage,
-} from 'state/happychat/actions';
-import {
-	canUserSendMessages,
-} from 'state/happychat/selectors';
-import {
-	when,
-	forEach,
-	compose,
-	propEquals,
-	call,
-	prop
-} from './functional';
+import { when, forEach, compose, propEquals, call, prop } from './functional';
 import scrollbleed from './scrollbleed';
-import { translate } from 'i18n-calypso';
+import { sendChatMessage, setChatMessage } from 'state/happychat/actions';
+import { canUserSendMessages } from 'state/happychat/selectors';
 
 // helper function for detecting when a DOM event keycode is pressed
 const returnPressed = propEquals( 'which', 13 );

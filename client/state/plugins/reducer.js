@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
+import installed from './installed/reducer';
+import premium from './premium/reducer';
+import upload from './upload/reducer';
 import wporg from './wporg/reducer';
 import { combineReducers } from 'state/utils';
-import premium from './premium/reducer';
-import installed from './installed/reducer';
-import upload from './upload/reducer';
 
 export default combineReducers( {
 	wporg,

@@ -7,8 +7,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
 import { unlikeComment, updateCommentLikes, handleUnlikeFailure } from '../';
+import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 

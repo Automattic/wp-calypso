@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import PlanPrice from 'components/plans/plan-price';
+import Popover from 'components/popover';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { getPlanBySlug } from 'state/plans/selectors';
 import { getSitePlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryPlans from 'components/data/query-plans';
 
 let exclusiveViewLock = null;
 

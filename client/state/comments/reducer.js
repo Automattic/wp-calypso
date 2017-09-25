@@ -2,44 +2,15 @@
 /**
  * External dependencies
  */
-import {
-	isUndefined,
-	orderBy,
-	has,
-	map,
-	unionBy,
-	reject,
-	isEqual,
-	get,
-	zipObject,
-	includes,
-	isArray,
-	values,
-} from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, zipObject, includes, isArray, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_CHANGE_STATUS,
-	COMMENTS_EDIT,
-	COMMENTS_RECEIVE,
-	COMMENTS_DELETE,
-	COMMENTS_ERROR,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_COUNT_RECEIVE,
-	COMMENTS_LIKE,
-	COMMENTS_UNLIKE,
-	COMMENTS_TREE_SITE_ADD,
-	READER_EXPAND_COMMENTS,
-} from '../action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import {
-	PLACEHOLDER_STATE,
-	NUMBER_OF_COMMENTS_PER_FETCH,
-	POST_COMMENT_DISPLAY_TYPES,
-} from './constants';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_EDIT, COMMENTS_RECEIVE, COMMENTS_DELETE, COMMENTS_ERROR, COMMENTS_COUNT_INCREMENT, COMMENTS_COUNT_RECEIVE, COMMENTS_LIKE, COMMENTS_UNLIKE, COMMENTS_TREE_SITE_ADD, READER_EXPAND_COMMENTS } from '../action-types';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH, POST_COMMENT_DISPLAY_TYPES } from './constants';
 import trees from './trees/reducer';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 const getCommentDate = ( { date } ) => new Date( date );
 

@@ -1,34 +1,32 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import {
-	createPaymentSettingsActionList,
-} from 'woocommerce/state/ui/payments/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
-import SettingsPaymentsOffline from './payments-offline';
+import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsPaymentsOffSite from './payments-off-site';
+import SettingsPaymentsOffline from './payments-offline';
 import SettingsPaymentsOnSite from './payments-on-site';
+import Button from 'components/button';
+import Main from 'components/main';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import ActionHeader from 'woocommerce/components/action-header';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
 
 class SettingsPayments extends Component {
 

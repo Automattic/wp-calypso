@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
-import React from 'react';
-import page from 'page';
 import { each, includes, startsWith } from 'lodash';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CommentsManagement from './main';
 import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';

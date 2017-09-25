@@ -1,21 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { READER_RELATED_POSTS_REQUEST, READER_RELATED_POSTS_REQUEST_SUCCESS, READER_RELATED_POSTS_REQUEST_FAILURE, READER_RELATED_POSTS_RECEIVE } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
-import {
-	READER_RELATED_POSTS_REQUEST,
-	READER_RELATED_POSTS_REQUEST_SUCCESS,
-	READER_RELATED_POSTS_REQUEST_FAILURE,
-	READER_RELATED_POSTS_RECEIVE,
-} from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	let requestRelatedPosts;

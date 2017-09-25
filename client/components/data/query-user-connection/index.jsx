@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSite } from 'state/sites/selectors';
 import { isUserConnected } from 'state/jetpack-connect/actions';
+import { isRequestingSite } from 'state/sites/selectors';
 
 class QueryUserConnection extends Component {
 	componentWillMount() {

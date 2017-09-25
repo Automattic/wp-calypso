@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { union } from 'lodash';
+import React, { Component } from 'react';
 
 export const trackForm = WrappedComponent => class TrackFormComponent extends Component {
 	state = {

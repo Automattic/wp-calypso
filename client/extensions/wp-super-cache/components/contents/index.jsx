@@ -1,30 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { flowRight, get, isEmpty, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CacheStats from './cache-stats';
+import { generateStats } from '../../state/stats/actions';
+import { getStats, isGeneratingStats } from '../../state/stats/selectors';
 import QueryStats from '../data/query-stats';
+import WrapSettingsForm from '../wrap-settings-form';
+import CacheStats from './cache-stats';
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import { getSiteTitle, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { generateStats } from '../../state/stats/actions';
-import {
-	getSiteTitle,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
-import {
-	getStats,
-	isGeneratingStats,
-} from '../../state/stats/selectors';
 
 class ContentsTab extends Component {
 	static propTypes = {

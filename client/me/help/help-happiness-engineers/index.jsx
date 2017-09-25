@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { shuffle } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import Gravatar from 'components/gravatar';
-import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
 import { getHappinessEngineers, hasReceivedHappinessEngineers } from 'state/happiness-engineers/selectors';
 
 function HelpHappinessEngineers( { translate, happinessEngineers, hasReceived } ) {

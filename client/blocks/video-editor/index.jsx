@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
-import Notice from 'components/notice';
-import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
+import Notice from 'components/notice';
+import ProgressBar from 'components/progress-bar';
+import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
+import { getPosterUploadProgress, getPosterUrl, shouldShowVideoEditorError } from 'state/selectors';
 import { updatePoster } from 'state/ui/editor/video-editor/actions';
-import {
-	getPosterUploadProgress,
-	getPosterUrl,
-	shouldShowVideoEditorError,
-} from 'state/selectors';
 
 class VideoEditor extends Component {
 	static propTypes = {

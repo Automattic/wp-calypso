@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:store-transactions' );
-import { Readable } from 'stream';
 import inherits from 'inherits';
+import { isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import paygateLoader from 'lib/paygate-loader';
-
-import { validateCardDetails } from 'lib/credit-card-details';
 import transactionStepTypes from './step-types';
+import { validateCardDetails } from 'lib/credit-card-details';
+import paygateLoader from 'lib/paygate-loader';
+import { Readable } from 'stream';
+const debug = debugFactory( 'calypso:store-transactions' );
 
 /**
  * Internal dependencies

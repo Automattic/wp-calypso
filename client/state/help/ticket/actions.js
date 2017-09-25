@@ -2,13 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
-import {
-	HELP_TICKET_CONFIGURATION_REQUEST,
-	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
-} from 'state/action-types';
+import { HELP_TICKET_CONFIGURATION_REQUEST, HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS, HELP_TICKET_CONFIGURATION_REQUEST_FAILURE, HELP_TICKET_CONFIGURATION_DISMISS_ERROR } from 'state/action-types';
 
 export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 	return {

@@ -1,17 +1,15 @@
-// Reader List Store
-
 /**
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-import Dispatcher from 'dispatcher';
 
 /**
  * Internal dependencies
  */
-import emitter from 'lib/mixins/emitter';
-
 import ListStore from './lists';
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
 
 let lists = null,
 	errors = [],

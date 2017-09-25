@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import toggleInfo from '../toggle-info';
+import Card from 'components/card';
 import QueryPostStats from 'components/data/query-post-stats';
 import QueryPosts from 'components/data/query-posts';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSitePost } from 'state/posts/selectors';
-import toggleInfo from '../toggle-info';
+import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
 const StatsPostDetailWeeks = ( props ) => {
 	const { isRequesting, opened, post, postId, moment, numberFormat, siteId, stats, toggle, translate } = props;

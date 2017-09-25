@@ -7,32 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { withSchemaValidation } from 'state/utils';
-import {
-	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
-	SITE_DELETE_RECEIVE,
-	JETPACK_DISCONNECT_RECEIVE,
-	SITE_RECEIVE,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-	SITES_RECEIVE,
-	SITES_REQUEST,
-	SITES_REQUEST_FAILURE,
-	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE,
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_UPDATE,
-	THEME_ACTIVATE_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { items as unwrappedItems, requestingAll, requesting, deleting } from '../reducer';
+import { MEDIA_DELETE, SITE_DELETE, SITE_DELETE_FAILURE, SITE_DELETE_SUCCESS, SITE_DELETE_RECEIVE, JETPACK_DISCONNECT_RECEIVE, SITE_RECEIVE, SITE_REQUEST, SITE_REQUEST_FAILURE, SITE_REQUEST_SUCCESS, SITES_RECEIVE, SITES_REQUEST, SITES_REQUEST_FAILURE, SITES_REQUEST_SUCCESS, SITES_UPDATE, SITE_SETTINGS_RECEIVE, SITE_SETTINGS_UPDATE, THEME_ACTIVATE_SUCCESS, WORDADS_SITE_APPROVE_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 

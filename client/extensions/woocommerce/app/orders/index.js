@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import config from 'config';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
+import OrdersList from './orders-list';
 import Button from 'components/button';
+import Main from 'components/main';
+import config from 'config';
+import ActionHeader from 'woocommerce/components/action-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import OrdersList from './orders-list';
 
 function Orders( { className, params, site, translate } ) {
 	let addButton = null;

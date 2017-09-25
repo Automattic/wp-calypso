@@ -1,30 +1,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveSharingButtons, requestSharingButtons, saveSharingButtons, updateSharingButtons } from '../actions';
+import { SHARING_BUTTONS_RECEIVE, SHARING_BUTTONS_REQUEST, SHARING_BUTTONS_REQUEST_FAILURE, SHARING_BUTTONS_REQUEST_SUCCESS, SHARING_BUTTONS_SAVE, SHARING_BUTTONS_SAVE_FAILURE, SHARING_BUTTONS_SAVE_SUCCESS, SHARING_BUTTONS_UPDATE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	SHARING_BUTTONS_RECEIVE,
-	SHARING_BUTTONS_REQUEST,
-	SHARING_BUTTONS_REQUEST_FAILURE,
-	SHARING_BUTTONS_REQUEST_SUCCESS,
-	SHARING_BUTTONS_SAVE,
-	SHARING_BUTTONS_SAVE_FAILURE,
-	SHARING_BUTTONS_SAVE_SUCCESS,
-	SHARING_BUTTONS_UPDATE
-} from 'state/action-types';
-import {
-	receiveSharingButtons,
-	requestSharingButtons,
-	saveSharingButtons,
-	updateSharingButtons
-} from '../actions';
 
 describe( 'actions', () => {
 	let spy;

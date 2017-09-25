@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { userCan } from 'lib/site/utils';
 import { isBusiness, isPremium } from 'lib/products-values';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Returns true if the site has WordAds access

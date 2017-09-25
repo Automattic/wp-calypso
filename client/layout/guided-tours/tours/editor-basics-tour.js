@@ -1,29 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { overEvery as and } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Next,
-	Quit,
-	Link,
-} from 'layout/guided-tours/config-elements';
-import {
-	isNewUser,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Next, Quit, Link } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { isNewUser } from 'state/ui/guided-tours/contexts';
 
 export const EditorBasicsTour = makeTour(
 	<Tour

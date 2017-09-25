@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { translate } from 'i18n-calypso';
 import { noop } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import formState from 'lib/form-state';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-
-import { translate } from 'i18n-calypso';
 
 const SignupSiteTitle = React.createClass( {
 	propTypes: {

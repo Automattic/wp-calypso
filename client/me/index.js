@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import controller from './controller';
+import config from 'config';
 
 export default function() {
 	if ( config.isEnabled( 'me/my-profile' ) ) {

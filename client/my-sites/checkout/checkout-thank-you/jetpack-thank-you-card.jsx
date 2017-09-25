@@ -1,83 +1,45 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import page from 'page';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { difference, filter, get, map, range, reduce, some } from 'lodash';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { difference, filter, get, map, range, reduce, some } from 'lodash';
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import Card from 'components/card';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import FeatureExample from 'components/feature-example';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import HappyChatButton from 'components/happychat/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import Gridicon from 'gridicons';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import analytics from 'lib/analytics';
-import JetpackSite from 'lib/site/jetpack';
-import support from 'lib/url/support';
-import Card from 'components/card';
-import utils from 'lib/site/utils';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
-import HappyChatButton from 'components/happychat/button';
-
-// Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getRawSite,
-	isJetpackSite,
-	isJetpackSiteMainNetworkSite,
-	isJetpackSiteMultiSite,
-	isRequestingSites,
-} from 'state/sites/selectors';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { requestSites } from 'state/sites/actions';
-import {
-	installPlugin,
-} from 'state/plugins/premium/actions';
-import {
-	getPluginsForSite,
-	getActivePlugin,
-	getNextPlugin,
-	isFinished,
-	isInstalling,
-	isRequesting,
-	hasRequested
-} from 'state/plugins/premium/selectors';
-// Store for existing plugins
-import PluginsStore from 'lib/plugins/store';
 import ProgressBar from 'components/progress-bar';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import {
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-	FEATURE_BACKUP_ARCHIVE_30,
-	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_AUTOMATED_RESTORES,
-	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-	FEATURE_EASY_SITE_MIGRATION,
-	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-	FEATURE_SPAM_AKISMET_PLUS,
-	FEATURES_LIST,
-	getPlanClass
-} from 'lib/plans/constants';
+import Spinner from 'components/spinner';
+import analytics from 'lib/analytics';
 import { getPlan } from 'lib/plans';
-import {
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
+import { FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY, FEATURE_BACKUP_ARCHIVE_30, FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED, FEATURE_AUTOMATED_RESTORES, FEATURE_BACKUP_ARCHIVE_UNLIMITED, FEATURE_EASY_SITE_MIGRATION, FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND, FEATURE_ONE_CLICK_THREAT_RESOLUTION, FEATURE_SPAM_AKISMET_PLUS, FEATURES_LIST, getPlanClass } from 'lib/plans/constants';
+import { PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY } from 'lib/plans/constants';
+import PluginsStore from 'lib/plugins/store';
+import JetpackSite from 'lib/site/jetpack';
+import utils from 'lib/site/utils';
+import support from 'lib/url/support';
+import { installPlugin } from 'state/plugins/premium/actions';
+import { getPluginsForSite, getActivePlugin, getNextPlugin, isFinished, isInstalling, isRequesting, hasRequested } from 'state/plugins/premium/selectors';
+import { fetchPluginData } from 'state/plugins/wporg/actions';
+import { getPlugin } from 'state/plugins/wporg/selectors';
+import { requestSites } from 'state/sites/actions';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getRawSite, isJetpackSite, isJetpackSiteMainNetworkSite, isJetpackSiteMultiSite, isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,

@@ -7,16 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingList,
-	isRequestingSubscribedLists,
-	getSubscribedLists,
-	isUpdatedList,
-	getListByOwnerAndSlug,
-	isSubscribedByOwnerAndSlug,
-	hasError,
-	isMissingByOwnerAndSlug,
-} from '../selectors';
+import { isRequestingList, isRequestingSubscribedLists, getSubscribedLists, isUpdatedList, getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, hasError, isMissingByOwnerAndSlug } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingList()', () => {

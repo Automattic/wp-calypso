@@ -1,32 +1,27 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import {
-	getEditorLastDraftPost,
-	getEditorLastDraftSiteId,
-	getEditorLastDraftPostId
-} from 'state/ui/editor/last-draft/selectors';
+import SiteIcon from 'blocks/site-icon';
+import QueryPosts from 'components/data/query-posts';
+import Dispatcher from 'dispatcher';
+import analytics from 'lib/analytics';
+import { decodeEntities } from 'lib/formatting';
 import { isRequestingSitePost } from 'state/posts/selectors';
+import { getSite } from 'state/sites/selectors';
+import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { getEditorLastDraftPost, getEditorLastDraftSiteId, getEditorLastDraftPostId } from 'state/ui/editor/last-draft/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { decodeEntities } from 'lib/formatting';
-import analytics from 'lib/analytics';
-import QueryPosts from 'components/data/query-posts';
-import SiteIcon from 'blocks/site-icon';
-import Dispatcher from 'dispatcher';
 
 const ResumeEditing = React.createClass( {
 	propTypes: {

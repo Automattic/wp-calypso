@@ -1,46 +1,41 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
+import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
-import accept from 'lib/accept';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
-import { isSavingSiteSettings } from 'state/site-settings/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { receiveMedia, deleteMedia } from 'state/media/actions';
-import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
+import accept from 'lib/accept';
 import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaStore from 'lib/media/store';
 import { isItemBeingUploaded } from 'lib/media/utils';
-import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
-import {
-	getSiteIconId,
-	getSiteIconUrl,
-	isPrivateSite,
-	isSiteSupportingImageEditor
-} from 'state/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { errorNotice } from 'state/notices/actions';
+import { getSiteIconId, getSiteIconUrl, isPrivateSite, isSiteSupportingImageEditor } from 'state/selectors';
+import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
+import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {

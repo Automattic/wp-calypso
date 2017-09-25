@@ -1,19 +1,15 @@
 /**
  * External dependencies
  */
-import { forOwn, get, reduce, isArray, map, flatten } from 'lodash';
 import i18n from 'i18n-calypso';
+import { forOwn, get, reduce, isArray, map, flatten } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedStatsQuery,
-	normalizers,
-	buildExportArray,
-} from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false

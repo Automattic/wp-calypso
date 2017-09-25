@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
 import Card from 'components/card';
-import Navigation from 'me/notification-settings/navigation';
+import FormButton from 'components/forms/form-button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButton from 'components/forms/form-button';
-import FormSelect from 'components/forms/form-select';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Main from 'components/main';
+import observe from 'lib/mixins/data-observe';
+import { protectForm } from 'lib/protect-form';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import eventRecorder from 'me/event-recorder';
+import formBase from 'me/form-base';
+import Navigation from 'me/notification-settings/navigation';
+import ReauthRequired from 'me/reauth-required';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 
 export default protectForm( localize( React.createClass( {
 	displayName: 'NotificationSubscriptions',

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { isHappychatAvailable } from 'state/happychat/selectors';
-import support from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
+import support from 'lib/url/support';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isHappychatAvailable } from 'state/happychat/selectors';
 
 export class HappinessSupport extends Component {
 	static propTypes = {

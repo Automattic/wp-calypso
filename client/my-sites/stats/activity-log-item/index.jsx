@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { connect } from 'react-redux';
-import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

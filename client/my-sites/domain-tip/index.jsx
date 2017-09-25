@@ -2,23 +2,23 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
-import { currentUserHasFlag } from 'state/current-user/selectors';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { getDomainsSuggestions } from 'state/domains/suggestions/selectors';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
 
 function getQueryObject( site, siteSlug ) {
 	if ( ! site || ! siteSlug ) {

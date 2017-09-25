@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
+import numeral from 'numeral';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React, { PureComponent } from 'react';
-import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
-import { localize } from 'i18n-calypso';
-import numeral from 'numeral';
-import page from 'page';
 
 /**
  * Internal dependencies

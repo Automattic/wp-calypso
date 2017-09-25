@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
+import { details, fetchThemeDetailsData, notFoundError } from './controller';
 import config from 'config';
 import { makeLayout } from 'controller';
-import { details, fetchThemeDetailsData, notFoundError } from './controller';
 
 export default function( router ) {
 	if ( config.isEnabled( 'manage/themes/details' ) ) {

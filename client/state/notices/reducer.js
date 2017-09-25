@@ -6,11 +6,7 @@ import { omit, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	NOTICE_CREATE,
-	NOTICE_REMOVE,
-	ROUTE_SET
-} from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
 export const items = createReducer( {}, {

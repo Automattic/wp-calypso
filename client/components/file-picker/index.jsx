@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { assign, noop } from 'lodash';
 import pick from 'component-file-picker';
+import { assign, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default class FilePicker extends React.Component {
 	constructor( props ) {

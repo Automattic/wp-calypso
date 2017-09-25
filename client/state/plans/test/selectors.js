@@ -8,21 +8,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getPlans,
-	isRequestingPlans,
-	getPlan,
-	getPlanRawPrice,
-	getPlanSlug
-} from '../selectors';
-
-/**
- * Fixture data
- */
-import {
-	PLANS,
-	getStateInstance
-} from './fixture';
+import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
+import { PLANS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getPlans()', () => {

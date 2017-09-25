@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	NOTIFICATION_SETTINGS_REQUEST,
-	NOTIFICATION_SETTINGS_UPDATE,
-} from 'state/action-types';
+import { NOTIFICATION_SETTINGS_REQUEST, NOTIFICATION_SETTINGS_UPDATE } from 'state/action-types';
 
 /**
  * Returns an action object to signal the request of the current user notification settings.

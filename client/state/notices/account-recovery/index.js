@@ -6,17 +6,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	successNotice,
-	errorNotice,
-} from 'state/notices/actions';
-
-import {
-	getAccountRecoveryPhone,
-	getAccountRecoveryEmail,
-} from 'state/account-recovery/settings/selectors';
-
 import { dispatchError } from '../utils';
+import { getAccountRecoveryPhone, getAccountRecoveryEmail } from 'state/account-recovery/settings/selectors';
+
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {

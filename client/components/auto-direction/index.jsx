@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
-import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
+import { stripHTML } from 'lib/formatting';
+import userModule from 'lib/user';
 
 const user = userModule();
 

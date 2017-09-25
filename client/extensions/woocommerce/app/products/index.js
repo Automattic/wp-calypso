@@ -1,32 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { fetchProducts, fetchProductSearchResults, clearProductSearch } from 'woocommerce/state/sites/products/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getTotalProducts,
-	areProductsLoaded,
-	areProductsLoading,
-} from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Button from 'components/button';
+import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ActionHeader from 'woocommerce/components/action-header';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchProducts, fetchProductSearchResults, clearProductSearch } from 'woocommerce/state/sites/products/actions';
+import { getTotalProducts, areProductsLoaded, areProductsLoading } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class Products extends Component {
 	static propTypes = {

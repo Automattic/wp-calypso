@@ -6,15 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	TIMEZONES_RECEIVE,
-	TIMEZONES_REQUEST,
-} from 'state/action-types';
-
-import {
-	requestTimezones,
-	timezonesReceive,
-} from '../actions';
+import { requestTimezones, timezonesReceive } from '../actions';
+import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {

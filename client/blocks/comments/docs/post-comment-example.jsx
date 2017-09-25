@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { repeat } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 
 const mockComment = {
 	author: {

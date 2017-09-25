@@ -1,21 +1,15 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	receiveRestoreSuccess,
-	receiveRestoreError,
-} from '../';
-import {
-	getRewindRestoreProgress,
-	rewindRestoreUpdateError,
-} from 'state/activity-log/actions';
+import { receiveRestoreSuccess, receiveRestoreError } from '../';
+import { getRewindRestoreProgress, rewindRestoreUpdateError } from 'state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

@@ -7,19 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	STORED_CARDS_ADD_COMPLETED,
-	STORED_CARDS_FETCH,
-	STORED_CARDS_FETCH_COMPLETED,
-	STORED_CARDS_FETCH_FAILED,
-	STORED_CARDS_DELETE,
-	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { items } from '../reducer';
 import { STORED_CARDS_FROM_API } from './fixture';
+import { STORED_CARDS_ADD_COMPLETED, STORED_CARDS_FETCH, STORED_CARDS_FETCH_COMPLETED, STORED_CARDS_FETCH_FAILED, STORED_CARDS_DELETE, STORED_CARDS_DELETE_COMPLETED, STORED_CARDS_DELETE_FAILED, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'items', () => {

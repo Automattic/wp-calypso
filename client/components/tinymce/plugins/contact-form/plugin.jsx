@@ -1,27 +1,20 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
+import Gridicon from 'gridicons';
 import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
-import Gridicon from 'gridicons';
+import tinymce from 'tinymce/tinymce';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ContactFormDialog from './dialog';
-import {
-	formClear,
-	formLoad,
-	fieldAdd,
-	fieldRemove,
-	fieldUpdate,
-	settingsUpdate
-} from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { formClear, formLoad, fieldAdd, fieldRemove, fieldUpdate, settingsUpdate } from 'state/ui/editor/contact-form/actions';
 
 const wpcomContactForm = editor => {
 	let node;

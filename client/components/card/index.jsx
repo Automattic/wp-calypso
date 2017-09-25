@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
+import { assign, omit } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 const Card = ( props ) => {
 	const { href, tagName, target, compact, children, highlight } = props;

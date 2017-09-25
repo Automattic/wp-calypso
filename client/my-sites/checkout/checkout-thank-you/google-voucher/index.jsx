@@ -1,33 +1,27 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import TermsAndConditions from './terms-and-conditions';
 import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import Dialog from 'components/dialog';
 import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
-import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
-import TermsAndConditions from './terms-and-conditions';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import {
-	assignSiteVoucher as assignVoucher
-} from 'state/sites/vouchers/actions';
+import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
+import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
-import {
-	getVouchersBySite,
-	getGoogleAdCredits
-} from 'state/sites/vouchers/selectors';
 
 const [
 	INITIAL_STEP,

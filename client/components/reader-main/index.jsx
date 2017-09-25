@@ -1,13 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Main from 'components/main';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
+import Main from 'components/main';
 
 /**
  * A specialization of `Main` that adds a class to the body of the document

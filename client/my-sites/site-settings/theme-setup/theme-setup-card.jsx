@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import Notice from 'components/notice';
-import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';
+import Button from 'components/button';
+import Notice from 'components/notice';
+import ActionPanel from 'my-sites/site-settings/action-panel';
+import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
+import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
+import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
+import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
 import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
 
 const ThemeSetupCard = ( { theme, translate, onClick } ) => (

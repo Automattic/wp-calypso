@@ -1,76 +1,23 @@
 /**
  * External dependencies
  */
-import { filter, map, property, delay, endsWith } from 'lodash';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import { filter, map, property, delay, endsWith } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl, getWpcomParentThemeId, shouldFilterWpcomThemes, isDownloadableFromWpcom } from './selectors';
+import { getThemeIdFromStylesheet, isThemeMatchingQuery, isThemeFromWpcom, normalizeJetpackTheme, normalizeWpcomTheme, normalizeWporgTheme } from './utils';
+import accept from 'lib/accept';
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
-import {
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE,
-	THEME_ACTIVATE_SUCCESS,
-	THEME_ACTIVATE_FAILURE,
-	THEME_BACK_PATH_SET,
-	THEME_CLEAR_ACTIVATED,
-	THEME_DELETE,
-	THEME_DELETE_SUCCESS,
-	THEME_DELETE_FAILURE,
-	THEME_FILTERS_REQUEST,
-	THEME_INSTALL,
-	THEME_INSTALL_SUCCESS,
-	THEME_INSTALL_FAILURE,
-	THEME_REQUEST,
-	THEME_REQUEST_SUCCESS,
-	THEME_REQUEST_FAILURE,
-	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_TRANSFER_INITIATE_PROGRESS,
-	THEME_TRANSFER_INITIATE_REQUEST,
-	THEME_TRANSFER_INITIATE_SUCCESS,
-	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_UPLOAD_START,
-	THEME_UPLOAD_SUCCESS,
-	THEME_UPLOAD_FAILURE,
-	THEME_UPLOAD_CLEAR,
-	THEME_UPLOAD_PROGRESS,
-	THEMES_REQUEST,
-	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE,
-	THEME_PREVIEW_OPTIONS,
-	THEME_PREVIEW_STATE,
-} from 'state/action-types';
-import {
-	recordTracksEvent,
-	withAnalytics
-} from 'state/analytics/actions';
-import {
-	getTheme,
-	getActiveTheme,
-	getLastThemeQuery,
-	getThemeCustomizeUrl,
-	getWpcomParentThemeId,
-	shouldFilterWpcomThemes,
-	isDownloadableFromWpcom,
-} from './selectors';
-import {
-	getThemeIdFromStylesheet,
-	isThemeMatchingQuery,
-	isThemeFromWpcom,
-	normalizeJetpackTheme,
-	normalizeWpcomTheme,
-	normalizeWporgTheme
-} from './utils';
-import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
+import { ACTIVE_THEME_REQUEST, ACTIVE_THEME_REQUEST_SUCCESS, ACTIVE_THEME_REQUEST_FAILURE, THEME_ACTIVATE, THEME_ACTIVATE_SUCCESS, THEME_ACTIVATE_FAILURE, THEME_BACK_PATH_SET, THEME_CLEAR_ACTIVATED, THEME_DELETE, THEME_DELETE_SUCCESS, THEME_DELETE_FAILURE, THEME_FILTERS_REQUEST, THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE, THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE, THEME_TRANSFER_INITIATE_FAILURE, THEME_TRANSFER_INITIATE_PROGRESS, THEME_TRANSFER_INITIATE_REQUEST, THEME_TRANSFER_INITIATE_SUCCESS, THEME_TRANSFER_STATUS_FAILURE, THEME_TRANSFER_STATUS_RECEIVE, THEME_UPLOAD_START, THEME_UPLOAD_SUCCESS, THEME_UPLOAD_FAILURE, THEME_UPLOAD_CLEAR, THEME_UPLOAD_PROGRESS, THEMES_REQUEST, THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE, THEME_PREVIEW_OPTIONS, THEME_PREVIEW_STATE } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'state/selectors';
-import i18n from 'i18n-calypso';
-import accept from 'lib/accept';
+import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 

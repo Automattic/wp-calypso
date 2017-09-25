@@ -1,19 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { items, queuedRequests } from '../reducer';
-import {
-	READER_RELATED_POSTS_REQUEST,
-	READER_RELATED_POSTS_REQUEST_SUCCESS,
-	READER_RELATED_POSTS_REQUEST_FAILURE,
-	READER_RELATED_POSTS_RECEIVE,
-} from 'state/action-types';
+import { READER_RELATED_POSTS_REQUEST, READER_RELATED_POSTS_REQUEST_SUCCESS, READER_RELATED_POSTS_REQUEST_FAILURE, READER_RELATED_POSTS_RECEIVE } from 'state/action-types';
 
 describe( 'items', () => {
 	it( 'should store the posts by global_ID', () => {

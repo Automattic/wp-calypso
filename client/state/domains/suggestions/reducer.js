@@ -1,15 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	DOMAINS_SUGGESTIONS_RECEIVE,
-	DOMAINS_SUGGESTIONS_REQUEST,
-	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
-	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
+import { DOMAINS_SUGGESTIONS_RECEIVE, DOMAINS_SUGGESTIONS_REQUEST, DOMAINS_SUGGESTIONS_REQUEST_FAILURE, DOMAINS_SUGGESTIONS_REQUEST_SUCCESS } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks domains suggestions, indexed by a serialized query.

@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import { property, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { property, sortBy } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import NextStepsBox from './next-steps-box';
-
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
 import steps from './steps';
 import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
 import productsValues from 'lib/products-values';
 import sitesFactory from 'lib/sites-list';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 const sites = sitesFactory();
 
 export default localize( React.createClass( {

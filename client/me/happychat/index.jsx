@@ -1,17 +1,17 @@
-/*
-	External Deps
-*/
-import React from 'react';
-import page from 'page';
+/**
+ * External dependencies
+ */
 import { translate } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
-/*
-	Internal deps
-*/
-import { renderWithReduxStore } from 'lib/react-helpers';
-import config from 'config';
-import controller from 'me/controller';
+/**
+ * Internal dependencies
+ */
 import Happychat from './main';
+import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import controller from 'me/controller';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 
 const renderChat = ( context ) => {

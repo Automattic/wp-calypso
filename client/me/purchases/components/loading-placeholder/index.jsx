@@ -1,8 +1,7 @@
-import page from 'page';
-
 /**
  * External dependencies
  */
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';

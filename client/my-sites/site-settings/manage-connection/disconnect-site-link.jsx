@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { getPlanClass } from 'lib/plans/constants';
+import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
-import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
+import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import { isSiteAutomatedTransfer } from 'state/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanClass } from 'lib/plans/constants';
-import { isSiteAutomatedTransfer } from 'state/selectors';
-import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 
 class DisconnectSiteLink extends Component {
 	state = {

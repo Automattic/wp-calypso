@@ -1,16 +1,12 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-
+import assert from 'assert';
 import cartValues from 'lib/cart-values';
+
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 const TEST_CART_KEY = 91234567890;
 

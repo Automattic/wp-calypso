@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:posts' );
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import utils from './utils';
-
 import Dispatcher from 'dispatcher';
+
+const debug = debugFactory( 'calypso:posts' );
 
 let _posts = {},
 	PostsStore;

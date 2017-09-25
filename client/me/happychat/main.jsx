@@ -2,20 +2,18 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import {
-	blur,
-	focus,
-} from 'state/happychat/actions';
-import viewport from 'lib/viewport';
-import HappychatConnection from 'components/happychat/connection';
 import Composer from 'components/happychat/composer';
+import HappychatConnection from 'components/happychat/connection';
 import Notices from 'components/happychat/notices';
 import Timeline from 'components/happychat/timeline';
+import viewport from 'lib/viewport';
+import { blur, focus } from 'state/happychat/actions';
 
 /**
  * React component for rendering a happychat client as a full page

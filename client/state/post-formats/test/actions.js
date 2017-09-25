@@ -1,21 +1,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
-import { useSandbox } from 'test/helpers/use-sinon';
-import useNock from 'test/helpers/use-nock';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	POST_FORMATS_RECEIVE,
-	POST_FORMATS_REQUEST,
-	POST_FORMATS_REQUEST_SUCCESS,
-	POST_FORMATS_REQUEST_FAILURE
-} from 'state/action-types';
 import { requestPostFormats } from '../actions';
+import { POST_FORMATS_RECEIVE, POST_FORMATS_REQUEST, POST_FORMATS_REQUEST_SUCCESS, POST_FORMATS_REQUEST_FAILURE } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

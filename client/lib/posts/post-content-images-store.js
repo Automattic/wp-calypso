@@ -6,11 +6,11 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import PostsStore from './posts-store';
+import utils from './utils';
 
 import Dispatcher from 'dispatcher';
-import utils from './utils';
-import PostsStore from './posts-store';
+import Emitter from 'lib/mixins/emitter';
 
 let _contentImages = {},
 	PostContentImagesStore;

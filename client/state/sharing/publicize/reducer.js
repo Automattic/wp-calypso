@@ -2,28 +2,14 @@
  * External dependencies
  */
 import { keyBy, omit, omitBy } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import {
-	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
-	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_SHARE,
-	PUBLICIZE_SHARE_SUCCESS,
-	PUBLICIZE_SHARE_FAILURE,
-	PUBLICIZE_SHARE_DISMISS
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
+import { connectionsSchema } from './schema';
+import { PUBLICIZE_CONNECTION_CREATE, PUBLICIZE_CONNECTION_DELETE, PUBLICIZE_CONNECTION_RECEIVE, PUBLICIZE_CONNECTION_REQUEST, PUBLICIZE_CONNECTION_REQUEST_FAILURE, PUBLICIZE_CONNECTION_REQUEST_SUCCESS, PUBLICIZE_CONNECTION_UPDATE, PUBLICIZE_CONNECTIONS_REQUEST, PUBLICIZE_CONNECTIONS_RECEIVE, PUBLICIZE_CONNECTIONS_REQUEST_FAILURE, PUBLICIZE_SHARE, PUBLICIZE_SHARE_SUCCESS, PUBLICIZE_SHARE_FAILURE, PUBLICIZE_SHARE_DISMISS } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const sharePostStatus = createReducer( {}, {
 	[ PUBLICIZE_SHARE ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {

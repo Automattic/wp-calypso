@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { reject, some } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user:profile-links' );
+import { reject, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import emitter from 'lib/mixins/emitter';
 import wpcom from 'lib/wp';
 
-import emitter from 'lib/mixins/emitter';
+const debug = debugFactory( 'calypso:user:profile-links' );
 
 /*
  * Initialize UserProfileLinks with defaults

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import mockery from 'mockery';
 import { expect } from 'chai';
+import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'EditorCategoriesTagsAccordion', function() {
 	let mount, i18n, accordion, EditorCategoriesTagsAccordion;

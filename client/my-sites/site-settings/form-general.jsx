@@ -1,39 +1,39 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { flowRight } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
+import Banner from 'components/banner';
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormInput from 'components/forms/form-text-input';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import LanguagePicker from 'components/language-picker';
 import SectionHeader from 'components/section-header';
-import config from 'config';
-import notices from 'notices';
-import FormInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
-import SiteIconSetting from './site-icon-setting';
-import Banner from 'components/banner';
-import { isBusiness } from 'lib/products-values';
+import config from 'config';
+import { preventWidows } from 'lib/formatting';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import { isBusiness } from 'lib/products-values';
+import notices from 'notices';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { preventWidows } from 'lib/formatting';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {

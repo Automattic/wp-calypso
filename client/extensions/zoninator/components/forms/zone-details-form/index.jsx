@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight, mapValues, trim } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { reduxForm } from 'redux-form';
 
 /**
  * Internal dependencies

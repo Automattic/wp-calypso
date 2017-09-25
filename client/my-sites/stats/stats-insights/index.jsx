@@ -1,34 +1,34 @@
 /**
-* External dependencies
-*/
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+ * External dependencies
+ */
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import LatestPostSummary from '../post-performance';
+import PostingActivity from '../post-trends';
+import Comments from '../stats-comments';
+import StatsFirstView from '../stats-first-view';
+import Followers from '../stats-followers';
+import StatsModule from '../stats-module';
 import StatsNavigation from '../stats-navigation';
+import Reach from '../stats-reach';
+import statsStrings from '../stats-strings';
+import StatsViews from '../stats-views';
+import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import DomainTip from 'my-sites/domain-tip';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
-import Comments from '../stats-comments';
-import Reach from '../stats-reach';
-import PostingActivity from '../post-trends';
-import StatsModule from '../stats-module';
-import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
-import LatestPostSummary from '../post-performance';
-import DomainTip from 'my-sites/domain-tip';
-import Main from 'components/main';
-import StatsFirstView from '../stats-first-view';
-import SectionHeader from 'components/section-header';
-import StatsViews from '../stats-views';
-import Followers from '../stats-followers';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StatsInsights = ( props ) => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;

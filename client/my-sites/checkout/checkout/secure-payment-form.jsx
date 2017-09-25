@@ -1,36 +1,30 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { get, find, defer } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { get, find, defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-
-import CreditsPaymentBox from './credits-payment-box';
-import FreeTrialConfirmationBox from './free-trial-confirmation-box';
-import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
+import CreditsPaymentBox from './credits-payment-box';
+import FreeCartPaymentBox from './free-cart-payment-box';
+import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import PayPalPaymentBox from './paypal-payment-box';
-
-import storeTransactions from 'lib/store-transactions';
-import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
-import upgradesActions from 'lib/upgrades/actions';
-import countriesList from 'lib/countries-list';
-import debugFactory from 'debug';
-import cartValues, {
-	isPaidForFullyInCredits,
-	isFree,
-	cartItems
-} from 'lib/cart-values';
+import EmptyContent from 'components/empty-content';
 import Notice from 'components/notice';
+import analytics from 'lib/analytics';
+import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
+import countriesList from 'lib/countries-list';
 import { preventWidows } from 'lib/formatting';
+import storeTransactions from 'lib/store-transactions';
+import upgradesActions from 'lib/upgrades/actions';
 
 /**
  * Module variables

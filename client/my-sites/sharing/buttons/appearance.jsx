@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight, partial } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,10 +13,10 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { isPrivateSite } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {

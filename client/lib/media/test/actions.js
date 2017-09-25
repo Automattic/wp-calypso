@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
 import { assign, isPlainObject, noop } from 'lodash';
 import mockery from 'mockery';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies

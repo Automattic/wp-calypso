@@ -1,20 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	EXPORT_ADVANCED_SETTINGS_FAIL,
-	EXPORT_ADVANCED_SETTINGS_FETCH,
-	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	EXPORT_POST_TYPE_SET,
-	EXPORT_POST_TYPE_FIELD_SET,
-	EXPORT_CLEAR,
-	EXPORT_COMPLETE,
-	EXPORT_START_REQUEST,
-	EXPORT_STARTED,
-	EXPORT_FAILURE
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
 import { States } from './constants';
+import { EXPORT_ADVANCED_SETTINGS_FAIL, EXPORT_ADVANCED_SETTINGS_FETCH, EXPORT_ADVANCED_SETTINGS_RECEIVE, EXPORT_POST_TYPE_SET, EXPORT_POST_TYPE_FIELD_SET, EXPORT_CLEAR, EXPORT_COMPLETE, EXPORT_START_REQUEST, EXPORT_STARTED, EXPORT_FAILURE } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 export function selectedPostType( state = null, action ) {
 	switch ( action.type ) {

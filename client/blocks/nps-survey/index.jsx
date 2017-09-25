@@ -1,30 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import RecommendationSelect from './recommendation-select';
 import Button from 'components/button';
 import Card from 'components/card';
-import RecommendationSelect from './recommendation-select';
-import {
-	submitNpsSurvey,
-	submitNpsSurveyWithNoScore,
-} from 'state/nps-survey/actions';
-import {
-	successNotice
-} from 'state/notices/actions';
-import {
-	hasAnsweredNpsSurvey,
-} from 'state/nps-survey/selectors';
 import analytics from 'lib/analytics';
+import { successNotice } from 'state/notices/actions';
+import { submitNpsSurvey, submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
+import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
 
 class NpsSurvey extends Component {
 	static propTypes = {

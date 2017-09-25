@@ -2,15 +2,8 @@
  * Internal dependencies
  */
 import { rewindStatusSchema } from './schema';
-import {
-	REWIND_ACTIVATE_SUCCESS,
-	REWIND_STATUS_ERROR,
-	REWIND_STATUS_UPDATE,
-} from 'state/action-types';
-import {
-	createReducer,
-	keyedReducer,
-} from 'state/utils';
+import { REWIND_ACTIVATE_SUCCESS, REWIND_STATUS_ERROR, REWIND_STATUS_UPDATE } from 'state/action-types';
+import { createReducer, keyedReducer } from 'state/utils';
 
 const stubNull = () => null;
 

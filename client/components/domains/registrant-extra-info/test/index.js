@@ -1,16 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-
-import RegistrantExtraInfoFrForm from '../fr-form';
-import RegistrantExtraInfoCaForm from '../ca-form';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import RegistrantExtraInfoCaForm from '../ca-form';
+import RegistrantExtraInfoFrForm from '../fr-form';
 import RegistrantExtraInfoForm from '../index';
 
 describe( 'Switcher Form', function() {

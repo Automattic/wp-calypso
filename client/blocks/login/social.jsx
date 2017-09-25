@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import GoogleLoginButton from 'components/social-buttons/google';
-import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
-import {
-	getCreatedSocialAccountUsername,
-	getCreatedSocialAccountBearerToken,
-	isSocialAccountCreating,
-} from 'state/login/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
+import GoogleLoginButton from 'components/social-buttons/google';
+import config from 'config';
+import WpcomLoginForm from 'signup/wpcom-login-form';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
+import { getCreatedSocialAccountUsername, getCreatedSocialAccountBearerToken, isSocialAccountCreating } from 'state/login/selectors';
+import { getCurrentQueryArguments } from 'state/ui/selectors';
 
 class SocialLoginForm extends Component {
 	static propTypes = {

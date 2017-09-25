@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { defer } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
-import { localize } from 'i18n-calypso';
-import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
-import { getTwoFactorAuthRequestError } from 'state/login/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { sendSmsCode, formUpdate } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
+import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
+import { sendSmsCode, formUpdate } from 'state/login/actions';
+import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {

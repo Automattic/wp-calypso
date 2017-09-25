@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 import { isArray } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
 import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
 import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/remove';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { errorNotice } from 'state/notices/actions';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
 export function requestBlogStickerList( { dispatch }, action ) {

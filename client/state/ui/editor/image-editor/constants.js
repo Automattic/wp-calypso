@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	values as objectValues
-} from 'lodash';
+import { values as objectValues } from 'lodash';
 
 export const AspectRatios = {
 	FREE: 'FREE',

@@ -2,6 +2,10 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
 import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:preview-save-functions' );

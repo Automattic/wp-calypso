@@ -1,44 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { each, find, get, map, noop, size, slice, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import {
-	changeCommentStatus,
-	deleteComment,
-	editComment,
-	likeComment,
-	replyComment,
-	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
+import CommentNavigation from '../comment-navigation';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentNavigation from '../comment-navigation';
-import EmptyContent from 'components/empty-content';
-import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import {
-	getSiteCommentsTree,
-	getSiteSetting,
-	isCommentsTreeInitialized,
-} from 'state/selectors';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
+import EmptyContent from 'components/empty-content';
+import Pagination from 'components/pagination';
+import { bumpStat, composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { changeCommentStatus, deleteComment, editComment, likeComment, replyComment, unlikeComment } from 'state/comments/actions';
+import { removeNotice, successNotice } from 'state/notices/actions';
+import { getSiteCommentsTree, getSiteSetting, isCommentsTreeInitialized } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const COMMENTS_PER_PAGE = 20;

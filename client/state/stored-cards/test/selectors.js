@@ -1,8 +1,12 @@
-// External dependencies
-import deepFreeze from 'deep-freeze';
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import { getStoredCardById, getStoredCards, hasLoadedStoredCardsFromServer } from '../selectors';
 import { STORED_CARDS_FROM_API } from './fixture';
 

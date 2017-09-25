@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import warn from 'lib/warn';
-import localforage from 'lib/localforage';
-import { isWhitelisted } from './whitelist-handler';
 import { cacheIndex } from './cache-index';
 import { generateKey, generatePageSeriesKey, normalizeRequestParams } from './utils';
+import { isWhitelisted } from './whitelist-handler';
+import config from 'config';
+import localforage from 'lib/localforage';
+import warn from 'lib/warn';
 
 /**
  * Module variables

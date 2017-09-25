@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import phone from 'phone';
 import i18n from 'i18n-calypso';
+import phone from 'phone';
 
 export default function( phoneNumber ) {
 	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );

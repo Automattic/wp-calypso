@@ -2,24 +2,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import page from 'page';
 import qs from 'qs';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import feedStreamFactory from 'lib/feed-stream-store';
-import { recordTrack } from 'reader/stats';
-import {
-	ensureStoreLoading,
-	trackPageLoad,
-	trackUpdatesLoaded,
-	trackScrollPage,
-} from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
+import feedStreamFactory from 'lib/feed-stream-store';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
+import { recordTrack } from 'reader/stats';
 
 const analyticsPageTitle = 'Reader';
 

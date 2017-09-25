@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import request from 'superagent';
-import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import request from 'superagent';
 
 /**
  * Internal dependencies

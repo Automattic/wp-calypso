@@ -1,30 +1,21 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { isEqual, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Draggable from 'components/draggable';
-import {
-	getImageEditorCropBounds,
-	getImageEditorAspectRatio,
-	getImageEditorTransform,
-	getImageEditorCrop,
-	imageEditorHasChanges
-} from 'state/ui/editor/image-editor/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import {
-	imageEditorCrop,
-	imageEditorComputedCrop
-} from 'state/ui/editor/image-editor/actions';
-import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
 import { getImageEditorOriginalAspectRatio } from 'state/selectors';
+import { imageEditorCrop, imageEditorComputedCrop } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
+import { getImageEditorCropBounds, getImageEditorAspectRatio, getImageEditorTransform, getImageEditorCrop, imageEditorHasChanges } from 'state/ui/editor/image-editor/selectors';
 
 class ImageEditorCrop extends Component {
 	static propTypes = {

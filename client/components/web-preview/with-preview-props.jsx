@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import { setUrlScheme } from 'lib/url';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
-import { setUrlScheme } from 'lib/url';
 
 class WithPreviewProps extends Component {
 	static propTypes = {

@@ -1,13 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-progress' );
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
 import ProgressItem from './progress-item';
+
+const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 
 export default localize( React.createClass( {
 

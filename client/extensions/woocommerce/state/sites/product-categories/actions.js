@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
-	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
-	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
+import wp from 'lib/wp';
+import { WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST, WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCT_CATEGORY_CREATE, WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED } from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId ) {
 	return ( dispatch ) => {

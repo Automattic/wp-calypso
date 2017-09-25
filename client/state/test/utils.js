@@ -1,21 +1,18 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { noop } from 'lodash';
 import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
 import { testSchema } from './mocks/schema';
-import useMockery from 'test/helpers/use-mockery';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { cachingActionCreatorFactory } from 'state/utils';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'utils', () => {
 	const currentState = deepFreeze( {

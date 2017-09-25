@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import support from 'lib/url/support';
-import Gridicon from 'gridicons';
 
 export default localize( React.createClass( {
 	displayName: 'TermsOfService',

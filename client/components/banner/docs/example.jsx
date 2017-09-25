@@ -6,13 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	FEATURE_ADVANCED_SEO,
-} from 'lib/plans/constants';
 import Banner from 'components/banner';
+import { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const BannerExample = () =>
 	<div>

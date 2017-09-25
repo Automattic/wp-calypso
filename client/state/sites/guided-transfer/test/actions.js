@@ -1,27 +1,15 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveGuidedTransferStatus, requestGuidedTransferStatus, saveHostDetails } from '../actions';
+import { GUIDED_TRANSFER_HOST_DETAILS_SAVE, GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE, GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS, GUIDED_TRANSFER_STATUS_RECEIVE, GUIDED_TRANSFER_STATUS_REQUEST, GUIDED_TRANSFER_STATUS_REQUEST_FAILURE, GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-	GUIDED_TRANSFER_STATUS_RECEIVE,
-	GUIDED_TRANSFER_STATUS_REQUEST,
-	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import {
-	receiveGuidedTransferStatus,
-	requestGuidedTransferStatus,
-	saveHostDetails,
-} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

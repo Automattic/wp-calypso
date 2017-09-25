@@ -1,44 +1,33 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import path from 'path';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Dialog from 'components/dialog';
-import FilePicker from 'components/file-picker';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Gravatar from 'components/gravatar';
-import {
-	isCurrentUserUploadingGravatar,
-} from 'state/current-user/gravatar-status/selectors';
-import {
-	resetAllImageEditorState
-} from 'state/ui/editor/image-editor/actions';
-import Spinner from 'components/spinner';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar,
-} from 'state/current-user/gravatar-status/actions';
 import ImageEditor from 'blocks/image-editor';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import Dialog from 'components/dialog';
 import DropZone from 'components/drop-zone';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import ExternalLink from 'components/external-link';
+import FilePicker from 'components/file-picker';
+import Gravatar from 'components/gravatar';
+import InfoPopover from 'components/info-popover';
+import Spinner from 'components/spinner';
+import path from 'path';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
+import { receiveGravatarImageFailed, uploadGravatar } from 'state/current-user/gravatar-status/actions';
+import { isCurrentUserUploadingGravatar } from 'state/current-user/gravatar-status/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 export class EditGravatar extends Component {
 	state = {

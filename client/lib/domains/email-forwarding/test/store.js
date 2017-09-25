@@ -6,10 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
-import Dispatcher from 'dispatcher';
-import { DOMAIN_NAME, EMAIL, EMAIL_FORWARDS, FORWARD_ADDRESS, MAILBOX_NAME } from './data';
 import EmailForwardingStore from './../store';
+import { DOMAIN_NAME, EMAIL, EMAIL_FORWARDS, FORWARD_ADDRESS, MAILBOX_NAME } from './data';
+import Dispatcher from 'dispatcher';
+import { action as ActionTypes } from 'lib/upgrades/constants';
 
 describe( 'store', () => {
 	it( 'should be an object', () => {

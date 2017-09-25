@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
-import Button from 'components/button';
-import notices from 'notices';
 import support from 'lib/url/support';
+import notices from 'notices';
 
 class IcannVerification extends React.Component {
 	state = {

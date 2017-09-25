@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import SettingsNavigation from '../navigation';
+import ShippingSettingsSaveButton from './save-button';
 import ActionHeader from 'woocommerce/components/action-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import SettingsNavigation from '../navigation';
-import ShippingSettingsSaveButton from './save-button';
 
 const ShippingHeader = ( { translate, site } ) => {
 	const breadcrumbs = [

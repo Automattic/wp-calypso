@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import debugFactory from 'debug';
-import page from 'page';
-import { includes } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
+import DesignMenu from 'blocks/design-menu';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
-import { closePreview } from 'state/ui/preview/actions';
-import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
+import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { closePreview } from 'state/ui/preview/actions';
+import { getPreviewUrl } from 'state/ui/preview/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 

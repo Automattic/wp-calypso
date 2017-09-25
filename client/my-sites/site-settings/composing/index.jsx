@@ -8,17 +8,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AfterTheDeadline from './after-the-deadline';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
+import AfterTheDeadline from './after-the-deadline';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
-import {
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
+import { isJetpackMinimumVersion, isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {

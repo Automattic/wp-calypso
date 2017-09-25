@@ -1,48 +1,39 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { find, findIndex, identity, noop, times } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { find, findIndex, identity, noop, times } from 'lodash';
 import page from 'page';
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL, PRIMARY_DOMAIN_REVERT_FAIL, PRIMARY_DOMAIN_REVERT_SUCCESS } from './constants';
+import DomainListNotice from './domain-list-notice';
 import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import SectionHeader from 'components/section-header';
+import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import Button from 'components/button';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
-import DomainListNotice from './domain-list-notice';
-import {
-	PRIMARY_DOMAIN_CHANGE_SUCCESS,
-	PRIMARY_DOMAIN_CHANGE_FAIL,
-	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS
-} from './constants';
+import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import SectionHeader from 'components/section-header';
+import config from 'config';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { isDomainOnlySite } from 'state/selectors';
-import { isPlanFeaturesEnabled } from 'lib/plans';
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { isPlanFeaturesEnabled } from 'lib/plans';
+import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import UpgradesNavigation from 'my-sites/domains/navigation';
+import paths from 'my-sites/domains/paths';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { isDomainOnlySite } from 'state/selectors';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
 
 export class List extends React.Component {
 	static defaultProps = {

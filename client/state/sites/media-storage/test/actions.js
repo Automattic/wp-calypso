@@ -6,18 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { receiveMediaStorage, requestMediaStorage } from '../actions';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST, SITE_MEDIA_STORAGE_REQUEST_SUCCESS, SITE_MEDIA_STORAGE_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE
-} from 'state/action-types';
-import {
-	receiveMediaStorage,
-	requestMediaStorage
-} from '../actions';
-
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {

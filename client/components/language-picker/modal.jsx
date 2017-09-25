@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, map, noop, partial } from 'lodash';
+import PropTypes from 'prop-types';
+
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import SectionNav from 'components/section-nav';
+import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabs from 'components/section-nav/tabs';
 
 class LanguagePickerModal extends PureComponent {
 	static propTypes = {

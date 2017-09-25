@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = ( event ) => {

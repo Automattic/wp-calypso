@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import { sectionify } from 'lib/route/path';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {

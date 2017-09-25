@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
-import config from 'config';
+import QueryPosts from 'components/data/query-posts';
 import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
-import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
-import humanDate from 'lib/human-date';
 import MultiCheckbox from 'components/forms/multi-checkbox';
-import QueryPosts from 'components/data/query-posts';
+import config from 'config';
+import analytics from 'lib/analytics';
+import humanDate from 'lib/human-date';
+import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 
 class ReadingWidget extends Component {
 

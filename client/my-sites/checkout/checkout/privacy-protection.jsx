@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import PrivacyProtectionDialog from './privacy-protection-dialog';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { abtest } from 'lib/abtest';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
+import SectionHeader from 'components/section-header';
+import { abtest } from 'lib/abtest';
+import { cartItems } from 'lib/cart-values';
 
 class PrivacyProtection extends Component {
 	handleDialogSelect = ( options, event ) => {

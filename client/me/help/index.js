@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 import page from 'page';
+
+/**
+ * Internal dependencies
+ */
+import helpController from './controller';
 import config from 'config';
 import meController from 'me/controller';
-import helpController from './controller';
 
 export default function() {
 	if ( config.isEnabled( 'help' ) ) {

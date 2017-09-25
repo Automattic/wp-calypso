@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
-import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
+import React from 'react';
 
 const ActionRemove = ( props ) =>
 	<button

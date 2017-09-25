@@ -2,23 +2,23 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:desktop' );
 import page from 'page';
+
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
-
-import userFactory from 'lib/user';
-const user = userFactory();
-import { ipcRenderer as ipc } from 'electron';          // From Electron
-import store from 'store';
+import { ipcRenderer as ipc } from 'electron';
 import oAuthToken from 'lib/oauth-token';
-import userUtilities from 'lib/user/utils';
+import paths from 'lib/paths';
 import location from 'lib/route/page-notifier';
 import { getStatsPathForTab } from 'lib/route/path';
+import userFactory from 'lib/user';
+import userUtilities from 'lib/user/utils';
+
+const debug = debugFactory( 'calypso:desktop' );
+const user = userFactory();
 
 /**
  * Module variables

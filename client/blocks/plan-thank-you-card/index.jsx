@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
-import formatCurrency from 'lib/format-currency';
-import ThankYouCard from 'components/thank-you-card';
+import QuerySites from 'components/data/query-sites';
 import PlanIcon from 'components/plans/plan-icon';
+import ThankYouCard from 'components/thank-you-card';
+import formatCurrency from 'lib/format-currency';
+import { getPlan } from 'lib/plans';
 import { getPlanClass } from 'lib/plans/constants';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getRawSite } from 'state/sites/selectors';
 
 class PlanThankYouCard extends Component {
 	getPlanClass() {

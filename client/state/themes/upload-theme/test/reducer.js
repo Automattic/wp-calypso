@@ -6,25 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	THEME_UPLOAD_START,
-	THEME_UPLOAD_SUCCESS,
-	THEME_UPLOAD_FAILURE,
-	THEME_UPLOAD_CLEAR,
-	THEME_UPLOAD_PROGRESS,
-	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_TRANSFER_INITIATE_PROGRESS,
-	THEME_TRANSFER_INITIATE_REQUEST,
-} from 'state/action-types';
-import {
-	uploadedThemeId,
-	uploadError,
-	progressLoaded,
-	progressTotal,
-	inProgress,
-} from '../reducer';
+import { uploadedThemeId, uploadError, progressLoaded, progressTotal, inProgress } from '../reducer';
+import { THEME_UPLOAD_START, THEME_UPLOAD_SUCCESS, THEME_UPLOAD_FAILURE, THEME_UPLOAD_CLEAR, THEME_UPLOAD_PROGRESS, THEME_TRANSFER_STATUS_RECEIVE, THEME_TRANSFER_INITIATE_FAILURE, THEME_TRANSFER_STATUS_FAILURE, THEME_TRANSFER_INITIATE_PROGRESS, THEME_TRANSFER_INITIATE_REQUEST } from 'state/action-types';
 
 const themeId = 'twentysixteen';
 

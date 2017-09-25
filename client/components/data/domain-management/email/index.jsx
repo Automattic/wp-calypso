@@ -2,34 +2,26 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
-import CartStore from 'lib/cart/store';
 import QueryProducts from 'components/data/query-products-list';
 import QuerySites from 'components/data/query-sites';
+import StoreConnection from 'components/data/store-connection';
+import CartStore from 'lib/cart/store';
+import DomainsStore from 'lib/domains/store';
+import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
-import {
-	fetchByDomain,
-	fetchBySiteId
-} from 'state/google-apps-users/actions';
-import {
-	getByDomain,
-	getBySite,
-	isLoaded
-} from 'state/google-apps-users/selectors';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
+import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getProductsList } from 'state/products-list/selectors';
 
 const user = userFactory();
 

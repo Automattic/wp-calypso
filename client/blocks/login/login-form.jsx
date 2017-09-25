@@ -2,38 +2,32 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import qs from 'qs';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import FormsButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
+import SocialLoginForm from './social';
 import Card from 'components/card';
+import FormsButton from 'components/forms/form-button';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { loginUser, formUpdate } from 'state/login/actions';
+import Notice from 'components/notice';
+import config from 'config';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	getRequestError,
-	isFormDisabled,
-	getSocialAccountIsLinking,
-	getSocialAccountLinkEmail,
-	getSocialAccountLinkService,
-} from 'state/login/selectors';
-import Notice from 'components/notice';
-import SocialLoginForm from './social';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { loginUser, formUpdate } from 'state/login/actions';
+import { getRequestError, isFormDisabled, getSocialAccountIsLinking, getSocialAccountLinkEmail, getSocialAccountLinkService } from 'state/login/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentQueryArguments } from 'state/ui/selectors';
 
 export class LoginForm extends Component {
 	static propTypes = {

@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeShowcaseTitle } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeShowcaseTitle } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeShowcaseTitle()', () => {
 	it( 'should return the correct title for a known vertical', () => {

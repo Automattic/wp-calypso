@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
-import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
+import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -12,6 +11,7 @@ import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
 import { FormPhoneInput } from '../';
 import mockCountriesList from './mocks/mock-countries-list';
 import mockCountriesListEmpty from './mocks/mock-countries-list-empty';
+import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
 
 const countries = mockCountriesList.get();
 

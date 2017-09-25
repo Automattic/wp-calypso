@@ -1,24 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	some,
-} from 'lodash';
+import { some } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import CartToggle from './cart-toggle';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import TermsOfService from './terms-of-service';
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
+import TermsOfService from './terms-of-service';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-import CartToggle from './cart-toggle';
+import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 
 const CreditsPaymentBox = React.createClass( {
 	content: function() {

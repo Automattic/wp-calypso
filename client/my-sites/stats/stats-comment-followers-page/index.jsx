@@ -1,29 +1,25 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, flowRight } from 'lodash';
+import { get, flowRight } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import ErrorPanel from '../stats-error';
-import Pagination from 'components/pagination';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import Pagination from 'components/pagination';
+import SectionHeader from 'components/section-header';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData, hasSiteStatsQueryFailed } from 'state/stats/lists/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
-	hasSiteStatsQueryFailed
-} from 'state/stats/lists/selectors';
 
 class StatModuleFollowersPage extends Component {
 	render() {

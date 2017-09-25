@@ -1,32 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import Debug from 'debug';
 import classNames from 'classnames';
+import Debug from 'debug';
+import { localize } from 'i18n-calypso';
 import page from 'page';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import InviteHeader from 'my-sites/invites/invite-header';
-import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
-import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import { login } from 'lib/paths';
-import _user from 'lib/user';
-import { fetchInvite } from 'lib/invites/actions';
-import InvitesStore from 'lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'components/empty-content';
-import { successNotice, infoNotice } from 'state/notices/actions';
-import analytics from 'lib/analytics';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
+import LocaleSuggestions from 'components/locale-suggestions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import analytics from 'lib/analytics';
+import { fetchInvite } from 'lib/invites/actions';
+import InvitesStore from 'lib/invites/stores/invites-accept-validation';
+import { login } from 'lib/paths';
+import _user from 'lib/user';
 import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
+import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
+import InviteHeader from 'my-sites/invites/invite-header';
+import { getRedirectAfterAccept } from 'my-sites/invites/utils';
+import { successNotice, infoNotice } from 'state/notices/actions';
 
 /**
  * Module variables

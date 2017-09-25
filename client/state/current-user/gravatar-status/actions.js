@@ -1,16 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	GRAVATAR_RECEIVE_IMAGE_FAILURE,
-	GRAVATAR_UPLOAD_REQUEST,
-} from 'state/action-types';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
+import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
+import { bumpStat, composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export function uploadGravatar( file, email ) {
 	return withAnalytics(

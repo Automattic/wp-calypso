@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import classNames from 'classnames';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import LanguagePicker from 'components/language-picker';
 import Card from 'components/card';
+import LanguagePicker from 'components/language-picker';
+import config from 'config';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';

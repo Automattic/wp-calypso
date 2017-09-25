@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import siteTitle from './updaters/site-title';
 
 const updaterFunctions = [

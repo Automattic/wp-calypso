@@ -2,17 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { announceFailure, createPages, handleSuccess, handleFailure } from '../';
+import { WP_JOB_MANAGER_CREATE_PAGES } from '../../../action-types';
+import { createPagesError, nextStep } from '../../../setup/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { announceFailure, createPages, handleSuccess, handleFailure } from '../';
-import { createPagesError, nextStep } from '../../../setup/actions';
-import { WP_JOB_MANAGER_CREATE_PAGES } from '../../../action-types';
 
 const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;

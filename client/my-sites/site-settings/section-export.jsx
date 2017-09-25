@@ -1,24 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import ExporterContainer from 'my-sites/exporter';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import ExporterContainer from 'my-sites/exporter';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 	if ( ! site ) {

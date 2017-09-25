@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
+import EditorFieldset from 'post-editor/editor-fieldset';
+import { isJetpackModuleActive } from 'state/sites/selectors';
 import { isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
 
 const SharingLikeOptions = React.createClass( {
 	propTypes: {

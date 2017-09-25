@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -12,20 +12,17 @@ import { connect } from 'react-redux';
 import Banner from 'components/banner';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import { isJetpackModuleActive } from 'state/selectors';
-import {
-	FEATURE_WORDADS_INSTANT,
-	PLAN_JETPACK_PREMIUM
-} from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class JetpackAds extends Component {
 	static defaultProps = {

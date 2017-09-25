@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 
-import { localize } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
+import EditorMediaModalGalleryEdit from './edit';
+import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
+import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import Notice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import EditorMediaModalGalleryEdit from './edit';
-import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
-import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
 export default localize( React.createClass( {
 	displayName: 'EditorMediaModalGalleryPreview',

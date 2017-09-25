@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import { bind } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { bind } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Suggestion from './suggestion';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import Suggestion from './suggestion';
 
 const SuggestionList = ( { onClick, onClose, popoverContext, query, selectedSuggestionId, suggestions } ) =>
 	<PopoverMenu

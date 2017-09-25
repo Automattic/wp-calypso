@@ -6,30 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	productsDeleteSuccess,
-	productsRequest,
-	productsRequestSuccess,
-	productsRequestFailure,
-	productsSearchRequest,
-	productsSearchRequestFailure,
-	productsSearchRequestSuccess,
-	productsSearchClear,
-} from '../reducer';
-
-import {
-	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+import { productsDeleteSuccess, productsRequest, productsRequestSuccess, productsRequestFailure, productsSearchRequest, productsSearchRequestFailure, productsSearchRequestSuccess, productsSearchClear } from '../reducer';
+import product from './fixtures/product';
 
 import products from './fixtures/products';
-import product from './fixtures/product';
+import { WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS, WOOCOMMERCE_PRODUCTS_REQUEST, WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'productsRequest', () => {

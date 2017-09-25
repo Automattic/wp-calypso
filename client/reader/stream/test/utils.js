@@ -3,14 +3,15 @@
  * External dependencies
  */
 import { expect, assert } from 'chai';
-import moment from 'moment';
 import mockery from 'mockery';
-let utils, sameDay, sameSite, combine, combineCards, injectRecommendations;
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
+
+let utils, sameDay, sameSite, combine, combineCards, injectRecommendations;
 
 describe( 'reader stream', () => {
 	useMockery();

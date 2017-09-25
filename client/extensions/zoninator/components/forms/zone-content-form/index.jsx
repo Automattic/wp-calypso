@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { FieldArray, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { FieldArray, reduxForm } from 'redux-form';
 
 /**
  * Internal dependencies
  */
+import PostsList from './posts-list';
 import CompactCard from 'components/card';
 import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
-import PostsList from './posts-list';
 
 const form = 'extensions.zoninator.zoneContent';
 

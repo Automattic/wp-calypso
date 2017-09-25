@@ -2,14 +2,13 @@
  * External dependencies
  */
 import { findIndex, pick, reject } from 'lodash';
-
 import update from 'react-addons-update';
 
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
 import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
+import { action as ActionTypes } from 'lib/upgrades/constants';
 
 function updateDomainState( state, domainName, dns ) {
 	const command = {

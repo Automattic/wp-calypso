@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
-import { localize } from 'i18n-calypso';
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-spam' );
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 
-import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+const debug = debugFactory( 'calypso:stats:action-spam' );
 
 export default localize( React.createClass( {
 	displayName: 'StatsActionSpam',

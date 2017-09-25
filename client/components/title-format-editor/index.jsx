@@ -1,19 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import {
-	get,
-	head,
-	map,
-	max,
-	min,
-	noop,
-} from 'lodash';
+import { CompositeDecorator, Editor, EditorState, Entity, Modifier, SelectionState } from 'draft-js';
+import { localize } from 'i18n-calypso';
+
+import { get, head, map, max, min, noop } from 'lodash';
 import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
+import Token from './token';
+import { buildSeoTitle } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 // The following polyfills exist for the draft-js editor, since
 // we are unable to change its codebase and yet we are waiting
@@ -92,18 +96,6 @@ if ( ! Array.prototype.fill ) {
 		return O;
 	};
 }
-
-// The below is a `require()` statement becuase it needs to
-// be loaded in after the polyfills are created.
-import { CompositeDecorator, Editor, EditorState, Entity, Modifier, SelectionState } from 'draft-js';
-
-// Parser also requires draft-js. Lets load it after the polyfills are created too.
-import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
-
-import Token from './token';
-import { buildSeoTitle } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { localize } from 'i18n-calypso';
 
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 

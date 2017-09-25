@@ -7,13 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	USER_SETTINGS_UPDATE,
-	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_UNSAVED_REMOVE,
-	USER_SETTINGS_UNSAVED_CLEAR,
-} from 'state/action-types';
 import reducer, { settings, unsavedSettings } from '../reducer';
+import { USER_SETTINGS_UPDATE, USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE, USER_SETTINGS_UNSAVED_CLEAR } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

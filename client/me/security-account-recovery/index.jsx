@@ -1,50 +1,28 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
-import ReauthRequired from 'me/reauth-required';
 import RecoveryEmail from './recovery-email';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
 import RecoveryPhone from './recovery-phone';
 import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
-import SecuritySectionNav from 'me/security-section-nav';
+import CompactCard from 'components/card/compact';
+import DocumentHead from 'components/data/document-head';
+import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
+import Main from 'components/main';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import ReauthRequired from 'me/reauth-required';
+import SecuritySectionNav from 'me/security-section-nav';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import { updateAccountRecoveryEmail, updateAccountRecoveryPhone, deleteAccountRecoveryPhone, deleteAccountRecoveryEmail, resendAccountRecoveryEmailValidation, resendAccountRecoveryPhoneValidation, validateAccountRecoveryPhone } from 'state/account-recovery/settings/actions';
 
-import {
-	updateAccountRecoveryEmail,
-	updateAccountRecoveryPhone,
-	deleteAccountRecoveryPhone,
-	deleteAccountRecoveryEmail,
-	resendAccountRecoveryEmailValidation,
-	resendAccountRecoveryPhoneValidation,
-	validateAccountRecoveryPhone,
-} from 'state/account-recovery/settings/actions';
-
-import {
-	getAccountRecoveryEmail,
-	getAccountRecoveryPhone,
-	isAccountRecoveryEmailActionInProgress,
-	isAccountRecoveryPhoneActionInProgress,
-	isValidatingAccountRecoveryPhone,
-	isAccountRecoveryEmailValidated,
-	isAccountRecoveryPhoneValidated,
-	hasSentAccountRecoveryEmailValidation,
-	hasSentAccountRecoveryPhoneValidation,
-	shouldPromptAccountRecoveryEmailValidationNotice,
-	shouldPromptAccountRecoveryPhoneValidationNotice,
-} from 'state/account-recovery/settings/selectors';
-
+import { getAccountRecoveryEmail, getAccountRecoveryPhone, isAccountRecoveryEmailActionInProgress, isAccountRecoveryPhoneActionInProgress, isValidatingAccountRecoveryPhone, isAccountRecoveryEmailValidated, isAccountRecoveryPhoneValidated, hasSentAccountRecoveryEmailValidation, hasSentAccountRecoveryPhoneValidation, shouldPromptAccountRecoveryEmailValidationNotice, shouldPromptAccountRecoveryPhoneValidationNotice } from 'state/account-recovery/settings/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const SecurityAccountRecovery = props =>

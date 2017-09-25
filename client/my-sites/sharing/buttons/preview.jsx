@@ -1,23 +1,21 @@
-import { filter, some } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import ButtonsLabelEditor from './label-editor';
+import ButtonsPreviewAction from './preview-action';
 
 import ButtonsPreviewButtons from './preview-buttons';
-import ButtonsPreviewAction from './preview-action';
 import ButtonsTray from './tray';
-import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
+import { decodeEntities } from 'lib/formatting';
 
 export default localize( React.createClass( {
 	displayName: 'SharingButtonsPreview',

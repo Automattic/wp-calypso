@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-
-import AccountComponent from 'me/account/main';
+import userSettings from 'lib/user-settings';
 import username from 'lib/username';
+import AccountComponent from 'me/account/main';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

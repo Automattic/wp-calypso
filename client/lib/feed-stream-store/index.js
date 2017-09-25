@@ -3,17 +3,18 @@
  * External dependencies
  */
 import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash';
+
 /**
  * Internal dependencies
  */
+import FeedStream from './feed-stream';
+import FeedStreamCache from './feed-stream-cache';
+import PagedStream from './paged-stream';
+import { keyToString, keysAreEqual } from './post-key';
 import config from 'config';
 import Dispatcher from 'dispatcher';
-import FeedStream from './feed-stream';
-import PagedStream from './paged-stream';
-import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 

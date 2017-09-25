@@ -2,16 +2,15 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { userCan } from 'lib/site/utils';
-import MediaLibraryListItem from 'my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
+import { userCan } from 'lib/site/utils';
+import MediaLibraryListItem from 'my-sites/media-library/list-item';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryEditItem',

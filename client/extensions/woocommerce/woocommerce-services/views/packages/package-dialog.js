@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { concat, difference, flatten, map } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EditPackage from './edit-package';
-import checkInputs from './modal-errors';
-import Dialog from 'components/dialog';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormButton from 'components/forms/form-button';
-import inputFilters from './input-filters';
-import PredefinedPackages from './predefined-packages';
-import SegmentedControl from 'components/segmented-control';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
+import EditPackage from './edit-package';
+import inputFilters from './input-filters';
+import checkInputs from './modal-errors';
+import PredefinedPackages from './predefined-packages';
+import Dialog from 'components/dialog';
+import FormButton from 'components/forms/form-button';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import SegmentedControl from 'components/segmented-control';
 
 const AddPackageDialog = ( props ) => {
 	const {

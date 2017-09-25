@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { assign, pick } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import urls from 'url';
 
 export default function( url ) {

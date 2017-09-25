@@ -1,16 +1,8 @@
-import {
-	compact,
-	flowRight as compose,
-	fromPairs,
-	get,
-	map,
-	matchesProperty,
-	reduce,
-} from 'lodash';
-import {
-	convertFromRaw,
-	convertToRaw,
-} from 'draft-js';
+/**
+ * External dependencies
+ */
+import { convertFromRaw, convertToRaw } from 'draft-js';
+import { compact, flowRight as compose, fromPairs, get, map, matchesProperty, reduce } from 'lodash';
 
 /*
  * The functions in this file convert between the

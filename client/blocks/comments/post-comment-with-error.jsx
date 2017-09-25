@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-/***
+/**
  * Internal dependencies
  */
 import PostCommentForm from './form';

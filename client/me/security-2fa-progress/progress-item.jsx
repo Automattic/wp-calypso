@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import debugFactory from 'debug';
 import React from 'react';
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
-import classNames from 'classnames';
 
 export default React.createClass( {
 

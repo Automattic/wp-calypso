@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
+import Main from 'components/main';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const { isJetpack, siteId, translate } = props;

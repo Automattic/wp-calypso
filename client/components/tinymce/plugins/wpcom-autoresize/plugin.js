@@ -1,13 +1,4 @@
 /**
- * WordPress TinyMCE Auto Resize plugin
- *
- * Adapted from WordPress.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
-*/
-
-/**
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';

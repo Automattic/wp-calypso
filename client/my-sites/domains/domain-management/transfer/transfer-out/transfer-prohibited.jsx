@@ -1,6 +1,8 @@
-/** External Dependencies */
-import React from 'react';
+/**
+ * External dependencies
+ */
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies

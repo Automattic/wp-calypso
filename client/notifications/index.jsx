@@ -1,35 +1,23 @@
 /**
- * Loads the notifications client into Calypso and
- * connects the messaging and interactive elements
- *
- *  - messages through iframe
- *  - keyboard hotkeys
- *  - window/pane scrolling
- *  - service worker
- *
- * @module notifications
- */
-
-/**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import page from 'page';
-import wpcom from 'lib/wp';
 import { get } from 'lodash';
-import 'config';
+import NotificationsPanel, { refreshNotes } from 'notifications-panel';
+
+import page from 'page';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import 'config';
 import config from 'config';
+import analytics from 'lib/analytics';
 import userLib from 'lib/user';
+import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
-
-import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 
 /**
  * Module variables

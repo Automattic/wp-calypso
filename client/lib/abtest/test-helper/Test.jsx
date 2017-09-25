@@ -1,5 +1,8 @@
-import React from 'react';
+/**
+ * External dependencies
+ */
 import classNames from 'classnames';
+import React from 'react';
 
 export default React.createClass( {
 

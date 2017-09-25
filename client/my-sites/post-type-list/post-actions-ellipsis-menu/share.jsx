@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import config from 'config';
 import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
-import { toggleSharePanel } from 'state/ui/post-type-list/actions';
 import { isPublicizeEnabled } from 'state/selectors';
-import config from 'config';
+import { toggleSharePanel } from 'state/ui/post-type-list/actions';
 
 class PostActionsEllipsisMenuShare extends Component {
 	static propTypes = {

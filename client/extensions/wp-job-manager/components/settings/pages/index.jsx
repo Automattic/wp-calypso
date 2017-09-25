@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormSection, isDirty, reduxForm } from 'redux-form';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
+import PageDropdown from './page-dropdown';
 import Card from 'components/card';
+import QueryPosts from 'components/data/query-posts';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import PageDropdown from './page-dropdown';
-import QueryPosts from 'components/data/query-posts';
 import SectionHeader from 'components/section-header';
+import { ProtectFormGuard } from 'lib/protect-form';
 import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 

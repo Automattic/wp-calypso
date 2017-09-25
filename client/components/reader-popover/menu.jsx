@@ -1,15 +1,15 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { omit } from 'lodash';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderPopover from 'components/reader-popover';
 import PopoverMenu from 'components/popover/menu';
+import ReaderPopover from 'components/reader-popover';
 
 const ReaderPopoverMenu = props => {
 	const popoverProps = omit( props, 'popoverComponent' );

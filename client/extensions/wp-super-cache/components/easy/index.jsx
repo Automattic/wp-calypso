@@ -1,29 +1,29 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { flowRight, get, isEmpty, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isHttps } from 'lib/url';
-import Button from 'components/button';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle/compact';
-import QueryStatus from '../data/query-status';
-import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
 import { testCache } from '../../state/cache/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
+import QueryStatus from '../data/query-status';
+import WrapSettingsForm from '../wrap-settings-form';
+import Button from 'components/button';
+import Card from 'components/card';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
+import { isHttps } from 'lib/url';
+import { getSiteTitle } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EasyTab extends Component {
 	static propTypes = {

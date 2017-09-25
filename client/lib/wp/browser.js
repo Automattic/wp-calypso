@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wp' );
+import wpcomPKG from 'wpcom/package';
 
 /**
  * Internal dependencies
  */
-import wpcomUndocumented from 'lib/wpcom-undocumented';
-import config from 'config';
-import wpcomSupport from 'lib/wp/support';
-import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
-
+import { injectLocalization } from './localization';
+import { SyncHandler, syncOptOut } from './sync-handler';
+import config from 'config';
 import oauthToken from 'lib/oauth-token';
-import wpcomPKG from 'wpcom/package';
+import wpcomSupport from 'lib/wp/support';
+import wpcomUndocumented from 'lib/wpcom-undocumented';
+const debug = debugFactory( 'calypso:wp' );
 
 const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
 let wpcom;

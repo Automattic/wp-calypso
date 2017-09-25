@@ -1,14 +1,14 @@
 /**
+ * Internal dependencies
+ */
+import Emitter from 'lib/mixins/emitter';
+
+/**
  * External dependencies
  */
 // only require keymaster if this is a browser environment
 let keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
-
-/**
- * Internal dependencies
- */
-import Emitter from 'lib/mixins/emitter';
 
 /**
  * Internal dependencies

@@ -6,11 +6,11 @@ import { isEmpty, mapValues, pickBy, without } from 'lodash';
 /**
  * Internal dependencies
  */
+import { ValidationErrors as MediaValidationErrors } from './constants';
+import MediaUtils from './utils';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import Sites from 'lib/sites-list';
-import MediaUtils from './utils';
-import { ValidationErrors as MediaValidationErrors } from './constants';
 
 /**
  * Module variables

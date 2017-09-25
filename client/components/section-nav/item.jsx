@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Count from 'components/count';
 import { preload } from 'sections-preload';

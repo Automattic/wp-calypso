@@ -1,9 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	HAPPYCHAT_RECEIVE_EVENT,
-} from 'state/action-types';
+import { HAPPYCHAT_RECEIVE_EVENT } from 'state/action-types';
 
 const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
 

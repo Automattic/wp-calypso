@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import Card from 'components/card';
 import Header from './header';
+import Card from 'components/card';
 import SettingsForm from 'me/notification-settings/settings-form';
+import { getSite } from 'state/sites/selectors';
 
 class BlogSettings extends Component {
 	static propTypes = {

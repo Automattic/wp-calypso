@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getAvailableExternalAccounts,
-} from '../selectors';
+import { getAvailableExternalAccounts } from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {

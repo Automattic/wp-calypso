@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	PLANS_RECEIVE,
-	PLANS_REQUEST,
-	PLANS_REQUEST_SUCCESS,
-	PLANS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
+import { PLANS_RECEIVE, PLANS_REQUEST, PLANS_REQUEST_SUCCESS, PLANS_REQUEST_FAILURE } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 /**
  * Plans `Reducer` function

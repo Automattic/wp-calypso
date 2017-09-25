@@ -1,11 +1,11 @@
-// External dependencies
+/**
+ * Internal dependencies
+ */
+import { action as actionTypes } from './constants';
 import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-
-// Internal dependencies
 import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
-import { action as actionTypes } from './constants';
+import wpcom from 'lib/wp';
 
 const fetchingLists = {};
 

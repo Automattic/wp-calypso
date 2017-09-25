@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
+import Dialog from 'components/dialog';
 
 class PaymentMethodStripeSetupDialog extends Component {
 

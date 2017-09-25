@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingDomainsSuggestions } from 'state/domains/suggestions/selectors';
 import { requestDomainsSuggestions } from 'state/domains/suggestions/actions';
+import { isRequestingDomainsSuggestions } from 'state/domains/suggestions/selectors';
 
 function getQueryObject( props ) {
 	const { query, vendor, quantity, includeSubdomain, surveyVertical } = props;

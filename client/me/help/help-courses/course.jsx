@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
+import CourseScheduleItem from './course-schedule-item';
 import CourseVideo from './course-video';
+import Card from 'components/card';
 import analytics from 'lib/analytics';
 import { getPrimarySiteId } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';

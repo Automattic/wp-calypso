@@ -1,21 +1,16 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PlanStorage from '../index';
 import PlanStorageBar from '../bar';
-import {
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_FREE,
-} from 'lib/plans/constants';
+import PlanStorage from '../index';
+import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL, PLAN_FREE } from 'lib/plans/constants';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 

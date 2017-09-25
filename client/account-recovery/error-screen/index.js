@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
 import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
+import EmptyContent from 'components/empty-content';
+import config from 'config';
 
 const getErrorContent = ( errorIdentifier, translate ) => {
 	switch ( errorIdentifier ) {

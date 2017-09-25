@@ -4,17 +4,17 @@
  */
 import classNames from 'classnames';
 import { compact } from 'lodash';
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'state/selectors';
-import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'lib/plugins/store';
 import SectionHeader from 'components/section-header';
+import PluginsStore from 'lib/plugins/store';
+import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
+import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'state/selectors';
 
 export class PluginSiteList extends Component {
 	static propTypes = {

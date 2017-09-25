@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import JetpackDevModeNotice from './jetpack-dev-mode-notice';
+import SiteSettingsNavigation from './navigation';
+import GeneralSettings from './section-general';
 import DocumentHead from 'components/data/document-head';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import GeneralSettings from './section-general';
-import SiteSettingsNavigation from './navigation';
+import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SiteSettingsComponent = ( {
 	siteId,

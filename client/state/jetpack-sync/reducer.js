@@ -1,21 +1,14 @@
 /**
- * External dependencis
+ * External dependencies
  */
 import { pick, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	JETPACK_SYNC_START_REQUEST,
-	JETPACK_SYNC_START_SUCCESS,
-	JETPACK_SYNC_START_ERROR,
-	JETPACK_SYNC_STATUS_REQUEST,
-	JETPACK_SYNC_STATUS_SUCCESS,
-	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
 import { getExpectedResponseKeys } from './utils';
+import { JETPACK_SYNC_START_REQUEST, JETPACK_SYNC_START_SUCCESS, JETPACK_SYNC_START_ERROR, JETPACK_SYNC_STATUS_REQUEST, JETPACK_SYNC_STATUS_SUCCESS, JETPACK_SYNC_STATUS_ERROR } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 export function fullSyncRequest( state = {}, action ) {
 	switch ( action.type ) {

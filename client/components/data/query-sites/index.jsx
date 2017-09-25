@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import { requestSites, requestSite } from 'state/sites/actions';
+import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 
 class QuerySites extends Component {
 	componentWillMount() {

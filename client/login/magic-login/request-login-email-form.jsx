@@ -1,37 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	fetchMagicLoginRequestEmail,
-	hideMagicLoginRequestNotice,
-} from 'state/login/magic-login/actions';
-import {
-	isFetchingMagicLoginEmail,
-	getMagicLoginCurrentView,
-	getMagicLoginRequestEmailError,
-	getMagicLoginRequestedEmailSuccessfully,
-} from 'state/selectors';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-} from 'state/login/magic-login/constants';
-
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
-import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { fetchMagicLoginRequestEmail, hideMagicLoginRequestNotice } from 'state/login/magic-login/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
+import { isFetchingMagicLoginEmail, getMagicLoginCurrentView, getMagicLoginRequestEmailError, getMagicLoginRequestedEmailSuccessfully } from 'state/selectors';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {

@@ -2,17 +2,16 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
-import { receiveUnfollowTag as receiveUnfollowTagAction } from 'state/reader/tags/items/actions';
-
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
+import { receiveUnfollowTag as receiveUnfollowTagAction } from 'state/reader/tags/items/actions';
 
 export function requestUnfollow( store, action ) {
 	store.dispatch(

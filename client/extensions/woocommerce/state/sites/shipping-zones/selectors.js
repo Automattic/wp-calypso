@@ -6,16 +6,10 @@ import { every, get, isArray, some } from 'lodash';
 /**
  * Internal dependencies
  */
+import { areShippingZoneLocationsLoaded, areShippingZoneLocationsLoading } from '../shipping-zone-locations/selectors';
+import { areShippingZoneMethodsLoaded, areShippingZoneMethodsLoading } from '../shipping-zone-methods/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
-import {
-	areShippingZoneMethodsLoaded,
-	areShippingZoneMethodsLoading,
-} from '../shipping-zone-methods/selectors';
-import {
-	areShippingZoneLocationsLoaded,
-	areShippingZoneLocationsLoading,
-} from '../shipping-zone-locations/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

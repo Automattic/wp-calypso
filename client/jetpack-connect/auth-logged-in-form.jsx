@@ -2,37 +2,37 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
-import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
-import page from 'page';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import SiteCard from './site-card';
 import Button from 'components/button';
 import Card from 'components/card';
+import FormattedHeader from 'components/formatted-header';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
-import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import SiteCard from './site-card';
 import Spinner from 'components/spinner';
-import FormattedHeader from 'components/formatted-header';
+import { decodeEntities } from 'lib/formatting';
+import { login } from 'lib/paths';
+import addQueryArgs from 'lib/route/add-query-args';
+import { externalRedirect } from 'lib/route/path';
 import userUtilities from 'lib/user/utils';
 import versionCompare from 'lib/version-compare';
-import { decodeEntities } from 'lib/formatting';
-import { externalRedirect } from 'lib/route/path';
-import { login } from 'lib/paths';
 
 /**
  * Constants

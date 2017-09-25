@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { omit, uniqueId } from 'lodash';
 import classnames from 'classnames';
+import { omit, uniqueId } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import FormRange from 'components/forms/form-range';
 

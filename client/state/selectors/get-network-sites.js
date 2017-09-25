@@ -8,10 +8,7 @@ import { get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { isMainSiteOf } from 'state/selectors';
-import {
-	getSite,
-	isJetpackSiteMainNetworkSite
-} from 'state/sites/selectors';
+import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
 
 /**
  * Returns the secondary sites of a given site

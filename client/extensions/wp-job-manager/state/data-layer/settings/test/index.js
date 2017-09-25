@@ -2,28 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { announceFailure, announceSuccess, fetchExtensionError, fetchExtensionSettings, saveSettings, updateExtensionSettings } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import {
-	announceFailure,
-	announceSuccess,
-	fetchExtensionError,
-	fetchExtensionSettings,
-	saveSettings,
-	updateExtensionSettings,
-} from '../';
-import {
-	fetchError,
-	fetchSettings,
-	updateSettings,
-} from 'wp-job-manager/state/settings/actions';
+import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';
 
 const apiResponse = {
 	data: {

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import page from 'page';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

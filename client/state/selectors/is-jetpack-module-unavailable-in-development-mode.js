@@ -6,8 +6,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { getJetpackModulesRequiringConnection } from './';
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns true if the module is unavailable in development mode. False if not.

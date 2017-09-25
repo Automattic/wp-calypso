@@ -6,10 +6,7 @@ import { uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	NOTICE_CREATE,
-	NOTICE_REMOVE
-} from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 
 export function removeNotice( noticeId ) {
 	return {

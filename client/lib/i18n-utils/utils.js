@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { find } from 'lodash';
-import { parse } from 'url';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { parse } from 'url';
 
 const localeRegex = /^[A-Z]{2,3}$/i;
 const localeWithRegionRegex = /^[A-Z]{2,3}-[A-Z]{2,3}$/i;

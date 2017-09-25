@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import url from 'url';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import url from 'url';
 
 function logImageLoads() {
 	const imagesLoaded = [];

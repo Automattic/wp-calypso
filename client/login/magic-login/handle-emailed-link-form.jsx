@@ -1,40 +1,29 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
-import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
-import userFactory from 'lib/user';
 import { login } from 'lib/paths';
-import { localize } from 'i18n-calypso';
-import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
-import {
-	fetchMagicLoginAuthenticate,
-	showMagicLoginLinkExpiredPage,
-} from 'state/login/magic-login/actions';
-import {
-	getMagicLoginCurrentView,
-	getMagicLoginRequestAuthError,
-	getMagicLoginRequestedAuthSuccessfully,
-	isFetchingMagicLoginAuth,
-} from 'state/selectors';
-import {
-	getTwoFactorNotificationSent,
-	isTwoFactorEnabled,
-} from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import userFactory from 'lib/user';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { fetchMagicLoginAuthenticate, showMagicLoginLinkExpiredPage } from 'state/login/magic-login/actions';
+import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
+import { getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import { getMagicLoginCurrentView, getMagicLoginRequestAuthError, getMagicLoginRequestedAuthSuccessfully, isFetchingMagicLoginAuth } from 'state/selectors';
 
 const user = userFactory();
 

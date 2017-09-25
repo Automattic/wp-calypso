@@ -1,47 +1,35 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import AccountDialog from './account-dialog';
-import {
-	createSiteConnection,
-	deleteSiteConnection,
-	failCreateConnection,
-	fetchConnection,
-	updateSiteConnection,
-} from 'state/sharing/publicize/actions';
-import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
-import FoldableCard from 'components/foldable-card';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
-import {
-	getBrokenSiteUserConnectionsForService,
-	getRemovableConnections,
-	getSiteUserConnectionsForService,
-	isFetchingConnections,
-} from 'state/sharing/publicize/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
+import FoldableCard from 'components/foldable-card';
 import requestExternalAccess from 'lib/sharing';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import { createSiteConnection, deleteSiteConnection, failCreateConnection, fetchConnection, updateSiteConnection } from 'state/sharing/publicize/actions';
+import { getBrokenSiteUserConnectionsForService, getRemovableConnections, getSiteUserConnectionsForService, isFetchingConnections } from 'state/sharing/publicize/selectors';
+import { getAvailableExternalAccounts } from 'state/sharing/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class SharingService extends Component {
 	static propTypes = {

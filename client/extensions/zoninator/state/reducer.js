@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import feeds from './feeds/reducer';
 import zones from './zones/reducer';
+import { combineReducers } from 'state/utils';
 
 export default combineReducers( {
 	feeds,

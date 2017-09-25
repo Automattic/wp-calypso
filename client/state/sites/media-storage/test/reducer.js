@@ -7,19 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
+import reducer, { items as unwrappedItems, fetchingItems } from '../reducer';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST, SITE_MEDIA_STORAGE_REQUEST_SUCCESS, SITE_MEDIA_STORAGE_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
-import reducer, {
-	items as unwrappedItems,
-	fetchingItems
-} from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );

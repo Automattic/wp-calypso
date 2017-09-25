@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import i18nUtils from 'lib/i18n-utils';
 import DomainConnectAuthorize from './domain-connect-authorize';
 import DomainConnectNotFoundError from './domain-connect-not-found-error';
+import i18nUtils from 'lib/i18n-utils';
 
 export function domainConnectAuthorize( context, next ) {
 	context.primary = (

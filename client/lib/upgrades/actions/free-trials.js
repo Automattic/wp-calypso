@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
+import { submitTransaction } from './checkout';
 import { cartItems, emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
 import productsListFactory from 'lib/products-list';
 import { fullCreditsPayment } from 'lib/store-transactions';
-import { submitTransaction } from './checkout';
 
 const productsList = productsListFactory();
 

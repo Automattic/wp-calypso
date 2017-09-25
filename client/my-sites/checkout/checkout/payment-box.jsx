@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { PureComponent } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies

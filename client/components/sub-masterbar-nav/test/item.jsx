@@ -2,14 +2,15 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
+import Gridicon from 'gridicons';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Item from '../item';
-import Gridicon from 'gridicons';
 
 describe( 'Item', () => {
 	it( 'should render a link containing the given label', () => {

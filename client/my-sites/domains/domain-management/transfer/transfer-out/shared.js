@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
 import support from 'lib/url/support';
+import notices from 'notices';
 
 export const displayResponseError = ( responseError ) => {
 	const errorMessages = {

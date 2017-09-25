@@ -1,25 +1,22 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
+import { localize } from 'i18n-calypso';
+import { get, reduce } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, reduce } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
+import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'components/section-header';
 import { getSiteSlug } from 'state/sites/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const StatsReach = props => {
 	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;

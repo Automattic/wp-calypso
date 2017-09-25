@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 import reducer, { postId } from '../reducer';
+import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import MediaStore from 'lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
+import HeaderCake from 'components/header-cake';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import MediaStore from 'lib/media/store';
 import { isModuleActive } from 'lib/site/utils';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 const EditorMediaModalGallery = React.createClass( {
 	propTypes: {

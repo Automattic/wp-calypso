@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { find, debounce, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find, debounce, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

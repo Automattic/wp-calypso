@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 
 class OrderFulfillment extends Component {
 	static propTypes = {

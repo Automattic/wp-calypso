@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { flowRight as compose, identity } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import {
-	flowRight as compose,
-	identity,
-} from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import { recordTracksEvent } from 'state/analytics/actions';
 import Plugin from './plugin';
+import Button from 'components/button';
+import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import SectionHeader from 'components/section-header';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const StandardPluginsPanel = ( {
 	displayCount,

@@ -2,14 +2,8 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import {
-	capitalize,
-	compact,
-	inRange,
-	isArray,
-	isEmpty
-} from 'lodash';
 import i18n from 'i18n-calypso';
+import { capitalize, compact, inRange, isArray, isEmpty } from 'lodash';
 
 function creditCardFieldRules() {
 	return {

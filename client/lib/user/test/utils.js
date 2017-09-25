@@ -8,8 +8,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'UserUtils', () => {
 	let UserUtils, user, configMock;

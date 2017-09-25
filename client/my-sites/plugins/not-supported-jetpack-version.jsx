@@ -1,25 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { warningNotice } from 'state/notices/actions';
+import { isJetpackSite, getSiteAdminUrl, getSiteDomain, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
 
-import {
-	isJetpackSite,
-	getSiteAdminUrl,
-	getSiteDomain,
-	siteHasMinimumJetpackVersion
-} from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class NonSupportedJetpackVersionNotice extends Component {
 	static propTypes = {

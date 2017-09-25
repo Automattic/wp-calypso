@@ -1,19 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {
-	List,
-	WindowScroller,
-	CellMeasurerCache,
-	CellMeasurer,
-	InfiniteLoader,
-} from 'react-virtualized';
 import { debounce, noop, get, pickBy } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { recordTracksRailcarRender } from 'reader/stats';
 

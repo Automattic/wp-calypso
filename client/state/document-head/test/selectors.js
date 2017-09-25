@@ -6,14 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getDocumentHeadTitle,
-	getDocumentHeadUnreadCount,
-	getDocumentHeadCappedUnreadCount,
-	getDocumentHeadFormattedTitle,
-	getDocumentHeadMeta,
-	getDocumentHeadLink
-} from '../selectors';
+import { getDocumentHeadTitle, getDocumentHeadUnreadCount, getDocumentHeadCappedUnreadCount, getDocumentHeadFormattedTitle, getDocumentHeadMeta, getDocumentHeadLink } from '../selectors';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

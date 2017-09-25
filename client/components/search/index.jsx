@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
+import { debounce, noop } from 'lodash';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { debounce, noop } from 'lodash';
-import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
+import analytics from 'lib/analytics';
 import { isMobile } from 'lib/viewport';
 
 /**

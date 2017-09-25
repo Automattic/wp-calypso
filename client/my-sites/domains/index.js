@@ -6,12 +6,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
-import SiftScience from 'lib/siftscience';
-import config from 'config';
 import paths from './paths';
+import config from 'config';
+import SiftScience from 'lib/siftscience';
+import controller from 'my-sites/controller';
 
 function registerMultiPage( { paths, handlers } ) {
 	paths.forEach( path => page( path, ...handlers ) );

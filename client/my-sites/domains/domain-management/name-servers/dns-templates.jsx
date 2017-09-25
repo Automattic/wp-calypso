@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { find, replace } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find, replace } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import EmailProvider from '../dns/email-provider';
+import DnsTemplateSelector from './dns-template-selector';
 import Card from 'components/card';
 import { dnsTemplates } from 'lib/domains/constants';
-import DnsTemplateSelector from './dns-template-selector';
-import EmailProvider from '../dns/email-provider';
 
 class DnsTemplates extends React.Component {
 	constructor( props ) {

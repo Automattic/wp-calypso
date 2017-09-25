@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import createReactClass from 'create-react-class';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-import Gridicon from 'gridicons';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Main from 'components/main';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormFieldset from 'components/forms/form-fieldset';
+import AuthCodeButton from './auth-code-button';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
+import Main from 'components/main';
 import Notice from 'components/notice';
+import WordPressLogo from 'components/wordpress-logo';
+import config from 'config';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import AuthStore from 'lib/oauth-store';
 import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
-import WordPressLogo from 'components/wordpress-logo';
-import AuthCodeButton from './auth-code-button';
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
 const LostPassword = localize( class extends React.Component {
 	render() {

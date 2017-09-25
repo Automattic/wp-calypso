@@ -6,9 +6,9 @@ import { get, find, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getBucket } from '../helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductCategory, getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
-import { getBucket } from '../helpers';
 
 /**
  * Gets all edits for product categories.

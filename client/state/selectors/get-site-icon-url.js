@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
 import { getSiteIconId, getMediaUrl } from './';
+import { getRawSite } from 'state/sites/selectors';
 
 /**
  * Returns a URL to the site's current site icon, or null if no icon exists or

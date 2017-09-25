@@ -1,14 +1,14 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { shouldSyncReaderFollows } from 'state/selectors';
 import { requestFollows } from 'state/reader/follows/actions';
+import { shouldSyncReaderFollows } from 'state/selectors';
 
 class SyncReaderFollows extends Component {
 	check() {

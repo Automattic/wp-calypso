@@ -6,8 +6,8 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { getPastBillingTransactions } from './';
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns a past billing transaction.

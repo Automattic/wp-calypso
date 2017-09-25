@@ -8,22 +8,11 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchProducts, fetchProductSearchResults, clearProductSearch, deleteProduct } from '../actions';
+import product from './fixtures/product';
+import products from './fixtures/products';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_PRODUCT_DELETE,
-	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
-import products from './fixtures/products';
-import product from './fixtures/product';
+import { WOOCOMMERCE_ERROR_SET, WOOCOMMERCE_PRODUCT_DELETE, WOOCOMMERCE_PRODUCT_DELETE_SUCCESS, WOOCOMMERCE_PRODUCTS_REQUEST, WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchProducts()', () => {

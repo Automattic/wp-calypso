@@ -6,8 +6,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import PluginUtils from '../utils';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Plugins Utils', () => {
 	useFakeDom();

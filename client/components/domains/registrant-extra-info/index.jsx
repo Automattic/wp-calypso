@@ -1,15 +1,15 @@
 /**
- * Extrenal dependencies
+ * External dependencies
  */
-import React, { PureComponent } from 'react';
 import { keys, filter } from 'lodash';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import fr from './fr-form';
 import ca from './ca-form';
+import fr from './fr-form';
+import config from 'config';
 
 const tldSpecificForms = {
 	ca,

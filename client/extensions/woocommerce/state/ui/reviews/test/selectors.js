@@ -6,11 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getReviewsCurrentPage,
-	getReviewsCurrentSearch,
-	getReviewsCurrentProduct
-} from '../selectors';
+import { getReviewsCurrentPage, getReviewsCurrentSearch, getReviewsCurrentProduct } from '../selectors';
 
 const preInitializedState = {
 	extensions: {

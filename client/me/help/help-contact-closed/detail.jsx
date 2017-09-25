@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 export default localize( ( props ) => {
 	const {	icon, children } = props;

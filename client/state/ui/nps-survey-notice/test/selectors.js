@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isNpsSurveyDialogShowing,
-} from '../selectors';
+import { isNpsSurveyDialogShowing } from '../selectors';
 
 describe( 'isNpsSurveyDialogShowing', () => {
 	it( 'should return true if the NPS survey dialog is showing', () => {

@@ -1,28 +1,20 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import {
-	identity,
-	includes,
-	noop,
-	without,
-} from 'lodash';
+import { identity, includes, noop, without } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
-import {
-	hideDropZone,
-	showDropZone,
-} from 'state/ui/drop-zone/actions';
+import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 
 export class DropZone extends React.Component {
 	static propTypes = {

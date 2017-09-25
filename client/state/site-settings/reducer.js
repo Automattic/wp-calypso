@@ -6,21 +6,10 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
 import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
-import {
-	MEDIA_DELETE,
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_REQUEST,
-	SITE_SETTINGS_REQUEST_FAILURE,
-	SITE_SETTINGS_REQUEST_SUCCESS,
-	SITE_SETTINGS_SAVE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE
-} from 'state/action-types';
+import { MEDIA_DELETE, SITE_SETTINGS_RECEIVE, SITE_SETTINGS_REQUEST, SITE_SETTINGS_REQUEST_FAILURE, SITE_SETTINGS_REQUEST_SUCCESS, SITE_SETTINGS_SAVE, SITE_SETTINGS_SAVE_FAILURE, SITE_SETTINGS_SAVE_SUCCESS, SITE_SETTINGS_UPDATE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

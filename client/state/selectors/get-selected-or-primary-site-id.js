@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
+import { getPrimarySiteId } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPrimarySiteId } from 'state/selectors';
 
 /**
  * Returns the currently selected ID, or the primary Site ID, if none is selected.

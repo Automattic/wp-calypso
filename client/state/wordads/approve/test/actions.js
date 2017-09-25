@@ -6,20 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
+import { WORDADS_SITE_APPROVE_REQUEST, WORDADS_SITE_APPROVE_REQUEST_SUCCESS, WORDADS_SITE_APPROVE_REQUEST_FAILURE, WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR, WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WORDADS_SITE_APPROVE_REQUEST,
-	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS
-} from 'state/action-types';
-import {
-	dismissWordAdsError,
-	dismissWordAdsSuccess,
-	requestWordAdsApproval,
-} from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy;

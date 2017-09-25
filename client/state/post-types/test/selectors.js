@@ -6,13 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostTypes,
-	getPostTypes,
-	getPostType,
-	postTypeSupports,
-	isPostTypeSupported
-} from '../selectors';
+import { isRequestingPostTypes, getPostTypes, getPostType, postTypeSupports, isPostTypeSupported } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostTypes()', () => {

@@ -1,16 +1,13 @@
 /**
- * Externals dependencies
+ * External dependencies
  */
 import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
-	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
 import { createReducer } from 'state/utils';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED, WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 const reducers = {};
 

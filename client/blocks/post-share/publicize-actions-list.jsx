@@ -1,37 +1,31 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
-import {
-	getPostShareScheduledActions,
-	getPostSharePublishedActions,
-} from 'state/selectors';
-import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
-import CompactCard from 'components/card/compact';
-import SocialLogo from 'social-logos';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import {
-	SCHEDULED,
-	PUBLISHED,
-} from './constants';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { isEnabled } from 'config';
-import Dialog from 'components/dialog';
-import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
-import analytics from 'lib/analytics';
+import { SCHEDULED, PUBLISHED } from './constants';
 import SharingPreviewModal from './sharing-preview-modal';
+import CompactCard from 'components/card/compact';
+import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
+import Dialog from 'components/dialog';
+import EllipsisMenu from 'components/ellipsis-menu';
 import Notice from 'components/notice';
+import PopoverMenuItem from 'components/popover/menu-item';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import { isEnabled } from 'config';
+import analytics from 'lib/analytics';
+import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
+import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {

@@ -1,13 +1,13 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { set } from 'lodash';
+import sinon from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';

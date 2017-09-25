@@ -1,36 +1,30 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import {
-	cancelEditingPaymentMethod,
-	changePaymentMethodEnabled,
-	changePaymentMethodField,
-	closeEditingPaymentMethod,
-	openPaymentMethodForEdit,
-} from 'woocommerce/state/ui/payments/methods/actions';
-import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import PaymentMethodCheque from './payment-method-cheque';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
-import PaymentMethodCheque from './payment-method-cheque';
+import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
+import Button from 'components/button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import analytics from 'lib/analytics';
+import ListItem from 'woocommerce/components/list/list-item';
+import ListItemField from 'woocommerce/components/list/list-item-field';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { cancelEditingPaymentMethod, changePaymentMethodEnabled, changePaymentMethodField, closeEditingPaymentMethod, openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
+import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {

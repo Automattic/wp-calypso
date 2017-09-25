@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
-} from 'state/action-types';
 import wpcom from 'lib/wp';
+import { OAUTH2_CLIENT_DATA_REQUEST, OAUTH2_CLIENT_DATA_REQUEST_FAILURE, OAUTH2_CLIENT_DATA_REQUEST_SUCCESS } from 'state/action-types';
 import { cachingActionCreatorFactory } from 'state/utils';
 
 const convertWpcomError = wpcomError => ( {

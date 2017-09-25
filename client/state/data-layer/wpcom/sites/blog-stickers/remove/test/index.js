@@ -1,20 +1,16 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	requestBlogStickerRemove,
-	receiveBlogStickerRemove,
-	receiveBlogStickerRemoveError,
-} from '../';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestBlogStickerRemove, receiveBlogStickerRemove, receiveBlogStickerRemoveError } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { pickBy, map } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import ProfileLinksAddWordPressSite from './site';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
+import config from 'config';
 import { recordClickEvent } from 'me/event-recorder';
 import { getPublicSites } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
-import ProfileLinksAddWordPressSite from './site';
 
 const addProfileLinks = ( inputs, userProfileLinks, callback ) => ( dispatch, getState ) => {
 	const links = pickBy( inputs, ( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue );

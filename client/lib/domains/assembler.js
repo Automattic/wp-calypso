@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import { camelCase, find, mapKeys, without } from 'lodash';
-
 import i18n from 'i18n-calypso';
+import { camelCase, find, mapKeys, without } from 'lodash';
 
 /**
  * Internal dependencies

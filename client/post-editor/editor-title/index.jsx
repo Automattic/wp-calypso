@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import ReactDom from 'react-dom';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PostUtils from 'lib/posts/utils';
-import EditorPermalink from 'post-editor/editor-permalink';
-import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
-import { isMobile } from 'lib/viewport';
+import TrackInputChanges from 'components/track-input-changes';
 import * as stats from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PostUtils from 'lib/posts/utils';
+import { isMobile } from 'lib/viewport';
+import EditorPermalink from 'post-editor/editor-permalink';
+import { editPost } from 'state/posts/actions';
+import { getEditedPost } from 'state/posts/selectors';
 import { areSitePermalinksEditable } from 'state/selectors';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {

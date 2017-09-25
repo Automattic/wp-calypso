@@ -1,27 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
-import eventRecorder from 'me/event-recorder';
 import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import eventRecorder from 'me/event-recorder';
 import purchasesPaths from 'me/purchases/paths';
-import {
-	getPastBillingTransaction,
-	getPastBillingTransactions,
-} from 'state/selectors';
+import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
 
 const BillingReceipt = React.createClass( {
 	mixins: [ eventRecorder ],

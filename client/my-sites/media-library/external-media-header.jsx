@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
-import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import MediaLibraryScale from './scale';
-import Card from 'components/card';
 import Button from 'components/button';
+import Card from 'components/card';
+import StickyPanel from 'components/sticky-panel';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
-import StickyPanel from 'components/sticky-panel';
 
 const DEBOUNCE_TIME = 250;
 

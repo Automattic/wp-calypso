@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Button from 'components/button';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
 
 export default localize( React.createClass( {
 

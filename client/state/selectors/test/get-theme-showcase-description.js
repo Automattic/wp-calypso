@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeShowcaseDescription } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeShowcaseDescription } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeShowcaseDescription()', () => {
 	it( 'should return the vertical description for a known vertical', () => {

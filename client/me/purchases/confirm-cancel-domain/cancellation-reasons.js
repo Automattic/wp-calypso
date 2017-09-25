@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import support from 'lib/url/support';
 

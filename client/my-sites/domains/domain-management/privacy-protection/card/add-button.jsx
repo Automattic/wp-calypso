@@ -1,18 +1,17 @@
-import page from 'page';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import config from 'config';
+import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
 
 class AddButton extends React.PureComponent {

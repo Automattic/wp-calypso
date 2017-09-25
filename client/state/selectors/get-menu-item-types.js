@@ -6,8 +6,8 @@ import { endsWith, filter, find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
+import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
 
 function getDefaultItemTypes( state, siteId ) {
 	const site = getRawSite( state, siteId );

@@ -1,33 +1,33 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
+import { map, pick, reduce, startsWith } from 'lodash';
+import page from 'page';
+import React from 'react';
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
-import React from 'react';
-import i18n from 'i18n-calypso';
-import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
-import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { map, pick, reduce, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import PostEditor from './post-editor';
+import Dispatcher from 'dispatcher';
+import analytics from 'lib/analytics';
+import { decodeEntities } from 'lib/formatting';
 import actions from 'lib/posts/actions';
+import { getFeaturedImageId } from 'lib/posts/utils';
 import route from 'lib/route';
 import User from 'lib/user';
 import userUtils from 'lib/user/utils';
-import analytics from 'lib/analytics';
-import { decodeEntities } from 'lib/formatting';
-import PostEditor from './post-editor';
-import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
-import Dispatcher from 'dispatcher';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import qs from 'querystring';
+import { editPost } from 'state/posts/actions';
+import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
+import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const user = User();
 

@@ -1,25 +1,23 @@
-import { connect } from 'react-redux';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import QueryPlans from 'components/data/query-plans';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
-import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import QueryPlans from 'components/data/query-plans';
+import StepWrapper from 'signup/step-wrapper';
+import { getSiteBySlug } from 'state/sites/selectors';
 
 class PlansStep extends Component {
 	constructor( props ) {

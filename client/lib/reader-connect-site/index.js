@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
-/*
- * Internal Dependencies
+/**
+ * Internal dependencies
  */
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-site';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import { omit, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { omit, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import smartSetState from 'lib/react-smart-set-state';
-import LikeActions from 'lib/like-store/actions';
 import LikeButton from './button';
+import LikeActions from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
+import smartSetState from 'lib/react-smart-set-state';
 
 class LikeButtonContainer extends PureComponent {
 	static propTypes = {

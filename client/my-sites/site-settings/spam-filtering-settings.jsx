@@ -1,32 +1,29 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Banner from 'components/banner';
+import ExternalLink from 'components/external-link';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import Gridicon from 'gridicons';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getJetpackSettingsSaveError, getJetpackSettingsSaveRequestStatus } from 'state/selectors';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import InfoPopover from 'components/info-popover';
+import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
+import { getJetpackSettingsSaveError, getJetpackSettingsSaveRequestStatus } from 'state/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	FEATURE_SPAM_AKISMET_PLUS,
-	PLAN_JETPACK_PERSONAL,
-} from 'lib/plans/constants';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,

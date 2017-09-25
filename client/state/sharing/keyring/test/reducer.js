@@ -7,21 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTIONS_RECEIVE,
-	KEYRING_CONNECTIONS_REQUEST,
-	KEYRING_CONNECTIONS_REQUEST_FAILURE,
-	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_DELETE,
-	DESERIALIZE,
-	SERIALIZE
-} from 'state/action-types';
-import {
-	isFetching,
-	items
-} from '../reducer';
+import { isFetching, items } from '../reducer';
+import { KEYRING_CONNECTION_DELETE, KEYRING_CONNECTIONS_RECEIVE, KEYRING_CONNECTIONS_REQUEST, KEYRING_CONNECTIONS_REQUEST_FAILURE, KEYRING_CONNECTIONS_REQUEST_SUCCESS, PUBLICIZE_CONNECTION_CREATE, PUBLICIZE_CONNECTION_DELETE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducers', () => {

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default function FormTelInput( { className, isError, isValid, ...props } ) {
 	const classes = classNames( 'form-tel-input', className, {

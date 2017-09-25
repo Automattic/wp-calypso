@@ -1,19 +1,17 @@
-import { isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
-
 import upgradesActions from 'lib/upgrades/actions';
 
 export default localize( React.createClass( {

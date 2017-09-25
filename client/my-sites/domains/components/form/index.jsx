@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import CountrySelect from './country-select';
 import HiddenInput from './hidden-input';
 import Input from './input';

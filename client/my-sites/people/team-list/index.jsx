@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
+import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-
-import PeopleListItem from 'my-sites/people/people-list-item';
-import SiteUsersFetcher from 'components/site-users-fetcher';
-import UsersActions from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
-import NoResults from 'my-sites/no-results';
-import analytics from 'lib/analytics';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ListEnd from 'components/list-end';
+import SiteUsersFetcher from 'components/site-users-fetcher';
+import analytics from 'lib/analytics';
+import UsersActions from 'lib/users/actions';
+import NoResults from 'my-sites/no-results';
+import PeopleListItem from 'my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
+const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 /**
  * Module Variables

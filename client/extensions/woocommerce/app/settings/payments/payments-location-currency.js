@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import { decodeEntities } from 'lib/formatting';
-import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
+import { decodeEntities } from 'lib/formatting';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import StoreAddress from 'woocommerce/components/store-address';
-import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
 import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {

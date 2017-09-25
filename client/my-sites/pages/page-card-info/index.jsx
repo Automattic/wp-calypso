@@ -1,18 +1,15 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import {
-	isFrontPage,
-	isPostsPage,
-} from 'state/pages/selectors';
+import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 
 function PageCardInfo( { translate, moment, page, showTimestamp, isFront, isPosts, siteUrl } ) {
 	const iconSize = 12;

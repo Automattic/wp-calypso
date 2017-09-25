@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { every, includes } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import PaginatedQueryManager from '../paginated';
-import MediaQueryKey from './key';
 import { DEFAULT_MEDIA_QUERY } from './constants';
+import MediaQueryKey from './key';
 
 /**
  * MediaQueryManager manages media which can be queried and change over time

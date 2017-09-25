@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { includes } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

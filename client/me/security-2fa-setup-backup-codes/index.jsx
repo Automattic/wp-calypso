@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-
-import Security2faProgress from 'me/security-2fa-progress';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import eventRecorder from 'me/event-recorder';
-import support from 'lib/url/support';
-
 import Notice from 'components/notice';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import support from 'lib/url/support';
+import eventRecorder from 'me/event-recorder';
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
+import Security2faProgress from 'me/security-2fa-progress';
+const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
 
 export default localize( React.createClass( {
 

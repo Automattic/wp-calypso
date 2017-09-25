@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './index';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSiteUrl } from 'state/selectors';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+import { getSiteUrl } from 'state/selectors';
 
 class SuccessBanner extends PureComponent {
 	static propTypes = {

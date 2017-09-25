@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
-import { localize } from 'i18n-calypso';
-
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
-import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
+import { default as Store, requestState } from 'lib/auth-code-request-store';
+import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
 
 class AuthCodeButton extends React.Component {
 	state = Store.get();

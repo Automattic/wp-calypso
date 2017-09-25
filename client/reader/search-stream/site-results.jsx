@@ -1,25 +1,24 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import 'lodash';
 import { localize } from 'i18n-calypso';
+import 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import ReaderInfiniteStream from 'components/reader-infinite-stream';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
-import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import withDimensions from 'lib/with-dimensions';
+import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'state/selectors';
 
 class SiteResults extends React.Component {
 	static propTypes = {

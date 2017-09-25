@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 export default class AsyncLoad extends Component {
 	static propTypes = {

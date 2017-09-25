@@ -1,5 +1,5 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import PropTypes from 'prop-types';
@@ -10,8 +10,8 @@ import { Field } from 'redux-form';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 /*

@@ -9,10 +9,10 @@ import { get, includes, pick, reduce } from 'lodash';
  * Internal dependencies
  */
 import fromApi from './from-api';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
 import { activityLogError, activityLogUpdate } from 'state/activity-log/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Module constants

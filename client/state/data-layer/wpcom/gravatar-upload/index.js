@@ -1,20 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	GRAVATAR_UPLOAD_RECEIVE,
-	GRAVATAR_UPLOAD_REQUEST,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-} from 'state/action-types';
+import { GRAVATAR_UPLOAD_RECEIVE, GRAVATAR_UPLOAD_REQUEST, GRAVATAR_UPLOAD_REQUEST_SUCCESS, GRAVATAR_UPLOAD_REQUEST_FAILURE } from 'state/action-types';
+import { bumpStat, composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
 
 export function uploadGravatar( { dispatch }, action ) {
 	const { email, file } = action;

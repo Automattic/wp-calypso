@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FeatureExample from '../index'
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
+import FeatureExample from '../index';
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
 export default React.createClass( {
 	displayName: 'FeatureExample',

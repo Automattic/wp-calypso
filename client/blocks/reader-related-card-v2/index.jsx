@@ -1,27 +1,27 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, noop, partial } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { get, noop, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { getPost } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
+import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderFeaturedImage from 'blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import Card from 'components/card/compact';
+import QueryReaderSite from 'components/data/query-reader-site';
 import Gravatar from 'components/gravatar';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderAuthorLink from 'blocks/reader-author-link';
+import { getPost } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 

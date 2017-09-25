@@ -9,8 +9,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import CloseOnEscape from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 const simulateEscapeKeydown = () => (
 	document.dispatchEvent( new window.KeyboardEvent( 'keydown', { keyCode: 27 } ) )

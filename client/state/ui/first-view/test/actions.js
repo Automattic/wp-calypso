@@ -1,19 +1,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	FIRST_VIEW_HIDE,
-	ROUTE_SET,
-} from 'state/action-types';
-import {
-	hideView
-} from '../actions';
+import { hideView } from '../actions';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

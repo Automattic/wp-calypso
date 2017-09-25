@@ -2,27 +2,23 @@
 /**
  * External dependencies
  */
+import { get, omit } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ReaderPostCard from 'blocks/reader-post-card';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-site';
 import FeedPostStore from 'lib/feed-post-store';
 import smartSetState from 'lib/react-smart-set-state';
+import { isDiscoverSitePick, getSourceData as getDiscoverSourceData, discoverBlogId } from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import {
-	isDiscoverSitePick,
-	getSourceData as getDiscoverSourceData,
-	discoverBlogId,
-} from 'reader/discover/helper';
 import { shallowEquals } from 'reader/utils';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 class ReaderPostCardAdapter extends React.Component {
 	static displayName = 'ReaderPostCardAdapter';

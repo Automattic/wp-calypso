@@ -1,29 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {
-	debounce,
-	defer,
-} from 'lodash';
 import debugFactory from 'debug';
+import { debounce, defer } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import contextTypes from '../context-types';
+import { posToCss, getStepPosition, getValidatedArrowPosition, query, targetForSlug } from '../positioning';
 import Card from 'components/card';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
-import {
-	posToCss,
-	getStepPosition,
-	getValidatedArrowPosition,
-	query,
-	targetForSlug,
-} from '../positioning';
-import contextTypes from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 

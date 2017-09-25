@@ -1,43 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import {
-	areSetupChoicesLoading,
-	getOptedOutOfShippingSetup,
-	getTriedCustomizerDuringInitialSetup,
-	getCheckedTaxSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import {
-	getTotalProducts,
-	areProductsLoaded,
-} from 'woocommerce/state/sites/products/selectors';
-import {
-	fetchProducts
-} from 'woocommerce/state/sites/products/actions';
-import {
-	fetchPaymentMethods,
-} from 'woocommerce/state/sites/payment-methods/actions';
-import {
-	fetchSetupChoices,
-	setOptedOutOfShippingSetup,
-	setTriedCustomizerDuringInitialSetup,
-	setCheckedTaxSetup,
-} from 'woocommerce/state/sites/setup-choices/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import {
-	arePaymentsSetup
-} from 'woocommerce/state/ui/payments/methods/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import SetupTask from './setup-task';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import { fetchSetupChoices, setOptedOutOfShippingSetup, setTriedCustomizerDuringInitialSetup, setCheckedTaxSetup } from 'woocommerce/state/sites/setup-choices/actions';
+import { areSetupChoicesLoading, getOptedOutOfShippingSetup, getTriedCustomizerDuringInitialSetup, getCheckedTaxSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selectors';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasks extends Component {

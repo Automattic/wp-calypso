@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
 describe( 'ButtonGroup', function() {

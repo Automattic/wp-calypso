@@ -6,19 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	areSetupChoicesLoaded,
-	areSetupChoicesLoading,
-	getFinishedInitialSetup,
-	getFinishedInstallOfRequiredPlugins,
-	getFinishedPageSetup,
-	getOptedOutOfShippingSetup,
-	getOptedOutofTaxesSetup,
-	getSetStoreAddressDuringInitialSetup,
-	getTriedCustomizerDuringInitialSetup,
-	isDefaultShippingZoneCreated,
-	getCheckedTaxSetup,
-} from '../selectors';
+import { areSetupChoicesLoaded, areSetupChoicesLoading, getFinishedInitialSetup, getFinishedInstallOfRequiredPlugins, getFinishedPageSetup, getOptedOutOfShippingSetup, getOptedOutofTaxesSetup, getSetStoreAddressDuringInitialSetup, getTriedCustomizerDuringInitialSetup, isDefaultShippingZoneCreated, getCheckedTaxSetup } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {

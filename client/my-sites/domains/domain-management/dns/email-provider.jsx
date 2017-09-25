@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import { isEmpty, trim } from 'lodash';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -11,12 +11,12 @@ import { connect } from 'react-redux';
  */
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import * as upgradesActions from 'lib/upgrades/actions';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 class EmailProvider extends Component {
 	state = {

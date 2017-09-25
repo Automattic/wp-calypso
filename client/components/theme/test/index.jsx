@@ -2,16 +2,15 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import { identity } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import MockMoreButton from '../more-button';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-
-import MockMoreButton from '../more-button';
 
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;

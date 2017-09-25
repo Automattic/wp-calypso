@@ -1,13 +1,9 @@
 /** @format */
 /**
- * External dependencies
- */
-import url from 'url';
-
-/**
  * Internal dependencies
  */
 import { X_POST } from 'lib/feed-post-store/display-types';
+import url from 'url';
 
 const exported = {
 	/**

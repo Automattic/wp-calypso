@@ -4,7 +4,7 @@
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';

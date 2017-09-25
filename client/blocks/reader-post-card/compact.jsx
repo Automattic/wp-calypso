@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
+import FeaturedAsset from './featured-asset';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import FeaturedAsset from './featured-asset';
+import AutoDirection from 'components/auto-direction';
+import Emojify from 'components/emojify';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

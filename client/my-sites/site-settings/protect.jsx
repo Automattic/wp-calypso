@@ -1,31 +1,27 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { includes, some, trim, trimEnd } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, some, trim, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import ExternalLink from 'components/external-link';
+import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
-} from 'state/selectors';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import { isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class Protect extends Component {
 	static propTypes = {

@@ -8,10 +8,9 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
+import postListCacheStore from 'lib/posts/post-list-cache-store';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-
-import postListCacheStore from 'lib/posts/post-list-cache-store';
 
 let Dispatcher;
 

@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import config from 'config';
 import page from 'page';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import controller from './controller';
+import paths from './paths';
+import config from 'config';
 import billingController from 'me/billing-history/controller';
 import meController from 'me/controller';
 import sitesController from 'my-sites/controller';
-import controller from './controller';
-import paths from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {

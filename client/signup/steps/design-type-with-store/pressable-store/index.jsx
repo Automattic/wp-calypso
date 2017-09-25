@@ -1,32 +1,29 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import EmailValidator from 'email-validator';
-import { connect } from 'react-redux';
-import { invoke } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { invoke } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import HeroImage from './hero-image';
+import Button from 'components/button';
 import FormButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import Button from 'components/button';
-import { localize } from 'i18n-calypso';
+import FormTextInput from 'components/forms/form-text-input';
+import LoggedOutForm from 'components/logged-out-form';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import { recordTracksEvent } from 'state/analytics/actions';
-
-import HeroImage from './hero-image';
 
 class PressableStoreStep extends Component {
 	constructor( props ) {

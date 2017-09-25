@@ -7,18 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	WORDADS_SITE_APPROVE_REQUEST,
-	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-} from 'state/action-types';
-import reducer, {
-	requesting,
-	requestErrors,
-	requestSuccess
-} from '../reducer';
+import reducer, { requesting, requestErrors, requestSuccess } from '../reducer';
+import { WORDADS_SITE_APPROVE_REQUEST, WORDADS_SITE_APPROVE_REQUEST_SUCCESS, WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS, WORDADS_SITE_APPROVE_REQUEST_FAILURE, WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

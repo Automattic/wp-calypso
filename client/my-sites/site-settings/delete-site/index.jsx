@@ -1,33 +1,33 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { some } from 'lodash';
-import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import Dialog from 'components/dialog';
 import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
 import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
 import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import Button from 'components/button';
+import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import Dialog from 'components/dialog';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, getSiteDomain } from 'state/sites/selectors';
-import Notice from 'components/notice';
-import QuerySitePurchases from 'components/data/query-site-purchases';
 import { deleteSite } from 'state/sites/actions';
+import { getSite, getSiteDomain } from 'state/sites/selectors';
 import { setSelectedSiteId } from 'state/ui/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class DeleteSite extends Component {
 	static propTypes = {

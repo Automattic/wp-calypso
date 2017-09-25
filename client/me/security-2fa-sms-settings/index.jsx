@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
-import FormPhoneInput from 'components/forms/form-phone-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormPhoneInput from 'components/forms/form-phone-input';
 import Notice from 'components/notice';
-import formBase from 'me/form-base';
-import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
+import { forSms } from 'lib/countries-list';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
-import { forSms } from 'lib/countries-list';
+import formBase from 'me/form-base';
+import Security2faProgress from 'me/security-2fa-progress';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();

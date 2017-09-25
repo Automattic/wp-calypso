@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import Searchable from '../';
+import assert from 'assert';
 
 const makeCollection = function() {
 	const Collection = function() {

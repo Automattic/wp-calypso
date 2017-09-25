@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import taxrates from './taxrates/reducer';
+import { combineReducers } from 'state/utils';
 
 export default combineReducers( {
 	taxrates,

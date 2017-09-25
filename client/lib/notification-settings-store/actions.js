@@ -1,9 +1,8 @@
 /**
  * Internal dependencies
  */
-
-import Dispatcher from 'dispatcher';
 import { actionTypes } from './constants';
+import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
 function buildSavePayload( source, settings ) {

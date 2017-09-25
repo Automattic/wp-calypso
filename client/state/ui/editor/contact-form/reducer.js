@@ -1,22 +1,14 @@
 /**
  * External dependencies
  */
-import { cloneDeep, merge } from 'lodash';
-
 import i18n from 'i18n-calypso';
+import { cloneDeep, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_CONTACT_FORM_CLEAR,
-	EDITOR_CONTACT_FORM_LOAD,
-	EDITOR_CONTACT_FORM_FIELD_ADD,
-	EDITOR_CONTACT_FORM_FIELD_REMOVE,
-	EDITOR_CONTACT_FORM_FIELD_UPDATE,
-	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
-} from 'state/action-types';
 import { CONTACT_FORM_DEFAULT, CONTACT_FORM_DEFAULT_NEW_FIELD } from './constants';
+import { EDITOR_CONTACT_FORM_CLEAR, EDITOR_CONTACT_FORM_LOAD, EDITOR_CONTACT_FORM_FIELD_ADD, EDITOR_CONTACT_FORM_FIELD_REMOVE, EDITOR_CONTACT_FORM_FIELD_UPDATE, EDITOR_CONTACT_FORM_SETTINGS_UPDATE } from 'state/action-types';
 
 const initialState = cloneDeep( CONTACT_FORM_DEFAULT );
 

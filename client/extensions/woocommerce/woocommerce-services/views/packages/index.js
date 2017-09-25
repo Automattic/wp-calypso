@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
+import * as PackagesActions from '../../state/packages/actions';
+import { getPackagesForm, getAllSelectedPackages } from '../../state/packages/selectors';
 import PackageDialog from './package-dialog';
 import PackagesListItem from './packages-list-item';
-import * as PackagesActions from '../../state/packages/actions';
+import Button from 'components/button';
+import Card from 'components/card';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPackagesForm, getAllSelectedPackages } from '../../state/packages/selectors';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 
 class Packages extends Component {
 	componentWillMount() {

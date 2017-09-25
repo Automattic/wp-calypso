@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { head, split } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 export default class ActivityIcon extends PureComponent {
 

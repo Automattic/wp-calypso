@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
- /**
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
-import {
-	actionListStepNext,
-	actionListStepSuccess,
-	actionListStepFailure,
-	actionListClear,
-} from 'woocommerce/state/action-list/actions';
-import { getLabelSettingsFormMeta } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
-import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { actionListStepNext, actionListStepSuccess, actionListStepFailure, actionListClear } from 'woocommerce/state/action-list/actions';
+import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
+import { getLabelSettingsFormMeta } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
+import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );

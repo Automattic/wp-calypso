@@ -7,11 +7,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	requestAutomatedTransferEligibility,
-	updateAutomatedTransferEligibility,
-	throwRequestError,
-} from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
+import { requestAutomatedTransferEligibility, updateAutomatedTransferEligibility, throwRequestError } from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
 
 describe( 'requestAutomatedTransferEligibility', () => {
 	it( 'should dispatch an http request', () => {

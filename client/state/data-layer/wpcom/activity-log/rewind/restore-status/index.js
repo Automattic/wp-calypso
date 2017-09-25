@@ -7,11 +7,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { createNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
 import { updateRewindRestoreProgress } from 'state/activity-log/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { createNotice } from 'state/notices/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:restore-status' );
 

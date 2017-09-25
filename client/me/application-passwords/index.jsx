@@ -1,36 +1,35 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
+import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:application-passwords' );
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
-
-import AppPasswordItem from 'me/application-password-item';
-import notices from 'notices';
-import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import Gridicon from 'gridicons';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
+import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import FormTextInput from 'components/forms/form-text-input';
+import SectionHeader from 'components/section-header';
+import observe from 'lib/mixins/data-observe';
+import AppPasswordItem from 'me/application-password-item';
 import eventRecorder from 'me/event-recorder';
-import Card from 'components/card';
-import classNames from 'classnames';
+import notices from 'notices';
 import { errorNotice } from 'state/notices/actions';
+
+const debug = debugFactory( 'calypso:application-passwords' );
 
 const ApplicationPasswords = React.createClass( {
 

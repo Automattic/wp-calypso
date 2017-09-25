@@ -1,21 +1,21 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import page from 'page';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
-import page from 'page';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { makeLayoutMiddleware } from './shared.js';
 import Layout from 'layout';
+import translatorInvitation from 'layout/community-translator/invitation-utils';
 import LayoutLoggedOut from 'layout/logged-out';
 import nuxWelcome from 'layout/nux-welcome';
-import translatorInvitation from 'layout/community-translator/invitation-utils';
-import { makeLayoutMiddleware } from './shared.js';
-import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Re-export

@@ -1,37 +1,31 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import {
-	areSetupChoicesLoading,
-	getFinishedInitialSetup,
-	getSetStoreAddressDuringInitialSetup,
-	getFinishedInstallOfRequiredPlugins,
-	getFinishedPageSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getTotalProducts, areProductsLoading, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import PreSetupView from './pre-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
+import Main from 'components/main';
+import ActionHeader from 'woocommerce/components/action-header';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { getTotalProducts, areProductsLoading, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { areSetupChoicesLoading, getFinishedInitialSetup, getSetStoreAddressDuringInitialSetup, getFinishedInstallOfRequiredPlugins, getFinishedPageSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 
 class Dashboard extends Component {
 

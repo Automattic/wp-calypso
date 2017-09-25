@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabs from 'components/section-nav/tabs';
 
 export default localize( React.createClass( {
 	displayName: 'ContactFormDialogNavigation',

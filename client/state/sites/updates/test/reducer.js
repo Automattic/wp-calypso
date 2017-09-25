@@ -7,21 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	SITE_RECEIVE,
-	SITES_RECEIVE,
-	SITES_UPDATE,
-	SITE_UPDATES_RECEIVE,
-	SITE_UPDATES_REQUEST,
-	SITE_UPDATES_REQUEST_SUCCESS,
-	SITE_UPDATES_REQUEST_FAILURE,
-	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
-	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../reducer';
+import { SITE_RECEIVE, SITES_RECEIVE, SITES_UPDATE, SITE_UPDATES_RECEIVE, SITE_UPDATES_REQUEST, SITE_UPDATES_REQUEST_SUCCESS, SITE_UPDATES_REQUEST_FAILURE, SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS, SITE_WORDPRESS_UPDATE_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

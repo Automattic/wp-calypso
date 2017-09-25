@@ -3,6 +3,9 @@
  */
 import { get, merge } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';
 

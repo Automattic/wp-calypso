@@ -1,21 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	createReducer,
-	keyedReducer,
-} from 'state/utils';
-
-import {
-	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
-	AUTOMATED_TRANSFER_STATUS_SET,
-	PLUGIN_UPLOAD,
-	PLUGIN_UPLOAD_CLEAR,
-	PLUGIN_UPLOAD_COMPLETE,
-	PLUGIN_UPLOAD_ERROR,
-	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP, AUTOMATED_TRANSFER_STATUS_SET, PLUGIN_UPLOAD, PLUGIN_UPLOAD_CLEAR, PLUGIN_UPLOAD_COMPLETE, PLUGIN_UPLOAD_ERROR, PLUGIN_UPLOAD_PROGRESS } from 'state/action-types';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 export const uploadedPluginId = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD ]: () => null,

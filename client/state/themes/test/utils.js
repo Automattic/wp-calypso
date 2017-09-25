@@ -6,18 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isPremium,
-	normalizeJetpackTheme,
-	normalizeWpcomTheme,
-	normalizeWporgTheme,
-	getThemeIdFromStylesheet,
-	getNormalizedThemesQuery,
-	getSerializedThemesQuery,
-	getDeserializedThemesQueryDetails,
-	getSerializedThemesQueryWithoutPage,
-	isThemeMatchingQuery
-} from '../utils';
+import { isPremium, normalizeJetpackTheme, normalizeWpcomTheme, normalizeWporgTheme, getThemeIdFromStylesheet, getNormalizedThemesQuery, getSerializedThemesQuery, getDeserializedThemesQueryDetails, getSerializedThemesQueryWithoutPage, isThemeMatchingQuery } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#isPremium()', () => {

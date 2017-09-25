@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 
 class TaxesOptions extends Component {
 

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import supportUrl from 'lib/url/support';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getGuidedTransferError } from 'state/sites/guided-transfer/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const getErrorText = ( { translate, errorCode } ) => {
 	switch ( errorCode ) {

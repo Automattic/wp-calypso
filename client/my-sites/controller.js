@@ -1,72 +1,41 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import page from 'page';
-import ReactDom from 'react-dom';
-import React from 'react';
 import i18n from 'i18n-calypso';
 import { uniq, some, startsWith } from 'lodash';
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { SITES_ONCE_CHANGED } from 'state/action-types';
-import userFactory from 'lib/user';
-import { receiveSite, requestSites } from 'state/sites/actions';
-import {
-	getSite,
-	isJetpackModuleActive,
-	isJetpackSite,
-	isRequestingSites,
-} from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import {
-	setSelectedSiteId,
-	setSection,
-	setAllSitesSelected
-} from 'state/ui/actions';
-import { savePreference } from 'state/preferences/actions';
-import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
-import NavigationComponent from 'my-sites/navigation';
-import route from 'lib/route';
-import notices from 'notices';
+import EmptyContentComponent from 'components/empty-content';
+import NoSitesMessage from 'components/empty-content/no-sites-message';
+import Main from 'components/main';
 import config from 'config';
 import analytics from 'lib/analytics';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import {
-	getPrimarySiteId,
-	getSiteId,
-	getSites,
-	getVisibleSites,
-	isDomainOnlySite,
-} from 'state/selectors';
-import {
-	domainManagementAddGoogleApps,
-	domainManagementContactsPrivacy,
-	domainManagementDns,
-	domainManagementEdit,
-	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
-	domainManagementList,
-	domainManagementNameServers,
-	domainManagementPrivacyProtection,
-	domainManagementRedirectSettings,
-	domainManagementTransfer,
-	domainManagementTransferOut,
-	domainManagementTransferToOtherSite,
-} from 'my-sites/domains/paths';
-import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
-import { errorNotice } from 'state/notices/actions';
-import { getPrimaryDomainBySiteId } from 'state/selectors';
-
-import NoSitesMessage from 'components/empty-content/no-sites-message';
-import EmptyContentComponent from 'components/empty-content';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import userFactory from 'lib/user';
 import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
-import Main from 'components/main';
+import { domainManagementAddGoogleApps, domainManagementContactsPrivacy, domainManagementDns, domainManagementEdit, domainManagementEditContactInfo, domainManagementEmail, domainManagementEmailForwarding, domainManagementList, domainManagementNameServers, domainManagementPrivacyProtection, domainManagementRedirectSettings, domainManagementTransfer, domainManagementTransferOut, domainManagementTransferToOtherSite } from 'my-sites/domains/paths';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import NavigationComponent from 'my-sites/navigation';
+import SitesComponent from 'my-sites/sites';
+import notices from 'notices';
+import { SITES_ONCE_CHANGED } from 'state/action-types';
+import { errorNotice } from 'state/notices/actions';
+import { savePreference } from 'state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
+import { getPrimarySiteId, getSiteId, getSites, getVisibleSites, isDomainOnlySite } from 'state/selectors';
+import { getPrimaryDomainBySiteId } from 'state/selectors';
+import { receiveSite, requestSites } from 'state/sites/actions';
+import { getSite, isJetpackModuleActive, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.

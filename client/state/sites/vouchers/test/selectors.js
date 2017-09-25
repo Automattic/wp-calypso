@@ -6,24 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getVouchersBySite,
-	getVouchersBySiteId,
-	getVouchersBySiteIdAndServiceType,
-	isRequestingSiteVouchers
-} from '../selectors';
-
-/**
- * Fixture data
- */
-import {
-	SITE_ID_0 as firstSiteId,
-	SITE_ID_1 as secondSiteId,
-	AD_CREDITS_0 as firstAdCredits,
-	VOUCHER_0 as firstVoucher,
-	SERVICE_TYPE as serviceType,
-	getStateInstance
-} from './fixture';
+import { getVouchersBySite, getVouchersBySiteId, getVouchersBySiteIdAndServiceType, isRequestingSiteVouchers } from '../selectors';
+import { SITE_ID_0 as firstSiteId, SITE_ID_1 as secondSiteId, AD_CREDITS_0 as firstAdCredits, VOUCHER_0 as firstVoucher, SERVICE_TYPE as serviceType, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getVouchersBySite()', () => {

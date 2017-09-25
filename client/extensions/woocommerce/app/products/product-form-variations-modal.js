@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle';
+import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
+import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
 class ProductFormVariationsModal extends React.Component {

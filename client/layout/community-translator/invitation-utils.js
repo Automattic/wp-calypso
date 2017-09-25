@@ -1,8 +1,4 @@
 /**
- * Community Translator Invitation Module
- */
-
-/**
  * External dependencies
  */
 import Debug from 'debug';
@@ -12,14 +8,14 @@ import store from 'store';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
+import emitter from 'lib/mixins/emitter';
+import preferencesActions from 'lib/preferences/actions';
+import preferencesStore from 'lib/preferences/store';
 import translator from 'lib/translator-jumpstart';
 import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
-import emitter from 'lib/mixins/emitter';
-import preferencesStore from 'lib/preferences/store';
-import preferencesActions from 'lib/preferences/actions';
 import notices from 'notices';
-import analytics from 'lib/analytics';
 
 const debug = Debug( 'calypso:community-translator-invitation' ),
 	user = userFactory(),

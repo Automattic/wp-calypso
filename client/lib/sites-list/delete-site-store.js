@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import Emitter from 'lib/mixins/emitter';
 
 let _deletedSite = {},

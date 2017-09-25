@@ -1,13 +1,12 @@
 /**
  * Internal dependencies
  */
-import { bypassDataLayer } from './utils';
-import { mergeHandlers } from 'state/action-watchers/utils';
-
-import wpcomHttpHandlers from './wpcom-http';
-import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';
+import { bypassDataLayer } from './utils';
 import wpcomHandlers from './wpcom';
+import wpcomHttpHandlers from './wpcom-http';
+import { mergeHandlers } from 'state/action-watchers/utils';
+import httpHandlers from 'state/http';
 
 const mergedHandlers = mergeHandlers(
 	httpHandlers,

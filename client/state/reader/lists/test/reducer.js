@@ -8,18 +8,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	READER_LISTS_RECEIVE,
-	READER_LISTS_UNFOLLOW_SUCCESS,
-	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_DISMISS_NOTICE,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
-	READER_LIST_REQUEST_SUCCESS,
-	READER_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
-
 import { items, updatedLists, missingLists, subscribedLists } from '../reducer';
+import { READER_LISTS_RECEIVE, READER_LISTS_UNFOLLOW_SUCCESS, READER_LIST_UPDATE_SUCCESS, READER_LIST_DISMISS_NOTICE, READER_LIST_UPDATE_TITLE, READER_LIST_UPDATE_DESCRIPTION, READER_LIST_REQUEST_SUCCESS, READER_LIST_REQUEST_FAILURE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

@@ -1,44 +1,34 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-import {
-	assign,
-	defer,
-	isEmpty,
-	isNull,
-	omitBy,
-	pick,
-	startsWith
-} from 'lodash';
 import async from 'async';
-import { parse as parseURL } from 'url';
-import page from 'page';
+import debugFactory from 'debug';
+import { assign, defer, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { get } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp' ;
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
-import userFactory from 'lib/user';
-const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
-import analytics from 'lib/analytics';
-import {
-	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
-} from 'state/action-types';
 import { abtest } from 'lib/abtest';
+import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import SignupCart from 'lib/signup/cart';
+import sitesFactory from 'lib/sites-list';
+import userFactory from 'lib/user';
+import wpcom from 'lib/wp';
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
+import { getSiteId } from 'state/selectors';
 
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-
-import { getSiteId } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
+
+import { parse as parseURL } from 'url';
+const sites = sitesFactory();
+const user = userFactory();
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 

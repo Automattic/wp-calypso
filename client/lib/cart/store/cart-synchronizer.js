@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import { assign, flowRight, pick } from 'lodash';
-
-import i18n from 'i18n-calypso';
-import Dispatcher from 'dispatcher';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import { assign, flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 
 /**
  * Internal dependencies

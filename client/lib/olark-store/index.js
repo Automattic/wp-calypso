@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducerStore } from 'lib/store';
 import { action as ActionTypes } from 'lib/olark-store/constants';
+import { createReducerStore } from 'lib/store';
 
 /**
  * Module variables

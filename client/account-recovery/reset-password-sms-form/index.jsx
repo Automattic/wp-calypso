@@ -1,31 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
 import Button from 'components/button';
 import Card from 'components/card';
-import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
+import FormTextInput from 'components/forms/form-text-input';
+import { setValidationKey, validateRequest, clearResetMethod } from 'state/account-recovery/reset/actions';
 
-import {
-	getAccountRecoveryResetUserData,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationError,
-	isValidatingAccountRecoveryKey,
-} from 'state/selectors';
-
-import {
-	setValidationKey,
-	validateRequest,
-	clearResetMethod,
-} from 'state/account-recovery/reset/actions';
+import { getAccountRecoveryResetUserData, getAccountRecoveryResetSelectedMethod, getAccountRecoveryValidationError, isValidatingAccountRecoveryKey } from 'state/selectors';
 
 class ResetPasswordSmsForm extends Component {
 	constructor( props ) {

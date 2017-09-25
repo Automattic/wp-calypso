@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import deterministicStringify from 'json-stable-stringify';
 import sha1 from 'hash.js/lib/hash/sha/1';
-import qs from 'querystring';
+import deterministicStringify from 'json-stable-stringify';
 
 /**
  * Internal dependencies
  */
 import { SYNC_RECORD_NAMESPACE } from './constants';
+import qs from 'querystring';
 
 /**
  * Generate a key from the given param object

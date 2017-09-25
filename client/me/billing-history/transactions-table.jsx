@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import { defer, isEmpty, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { defer, isEmpty, pick } from 'lodash';
 import React from 'react';
 import titleCase from 'to-title-case';
-import { capitalPDangit } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
+import tableRows from './table-rows';
 import TransactionsHeader from './transactions-header';
 
-import tableRows from './table-rows';
-
 import SearchCard from 'components/search-card';
+import { capitalPDangit } from 'lib/formatting';
 
 const TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',

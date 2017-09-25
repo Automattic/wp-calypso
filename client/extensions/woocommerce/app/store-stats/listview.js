@@ -1,35 +1,30 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { connect } from 'react-redux';
 import { moment } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getUnitPeriod } from './utils';
-import HeaderCake from 'components/header-cake';
-import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
-import Main from 'components/main';
 import Module from './store-stats-module';
-import SectionNav from 'components/section-nav';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import StoreStatsNavigationTabs from './store-stats-navigation/navtabs';
-import {
-	topProducts,
-	topCategories,
-	topCoupons,
-	UNITS
-} from 'woocommerce/app/store-stats/constants';
-import { getJetpackSites } from 'state/selectors';
+import { getUnitPeriod } from './utils';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteStats from 'components/data/query-site-stats';
+import HeaderCake from 'components/header-cake';
+import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import SectionNav from 'components/section-nav';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import { getJetpackSites } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { topProducts, topCategories, topCoupons, UNITS } from 'woocommerce/app/store-stats/constants';
 
 const listType = {
 	products: topProducts,

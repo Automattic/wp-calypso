@@ -1,28 +1,28 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
+import page from 'page';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import route from 'lib/route';
+import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import FollowList from 'lib/follow-list';
+import FollowList from 'lib/follow-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import AsyncLoad from 'components/async-load';
-import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-import FollowList from 'lib/follow-list';
-import FollowList from 'lib/follow-list';
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {

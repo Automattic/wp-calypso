@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import wpcom from 'lib/wp';
-
 import { get, keys } from 'lodash';
 
 /**
@@ -10,15 +8,8 @@ import { get, keys } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import versionCompare from 'lib/version-compare';
-import {
-	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
-	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-	PLUGIN_SETUP_INSTALL,
-	PLUGIN_SETUP_ACTIVATE,
-	PLUGIN_SETUP_CONFIGURE,
-	PLUGIN_SETUP_FINISH,
-	PLUGIN_SETUP_ERROR
-} from 'state/action-types';
+import wpcom from 'lib/wp';
+import { PLUGIN_SETUP_INSTRUCTIONS_FETCH, PLUGIN_SETUP_INSTRUCTIONS_RECEIVE, PLUGIN_SETUP_INSTALL, PLUGIN_SETUP_ACTIVATE, PLUGIN_SETUP_CONFIGURE, PLUGIN_SETUP_FINISH, PLUGIN_SETUP_ERROR } from 'state/action-types';
 
 /**
  *  Local variables;

@@ -1,14 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	ACCOUNT_RECOVERY_RESET_REQUEST,
-	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-} from 'state/action-types';
 import { setResetMethod } from 'state/account-recovery/reset/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { ACCOUNT_RECOVERY_RESET_REQUEST, ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS, ACCOUNT_RECOVERY_RESET_REQUEST_ERROR } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 export const requestReset = ( { dispatch }, action ) => {
 	const {

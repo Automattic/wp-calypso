@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	ZONINATOR_REQUEST_FEED,
-	ZONINATOR_SAVE_FEED,
-	ZONINATOR_UPDATE_FEED,
-} from '../action-types';
+import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED, ZONINATOR_UPDATE_FEED } from '../action-types';
 
 /**
  * Returns an action object to indicate that a request has been made to fetch the feed.

@@ -6,9 +6,9 @@ import request from 'superagent';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
 import { actions } from './constants';
 import { errors as errorTypes } from './constants';
+import Dispatcher from 'dispatcher';
 import analytics from 'lib/analytics';
 
 export function login( username, password, auth_code ) {

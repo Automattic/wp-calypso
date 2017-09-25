@@ -1,15 +1,10 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
+import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 import { TIMEZONES_RECEIVE } from 'state/action-types';
 
-import {
-	rawOffsetsSchema,
-	labelsSchema,
-	continentsSchema
-} from './schema';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const rawOffsets = createReducer( {}, {
 	[ TIMEZONES_RECEIVE ]: ( state, actions ) => ( actions.rawOffsets )

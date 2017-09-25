@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import ContactComponent from './help-contact';
+import CoursesComponent from './help-courses';
+import HelpComponent from './main';
+import config from 'config';
 import analytics from 'lib/analytics';
 import { login } from 'lib/paths';
-import route from 'lib/route';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import config from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import HelpComponent from './main';
-import CoursesComponent from './help-courses';
-import ContactComponent from './help-contact';
+import route from 'lib/route';
 import support from 'lib/url/support';
 import userUtils from 'lib/user/utils';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export default {
 	loggedOut( context, next ) {

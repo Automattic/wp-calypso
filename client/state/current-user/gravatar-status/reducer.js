@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	GRAVATAR_UPLOAD_RECEIVE,
-	GRAVATAR_UPLOAD_REQUEST,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-	GRAVATAR_UPLOAD_REQUEST_FAILURE
-} from 'state/action-types';
+import { GRAVATAR_UPLOAD_RECEIVE, GRAVATAR_UPLOAD_REQUEST, GRAVATAR_UPLOAD_REQUEST_SUCCESS, GRAVATAR_UPLOAD_REQUEST_FAILURE } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
 export const isUploading = createReducer( false, {

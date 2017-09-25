@@ -2,20 +2,20 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import JetpackExampleActivate from './example-components/jetpack-activate';
+import JetpackExampleConnect from './example-components/jetpack-connect';
+import JetpackExampleInstall from './example-components/jetpack-install';
 import Card from 'components/card';
 import { preventWidows } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
-import JetpackExampleInstall from './example-components/jetpack-install';
-import JetpackExampleActivate from './example-components/jetpack-activate';
-import JetpackExampleConnect from './example-components/jetpack-connect';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 

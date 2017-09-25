@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedOrPrimarySiteId } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
 
 export const getHelpSiteId = createSelector(
 	state => state.help.selectedSiteId

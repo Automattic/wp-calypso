@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, includes } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import SiteOrDomainChoice from './choice';
-import { getCurrentUserId } from 'state/current-user/selectors';
-// TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import DomainImage from 'signup/steps/design-type-with-store/domain-image';
-import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
-import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
-import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
-import { getAvailableProductsList } from 'state/products-list/selectors';
+import { cartItems } from 'lib/cart-values';
 import { getTld } from 'lib/domains';
+import SignupActions from 'lib/signup/actions';
+import NavigationLink from 'signup/navigation-link';
+import StepWrapper from 'signup/step-wrapper';
+import DomainImage from 'signup/steps/design-type-with-store/domain-image';
+import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
+import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getAvailableProductsList } from 'state/products-list/selectors';
 
 class SiteOrDomain extends Component {
 	getDomainProductSlug( domain ) {

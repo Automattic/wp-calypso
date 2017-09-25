@@ -6,13 +6,8 @@ import { difference, flatten, groupBy, sortBy, toPairs } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib/products-values';
 import { isIncludedWithPlan } from 'lib/purchases';
-import {
-	getDomainProductRanking,
-	isCredits,
-	isDomainProduct,
-	isPlan
-} from 'lib/products-values';
 
 /**
  * Sorts all products in the following order:

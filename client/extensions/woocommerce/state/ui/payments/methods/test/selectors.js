@@ -6,14 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	arePaymentsSetup,
-	getPaymentMethodEdits,
-	getPaymentMethodsWithEdits,
-	getCurrentlyEditingPaymentMethod,
-	getPaymentMethodsGroup,
-	isCurrentlyEditingPaymentMethod,
-} from '../selectors';
+import { arePaymentsSetup, getPaymentMethodEdits, getPaymentMethodsWithEdits, getCurrentlyEditingPaymentMethod, getPaymentMethodsGroup, isCurrentlyEditingPaymentMethod } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const siteState = {

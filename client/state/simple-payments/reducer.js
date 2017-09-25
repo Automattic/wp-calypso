@@ -1,9 +1,8 @@
 /**
  * Internal dependencies
  */
-
-import { combineReducers } from 'state/utils';
 import productList from './product-list/reducer';
+import { combineReducers } from 'state/utils';
 
 export default combineReducers( {
 	productList

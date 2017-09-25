@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+
+const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
 
 export default localize( React.createClass( {
 

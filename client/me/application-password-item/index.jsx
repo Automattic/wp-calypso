@@ -1,23 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:application-password-item' );
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import eventRecorder from 'me/event-recorder';
 
 import { errorNotice } from 'state/notices/actions';
-import Button from 'components/button';
+const debug = debugFactory( 'calypso:application-password-item' );
 
 const ApplicationPasswordsItem = React.createClass( {
 

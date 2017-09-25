@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import preloadImage from '../preload-image';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
-import preloadImage from '../preload-image';
 
 describe( '#preloadImage()', function() {
 	let sandbox, Image;

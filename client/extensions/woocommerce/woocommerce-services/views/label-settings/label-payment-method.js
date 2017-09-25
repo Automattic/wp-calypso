@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
 import CompactCard from 'components/card/compact';
+import FormCheckbox from 'components/forms/form-checkbox';
 import PaymentLogo from 'components/payment-logo';
 
 export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { canCurrentUser } from 'state/selectors';
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import config from 'config';
 import route from 'lib/route';
+import { canCurrentUser } from 'state/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class App extends Component {
 

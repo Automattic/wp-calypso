@@ -1,22 +1,22 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import config from 'config';
-import { READER_UNFOLLOW } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { createNotice, errorNotice } from 'state/notices/actions';
-import { follow } from 'state/reader/follows/actions';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
+import { READER_UNFOLLOW } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { createNotice, errorNotice } from 'state/notices/actions';
+import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
+import { follow } from 'state/reader/follows/actions';
+import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;

@@ -6,21 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	OLARK_READY,
-	OLARK_REQUEST,
-	OLARK_TIMEOUT,
-	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY,
-	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
-import {
-	STATUS_READY,
-	STATUS_TIMEOUT,
-	OPERATOR_STATUS_AVAILABLE,
-	OPERATOR_STATUS_AWAY
-} from '../constants';
+import { STATUS_READY, STATUS_TIMEOUT, OPERATOR_STATUS_AVAILABLE, OPERATOR_STATUS_AWAY } from '../constants';
 import reducer, { status, requesting, availability, operatorStatus } from '../reducer';
+import { OLARK_READY, OLARK_REQUEST, OLARK_TIMEOUT, OLARK_OPERATORS_AVAILABLE, OLARK_OPERATORS_AWAY, OLARK_SET_AVAILABILITY } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

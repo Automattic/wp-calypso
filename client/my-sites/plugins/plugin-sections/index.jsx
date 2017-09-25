@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-import { filter, find } from 'lodash';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { filter, find } from 'lodash';
 import React from 'react';
 import titleCase from 'to-title-case';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-
 import Card from 'components/card';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import analytics from 'lib/analytics';
 
 export default localize( React.createClass( {
 

@@ -2,47 +2,19 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
 
 /**
  * Internal dependencies
  */
-import {
-	PUSH_NOTIFICATIONS_API_READY,
-	PUSH_NOTIFICATIONS_API_NOT_READY,
-	PUSH_NOTIFICATIONS_AUTHORIZE,
-	PUSH_NOTIFICATIONS_BLOCK,
-	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
-	PUSH_NOTIFICATIONS_MUST_PROMPT,
-	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
-} from 'state/action-types';
-
-import {
-	isApiReady,
-	getDeviceId,
-	getStatus,
-	isBlocked,
-	isEnabled,
-} from './selectors';
-import {
-	isOpera,
-	isPushNotificationsDenied,
-	isPushNotificationsSupported,
-	isUnsupportedChromeVersion,
-	getChromeVersion,
-	getOperaVersion,
-} from './utils';
-import {
-	registerServerWorker,
-} from 'lib/service-worker';
-import {
-	recordTracksEvent,
-	bumpStat
-} from 'state/analytics/actions';
-
+import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
+import { isOpera, isPushNotificationsDenied, isPushNotificationsSupported, isUnsupportedChromeVersion, getChromeVersion, getOperaVersion } from './utils';
+import { registerServerWorker } from 'lib/service-worker';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
+
+import wpcom from 'lib/wp';
+import { PUSH_NOTIFICATIONS_API_READY, PUSH_NOTIFICATIONS_API_NOT_READY, PUSH_NOTIFICATIONS_AUTHORIZE, PUSH_NOTIFICATIONS_BLOCK, PUSH_NOTIFICATIONS_TOGGLE_ENABLED, PUSH_NOTIFICATIONS_MUST_PROMPT, PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE, PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE, PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS } from 'state/action-types';
+
+import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const serviceWorkerOptions = {

@@ -2,10 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import store from 'store';
+
+/**
+ * Internal dependencies
+ */
+import Emitter from 'lib/mixins/emitter';
 
 const debug = debugFactory( 'calypso:trophies-data' );
-import Emitter from 'lib/mixins/emitter';
-import store from 'store';
 
 /**
  * Internal dependencies

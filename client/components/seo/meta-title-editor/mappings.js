@@ -1,52 +1,7 @@
-// Maps between different title format formats
-//
-// raw from API is
-// {
-// 	"advanced_seo_title_formats": {
-// 		"pages": [
-// 			{ "type": "token", "value": "page_title" },
-// 			{ "type": "string", "value": " is awesome!" }
-// 		],
-// 		"posts": [
-// 			{ "type": "token", "value": "post_title" },
-// 			{ "type": "string", "value": " | " },
-// 			{ "type": "token", "value": "site_name" }
-// 		],
-// 	}
-// }
-//
-// native is an array of plain-text strings and tokens
-//   [ { type: 'postTitle' }, { type: 'string', value: ' on ' }, { type: 'siteName' } ]
-//     \___________________/                                     \__________________/
-//               |                                                  |
-//               \--------------------------------------------------\--- tokens
-//
-//   @see README for `TokenField`
-//   [
-//   	{ value: 'Site Name', type: 'siteName' },
-//   	{ value: ' | ', type: 'string' },
-//   	{ value: 'Post Title', type: 'postTitle' }
-//   ]
-//
-
 /**
  * External dependencies
  */
-import {
-	camelCase,
-	flowRight as compose,
-	get,
-	initial,
-	last,
-	map,
-	mapKeys,
-	mapValues,
-	partialRight,
-	rearg,
-	reduce,
-	snakeCase,
-	unary,
-} from 'lodash';
+import { camelCase, flowRight as compose, get, initial, last, map, mapKeys, mapValues, partialRight, rearg, reduce, snakeCase, unary } from 'lodash';
 
 const mergeStringPieces = ( a, b ) => ( {
 	type: 'string',

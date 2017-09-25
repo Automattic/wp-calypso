@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
-import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
 import { reducer } from '../reducer';
+import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
+import { action as ActionTypes } from 'lib/upgrades/constants';
 
 describe( 'reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete action', () => {

@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
-
-import assert from 'assert';
 import { defer, find, last, omit } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'progress-store', function() {
 	let SignupProgressStore, SignupActions, Dispatcher;

@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const JetpackDevModeNotice = ( {
 	isJetpackSiteInDevMode,

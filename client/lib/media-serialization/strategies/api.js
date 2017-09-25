@@ -6,8 +6,8 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
 import { MediaTypes } from '../constants';
+import MediaUtils from 'lib/media/utils';
 
 /**
  * Given a REST API media object, attempts to infer the type and returns a

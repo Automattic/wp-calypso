@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import { find } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Courses from './courses';
-import {
-	getUserPurchases,
-	isFetchingUserPurchases,
-	hasLoadedUserPurchasesFromServer
-} from 'state/purchases/selectors';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { receiveHelpCourses } from 'state/help/courses/actions';
 import { getHelpCourses } from 'state/help/courses/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { getUserPurchases, isFetchingUserPurchases, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 
 function getCourses() {
 	return [

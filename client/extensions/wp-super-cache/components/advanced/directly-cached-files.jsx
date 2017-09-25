@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { pick } from 'lodash';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
 
 class DirectlyCachedFiles extends Component {
 	onKeyDown = event => {

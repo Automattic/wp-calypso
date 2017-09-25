@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { identity, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { identity, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
-import signupUtils from 'signup/utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import SignupActions from 'lib/signup/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 import support from 'lib/url/support';
+import StepWrapper from 'signup/step-wrapper';
+import signupUtils from 'signup/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class UserStep extends Component {
 	static propTypes = {

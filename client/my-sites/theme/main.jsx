@@ -1,63 +1,50 @@
-/* eslint-disable react/no-danger  */
-// FIXME!!!^ we want to ensure we have sanitised data…
-
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
-import classNames from 'classnames';
 import titlecase from 'to-title-case';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
+import ThemeFeaturesCard from './theme-features-card';
+import ThemeNotFoundError from './theme-not-found-error';
 import ThemesRelatedCard from './themes-related-card';
-import ThemePreview from 'my-sites/themes/theme-preview';
 import Button from 'components/button';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import DocumentHead from 'components/data/document-head';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { decodeEntities } from 'lib/formatting';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+import { connectOptions } from 'my-sites/themes/theme-options';
+import ThemePreview from 'my-sites/themes/theme-preview';
+import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import { connectOptions } from 'my-sites/themes/theme-options';
-import {
-	isThemeActive,
-	isThemePremium,
-	isPremiumThemeAvailable,
-	isWpcomTheme as isThemeWpcom,
-	getPremiumThemePrice,
-	getThemeDetailsUrl,
-	getThemeRequestErrors,
-	getThemeForumUrl,
-} from 'state/themes/selectors';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import { decodeEntities } from 'lib/formatting';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
-import ThemeNotFoundError from './theme-not-found-error';
-import ThemeFeaturesCard from './theme-features-card';
+import { isThemeActive, isThemePremium, isPremiumThemeAvailable, isWpcomTheme as isThemeWpcom, getPremiumThemePrice, getThemeDetailsUrl, getThemeRequestErrors, getThemeForumUrl } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
+import { getBackPath } from 'state/themes/themes-ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',

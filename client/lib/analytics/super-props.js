@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import { assign } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
 
 export default {
 	getAll: function( selectedSite, siteCount ) {

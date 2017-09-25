@@ -1,18 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import WPSuperCache from './main';
 import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSiteFragment, sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import WPSuperCache from './main';
 
 export function settings( context ) {
 	const siteId = getSiteFragment( context.path );

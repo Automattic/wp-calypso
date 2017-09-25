@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-import urlModule from 'url';
 import { pickBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import urlModule from 'url';
 
 export default function( args, url ) {
 	if ( 'object' !== typeof args ) {

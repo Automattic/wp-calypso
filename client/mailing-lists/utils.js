@@ -3,12 +3,12 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:mailing-lists' );
-
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+
+const debug = debugFactory( 'calypso:mailing-lists' );
 
 export default {
 	deleteSubscriber( category, emailAddress, hmac, context ) {

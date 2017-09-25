@@ -4,15 +4,15 @@
 import chai from 'chai';
 
 /**
- * External dependencies
- */
-const expect = chai.expect;
-
-/**
  * Internal dependencies
  */
 import highlight from '../';
 import useFakeDom from 'test/helpers/use-fake-dom';
+
+/**
+ * External dependencies
+ */
+const expect = chai.expect;
 
 describe( 'highlight', function() {
 	useFakeDom();

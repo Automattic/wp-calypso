@@ -2,22 +2,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
+import QueryPlans from 'components/data/query-plans';
+import addQueryArgs from 'lib/route/add-query-args';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite } from 'state/sites/selectors';
-import QueryPlans from 'components/data/query-plans';
-import addQueryArgs from 'lib/route/add-query-args';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 

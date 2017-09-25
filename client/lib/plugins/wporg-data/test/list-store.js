@@ -7,10 +7,10 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
 import localStorageSpies from './mocks/local-store';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'WPORG Plugins Lists Store', () => {
 	let Dispatcher, PluginsListsStore, pluginsList;

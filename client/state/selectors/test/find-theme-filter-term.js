@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { findThemeFilterTerm } from '../';
-import { state } from './fixtures/theme-filters';
+import { findThemeFilterTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'findThemeFilterTerm()', () => {
 	it( 'should return null for an inexistent term slug', () => {

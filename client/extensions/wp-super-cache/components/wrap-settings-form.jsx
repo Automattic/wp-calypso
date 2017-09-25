@@ -1,43 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import {
-	flowRight,
-	isEqual,
-	omit,
-	pick,
-} from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { flowRight, isEqual, omit, pick } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { deleteCache } from '../state/cache/actions';
+import { isCacheDeleteSuccessful, isDeletingCache } from '../state/cache/selectors';
+import { saveSettings } from '../state/settings/actions';
+import { getSettings, isRequestingSettings, isSavingSettings, isSettingsSaveSuccessful } from '../state/settings/selectors';
+import QuerySettings from './data/query-settings';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
-import QuerySettings from './data/query-settings';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
-import { deleteCache } from '../state/cache/actions';
-import {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} from 'state/notices/actions';
-import { saveSettings } from '../state/settings/actions';
-import {
-	isCacheDeleteSuccessful,
-	isDeletingCache,
-} from '../state/cache/selectors';
-import {
-	getSettings,
-	isRequestingSettings,
-	isSavingSettings,
-	isSettingsSaveSuccessful,
-} from '../state/settings/selectors';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {

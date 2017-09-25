@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, identity } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find, identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import SignupThemesList from './signup-themes-list';
+import Button from 'components/button';
 import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
-import SignupThemesList from './signup-themes-list';
+import { themes } from 'lib/signup/themes-data';
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
-import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 

@@ -7,11 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import stripeConnectAccountReducer from '../reducer';
+import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE, WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE } from 'woocommerce/state/action-types';
 import sitesReducer from 'woocommerce/state/sites/reducer';
-import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
-} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'default stripeConnectAccount reducer behavior', () => {

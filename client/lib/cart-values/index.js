@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
 import { extend } from 'lodash';
 import update from 'react-addons-update';
-import i18n from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import cartItems from './cart-items';
+import config from 'config';
 
 import productsValues from 'lib/products-values';
 

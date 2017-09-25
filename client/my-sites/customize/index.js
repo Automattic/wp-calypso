@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSelection, sites, navigation } from 'my-sites/controller';
-import { customize } from './controller';
+import { customize } from './controller';
 import config from 'config';
+import { siteSelection, sites, navigation } from 'my-sites/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/customize' ) ) {

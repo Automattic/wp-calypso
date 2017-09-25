@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
 import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { login } from 'lib/paths';
 import { recordPageView } from 'state/analytics/actions';
-import Gridicon from 'gridicons';
+import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {

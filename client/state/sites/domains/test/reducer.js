@@ -7,45 +7,12 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import domainsReducer, {
-	items,
-	requesting as requestReducer,
-	errors as errorsReducer
-} from '../reducer';
+import { domainsRequestAction, domainsRequestSuccessAction, domainsRequestFailureAction } from '../actions';
+import domainsReducer, { items, requesting as requestReducer, errors as errorsReducer } from '../reducer';
+import { SITE_ID_FIRST as siteId, SITE_ID_FIRST as firstSiteId, SITE_ID_SECOND as secondSiteId, SITE_FIRST_DOMAINS as siteDomains, DOMAIN_PRIMARY as firstDomain, DOMAIN_NOT_PRIMARY as secondDomain, ERROR_MESSAGE_RESPONSE as errorMessageResponse } from './fixture';
+import { SITE_DOMAINS_RECEIVE, SITE_DOMAINS_REQUEST, SITE_DOMAINS_REQUEST_SUCCESS, SITE_DOMAINS_REQUEST_FAILURE } from 'state/action-types';
+
 import { withSchemaValidation } from 'state/utils';
-
-/**
- * Action types constantes
- */
-import {
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
-
-/**
- * Actions creators functions
- */
-import {
-	domainsRequestAction,
-	domainsRequestSuccessAction,
-	domainsRequestFailureAction
-} from '../actions';
-
-/**
- * Fixture data
- */
-import {
-	SITE_ID_FIRST as siteId,
-	SITE_ID_FIRST as firstSiteId,
-	SITE_ID_SECOND as secondSiteId,
-	SITE_FIRST_DOMAINS as siteDomains,
-	DOMAIN_PRIMARY as firstDomain,
-	DOMAIN_NOT_PRIMARY as secondDomain,
-	ERROR_MESSAGE_RESPONSE as errorMessageResponse
-} from './fixture';
-
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const itemsReducer = withSchemaValidation( items.schema, items );

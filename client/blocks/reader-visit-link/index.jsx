@@ -2,9 +2,9 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies

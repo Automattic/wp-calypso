@@ -7,66 +7,12 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-
-import {
-	accountRecoverySettingsFetch,
-	accountRecoverySettingsFetchSuccess,
-	accountRecoverySettingsFetchFailed,
-
-	updateAccountRecoveryPhone,
-	updateAccountRecoveryPhoneSuccess,
-	updateAccountRecoveryPhoneFailed,
-
-	deleteAccountRecoveryPhone,
-	deleteAccountRecoveryPhoneSuccess,
-	deleteAccountRecoveryPhoneFailed,
-
-	updateAccountRecoveryEmail,
-	updateAccountRecoveryEmailSuccess,
-	updateAccountRecoveryEmailFailed,
-
-	deleteAccountRecoveryEmail,
-	deleteAccountRecoveryEmailSuccess,
-	deleteAccountRecoveryEmailFailed,
-
-	resendAccountRecoveryEmailValidation,
-	resendAccountRecoveryEmailValidationSuccess,
-	resendAccountRecoveryEmailValidationFailed,
-
-	resendAccountRecoveryPhoneValidation,
-	resendAccountRecoveryPhoneValidationSuccess,
-	resendAccountRecoveryPhoneValidationFailed,
-
-	validateAccountRecoveryPhone,
-	validateAccountRecoveryPhoneSuccess,
-	validateAccountRecoveryPhoneFailed,
-} from '../actions';
-
-import {
-	ACCOUNT_RECOVERY_SETTINGS_FETCH,
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-
-	ACCOUNT_RECOVERY_SETTINGS_DELETE,
-	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-
-	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
-	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
-} from 'state/action-types';
-
+import { accountRecoverySettingsFetch, accountRecoverySettingsFetchSuccess, accountRecoverySettingsFetchFailed, updateAccountRecoveryPhone, updateAccountRecoveryPhoneSuccess, updateAccountRecoveryPhoneFailed, deleteAccountRecoveryPhone, deleteAccountRecoveryPhoneSuccess, deleteAccountRecoveryPhoneFailed, updateAccountRecoveryEmail, updateAccountRecoveryEmailSuccess, updateAccountRecoveryEmailFailed, deleteAccountRecoveryEmail, deleteAccountRecoveryEmailSuccess, deleteAccountRecoveryEmailFailed, resendAccountRecoveryEmailValidation, resendAccountRecoveryEmailValidationSuccess, resendAccountRecoveryEmailValidationFailed, resendAccountRecoveryPhoneValidation, resendAccountRecoveryPhoneValidationSuccess, resendAccountRecoveryPhoneValidationFailed, validateAccountRecoveryPhone, validateAccountRecoveryPhoneSuccess, validateAccountRecoveryPhoneFailed } from '../actions';
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import { generateSuccessAndFailedTestsForThunk } from './utils';
+import { ACCOUNT_RECOVERY_SETTINGS_FETCH, ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED, ACCOUNT_RECOVERY_SETTINGS_UPDATE, ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED, ACCOUNT_RECOVERY_SETTINGS_DELETE, ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED, ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION, ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED, ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE, ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED } from 'state/action-types';
+
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'account-recovery actions', () => {
 	let spy;

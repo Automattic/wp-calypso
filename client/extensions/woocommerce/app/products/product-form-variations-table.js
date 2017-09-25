@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormTextInput from 'components/forms/form-text-input';
-import FormWeightInput from 'woocommerce/components/form-weight-input';
-import PriceInput from 'woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
+import Dialog from 'components/dialog';
+import FormTextInput from 'components/forms/form-text-input';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
+import FormWeightInput from 'woocommerce/components/form-weight-input';
+import PriceInput from 'woocommerce/components/price-input';
 
 class ProductFormVariationsTable extends React.Component {
 

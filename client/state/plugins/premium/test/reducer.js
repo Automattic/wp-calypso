@@ -7,19 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
-	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-	PLUGIN_SETUP_INSTALL,
-	PLUGIN_SETUP_ACTIVATE,
-	PLUGIN_SETUP_CONFIGURE,
-	PLUGIN_SETUP_FINISH,
-	PLUGIN_SETUP_ERROR
-} from 'state/action-types';
 import { isRequesting, plugins } from '../reducer';
-
-// Example state data
 import { initSite, installingSite, activatingSite, configuringSite, finishedPluginSite, siteWithError } from './examples';
+
+import { PLUGIN_SETUP_INSTRUCTIONS_FETCH, PLUGIN_SETUP_INSTRUCTIONS_RECEIVE, PLUGIN_SETUP_INSTALL, PLUGIN_SETUP_ACTIVATE, PLUGIN_SETUP_CONFIGURE, PLUGIN_SETUP_FINISH, PLUGIN_SETUP_ERROR } from 'state/action-types';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {

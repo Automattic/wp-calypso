@@ -6,34 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	IMAGE_EDITOR_CROP,
-	IMAGE_EDITOR_COMPUTED_CROP,
-	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
-	IMAGE_EDITOR_FLIP,
-	IMAGE_EDITOR_SET_ASPECT_RATIO,
-	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
-	IMAGE_EDITOR_SET_FILE_INFO,
-	IMAGE_EDITOR_SET_CROP_BOUNDS,
-	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_HAS_LOADED
-} from 'state/action-types';
-
-import {
-	resetImageEditorState,
-	resetAllImageEditorState,
-	imageEditorRotateCounterclockwise,
-	imageEditorFlip,
-	setImageEditorAspectRatio,
-	setImageEditorDefaultAspectRatio,
-	setImageEditorFileInfo,
-	setImageEditorCropBounds,
-	imageEditorCrop,
-	imageEditorComputedCrop,
-	setImageEditorImageHasLoaded
-} from '../actions';
+import { resetImageEditorState, resetAllImageEditorState, imageEditorRotateCounterclockwise, imageEditorFlip, setImageEditorAspectRatio, setImageEditorDefaultAspectRatio, setImageEditorFileInfo, setImageEditorCropBounds, imageEditorCrop, imageEditorComputedCrop, setImageEditorImageHasLoaded } from '../actions';
 import { AspectRatios } from '../constants';
+import { IMAGE_EDITOR_CROP, IMAGE_EDITOR_COMPUTED_CROP, IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE, IMAGE_EDITOR_FLIP, IMAGE_EDITOR_SET_ASPECT_RATIO, IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO, IMAGE_EDITOR_SET_FILE_INFO, IMAGE_EDITOR_SET_CROP_BOUNDS, IMAGE_EDITOR_STATE_RESET, IMAGE_EDITOR_STATE_RESET_ALL, IMAGE_EDITOR_IMAGE_HAS_LOADED } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#resetImageEditorState()', () => {

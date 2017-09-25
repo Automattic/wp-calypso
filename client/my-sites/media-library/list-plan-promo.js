@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import page from 'page';
-import analytics from 'lib/analytics';
-import { preventWidows } from 'lib/formatting';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 
-import Button from 'components/button';
+import analytics from 'lib/analytics';
+import { preventWidows } from 'lib/formatting';
 
 export default localize( React.createClass( {
 	displayName: 'MediaLibraryListPlanPromo',

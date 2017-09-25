@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import error from './error-reducer';
+import { combineReducers } from 'state/utils';
 
 export default combineReducers( {
 	error,

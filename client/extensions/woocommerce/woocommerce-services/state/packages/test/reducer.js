@@ -7,25 +7,9 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import initialState from './initial-state';
+import { addPackage, removePackage, editPackage, dismissModal, savePackage, updatePackagesField, toggleOuterDimensions, setModalErrors, setIsSaving, setIsFetching, removePredefinedPackage, savePredefinedPackages, toggleAll, togglePackage, setAddMode } from '../actions';
 import reducer from '../reducer';
-import {
-	addPackage,
-	removePackage,
-	editPackage,
-	dismissModal,
-	savePackage,
-	updatePackagesField,
-	toggleOuterDimensions,
-	setModalErrors,
-	setIsSaving,
-	setIsFetching,
-	removePredefinedPackage,
-	savePredefinedPackages,
-	toggleAll,
-	togglePackage,
-	setAddMode,
-} from '../actions';
+import initialState from './initial-state';
 
 const siteId = 123;
 

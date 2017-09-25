@@ -1,20 +1,11 @@
 /**
- * Adapted from the WordPress wp-view TinyMCE plugin.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
-*/
-
-/* eslint-disable no-cond-assign */
-
-/**
  * External dependencies
  */
-import { debounce } from 'lodash';
-import tinymce from 'tinymce/tinymce';
-import ReactDom from 'react-dom';
-import React from 'react';
 import i18n from 'i18n-calypso';
+import { debounce } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies

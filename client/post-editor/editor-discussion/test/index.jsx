@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
-import sinon from 'sinon';
-import mockery from 'mockery';
 import { expect } from 'chai';
 import { noop } from 'lodash';
+import mockery from 'mockery';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables

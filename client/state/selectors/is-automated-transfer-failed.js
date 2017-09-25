@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-import {
-	flowRight as compose,
-} from 'lodash';
+import { flowRight as compose } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { transferStates } from 'state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';

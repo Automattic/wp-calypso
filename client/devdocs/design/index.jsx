@@ -1,85 +1,81 @@
 /**
  * External dependencies
  */
+import Gridicons from 'gridicons/build/example';
+import { trim } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import page from 'page';
-import { slugToCamelCase } from 'devdocs/docs-example/util';
-import { trim } from 'lodash';
+import SocialLogos from 'social-logos/example';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import SearchCard from 'components/search-card';
-
-/**
- * Docs examples
- */
-import SearchDemo from 'components/search/docs/example';
-import Notices from 'components/notice/docs/example';
-import GlobalNotices from 'components/global-notices/docs/example';
-import Gravatar from 'components/gravatar/docs/example';
-import Buttons from 'components/button/docs/example';
-import ButtonGroups from 'components/button-group/docs/example';
-import Gridicons from 'gridicons/build/example';
 import Accordions from 'components/accordion/docs/example';
-import SocialLogos from 'social-logos/example';
-import SelectDropdown from 'components/select-dropdown/docs/example';
-import SegmentedControl from 'components/segmented-control/docs/example';
-import Cards from 'components/card/docs/example';
-import TokenFields from 'components/token-field/docs/example';
-import CountedTextareas from 'components/forms/counted-textarea/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
-import Popovers from 'components/popover/docs/example';
-import EllipsisMenu from 'components/ellipsis-menu/docs/example';
-import Ranges from 'components/forms/range/docs/example';
-import Gauge from 'components/gauge/docs/example';
-import Headers from 'components/header-cake/docs/example';
-import DropZones from 'components/drop-zone/docs/example';
-import FormFields from 'components/forms/docs/example';
-import SectionNav from 'components/section-nav/docs/example';
-import Spinner from 'components/spinner/docs/example';
-import SpinnerButton from 'components/spinner-button/docs/example';
-import SpinnerLine from 'components/spinner-line/docs/example';
-import Rating from 'components/rating/docs/example';
-import DatePicker from 'components/date-picker/docs/example';
-import InputChrono from 'components/input-chrono/docs/example';
-import ImagePreloader from 'components/image-preloader/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import Timezone from 'components/timezone/docs/example';
-import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
-import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
-import InfoPopover from 'components/info-popover/docs/example';
-import Tooltip from 'components/tooltip/docs/example';
-import FoldableCard from 'components/foldable-card/docs/example';
-import SectionHeader from 'components/section-header/docs/example';
-import PaymentLogo from 'components/payment-logo/docs/example';
-import Count from 'components/count/docs/example';
-import Version from 'components/version/docs/example';
+import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
+import ButtonGroups from 'components/button-group/docs/example';
+import Buttons from 'components/button/docs/example';
+import Cards from 'components/card/docs/example';
+import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
+import Count from 'components/count/docs/example';
+import DatePicker from 'components/date-picker/docs/example';
+import DropZones from 'components/drop-zone/docs/example';
+import EllipsisMenu from 'components/ellipsis-menu/docs/example';
+import EmojifyExample from 'components/emojify/docs/example';
+import EmptyContent from 'components/empty-content/docs/example';
 import ExternalLink from 'components/external-link/docs/example';
+import FAQ from 'components/faq/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
-import Collection from 'devdocs/design/search-collection';
-import FAQ from 'components/faq/docs/example';
-import VerticalMenu from 'components/vertical-menu/docs/example';
-import Banner from 'components/banner/docs/example';
-import EmojifyExample from 'components/emojify/docs/example';
-import LanguagePicker from 'components/language-picker/docs/example';
+import FoldableCard from 'components/foldable-card/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
-import EmptyContent from 'components/empty-content/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
-import PaginationExample from 'components/pagination/docs/example';
-import ListEnd from 'components/list-end/docs/example';
-import Wizard from 'components/wizard/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
+import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
+import CountedTextareas from 'components/forms/counted-textarea/docs/example';
+import FormFields from 'components/forms/docs/example';
+import Ranges from 'components/forms/range/docs/example';
+import Gauge from 'components/gauge/docs/example';
+import GlobalNotices from 'components/global-notices/docs/example';
+import Gravatar from 'components/gravatar/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
+import HeaderCake from 'components/header-cake';
+import Headers from 'components/header-cake/docs/example';
+import ImagePreloader from 'components/image-preloader/docs/example';
+import InfoPopover from 'components/info-popover/docs/example';
+import InputChrono from 'components/input-chrono/docs/example';
+import LanguagePicker from 'components/language-picker/docs/example';
+import ListEnd from 'components/list-end/docs/example';
+import Main from 'components/main';
+import Notices from 'components/notice/docs/example';
+import PaginationExample from 'components/pagination/docs/example';
+import PaymentLogo from 'components/payment-logo/docs/example';
+import Popovers from 'components/popover/docs/example';
+import ProgressBar from 'components/progress-bar/docs/example';
+import Rating from 'components/rating/docs/example';
+import Ribbon from 'components/ribbon/docs/example';
+import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import SearchCard from 'components/search-card';
+import SearchDemo from 'components/search/docs/example';
+import SectionHeader from 'components/section-header/docs/example';
+import SectionNav from 'components/section-nav/docs/example';
+import SegmentedControl from 'components/segmented-control/docs/example';
+import SelectDropdown from 'components/select-dropdown/docs/example';
+import SpinnerButton from 'components/spinner-button/docs/example';
+import SpinnerLine from 'components/spinner-line/docs/example';
+import Spinner from 'components/spinner/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
+import Timezone from 'components/timezone/docs/example';
+import TokenFields from 'components/token-field/docs/example';
+import Tooltip from 'components/tooltip/docs/example';
+import Version from 'components/version/docs/example';
+import VerticalMenu from 'components/vertical-menu/docs/example';
+import Wizard from 'components/wizard/docs/example';
+import config from 'config';
+import Collection from 'devdocs/design/search-collection';
+import { slugToCamelCase } from 'devdocs/docs-example/util';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';

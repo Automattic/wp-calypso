@@ -1,34 +1,28 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { includes, kebabCase } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-import { includes, kebabCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import LostPasswordForm from 'account-recovery/lost-password-form';
-import ForgotUsernameForm from 'account-recovery/forgot-username-form';
-import ResetPasswordForm from 'account-recovery/reset-password-form';
-import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
-import ResetPasswordSmsForm from 'account-recovery/reset-password-sms-form';
-import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-form';
-import ResetPasswordSucceeded from 'account-recovery/reset-password-succeeded';
-import ResetCodeValidation from 'account-recovery/reset-code-validation';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
-import {
-	isAccountRecoveryResetOptionsReady,
-	isAccountRecoveryUserDataReady,
-	isAccountRecoveryResetPasswordSucceeded,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationKey,
-} from 'state/selectors';
+import ForgotUsernameForm from 'account-recovery/forgot-username-form';
+import LostPasswordForm from 'account-recovery/lost-password-form';
+import ResetCodeValidation from 'account-recovery/reset-code-validation';
+import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-form';
+import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
+import ResetPasswordForm from 'account-recovery/reset-password-form';
+import ResetPasswordSmsForm from 'account-recovery/reset-password-sms-form';
+import ResetPasswordSucceeded from 'account-recovery/reset-password-succeeded';
+import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isAccountRecoveryResetOptionsReady, isAccountRecoveryUserDataReady, isAccountRecoveryResetPasswordSucceeded, getAccountRecoveryResetSelectedMethod, getAccountRecoveryValidationKey } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
 	const concatHeadTitle = ( parentTitle, childTitle ) => ( parentTitle + ' ‹ ' + childTitle );

@@ -1,13 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
-	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_SETTINGS_BATCH_REQUEST, WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 const doInitialSetupSuccess = ( siteId, data ) => {
 	return {

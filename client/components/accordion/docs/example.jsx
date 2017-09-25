@@ -1,16 +1,13 @@
-/* eslint-disable max-len */
-
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-
-import Gridicon from 'gridicons';
 
 export default class extends React.PureComponent {
     static displayName = 'AccordionExample';

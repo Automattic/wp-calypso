@@ -7,11 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	WPORG_PLUGIN_DATA_RECEIVE,
-	FETCH_WPORG_PLUGIN_DATA,
-} from 'state/action-types';
 import { items, fetchingItems } from '../reducer';
+import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {

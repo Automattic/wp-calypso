@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { isCommentableDiscoverPost } from 'blocks/comments/helper';
 import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
+import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {

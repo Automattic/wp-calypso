@@ -1,29 +1,21 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { noop, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { noop, startsWith } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import ImageEditorCrop from './image-editor-crop';
 import MediaUtils from 'lib/media/utils';
-import {
-	getImageEditorTransform,
-	getImageEditorFileInfo,
-	getImageEditorCrop,
-	isImageEditorImageLoaded
-} from 'state/ui/editor/image-editor/selectors';
-import {
-	setImageEditorCropBounds,
-	setImageEditorImageHasLoaded
-} from 'state/ui/editor/image-editor/actions';
 import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
+import { setImageEditorCropBounds, setImageEditorImageHasLoaded } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorTransform, getImageEditorFileInfo, getImageEditorCrop, isImageEditorImageLoaded } from 'state/ui/editor/image-editor/selectors';
 
 export class ImageEditorCanvas extends Component {
 	static propTypes = {

@@ -2,16 +2,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Emojify from 'components/emojify';
 import { getStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import Emojify from 'components/emojify';
 
 class ReaderSiteStreamLink extends React.Component {
 	static propTypes = {

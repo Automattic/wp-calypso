@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { defer, noop } from 'lodash';
 import { expect } from 'chai';
+import { defer, noop } from 'lodash';
 import sinon from 'sinon';
 
 /**

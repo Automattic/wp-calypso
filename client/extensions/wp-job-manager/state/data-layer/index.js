@@ -1,11 +1,15 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
-import { addHandlers } from 'state/data-layer/extensions-middleware';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import settings from './settings';
 import setup from './setup';
-import debugFactory from 'debug';
+import { mergeHandlers } from 'state/action-watchers/utils';
+import { addHandlers } from 'state/data-layer/extensions-middleware';
 
 const debug = debugFactory( 'wp-job-manager:errors' );
 

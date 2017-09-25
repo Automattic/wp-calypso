@@ -3,15 +3,15 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:followers-actions' );
-
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import FollowersStore from 'lib/followers/store';
 
 import wpcom from 'lib/wp';
-import FollowersStore from 'lib/followers/store';
+
+const debug = debugFactory( 'calypso:followers-actions' );
 
 const FollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {

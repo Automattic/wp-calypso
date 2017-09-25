@@ -2,51 +2,44 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import config from 'config';
 import debugFactory from 'debug';
-import scrollTo from 'lib/scroll-to';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from '../activity-log-banner';
+import ErrorBanner from '../activity-log-banner/error-banner';
+import ProgressBanner from '../activity-log-banner/progress-banner';
+import SuccessBanner from '../activity-log-banner/success-banner';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
-import ActivityLogRewindToggle from './activity-log-rewind-toggle';
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import EmptyContent from 'components/empty-content';
-import ErrorBanner from '../activity-log-banner/error-banner';
-import JetpackColophon from 'components/jetpack-colophon';
-import Main from 'components/main';
-import ProgressBanner from '../activity-log-banner/progress-banner';
-import QueryActivityLog from 'components/data/query-activity-log';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import SuccessBanner from '../activity-log-banner/success-banner';
+import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import { adjustMoment } from './utils';
-import { canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import QueryActivityLog from 'components/data/query-activity-log';
+import QueryRewindStatus from 'components/data/query-rewind-status';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import EmptyContent from 'components/empty-content';
+import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import config from 'config';
+import scrollTo from 'lib/scroll-to';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
-import {
-	getActivityLogs,
-	getRestoreProgress,
-	getRewindStatusError,
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-	isRewindActive as isRewindActiveSelector,
-} from 'state/selectors';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { canCurrentUser } from 'state/selectors';
+import { getActivityLogs, getRestoreProgress, getRewindStatusError, getSiteGmtOffset, getSiteTimezoneValue, isRewindActive as isRewindActiveSelector } from 'state/selectors';
+import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module constants

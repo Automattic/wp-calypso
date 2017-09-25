@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { noop } from 'lodash';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
+import assert from 'assert';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 

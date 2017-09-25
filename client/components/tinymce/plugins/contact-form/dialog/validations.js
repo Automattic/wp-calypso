@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { every } from 'lodash';
 import emailValidator from 'email-validator';
+import { every } from 'lodash';
 
 export function validateFormFields( fields ) {
 	if ( ! Array.isArray( fields ) || fields.length === 0 ) {

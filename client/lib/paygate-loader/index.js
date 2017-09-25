@@ -3,12 +3,12 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:paygate' );
-
 /**
  * Internal dependencies
  */
 import loadScript from 'lib/load-script';
+
+const debug = debugFactory( 'calypso:paygate' );
 
 /**
  * PaygateLoader component

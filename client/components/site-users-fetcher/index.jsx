@@ -1,21 +1,20 @@
-import { includes, isEqual, omit, partition } from 'lodash';
-
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { includes, isEqual, omit, partition } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:site-users-fetcher' );
 
 /**
  * Internal dependencies
  */
+import pollers from 'lib/data-poller';
+import UsersActions from 'lib/users/actions';
 import UsersStore from 'lib/users/store';
 
-import UsersActions from 'lib/users/actions';
-import pollers from 'lib/data-poller';
+const debug = debugFactory( 'calypso:site-users-fetcher' );
 
 /**
  * Module variables

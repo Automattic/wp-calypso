@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
 
 const RejectedUserAgents = ( {
 	fields: {

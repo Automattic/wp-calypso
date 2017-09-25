@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { every, some, includes, get } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import PaginatedQueryManager from '../paginated';
-import PostQueryKey from './key';
 import { DEFAULT_POST_QUERY } from './constants';
+import PostQueryKey from './key';
 
 /**
  * PostQueryManager manages posts which can be queried and change over time

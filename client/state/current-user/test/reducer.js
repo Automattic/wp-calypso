@@ -7,19 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { withSchemaValidation } from 'state/utils';
-import {
-	CURRENT_USER_ID_SET,
-	DESERIALIZE,
-	PLANS_RECEIVE,
-	SERIALIZE,
-	SITE_RECEIVE,
-	SITE_PLANS_FETCH_COMPLETED,
-	SITES_RECEIVE,
-	SITES_UPDATE
-} from 'state/action-types';
 import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
+import { CURRENT_USER_ID_SET, DESERIALIZE, PLANS_RECEIVE, SERIALIZE, SITE_RECEIVE, SITE_PLANS_FETCH_COMPLETED, SITES_RECEIVE, SITES_UPDATE } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 const capabilities = withSchemaValidation( unwrappedCapabilities.schema, unwrappedCapabilities );
 
 describe( 'reducer', () => {

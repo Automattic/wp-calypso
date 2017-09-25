@@ -1,24 +1,22 @@
-import React from 'react';
-
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
-import qs from 'querystring';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import EditorLocationSearch from './search';
+import Notice from 'components/notice';
+
 import PostActions from 'lib/posts/actions';
+import stats from 'lib/posts/stats';
 
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import stats from 'lib/posts/stats';
-import EditorLocationSearch from './search';
-
-import Notice from 'components/notice';
+import qs from 'querystring';
 
 /**
  * Module variables

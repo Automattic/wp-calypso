@@ -3,15 +3,14 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:help-search:actions' );
-
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
 import { action as ActionTypes } from './constants';
+import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
+
+const debug = debugFactory( 'calypso:help-search:actions' );
 
 const HelpSearchActions = {
 	fetch: function( searchQuery ) {

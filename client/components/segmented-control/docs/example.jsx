@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
-
 import ControlItem from 'components/segmented-control/item';
 
 /**

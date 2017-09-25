@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isFrontPage,
-	isPostsPage,
-} from '../selectors';
+import { isFrontPage, isPostsPage } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isFrontPage()', () => {

@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import PrimaryDomainButton from './primary-domain-button';
 import SectionHeader from 'components/section-header';
+import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 
 const Header = React.createClass( {
 	propTypes: {

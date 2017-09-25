@@ -1,9 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST } from 'state/action-types';

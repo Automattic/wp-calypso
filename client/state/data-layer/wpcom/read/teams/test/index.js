@@ -9,10 +9,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-
-// import { requestTeams } from 'state/reader/teams/actions';
 import { READER_TEAMS_RECEIVE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 const apiResponse = { teams: [ { slug: 'a8c', title: 'Automattic' } ] };
 

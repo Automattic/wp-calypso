@@ -6,15 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import config from 'config';
 import paths from './paths';
-import {
-	isExpired,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isPaidWithCreditCard,
-} from 'lib/purchases';
+import config from 'config';
+import analytics from 'lib/analytics';
+import { isExpired, isIncludedWithPlan, isOneTimePurchase, isPaidWithCreditCard } from 'lib/purchases';
 
 // TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {

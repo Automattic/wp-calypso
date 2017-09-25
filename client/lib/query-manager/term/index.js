@@ -8,8 +8,8 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import PaginatedQueryManager from '../paginated';
-import TermQueryKey from './key';
 import { DEFAULT_TERM_QUERY } from './constants';
+import TermQueryKey from './key';
 
 /**
  * TermQueryManager manages terms which can be queried and change over time

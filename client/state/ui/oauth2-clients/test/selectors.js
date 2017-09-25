@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCurrentOAuth2Client,
-	showOAuth2Layout,
-} from '../selectors';
+import { getCurrentOAuth2Client, showOAuth2Layout } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getCurrentOAuth2Client()', () => {

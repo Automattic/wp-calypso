@@ -1,36 +1,36 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import notices from 'notices';
-import { Set } from 'immutable';
-import { connect } from 'react-redux';
-import { get, includes, isString, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { Set } from 'immutable';
+import { get, includes, isString, omit, partial, pickBy } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import FormInput from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import ExternalLink from 'components/external-link';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormInput from 'components/forms/form-text-input-with-affixes';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { isSiteSettingsSaveSuccessful, getSiteSettingsSaveError } from 'state/site-settings/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSite } from 'state/sites/actions';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import { protectForm } from 'lib/protect-form';
+import notices from 'notices';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { isJetpackModuleActive } from 'state/selectors';
+import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
+import { isSiteSettingsSaveSuccessful, getSiteSettingsSaveError } from 'state/site-settings/selectors';
+import { requestSite } from 'state/sites/actions';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteVerification extends Component {
 	static serviceIds = {

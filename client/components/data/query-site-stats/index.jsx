@@ -2,10 +2,9 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import shallowEqual from 'react-pure-render/shallowEqual';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

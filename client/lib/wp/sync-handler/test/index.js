@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import { defer } from 'lodash';
 import { expect } from 'chai';
+import { defer } from 'lodash';
 import { spy } from 'sinon';
-import querystring from 'querystring';
 
 /**
  * Internal dependencies
  */
+import { RECORDS_LIST_KEY } from '../constants';
 import { generateKey } from '../utils';
 import * as testData from './data';
 import localforageMock from './mock/localforage';
-import { RECORDS_LIST_KEY } from '../constants';
-import useMockery from 'test/helpers/use-mockery';
 import wpcomUndocumented from 'lib/wpcom-undocumented';
+import querystring from 'querystring';
+
+import useMockery from 'test/helpers/use-mockery';
 
 let wpcom, SyncHandler, hasPaginationChanged, syncOptOut, responseData, cacheIndex;
 

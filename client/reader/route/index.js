@@ -1,8 +1,8 @@
 /** @format */
+
 /**
  * Internal dependencies
  */
-
 import config from 'config';
 
 const FEED_URL_BASE = '/read/feeds/';

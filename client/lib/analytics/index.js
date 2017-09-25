@@ -3,20 +3,20 @@
  */
 import cookie from 'cookie';
 import debug from 'debug';
-import qs from 'qs';
-import url from 'url';
 import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import emitter from 'lib/mixins/emitter';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
-import { loadScript } from 'lib/load-script';
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { loadScript } from 'lib/load-script';
+import emitter from 'lib/mixins/emitter';
+import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
+import url from 'url';
 
 /**
  * Module variables

@@ -7,18 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	normalizePostForDisplay,
-	normalizePostForState,
-	normalizePostForApi,
-	getNormalizedPostsQuery,
-	getSerializedPostsQuery,
-	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage,
-	getTermIdsFromEdits,
-	isTermsEqual,
-	mergeIgnoringArrays
-} from '../utils';
+import { normalizePostForDisplay, normalizePostForState, normalizePostForApi, getNormalizedPostsQuery, getSerializedPostsQuery, getDeserializedPostsQueryDetails, getSerializedPostsQueryWithoutPage, getTermIdsFromEdits, isTermsEqual, mergeIgnoringArrays } from '../utils';
 
 describe( 'utils', () => {
 	describe( 'isTermsEqual', () => {

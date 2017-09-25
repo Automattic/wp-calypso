@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducerStore } from 'lib/store';
 import { reducer, initialState } from 'lib/invites/reducers/invites-sent';
+import { createReducerStore } from 'lib/store';
 
 const InvitesSentStore = createReducerStore( reducer, initialState );
 

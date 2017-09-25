@@ -1,14 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';

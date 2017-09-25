@@ -1,37 +1,34 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import closest from 'component-closest';
+import { noop, truncate, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { noop, truncate, get, isEmpty } from 'lodash';
-import classnames from 'classnames';
 import ReactDom from 'react-dom';
-import closest from 'component-closest';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Card from 'components/card';
-import DisplayTypes from 'state/reader/posts/display-types';
-import * as stats from 'reader/stats';
-import ReaderPostActions from 'blocks/reader-post-actions';
 import PostByline from './byline';
+import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
-import ConversationPost from './conversation-post';
-import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import {
-	getDiscoverBlogName,
-	getSourceFollowUrl as getDiscoverFollowUrl,
-} from 'reader/discover/helper';
+import ReaderPostActions from 'blocks/reader-post-actions';
+import Card from 'components/card';
 import DiscoverFollowButton from 'reader/discover/follow-button';
-import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
+import { getDiscoverBlogName, getSourceFollowUrl as getDiscoverFollowUrl } from 'reader/discover/helper';
+import FollowButton from 'reader/follow-button';
+import * as stats from 'reader/stats';
+import DisplayTypes from 'state/reader/posts/display-types';
 import { isReaderCardExpanded } from 'state/selectors';
+import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {

@@ -6,9 +6,7 @@ import { uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
 function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction ) {
 	const action = {

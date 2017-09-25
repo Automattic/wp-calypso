@@ -2,14 +2,14 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import { moment } from 'i18n-calypso';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import CalendarPopover from 'blocks/calendar-popover';
+import Button from 'components/button';
 
 const tomorrow = date => date.date( date.date() + 1 );
 

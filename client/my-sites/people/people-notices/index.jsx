@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PeopleLog from 'lib/people/log-store';
-import PeopleActions from 'lib/people/actions';
 import Notice from 'components/notice';
+import PeopleActions from 'lib/people/actions';
+import PeopleLog from 'lib/people/log-store';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;

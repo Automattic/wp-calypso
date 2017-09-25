@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Button from 'components/button';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WordPressLogo from 'components/wordpress-logo';
+import config from 'config';
 
 class Connect extends React.Component {
 	getCreateAccountUrl = () => {

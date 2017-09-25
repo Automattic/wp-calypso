@@ -3,11 +3,12 @@
  */
 import { assign, defer } from 'lodash';
 
-// Internal dependencies
-import Dispatcher from 'dispatcher';
-
+/**
+ * Internal dependencies
+ */
 import { action as ACTION } from './constants';
 import PostFetcher from './post-fetcher';
+import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
 let feedPostFetcher, blogPostFetcher, FeedPostActions;

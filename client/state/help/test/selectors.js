@@ -7,9 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getHelpSiteId,
-} from '../selectors';
+import { getHelpSiteId } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getHelpSiteId()', () => {

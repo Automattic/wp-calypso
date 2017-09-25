@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;

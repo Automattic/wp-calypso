@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 /**
  * External dependencies
  */
@@ -8,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {

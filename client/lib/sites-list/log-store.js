@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { reject, filter, clone } from 'lodash';
 import debugModule from 'debug';
+import { reject, filter, clone } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { includes } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsStore from 'lib/plugins/store';
 import Rating from 'components/rating/';
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PluginsStore from 'lib/plugins/store';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const PluginsBrowserListElement = React.createClass( {
 

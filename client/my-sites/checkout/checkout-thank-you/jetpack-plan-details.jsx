@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
+import config from 'config';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
-
-import config from 'config';
+import userFactory from 'lib/user';
 const user = userFactory();
 
 const JetpackPlanDetails = ( { selectedSite } ) => {

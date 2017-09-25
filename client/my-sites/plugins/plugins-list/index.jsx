@@ -1,30 +1,29 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept';
-import { warningNotice } from 'state/notices/actions';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'lib/plugins/actions';
-import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginNotices from 'lib/plugins/notices';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import acceptDialog from 'lib/accept';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginNotices from 'lib/plugins/notices';
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { warningNotice } from 'state/notices/actions';
+import { isSiteAutomatedTransfer } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i, prop;

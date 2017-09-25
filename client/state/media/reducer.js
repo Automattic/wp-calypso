@@ -2,21 +2,13 @@
  * External dependencies
  */
 import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import {
-	MEDIA_DELETE,
-	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
-	MEDIA_RECEIVE,
-	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
+import { MEDIA_DELETE, MEDIA_ITEM_REQUEST_FAILURE, MEDIA_ITEM_REQUEST_SUCCESS, MEDIA_ITEM_REQUESTING, MEDIA_RECEIVE, MEDIA_REQUEST_FAILURE, MEDIA_REQUEST_SUCCESS, MEDIA_REQUESTING } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {

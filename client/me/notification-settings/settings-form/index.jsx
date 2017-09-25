@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import Immutable from 'immutable';
 
 /**
  * Internal dependencies
  */
-import Settings from './settings';
 import Actions from './actions';
+import Settings from './settings';
 
 class NotificationSettingsForm extends Component {
 	static propTypes = {

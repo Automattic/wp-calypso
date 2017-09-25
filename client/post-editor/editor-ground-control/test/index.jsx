@@ -2,17 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
-import React from 'react';
 import { shallow } from 'enzyme';
+import { noop } from 'lodash';
 import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables

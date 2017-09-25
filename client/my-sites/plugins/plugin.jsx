@@ -1,45 +1,36 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { includes, uniq, upperFirst } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PluginSiteList from 'my-sites/plugins/plugin-site-list';
+import NoPermissionsError from './no-permissions-error';
+import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
+import DocumentHead from 'components/data/document-head';
+import QuerySites from 'components/data/query-sites';
 import HeaderCake from 'components/header-cake';
-import PluginMeta from 'my-sites/plugins/plugin-meta';
-import PluginsStore from 'lib/plugins/store';
-import PluginsLog from 'lib/plugins/log-store';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
-import PluginsActions from 'lib/plugins/actions';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginNotices from 'lib/plugins/notices';
+import PluginsStore from 'lib/plugins/store';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginSections from 'my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import PluginSiteList from 'my-sites/plugins/plugin-site-list';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySites from 'components/data/query-sites';
-import {
-	canJetpackSiteManage,
-	isJetpackSite,
-	isRequestingSites,
-} from 'state/sites/selectors';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getSelectedOrAllSitesWithPlugins,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
-import NoPermissionsError from './no-permissions-error';
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
+import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins, getSelectedOrAllSitesWithPlugins, isSiteAutomatedTransfer } from 'state/selectors';
+import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',

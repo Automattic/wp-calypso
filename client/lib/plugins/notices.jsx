@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import { groupBy } from 'lodash';
 import i18n from 'i18n-calypso';
+import { groupBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import PluginsLog from 'lib/plugins/log-store';
 import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
 import PluginsUtil from 'lib/plugins/utils';
 import versionCompare from 'lib/version-compare';
+import notices from 'notices';
 
 function getCombination( translateArg ) {
 	return ( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) + ' ' + ( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' );

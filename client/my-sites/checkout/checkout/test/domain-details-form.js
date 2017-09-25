@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, merge } from 'lodash';
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 

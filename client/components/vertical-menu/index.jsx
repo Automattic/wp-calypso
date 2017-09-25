@@ -1,12 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import { identity, partial } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-	identity,
-	partial
-} from 'lodash';
+import React, { PureComponent } from 'react';
 
 export class VerticalMenu extends PureComponent {
 

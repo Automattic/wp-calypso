@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import supportUrls from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
+import supportUrls from 'lib/url/support';
 import userFactory from 'lib/user';
 
 const user = userFactory();

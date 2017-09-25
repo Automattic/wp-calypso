@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import ApiCache from './api-cache';
-import CompactCard from 'components/card/compact';
-import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
 import PublicPostTypes from './public-post-types';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
 import { getSiteUrl } from 'state/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const DataSynchronization = ( {
 	siteUrl,

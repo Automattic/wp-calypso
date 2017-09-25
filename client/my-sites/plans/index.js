@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
 import plansController from './controller';
 import currentPlanController from './current-plan/controller';
+import controller from 'my-sites/controller';
 
 export default function() {
 	page(

@@ -6,10 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
-
-import config from 'config';
 import peopleController from './controller';
+import config from 'config';
+import controller from 'my-sites/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/people' ) ) {

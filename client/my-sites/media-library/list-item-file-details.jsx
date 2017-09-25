@@ -1,14 +1,10 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'gridicons';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryListItemFileDetails',

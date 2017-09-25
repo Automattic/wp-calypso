@@ -7,11 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	WP_JOB_MANAGER_CREATE_PAGES,
-	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
-	WP_JOB_MANAGER_WIZARD_NEXT_STEP,
-} from '../../action-types';
+import { WP_JOB_MANAGER_CREATE_PAGES, WP_JOB_MANAGER_CREATE_PAGES_ERROR, WP_JOB_MANAGER_WIZARD_NEXT_STEP } from '../../action-types';
 import reducer, { creating, nextStep } from '../reducer';
 
 describe( 'reducer', () => {

@@ -1,25 +1,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTION_DELETE_FAILURE,
-	KEYRING_CONNECTIONS_RECEIVE,
-	KEYRING_CONNECTIONS_REQUEST,
-	KEYRING_CONNECTIONS_REQUEST_FAILURE,
-	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import {
-	requestKeyringConnections,
-	deleteKeyringConnection,
-	deleteStoredKeyringConnection,
-} from '../actions';
+import { requestKeyringConnections, deleteKeyringConnection, deleteStoredKeyringConnection } from '../actions';
+import { KEYRING_CONNECTION_DELETE, KEYRING_CONNECTION_DELETE_FAILURE, KEYRING_CONNECTIONS_RECEIVE, KEYRING_CONNECTIONS_REQUEST, KEYRING_CONNECTIONS_REQUEST_FAILURE, KEYRING_CONNECTIONS_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

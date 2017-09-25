@@ -3,13 +3,13 @@
  */
 import { expect } from 'chai';
 import { map } from 'lodash';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
 import JetpackSite from 'lib/site/jetpack';
+import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 const UNIQUEID = 'media-13';

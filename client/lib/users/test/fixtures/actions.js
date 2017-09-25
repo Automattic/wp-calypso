@@ -1,10 +1,13 @@
-import site from './site';
-import usersData from './users';
-import moreUsersData from './more-users';
+/**
+ * Internal dependencies
+ */
 import deletedUserData from './deleted-user';
-import updatedUserData from './updated-single-user';
-import singleUserData from './single-user';
+import moreUsersData from './more-users';
 import pollingUsersData from './polling-users';
+import singleUserData from './single-user';
+import site from './site';
+import updatedUserData from './updated-single-user';
+import usersData from './users';
 
 export default {
 	fetched: {

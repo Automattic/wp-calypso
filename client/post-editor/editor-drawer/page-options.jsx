@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import Accordion from 'components/accordion';
+import PageOrder from 'post-editor/editor-page-order';
 import PageParent from 'post-editor/editor-page-parent';
 import PageTemplates from 'post-editor/editor-page-templates';
-import PageOrder from 'post-editor/editor-page-order';
-import Accordion from 'components/accordion';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;

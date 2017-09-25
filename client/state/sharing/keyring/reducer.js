@@ -6,17 +6,9 @@ import { keyBy, omit, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTIONS_RECEIVE,
-	KEYRING_CONNECTIONS_REQUEST,
-	KEYRING_CONNECTIONS_REQUEST_FAILURE,
-	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_DELETE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { itemSchema } from './schema';
+import { KEYRING_CONNECTION_DELETE, KEYRING_CONNECTIONS_RECEIVE, KEYRING_CONNECTIONS_REQUEST, KEYRING_CONNECTIONS_REQUEST_FAILURE, KEYRING_CONNECTIONS_REQUEST_SUCCESS, PUBLICIZE_CONNECTION_CREATE, PUBLICIZE_CONNECTION_DELETE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 // Tracks fetching state for keyring connections
 export const isFetching = createReducer( false, {

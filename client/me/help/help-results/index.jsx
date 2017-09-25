@@ -7,8 +7,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import HelpResult from './item';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
 export default React.createClass( {

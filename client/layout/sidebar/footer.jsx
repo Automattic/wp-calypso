@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import config from 'config';
 import HappychatButton from 'components/happychat/button';
+import config from 'config';
 import { hasActiveHappychatSession } from 'state/happychat/selectors';
 
 const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (

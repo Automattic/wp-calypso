@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
 import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
+import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
 import { fetchPostShareActionsScheduled, fetchPostShareActionsPublished } from 'state/sharing/publicize/publicize-actions/actions';
 
 class QuerySharePostActions extends Component {

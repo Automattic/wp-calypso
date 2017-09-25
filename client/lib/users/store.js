@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import deterministicStringify from 'json-stable-stringify';
 import { endsWith, find, omit } from 'lodash';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:users:store' );
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:users:store' );
 
 let _fetchingUsersByNamespace = {},        // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)

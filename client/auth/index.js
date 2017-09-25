@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import controller from './controller';
+import config from 'config';
 
 export default () => {
 	// Always enable the /oauth-login route and redirect to /log-in if `oauth` is disabled

@@ -8,14 +8,11 @@ import { delay, noop } from 'lodash';
  * Internal dependencies
  */
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { requestSite } from 'state/sites/actions';
+import { getAutomatedTransferStatus, setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { successNotice } from 'state/notices/actions';
-import {
-	getAutomatedTransferStatus,
-	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
+import { requestSite } from 'state/sites/actions';
 
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;

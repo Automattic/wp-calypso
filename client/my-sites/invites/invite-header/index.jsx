@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
+import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 
 export default localize( React.createClass( {

@@ -1,49 +1,28 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, identity, includes, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { ALLOWED_SECTIONS, EDITOR, NOTES, READER, STATS, getAppBannerData, getNewDismissTimes, getCurrentSection, isDismissed, APP_BANNER_DISMISS_TIMES_PREFERENCE } from './utils';
 import Button from 'components/button';
 import Card from 'components/card';
-import { getSectionName } from 'state/ui/selectors';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import versionCompare from 'lib/version-compare';
+import { bumpStat, composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { savePreference } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { isNotificationsOpen } from 'state/selectors';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics
-} from 'state/analytics/actions';
-import { savePreference } from 'state/preferences/actions';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { getSectionName } from 'state/ui/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	get,
-	identity,
-	includes,
-	noop
-} from 'lodash';
-import {
-	ALLOWED_SECTIONS,
-	EDITOR,
-	NOTES,
-	READER,
-	STATS,
-	getAppBannerData,
-	getNewDismissTimes,
-	getCurrentSection,
-	isDismissed,
-	APP_BANNER_DISMISS_TIMES_PREFERENCE,
-} from './utils';
-import versionCompare from 'lib/version-compare';
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;

@@ -1,21 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
+import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
 class StoreStatsModule extends Component {
 	static propTypes = {

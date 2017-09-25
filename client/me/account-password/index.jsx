@@ -1,35 +1,31 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import {
-	debounce,
-	flowRight as compose,
-	head,
-	isEmpty
-} from 'lodash';
-import { bindActionCreators } from 'redux';
+import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:account-password' );
-import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import observe from 'lib/mixins/data-observe';
+import { ProtectFormGuard } from 'lib/protect-form';
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
+
+const debug = debugFactory( 'calypso:me:account-password' );
 
 const AccountPassword = React.createClass( {
 

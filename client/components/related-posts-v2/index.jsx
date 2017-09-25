@@ -1,18 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { noop, times } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, times } from 'lodash';
-import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 import RelatedPost from 'blocks/reader-related-card-v2';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 
 function RelatedPosts( { siteId, postId, posts, title, scope, className = '', onPostClick = noop, onSiteClick = noop } ) {
 	let listItems;

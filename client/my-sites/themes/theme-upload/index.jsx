@@ -1,61 +1,43 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { includes, find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import EmptyContent from 'components/empty-content';
-import ProgressBar from 'components/progress-bar';
-import Button from 'components/button';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-// Necessary for ThanksModal
-import QueryActiveTheme from 'components/data/query-active-theme';
-import { localize } from 'i18n-calypso';
-import notices from 'notices';
-import debugFactory from 'debug';
-import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import {
-	getSiteAdminUrl,
-	isJetpackSite,
-	isJetpackSiteMultiSite,
-	hasJetpackSiteJetpackThemesExtendedFeatures
-} from 'state/sites/selectors';
-import {
-	isUploadInProgress,
-	isUploadComplete,
-	hasUploadFailed,
-	getUploadedThemeId,
-	getUploadError,
-	getUploadProgressTotal,
-	getUploadProgressLoaded,
-	isInstallInProgress,
-} from 'state/themes/upload-theme/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import UploadDropZone from 'blocks/upload-drop-zone';
+import Button from 'components/button';
+import Card from 'components/card';
+import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer
-} from 'state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import EmptyContent from 'components/empty-content';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import ProgressBar from 'components/progress-bar';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+import { connectOptions } from 'my-sites/themes/theme-options';
+import notices from 'notices';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSiteAdminUrl, isJetpackSite, isJetpackSiteMultiSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
+import { getCanonicalTheme } from 'state/themes/selectors';
+import { getBackPath } from 'state/themes/themes-ui/selectors';
+import { isUploadInProgress, isUploadComplete, hasUploadFailed, getUploadedThemeId, getUploadError, getUploadProgressTotal, getUploadProgressLoaded, isInstallInProgress } from 'state/themes/upload-theme/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 

@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies

@@ -7,18 +7,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import { receivePlans, receiveError, requestPlans } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	plansReceiveAction,
-	plansRequestFailureAction,
-	plansRequestSuccessAction,
-} from 'state/plans/actions';
-import {
-	receivePlans,
-	receiveError,
-	requestPlans,
-} from '../';
-
+import { plansReceiveAction, plansRequestFailureAction, plansRequestSuccessAction } from 'state/plans/actions';
 import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {

@@ -6,17 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	productsSearchRequest,
-	productsSearchRequestSuccess,
-	productsSearchClear,
-} from '../search-reducer';
-
-import {
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-} from 'woocommerce/state/action-types';
+import { productsSearchRequest, productsSearchRequestSuccess, productsSearchClear } from '../search-reducer';
+import { WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR } from 'woocommerce/state/action-types';
 
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
 

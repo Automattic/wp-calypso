@@ -1,19 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import {
-	get,
-} from 'lodash';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
 import Dialog from 'components/dialog';
+import { getSite } from 'state/sites/selectors';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {

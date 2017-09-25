@@ -6,15 +6,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	REWIND_DEACTIVATE_REQUEST,
-} from 'state/action-types';
-import {
-	rewindDeactivateFailure,
-	rewindDeactivateSuccess,
-} from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { REWIND_DEACTIVATE_REQUEST } from 'state/action-types';
+import { rewindDeactivateFailure, rewindDeactivateSuccess } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 const deactivateRewind = ( { dispatch }, action ) => {

@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import React, { Component } from 'react';
-import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -13,6 +11,8 @@ import PropTypes from 'prop-types';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
 import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
+import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
+import config from 'config';
 
 class PaymentMethodStripe extends Component {
 	static propTypes = {

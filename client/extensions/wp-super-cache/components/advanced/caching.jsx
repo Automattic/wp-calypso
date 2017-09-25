@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { includes, pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
@@ -17,7 +18,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
 
 const Caching = ( {
 	fields: {

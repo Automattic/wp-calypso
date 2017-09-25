@@ -1,31 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import {
-	areOrdersLoading,
-	areOrdersLoaded,
-	getNewOrders,
-	getNewOrdersRevenue,
-} from 'woocommerce/state/sites/orders/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
-import ShareWidget from 'woocommerce/components/share-widget';
 import Card from 'components/card';
+import { getCurrentUser } from 'state/current-user/selectors';
+import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import ShareWidget from 'woocommerce/components/share-widget';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { areOrdersLoading, areOrdersLoaded, getNewOrders, getNewOrdersRevenue } from 'woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 
 class ManageOrdersView extends Component {
 	static propTypes = {

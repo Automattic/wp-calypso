@@ -1,26 +1,12 @@
 /**
  * External dependencies
  */
-import {
-	curry,
-	flatMap,
-	get,
-	isFunction,
-	merge,
-	property,
-} from 'lodash';
+import { curry, flatMap, get, isFunction, merge, property } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	ANALYTICS_EVENT_RECORD,
-	ANALYTICS_MULTI_TRACK,
-	ANALYTICS_PAGE_VIEW_RECORD,
-	ANALYTICS_STAT_BUMP,
-	ANALYTICS_TRACKING_ON,
-	ANALYTICS_TRACKS_ANONID_SET,
-} from 'state/action-types';
+import { ANALYTICS_EVENT_RECORD, ANALYTICS_MULTI_TRACK, ANALYTICS_PAGE_VIEW_RECORD, ANALYTICS_STAT_BUMP, ANALYTICS_TRACKING_ON, ANALYTICS_TRACKS_ANONID_SET } from 'state/action-types';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),

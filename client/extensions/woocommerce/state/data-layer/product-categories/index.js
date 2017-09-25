@@ -1,13 +1,11 @@
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { WOOCOMMERCE_PRODUCT_CATEGORY_CREATE } from 'woocommerce/state/action-types';
 import { post } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
-import {
-	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
-} from 'woocommerce/state/action-types';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 
 export function handleProductCategoryCreate( store, action ) {
 	const { siteId, category, successAction, failureAction } = action;

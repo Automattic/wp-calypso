@@ -1,28 +1,28 @@
 /**
- * Externel dependencies
+ * External dependencies
  */
-import { noop } from 'lodash';
+import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
-import { isInitialized as isDomainInitialized } from 'lib/domains';
 import Dispatcher from 'dispatcher';
-import DnsStore from 'lib/domains/dns/store';
+import { isInitialized as isDomainInitialized } from 'lib/domains';
 import domainsAssembler from 'lib/domains/assembler';
-import DomainsStore from 'lib/domains/store';
+import { isBeingProcessed } from 'lib/domains/dns';
+import DnsStore from 'lib/domains/dns/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
-import { requestSite } from 'state/sites/actions';
+import DomainsStore from 'lib/domains/store';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
 import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
-import debugFactory from 'debug';
-import { isBeingProcessed } from 'lib/domains/dns';
+import { requestSite } from 'state/sites/actions';
 
 const debug = debugFactory( 'actions:domain-management' );
 

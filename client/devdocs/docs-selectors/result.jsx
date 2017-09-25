@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { filter, findLast } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { filter, findLast } from 'lodash';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import DocsSelectorsParamType from './param-type';
+import Card from 'components/card';
 
 export default function DocsSelectorsResult( { url, name, description, tags, expanded } ) {
 	const paramTags = filter( tags, { title: 'param' } );

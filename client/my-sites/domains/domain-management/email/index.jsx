@@ -1,33 +1,28 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AddGoogleAppsCard from './add-google-apps-card';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import EmptyContent from 'components/empty-content';
-import paths from 'my-sites/domains/paths';
-import {
-	hasGoogleApps,
-	hasGoogleAppsSupportedDomain,
-	getSelectedDomain
-} from 'lib/domains';
+import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import Header from 'my-sites/domains/domain-management/components/header';
+import UpgradesNavigation from 'my-sites/domains/navigation';
+import paths from 'my-sites/domains/paths';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class Email extends React.Component {
 	static propTypes = {

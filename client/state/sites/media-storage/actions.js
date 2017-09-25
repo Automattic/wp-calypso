@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE
-} from 'state/action-types';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST, SITE_MEDIA_STORAGE_REQUEST_SUCCESS, SITE_MEDIA_STORAGE_REQUEST_FAILURE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a mediaStorage object

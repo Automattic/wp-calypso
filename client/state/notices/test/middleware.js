@@ -2,28 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { createStore } from 'redux';
 import { noop } from 'lodash';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import PostQueryManager from 'lib/query-manager/post';
+import noticesMiddleware, { handlers, onPostDeleteFailure, onPostRestoreFailure, onPostSaveSuccess } from '../middleware';
 import { dispatchSuccess, dispatchError } from '../utils';
-import noticesMiddleware, {
-	handlers,
-	onPostDeleteFailure,
-	onPostRestoreFailure,
-	onPostSaveSuccess
-} from '../middleware';
-import { useSandbox } from 'test/helpers/use-sinon';
+import PostQueryManager from 'lib/query-manager/post';
+import { NOTICE_CREATE, POST_DELETE_FAILURE, POST_RESTORE_FAILURE, POST_SAVE_SUCCESS } from 'state/action-types';
 import { successNotice } from 'state/notices/actions';
-import {
-	NOTICE_CREATE,
-	POST_DELETE_FAILURE,
-	POST_RESTORE_FAILURE,
-	POST_SAVE_SUCCESS
-} from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {

@@ -6,18 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import * as analytics from 'state/analytics/actions';
+import { askQuestion, initialize } from '..';
 import * as directly from 'lib/directly';
-import {
-	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_SUCCESS,
-	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
-import {
-	askQuestion,
-	initialize,
-} from '..';
+import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_SUCCESS, DIRECTLY_INITIALIZATION_ERROR } from 'state/action-types';
+import * as analytics from 'state/analytics/actions';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'Directly data layer', () => {
 	let store;

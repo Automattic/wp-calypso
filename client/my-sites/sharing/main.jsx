@@ -1,31 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import DocumentHead from 'components/data/document-head';
-import {
-	getSiteSlug,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import Main from 'components/main';
+import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const Sharing = ( {
 	contentComponent,

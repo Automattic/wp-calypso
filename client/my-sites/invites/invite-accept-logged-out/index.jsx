@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-import SignupForm from 'components/signup-form';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { login } from 'lib/paths';
-import { createAccount, acceptInvite } from 'lib/invites/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
-import { errorNotice } from 'state/notices/actions';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import SignupForm from 'components/signup-form';
+import analytics from 'lib/analytics';
+import { createAccount, acceptInvite } from 'lib/invites/actions';
+import { login } from 'lib/paths';
+import InviteFormHeader from 'my-sites/invites/invite-form-header';
+import WpcomLoginForm from 'signup/wpcom-login-form';
+import { errorNotice } from 'state/notices/actions';
 
 /**
  * Module variables

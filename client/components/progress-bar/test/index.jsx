@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import { shallow } from 'enzyme';
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import ProgressBar from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'ProgressBar', function() {
 	useFakeDom();

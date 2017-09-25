@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
+import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import eventRecorder from 'me/event-recorder';
 import Notice from 'components/notice';
+import eventRecorder from 'me/event-recorder';
 
 export default localize( React.createClass( {
 

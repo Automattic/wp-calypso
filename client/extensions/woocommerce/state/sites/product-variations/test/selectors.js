@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getVariationsForProduct,
-} from '../selectors';
+import { getVariationsForProduct } from '../selectors';
 import productVariations from './fixtures/variations';
 
 const loadedState = {

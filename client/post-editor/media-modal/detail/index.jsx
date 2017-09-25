@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { noop, partial } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import preloadImage from '../preload-image';
 import DetailItem from './detail-item';
+import HeaderCake from 'components/header-cake';
 
 import MediaUtils from 'lib/media/utils';
-import HeaderCake from 'components/header-cake';
-import preloadImage from '../preload-image';
-import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 export const EditorMediaModalDetail = React.createClass( {
 	propTypes: {

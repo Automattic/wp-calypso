@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
 import { fromJS } from 'immutable';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies

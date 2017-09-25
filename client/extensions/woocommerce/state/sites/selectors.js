@@ -3,8 +3,8 @@
  */
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { getPrimarySiteId } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Gets currently selected site or, if that isn't available and the user has

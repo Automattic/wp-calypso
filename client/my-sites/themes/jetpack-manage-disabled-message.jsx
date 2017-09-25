@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import ThemesList from 'components/themes-list';
+import analytics from 'lib/analytics';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
 class JetpackManageDisabledMessage extends Component {

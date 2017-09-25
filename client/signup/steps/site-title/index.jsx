@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
@@ -9,15 +10,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-
 import SignupSiteTitle from 'components/signup-site-title';
 import SiteTitleExample from 'components/site-title-example';
+import SignupActions from 'lib/signup/actions';
 
+import StepWrapper from 'signup/step-wrapper';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-
-import { translate } from 'i18n-calypso';
 
 class SiteTitleStep extends React.Component {
 	static propTypes = {

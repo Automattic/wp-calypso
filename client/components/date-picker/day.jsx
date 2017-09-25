@@ -1,8 +1,8 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { noop } from 'lodash';
+import React from 'react';
 
 const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => event => {
 	onMouseEnter( date, modifiers, event );

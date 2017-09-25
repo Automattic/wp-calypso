@@ -1,34 +1,33 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-const debug = debugFactory( 'calypso:me:sidebar' );
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
-
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
-import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
-import eventRecorder from 'me/event-recorder';
 import userFactory from 'lib/user';
-const user = userFactory();
 import userUtilities from 'lib/user/utils';
-
-import Button from 'components/button';
+import eventRecorder from 'me/event-recorder';
+import ProfileGravatar from 'me/profile-gravatar';
 import purchasesPaths from 'me/purchases/paths';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+
+const debug = debugFactory( 'calypso:me:sidebar' );
+
+const user = userFactory();
 
 const MeSidebar = React.createClass( {
 

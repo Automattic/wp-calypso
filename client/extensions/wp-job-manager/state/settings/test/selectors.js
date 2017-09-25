@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getSettings,
-	isFetchingSettings,
-} from '../selectors';
+import { getSettings, isFetchingSettings } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

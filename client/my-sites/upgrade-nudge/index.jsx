@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { identity, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { hasFeature } from 'state/sites/plans/selectors';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class UpgradeNudge extends React.Component {

@@ -1,40 +1,20 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import { has, identity, mapValues, pickBy } from 'lodash';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import {
-	activate as activateAction,
-	tryAndCustomize as tryAndCustomizeAction,
-	confirmDelete,
-	showThemePreview as themePreview,
-} from 'state/themes/actions';
-import {
-	getThemeSignupUrl,
-	getThemePurchaseUrl,
-	getThemeCustomizeUrl,
-	getThemeDetailsUrl,
-	getThemeSupportUrl,
-	getJetpackUpgradeUrlIfPremiumTheme,
-	getThemeHelpUrl,
-	isThemeActive,
-	isThemePremium,
-	isPremiumThemeAvailable,
-	isThemeAvailableOnJetpackSite
-} from 'state/themes/selectors';
-import {
-	isJetpackSite,
-	isJetpackSiteMultiSite
-} from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { activate as activateAction, tryAndCustomize as tryAndCustomizeAction, confirmDelete, showThemePreview as themePreview } from 'state/themes/actions';
+import { getThemeSignupUrl, getThemePurchaseUrl, getThemeCustomizeUrl, getThemeDetailsUrl, getThemeSupportUrl, getJetpackUpgradeUrlIfPremiumTheme, getThemeHelpUrl, isThemeActive, isThemePremium, isPremiumThemeAvailable, isThemeAvailableOnJetpackSite } from 'state/themes/selectors';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {

@@ -1,36 +1,15 @@
 /**
  * External dependencies
  */
+import { find, get, includes, invoke } from 'lodash';
 import moment from 'moment';
-import {
-	find,
-	get,
-	includes,
-	invoke
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import {
-	isFreeJetpackPlan,
-	isJetpackPlan,
-	isMonthly
-} from 'lib/products-values';
-import {
-	FEATURES_LIST,
-	PLANS_LIST,
-	PLAN_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_PERSONAL,
-} from 'lib/plans/constants';
+import { FEATURES_LIST, PLANS_LIST, PLAN_FREE, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_PERSONAL } from 'lib/plans/constants';
+import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
 
 /**
  * Module vars

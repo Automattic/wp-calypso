@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
-import { canCurrentUser } from 'state/selectors';
-import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import PopoverMenuItem from 'components/popover/menu-item';
 import { isEnabled } from 'config';
 import { bumpStat } from 'state/analytics/actions';
+import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import { getPost } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 
 const bumpDuplicateStat = () => bumpStat( 'calypso_cpt_actions', 'duplicate' );
 

@@ -7,12 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getGuidedTransferIssue,
-	isGuidedTransferAvailableForAllSites,
-	isRequestingGuidedTransferStatus,
-	isGuidedTransferSavingHostDetails,
-} from '../selectors';
+import { getGuidedTransferIssue, isGuidedTransferAvailableForAllSites, isRequestingGuidedTransferStatus, isGuidedTransferSavingHostDetails } from '../selectors';
 
 describe( 'selectors', () => {
 	const testSiteId = 100658273;

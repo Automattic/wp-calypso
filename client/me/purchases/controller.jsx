@@ -1,28 +1,28 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { partial } from 'lodash';
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
 import CancelPrivacyProtection from './cancel-privacy-protection';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
-import EditCardDetails from './payment/edit-card-details';
-import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
-import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
-import PurchasesHeader from './purchases-list/header';
+import AddCardDetails from './payment/add-card-details';
+import EditCardDetails from './payment/edit-card-details';
 import PurchasesList from './purchases-list';
-import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
-import { setDocumentHeadTitle } from 'state/document-head/actions';
+import PurchasesHeader from './purchases-list/header';
 import titles from './titles';
+import NoSitesMessage from 'components/empty-content/no-sites-message';
+import Main from 'components/main';
+import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
 import userFactory from 'lib/user';
+import { setDocumentHeadTitle } from 'state/document-head/actions';
 
 const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
 const user = userFactory();

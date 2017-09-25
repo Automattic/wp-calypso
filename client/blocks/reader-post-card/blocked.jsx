@@ -2,18 +2,18 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { requestSiteUnblock } from 'state/reader/site-blocks/actions';
 import Card from 'components/card';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { requestSiteUnblock } from 'state/reader/site-blocks/actions';
 
 class PostBlocked extends React.Component {
 	static propTypes = {

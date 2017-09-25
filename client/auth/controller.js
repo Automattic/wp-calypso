@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
 import { startsWith } from 'lodash';
 import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
+import store from 'store';
+import WPOAuth from 'wpcom-oauth';
 
 /**
  * Internal dependencies
  */
-import OAuthLogin from './login';
 import ConnectComponent from './connect';
-import * as OAuthToken from 'lib/oauth-token';
-import wpcom from 'lib/wp';
-import config from 'config';
-import store from 'store';
-import WPOAuth from 'wpcom-oauth';
-import userFactory from 'lib/user';
+import OAuthLogin from './login';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
+import config from 'config';
+import * as OAuthToken from 'lib/oauth-token';
+import userFactory from 'lib/user';
+import wpcom from 'lib/wp';
 
 export default {
 

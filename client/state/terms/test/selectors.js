@@ -6,17 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { countFoundTermsForQuery, getTerm, getTerms, getTermsForQuery, getTermsForQueryIgnoringPage, getTermsLastPageForQuery, isRequestingTermsForQuery, isRequestingTermsForQueryIgnoringPage } from '../selectors';
 import TermQueryManager from 'lib/query-manager/term';
-import {
-	countFoundTermsForQuery,
-	getTerm,
-	getTerms,
-	getTermsForQuery,
-	getTermsForQueryIgnoringPage,
-	getTermsLastPageForQuery,
-	isRequestingTermsForQuery,
-	isRequestingTermsForQueryIgnoringPage
-} from '../selectors';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

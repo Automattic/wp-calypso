@@ -7,20 +7,9 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	areOrdersLoaded,
-	areOrdersLoading,
-	getOrder,
-	getOrders,
-	getTotalOrders,
-	isOrderLoaded,
-	isOrderLoading,
-	isOrderUpdating,
-	getNewOrders,
-	getNewOrdersRevenue,
-} from '../selectors';
-import orders from './fixtures/orders';
+import { areOrdersLoaded, areOrdersLoading, getOrder, getOrders, getTotalOrders, isOrderLoaded, isOrderLoading, isOrderUpdating, getNewOrders, getNewOrdersRevenue } from '../selectors';
 import order from './fixtures/order';
+import orders from './fixtures/orders';
 const additionalOrders = [ order ];
 
 const preInitializedState = {

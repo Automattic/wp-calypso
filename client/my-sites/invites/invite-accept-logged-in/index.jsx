@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import analytics from 'lib/analytics';
+import { acceptInvite } from 'lib/invites/actions';
+import InviteFormHeader from 'my-sites/invites/invite-form-header';
 
 const InviteAcceptLoggedIn = React.createClass( {
 

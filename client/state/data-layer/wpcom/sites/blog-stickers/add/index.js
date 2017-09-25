@@ -1,18 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 
 export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(

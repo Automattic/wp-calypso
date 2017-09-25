@@ -6,12 +6,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { renderTab } from './app/controller';
-import ZoneCreator from './components/settings/zone-creator';
 import Zone from './components/settings/zone';
+import ZoneCreator from './components/settings/zone-creator';
 import ZonesDashboard from './components/settings/zones-dashboard';
 import installActionHandlers from './state/data-layer';
+import { navigation, sites, siteSelection } from 'my-sites/controller';
 
 export default function() {
 	page( '/extensions/zoninator', sites );

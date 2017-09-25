@@ -1,44 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import ProgressBar from 'components/progress-bar';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
-import EmptyContent from 'components/empty-content';
+import UploadDropZone from 'blocks/upload-drop-zone';
+import Card from 'components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
+import EmptyContent from 'components/empty-content';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import ProgressBar from 'components/progress-bar';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
+import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
+import { getPluginUploadError, getPluginUploadProgress, getUploadedPluginId, isPluginUploadComplete, isPluginUploadInProgress } from 'state/selectors';
+import { getSiteAdminUrl, isJetpackMinimumVersion, isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getPluginUploadError,
-	getPluginUploadProgress,
-	getUploadedPluginId,
-	isPluginUploadComplete,
-	isPluginUploadInProgress,
-} from 'state/selectors';
-import {
-	getSiteAdminUrl,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer
-} from 'state/automated-transfer/selectors';
 
 class PluginUpload extends React.Component {
 	state = {

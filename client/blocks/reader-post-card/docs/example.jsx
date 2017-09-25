@@ -1,14 +1,14 @@
 /** @format */
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ReaderPostCardBlock from 'blocks/reader-post-card';
 import { posts, site } from './fixtures';
+import ReaderPostCardBlock from 'blocks/reader-post-card';
 
 const ReaderPostCard = () =>
 	<div className="design-assets__group">

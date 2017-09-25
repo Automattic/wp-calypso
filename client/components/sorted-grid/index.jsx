@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { get, keys, last, map, omit, reduce, slice } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import InfiniteList from 'components/infinite-list';
 import Label from './label';
+import InfiniteList from 'components/infinite-list';
 
 class SortedGrid extends PureComponent {
 

@@ -1,29 +1,24 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import Gridicon from 'gridicons';
+import { get, has, map, take, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, has, map, take, values } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import PostTime from 'reader/post-time';
-import { getSiteName } from 'reader/get-helpers';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'reader/stats';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import { getStreamUrl } from 'reader/route';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderAvatar from 'blocks/reader-avatar';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import { getSiteName } from 'reader/get-helpers';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import PostTime from 'reader/post-time';
+import { getStreamUrl } from 'reader/route';
+import { recordAction, recordGaEvent, recordTrackForPost, recordPermalinkClick } from 'reader/stats';
 
 const TAGS_TO_SHOW = 3;
 

@@ -1,11 +1,3 @@
-/*
- * atd.core.js - A building block to create a front-end for AtD
- * Author      : Raphael Mudge & Andrew Duthie, Automattic
- * License     : LGPL
- * Project     : http://www.afterthedeadline.com/development.slp
- * Contact     : raffi@automattic.com, andrew.duthie@automattic.com
- */
-
 /**
  * External dependencies
  */

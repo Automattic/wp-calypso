@@ -3,8 +3,8 @@
  */
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import superagent from 'superagent';
 import { find } from 'lodash';
+import superagent from 'superagent';
 
 /**
  * Internal dependencies

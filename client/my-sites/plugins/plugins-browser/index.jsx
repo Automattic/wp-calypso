@@ -1,51 +1,38 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
+import HeaderButton from 'components/header-button';
+import MainComponent from 'components/main';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
-import MainComponent from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import NoResults from 'my-sites/no-results';
-import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
-import PluginsListStore from 'lib/plugins/wporg-data/list-store';
-import PluginsActions from 'lib/plugins/wporg-data/actions';
-import URLSearch from 'lib/mixins/url-search';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	getSelectedOrAllSitesJetpackCanManage,
-	hasJetpackSites,
-} from 'state/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
-import {
-	getSitePlan,
-	isJetpackSite,
-	isRequestingSites,
-	canJetpackSiteManage,
-} from 'state/sites/selectors';
-import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
-import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import HeaderButton from 'components/header-button';
-import { isBusiness, isEnterprise } from 'lib/products-values';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
-import Banner from 'components/banner';
+import NavTabs from 'components/section-nav/tabs';
 import { isEnabled } from 'config';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import URLSearch from 'lib/mixins/url-search';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import PluginsActions from 'lib/plugins/wporg-data/actions';
+import PluginsListStore from 'lib/plugins/wporg-data/list-store';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import NoResults from 'my-sites/no-results';
+import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
+import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
+import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { canCurrentUser, getSelectedOrAllSitesJetpackCanManage, hasJetpackSites } from 'state/selectors';
+import { getSitePlan, isJetpackSite, isRequestingSites, canJetpackSiteManage } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,

@@ -1,6 +1,9 @@
-import site from './mock-site';
+/**
+ * Internal dependencies
+ */
 import followerData from './mock-email-followers';
 import moreFollowerData from './mock-more-email-followers';
+import site from './mock-site';
 
 export default {
 	fetchedFollowers: {

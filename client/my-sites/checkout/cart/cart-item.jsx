@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -9,18 +10,10 @@ import { connect } from 'react-redux';
  */
 import analytics from 'lib/analytics';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
-import {
-	isCredits,
-	isDomainProduct,
-	isGoogleApps,
-	isTheme,
-	isMonthly,
-	isPlan
-} from 'lib/products-values';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { isCredits, isDomainProduct, isGoogleApps, isTheme, isMonthly, isPlan } from 'lib/products-values';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { localize } from 'i18n-calypso';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag } from 'state/current-user/selectors';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 

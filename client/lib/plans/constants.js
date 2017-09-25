@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
 import { compact, includes } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

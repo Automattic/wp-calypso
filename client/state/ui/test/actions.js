@@ -6,12 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SELECTED_SITE_SET,
-	ROUTE_SET,
-	NOTIFICATIONS_PANEL_TOGGLE
-} from 'state/action-types';
 import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
+import { SELECTED_SITE_SET, ROUTE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setSelectedSiteId()', () => {

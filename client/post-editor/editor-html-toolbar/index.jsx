@@ -1,47 +1,37 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import {
-	get,
-	map,
-	reduce,
-	throttle,
-} from 'lodash';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { get, map, reduce, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Env } from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
+import AddImageDialog from './add-image-dialog';
+import AddLinkDialog from './add-link-dialog';
+import Button from 'components/button';
+import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
+import config from 'config';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import PostActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
-import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite } from 'state/ui/selectors';
-import {
-	fieldAdd,
-	fieldRemove,
-	fieldUpdate,
-	settingsUpdate
-} from 'state/ui/editor/contact-form/actions';
-import AddImageDialog from './add-image-dialog';
-import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
-import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
-import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
-import config from 'config';
-import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import EditorMediaModal from 'post-editor/editor-media-modal';
+import markup from 'post-editor/media-modal/markup';
+import { fieldAdd, fieldRemove, fieldUpdate, settingsUpdate } from 'state/ui/editor/contact-form/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module constant

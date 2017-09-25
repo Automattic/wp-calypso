@@ -1,29 +1,15 @@
 /**
  * External dependencies
  */
-import {
-	omit,
-	findIndex,
-} from 'lodash';
+import { omit, findIndex } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import status from './status/reducer';
-import { combineReducers, createReducer } from 'state/utils';
-import {
-	PLUGINS_RECEIVE,
-	PLUGINS_REQUEST,
-	PLUGINS_REQUEST_SUCCESS,
-	PLUGINS_REQUEST_FAILURE,
-	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
-	PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
-	PLUGIN_UPDATE_REQUEST_SUCCESS,
-	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
-	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
-	PLUGIN_INSTALL_REQUEST_SUCCESS,
-	PLUGIN_REMOVE_REQUEST_SUCCESS,
-} from 'state/action-types';
 import { pluginsSchema } from './schema';
+import status from './status/reducer';
+import { PLUGINS_RECEIVE, PLUGINS_REQUEST, PLUGINS_REQUEST_SUCCESS, PLUGINS_REQUEST_FAILURE, PLUGIN_ACTIVATE_REQUEST_SUCCESS, PLUGIN_DEACTIVATE_REQUEST_SUCCESS, PLUGIN_UPDATE_REQUEST_SUCCESS, PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_REMOVE_REQUEST_SUCCESS } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.

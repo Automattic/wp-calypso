@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import webRouter from './index.web';
+import config from 'config';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {

@@ -6,11 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostStats,
-	getPostStat,
-	getPostStats,
-} from '../selectors';
+import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPostStats()', () => {

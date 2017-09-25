@@ -1,24 +1,24 @@
 /**
  * External dependencies
- **/
-import React from 'react';
+ */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Count from 'components/count';
 import StatsModuleContent from '../stats-module/content-text';
-import QueryPostLikes from 'components/data/query-post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
-import { isRequestingPostLikes, countPostLikes } from 'state/selectors';
 import PostLikes from 'blocks/post-likes';
+import Card from 'components/card';
+import Count from 'components/count';
+import QueryPostLikes from 'components/data/query-post-likes';
+import { isRequestingPostLikes, countPostLikes } from 'state/selectors';
 
 export const StatsPostLikes = props => {
 	const { countLikes, isRequesting, opened, postId, postType, siteId, toggle, translate } = props;

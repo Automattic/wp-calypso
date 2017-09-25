@@ -6,13 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getOrderDiscountTax,
-	getOrderLineItemTax,
-	getOrderShippingTax,
-	getOrderSubtotalTax,
-	getOrderTotalTax,
-} from '../index';
+import { getOrderDiscountTax, getOrderLineItemTax, getOrderShippingTax, getOrderSubtotalTax, getOrderTotalTax } from '../index';
 import orderWithTax from './fixtures/order';
 import orderWithoutTax from './fixtures/order-no-tax';
 import orderWithCoupons from './fixtures/order-with-coupons';

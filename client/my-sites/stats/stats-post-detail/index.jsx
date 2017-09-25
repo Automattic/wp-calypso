@@ -1,36 +1,35 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Emojify from 'components/emojify';
-import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
-import StatsPlaceholder from '../stats-module/placeholder';
-import HeaderCake from 'components/header-cake';
-import { decodeEntities } from 'lib/formatting';
-import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import StatsPlaceholder from '../stats-module/placeholder';
 import PostLikes from '../stats-post-likes';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import EmptyContent from 'components/empty-content';
-import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PostSummary from '../stats-post-summary';
 import Button from 'components/button';
+import QueryPostStats from 'components/data/query-post-stats';
+import QueryPosts from 'components/data/query-posts';
+import Emojify from 'components/emojify';
+import EmptyContent from 'components/empty-content';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import WebPreview from 'components/web-preview';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
+import { decodeEntities } from 'lib/formatting';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
+import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsPostDetail extends Component {
 	static propTypes = {

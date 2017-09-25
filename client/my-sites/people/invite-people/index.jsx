@@ -1,46 +1,46 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
+import page from 'page';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import RoleSelect from 'my-sites/people/role-select';
-import TokenField from 'components/token-field';
+import Card from 'components/card';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmptyContent from 'components/empty-content';
+import FeatureExample from 'components/feature-example';
+import CountedTextarea from 'components/forms/counted-textarea';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites } from 'lib/invites/actions';
-import Card from 'components/card';
-import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import CountedTextarea from 'components/forms/counted-textarea';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import TokenField from 'components/token-field';
+import analytics from 'lib/analytics';
+import { sendInvites } from 'lib/invites/actions';
 import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'lib/invites/stores/invites-sent';
-import analytics from 'lib/analytics';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import EmptyContent from 'components/empty-content';
 import { userCan } from 'lib/site/utils';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FeatureExample from 'components/feature-example';
 import versionCompare from 'lib/version-compare';
+import RoleSelect from 'my-sites/people/role-select';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables

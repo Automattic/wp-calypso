@@ -6,16 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	JETPACK_SYNC_START_REQUEST,
-	JETPACK_SYNC_START_SUCCESS,
-	JETPACK_SYNC_START_ERROR,
-	JETPACK_SYNC_STATUS_REQUEST,
-	JETPACK_SYNC_STATUS_SUCCESS,
-	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
+import { JETPACK_SYNC_START_REQUEST, JETPACK_SYNC_START_SUCCESS, JETPACK_SYNC_START_ERROR, JETPACK_SYNC_STATUS_REQUEST, JETPACK_SYNC_STATUS_SUCCESS, JETPACK_SYNC_STATUS_ERROR } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {

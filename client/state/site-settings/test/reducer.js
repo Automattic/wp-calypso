@@ -7,21 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	MEDIA_DELETE,
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_REQUEST,
-	SITE_SETTINGS_REQUEST_FAILURE,
-	SITE_SETTINGS_REQUEST_SUCCESS,
-	SITE_SETTINGS_SAVE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import { items, requesting, saveRequests } from '../reducer';
+import { MEDIA_DELETE, SITE_SETTINGS_RECEIVE, SITE_SETTINGS_REQUEST, SITE_SETTINGS_REQUEST_FAILURE, SITE_SETTINGS_REQUEST_SUCCESS, SITE_SETTINGS_SAVE, SITE_SETTINGS_SAVE_FAILURE, SITE_SETTINGS_SAVE_SUCCESS, SITE_SETTINGS_UPDATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

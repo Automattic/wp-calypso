@@ -6,8 +6,8 @@ import { get, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
 import createSelector from 'lib/create-selector';
+import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
 
 const getScheduledActions = ( state, siteId, postId ) => ( orderBy( get(
 	state,

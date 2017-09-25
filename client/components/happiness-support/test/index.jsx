@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 import { noop } from 'lodash';
+import React from 'react';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { HappinessSupport } from '..';
-import support from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
+import support from 'lib/url/support';
 
 describe( 'HappinessSupport', function() {
 	let wrapper;

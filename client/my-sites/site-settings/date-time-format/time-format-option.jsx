@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import { defaultTimeFormats } from './default-formats';
+import { phpToMomentDatetimeFormat } from './utils';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { defaultTimeFormats } from './default-formats';
-import { phpToMomentDatetimeFormat } from './utils';
+import FormInput from 'components/forms/form-text-input';
 
 export const TimeFormatOption = ( {
 	disabled,

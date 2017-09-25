@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import QuerySites from 'components/data/query-sites';
 import Image from 'components/image';
 import Spinner from 'components/spinner';
-import QuerySites from 'components/data/query-sites';
-import { getSite } from 'state/sites/selectors';
-import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'state/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
+import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
 
 function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );

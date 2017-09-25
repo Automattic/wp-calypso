@@ -2,24 +2,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { translate } from 'i18n-calypso';
+import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { announceSuccess, announceFailure, requestZoneFeed, requestZoneFeedError, saveZoneFeed, updateZoneFeed } from '../';
+import { fromApi, toApi } from '../util';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import {
-	announceSuccess,
-	announceFailure,
-	requestZoneFeed,
-	requestZoneFeedError,
-	saveZoneFeed,
-	updateZoneFeed,
-} from '../';
-import { fromApi, toApi } from '../util';
 import { updateFeed } from 'zoninator/state/feeds/actions';
 
 const dummyAction = {

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import { partial } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import DismissibleCard from '../';
+import Button from 'components/button';
 import { savePreference } from 'state/preferences/actions';
 
 function DismissibleCardExample( { clearPreference } ) {

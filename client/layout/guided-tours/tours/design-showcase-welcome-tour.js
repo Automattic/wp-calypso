@@ -1,35 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-	negate as not,
-} from 'lodash';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { overEvery as and, negate as not } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Next,
-	Quit,
-	Continue,
-} from 'layout/guided-tours/config-elements';
-import {
-	hasAnalyticsEventFired,
-	isAbTestInVariant,
-	inSection,
-	isNewUser,
-	isEnabled,
-	selectedSiteIsCustomizable,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Next, Quit, Continue } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { hasAnalyticsEventFired, isAbTestInVariant, inSection, isNewUser, isEnabled, selectedSiteIsCustomizable } from 'state/ui/guided-tours/contexts';
 
 const anyThemeMoreButtonClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 

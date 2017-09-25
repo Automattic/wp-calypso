@@ -7,14 +7,13 @@ import update from 'react-addons-update';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-
+import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
-import Dispatcher from 'dispatcher';
-import transactionStepTypes from 'lib/store-transactions/step-types';
 import { hasDomainDetails } from 'lib/store-transactions';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 
 let _transaction = createInitialTransaction();
 

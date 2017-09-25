@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
 import { expect } from 'chai';
+import { assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import domainsAssembler from './../assembler';
-
 import { type as domainTypes } from './../constants';
 
 describe( 'assembler', () => {

@@ -1,15 +1,7 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
-import {
-	THEME_SETUP_REQUEST,
-	THEME_SETUP_RESULT,
-	THEME_SETUP_TOGGLE_DIALOG,
-} from 'state/action-types';
+import { THEME_SETUP_REQUEST, THEME_SETUP_RESULT, THEME_SETUP_TOGGLE_DIALOG } from 'state/action-types';
 
 const initialState = {
 	active: false,

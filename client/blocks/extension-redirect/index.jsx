@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import versionCompare from 'lib/version-compare';
+import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class ExtensionRedirect extends Component {
 	static propTypes = {

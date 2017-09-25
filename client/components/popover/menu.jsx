@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
+import { over } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import { over } from 'lodash';
 
 /**
  * Internal dependencies

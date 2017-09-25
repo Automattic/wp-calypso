@@ -1,13 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import PaladinComponent from './main';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 export default {
 	activate: function( context ) {

@@ -7,15 +7,11 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { get, post, put, del } from '../actions';
 import { handleRequest } from '../';
+import { get, post, put, del } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_API_REQUEST_SUCCESS,
-	WOOCOMMERCE_API_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_ERROR_SET, WOOCOMMERCE_API_REQUEST_SUCCESS, WOOCOMMERCE_API_REQUEST_FAILURE } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	const siteId = 123;

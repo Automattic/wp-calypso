@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
-import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
+import { getPost } from 'state/posts/selectors';
 import { canCurrentUser } from 'state/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {

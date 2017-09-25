@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getUserSuggestions,
-	isRequestingUserSuggestions
-} from '../selectors';
+import { getUserSuggestions, isRequestingUserSuggestions } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getUserSuggestions()', () => {

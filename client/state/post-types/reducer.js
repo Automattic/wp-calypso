@@ -6,18 +6,10 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
-
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-	POST_TYPES_RECEIVE,
-	POST_TYPES_REQUEST,
-	POST_TYPES_REQUEST_SUCCESS,
-	POST_TYPES_REQUEST_FAILURE
-} from 'state/action-types';
+import { SERIALIZE, DESERIALIZE, POST_TYPES_RECEIVE, POST_TYPES_REQUEST, POST_TYPES_REQUEST_SUCCESS, POST_TYPES_REQUEST_FAILURE } from 'state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

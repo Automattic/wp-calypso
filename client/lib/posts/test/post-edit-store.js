@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { assign, isEqual, noop } from 'lodash';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 

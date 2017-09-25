@@ -8,9 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import {
-	WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT } from 'woocommerce/state/action-types';
 
 const initialState = {
 	123: {

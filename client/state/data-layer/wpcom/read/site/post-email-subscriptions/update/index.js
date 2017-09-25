@@ -1,21 +1,21 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import { get, merge } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { get, merge } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { buildBody } from '../utils';
 import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
+import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { getReaderFollowForBlog } from 'state/selectors';
-import { buildBody } from '../utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestUpdatePostEmailSubscription( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {

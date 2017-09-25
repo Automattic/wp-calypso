@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { isArray, isUndefined, map, omitBy } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { toValidId } from 'reader/id-helpers';
 

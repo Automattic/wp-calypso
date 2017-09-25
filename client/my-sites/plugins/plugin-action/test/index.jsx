@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { shallow } from 'enzyme';
+import mockery from 'mockery';
 import React from 'react';
 
 /**

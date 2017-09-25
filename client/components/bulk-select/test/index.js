@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

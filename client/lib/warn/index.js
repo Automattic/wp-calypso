@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
-
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import config from 'config';
 

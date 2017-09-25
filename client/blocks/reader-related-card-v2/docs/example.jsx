@@ -1,13 +1,13 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import Card from 'components/card';
+import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 
 const LONGREADS_SITE_ID = 70135762;
 const LONGREADS_POST_ID = 65877;

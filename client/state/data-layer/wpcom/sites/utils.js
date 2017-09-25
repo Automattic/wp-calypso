@@ -6,15 +6,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_DELETE,
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-} from 'state/action-types';
+import { COMMENTS_DELETE, COMMENTS_RECEIVE, COMMENTS_COUNT_INCREMENT } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
+import { getSitePost } from 'state/posts/selectors';
 
 /**
  * Creates a placeholder comment for a given text and postId

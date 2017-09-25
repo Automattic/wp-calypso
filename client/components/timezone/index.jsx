@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { map, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

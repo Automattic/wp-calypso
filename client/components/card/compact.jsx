@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { assign } from 'lodash';
 import classnames from 'classnames';
 import createClass from 'create-react-class';
+import { assign } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

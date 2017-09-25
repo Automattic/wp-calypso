@@ -1,36 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classnames from 'classnames';
+import { difference, get, includes, isEqual, range, size, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	difference,
-	get,
-	includes,
-	isEqual,
-	range,
-	size,
-	throttle,
-} from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
-import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
+import WindowScroller from 'react-virtualized/WindowScroller';
 
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSitePostsForQuery,
-	getSitePostsForQueryIgnoringPage,
-	getSitePostsLastPageForQuery
-} from 'state/posts/selectors';
-import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
+import PostItem from 'blocks/post-item';
+import QueryPosts from 'components/data/query-posts';
+import { isRequestingSitePostsForQuery, getSitePostsForQueryIgnoringPage, getSitePostsLastPageForQuery } from 'state/posts/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

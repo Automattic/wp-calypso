@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { filter, forEach, has, isUndefined, map, omit, partition, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import analytics from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import Dispatcher from 'dispatcher';
+import analytics from 'lib/analytics';
 import { action } from 'lib/feed-post-store/constants';
 import wpcom from 'lib/wp';
+import { READER_POSTS_RECEIVE } from 'state/action-types';
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );

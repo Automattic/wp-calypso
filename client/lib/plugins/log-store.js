@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
+import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
 let _errors = [],
 	_inProgress = [],

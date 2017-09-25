@@ -6,19 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isOlarkReady,
-	isOperatorsAvailable,
-	isOlarkTimedOut,
-	isChatAvailable,
-	isRequestingOlark
-} from '../selectors';
-import {
-	STATUS_READY,
-	STATUS_TIMEOUT,
-	OPERATOR_STATUS_AVAILABLE,
-	OPERATOR_STATUS_AWAY
-} from '../constants';
+import { STATUS_READY, STATUS_TIMEOUT, OPERATOR_STATUS_AVAILABLE, OPERATOR_STATUS_AWAY } from '../constants';
+import { isOlarkReady, isOperatorsAvailable, isOlarkTimedOut, isChatAvailable, isRequestingOlark } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isChatAvailable()', () => {

@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
-import { makeLayout } from 'controller';
-import { makeNavigation, siteSelection, makeSites } from 'my-sites/controller';
 import { loggedIn, loggedOut, upload, fetchThemeFilters } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
+import config from 'config';
+import { makeLayout } from 'controller';
+import userFactory from 'lib/user';
+import { makeNavigation, siteSelection, makeSites } from 'my-sites/controller';
 
 export default function( router ) {
 	const user = userFactory();

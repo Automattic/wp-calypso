@@ -2,15 +2,8 @@
  * Internal dependencies
  */
 import { restoreProgressSchema } from './schema';
-import {
-	REWIND_RESTORE,
-	REWIND_RESTORE_DISMISS_PROGRESS,
-	REWIND_RESTORE_UPDATE_PROGRESS,
-} from 'state/action-types';
-import {
-	createReducer,
-	keyedReducer,
-} from 'state/utils';
+import { REWIND_RESTORE, REWIND_RESTORE_DISMISS_PROGRESS, REWIND_RESTORE_UPDATE_PROGRESS } from 'state/action-types';
+import { createReducer, keyedReducer } from 'state/utils';
 
 const stubNull = () => null;
 

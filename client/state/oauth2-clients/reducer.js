@@ -1,10 +1,8 @@
 /**
  * Internal dependencies
  */
+import { OAUTH2_CLIENT_DATA_REQUEST_SUCCESS } from 'state/action-types';
 import { createReducer } from 'state/utils';
-import {
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
-} from 'state/action-types';
 
 export const initialClientsData = {
 	930: {

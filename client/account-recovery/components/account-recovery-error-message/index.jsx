@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
+import config from 'config';
 
 class AccountRecoveryErrorMessage extends Component {
 	getErrorMessage = () => {

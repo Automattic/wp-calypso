@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import BasicWidget from 'woocommerce/components/basic-widget';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import ShareWidget from 'woocommerce/components/share-widget';
 import WidgetGroup from 'woocommerce/components/widget-group';
+import { getLink } from 'woocommerce/lib/nav-utils';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {

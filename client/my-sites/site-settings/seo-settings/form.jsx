@@ -1,75 +1,46 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { Set } from 'immutable';
+import { get, includes, isArray, isEqual, mapValues, omit, overSome, pickBy, partial } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Set } from 'immutable';
-import {
-	get,
-	includes,
-	isArray,
-	isEqual,
-	mapValues,
-	omit,
-	overSome,
-	pickBy,
-	partial
-} from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import MetaTitleEditor from 'components/seo/meta-title-editor';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
-import { protectForm } from 'lib/protect-form';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import {
-	getSeoTitleFormatsForSite,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	isRequestingSite,
-} from 'state/sites/selectors';
-import {
-	isSiteSettingsSaveSuccessful,
-	getSiteSettingsSaveError,
-} from 'state/site-settings/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isJetpackModuleActive,
-	isHiddenSite,
-	isPrivateSite,
-} from 'state/selectors';
-import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
-import { recordTracksEvent } from 'state/analytics/actions';
-import WebPreview from 'components/web-preview';
-import { requestSite } from 'state/sites/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import {
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness
-} from 'lib/products-values';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
+import Button from 'components/button';
+import Card from 'components/card';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import {
-	requestSiteSettings,
-	saveSiteSettings
-} from 'state/site-settings/actions';
+import CountedTextarea from 'components/forms/counted-textarea';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import SectionHeader from 'components/section-header';
+import MetaTitleEditor from 'components/seo/meta-title-editor';
+import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
+import WebPreview from 'components/web-preview';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
+import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
+import { protectForm } from 'lib/protect-form';
+import notices from 'notices';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { getPlugins } from 'state/plugins/installed/selectors';
+import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'state/selectors';
+import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
+import { isSiteSettingsSaveSuccessful, getSiteSettingsSaveError } from 'state/site-settings/selectors';
+import { requestSite } from 'state/sites/actions';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSeoTitleFormatsForSite, isJetpackMinimumVersion, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well

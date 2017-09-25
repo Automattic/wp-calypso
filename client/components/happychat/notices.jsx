@@ -1,23 +1,15 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import {
-	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
-	HAPPYCHAT_CHAT_STATUS_PENDING,
-	HAPPYCHAT_CHAT_STATUS_MISSED,
-	HAPPYCHAT_CHAT_STATUS_ABANDONED,
-	getHappychatStatus,
-	getHappychatConnectionStatus,
-	isHappychatServerReachable,
-} from 'state/happychat/selectors';
+import { HAPPYCHAT_CHAT_STATUS_ASSIGNING, HAPPYCHAT_CHAT_STATUS_PENDING, HAPPYCHAT_CHAT_STATUS_MISSED, HAPPYCHAT_CHAT_STATUS_ABANDONED, getHappychatStatus, getHappychatConnectionStatus, isHappychatServerReachable } from 'state/happychat/selectors';
 
 /*
  * Renders any notices about the chat session to the user

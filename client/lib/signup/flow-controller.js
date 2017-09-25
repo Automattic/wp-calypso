@@ -1,40 +1,26 @@
 /**
  * External dependencies
  */
-import {
-	assign,
-	compact,
-	defer,
-	difference,
-	every,
-	filter,
-	find,
-	flatten,
-	get,
-	isEmpty,
-	keys,
-	map,
-	pick,
-	reject
-} from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:signup:flow-controller' ); // eslint-disable-line no-unused-vars
-import store from 'store';
+import { assign, compact, defer, difference, every, filter, find, flatten, get, isEmpty, keys, map, pick, reject } from 'lodash';
 import page from 'page';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
 import SignupActions from './actions';
+import SignupDependencyStore from './dependency-store';
 
 import SignupProgressStore from './progress-store';
-import SignupDependencyStore from './dependency-store';
+import userFactory from 'lib/user';
+import wpcom from 'lib/wp';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
-import wpcom from 'lib/wp';
-import userFactory from 'lib/user';
-const user = userFactory();
 import utils from 'signup/utils';
+
+const debug = debugFactory( 'calypso:signup:flow-controller' ); // eslint-disable-line no-unused-vars
+const user = userFactory();
 
 /**
  * Constants

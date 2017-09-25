@@ -6,8 +6,8 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isHttps, withoutHttp } from 'lib/url';
 import config from 'config';
+import { isHttps, withoutHttp } from 'lib/url';
 
 export default function( site ) {
 	const attributes = {};

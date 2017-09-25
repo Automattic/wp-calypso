@@ -1,34 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { includes, filter, map, noop, reduce, union } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import {
-	includes,
-	filter,
-	map,
-	noop,
-	reduce,
-	union,
-} from 'lodash';
 import WindowScroller from 'react-virtualized/WindowScroller';
 
 /**
  * Internal dependencies
  */
-import VirtualList from 'components/virtual-list';
 import ListItem from './list-item';
 import CompactCard from 'components/card/compact';
-import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import {
-	isRequestingTermsForQueryIgnoringPage,
-	getTermsLastPageForQuery,
-	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
+import QueryTerms from 'components/data/query-terms';
+import VirtualList from 'components/virtual-list';
+import { isRequestingTermsForQueryIgnoringPage, getTermsLastPageForQuery, getTermsForQueryIgnoringPage } from 'state/terms/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**

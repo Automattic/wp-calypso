@@ -1,38 +1,38 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { map, forEach, head, includes, keys } from 'lodash';
-import debugModule from 'debug';
 import classNames from 'classnames';
+import debugModule from 'debug';
 import i18n, { localize } from 'i18n-calypso';
+import { map, forEach, head, includes, keys } from 'lodash';
+import { find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { find } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import config from 'config';
-import analytics from 'lib/analytics';
+import SocialSignupForm from './social';
+import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import notices from 'notices';
-import Notice from 'components/notice';
 import LoggedOutForm from 'components/logged-out-form';
-import { login } from 'lib/paths';
-import formState from 'lib/form-state';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import Notice from 'components/notice';
+import config from 'config';
+import analytics from 'lib/analytics';
+import formState from 'lib/form-state';
+import { login } from 'lib/paths';
+import wpcom from 'lib/wp';
+import notices from 'notices';
 import { mergeFormWithValue } from 'signup/utils';
-import SocialSignupForm from './social';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
 

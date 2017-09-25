@@ -9,12 +9,7 @@ import { map } from 'lodash';
  */
 import { createSiteDomainObject } from './assembler';
 import wpcom from 'lib/wp';
-import {
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+import { SITE_DOMAINS_RECEIVE, SITE_DOMAINS_REQUEST, SITE_DOMAINS_REQUEST_SUCCESS, SITE_DOMAINS_REQUEST_FAILURE } from 'state/action-types';
 
 /**
  * Module vars

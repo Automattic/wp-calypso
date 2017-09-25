@@ -1,23 +1,20 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { buildBody } from '../utils';
 import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import {
-	unsubscribeToNewPostEmail,
-	updateNewPostEmailSubscription,
-} from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
-import { buildBody } from '../utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { unsubscribeToNewPostEmail, updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 
 export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(

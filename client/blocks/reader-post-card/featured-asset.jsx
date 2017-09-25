@@ -1,15 +1,15 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 
 const FeaturedAsset = ( {
 	canonicalMedia,

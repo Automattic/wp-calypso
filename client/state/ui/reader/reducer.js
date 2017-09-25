@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
+import cardExpansions from './card-expansions/reducer';
 import sidebar from './sidebar/reducer';
 import { combineReducers } from 'state/utils';
-import cardExpansions from './card-expansions/reducer';
 
 export default combineReducers( {
 	sidebar,

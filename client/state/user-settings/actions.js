@@ -7,15 +7,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE, USER_SETTINGS_UPDATE, USER_SETTINGS_UNSAVED_CLEAR, USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE } from 'state/action-types';
 import { getUserSettings } from 'state/selectors';
-import {
-	USER_SETTINGS_REQUEST,
-	USER_SETTINGS_SAVE,
-	USER_SETTINGS_UPDATE,
-	USER_SETTINGS_UNSAVED_CLEAR,
-	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_UNSAVED_REMOVE,
-} from 'state/action-types';
 
 const debug = debugFactory( 'calypso:user:settings' );
 

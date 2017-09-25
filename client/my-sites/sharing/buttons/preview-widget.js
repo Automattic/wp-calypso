@@ -1,9 +1,12 @@
 /**
  * External dependencies
  */
-import qs from 'querystring';
-
 import i18n from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import qs from 'querystring';
 
 const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 

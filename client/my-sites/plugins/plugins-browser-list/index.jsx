@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
 import SectionHeader from 'components/section-header';
+import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
 
 export default localize( React.createClass( {
 

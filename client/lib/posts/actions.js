@@ -2,27 +2,27 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:posts' );
-import store from 'store';
 import { assign, clone, defer, fromPairs } from 'lodash';
+
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
-import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
 import postListStoreFactory from './post-list-store-factory';
+import PostsStore from './posts-store';
+import stats from './stats';
+import utils from './utils';
+import Dispatcher from 'dispatcher';
 import PreferencesStore from 'lib/preferences/store';
 import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
-import utils from './utils';
 import versionCompare from 'lib/version-compare';
-import Dispatcher from 'dispatcher';
-import stats from './stats';
+import wpcom from 'lib/wp';
 import { normalizeTermsForApi } from 'state/posts/utils';
+
+const debug = debugFactory( 'calypso:posts' );
+const sites = sitesFactory();
 
 let PostActions;
 

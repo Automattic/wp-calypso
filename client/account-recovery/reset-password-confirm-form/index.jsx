@@ -1,28 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormLabel from 'components/forms/form-label';
+import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
 import { STRONG_PASSWORD } from 'lib/url/support';
-import {
-	getAccountRecoveryResetUserData,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationKey,
-	getAccountRecoveryResetPasswordError,
-	isRequestingResetPassword,
-} from 'state/selectors';
 import { requestResetPassword } from 'state/account-recovery/reset/actions';
+import { getAccountRecoveryResetUserData, getAccountRecoveryResetSelectedMethod, getAccountRecoveryValidationKey, getAccountRecoveryResetPasswordError, isRequestingResetPassword } from 'state/selectors';
 
 class ResetPasswordConfirmForm extends Component {
 	constructor( props ) {

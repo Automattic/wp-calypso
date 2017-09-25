@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,8 +10,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
 import { requestRelatedPosts } from 'state/reader/related-posts/actions';
+import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {

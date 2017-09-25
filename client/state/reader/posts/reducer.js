@@ -7,9 +7,9 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { itemsSchema } from './schema';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import { itemsSchema } from './schema';
 
 /**
  * Tracks all known post objects, indexed by post ID.

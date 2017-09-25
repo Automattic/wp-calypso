@@ -1,31 +1,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
+
 /**
  * Internal dependencies
  */
+import { WP_SUPER_CACHE_RECEIVE_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE, WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS, WP_SUPER_CACHE_RESTORE_SETTINGS, WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, WP_SUPER_CACHE_SAVE_SETTINGS, WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS } from '../../action-types';
+import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_RECEIVE_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_SAVE_SETTINGS,
-	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-} from '../../action-types';
-import {
-	receiveSettings,
-	requestSettings,
-	restoreSettings,
-	saveSettings,
-} from '../actions';
 
 describe( 'actions', () => {
 	let spy;

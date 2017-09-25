@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import React from 'react';
 import ReactDom from 'react-dom';
-import observe from 'lib/mixins/data-observe';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
+import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default localize( React.createClass( {
 	displayName: 'CountrySelect',

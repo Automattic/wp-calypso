@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
+import classnames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has } from 'lodash';
-import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
+import AuthorCompactProfilePlaceholder from './placeholder';
 import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import ReaderFollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import AuthorCompactProfilePlaceholder from './placeholder';
 
 class AuthorCompactProfile extends React.Component {
 	static propTypes = {

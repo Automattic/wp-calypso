@@ -1,8 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
+import { find, flatten, includes, map, startsWith } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { countries, dialCodeMap } from './data';
 
 /**

@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { ForgotUsernameFormComponent } from '..';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'ForgotUsername', () => {
 	const inputSelectors = [

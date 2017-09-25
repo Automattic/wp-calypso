@@ -1,19 +1,13 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	addLocaleToPath,
-	getLanguage,
-	getLocaleFromPath,
-	isDefaultLocale,
-	removeLocaleFromPath,
-} from 'lib/i18n-utils';
+import assert from 'assert';
+import { addLocaleToPath, getLanguage, getLocaleFromPath, isDefaultLocale, removeLocaleFromPath } from 'lib/i18n-utils';
 
 describe( 'utils', function() {
 	describe( '#isDefaultLocale', function() {

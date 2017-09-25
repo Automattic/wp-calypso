@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import addQueryArgs from 'lib/route/add-query-args';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { login } from 'lib/paths';
+import addQueryArgs from 'lib/route/add-query-args';
 import { recordPageView } from 'state/analytics/actions';
+import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 
 const nativeLoginUrl = login( { isNative: true } );
 const lostPasswordURL = addQueryArgs( {

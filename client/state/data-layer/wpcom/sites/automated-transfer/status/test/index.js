@@ -7,15 +7,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { requestStatus, receiveStatus } from '../';
+import { getAutomatedTransferStatus, setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-import {
-	requestStatus,
-	receiveStatus,
-} from '../';
-import {
-	getAutomatedTransferStatus,
-	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
 
 const siteId = 1916284;
 

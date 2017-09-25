@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { omit, map } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { omit, map } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import QuerySiteRoles from 'components/data/query-site-roles';
+import QuerySites from 'components/data/query-sites';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QuerySites from 'components/data/query-sites';
-import QuerySiteRoles from 'components/data/query-site-roles';
-import { getSite } from 'state/sites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
+import { getSite } from 'state/sites/selectors';
 
 const getWpcomFollowerRole = ( { site, translate } ) => {
 	const displayName = site.is_private

@@ -7,9 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getHelpCourses,
-} from '../selectors';
+import { getHelpCourses } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getHelpCourses()', () => {

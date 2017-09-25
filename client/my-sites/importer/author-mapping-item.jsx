@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies

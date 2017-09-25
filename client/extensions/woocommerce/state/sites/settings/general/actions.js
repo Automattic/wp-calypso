@@ -1,16 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
-import {
-	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
-	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
-	WOOCOMMERCE_CURRENCY_UPDATE,
-	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-} from 'woocommerce/state/action-types';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_TAXES_ENABLED_UPDATE, WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS, WOOCOMMERCE_CURRENCY_UPDATE, WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS, WOOCOMMERCE_SETTINGS_GENERAL_REQUEST } from 'woocommerce/state/action-types';
 
 export const fetchSettingsGeneral = ( siteId ) => {
 	return {

@@ -1,32 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import Gridicon from 'gridicons';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	ButtonRow,
-	Continue,
-	Link,
-	makeTour,
-	Next,
-	Quit,
-	Step,
-	Tour,
-} from 'layout/guided-tours/config-elements';
-import {
-	hasSelectedSiteDefaultSiteTitle,
-	isUserOlderThan,
-	isEnabled,
-	canUserEditSettingsOfSelectedSite,
-	isAbTestInVariant,
-} from 'state/ui/guided-tours/contexts';
+import { ButtonRow, Continue, Link, makeTour, Next, Quit, Step, Tour } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { hasSelectedSiteDefaultSiteTitle, isUserOlderThan, isEnabled, canUserEditSettingsOfSelectedSite, isAbTestInVariant } from 'state/ui/guided-tours/contexts';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 

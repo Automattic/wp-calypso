@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { connect } from 'react-redux';
-import { Field, formValueSelector, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Field, formValueSelector, reduxForm } from 'redux-form';
 
 /**
  * Internal dependencies
  */
+import { createPages } from '../../../state/setup/actions';
+import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/selectors';
 import { SetupPath, Steps } from '../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
@@ -22,9 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
-import { createPages } from '../../../state/setup/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/selectors';
 
 const form = 'extensions.wpJobManager.pageSetup';
 

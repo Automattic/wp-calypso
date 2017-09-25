@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Accordion from 'components/accordion';
 import PostActions from 'lib/posts/actions';
 import * as stats from 'lib/posts/stats';
 import { getFeaturedImageId } from 'lib/posts/utils';
-import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';

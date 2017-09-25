@@ -1,10 +1,6 @@
 /**
  * External dependencies
  */
-import {
-	format as formatUrl,
-	parse as parseUrl,
-} from 'url';
 import { has, isString, omit, startsWith } from 'lodash';
 
 /**
@@ -13,6 +9,7 @@ import { has, isString, omit, startsWith } from 'lodash';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Check if a URL is located outside of Calypso.

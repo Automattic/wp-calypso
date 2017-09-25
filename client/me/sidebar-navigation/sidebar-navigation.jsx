@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import SidebarNavigation from 'components/sidebar-navigation';
 import Gravatar from 'components/gravatar';
+import SidebarNavigation from 'components/sidebar-navigation';
 import userFactory from 'lib/user';
 
 const user = userFactory();

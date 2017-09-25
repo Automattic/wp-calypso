@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { forEach } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import BulkSelect from 'woocommerce/components/bulk-select';
+import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
+import PackagesListItem from './packages-list-item';
 import FoldableCard from 'components/foldable-card';
 import FormCheckbox from 'components/forms/form-checkbox';
-import PackagesListItem from './packages-list-item';
-import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
+import BulkSelect from 'woocommerce/components/bulk-select';
 
 const PredefinedPackages = ( { siteId, form, toggleAll, togglePackage, currentlyEditingPredefinedPackages, translate } ) => {
 	const { dimensionUnit } = form;

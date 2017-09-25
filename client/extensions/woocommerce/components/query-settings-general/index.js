@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { errorNotice, removeNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
-import { errorNotice, removeNotice } from 'state/notices/actions';
 
 class QuerySettingsGeneral extends Component {
 	fetch( siteId ) {

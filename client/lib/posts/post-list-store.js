@@ -2,22 +2,16 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { assign, clone, difference, last, maxBy, some, transform } from 'lodash';
 import { EventEmitter } from 'events/';
+import { assign, clone, difference, last, maxBy, some, transform } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import PostListCacheStore, { getCacheKey, getCanonicalList, setCanonicalList, deleteCanonicalList } from './post-list-cache-store';
+import PostsStore from './posts-store';
 import Dispatcher from 'dispatcher';
 import treeConvert from 'lib/tree-convert';
-import PostsStore from './posts-store';
-import PostListCacheStore,
-	{
-		getCacheKey,
-		getCanonicalList,
-		setCanonicalList,
-		deleteCanonicalList
-	} from './post-list-cache-store';
 
 /**
  * Module Variables

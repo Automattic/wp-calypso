@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
-import Gridicon from 'gridicons';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import Table from 'woocommerce/components/table';
+import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
 
 class Example extends Component {
 	state = {

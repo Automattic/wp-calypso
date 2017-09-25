@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import { expect } from 'chai';
 import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
-import { expect } from 'chai';
+import ReactDom from 'react-dom';
 import sinon from 'sinon';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
  */
 import TrackInputChanges from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables

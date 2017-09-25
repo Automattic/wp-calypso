@@ -2,26 +2,26 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { startCase } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startCase } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import PrivateSite from './private-site';
+import LoginBlock from 'blocks/login';
+import DocumentHead from 'components/data/document-head';
+import GlobalNotices from 'components/global-notices';
+import LocaleSuggestions from 'components/locale-suggestions';
+import Main from 'components/main';
+import notices from 'notices';
+import { recordPageView } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import Main from 'components/main';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoginBlock from 'blocks/login';
-import { recordPageView } from 'state/analytics/actions';
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
-import PrivateSite from './private-site';
 
 export class Login extends React.Component {
 	static propTypes = {

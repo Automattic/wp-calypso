@@ -9,9 +9,6 @@ import { assign } from 'lodash';
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
-
-// We need to load the CartStore to make sure the store is registered with the
-// dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
 function disableCart() {

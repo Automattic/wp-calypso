@@ -1,20 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { clone } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { clone } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import GoogleAppsUsersForm from './users-form';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
 	componentWillMount() {

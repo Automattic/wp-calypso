@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { get, isUndefined } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isUndefined } from 'lodash';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import CompactCard from 'components/card/compact';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryTerms from 'components/data/query-terms';
 import { decodeEntities } from 'lib/formatting';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
-
-import CompactCard from 'components/card/compact';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
+import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 const TaxonomyCard = ( {
 		count,

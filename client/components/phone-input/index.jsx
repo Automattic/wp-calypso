@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { find, identity, noop } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { find, identity, noop } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormCountrySelect from 'components/forms/form-country-select';
-import { formatNumber, findCountryFromNumber, processNumber, MIN_LENGTH_TO_FORMAT } from './phone-number';
 import CountryFlag from './country-flag';
 import { countries } from './data';
+import { formatNumber, findCountryFromNumber, processNumber, MIN_LENGTH_TO_FORMAT } from './phone-number';
+import FormCountrySelect from 'components/forms/form-country-select';
 
 class PhoneInput extends React.PureComponent {
 	static propTypes = {

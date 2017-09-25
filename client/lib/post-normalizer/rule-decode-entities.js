@@ -1,13 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-
 import { forOwn } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-
 import { decodeEntities as decode } from 'lib/formatting';
 import safeImageURL from 'lib/safe-image-url';
 

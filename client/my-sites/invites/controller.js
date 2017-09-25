@@ -1,25 +1,25 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import store from 'store';
-import page from 'page';
-import { find, get, isEmpty, pick } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
+import { find, get, isEmpty, pick } from 'lodash';
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
+import store from 'store';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import InviteAccept from 'my-sites/invites/invite-accept';
-import { setSection } from 'state/ui/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
-import _user from 'lib/user';
 import i18nUtils from 'lib/i18n-utils';
+import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import _user from 'lib/user';
+import InviteAccept from 'my-sites/invites/invite-accept';
+import { getRedirectAfterAccept } from 'my-sites/invites/utils';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { setSection } from 'state/ui/actions';
 
 /**
  * Module variables

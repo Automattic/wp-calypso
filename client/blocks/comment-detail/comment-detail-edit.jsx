@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -13,10 +13,10 @@ import { connect } from 'react-redux';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import { getSiteSlug } from 'state/sites/selectors';
+import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
+import { getSiteSlug } from 'state/sites/selectors';
 
 export class CommentDetailEdit extends Component {
 	static propTypes = {

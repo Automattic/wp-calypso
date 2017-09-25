@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, isNumber } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,9 +12,9 @@ import { get, isNumber } from 'lodash';
 import Button from 'components/button';
 import Count from 'components/count';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 class FollowersCount extends Component {
 	render() {

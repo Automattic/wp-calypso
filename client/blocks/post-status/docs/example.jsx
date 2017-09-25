@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import { map, mapValues, get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { map, mapValues, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import Card from 'components/card';
 import PostStatus from '../';
+import Card from 'components/card';
+import QueryPosts from 'components/data/query-posts';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePostsForQuery } from 'state/posts/selectors';
 

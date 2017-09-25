@@ -1,21 +1,21 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { map, partial, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, partial, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import Button from 'components/button';
-import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
+import Button from 'components/button';
+import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
+import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {

@@ -1,31 +1,30 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import i18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
-import React from 'react';
 import { isEmpty } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import SecondaryCart from './cart/secondary-cart';
+import SecondaryCart from './cart/secondary-cart';
+import Checkout from './checkout';
+import Checkout from './checkout';
+import CheckoutThankYouComponent from './checkout-thank-you';
+import CartData from 'components/data/cart';
+import CartData from 'components/data/cart';
+import CheckoutData from 'components/data/checkout';
+import CheckoutData from 'components/data/checkout';
 import analytics from 'lib/analytics';
+import productsFactory from 'lib/products-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
-import productsFactory from 'lib/products-list';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
-
-import Checkout from './checkout';
-import CheckoutData from 'components/data/checkout';
-import CartData from 'components/data/cart';
-import SecondaryCart from './cart/secondary-cart';
-import Checkout from './checkout';
-import CheckoutData from 'components/data/checkout';
-import CartData from 'components/data/cart';
-import SecondaryCart from './cart/secondary-cart';
-import CheckoutThankYouComponent from './checkout-thank-you';
 
 /**
  * Module variables

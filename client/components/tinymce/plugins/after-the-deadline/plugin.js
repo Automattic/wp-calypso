@@ -1,27 +1,9 @@
-/*
- * TinyMCE Writing Improvement Tool Plugin
- * Author: Raphael Mudge (raffi@automattic.com), Andrew Duthie (andrew.duthie@automattic.com)
- *
- * http://www.afterthedeadline.com
- *
- * Distributed under the LGPL
- *
- * Derived from:
- *	$Id: editor_plugin_src.js 425 2007-11-21 15:17:39Z spocke $
- *
- *	@author Moxiecode
- *	@copyright Copyright (C) 2004-2008, Moxiecode Systems AB, All rights reserved.
- *
- *	Moxiecode Spell Checker plugin released under the LGPL with TinyMCE
- */
-
 /**
  * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
-import qs from 'querystring';
-import { find, throttle } from 'lodash';
 import { getLocaleSlug, translate } from 'i18n-calypso';
+import { find, throttle } from 'lodash';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -29,6 +11,7 @@ import { getLocaleSlug, translate } from 'i18n-calypso';
 import AtDCore from './core';
 import PreferencesActions from 'lib/preferences/actions';
 import PreferencesStore from 'lib/preferences/store';
+import qs from 'querystring';
 
 /**
  * Module variables

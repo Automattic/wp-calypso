@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { find, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal depencencies
+ * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
 import Suggestions from 'components/suggestions';

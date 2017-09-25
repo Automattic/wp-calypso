@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { find, get, includes } from 'lodash';
 import debugFactory from 'debug';
+import { find, get, includes } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { initialSiteState } from './reducer';
-import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
+import { initialSiteState } from './reducer';
 import createSelector from 'lib/create-selector';
 import { PLANS_LIST } from 'lib/plans/constants';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Module dependencies

@@ -8,13 +8,10 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchSettingsProducts } from '../actions';
-import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST, WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {
 	describe( '#fetchSettingsProducts()', () => {

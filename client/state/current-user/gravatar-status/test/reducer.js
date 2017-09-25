@@ -6,18 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	GRAVATAR_UPLOAD_RECEIVE,
-	GRAVATAR_UPLOAD_REQUEST,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import reducer, {
-	isUploading,
-	tempImage
-} from '../reducer';
+import reducer, { isUploading, tempImage } from '../reducer';
+import { GRAVATAR_UPLOAD_RECEIVE, GRAVATAR_UPLOAD_REQUEST, GRAVATAR_UPLOAD_REQUEST_SUCCESS, GRAVATAR_UPLOAD_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'exports expected reducer keys', () => {

@@ -1,20 +1,15 @@
-import { forEach } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/* eslint-disable no-multi-spaces */
-
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-
 import FormButton from 'components/forms/form-button';
 
 const HelpModal = React.createClass( {
@@ -27,26 +22,26 @@ const HelpModal = React.createClass( {
 
 	defaultShortcuts() {
 		return [
-			{ c: this.props.translate( 'Copy' ),      x: this.props.translate( 'Cut' )              },
-			{ v: this.props.translate( 'Paste' ),     a: this.props.translate( 'Select all' )       },
-			{ z: this.props.translate( 'Undo' ),      y: this.props.translate( 'Redo' )             },
-			{ b: this.props.translate( 'Bold' ),      i: this.props.translate( 'Italic' )           },
+			{ c: this.props.translate( 'Copy' ), x: this.props.translate( 'Cut' ) },
+			{ v: this.props.translate( 'Paste' ), a: this.props.translate( 'Select all' ) },
+			{ z: this.props.translate( 'Undo' ), y: this.props.translate( 'Redo' ) },
+			{ b: this.props.translate( 'Bold' ), i: this.props.translate( 'Italic' ) },
 			{ u: this.props.translate( 'Underline' ), k: this.props.translate( 'Insert/edit link' ) }
 		];
 	},
 
 	additionalShortcuts() {
 		return [
-			{ 1: this.props.translate( 'Heading 1' ),             2: this.props.translate( 'Heading 2' ) },
-			{ 3: this.props.translate( 'Heading 3' ),             4: this.props.translate( 'Heading 4' ) },
-			{ 5: this.props.translate( 'Heading 5' ),             6: this.props.translate( 'Heading 6' ) },
-			{ l: this.props.translate( 'Align left' ),            c: this.props.translate( 'Align center' ) },
-			{ r: this.props.translate( 'Align right' ),           j: this.props.translate( 'Justify' ) },
-			{ d: this.props.translate( 'Strikethrough' ),         q: this.props.translate( 'Blockquote' ) },
-			{ u: this.props.translate( 'Bullet list' ),           o: this.props.translate( 'Numbered list' ) },
-			{ a: this.props.translate( 'Insert/edit link' ),      s: this.props.translate( 'Remove link' ) },
-			{ m: this.props.translate( 'Insert/edit image' ),     t: this.props.translate( 'Insert Read More tag' ) },
-			{ h: this.props.translate( 'Keyboard Shortcuts' ),    x: this.props.translate( 'Code' ) },
+			{ 1: this.props.translate( 'Heading 1' ), 2: this.props.translate( 'Heading 2' ) },
+			{ 3: this.props.translate( 'Heading 3' ), 4: this.props.translate( 'Heading 4' ) },
+			{ 5: this.props.translate( 'Heading 5' ), 6: this.props.translate( 'Heading 6' ) },
+			{ l: this.props.translate( 'Align left' ), c: this.props.translate( 'Align center' ) },
+			{ r: this.props.translate( 'Align right' ), j: this.props.translate( 'Justify' ) },
+			{ d: this.props.translate( 'Strikethrough' ), q: this.props.translate( 'Blockquote' ) },
+			{ u: this.props.translate( 'Bullet list' ), o: this.props.translate( 'Numbered list' ) },
+			{ a: this.props.translate( 'Insert/edit link' ), s: this.props.translate( 'Remove link' ) },
+			{ m: this.props.translate( 'Insert/edit image' ), t: this.props.translate( 'Insert Read More tag' ) },
+			{ h: this.props.translate( 'Keyboard Shortcuts' ), x: this.props.translate( 'Code' ) },
 			{ p: this.props.translate( 'Insert Page Break tag' ) }
 		];
 	},

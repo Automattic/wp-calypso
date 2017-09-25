@@ -1,50 +1,36 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { debounce } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ProductForm from './product-form';
+import ProductHeader from './product-header';
 import Main from 'components/main';
 import accept from 'lib/accept';
 import { ProtectFormGuard } from 'lib/protect-form';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { createProduct, fetchProduct, deleteProduct as deleteProductAction } from 'woocommerce/state/sites/products/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
+import { createProduct, fetchProduct, deleteProduct as deleteProductAction } from 'woocommerce/state/sites/products/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	editProduct,
-	editProductAttribute,
-	createProductActionList,
-	clearProductEdits,
-} from 'woocommerce/state/ui/products/actions';
-import { getProductEdits, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
-import {
-	editProductVariation,
-	clearProductVariationEdits,
-} from 'woocommerce/state/ui/products/variations/actions';
-import {
-	getProductVariationsWithLocalEdits,
-	getVariationEditsStateForProduct,
-} from 'woocommerce/state/ui/products/variations/selectors';
-import {
-	editProductCategory,
-	clearProductCategoryEdits,
-} from 'woocommerce/state/ui/product-categories/actions';
+import { editProductCategory, clearProductCategoryEdits } from 'woocommerce/state/ui/product-categories/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import page from 'page';
-import ProductForm from './product-form';
-import ProductHeader from './product-header';
+import { editProduct, editProductAttribute, createProductActionList, clearProductEdits } from 'woocommerce/state/ui/products/actions';
+import { getProductEdits, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
+import { editProductVariation, clearProductVariationEdits } from 'woocommerce/state/ui/products/variations/actions';
+import { getProductVariationsWithLocalEdits, getVariationEditsStateForProduct } from 'woocommerce/state/ui/products/variations/selectors';
 
 class ProductUpdate extends React.Component {
 	static propTypes = {

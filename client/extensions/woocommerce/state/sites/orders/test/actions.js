@@ -2,28 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
 import { omit } from 'lodash';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { fetchOrder, fetchOrders, updateOrder } from '../actions';
+import order from './fixtures/order';
+import orders from './fixtures/orders';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WOOCOMMERCE_ORDER_REQUEST,
-	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
-	WOOCOMMERCE_ORDER_UPDATE,
-	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
-	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
-	WOOCOMMERCE_ORDERS_REQUEST,
-	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import orders from './fixtures/orders';
-import order from './fixtures/order';
+import { WOOCOMMERCE_ORDER_REQUEST, WOOCOMMERCE_ORDER_REQUEST_FAILURE, WOOCOMMERCE_ORDER_REQUEST_SUCCESS, WOOCOMMERCE_ORDER_UPDATE, WOOCOMMERCE_ORDER_UPDATE_FAILURE, WOOCOMMERCE_ORDER_UPDATE_SUCCESS, WOOCOMMERCE_ORDERS_REQUEST, WOOCOMMERCE_ORDERS_REQUEST_FAILURE, WOOCOMMERCE_ORDERS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchOrders()', () => {

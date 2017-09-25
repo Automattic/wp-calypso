@@ -1,26 +1,19 @@
 /**
  * External dependencies
  */
-import url from 'url';
-import path from 'path';
-import photon from 'photon';
 import { includes, omitBy, startsWith } from 'lodash';
+import photon from 'photon';
 import { isUri } from 'valid-url';
 
 /**
  * Internal dependencies
  */
-import resize from 'lib/resize-image-url';
-import {
-	MimeTypes,
-	VideoPressFileTypes,
-	ThumbnailSizeDimensions,
-	GalleryColumnedTypes,
-	GallerySizeableTypes,
-	GalleryDefaultAttrs
-} from './constants';
-import Shortcode from 'lib/shortcode';
+import { MimeTypes, VideoPressFileTypes, ThumbnailSizeDimensions, GalleryColumnedTypes, GallerySizeableTypes, GalleryDefaultAttrs } from './constants';
 import { uniqueId } from 'lib/impure-lodash';
+import resize from 'lib/resize-image-url';
+import Shortcode from 'lib/shortcode';
+import path from 'path';
+import url from 'url';
 
 /**
  * Module variables

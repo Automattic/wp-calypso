@@ -2,10 +2,7 @@
 /**
  * Internal dependencies
  */
-import {
-	actionListStepSuccess,
-	actionListStepFailure,
-} from 'woocommerce/state/action-list/actions';
+import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
 
 export const time = {
 	stepAStart: Date.now() - 3000,

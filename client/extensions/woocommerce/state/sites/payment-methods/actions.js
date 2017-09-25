@@ -2,19 +2,11 @@
  * Internal dependencies
  */
 import getPaymentMethodDetails from '../../../lib/get-payment-method-details';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	WOOCOMMERCE_PAYMENT_METHOD_UPDATE,
-	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import {
-	arePaymentMethodsLoaded,
-	arePaymentMethodsLoading,
-} from './selectors';
+import { arePaymentMethodsLoaded, arePaymentMethodsLoading } from './selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE, WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS, WOOCOMMERCE_PAYMENT_METHODS_REQUEST, WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 const addPaymentMethodDetails = ( method ) => {
 	return {

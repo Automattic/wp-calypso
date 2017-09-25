@@ -6,15 +6,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { WOOCOMMERCE_API_REQUEST, WOOCOMMERCE_API_REQUEST_SUCCESS, WOOCOMMERCE_API_REQUEST_FAILURE } from 'woocommerce/state/action-types';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-
-import {
-	WOOCOMMERCE_API_REQUEST,
-	WOOCOMMERCE_API_REQUEST_SUCCESS,
-	WOOCOMMERCE_API_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:request' );
 

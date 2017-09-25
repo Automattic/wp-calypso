@@ -1,14 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
-import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import cssSafeUrl from 'lib/css-safe-url';
 import resizeImageUrl from 'lib/resize-image-url';

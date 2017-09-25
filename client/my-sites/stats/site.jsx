@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
-import StatsPeriodNavigation from './stats-period-navigation';
-import Main from 'components/main';
-import StatsNavigation from './stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DatePicker from './stats-date-picker';
-import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
-import StatsModule from './stats-module';
-import statsStrings from './stats-strings';
-import titlecase from 'to-title-case';
+import Countries from './stats-countries';
+import DatePicker from './stats-date-picker';
 import StatsFirstView from './stats-first-view';
-import StickyPanel from 'components/sticky-panel';
+import StatsModule from './stats-module';
+import StatsNavigation from './stats-navigation';
+import StatsPeriodNavigation from './stats-period-navigation';
+import statsStrings from './stats-strings';
 import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class StatsSite extends Component {
 	constructor( props ) {

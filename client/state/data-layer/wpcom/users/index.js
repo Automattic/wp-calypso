@@ -7,11 +7,9 @@ import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
  * Internal dependencies
  */
 import { USERS_REQUEST } from 'state/action-types';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	receiveUser,
-} from 'state/users/actions';
+import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
+import { receiveUser } from 'state/users/actions';
 
 export const DEFAULT_PER_PAGE = 10;
 

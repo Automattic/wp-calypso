@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
-import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
 import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
-import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
-import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/locations/selectors';
+import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
+import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
+import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
+import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 
 class QueryShippingZones extends Component {
 	fetch( siteId ) {

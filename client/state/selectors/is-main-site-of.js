@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	getSiteOption,
-	isJetpackSiteMainNetworkSite,
-	isJetpackSiteSecondaryNetworkSite
-} from 'state/sites/selectors';
 import { withoutHttp } from 'lib/url';
+import { getSiteOption, isJetpackSiteMainNetworkSite, isJetpackSiteSecondaryNetworkSite } from 'state/sites/selectors';
 
 /**
  * Returns true if site mainSiteId is the main site of site secondarySiteId and false otherwise.

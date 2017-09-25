@@ -1,16 +1,8 @@
 /**
- * External dependencies
- */
-import { createReducer } from 'state/utils';
-
-/**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-} from 'woocommerce/state/action-types';
+import { createReducer } from 'state/utils';
+import { WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST, WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS, WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST ]: productsSearchRequest,

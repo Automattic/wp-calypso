@@ -4,18 +4,17 @@
 import { expect } from 'chai';
 import { noop } from 'lodash';
 import { Provider as ReduxProvider } from 'react-redux';
+import ReactClass from 'react/lib/ReactClass';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { sites } from './fixtures';
 import { createReduxStore } from 'state';
 
-import { sites } from './fixtures';
-
 import emptyComponent from 'test/helpers/react/empty-component';
-import ReactClass from 'react/lib/ReactClass';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginsList', () => {
 	let React, testRenderer, PluginsList, TestUtils;

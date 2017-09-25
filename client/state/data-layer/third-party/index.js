@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
 import directly from './directly';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 export const handlers = mergeHandlers(
 	directly,

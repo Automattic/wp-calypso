@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingStatus } from '../../../state/status/selectors';
 import { requestStatus } from '../../../state/status/actions';
+import { isRequestingStatus } from '../../../state/status/selectors';
 
 class QueryStatus extends Component {
 	componentWillMount() {

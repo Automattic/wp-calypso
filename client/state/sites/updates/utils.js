@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-import wp from 'lib/wp';
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import { siteUpdatesRequestAction, siteUpdatesRequestSuccessAction, siteUpdatesReceiveAction, siteUpdatesRequestFailureAction } from './actions';
+import wp from 'lib/wp';
 
 /**
  * Module vars
  */
 const wpcomUndoc = wp.undocumented();
 const debug = debugFactory( 'calypso:state:site:updates' );
-
-import {
-	siteUpdatesRequestAction,
-	siteUpdatesRequestSuccessAction,
-	siteUpdatesReceiveAction,
-	siteUpdatesRequestFailureAction
-} from './actions';
 
 export function requestSiteUpdates( siteId ) {
 	debug( 'requestSiteUpdates(%o) called', siteId );

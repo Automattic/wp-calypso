@@ -1,12 +1,16 @@
 /**
+ * External dependencies
+ */
+import inherits from 'inherits';
+
+/**
  * Internal dependencies
  */
+import config from 'config';
 import Site from 'lib/site';
 
-import inherits from 'inherits';
-import versionCompare from 'lib/version-compare';
 import SiteUtils from 'lib/site/utils';
-import config from 'config';
+import versionCompare from 'lib/version-compare';
 
 inherits( JetpackSite, Site );
 

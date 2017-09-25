@@ -1,48 +1,36 @@
 /**
  * External dependencies
  */
+import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY
-} from 'lib/plans/constants';
-import FindNewTheme from './find-new-theme';
-import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
-import GoogleVouchers from './google-vouchers';
-import CustomizeTheme from './customize-theme';
-import VideoAudioPosts from './video-audio-posts';
-import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
+import CustomizeTheme from './customize-theme';
+import FindNewTheme from './find-new-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
+import GoogleVouchers from './google-vouchers';
 import JetpackAntiSpam from './jetpack-anti-spam';
-import JetpackPublicize from './jetpack-publicize';
-import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
+import JetpackPublicize from './jetpack-publicize';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
+import JetpackVideo from './jetpack-video';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import MonetizeSite from './monetize-site';
+import UploadPlugins from './upload-plugins';
+import VideoAudioPosts from './video-audio-posts';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {

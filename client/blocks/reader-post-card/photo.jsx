@@ -1,14 +1,14 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { noop, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, debounce } from 'lodash';
-import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';

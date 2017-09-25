@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-} from 'woocommerce/lib/order-status';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 
 class OrdersFilterNav extends Component {
 	doSearch = ( search ) => {

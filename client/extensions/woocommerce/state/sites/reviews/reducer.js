@@ -6,13 +6,9 @@ import { keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import { getSerializedReviewsQuery } from './utils';
-import {
-	WOOCOMMERCE_REVIEWS_RECEIVE,
-	WOOCOMMERCE_REVIEWS_REQUEST,
-	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
+import { combineReducers } from 'state/utils';
+import { WOOCOMMERCE_REVIEWS_RECEIVE, WOOCOMMERCE_REVIEWS_REQUEST, WOOCOMMERCE_REVIEW_STATUS_CHANGE } from 'woocommerce/state/action-types';
 
 /**
  * Returns if a reviews request for a specific query is in progress or not.

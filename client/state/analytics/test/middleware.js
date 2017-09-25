@@ -7,22 +7,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import { withAnalytics, bumpStat, recordCustomAdWordsRemarketingEvent, recordCustomFacebookConversionEvent, recordGoogleEvent, recordGooglePageView, recordTracksEvent, recordPageView, setTracksAnonymousUserId } from '../actions';
+import { adTrackingMock, analyticsMock } from './helpers/analytics-mock';
 import useMockery from 'test/helpers/use-mockery';
-import {
-	withAnalytics,
-	bumpStat,
-	recordCustomAdWordsRemarketingEvent,
-	recordCustomFacebookConversionEvent,
-	recordGoogleEvent,
-	recordGooglePageView,
-	recordTracksEvent,
-	recordPageView,
-	setTracksAnonymousUserId
-} from '../actions';
-import {
-	adTrackingMock,
-	analyticsMock,
-} from './helpers/analytics-mock';
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {

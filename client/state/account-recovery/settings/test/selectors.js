@@ -6,32 +6,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isAccountRecoverySettingsReady,
-	isAccountRecoveryEmailValidated,
-	isAccountRecoveryPhoneValidated,
-	isUpdatingAccountRecoveryPhone,
-	isUpdatingAccountRecoveryEmail,
-	isDeletingAccountRecoveryPhone,
-	isDeletingAccountRecoveryEmail,
-	isAccountRecoveryEmailActionInProgress,
-	isAccountRecoveryPhoneActionInProgress,
-	isValidatingAccountRecoveryPhone,
-
-	hasSentAccountRecoveryEmailValidation,
-	hasSentAccountRecoveryPhoneValidation,
-
-	shouldPromptAccountRecoveryEmailValidationNotice,
-	shouldPromptAccountRecoveryPhoneValidationNotice,
-
-	getAccountRecoveryEmail,
-	getAccountRecoveryPhone,
-} from '../selectors';
-
-import {
-	dummyNewPhone,
-	dummyNewEmail,
-} from './test-data';
+import { isAccountRecoverySettingsReady, isAccountRecoveryEmailValidated, isAccountRecoveryPhoneValidated, isUpdatingAccountRecoveryPhone, isUpdatingAccountRecoveryEmail, isDeletingAccountRecoveryPhone, isDeletingAccountRecoveryEmail, isAccountRecoveryEmailActionInProgress, isAccountRecoveryPhoneActionInProgress, isValidatingAccountRecoveryPhone, hasSentAccountRecoveryEmailValidation, hasSentAccountRecoveryPhoneValidation, shouldPromptAccountRecoveryEmailValidationNotice, shouldPromptAccountRecoveryPhoneValidationNotice, getAccountRecoveryEmail, getAccountRecoveryPhone } from '../selectors';
+import { dummyNewPhone, dummyNewEmail } from './test-data';
 
 describe( '#account-recovery/settings/selectors', () => {
 	const stateBeforeFetching = {

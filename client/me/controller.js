@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
+import i18n from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import route from 'lib/route';
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
-
-import SidebarComponent from 'me/sidebar';
-import ProfileComponent from 'me/profile';
-import AppsComponent from 'me/get-apps';
 import NextSteps from './next-steps';
+import analytics from 'lib/analytics';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
 import trophiesData from 'lib/trophies-data';
+import userSettings from 'lib/user-settings';
+import AppsComponent from 'me/get-apps';
+import ProfileComponent from 'me/profile';
+import SidebarComponent from 'me/sidebar';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

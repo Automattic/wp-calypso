@@ -1,20 +1,17 @@
 /**
  * External dependencies
  */
+import { noop, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-} from 'state/selectors';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
+import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
 
 class CalendarPopover extends Component {
 	static propTypes = {

@@ -1,21 +1,21 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import { map, take, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, take, filter } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import ReaderExcerpt from 'blocks/reader-excerpt';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
-import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
-import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
-import ReaderExcerpt from 'blocks/reader-excerpt';
+import resizeImageUrl from 'lib/resize-image-url';
+import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 function getGalleryWorthyImages( post ) {

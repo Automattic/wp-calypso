@@ -1,17 +1,17 @@
 /**
- *  External Dependencies
+ * External dependencies
  */
 import { forEach, get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
 import { action as ActionType } from './constants';
-import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
-import wpcom from 'lib/wp';
+import Dispatcher from 'dispatcher';
+import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
+import wpcom from 'lib/wp';
 import { COMMENTS_RECEIVE } from 'state/action-types';
 
 function getNextPageParams( store ) {

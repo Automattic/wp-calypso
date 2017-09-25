@@ -6,16 +6,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	PREFERENCES_SET,
-	PREFERENCES_RECEIVE,
-	PREFERENCES_FETCH,
-	PREFERENCES_FETCH_SUCCESS,
-	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { remoteValuesSchema } from './schema';
+import { PREFERENCES_SET, PREFERENCES_RECEIVE, PREFERENCES_FETCH, PREFERENCES_FETCH_SUCCESS, PREFERENCES_FETCH_FAILURE, PREFERENCES_SAVE_SUCCESS } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated local values state after an action has been dispatched.

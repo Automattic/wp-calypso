@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { find, includes, some } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { prepareComparableUrl } from 'state/reader/follows/utils';
 

@@ -1,11 +1,14 @@
 
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
-import useFileSystemMocks from 'test/helpers/use-filesystem-mocks';
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useFileSystemMocks from 'test/helpers/use-filesystem-mocks';
 
 let	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 

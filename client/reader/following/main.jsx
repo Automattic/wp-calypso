@@ -2,22 +2,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
+import FollowingIntro from './intro';
 import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
-import { recordTrack } from 'reader/stats';
+import config from 'config';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
-import FollowingIntro from './intro';
-import config from 'config';
+import { recordTrack } from 'reader/stats';
+import Stream from 'reader/stream';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {

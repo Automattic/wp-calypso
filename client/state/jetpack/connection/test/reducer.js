@@ -7,31 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	JETPACK_CONNECTION_STATUS_RECEIVE,
-	JETPACK_CONNECTION_STATUS_REQUEST,
-	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
-	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST,
-	JETPACK_DISCONNECT_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST_SUCCESS,
-	JETPACK_USER_CONNECTION_DATA_RECEIVE,
-	JETPACK_USER_CONNECTION_DATA_REQUEST,
-	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
-	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
-} from 'state/action-types';
-import {
-	items as itemsReducer,
-	requests as requestsReducer,
-	dataItems as dataItemsReducer,
-	dataRequests as dataRequestsReducer,
-	disconnectRequests as disconnectRequestsReducer
-} from '../reducer';
-import {
-	items as ITEMS_FIXTURE,
-	requests as REQUESTS_FIXTURE,
-	dataItems as DATA_ITEMS_FIXTURE,
-} from './fixture';
+import { items as itemsReducer, requests as requestsReducer, dataItems as dataItemsReducer, dataRequests as dataRequestsReducer, disconnectRequests as disconnectRequestsReducer } from '../reducer';
+import { items as ITEMS_FIXTURE, requests as REQUESTS_FIXTURE, dataItems as DATA_ITEMS_FIXTURE } from './fixture';
+import { JETPACK_CONNECTION_STATUS_RECEIVE, JETPACK_CONNECTION_STATUS_REQUEST, JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS, JETPACK_CONNECTION_STATUS_REQUEST_FAILURE, JETPACK_DISCONNECT_REQUEST, JETPACK_DISCONNECT_REQUEST_FAILURE, JETPACK_DISCONNECT_REQUEST_SUCCESS, JETPACK_USER_CONNECTION_DATA_RECEIVE, JETPACK_USER_CONNECTION_DATA_REQUEST, JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS, JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

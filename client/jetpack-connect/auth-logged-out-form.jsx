@@ -2,27 +2,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import debugModule from 'debug';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import HelpButton from './help-button';
-import { login } from 'lib/paths';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import addQueryArgs from 'lib/route/add-query-args';
-import LocaleSuggestions from 'components/locale-suggestions';
-import SignupForm from 'components/signup-form';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import versionCompare from 'lib/version-compare';
-import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
+import FormattedHeader from 'components/formatted-header';
+import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import SignupForm from 'components/signup-form';
+import config from 'config';
+import { login } from 'lib/paths';
+import addQueryArgs from 'lib/route/add-query-args';
+import versionCompare from 'lib/version-compare';
+import WpcomLoginForm from 'signup/wpcom-login-form';
 
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 

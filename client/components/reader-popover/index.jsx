@@ -1,13 +1,13 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Popover from 'components/popover';
 

@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import {
-	mapValues,
-	omit,
-	property,
-} from 'lodash';
 import debugFactory from 'debug';
+import { mapValues, omit, property } from 'lodash';
+import React, { Component } from 'react';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 

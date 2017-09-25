@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
-	WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PRODUCT_VARIATION_EDIT, WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR } from 'woocommerce/state/action-types';
 
 /**
  * Edits a product variation.

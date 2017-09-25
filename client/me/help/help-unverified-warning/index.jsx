@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import userFactory from 'lib/user';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import userFactory from 'lib/user';
 import notices from 'notices';
 
 const user = userFactory();

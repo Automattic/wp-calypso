@@ -1,32 +1,26 @@
 /**
  * External dependencies
  */
+import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import url from 'url';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import QuerySitePlans from 'components/data/query-site-plans';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/domains/paths';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import {
-	canCurrentUser,
-	isEligibleForFreeToPaidUpsell,
-} from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QuerySitePlans from 'components/data/query-site-plans';
-import {
-	isStarted as isJetpackPluginsStarted,
-	isFinished as isJetpackPluginsFinished
-} from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import paths from 'my-sites/domains/paths';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { isStarted as isJetpackPluginsStarted, isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
+import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { isDomainOnlySite } from 'state/selectors';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
+import url from 'url';
 
 class SiteNotice extends React.Component {
 	static propTypes = {

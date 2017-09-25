@@ -4,15 +4,15 @@
 import { expect } from 'chai';
 import { identity, noop } from 'lodash';
 import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils' ;
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import useMockery from 'test/helpers/use-mockery';
 
 describe( '#signupStep User', () => {
 	let User, testElement, rendered, EMPTY_COMPONENT;

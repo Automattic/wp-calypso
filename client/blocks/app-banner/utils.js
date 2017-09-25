@@ -1,11 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import {
-	get,
-	includes,
-	reduce,
-} from 'lodash';
+import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const EDITOR = 'post-editor';

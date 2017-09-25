@@ -6,8 +6,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { state } from './fixtures/theme-filters';
 import { getThemeFilterStringFromTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {
 	it( 'should return taxonomy:term filter given the term', () => {

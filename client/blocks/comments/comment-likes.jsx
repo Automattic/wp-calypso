@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
+import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies

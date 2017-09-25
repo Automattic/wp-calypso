@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { forEach, get, includes, orderBy, reject } from 'lodash';
+
 /**
  * Internal dependencies
  */

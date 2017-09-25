@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { pick } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import url from 'url';
 
 /**

@@ -1,17 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { uniqBy } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED, GOOGLE_APPS_USERS_FETCH_FAILED } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import {
-	GOOGLE_APPS_USERS_FETCH,
-	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-	GOOGLE_APPS_USERS_FETCH_FAILED,
-} from 'state/action-types';
 
 export function items( state = [], action ) {
 	switch ( action.type ) {

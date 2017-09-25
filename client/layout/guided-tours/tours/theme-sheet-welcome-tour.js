@@ -1,30 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { overEvery as and, negate as not } from 'lodash';
-import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { translate } from 'i18n-calypso';
+import { overEvery as and, negate as not } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	ButtonRow,
-	Continue,
-	Next,
-	Quit,
-	Step,
-	Tour,
-	makeTour,
-} from 'layout/guided-tours/config-elements';
-import {
-	isAbTestInVariant,
-	isEnabled,
-	isNewUser,
-} from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
+import { ButtonRow, Continue, Next, Quit, Step, Tour, makeTour } from 'layout/guided-tours/config-elements';
 import { isDesktop } from 'lib/viewport';
+import { isAbTestInVariant, isEnabled, isNewUser } from 'state/ui/guided-tours/contexts';
+import { isPreviewShowing } from 'state/ui/selectors';
 
 export const ThemeSheetWelcomeTour = makeTour(
 	<Tour name="themeSheetWelcomeTour"

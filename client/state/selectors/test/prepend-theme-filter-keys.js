@@ -6,8 +6,8 @@ import { assert, expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { state } from './fixtures/theme-filters';
 import { prependThemeFilterKeys } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {
 	it( 'should handle invalid input', () => {

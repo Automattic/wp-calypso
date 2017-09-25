@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingStatus,
-	getStatus,
-} from '../selectors';
+import { isRequestingStatus, getStatus } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

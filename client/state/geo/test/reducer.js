@@ -7,15 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	GEO_RECEIVE,
-	GEO_REQUEST,
-	GEO_REQUEST_FAILURE,
-	GEO_REQUEST_SUCCESS,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { requesting, geo } from '../reducer';
+import { GEO_RECEIVE, GEO_REQUEST, GEO_REQUEST_FAILURE, GEO_REQUEST_SUCCESS, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );

@@ -3,10 +3,10 @@
  */
 import { expect } from 'chai';
 
-import {
-	processInboundChain,
-	processOutboundChain,
-} from '../';
+/**
+ * Internal dependencies
+ */
+import { processInboundChain, processOutboundChain } from '../';
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAILURE' };

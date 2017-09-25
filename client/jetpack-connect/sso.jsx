@@ -2,43 +2,43 @@
 /**
  * External dependencies
  */
+import cookie from 'cookie';
+import debugModule from 'debug';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { get, map } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import debugModule from 'debug';
-import { get, map } from 'lodash';
-import Gridicon from 'gridicons';
-import cookie from 'cookie';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { login } from 'lib/paths';
-import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
-import { getSSO } from 'state/jetpack-connect/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
-import config from 'config';
-import EmptyContent from 'components/empty-content';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import HelpButton from './help-button';
+import MainWrapper from './main-wrapper';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
-import { decodeEntities } from 'lib/formatting';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import Button from 'components/button';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
-import MainWrapper from './main-wrapper';
-import HelpButton from './help-button';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmptyContent from 'components/empty-content';
+import FormattedHeader from 'components/formatted-header';
+import Gravatar from 'components/gravatar';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import config from 'config';
+import analytics from 'lib/analytics';
+import { decodeEntities } from 'lib/formatting';
+import { login } from 'lib/paths';
+import addQueryArgs from 'lib/route/add-query-args';
+import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { getSSO } from 'state/jetpack-connect/selectors';
 
 /*
  * Module variables

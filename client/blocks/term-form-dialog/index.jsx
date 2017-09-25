@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get, find, noop, assign } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get, find, noop, assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import Dialog from 'components/dialog';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
 import viewport from 'lib/viewport';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { getTerms } from 'state/terms/selectors';
-import { addTerm, updateTerm } from 'state/terms/actions';
 import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { addTerm, updateTerm } from 'state/terms/actions';
+import { getTerms } from 'state/terms/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class TermFormDialog extends Component {
 	static initialState = {

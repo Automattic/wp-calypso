@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import { compact, map } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { navigation, sites, siteSelection } from 'my-sites/controller';
+import { Tabs } from './app/constants';
 import { settings } from './app/controller';
-import { Tabs } from './app/constants';
+import { navigation, sites, siteSelection } from 'my-sites/controller';
 
 export default function() {
 	const validTabSlugs = compact( map( Tabs, ( { slug } ) => slug ) ).join( '|' );

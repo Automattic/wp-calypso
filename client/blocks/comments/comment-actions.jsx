@@ -2,22 +2,22 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import classnames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { changeCommentStatus } from 'state/comments/actions';
-import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
+import CommentLikeButtonContainer from './comment-likes';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
+import { changeCommentStatus } from 'state/comments/actions';
 
 const CommentActions = ( {
 	post,

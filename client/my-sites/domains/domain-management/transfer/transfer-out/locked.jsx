@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import { displayRequestTransferCodeResponseNotice } from './shared';
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
-import { displayRequestTransferCodeResponseNotice } from './shared';
 import support from 'lib/url/support';
 
 class Locked extends React.Component {

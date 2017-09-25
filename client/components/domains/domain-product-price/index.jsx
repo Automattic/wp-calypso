@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PremiumPopover from 'components/plans/premium-popover';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 
 class DomainProductPrice extends React.Component {
 	static propTypes = {

@@ -1,35 +1,23 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop, values as objectValues } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	noop,
-	values as objectValues
-} from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import {
-	AspectRatios,
-	MinimumImageDimensions,
-} from 'state/ui/editor/image-editor/constants';
-import {
-	getImageEditorAspectRatio
-} from 'state/ui/editor/image-editor/selectors';
-import {
-	imageEditorRotateCounterclockwise,
-	imageEditorFlip,
-	setImageEditorAspectRatio
-} from 'state/ui/editor/image-editor/actions';
 import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
+import { imageEditorRotateCounterclockwise, imageEditorFlip, setImageEditorAspectRatio } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios, MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'state/ui/editor/image-editor/selectors';
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {

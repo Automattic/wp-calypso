@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { localize } from 'i18n-calypso';
 import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain } from 'lib/domains';
-import Header from 'my-sites/domains/domain-management/components/header';
-import { localize } from 'i18n-calypso';
-import Main from 'components/main';
-import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
 import MappedDomain from './mapped-domain';
-import paths from 'my-sites/domains/paths';
 import RegisteredDomain from './registered-domain';
-import { registrar as registrarNames } from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
-import { type as domainTypes } from 'lib/domains/constants';
 import WpcomDomain from './wpcom-domain';
+import Main from 'components/main';
+import { getSelectedDomain } from 'lib/domains';
+import { registrar as registrarNames } from 'lib/domains/constants';
+import { type as domainTypes } from 'lib/domains/constants';
+import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
 
 const Edit = React.createClass( {
 	render() {

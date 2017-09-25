@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import DayPicker from 'react-day-picker';
-import { noop, merge, map, filter, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { noop, merge, map, filter, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import DayPicker from 'react-day-picker';
 
 /**
  * Internal dependencies

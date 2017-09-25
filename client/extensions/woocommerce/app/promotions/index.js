@@ -1,23 +1,23 @@
 /**
- * External depedencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { fetchCouponsPage } from 'woocommerce/state/sites/coupons/actions';
-import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ActionHeader from 'woocommerce/components/action-header';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchCouponsPage } from 'woocommerce/state/sites/coupons/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class Promotions extends Component {
 	static propTypes = {

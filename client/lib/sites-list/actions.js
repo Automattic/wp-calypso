@@ -2,13 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:sites-list:actions' );
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
+
+const debug = debugFactory( 'calypso:sites-list:actions' );
 
 const SitesListActions = {
 	removeSitesNotices( logs ) {

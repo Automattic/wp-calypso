@@ -1,30 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight, partialRight, pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wrapSettingsForm from './wrap-settings-form';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 import Protect from './protect';
-import Sso from './sso';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
-} from 'state/selectors';
 import SpamFilteringSettings from './spam-filtering-settings';
+import Sso from './sso';
+import wrapSettingsForm from './wrap-settings-form';
+import Button from 'components/button';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+import SectionHeader from 'components/section-header';
 import { isATEnabled } from 'lib/automated-transfer';
+import { isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteSettingsFormSecurity extends Component {
 	renderSectionHeader( title, showButton = true, disableButton = false ) {

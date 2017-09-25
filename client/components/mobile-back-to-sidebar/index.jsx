@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 

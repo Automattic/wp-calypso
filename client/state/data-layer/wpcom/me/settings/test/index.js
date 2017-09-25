@@ -7,13 +7,10 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	updateUserSettings,
-	clearUnsavedUserSettings,
-} from 'state/user-settings/actions';
 
 describe( 'wpcom-api', () => {
 	let dispatch, settingsModule;

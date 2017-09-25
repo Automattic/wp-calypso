@@ -1,28 +1,25 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import debugModule from 'debug';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
-import { getSelectedSite } from 'state/ui/selectors';
-import syncSelectors from 'state/jetpack-sync/selectors';
-import {
-	getSyncStatus,
-	scheduleJetpackFullysync
-} from 'state/jetpack-sync/actions';
-import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
+import ProgressBar from 'components/progress-bar';
 import analytics from 'lib/analytics';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
+import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
+import syncSelectors from 'state/jetpack-sync/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /*
  * Module variables

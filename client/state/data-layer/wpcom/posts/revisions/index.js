@@ -7,16 +7,10 @@ import { flow, forEach, get, map, mapKeys, mapValues, omit, pick } from 'lodash'
  * Internal dependencies
  */
 import { countDiffWords, diffWords } from 'lib/text-utils';
-import {
-	POST_REVISIONS_REQUEST,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { POST_REVISIONS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	receivePostRevisions,
-	receivePostRevisionsSuccess,
-	receivePostRevisionsFailure,
-} from 'state/posts/revisions/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { receivePostRevisions, receivePostRevisionsSuccess, receivePostRevisionsFailure } from 'state/posts/revisions/actions';
 
 /**
  * Normalize a WP REST API Post Revisions resource for consumption in Calypso

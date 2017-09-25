@@ -1,21 +1,15 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	receiveRewindStatus,
-	receiveRewindStatusError,
-} from '../';
-import {
-	updateRewindStatus,
-	rewindStatusError,
-} from 'state/activity-log/actions';
+import { receiveRewindStatus, receiveRewindStatusError } from '../';
+import { updateRewindStatus, rewindStatusError } from 'state/activity-log/actions';
 
 const SITE_ID = 77203074;
 

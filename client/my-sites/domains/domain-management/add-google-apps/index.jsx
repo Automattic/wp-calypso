@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
 import AddEmailAddressesCard from './add-email-addresses-card';
-import paths from 'my-sites/domains/paths';
-import { hasGoogleAppsSupportedDomain } from 'lib/domains';
-import SectionHeader from 'components/section-header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import { hasGoogleAppsSupportedDomain } from 'lib/domains';
+import Header from 'my-sites/domains/domain-management/components/header';
+import paths from 'my-sites/domains/paths';
 
 class AddGoogleApps extends React.Component {
 	componentDidMount() {

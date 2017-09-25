@@ -1,17 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	STORED_CARDS_ADD_COMPLETED,
-	STORED_CARDS_FETCH,
-	STORED_CARDS_FETCH_COMPLETED,
-	STORED_CARDS_FETCH_FAILED,
-	STORED_CARDS_DELETE,
-	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
+import { STORED_CARDS_ADD_COMPLETED, STORED_CARDS_FETCH, STORED_CARDS_FETCH_COMPLETED, STORED_CARDS_FETCH_FAILED, STORED_CARDS_DELETE, STORED_CARDS_DELETE_COMPLETED, STORED_CARDS_DELETE_FAILED } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * `Reducer` function which handles request/response actions

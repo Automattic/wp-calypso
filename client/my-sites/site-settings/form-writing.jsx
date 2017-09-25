@@ -1,34 +1,30 @@
 /**
  * External dependencies
  */
+import { flowRight, get, pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wrapSettingsForm from './wrap-settings-form';
-import config from 'config';
-import PressThis from './press-this';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import QueryTaxonomies from 'components/data/query-taxonomies';
-import TaxonomyCard from './taxonomies/taxonomy-card';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import Masterbar from './masterbar';
 import MediaSettings from './media-settings';
-import ThemeEnhancements from './theme-enhancements';
+import PressThis from './press-this';
 import PublishingTools from './publishing-tools';
+import TaxonomyCard from './taxonomies/taxonomy-card';
+import ThemeEnhancements from './theme-enhancements';
+import wrapSettingsForm from './wrap-settings-form';
+import Button from 'components/button';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryTaxonomies from 'components/data/query-taxonomies';
+import SectionHeader from 'components/section-header';
+import config from 'config';
+import { requestPostTypes } from 'state/post-types/actions';
+import { isJetpackSite, isJetpackMinimumVersion, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {

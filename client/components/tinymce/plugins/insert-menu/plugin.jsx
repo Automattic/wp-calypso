@@ -2,11 +2,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import tinymce from 'tinymce/tinymce';
-import { renderToString } from 'react-dom/server';
-import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import i18n from 'i18n-calypso';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies

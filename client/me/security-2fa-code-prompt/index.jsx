@@ -1,31 +1,30 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 /**
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-
-import FormLabel from 'components/forms/form-label';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTelInput from 'components/forms/form-tel-input';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import analytics from 'lib/analytics';
-import constants from 'me/constants';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTelInput from 'components/forms/form-tel-input';
 import Notice from 'components/notice';
+
+import analytics from 'lib/analytics';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import constants from 'me/constants';
+const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 export default localize( React.createClass( {
 

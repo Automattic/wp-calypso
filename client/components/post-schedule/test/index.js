@@ -6,14 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	is12hr,
-	isValidGMTOffset,
-	getLocalizedDate,
-	convertHoursToHHMM,
-	convertMinutesToHHMM,
-	parseAndValidateNumber,
-} from '../utils';
+import { is12hr, isValidGMTOffset, getLocalizedDate, convertHoursToHHMM, convertMinutesToHHMM, parseAndValidateNumber } from '../utils';
 
 describe( 'is12hr', () => {
 	it( 'Should return true for a 12-hour time format', () => {

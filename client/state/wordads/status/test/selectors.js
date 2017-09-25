@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isSiteWordadsUnsafe,
-	isRequestingWordadsStatus
-} from '../selectors';
+import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {

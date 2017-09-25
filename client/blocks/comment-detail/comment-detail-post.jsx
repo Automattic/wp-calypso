@@ -1,21 +1,17 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import SiteIcon from 'blocks/site-icon';
 import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
-import SiteIcon from 'blocks/site-icon';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 export const CommentDetailPost = ( {
 	commentId,

@@ -1,40 +1,24 @@
-/* eslint wpcalypso/i18n-ellipsis: 0 */
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import FilteredList from 'woocommerce/components/filtered-list';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { decodeEntities } from 'lib/formatting';
-import {
-	getShippingZoneLocationsWithEdits,
-	canLocationsBeFiltered,
-	canLocationsBeFilteredByState,
-	areLocationsFilteredByPostcode,
-	areLocationsFilteredByState,
-	areLocationsUnfiltered,
-	getCurrentlyEditingShippingZoneStates,
-	getCurrentSelectedCountryZoneOwner,
-} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import {
-	filterByWholeCountry,
-	filterByState,
-	filterByPostcode,
-	toggleStateSelected,
-	editPostcode,
-} from 'woocommerce/state/ui/shipping/zones/locations/actions';
+import FilteredList from 'woocommerce/components/filtered-list';
+import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import { filterByWholeCountry, filterByState, filterByPostcode, toggleStateSelected, editPostcode } from 'woocommerce/state/ui/shipping/zones/locations/actions';
+import { getShippingZoneLocationsWithEdits, canLocationsBeFiltered, canLocationsBeFilteredByState, areLocationsFilteredByPostcode, areLocationsFilteredByState, areLocationsUnfiltered, getCurrentlyEditingShippingZoneStates, getCurrentSelectedCountryZoneOwner } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
 const ShippingZoneLocationDialogSettings = ( {
 		canFilter,
@@ -139,8 +123,7 @@ const ShippingZoneLocationDialogSettings = ( {
 						value={ postcode || '' }
 						onChange={ onPostcodeChange } />
 					<p>
-						{ translate( 'Postcodes containing wildcards (e.g. CB23*) ' +
-							'and fully numeric ranges (e.g. 90210...99000) are also supported.' ) }
+						{ translate( Postcodes containing wildcards (e.g. CB23*) and fully numeric ranges (e.g. 90210…99000) are also supported. ) }
 					</p>
 				</FormFieldSet>
 			);

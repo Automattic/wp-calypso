@@ -7,23 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_DELETE_CACHE,
-	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
-	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
-	WP_SUPER_CACHE_PRELOAD_CACHE,
-	WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE,
-	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
-	WP_SUPER_CACHE_TEST_CACHE,
-	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
-	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
-} from '../../action-types';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+import { WP_SUPER_CACHE_DELETE_CACHE, WP_SUPER_CACHE_DELETE_CACHE_FAILURE, WP_SUPER_CACHE_DELETE_CACHE_SUCCESS, WP_SUPER_CACHE_PRELOAD_CACHE, WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE, WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, WP_SUPER_CACHE_TEST_CACHE, WP_SUPER_CACHE_TEST_CACHE_FAILURE, WP_SUPER_CACHE_TEST_CACHE_SUCCESS } from '../../action-types';
 import reducer from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

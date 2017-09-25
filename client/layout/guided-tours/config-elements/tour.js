@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-	find,
-} from 'lodash';
+import { Component } from 'react';
 
 /**
  * Internal dependencies

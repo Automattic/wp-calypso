@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-modules */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,12 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
+import Site from 'lib/site';
+import sitesFactory from 'lib/sites-list';
 import { receiveSiteUpdates, receiveSite } from 'state/sites/actions';
 import { getSite } from 'state/sites/selectors';
 
-import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
-import Site from 'lib/site';
 
 /**
  * Redux store enhancer which binds to the application-wide sites-list

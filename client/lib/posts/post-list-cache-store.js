@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import { intersection } from 'lodash';
 import debugFactory from 'debug';
+import { intersection } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import sitesFactory from 'lib/sites-list';
+import PostListStoreFactory from './post-list-store-factory';
 import Dispatcher from 'dispatcher';
+import sitesFactory from 'lib/sites-list';
 import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
 
-import PostListStoreFactory from './post-list-store-factory';
 const PostListStore = PostListStoreFactory();
 
 let cache = {};

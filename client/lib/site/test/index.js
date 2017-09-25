@@ -4,6 +4,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+/**
+ * Internal dependencies
+ */
 import Site from '..';
 
 describe( 'Calypso Site', () => {

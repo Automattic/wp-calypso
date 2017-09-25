@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { parse as parseUrl } from 'url';
 import page from 'page';
 import qs from 'qs';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
+import WPLogin from './wp-login';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
+import { parse as parseUrl } from 'url';
 
 const enhanceContextWithLogin = context => {
 	const {

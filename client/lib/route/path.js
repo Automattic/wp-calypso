@@ -4,7 +4,7 @@
 import { includes } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import trailingslashit from './trailingslashit';
 import untrailingslashit from './untrailingslashit';

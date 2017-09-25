@@ -2,14 +2,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { entries } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -27,18 +26,15 @@ import FormRadiosBarExample from 'components/forms/form-radios-bar/docs/example'
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormStateSelector from 'components/forms/us-state-selector';
 import FormTelInput from 'components/forms/form-tel-input';
-import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextarea from 'components/forms/form-textarea';
 import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormStateSelector from 'components/forms/us-state-selector';
 import PhoneInput from 'components/phone-input';
-
-/**
- * Internal dependencies
- */
 import { forSms } from 'lib/countries-list';
 import { CURRENCIES } from 'lib/format-currency/currencies';
 

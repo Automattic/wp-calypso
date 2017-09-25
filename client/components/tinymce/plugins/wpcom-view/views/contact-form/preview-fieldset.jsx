@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { omit } from 'lodash';
+import React from 'react';
 
 export default React.createClass( {
 	displayName: 'ContactFormViewPreviewFieldset',

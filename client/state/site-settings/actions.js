@@ -1,18 +1,9 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import {
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_REQUEST,
-	SITE_SETTINGS_REQUEST_FAILURE,
-	SITE_SETTINGS_REQUEST_SUCCESS,
-	SITE_SETTINGS_SAVE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE
-} from 'state/action-types';
 import { normalizeSettings } from './utils';
+import wpcom from 'lib/wp';
+import { SITE_SETTINGS_RECEIVE, SITE_SETTINGS_REQUEST, SITE_SETTINGS_REQUEST_FAILURE, SITE_SETTINGS_REQUEST_SUCCESS, SITE_SETTINGS_SAVE, SITE_SETTINGS_SAVE_FAILURE, SITE_SETTINGS_SAVE_SUCCESS, SITE_SETTINGS_UPDATE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.

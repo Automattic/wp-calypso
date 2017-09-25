@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteByUrl } from 'state/sites/selectors';
+import { AUTH_ATTEMPS_TTL } from './constants';
 import { isStale } from './utils';
 import { urlToSlug } from 'lib/url';
-import { AUTH_ATTEMPS_TTL } from './constants';
+import { getSiteByUrl } from 'state/sites/selectors';
 
 const getJetpackSiteByUrl = ( state, url ) => {
 	const site = getSiteByUrl( state, url );

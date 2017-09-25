@@ -6,14 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCurrentlyEditingReviewReplyId,
-	getCurrentlyEditingReviewId,
-	getReviewReplyEdits,
-	getReviewReplyWithEdits,
-	isCurrentlyEditingReviewReply,
-} from '../selectors';
-
+import { getCurrentlyEditingReviewReplyId, getCurrentlyEditingReviewId, getReviewReplyEdits, getReviewReplyWithEdits, isCurrentlyEditingReviewReply } from '../selectors';
 import reviewReplies from 'woocommerce/state/sites/review-replies/test/fixtures/review-replies';
 
 const preInitializedState = {

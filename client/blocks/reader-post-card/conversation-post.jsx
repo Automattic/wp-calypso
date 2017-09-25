@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ConversationPostList from 'blocks/conversations/list';
 import CompactPostCard from 'blocks/reader-post-card/compact';

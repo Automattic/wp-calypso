@@ -2,29 +2,26 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import page from 'page';
-import qs from 'querystring';
-import ReactClass from 'react/lib/ReactClass';
 import i18n, { setLocale } from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
-import url from 'url';
+import page from 'page';
+import ReactClass from 'react/lib/ReactClass';
 
 /**
  * Internal dependencies
  */
-import accessibleFocus from 'lib/accessible-focus';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
-import { receiveUser } from 'state/users/actions';
-import {
-	setCurrentUserId,
-	setCurrentUserFlags
-} from 'state/current-user/actions';
-import { setRoute as setRouteAction } from 'state/ui/actions';
+import accessibleFocus from 'lib/accessible-focus';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
-
+import { bindState as bindWpLocaleState } from 'lib/wp/localization';
+import qs from 'querystring';
 import sections from 'sections';
+
+import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
+import { setRoute as setRouteAction } from 'state/ui/actions';
+import { receiveUser } from 'state/users/actions';
+import url from 'url';
 
 const debug = debugFactory( 'calypso' );
 

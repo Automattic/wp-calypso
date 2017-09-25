@@ -7,29 +7,18 @@ import { find, isObject, isFunction, isEqual, compact } from 'lodash';
 /**
  * Internal dependencies
  */
-// TODO: Remove this when product edits have siteIds.
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
-import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
-import { getProduct } from 'woocommerce/state/sites/products/selectors';
-import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { actionListStepNext, actionListStepSuccess, actionListStepFailure, actionListClear } from 'woocommerce/state/action-list/actions';
+import { WOOCOMMERCE_PRODUCT_EDIT, WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT, WOOCOMMERCE_PRODUCT_CATEGORY_EDIT, WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
+import { createProductVariation, updateProductVariation, deleteProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
-import { createProductVariation, updateProductVariation, deleteProductVariation } from 'woocommerce/state/sites/product-variations/actions';
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
-import {
-	actionListStepNext,
-	actionListStepSuccess,
-	actionListStepFailure,
-	actionListClear,
-} from 'woocommerce/state/action-list/actions';
-import {
-	WOOCOMMERCE_PRODUCT_EDIT,
-	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
-	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
-	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
-} from 'woocommerce/state/action-types';
+import { getProduct } from 'woocommerce/state/sites/products/selectors';
+import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
+import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],

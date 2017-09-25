@@ -6,12 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	getThemeFilterTerm,
-	isValidThemeFilterTerm,
-	getThemeFilterStringFromTerm,
-	getThemeFilterTermFromString,
-} from 'state/selectors';
+import { getThemeFilterTerm, isValidThemeFilterTerm, getThemeFilterStringFromTerm, getThemeFilterTermFromString } from 'state/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

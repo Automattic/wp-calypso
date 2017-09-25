@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:feed-store:post-list-store' );
+import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import FeedPostStore from 'lib/feed-post-store';
-import { action as ActionTypes } from './constants';
-import { setLastStoreId } from 'reader/controller-helper';
 import * as FeedStreamActions from './actions';
+import { action as ActionTypes } from './constants';
+import FeedPostStore from 'lib/feed-post-store';
+import Emitter from 'lib/mixins/emitter';
+import { setLastStoreId } from 'reader/controller-helper';
+
+const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
 export default class PagedStream {
 	constructor( spec ) {

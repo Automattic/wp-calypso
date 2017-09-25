@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react' ;
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import { getTld } from 'lib/domains';
 import EmptyContent from 'components/empty-content';
+import { getTld } from 'lib/domains';
 
 const MaintenanceCard = ( { selectedDomainName, translate } ) => {
 	const tld = getTld( selectedDomainName );

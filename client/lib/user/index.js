@@ -1,13 +1,9 @@
 /**
- * External Dependencies
+ * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
-/**
- * Internal Dependencies
- */
-import { action as InvitesActionTypes } from 'lib/invites/constants';
 import User from './user';
+import Dispatcher from 'dispatcher';
+import { action as InvitesActionTypes } from 'lib/invites/constants';
 let _user = false;
 
 export default function() {

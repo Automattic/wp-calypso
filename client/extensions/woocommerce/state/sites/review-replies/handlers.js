@@ -2,11 +2,8 @@
  * Internal dependencies
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { WOOCOMMERCE_REVIEW_REPLIES_UPDATED, WOOCOMMERCE_REVIEW_REPLIES_REQUEST } from 'woocommerce/state/action-types';
 import request from 'woocommerce/state/sites/http-request';
-import {
-	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
-	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
-} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_REVIEW_REPLIES_REQUEST ]: [ dispatchRequest(

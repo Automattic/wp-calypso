@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { isFunction, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 class MasterbarItem extends Component {
 	static propTypes = {

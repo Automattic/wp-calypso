@@ -1,14 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	SUPPORT_USER_ACTIVATE,
-	SUPPORT_USER_ERROR,
-	SUPPORT_USER_PREFILL,
-	SUPPORT_USER_SET_USERNAME,
-	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_TOGGLE_DIALOG,
-} from 'state/action-types';
+import { SUPPORT_USER_ACTIVATE, SUPPORT_USER_ERROR, SUPPORT_USER_PREFILL, SUPPORT_USER_SET_USERNAME, SUPPORT_USER_TOKEN_FETCH, SUPPORT_USER_TOGGLE_DIALOG } from 'state/action-types';
 
 /**
  * Dispatched when a support user token is being fetched

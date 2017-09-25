@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+
 /**
  * Internal dependencies
  */

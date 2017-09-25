@@ -2,13 +2,8 @@
  * Internal dependencies
  */
 import productListSchema from './schema';
+import { SIMPLE_PAYMENTS_PRODUCT_RECEIVE, SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE, SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE, SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-} from 'state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.

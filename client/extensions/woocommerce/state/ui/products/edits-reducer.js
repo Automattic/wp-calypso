@@ -2,23 +2,14 @@
  * External dependencies
  */
 import { compact, isEqual, filter, uniqueId } from 'lodash';
-import { createReducer } from 'state/utils';
 
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PRODUCT_CREATE,
-	WOOCOMMERCE_PRODUCT_DELETE,
-	WOOCOMMERCE_PRODUCT_EDIT,
-	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
-	WOOCOMMERCE_PRODUCT_UPDATE,
-	WOOCOMMERCE_PRODUCT_UPDATED,
-	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
-	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
-	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
+import { createReducer } from 'state/utils';
+
+import { WOOCOMMERCE_PRODUCT_CREATE, WOOCOMMERCE_PRODUCT_DELETE, WOOCOMMERCE_PRODUCT_EDIT, WOOCOMMERCE_PRODUCT_EDIT_CLEAR, WOOCOMMERCE_PRODUCT_UPDATE, WOOCOMMERCE_PRODUCT_UPDATED, WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT, WOOCOMMERCE_PRODUCT_CATEGORY_CREATE, WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,

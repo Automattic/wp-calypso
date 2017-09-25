@@ -1,35 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, partial } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
+import ExternalLink from 'components/external-link';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import InfoPopover from 'components/info-popover';
+import SectionHeader from 'components/section-header';
+import config from 'config';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import {
-	getSiteMonitorSettings,
-	isActivatingJetpackModule,
-	isDeactivatingJetpackModule,
-	isFetchingJetpackModules,
-	isJetpackModuleActive,
-	isRequestingSiteMonitorSettings,
-	isUpdatingSiteMonitorSettings
-} from 'state/selectors';
+import { getSiteMonitorSettings, isActivatingJetpackModule, isDeactivatingJetpackModule, isFetchingJetpackModules, isJetpackModuleActive, isRequestingSiteMonitorSettings, isUpdatingSiteMonitorSettings } from 'state/selectors';
+import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};

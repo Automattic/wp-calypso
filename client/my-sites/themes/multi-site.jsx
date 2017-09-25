@@ -6,10 +6,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
+import ThemesSiteSelectorModal from './themes-site-selector-modal';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 const MultiSiteThemeShowcase = connectOptions(
 	( props ) => (

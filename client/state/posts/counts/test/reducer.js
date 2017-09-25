@@ -7,24 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer, { requesting, counts } from '../reducer';
+import { CURRENT_USER_ID_SET, POST_COUNTS_RECEIVE, POST_COUNTS_REQUEST, POST_COUNTS_REQUEST_SUCCESS, POST_COUNTS_REQUEST_FAILURE, POST_COUNTS_RESET_INTERNAL_STATE, POST_DELETE, POST_SAVE, POSTS_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	CURRENT_USER_ID_SET,
-	POST_COUNTS_RECEIVE,
-	POST_COUNTS_REQUEST,
-	POST_COUNTS_REQUEST_SUCCESS,
-	POST_COUNTS_REQUEST_FAILURE,
-	POST_COUNTS_RESET_INTERNAL_STATE,
-	POST_DELETE,
-	POST_SAVE,
-	POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import reducer, {
-	requesting,
-	counts
-} from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

@@ -2,9 +2,9 @@
 /**
  * External dependencies
  */
+import { take, map, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { take, map, values } from 'lodash';
 
 const ReaderFullPostHeaderTags = ( { tags } ) => {
 	const numberOfTagsToDisplay = 5;

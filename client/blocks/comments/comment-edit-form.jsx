@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
 import Notice from 'components/notice';
-import { editComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent } from 'reader/stats';
+import { editComment } from 'state/comments/actions';
 
 class PostCommentForm extends Component {
 	constructor( props ) {

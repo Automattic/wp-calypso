@@ -1,21 +1,19 @@
-import React, { Component } from 'react';
-import url from 'url';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import qs from 'querystring';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import classnames from 'classnames';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
+import qs from 'querystring';
 import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
+import url from 'url';
 
 export class Gravatar extends Component {
 	constructor() {

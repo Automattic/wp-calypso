@@ -1,14 +1,10 @@
 /**
  * Internal dependencies
  */
+import { PLANS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { PLANS_REQUEST } from 'state/action-types';
-import {
-	plansReceiveAction,
-	plansRequestFailureAction,
-	plansRequestSuccessAction,
-} from 'state/plans/actions';
+import { plansReceiveAction, plansRequestFailureAction, plansRequestSuccessAction } from 'state/plans/actions';
 
 /**
  * @module state/data-layer/wpcom/plans

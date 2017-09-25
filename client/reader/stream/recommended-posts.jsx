@@ -1,22 +1,21 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { map, partial, some } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { map, partial, some } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import PostStore from 'lib/feed-post-store';
-import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
+import PostStore from 'lib/feed-post-store';
 import { dismissPost } from 'lib/feed-stream-store/actions';
+import { recordAction, recordTrackForPost } from 'reader/stats';
 
 function dismissRecommendation( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {

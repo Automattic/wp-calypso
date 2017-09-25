@@ -1,9 +1,13 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import page from 'page';
-import userFactory from 'lib/user';
+
+/**
+ * Internal dependencies
+ */
 import { canAddGoogleApps } from 'lib/domains';
+import userFactory from 'lib/user';
 
 const user = userFactory();
 

@@ -1,39 +1,30 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { compact, find, get, identity, overSome } from 'lodash';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import {
-	compact,
-	find,
-	get,
-	identity,
-	overSome
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
+import FacebookPreview from 'components/seo/facebook-preview';
 import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
+import TwitterPreview from 'components/seo/twitter-preview';
 import VerticalMenu from 'components/vertical-menu';
+import { SocialItem } from 'components/vertical-menu/items';
+import { parseHtml } from 'lib/formatting';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import { parseHtml } from 'lib/formatting';
-import { SocialItem } from 'components/vertical-menu/items';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getSeoTitle } from 'state/sites/selectors';
-import {
-	getSectionName,
-	getSelectedSite
-} from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSectionName, getSelectedSite } from 'state/ui/selectors';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 const hasBusinessPlan = overSome( isBusiness, isEnterprise );

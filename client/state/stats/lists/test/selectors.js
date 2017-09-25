@@ -6,17 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getSiteStatsMaxPostsByDay,
-	getSiteStatsForQuery,
-	getSiteStatsPostStreakData,
-	getSiteStatsPostsCountByDay,
-	getSiteStatsTotalPostsForStreakQuery,
-	getSiteStatsNormalizedData,
-	isRequestingSiteStatsForQuery,
-	getSiteStatsCSVData,
-	hasSiteStatsQueryFailed,
-} from '../selectors';
+import { getSiteStatsMaxPostsByDay, getSiteStatsForQuery, getSiteStatsPostStreakData, getSiteStatsPostsCountByDay, getSiteStatsTotalPostsForStreakQuery, getSiteStatsNormalizedData, isRequestingSiteStatsForQuery, getSiteStatsCSVData, hasSiteStatsQueryFailed } from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {

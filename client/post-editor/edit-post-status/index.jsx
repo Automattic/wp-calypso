@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import Revisions from 'post-editor/editor-revisions';
-import postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
-import siteUtils from 'lib/site/utils';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import postUtils from 'lib/posts/utils';
+import siteUtils from 'lib/site/utils';
 import EditorPublishDate from 'post-editor/editor-publish-date';
+import Revisions from 'post-editor/editor-revisions';
 import EditorVisibility from 'post-editor/editor-visibility';
+import { editPost } from 'state/posts/actions';
+import { getEditedPost } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class EditPostStatus extends Component {
 

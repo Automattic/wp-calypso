@@ -4,17 +4,17 @@
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
-import ReactDom from 'react-dom';
 import React from 'react';
-import url from 'url';
-import qs from 'querystring';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import analytics from 'lib/analytics';
 
-import EmptyContent from 'components/empty-content';
+import qs from 'querystring';
+import url from 'url';
 
 /**
  * Module variables

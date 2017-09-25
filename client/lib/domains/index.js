@@ -2,17 +2,13 @@
  * External dependencies
  */
 import inherits from 'inherits';
-import {
-	some,
-	includes,
-	find
-} from 'lodash';
+import { some, includes, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
+import wpcom from 'lib/wp';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
 	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];

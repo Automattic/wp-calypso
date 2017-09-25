@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
-import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
-import Main from 'components/main';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderNotes from './order-notes';
+import Button from 'components/button';
+import Main from 'components/main';
+import ActionHeader from 'woocommerce/components/action-header';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
+import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class Order extends Component {
 	state = {

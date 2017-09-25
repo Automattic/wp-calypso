@@ -7,18 +7,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_DELETE,
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-	NOTICE_CREATE
-} from 'state/action-types';
-import {
-	createPlaceholderComment,
-	dispatchNewCommentRequest,
-	updatePlaceholderComment,
-	handleWriteCommentFailure,
-} from '../utils';
+import { createPlaceholderComment, dispatchNewCommentRequest, updatePlaceholderComment, handleWriteCommentFailure } from '../utils';
+import { COMMENTS_DELETE, COMMENTS_RECEIVE, COMMENTS_COUNT_INCREMENT, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 

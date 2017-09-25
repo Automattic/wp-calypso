@@ -1,11 +1,12 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
-import {
-	nativeToRaw,
-	rawToNative,
-	fromApi,
-	toApi,
-} from '../mappings';
+/**
+ * Internal dependencies
+ */
+import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 
 describe( 'SEO', () => {
 	describe( 'Title Format Editor', () => {

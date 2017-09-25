@@ -1,21 +1,17 @@
 /**
  * External dependencies
  */
-import { Me } from 'wpcom';
-import inherits from 'inherits';
 import debugFactory from 'debug';
+import inherits from 'inherits';
+import { Me } from 'wpcom';
 
 /**
  * Internal dependencies
  */
 import MePreferences from './me-preferences.js';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
-
-/**
- * Internal dependencies.
- */
-import config from 'config';
 
 /**
  * Create an UndocumentedMe instance

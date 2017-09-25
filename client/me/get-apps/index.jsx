@@ -6,11 +6,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import Main from 'components/main';
-import GetAppsIllustration from './illustration.jsx';
 import DesktopDownloadCard from './desktop-download-card.jsx';
+import GetAppsIllustration from './illustration.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 
 export const GetApps = () => {
 	return (

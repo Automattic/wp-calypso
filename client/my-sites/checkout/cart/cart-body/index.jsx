@@ -2,14 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CartItems from 'my-sites/checkout/cart/cart-items';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import CartItems from 'my-sites/checkout/cart/cart-items';
 import CartTotal from 'my-sites/checkout/cart/cart-total';
 
 class CartBody extends React.PureComponent {

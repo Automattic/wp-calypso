@@ -1,26 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import ShippingZoneLocationDialogCountries from './shipping-zone-location-dialog-countries';
 import ShippingZoneLocationDialogSettings from './shipping-zone-location-dialog-settings';
+import Dialog from 'components/dialog';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import {
-	closeEditLocations,
-	cancelEditLocations,
-} from 'woocommerce/state/ui/shipping/zones/locations/actions';
-import {
-	isEditLocationsModalOpen,
-	areCurrentlyEditingShippingZoneLocationsValid,
-} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+import { closeEditLocations, cancelEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
+import { isEditLocationsModalOpen, areCurrentlyEditingShippingZoneLocationsValid } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
 const ShippingZoneLocationDialog = ( { siteId, isVisible, isAdding, translate, actions, canSave } ) => {
 	if ( ! isVisible ) {

@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import WebPreviewContent from './content';
+import RootChild from 'components/root-child';
 import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
-import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
-import { setPreviewShowing } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import WebPreviewContent from './content';
+import { setPreviewShowing } from 'state/ui/actions';
 
 export class WebPreview extends PureComponent {
 	constructor( props ) {

@@ -1,49 +1,31 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { noop, isEqual, partial } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-	noop,
-	isEqual,
-	partial
-} from 'lodash';
-import path from 'path';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import Notice from 'components/notice';
+import ImageEditorButtons from './image-editor-buttons';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
-import ImageEditorButtons from './image-editor-buttons';
-import MediaUtils from 'lib/media/utils';
-import {
-	resetImageEditorState,
-	resetAllImageEditorState,
-	setImageEditorFileInfo,
-	setImageEditorDefaultAspectRatio
-} from 'state/ui/editor/image-editor/actions';
-import {
-	getImageEditorFileInfo,
-	isImageEditorImageLoaded
-} from 'state/ui/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getDefaultAspectRatio } from './utils';
+import CloseOnEscape from 'components/close-on-escape';
 import QuerySites from 'components/data/query-sites';
-import {
-	AspectRatios,
-	AspectRatiosValues
-} from 'state/ui/editor/image-editor/constants';
-import {
-	getDefaultAspectRatio
-} from './utils';
+import Notice from 'components/notice';
+import MediaUtils from 'lib/media/utils';
+import path from 'path';
+import { getSite } from 'state/sites/selectors';
+import { resetImageEditorState, resetAllImageEditorState, setImageEditorFileInfo, setImageEditorDefaultAspectRatio } from 'state/ui/editor/image-editor/actions';
+import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
+import { getImageEditorFileInfo, isImageEditorImageLoaded } from 'state/ui/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class ImageEditor extends React.Component {
 	static propTypes = {

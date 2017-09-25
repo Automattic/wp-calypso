@@ -2,11 +2,7 @@
  * Internal dependencies
  */
 import * as api from '../../api';
-import {
-	WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
-	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
-	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
-} from '../action-types';
+import { WOOCOMMERCE_SERVICES_LABELS_INIT_FORM, WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE, WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY } from '../action-types';
 import { getLabelSettingsForm, getLabelSettingsFormData } from './selectors';
 
 export const initForm = ( siteId, storeOptions, formData, formMeta ) => {

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { get, includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,10 +1,10 @@
-/*
+/**
  * External dependencies
  */
 import debugModule from 'debug';
 import { noop } from 'lodash';
 
-/*
+/**
  * Internal dependencies
  */
 import config from 'config';

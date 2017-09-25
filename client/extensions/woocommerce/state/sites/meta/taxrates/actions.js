@@ -1,16 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	areTaxRatesLoaded,
-	areTaxRatesLoading,
-} from './selectors';
 import { setError } from '../../status/wc-api/actions';
-import {
-	WOOCOMMERCE_TAXRATES_REQUEST,
-	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { areTaxRatesLoaded, areTaxRatesLoading } from './selectors';
 import wp from 'lib/wp';
+import { WOOCOMMERCE_TAXRATES_REQUEST, WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispatch, getState ) => {
 	if ( areTaxRatesLoading( getState(), siteId ) ) {

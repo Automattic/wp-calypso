@@ -7,14 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	USER_SUGGESTIONS_RECEIVE,
-	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
 import { items, requesting } from '../reducer';
+import { USER_SUGGESTIONS_RECEIVE, USER_SUGGESTIONS_REQUEST, USER_SUGGESTIONS_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

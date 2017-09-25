@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getOrderStatusList } from 'woocommerce/lib/order-status';
 import FormSelect from 'components/forms/form-select';
+import { getOrderStatusList } from 'woocommerce/lib/order-status';
 
 function OrderStatusSelect( { onChange, value } ) {
 	const statuses = getOrderStatusList();

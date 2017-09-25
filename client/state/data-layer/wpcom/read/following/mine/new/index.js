@@ -1,23 +1,23 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { translate } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import config from 'config';
-import { READER_FOLLOW } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
-import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
+import { READER_FOLLOW } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
+import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
+import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 
 export function requestFollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;

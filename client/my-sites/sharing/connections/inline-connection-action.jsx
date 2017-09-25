@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import ServiceAction from './service-action';
+import requestExternalAccess from 'lib/sharing';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import { getKeyringConnections } from 'state/sharing/keyring/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import requestExternalAccess from 'lib/sharing';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
 export const getNamedConnectedService = ( state, name ) => getKeyringConnections( state ).filter( item => item.service === name );

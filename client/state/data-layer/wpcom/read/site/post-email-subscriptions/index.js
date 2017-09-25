@@ -1,10 +1,10 @@
 /** @format */
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import unsubscribe from './delete';
 import subscribe from './new';
 import update from './update';
-import unsubscribe from './delete';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 export default mergeHandlers( subscribe, update, unsubscribe );

@@ -1,30 +1,29 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import page from 'page';
 
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:posts' );
-import i18n from 'i18n-calypso';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import route from 'lib/route';
-
 import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
-import trackScrollPage from 'lib/track-scroll-page';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { areAllSitesSingleUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import route from 'lib/route';
+import trackScrollPage from 'lib/track-scroll-page';
 
 import Posts from 'my-sites/posts/main';
+import { getCurrentUserId } from 'state/current-user/selectors';
+
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { areAllSitesSingleUser } from 'state/selectors';
+import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+const debug = debugFactory( 'calypso:my-sites:posts' );
 
 export default {
 

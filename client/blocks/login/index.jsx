@@ -1,37 +1,30 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { includes, capitalize } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-import { includes, capitalize } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import {
-	getRedirectTo,
-	getRequestNotice,
-	getTwoFactorNotificationSent,
-	isTwoFactorEnabled,
-	getSocialAccountIsLinking,
-	getSocialAccountLinkService,
-} from 'state/login/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SocialConnectPrompt from './social-connect-prompt';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import { login } from 'lib/paths';
 import Notice from 'components/notice';
-import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { login } from 'lib/paths';
 import userFactory from 'lib/user';
-import SocialConnectPrompt from './social-connect-prompt';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getRedirectTo, getRequestNotice, getTwoFactorNotificationSent, isTwoFactorEnabled, getSocialAccountIsLinking, getSocialAccountLinkService } from 'state/login/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 const user = userFactory();
 

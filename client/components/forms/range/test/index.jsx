@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import ReactDom from 'react-dom';
-import Gridicon from 'gridicons';
-import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
+import Gridicon from 'gridicons';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies

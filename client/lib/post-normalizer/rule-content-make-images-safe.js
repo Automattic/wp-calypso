@@ -1,14 +1,14 @@
 /**
-* External Dependencies
-*/
-import url from 'url';
+ * External dependencies
+ */
 import { forEach, startsWith, some, includes, filter } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
+import safeImageURL from 'lib/safe-image-url';
+import url from 'url';
 
 const TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 

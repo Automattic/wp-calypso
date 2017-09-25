@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
+import ProductVariationTypesForm from './product-variation-types-form';
+import FoldableCard from 'components/foldable-card';
 import FormToggle from 'components/forms/form-toggle';
 
 class ProductFormVariationsCard extends Component {

@@ -1,19 +1,19 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import i18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
 import React from 'react';
+import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { sectionify } from 'lib/route/path';
 import analytics from 'lib/analytics';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
+import { sectionify } from 'lib/route/path';
 import CustomizeComponent from 'my-sites/customize/main';
+
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export function customize( context ) {
 	const basePath = sectionify( context.path );

@@ -1,13 +1,13 @@
 /**
+ * External dependencies
+ */
+import { pick } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	WORDADS_STATUS_REQUEST,
-	WORDADS_STATUS_REQUEST_SUCCESS,
-	WORDADS_STATUS_REQUEST_FAILURE
-} from 'state/action-types';
-import { pick } from 'lodash';
+import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_REQUEST_SUCCESS, WORDADS_STATUS_REQUEST_FAILURE } from 'state/action-types';
 
 export function requestWordadsStatus( siteId ) {
 	return ( dispatch ) => {

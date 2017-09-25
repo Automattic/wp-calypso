@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import EmptyContent from 'components/empty-content';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { getPrimaryDomainBySiteId } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';

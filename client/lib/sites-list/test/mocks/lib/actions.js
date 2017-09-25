@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from '../../fixtures/site';
 
 const Actions = {

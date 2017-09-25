@@ -3,17 +3,14 @@
  */
 import validator from 'is-my-json-valid';
 import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
-import LRU from 'lru-cache';
+import { combineReducers as combine } from 'redux';
 
 /**
  * Internal dependencies
  */
-import {
-	DESERIALIZE,
-	SERIALIZE,
-} from './action-types';
+import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
+import LRU from 'lru-cache';
 
 export function isValidStateWithSchema( state, schema ) {
 	const validate = validator( schema );

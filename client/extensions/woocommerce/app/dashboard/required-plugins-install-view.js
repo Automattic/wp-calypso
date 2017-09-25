@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
-import analytics from 'lib/analytics';
+import SetupHeader from './setup-header';
 import Button from 'components/button';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import ProgressBar from 'components/progress-bar';
+import analytics from 'lib/analytics';
+import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 
 class RequiredPluginsInstallView extends Component {

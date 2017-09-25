@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, pick, compact, escape, unescape } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import TokenField from 'components/token-field';
 import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)

@@ -1,22 +1,22 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { createElement } from 'react';
-import page from 'page';
 import { translate } from 'i18n-calypso';
+import page from 'page';
+import { createElement } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import notices from 'notices';
+import SharingButtons from './buttons/buttons';
+import SharingConnections from './connections/connections';
+import Sharing from './main';
 import { pageView } from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { sectionify } from 'lib/route';
-import Sharing from './main';
-import SharingButtons from './buttons/buttons';
-import SharingConnections from './connections/connections';
-import sites from 'lib/sites-list';
 import utils from 'lib/site/utils';
+import sites from 'lib/sites-list';
+import notices from 'notices';
 
 const analyticsPageTitle = 'Sharing';
 

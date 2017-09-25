@@ -1,31 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { range } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import EmptyContent from 'components/empty-content';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
-import {
-	areReviewsLoading,
-	areReviewsLoaded,
-	getReviews,
-	getTotalReviews
-} from 'woocommerce/state/sites/reviews/selectors';
-import { getReviewsCurrentPage, getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Pagination from 'components/pagination';
 import ReviewCard from './review-card';
 import ReviewsFilterNav from './reviews-filter-nav';
+import Card from 'components/card';
+import EmptyContent from 'components/empty-content';
+import Pagination from 'components/pagination';
+import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import { areReviewsLoading, areReviewsLoaded, getReviews, getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { updateCurrentReviewsQuery } from 'woocommerce/state/ui/reviews/actions';
+import { getReviewsCurrentPage, getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
 
 class ReviewsList extends Component {
 	static propTypes = {

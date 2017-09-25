@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {

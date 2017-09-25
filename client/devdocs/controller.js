@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import qs from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
-import url from 'url';
+import qs from 'qs';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import DocsComponent from './main';
-import { login } from 'lib/paths';
-import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
-import DocsSelectors from './docs-selectors';
 import Typography from './design/typography';
-import DevWelcome from './welcome';
-import Sidebar from './sidebar';
+import SingleDocComponent from './doc';
+import DocsSelectors from './docs-selectors';
 import FormStateExamplesComponent from './form-state-examples';
-import EmptyContent from 'components/empty-content';
+import DocsComponent from './main';
+import Sidebar from './sidebar';
+import DevWelcome from './welcome';
 import WizardComponent from './wizard-component';
+import EmptyContent from 'components/empty-content';
+import config from 'config';
+import { login } from 'lib/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import url from 'url';
 
 const devdocs = {
 

@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { untrailingslashit } from 'lib/route';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import { untrailingslashit } from 'lib/route';
 
 export default localize( ( { selectedSite, translate } ) => {
 	let adminURL = get( selectedSite, 'options.admin_url', '' );

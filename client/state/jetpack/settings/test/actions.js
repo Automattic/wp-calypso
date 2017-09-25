@@ -6,26 +6,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	JETPACK_SETTINGS_RECEIVE,
-	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
-	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
-	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
-	JETPACK_SETTINGS_REQUEST,
-	JETPACK_SETTINGS_REQUEST_FAILURE,
-	JETPACK_SETTINGS_REQUEST_SUCCESS,
-	JETPACK_SETTINGS_UPDATE,
-	JETPACK_SETTINGS_UPDATE_SUCCESS,
-	JETPACK_SETTINGS_UPDATE_FAILURE
-} from 'state/action-types';
 import { fetchSettings, updateSettings, regeneratePostByEmail } from '../actions';
 import { filterSettingsByActiveModules } from '../utils';
-import {
-	settings as SETTINGS_FIXTURE,
-	normalizedSettings as NORMALIZED_SETTINGS_FIXTURE
-} from './fixture';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { settings as SETTINGS_FIXTURE, normalizedSettings as NORMALIZED_SETTINGS_FIXTURE } from './fixture';
+import { JETPACK_SETTINGS_RECEIVE, JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL, JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS, JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE, JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_REQUEST_FAILURE, JETPACK_SETTINGS_REQUEST_SUCCESS, JETPACK_SETTINGS_UPDATE, JETPACK_SETTINGS_UPDATE_SUCCESS, JETPACK_SETTINGS_UPDATE_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

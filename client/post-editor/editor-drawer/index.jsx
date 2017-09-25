@@ -1,46 +1,41 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import EditorDrawerLabel from './label';
+import EditorDrawerPageOptions from './page-options';
+import EditorDrawerTaxonomies from './taxonomies';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
-import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
+import QueryPostTypes from 'components/data/query-post-types';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import FormTextarea from 'components/forms/form-textarea';
-import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
+import config from 'config';
+import PostMetadata from 'lib/post-metadata';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import QueryPostTypes from 'components/data/query-post-types';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import {
-	isJetpackMinimumVersion,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'state/sites/selectors';
-import config from 'config';
-import { areSitePermalinksEditable } from 'state/selectors';
-
-import EditorDrawerTaxonomies from './taxonomies';
-import EditorDrawerPageOptions from './page-options';
-import EditorDrawerLabel from './label';
-import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
+import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
+import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
+import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
+import { getPostType } from 'state/post-types/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { areSitePermalinksEditable } from 'state/selectors';
+import { isJetpackMinimumVersion, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Constants

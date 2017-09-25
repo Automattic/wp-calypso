@@ -1,29 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import CompactCard from 'components/card/compact';
-import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
+import GoogleAppsUsers from './users';
+import CompactCard from 'components/card/compact';
 import { abtest } from 'lib/abtest';
+import { cartItems } from 'lib/cart-values';
 import { validate as validateGappsUsers, filter as filterUsers } from 'lib/domains/google-apps-users';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 class GoogleAppsDialog extends React.Component {

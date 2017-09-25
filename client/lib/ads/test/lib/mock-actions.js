@@ -1,6 +1,9 @@
-import site from './mock-site';
+/**
+ * Internal dependencies
+ */
 import earnings from './mock-earnings';
 import settings from './mock-settings';
+import site from './mock-site';
 
 export default {
 	fetchedEarnings: {

@@ -1,14 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	OLARK_READY,
-	OLARK_REQUEST,
-	OLARK_TIMEOUT,
-	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY,
-	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
+import { OLARK_READY, OLARK_REQUEST, OLARK_TIMEOUT, OLARK_OPERATORS_AVAILABLE, OLARK_OPERATORS_AWAY, OLARK_SET_AVAILABILITY } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that olark did not load

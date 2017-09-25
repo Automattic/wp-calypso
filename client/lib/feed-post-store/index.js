@@ -1,21 +1,20 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import config from 'config';
-import { get, assign, forEach, isEqual, defer } from 'lodash';
 import debugModule from 'debug';
+import { get, assign, forEach, isEqual, defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
-import emitter from 'lib/mixins/emitter';
-import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
 import { action as FeedPostActionType } from './constants';
-import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
+import config from 'config';
+import Dispatcher from 'dispatcher';
 import { mc } from 'lib/analytics';
+import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
+import emitter from 'lib/mixins/emitter';
 import stats from 'reader/stats';
+import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
 
 /**
  * Module variables

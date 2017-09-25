@@ -2,28 +2,22 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import FormToggle from 'components/forms/form-toggle';
 import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import FormToggle from 'components/forms/form-toggle';
+import { subscribeToNewPostEmail, updateNewPostEmailSubscription, unsubscribeToNewPostEmail, subscribeToNewCommentEmail, unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { getReaderFollows } from 'state/selectors';
-import {
-	subscribeToNewPostEmail,
-	updateNewPostEmailSubscription,
-	unsubscribeToNewPostEmail,
-	subscribeToNewCommentEmail,
-	unsubscribeToNewCommentEmail,
-} from 'state/reader/follows/actions';
 
 class ReaderEmailSettings extends Component {
 	static displayName = 'ReaderEmailSettings';

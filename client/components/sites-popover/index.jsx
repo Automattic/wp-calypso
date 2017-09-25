@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
+import { hasTouch } from 'lib/touch-detect';
 
 export default React.createClass( {
 	displayName: 'SitesPopover',

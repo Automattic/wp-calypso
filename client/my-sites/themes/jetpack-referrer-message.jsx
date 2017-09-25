@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import CurrentTheme from 'my-sites/themes/current-theme';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
 const JetpackReferrerMessage = ( { siteId, translate, adminUrl, analyticsPath, analyticsPageTitle } ) => (

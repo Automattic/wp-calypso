@@ -1,5 +1,5 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,13 +8,10 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	requestUnfollowTag as requestUnfollowAction,
-	receiveUnfollowTag as receiveUnfollowAction,
-} from 'state/reader/tags/items/actions';
 import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestUnfollowTag as requestUnfollowAction, receiveUnfollowTag as receiveUnfollowAction } from 'state/reader/tags/items/actions';
 
 const successfulUnfollowResponse = {
 	subscribed: false,

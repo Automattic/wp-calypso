@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import PostItem from '../';
 import QueryPosts from 'components/data/query-posts';
 import QuerySites from 'components/data/query-sites';
-import PostItem from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 

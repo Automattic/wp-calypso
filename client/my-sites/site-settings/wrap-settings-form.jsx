@@ -1,38 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
-import {
-	isRequestingSiteSettings,
-	isSavingSiteSettings,
-	isSiteSettingsSaveSuccessful,
-	getSiteSettingsSaveError,
-	getSiteSettings
-} from 'state/site-settings/selectors';
-import {
-	isRequestingJetpackSettings,
-	isUpdatingJetpackSettings,
-	isJetpackSettingsSaveFailure,
-	getJetpackSettings
-} from 'state/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRequestingJetpackSettings, isUpdatingJetpackSettings, isJetpackSettingsSaveFailure, getJetpackSettings } from 'state/selectors';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { isRequestingSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful, getSiteSettingsSaveError, getSiteSettings } from 'state/site-settings/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {

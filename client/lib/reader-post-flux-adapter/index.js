@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
-/*
- * Internal Dependencies
+/**
+ * Internal dependencies
  */
 import FeedPostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
-import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.

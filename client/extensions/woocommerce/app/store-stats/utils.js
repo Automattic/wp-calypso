@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { find, includes } from 'lodash';
 import classnames from 'classnames';
 import { moment } from 'i18n-calypso';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies

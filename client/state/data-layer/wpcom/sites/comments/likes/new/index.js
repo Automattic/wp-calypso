@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 

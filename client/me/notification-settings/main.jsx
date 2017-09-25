@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
+import Navigation from './navigation';
 import PushNotificationSettings from './push-notification-settings';
-import store from 'lib/notification-settings-store';
 import QueryUserDevices from 'components/data/query-user-devices';
+import Main from 'components/main';
+import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import ReauthRequired from 'me/reauth-required';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 class NotificationSettings extends Component {
 	state = {

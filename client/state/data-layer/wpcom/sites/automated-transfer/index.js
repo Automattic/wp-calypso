@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
 import eligibility from './eligibility';
 import initiate from './initiate';
 import status from './status';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 export default mergeHandlers(
 	eligibility,

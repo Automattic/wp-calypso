@@ -1,13 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { WP_JOB_MANAGER_FETCH_ERROR, WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_UPDATE_SETTINGS } from '../action-types';
 import { itemsSchema } from './schema';
-import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
-	WP_JOB_MANAGER_UPDATE_SETTINGS,
-} from '../action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated fetching state after an action has been dispatched.

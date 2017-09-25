@@ -8,12 +8,11 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import initialState from 'state/initial-state';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-
-import initialState from 'state/initial-state';
 
 describe( 'initial-state', () => {
 	let clock,

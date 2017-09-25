@@ -6,11 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getStats,
-	isDeletingFile,
-	isGeneratingStats,
-} from '../selectors';
+import { getStats, isDeletingFile, isGeneratingStats } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

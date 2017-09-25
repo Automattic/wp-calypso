@@ -1,43 +1,42 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import debugModule from 'debug';
+import { translate } from 'i18n-calypso';
+import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
 import { connect } from 'react-redux';
-import { setSurvey } from 'state/signup/steps/survey/actions';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import SignupProgressStore from 'lib/signup/progress-store';
-import SignupFlowController from 'lib/signup/flow-controller';
-import LocaleSuggestions from 'components/locale-suggestions';
-import FlowProgressIndicator from './flow-progress-indicator';
-import steps from './config/steps';
-import stepComponents from './config/step-components';
 import flows from './config/flows';
-import WpcomLoginForm from './wpcom-login-form';
-import userModule from 'lib/user';
-import analytics from 'lib/analytics';
-import SignupProcessingScreen from 'signup/processing-screen';
+import stepComponents from './config/step-components';
+import steps from './config/steps';
+import FlowProgressIndicator from './flow-progress-indicator';
 import utils from './utils';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import * as oauthToken from 'lib/oauth-token';
+import WpcomLoginForm from './wpcom-login-form';
 import DocumentHead from 'components/data/document-head';
-import { translate } from 'i18n-calypso';
-import SignupActions from 'lib/signup/actions';
+import LocaleSuggestions from 'components/locale-suggestions';
+import config from 'config';
+import analytics from 'lib/analytics';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
+import * as oauthToken from 'lib/oauth-token';
+import SignupActions from 'lib/signup/actions';
+import SignupDependencyStore from 'lib/signup/dependency-store';
+import SignupFlowController from 'lib/signup/flow-controller';
+import SignupProgressStore from 'lib/signup/progress-store';
 import { disableCart } from 'lib/upgrades/actions';
+import userModule from 'lib/user';
+import SignupProcessingScreen from 'signup/processing-screen';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { setSurvey } from 'state/signup/steps/survey/actions';
 
 /**
  * Constants

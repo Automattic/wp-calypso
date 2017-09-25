@@ -8,13 +8,7 @@ import { assert } from 'chai';
  */
 import reducer from '../reducer';
 import { dummyConfiguration, dummyError } from './test-data';
-
-import {
-	HELP_TICKET_CONFIGURATION_REQUEST,
-	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
-} from 'state/action-types';
+import { HELP_TICKET_CONFIGURATION_REQUEST, HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS, HELP_TICKET_CONFIGURATION_REQUEST_FAILURE, HELP_TICKET_CONFIGURATION_DISMISS_ERROR } from 'state/action-types';
 
 describe( 'ticket-support/configuration reducer', () => {
 	it( 'should default to the expected structure', () => {

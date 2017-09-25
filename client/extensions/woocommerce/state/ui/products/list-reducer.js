@@ -1,16 +1,8 @@
 /**
- * External dependencies
- */
-import { createReducer } from 'state/utils';
-
-/**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { createReducer } from 'state/utils';
+import { WOOCOMMERCE_PRODUCT_DELETE_SUCCESS, WOOCOMMERCE_PRODUCTS_REQUEST, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_DELETE_SUCCESS ]: productsDeleteSuccess,

@@ -1,33 +1,21 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
 import debugFactory from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import {
-	ANALYTICS_SUPER_PROPS_UPDATE,
-	NOTIFICATIONS_PANEL_TOGGLE,
-	SELECTED_SITE_SET,
-	SITE_RECEIVE,
-	SITES_RECEIVE,
-	SITES_UPDATE,
-	SITES_ONCE_CHANGED,
-	SELECTED_SITE_SUBSCRIBE,
-	SELECTED_SITE_UNSUBSCRIBE
-} from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
+import keyboardShortcuts from 'lib/keyboard-shortcuts';
+import sitesFactory from 'lib/sites-list';
+import { ANALYTICS_SUPER_PROPS_UPDATE, NOTIFICATIONS_PANEL_TOGGLE, SELECTED_SITE_SET, SITE_RECEIVE, SITES_RECEIVE, SITES_UPDATE, SITES_ONCE_CHANGED, SELECTED_SITE_SUBSCRIBE, SELECTED_SITE_UNSUBSCRIBE } from 'state/action-types';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { isNotificationsOpen } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import keyboardShortcuts from 'lib/keyboard-shortcuts';
-
-// KILL IT WITH FIRE
-import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
 const debug = debugFactory( 'calypso:state:middleware' );

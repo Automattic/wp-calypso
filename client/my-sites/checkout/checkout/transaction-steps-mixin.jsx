@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react'; // eslint-disable-line no-unused-vars
 import debugFactory from 'debug';
 import { defer, isEqual, pick } from 'lodash';
-
-const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' );
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -13,9 +11,11 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
 import analytics from 'lib/analytics';
 import adTracking from 'lib/analytics/ad-tracking';
 import { cartItems } from 'lib/cart-values';
-import { displayError, clear } from 'lib/upgrades/notices';
-import upgradesActions from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import upgradesActions from 'lib/upgrades/actions';
+import { displayError, clear } from 'lib/upgrades/notices';
+
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' );
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {

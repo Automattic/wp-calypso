@@ -8,7 +8,6 @@ import sanitizeHtml from 'sanitize-html';
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-
 import { parseHtml } from 'lib/formatting';
 
 /**

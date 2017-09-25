@@ -1,46 +1,43 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { includes, startsWith } from 'lodash';
+import page from 'page';
 import React from 'react';
 import ReactDom from 'react-dom';
 import store from 'store';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso' );
-import page from 'page';
 
 /**
  * Internal dependencies
  */
+import emailVerification from 'components/email-verification';
 import config from 'config';
-
-import abtestModule from 'lib/abtest'; // used by error logger
-import { initialize as initializeHappychat } from 'state/happychat/actions';
+import { ReduxWrappedLayout as Layout } from 'controller';
+import nuxWelcome from 'layout/nux-welcome';
+import abtestModule from 'lib/abtest';
 import analytics from 'lib/analytics';
+import superProps from 'lib/analytics/super-props';
+import Logger from 'lib/catch-js-errors';
 import reduxBridge from 'lib/redux-bridge';
 import route from 'lib/route';
-import normalize from 'lib/route/normalize';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
-import superProps from 'lib/analytics/super-props';
+import normalize from 'lib/route/normalize';
 import translatorJumpstart from 'lib/translator-jumpstart';
-import nuxWelcome from 'layout/nux-welcome';
-import emailVerification from 'components/email-verification';
-import viewport from 'lib/viewport';
-import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import syncHandler from 'lib/wp/sync-handler';
 import supportUser from 'lib/user/support-user-interop';
+import viewport from 'lib/viewport';
+import syncHandler from 'lib/wp/sync-handler';
+import { initialize as initializeHappychat } from 'state/happychat/actions';
+import { init as pushNotificationsInit } from 'state/push-notifications/actions';
+import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+const debug = debugFactory( 'calypso' );
 
 /**
  * Internal dependencies
  */
 const // used by logger
 getSavedVariations = abtestModule.getSavedVariations;
-
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
-
-import { ReduxWrappedLayout as Layout } from 'controller';
-import Logger from 'lib/catch-js-errors';
 
 function renderLayout( reduxStore ) {
 	const layoutElement = React.createElement( Layout, {

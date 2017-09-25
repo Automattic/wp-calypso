@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { head, values } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:validate-fieldset' );
+import { head, values } from 'lodash';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
+
+const debug = debugFactory( 'calypso:validate-fieldset' );
 
 export default class ValidationFieldset extends Component {
 	renderValidationNotice() {

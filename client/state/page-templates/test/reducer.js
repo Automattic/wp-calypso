@@ -7,16 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	PAGE_TEMPLATES_RECEIVE,
-	PAGE_TEMPLATES_REQUEST,
-	PAGE_TEMPLATES_REQUEST_FAILURE,
-	PAGE_TEMPLATES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { PAGE_TEMPLATES_RECEIVE, PAGE_TEMPLATES_REQUEST, PAGE_TEMPLATES_REQUEST_FAILURE, PAGE_TEMPLATES_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );

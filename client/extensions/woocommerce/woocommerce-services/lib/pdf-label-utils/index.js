@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import querystring from 'querystring';
 import { includes, reduce, filter, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getPDFSupport from '../utils/pdf-support';
+import querystring from 'querystring';
 
 const PAPER_SIZES = {
 	a4: {

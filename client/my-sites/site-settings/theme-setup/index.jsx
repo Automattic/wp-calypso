@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryTheme from 'components/data/query-theme';
 import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryTheme from 'components/data/query-theme';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { toggleDialog } from 'state/ui/theme-setup/actions';
 
 class ThemeSetup extends Component {

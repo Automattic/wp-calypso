@@ -1,37 +1,31 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Navigation from './store-stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import Module from './store-stats-module';
 import List from './store-stats-list';
+import Module from './store-stats-module';
+import Navigation from './store-stats-navigation';
 import WidgetList from './store-stats-widget-list';
-import SectionHeader from 'components/section-header';
-import JetpackColophon from 'components/jetpack-colophon';
-import {
-	sparkWidgets,
-	topProducts,
-	topCategories,
-	topCoupons,
-	UNITS
-} from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
-import { getJetpackSites } from 'state/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteStats from 'components/data/query-site-stats';
+import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import { getJetpackSites } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { sparkWidgets, topProducts, topCategories, topCoupons, UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStats extends Component {
 	static propTypes = {

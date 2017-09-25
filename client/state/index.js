@@ -1,21 +1,17 @@
 /**
  * External dependencies
  */
-import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reducer as form } from 'redux-form';
+import thunkMiddleware from 'redux-thunk';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import accountRecovery from './account-recovery/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
-import sitesSync from './sites/enhancer';
-import noticesMiddleware from './notices/middleware';
-import extensionsModule from 'extensions';
 import application from './application/reducer';
-import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
@@ -27,14 +23,15 @@ import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
-import help from './help/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
-import jetpack from './jetpack/reducer';
-import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
+import help from './help/reducer';
+import jetpackConnect from './jetpack-connect/reducer';
+import jetpackSync from './jetpack-sync/reducer';
+import jetpack from './jetpack/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
+import noticesMiddleware from './notices/middleware';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -42,34 +39,37 @@ import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
-import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
+import posts from './posts/reducer';
 import preferences from './preferences/reducer';
 import preview from './preview/reducer';
 import productsList from './products-list/reducer';
-import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
+import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
-import sites from './sites/reducer';
 import siteRoles from './site-roles/reducer';
 import siteSettings from './site-settings/reducer';
+import sitesSync from './sites/enhancer';
+import sites from './sites/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
-import timezones from './timezones/reducer';
 import themes from './themes/reducer';
+import timezones from './timezones/reducer';
 import ui from './ui/reducer';
-import users from './users/reducer';
 import userDevices from './user-devices/reducer';
 import userSettings from './user-settings/reducer';
+import users from './users/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';
+import extensionsModule from 'extensions';
+import { combineReducers } from 'state/utils';
 
 /**
  * Module variables

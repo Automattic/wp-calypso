@@ -1,9 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	ANALYTICS_TRACKING_ON
-} from 'state/action-types';
+import { ANALYTICS_TRACKING_ON } from 'state/action-types';
 
 export const analyticsTracking = ( state = {}, { type, meta } ) => {
 	switch ( type ) {

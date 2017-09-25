@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import paths from 'my-sites/domains/paths';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import paths from 'my-sites/domains/paths';
 
 describe( 'MapDomain component', () => {
 	const pageSpy = spy();

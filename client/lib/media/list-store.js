@@ -6,10 +6,9 @@ import { assign, isEqual, map, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
 import MediaStore from './store';
 import MediaUtils from './utils';
+import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
 /**

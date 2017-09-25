@@ -1,13 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	PREVIEW_URL_CLEAR,
-	PREVIEW_URL_SET,
-	PREVIEW_TOOL_SET,
-	PREVIEW_TYPE_SET,
-	PREVIEW_TYPE_RESET,
-} from 'state/action-types';
+import { PREVIEW_URL_CLEAR, PREVIEW_URL_SET, PREVIEW_TOOL_SET, PREVIEW_TYPE_SET, PREVIEW_TYPE_RESET } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export function currentPreviewUrl( state = null, action ) {

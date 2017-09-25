@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
-	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
-	WOOCOMMERCE_PRODUCT_EDIT,
-	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE, WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT, WOOCOMMERCE_PRODUCT_EDIT, WOOCOMMERCE_PRODUCT_EDIT_CLEAR } from 'woocommerce/state/action-types';
 
 export function editProduct( siteId, product, data ) {
 	return {

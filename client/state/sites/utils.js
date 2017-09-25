@@ -1,18 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	getRawSite,
-	getSiteDomain,
-	getSiteOption,
-	getSiteSlug,
-	getSiteTitle,
-	isJetpackSite,
-	isSiteConflicting,
-	isSitePreviewable
-} from 'state/sites/selectors';
-import { canCurrentUser, getSiteOptions } from 'state/selectors';
 import { withoutHttp } from 'lib/url';
+import { canCurrentUser, getSiteOptions } from 'state/selectors';
+import { getRawSite, getSiteDomain, getSiteOption, getSiteSlug, getSiteTitle, isJetpackSite, isSiteConflicting, isSitePreviewable } from 'state/sites/selectors';
 
 /**
  * Returns computed properties of the site object.

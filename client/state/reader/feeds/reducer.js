@@ -1,23 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assign, keyBy, map, omit, omitBy, reduce } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	READER_FEED_REQUEST,
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import { decodeEntities } from 'lib/formatting';
 import { itemsSchema } from './schema';
+import { decodeEntities } from 'lib/formatting';
+import { READER_FEED_REQUEST, READER_FEED_REQUEST_SUCCESS, READER_FEED_REQUEST_FAILURE, READER_FEED_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,

@@ -1,13 +1,9 @@
 /**
- * External dependencies
- */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-
-/**
  * Internal dependencies
  */
 import { ActionTypes } from './constants';
+import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
 
 /**
  * Given a site ID and shortcode text, triggers a request to the REST API

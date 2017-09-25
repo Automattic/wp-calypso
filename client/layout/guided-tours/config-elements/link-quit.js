@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import contextTypes from '../context-types';
+import Button from 'components/button';
 
 export default class LinkQuit extends Component {
 	static propTypes = {

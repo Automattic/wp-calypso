@@ -1,26 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	identity,
-	includes,
-	noop,
-	pull,
-} from 'lodash';
+import { identity, includes, noop, pull } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import DataSource from './data-source';
+import FilterItem from './filter-item';
+import PlanStorage from 'blocks/plan-storage';
+import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
-import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PlanStorage from 'blocks/plan-storage';
-import FilterItem from './filter-item';
-import DataSource from './data-source';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {

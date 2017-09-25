@@ -1,10 +1,10 @@
 /**
- * External Dependencies
-*/
+ * External dependencies
+ */
 import { assert } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { areEqualIgnoringWhitespaceAndCase } from '../';
 

@@ -6,9 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
 
 const DomainManagementHeader = React.createClass( {
 	render() {

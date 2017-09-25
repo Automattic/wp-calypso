@@ -1,51 +1,36 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import {
-	camelCase,
-	deburr,
-	first,
-	head,
-	includes,
-	indexOf,
-	intersection,
-	isEqual,
-	kebabCase,
-	last,
-	map,
-	omit,
-	pick,
-	reduce,
-} from 'lodash';
+import { localize } from 'i18n-calypso';
+import { camelCase, deburr, first, head, includes, indexOf, intersection, isEqual, kebabCase, last, map, omit, pick, reduce } from 'lodash';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
-import { cartItems } from 'lib/cart-values';
-import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
-import analytics from 'lib/analytics';
-import formState from 'lib/form-state';
-import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
+import PrivacyProtection from './privacy-protection';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import FormButton from 'components/forms/form-button';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
-import wp from 'lib/wp';
-import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
+import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+import formState from 'lib/form-state';
+import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
+import wp from 'lib/wp';
+import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { getContactDetailsCache } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),

@@ -1,29 +1,24 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import DomainProductPrice from 'components/domains/domain-product-price';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import Notice from 'components/notice';
 import { cartItems } from 'lib/cart-values';
 import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	recordAddDomainButtonClickInMapDomain,
-	recordFormSubmitInMapDomain,
-	recordInputFocusInMapDomain,
-	recordGoButtonClickInMapDomain
-} from 'state/domains/actions';
-import Notice from 'components/notice';
+import { recordAddDomainButtonClickInMapDomain, recordFormSubmitInMapDomain, recordInputFocusInMapDomain, recordGoButtonClickInMapDomain } from 'state/domains/actions';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {

@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { defer } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import page from 'page';
-import { addItem } from 'lib/upgrades/actions/cart';
 import { trackClick } from '../themes/helpers';
+import Dispatcher from 'dispatcher';
 import { themeItem } from 'lib/cart-values/cart-items';
+import { addItem } from 'lib/upgrades/actions/cart';
 
 const CustomizeActions = {
 	purchase: function( id, site ) {

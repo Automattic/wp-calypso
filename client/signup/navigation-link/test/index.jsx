@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { stub } from 'sinon';
 import { noop } from 'lodash';
+import React from 'react';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import EMPTY_COMPONENT from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;

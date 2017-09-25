@@ -2,17 +2,15 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
-
 import MediaLibraryListItemFileDetails from './list-item-file-details';
-
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+
+import MediaUtils from 'lib/media/utils';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryListItemImage',

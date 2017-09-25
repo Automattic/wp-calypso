@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assign, find, matches } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
 

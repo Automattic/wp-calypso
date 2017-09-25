@@ -1,17 +1,17 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { fetchOrder } from '../actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isOrderRefunding } from './selectors';
-import request from 'woocommerce/state/sites/request';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
-import {
-	WOOCOMMERCE_ORDER_REFUND_CREATE,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
-} from 'woocommerce/state/action-types';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_ORDER_REFUND_CREATE, WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS, WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE } from 'woocommerce/state/action-types';
+import request from 'woocommerce/state/sites/request';
 
 export const sendRefund = ( siteId, orderId, refund ) => ( dispatch, getState ) => {
 	const state = getState();

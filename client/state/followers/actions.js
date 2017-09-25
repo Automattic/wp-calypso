@@ -3,20 +3,13 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:followers-actions' );
-
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	FOLLOWERS_RECEIVE,
-	FOLLOWERS_REQUEST,
-	FOLLOWERS_REQUEST_ERROR,
-	FOLLOWER_REMOVE_ERROR,
-	FOLLOWER_REMOVE_REQUEST,
-	FOLLOWER_REMOVE_SUCCESS
-} from 'state/action-types';
+import { FOLLOWERS_RECEIVE, FOLLOWERS_REQUEST, FOLLOWERS_REQUEST_ERROR, FOLLOWER_REMOVE_ERROR, FOLLOWER_REMOVE_REQUEST, FOLLOWER_REMOVE_SUCCESS } from 'state/action-types';
+
+const debug = debugFactory( 'calypso:followers-actions' );
 
 export default {
 	fetchFollowers( query, silentUpdate = false ) {

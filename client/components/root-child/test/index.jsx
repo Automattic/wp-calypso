@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
-import React from 'react';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { mount } from 'enzyme';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import RootChild from '../';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables

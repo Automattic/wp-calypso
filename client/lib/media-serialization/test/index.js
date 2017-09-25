@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { deserialize } from '../';
 import { MediaTypes } from '../constants';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'MediaSerialization', function() {
 	useFakeDom();

@@ -1,9 +1,5 @@
 /**
- * A little module for loading a external script
- */
-
-/**
- * Internal dependency.
+ * Internal dependencies
  */
 import config from 'config';
 

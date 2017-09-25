@@ -6,17 +6,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import eligibility from './eligibility/reducer';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import { transferStates } from './constants';
+import eligibility from './eligibility/reducer';
 import { automatedTransfer as schema } from './schema';
-import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
-	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
-	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
-	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
-	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE, AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS, THEME_TRANSFER_INITIATE_REQUEST as INITIATE, THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE, THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE } from 'state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 
 export const status = ( state = null, action ) => get( {
 	[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,

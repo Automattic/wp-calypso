@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
  */
 import Dialog from 'components/dialog';
 import SitesListActions from 'lib/sites-list/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 class DisconnectJetpackDialog extends Component {
 	constructor( props ) {

@@ -1,15 +1,13 @@
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 
-import {
-	add, remove,
-	resetForTesting as reset,
-	EVERY_SECOND,
-	EVERY_FIVE_SECONDS,
-	EVERY_TEN_SECONDS,
-	EVERY_THIRTY_SECONDS,
-	EVERY_MINUTE
-} from '../runner';
+/**
+ * Internal dependencies
+ */
+import { add, remove, resetForTesting as reset, EVERY_SECOND, EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, EVERY_THIRTY_SECONDS, EVERY_MINUTE } from '../runner';
 
 const noop = () => null;
 const nudgeObject = ( o, value ) => () => ( o.counter += value );

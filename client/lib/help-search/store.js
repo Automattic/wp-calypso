@@ -3,14 +3,13 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:help-search:store' );
-
 /**
  * Internal dependencies
  */
+import { action as ActionTypes } from './constants';
 import { createReducerStore } from 'lib/store';
 
-import { action as ActionTypes } from './constants';
+const debug = debugFactory( 'calypso:help-search:store' );
 
 /**
  * Module variables

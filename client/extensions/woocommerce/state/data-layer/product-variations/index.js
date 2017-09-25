@@ -6,16 +6,11 @@ import { isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { WOOCOMMERCE_PRODUCT_VARIATION_CREATE, WOOCOMMERCE_PRODUCT_VARIATION_UPDATE, WOOCOMMERCE_PRODUCT_VARIATION_DELETE, WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST } from 'woocommerce/state/action-types';
 import { del, get, post, put } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
-import {
-	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
-	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
-	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
-	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_VARIATION_CREATE ]: [ handleProductVariationCreate ],

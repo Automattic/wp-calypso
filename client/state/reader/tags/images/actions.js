@@ -8,12 +8,7 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	READER_TAG_IMAGES_REQUEST,
-	READER_TAG_IMAGES_REQUEST_SUCCESS,
-	READER_TAG_IMAGES_REQUEST_FAILURE,
-	READER_TAG_IMAGES_RECEIVE,
-} from 'state/action-types';
+import { READER_TAG_IMAGES_REQUEST, READER_TAG_IMAGES_REQUEST_SUCCESS, READER_TAG_IMAGES_REQUEST_FAILURE, READER_TAG_IMAGES_RECEIVE } from 'state/action-types';
 
 /**
  * Module variables

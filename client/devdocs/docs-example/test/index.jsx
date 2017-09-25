@@ -2,17 +2,17 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Button from 'components/button';
 import Count from 'components/count';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'DocsExample', () => {
 	useFakeDom();

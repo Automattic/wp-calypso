@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import cartValues from 'lib/cart-values';
-
 import SubscriptionText from './subscription-text';
+import cartValues from 'lib/cart-values';
 import transactionStepTypes from 'lib/store-transactions/step-types';
 
 /**

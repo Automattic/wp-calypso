@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { getTld } from 'lib/domains';
-import support from 'lib/url/support';
 import { domainAvailability } from 'lib/domains/constants';
+import support from 'lib/url/support';
 
 function getAvailabilityNotice( domain, error ) {
 	let message,

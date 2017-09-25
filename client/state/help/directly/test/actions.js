@@ -6,18 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	askQuestion,
-	initialize,
-	initializationCompleted,
-	initializationFailed,
-} from '../actions';
-import {
-	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_START,
-	DIRECTLY_INITIALIZATION_SUCCESS,
-	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
+import { askQuestion, initialize, initializationCompleted, initializationFailed } from '../actions';
+import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START, DIRECTLY_INITIALIZATION_SUCCESS, DIRECTLY_INITIALIZATION_ERROR } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#askQuestion()', () => {

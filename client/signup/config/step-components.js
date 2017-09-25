@@ -7,15 +7,15 @@ import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
 import DomainsStepComponent from 'signup/steps/domains';
 import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
-import SiteComponent from 'signup/steps/site';
+import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
+import SiteComponent from 'signup/steps/site';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
 import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
-import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 
 export default {
 	'design-type': DesignTypeComponent,

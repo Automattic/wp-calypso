@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
-import debugFactory from 'debug';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import FormButton from 'components/forms/form-button';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import LoggedOutForm from 'components/logged-out-form';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import config from 'config';
-import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { login } from 'lib/paths';
 import SignupActions from 'lib/signup/actions';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
+import wpcom from 'lib/wp';
 import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import ValidationFieldset from 'signup/validation-fieldset';
 
 const debug = debugFactory( 'calypso:steps:site' );
 

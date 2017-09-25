@@ -4,10 +4,10 @@
 import chai from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import decodeEntitiesNode from '../decode-entities/node';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'formatting', () => {
 	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;

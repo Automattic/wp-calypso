@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	flowRight as compose,
-	get,
-} from 'lodash';
+import { flowRight as compose, get } from 'lodash';
 
 export const getAutomatedTransfer = ( state, siteId ) =>
 	get( state, [ 'automatedTransfer', siteId ], {} );

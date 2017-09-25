@@ -7,9 +7,9 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 import route from 'lib/route';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 let singleton;
 

@@ -2,21 +2,21 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AccountPassword from 'me/account-password';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import AccountPassword from 'me/account-password';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 

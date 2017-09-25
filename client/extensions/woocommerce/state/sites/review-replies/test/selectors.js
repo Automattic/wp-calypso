@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getReviewReplies,
-	getReviewReply,
-} from '../selectors';
+import { getReviewReplies, getReviewReply } from '../selectors';
 import reviewReplies from './fixtures/review-replies';
 
 const preInitializedState = {

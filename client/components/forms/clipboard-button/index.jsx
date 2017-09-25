@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import ReactDom from 'react-dom';
-import Clipboard from 'clipboard';
-import { omit, noop } from 'lodash';
 import classNames from 'classnames';
+import Clipboard from 'clipboard';
+import { localize } from 'i18n-calypso';
+import { omit, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies

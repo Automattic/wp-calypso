@@ -1,24 +1,16 @@
 /**
  * External dependencies
  */
-import { match } from 'sinon';
 import { expect } from 'chai';
+import { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	PAGE_TEMPLATES_RECEIVE,
-	PAGE_TEMPLATES_REQUEST,
-	PAGE_TEMPLATES_REQUEST_SUCCESS,
-	PAGE_TEMPLATES_REQUEST_FAILURE
-} from 'state/action-types';
-import {
-	receivePageTemplates,
-	requestPageTemplates
-} from '../actions';
+import { receivePageTemplates, requestPageTemplates } from '../actions';
+import { PAGE_TEMPLATES_RECEIVE, PAGE_TEMPLATES_REQUEST, PAGE_TEMPLATES_REQUEST_SUCCESS, PAGE_TEMPLATES_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

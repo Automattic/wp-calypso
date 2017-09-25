@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteOverview from './stats-site-overview';
-import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
-import StatsNavigation from './stats-navigation';
-import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
+import StatsNavigation from './stats-navigation';
+import SiteOverviewPlaceholder from './stats-overview-placeholder';
+import SiteOverview from './stats-site-overview';
 import QuerySites from 'components/data/query-sites';
 import JetpackColophon from 'components/jetpack-colophon';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getVisibleSites } from 'state/selectors';
 

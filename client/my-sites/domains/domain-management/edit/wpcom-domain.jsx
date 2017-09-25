@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
+import Card from 'components/card/compact';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import analyticsMixin from 'lib/mixins/analytics';
 
 const WpcomDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],

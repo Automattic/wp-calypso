@@ -2,11 +2,7 @@
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import {
-	WOOCOMMERCE_ORDER_REFUND_CREATE,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_ORDER_REFUND_CREATE, WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE, WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS } from 'woocommerce/state/action-types';
 
 /**
  * Returns the updated order requests state after an action has been

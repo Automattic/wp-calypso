@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import TWEEN from 'tween.js';
 import { defer } from 'lodash';
+import TWEEN from 'tween.js';
 
 function getCurrentScroll( container ) {
 	if ( container && container.scrollTop !== undefined ) {

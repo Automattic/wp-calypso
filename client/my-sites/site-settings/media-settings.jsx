@@ -1,50 +1,35 @@
 /**
  * External dependencies
  */
+import filesize from 'filesize';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import PlanStorageBar from 'blocks/plan-storage/bar';
 import Banner from 'components/banner';
 import Card from 'components/card';
-import filesize from 'filesize';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import QueryMediaStorage from 'components/data/query-media-storage';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import {
-	PLAN_JETPACK_PREMIUM,
-	FEATURE_VIDEO_UPLOADS,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-} from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
-} from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getMediaStorageLimit,
-	getMediaStorageUsed,
-} from 'state/selectors';
-import {
-	getSitePlanSlug,
-	getSiteSlug,
-} from 'state/sites/selectors';
+import { PLAN_JETPACK_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM, FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from 'lib/plans/constants';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import { updateSettings } from 'state/jetpack/settings/actions';
-import QueryMediaStorage from 'components/data/query-media-storage';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import PlanStorageBar from 'blocks/plan-storage/bar';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import { getMediaStorageLimit, getMediaStorageUsed } from 'state/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class MediaSettings extends Component {
 	static propTypes = {

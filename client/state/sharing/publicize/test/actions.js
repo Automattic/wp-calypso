@@ -1,38 +1,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_CREATE_FAILURE,
-	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
-	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
-	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import {
-	createSiteConnection,
-	deleteSiteConnection,
-	deleteConnection,
-	failCreateConnection,
-	fetchConnection,
-	fetchConnections,
-	receiveConnections,
-	updateSiteConnection,
-} from '../actions';
+import { createSiteConnection, deleteSiteConnection, deleteConnection, failCreateConnection, fetchConnection, fetchConnections, receiveConnections, updateSiteConnection } from '../actions';
+import { PUBLICIZE_CONNECTION_CREATE, PUBLICIZE_CONNECTION_CREATE_FAILURE, PUBLICIZE_CONNECTION_DELETE, PUBLICIZE_CONNECTION_DELETE_FAILURE, PUBLICIZE_CONNECTION_RECEIVE, PUBLICIZE_CONNECTION_REQUEST, PUBLICIZE_CONNECTION_REQUEST_FAILURE, PUBLICIZE_CONNECTION_REQUEST_SUCCESS, PUBLICIZE_CONNECTION_UPDATE, PUBLICIZE_CONNECTION_UPDATE_FAILURE, PUBLICIZE_CONNECTIONS_REQUEST, PUBLICIZE_CONNECTIONS_RECEIVE, PUBLICIZE_CONNECTIONS_REQUEST_FAILURE, PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

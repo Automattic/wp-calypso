@@ -1,9 +1,9 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
+import React from 'react';
 
 const BlogStickersList = ( { stickers, translate } ) => {
 	return (

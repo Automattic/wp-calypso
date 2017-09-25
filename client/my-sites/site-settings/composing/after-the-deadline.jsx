@@ -1,30 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import ExternalLink from 'components/external-link';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import TokenField from 'components/token-field';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import TokenField from 'components/token-field';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import { isJetpackModuleActive, isJetpackModuleUnavailableInDevelopmentMode, isJetpackSiteInDevelopmentMode } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
-} from 'state/selectors';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 class AfterTheDeadline extends Component {
 	static defaultProps = {

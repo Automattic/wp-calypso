@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
-import Gridicon from 'gridicons';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,13 +19,13 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Tooltip from 'components/tooltip';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { decodeEntities } from 'lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { getSite } from 'state/sites/selectors';
-import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {

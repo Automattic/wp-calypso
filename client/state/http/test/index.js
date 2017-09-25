@@ -7,9 +7,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import { extendAction } from 'state/utils';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'state/utils';
+import useMockery from 'test/helpers/use-mockery';
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };

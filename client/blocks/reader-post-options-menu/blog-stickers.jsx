@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import { map, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, includes } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getBlogStickers } from 'state/selectors';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
 import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
+import { getBlogStickers } from 'state/selectors';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	static propTypes = {

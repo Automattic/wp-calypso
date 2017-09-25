@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 
 export default React.createClass( {
 	displayName: 'ExternalLink',

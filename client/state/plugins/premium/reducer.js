@@ -1,24 +1,14 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
-	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-	PLUGIN_SETUP_INSTALL,
-	PLUGIN_SETUP_ACTIVATE,
-	PLUGIN_SETUP_CONFIGURE,
-	PLUGIN_SETUP_FINISH,
-	PLUGIN_SETUP_ERROR,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
+import { PLUGIN_SETUP_INSTRUCTIONS_FETCH, PLUGIN_SETUP_INSTRUCTIONS_RECEIVE, PLUGIN_SETUP_INSTALL, PLUGIN_SETUP_ACTIVATE, PLUGIN_SETUP_CONFIGURE, PLUGIN_SETUP_FINISH, PLUGIN_SETUP_ERROR, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 /*
  * Tracks the requesting state for premium plugin "instructions" (the list

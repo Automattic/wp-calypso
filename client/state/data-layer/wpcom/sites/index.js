@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
 import activity from './activity';
 import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
@@ -11,6 +10,7 @@ import media from './media';
 import plugins from './plugins';
 import posts from './posts';
 import simplePayments from './simple-payments';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 export default mergeHandlers(
 	activity,

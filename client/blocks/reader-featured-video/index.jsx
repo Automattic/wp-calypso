@@ -1,22 +1,22 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { throttle, constant, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { throttle, constant, noop } from 'lodash';
 import ReactDom from 'react-dom';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import EmbedHelper from 'reader/embed-helper';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
+import EmbedHelper from 'reader/embed-helper';
+import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {

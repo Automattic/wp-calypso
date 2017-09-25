@@ -2,22 +2,20 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import { renderToString } from 'react-dom/server';
-import mockery from 'mockery';
 import { noop } from 'lodash';
-import {
-	receiveTheme,
-	themeRequestFailure,
-} from 'state/themes/actions';
+import mockery from 'mockery';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import useMockery from 'test/helpers/use-mockery';
+import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
 import EmptyComponent from 'test/helpers/react/empty-component';
+
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'main', function() {
 	describe( 'Calling renderToString() on Theme Info sheet', function() {

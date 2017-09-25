@@ -1,23 +1,16 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-// Internal dependencies
-import {
-	PRIVACY_PROTECTION_CANCEL,
-	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PURCHASES_REMOVE,
-	PURCHASES_SITE_FETCH,
-	PURCHASES_SITE_FETCH_COMPLETED,
-	PURCHASES_USER_FETCH,
-	PURCHASES_USER_FETCH_COMPLETED,
-	PURCHASE_REMOVE_COMPLETED,
-	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
+/**
+ * Internal dependencies
+ */
+import actions from '../actions';
+import { PRIVACY_PROTECTION_CANCEL, PRIVACY_PROTECTION_CANCEL_COMPLETED, PURCHASES_REMOVE, PURCHASES_SITE_FETCH, PURCHASES_SITE_FETCH_COMPLETED, PURCHASES_USER_FETCH, PURCHASES_USER_FETCH_COMPLETED, PURCHASE_REMOVE_COMPLETED, PURCHASE_REMOVE_FAILED } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
-
-import actions from '../actions';
 
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ],

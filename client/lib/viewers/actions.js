@@ -3,14 +3,13 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:viewers:actions' );
-
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
+
+const debug = debugFactory( 'calypso:viewers:actions' );
 
 const ViewersActions = {
 	fetch: function( siteId, page = 1 ) {

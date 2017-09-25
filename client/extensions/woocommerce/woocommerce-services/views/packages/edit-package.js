@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { omit, trim } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
+import FieldError from '../../components/field-error';
+import inputFilters from './input-filters';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FieldError from '../../components/field-error';
-import inputFilters from './input-filters';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 
 const renderDimensionsInput = ( dimensionsName, dimensionsStr, updateField ) => {
 	const { length, width, height } = inputFilters.parseDimensions( dimensionsStr );

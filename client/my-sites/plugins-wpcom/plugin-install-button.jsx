@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getEligibility } from 'state/automated-transfer/selectors';
-import { initiateThemeTransfer } from 'state/themes/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { getEligibility } from 'state/automated-transfer/selectors';
+import { initiateThemeTransfer } from 'state/themes/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export const WpcomPluginInstallButton = props => {
 	const {

@@ -6,12 +6,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	USER_SETTINGS_UPDATE,
-	USER_SETTINGS_UNSAVED_CLEAR,
-	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_UNSAVED_REMOVE,
-} from 'state/action-types';
+import { USER_SETTINGS_UPDATE, USER_SETTINGS_UNSAVED_CLEAR, USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export const settings = ( state = null, { type, settingValues } ) =>

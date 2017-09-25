@@ -1,24 +1,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
-import { useSandbox } from 'test/helpers/use-sinon';
-import useNock from 'test/helpers/use-nock';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_TRANSACTIONS_RECEIVE,
-	BILLING_TRANSACTIONS_REQUEST,
-	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-	BILLING_TRANSACTIONS_REQUEST_FAILURE
-} from 'state/action-types';
 import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
+import { BILLING_RECEIPT_EMAIL_SEND, BILLING_RECEIPT_EMAIL_SEND_FAILURE, BILLING_RECEIPT_EMAIL_SEND_SUCCESS, BILLING_TRANSACTIONS_RECEIVE, BILLING_TRANSACTIONS_REQUEST, BILLING_TRANSACTIONS_REQUEST_SUCCESS, BILLING_TRANSACTIONS_REQUEST_FAILURE } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

@@ -6,15 +6,15 @@ import { every, forIn, isEmpty, isObject, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
+import { mergeLocationEdits } from './helpers';
+import { JOURNAL_ACTIONS } from './reducer';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { areShippingZonesLoaded, getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
-import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
-import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import { getContinents, getCountries, getCountryName, getStates, hasStates } from 'woocommerce/state/sites/locations/selectors';
-import { JOURNAL_ACTIONS } from './reducer';
-import { mergeLocationEdits } from './helpers';
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
+import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { areShippingZonesLoaded, getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 
 /**
  * Computes a map of the continents that belong to a zone different than the one that's currently being edited.

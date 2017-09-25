@@ -1,37 +1,15 @@
 /**
  * External dependencies
  */
-import { match } from 'sinon';
 import { expect } from 'chai';
+import { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { deleteSite, receiveDeletedSite, receiveSite, receiveSites, receiveSiteUpdates, requestSites, requestSite } from '../actions';
+import { SITE_DELETE, SITE_DELETE_FAILURE, SITE_DELETE_SUCCESS, SITE_RECEIVE, SITE_REQUEST, SITE_REQUEST_FAILURE, SITE_REQUEST_SUCCESS, SITES_RECEIVE, SITES_REQUEST, SITES_REQUEST_FAILURE, SITES_REQUEST_SUCCESS, SITES_UPDATE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
-	SITE_RECEIVE,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-	SITES_RECEIVE,
-	SITES_REQUEST,
-	SITES_REQUEST_FAILURE,
-	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE
-} from 'state/action-types';
-import {
-	deleteSite,
-	receiveDeletedSite,
-	receiveSite,
-	receiveSites,
-	receiveSiteUpdates,
-	requestSites,
-	requestSite
-} from '../actions';
-
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {

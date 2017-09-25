@@ -7,25 +7,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
-import {
-	showNpsSurveyNotice,
-	setNpsSurveyDialogShowing,
-	setupNpsSurveyDevTrigger,
-} from 'state/ui/nps-survey-notice/actions';
-import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
-import {
-	submitNpsSurveyWithNoScore,
-	setupNpsSurveyEligibility,
-} from 'state/nps-survey/actions';
-import {
-	hasAnsweredNpsSurvey,
-	hasAnsweredNpsSurveyWithNoScore,
-	isSectionAndSessionEligibleForNpsSurvey,
-	wasNpsSurveyShownThisSession,
-} from 'state/nps-survey/selectors';
+import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
+import { submitNpsSurveyWithNoScore, setupNpsSurveyEligibility } from 'state/nps-survey/actions';
+import { hasAnsweredNpsSurvey, hasAnsweredNpsSurveyWithNoScore, isSectionAndSessionEligibleForNpsSurvey, wasNpsSurveyShownThisSession } from 'state/nps-survey/selectors';
+import { showNpsSurveyNotice, setNpsSurveyDialogShowing, setupNpsSurveyDevTrigger } from 'state/ui/nps-survey-notice/actions';
+import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
 

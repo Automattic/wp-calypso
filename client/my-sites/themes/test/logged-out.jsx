@@ -1,12 +1,8 @@
 /**
- * Tests for controller.jsx
- */
-
-/**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { assert } from 'chai';
+import { noop } from 'lodash';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -15,11 +11,11 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
 import { THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'logged-out', () => {
 	context( 'when calling renderToString()', function() {

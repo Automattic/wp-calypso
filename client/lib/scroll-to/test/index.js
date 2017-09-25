@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 

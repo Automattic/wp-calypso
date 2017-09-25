@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { ary, defer } from 'lodash';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import { createStore } from 'redux';
+import assert from 'assert';
 import { reducer } from 'state';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'flow-controller', function() {
 	let SignupProgressStore,

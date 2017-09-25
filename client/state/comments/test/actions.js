@@ -7,25 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { COMMENTS_DELETE, COMMENTS_REQUEST, COMMENTS_LIKE, COMMENTS_UNLIKE, COMMENTS_WRITE, COMMENTS_REPLY_WRITE } from '../../action-types';
+import { requestPostComments, writeComment, replyComment, deleteComment, likeComment, unlikeComment } from '../actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	COMMENTS_DELETE,
-	COMMENTS_REQUEST,
-	COMMENTS_LIKE,
-	COMMENTS_UNLIKE,
-	COMMENTS_WRITE,
-	COMMENTS_REPLY_WRITE,
-} from '../../action-types';
-import {
-	requestPostComments,
-	writeComment,
-	replyComment,
-	deleteComment,
-	likeComment,
-	unlikeComment,
-} from '../actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;

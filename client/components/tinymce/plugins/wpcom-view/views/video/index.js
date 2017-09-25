@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import ShortcodeUtils from 'lib/shortcode';
 import VideoView from './view';
+import ShortcodeUtils from 'lib/shortcode';
 
 export function match( content ) {
 	const nextMatch = ShortcodeUtils.next( 'wpvideo', content );

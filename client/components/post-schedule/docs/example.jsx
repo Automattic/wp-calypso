@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-import PostSchedule from 'components/post-schedule';
-import Timezone from 'components/timezone';
 import Card from 'components/card';
 import EventsTooltip from 'components/date-picker/events-tooltip';
+import PostSchedule from 'components/post-schedule';
+import Timezone from 'components/timezone';
 
 /**
  * Date Picker Demo

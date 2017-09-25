@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
-import { isEnabled } from 'config';
-import safeProtocolUrl from 'lib/safe-protocol-url';
 import ExternalLink from 'components/external-link';
-import Gridicon from 'gridicons';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
-import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { isEnabled } from 'config';
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { login } from 'lib/paths';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import { addQueryArgs } from 'lib/url';
+import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {

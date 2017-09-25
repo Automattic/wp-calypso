@@ -3,15 +3,16 @@
  */
 import debugModule from 'debug';
 import sinon from 'sinon';
-import assert from 'assert';
 
 /**
  * Internal dependencies
  */
+import mockedFlows from './fixtures/flows';
+import assert from 'assert';
+
+import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import mockedFlows from './fixtures/flows';
 
 /**
  * Module variables

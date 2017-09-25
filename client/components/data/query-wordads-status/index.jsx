@@ -2,15 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { requestWordadsStatus } from 'state/wordads/status/actions';
+import { isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 
 class QueryWordadsStatus extends Component {
 	componentWillMount() {

@@ -1,26 +1,21 @@
 /**
  * External dependencies
  */
-import { get, omitBy, omit } from 'lodash';
-import qs from 'querystring';
 import { translate } from 'i18n-calypso';
+import { get, omitBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { DEFAULT_QUERY } from './utils';
+import qs from 'querystring';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { WOOCOMMERCE_REVIEWS_RECEIVE, WOOCOMMERCE_REVIEWS_REQUEST, WOOCOMMERCE_REVIEW_DELETE, WOOCOMMERCE_REVIEW_STATUS_CHANGE } from 'woocommerce/state/action-types';
+import request from 'woocommerce/state/sites/http-request';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import { getReviewsCurrentPage, getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
-import request from 'woocommerce/state/sites/http-request';
-import {
-	WOOCOMMERCE_REVIEWS_RECEIVE,
-	WOOCOMMERCE_REVIEWS_REQUEST,
-	WOOCOMMERCE_REVIEW_DELETE,
-	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_REVIEWS_REQUEST ]: [ dispatchRequest(

@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-import { wrap } from 'lodash';
-import Emitter from 'lib/mixins/emitter';
 import debugFactory from 'debug';
+import { wrap } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import Emitter from 'lib/mixins/emitter';
 const debug = debugFactory( 'calypso:ticker' );
 
 const ticker = {};

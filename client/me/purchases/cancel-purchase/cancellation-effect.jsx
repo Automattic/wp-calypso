@@ -1,13 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
 import { isDomainMapping, isGoogleApps, isJetpackPlan, isTheme } from 'lib/products-values';
+import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;

@@ -6,15 +6,7 @@ import { get, has, includes, isFunction, overSome, takeRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_PASTE_EVENT,
-	FIRST_VIEW_HIDE,
-	GUIDED_TOUR_UPDATE,
-	THEMES_REQUEST_SUCCESS,
-	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
-	SITE_SETTINGS_RECEIVE,
-} from 'state/action-types';
+import { EDITOR_PASTE_EVENT, FIRST_VIEW_HIDE, GUIDED_TOUR_UPDATE, THEMES_REQUEST_SUCCESS, PREVIEW_IS_SHOWING, ROUTE_SET, SITE_SETTINGS_RECEIVE } from 'state/action-types';
 
 const relevantAnalyticsEvents = [
 	'calypso_themeshowcase_theme_click',

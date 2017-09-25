@@ -1,28 +1,27 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { includes } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import EditContactInfoFormCard from './form-card';
-import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
 import PendingWhoisUpdateCard from './pending-whois-update-card';
+import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import { getSelectedDomain } from 'lib/domains';
+import { registrar as registrarNames } from 'lib/domains/constants';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
+import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
-import SectionHeader from 'components/section-header';
-import { registrar as registrarNames } from 'lib/domains/constants';
 
 const EditContactInfo = React.createClass( {
 	propTypes: {

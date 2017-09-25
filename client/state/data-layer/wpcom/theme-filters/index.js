@@ -6,12 +6,9 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	THEME_FILTERS_REQUEST,
-	THEME_FILTERS_ADD,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 const fetchFilters = ( { dispatch }, action ) => {

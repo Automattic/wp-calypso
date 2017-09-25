@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import FormSecurity from 'my-sites/site-settings/form-security';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
+import Main from 'components/main';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
+import FormSecurity from 'my-sites/site-settings/form-security';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
+import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {

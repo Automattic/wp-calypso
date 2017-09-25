@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
-import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
+import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 
 function bumpStat() {
 	mc.bumpStat( 'calypso_cpt_actions', 'stats' );

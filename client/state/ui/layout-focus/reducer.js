@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	LAYOUT_FOCUS_SET,
-	LAYOUT_NEXT_FOCUS_ACTIVATE,
-	LAYOUT_NEXT_FOCUS_SET,
-} from 'state/action-types';
+import { LAYOUT_FOCUS_SET, LAYOUT_NEXT_FOCUS_ACTIVATE, LAYOUT_NEXT_FOCUS_SET } from 'state/action-types';
 
 const initialState = { current: 'content', next: null };
 

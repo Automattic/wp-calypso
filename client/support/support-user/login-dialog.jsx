@@ -1,18 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
 import { get } from 'lodash';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 
 class SupportUserLoginDialog extends Component {

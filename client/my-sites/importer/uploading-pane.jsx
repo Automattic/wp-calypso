@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { flowRight, includes, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
+import { connectDispatcher } from './dispatcher-converter';
+import DropZone from 'components/drop-zone';
+import Button from 'components/forms/form-button';
+import ProgressBar from 'components/progress-bar';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import Button from 'components/forms/form-button';
-import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
-import { connectDispatcher } from './dispatcher-converter';
 
 export const UploadingPane = localize( React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',

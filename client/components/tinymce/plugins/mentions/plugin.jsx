@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
-import ReactDom from 'react-dom';
 import React from 'react';
+import ReactDom from 'react-dom';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
 import Mentions from './mentions';
-import { getSelectedSite } from 'state/ui/selectors';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables

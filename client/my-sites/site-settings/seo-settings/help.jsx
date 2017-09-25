@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const SeoSettingsHelpCard = ( {
 	hasAdvancedSEOFeature,

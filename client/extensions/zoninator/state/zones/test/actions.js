@@ -6,24 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	ZONINATOR_ADD_ZONE,
-	ZONINATOR_DELETE_ZONE,
-	ZONINATOR_REQUEST_ERROR,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_SAVE_ZONE,
-	ZONINATOR_UPDATE_ZONE,
-	ZONINATOR_UPDATE_ZONES,
-} from '../../action-types';
-import {
-	requestZones,
-	requestError,
-	updateZones,
-	updateZone,
-	addZone,
-	deleteZone,
-	saveZone,
-} from '../actions';
+import { ZONINATOR_ADD_ZONE, ZONINATOR_DELETE_ZONE, ZONINATOR_REQUEST_ERROR, ZONINATOR_REQUEST_ZONES, ZONINATOR_SAVE_ZONE, ZONINATOR_UPDATE_ZONE, ZONINATOR_UPDATE_ZONES } from '../../action-types';
+import { requestZones, requestError, updateZones, updateZone, addZone, deleteZone, saveZone } from '../actions';
 
 describe( 'actions', () => {
 	const siteId = 123456;

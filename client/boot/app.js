@@ -1,10 +1,3 @@
-// Initialize polyfills before any dependencies are loaded
-import './polyfills';
-
-if ( process.env.NODE_ENV === 'development' ) {
-	require( 'lib/wrap-es6-functions' )();
-}
-
 /**
  * External dependencies
  */
@@ -15,15 +8,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	configureReduxStore,
-	locales,
-	setupMiddlewares,
-	utils
-} from './common';
-import createReduxStoreFromPersistedInitialState from 'state/initial-state';
+import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
+import './polyfills';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
+import createReduxStoreFromPersistedInitialState from 'state/initial-state';
+
+if ( process.env.NODE_ENV === 'development' ) {
+	require( 'lib/wrap-es6-functions' )();
+}
 
 const debug = debugFactory( 'calypso' );
 

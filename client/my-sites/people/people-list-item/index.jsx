@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import PeopleProfile from 'my-sites/people/people-profile';
-import analytics from 'lib/analytics';
 import config from 'config';
+import analytics from 'lib/analytics';
+import PeopleProfile from 'my-sites/people/people-profile';
 
 export default localize( React.createClass( {
 

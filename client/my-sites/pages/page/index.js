@@ -1,49 +1,36 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import createFragment from 'react-addons-create-fragment';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { flow, get, includes, partial } from 'lodash';
 import pageRouter from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import createFragment from 'react-addons-create-fragment';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
-import {
-	flow,
-	get,
-	includes,
-	partial,
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import updatePostStatus from 'components/update-post-status';
+import helpers from '../helpers';
+import PageCardInfo from '../page-card-info';
+import SiteIcon from 'blocks/site-icon';
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import SiteIcon from 'blocks/site-icon';
-import helpers from '../helpers';
-import utils from 'lib/posts/utils';
-import classNames from 'classnames';
-
 import MenuSeparator from 'components/popover/menu-separator';
-import PageCardInfo from '../page-card-info';
-import {
-	getSite,
-	hasStaticFrontPage,
-	isSitePreviewable,
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isFrontPage,
-	isPostsPage,
-} from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import updatePostStatus from 'components/update-post-status';
+import utils from 'lib/posts/utils';
 import { getPreviewURL } from 'lib/posts/utils';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { isFrontPage, isPostsPage } from 'state/pages/selectors';
+import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 

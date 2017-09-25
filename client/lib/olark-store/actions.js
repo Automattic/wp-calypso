@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-import dispatcher from 'dispatcher';
-
-/**
  * Internal dependencies
  */
+import dispatcher from 'dispatcher';
 import { action as ActionTypes } from 'lib/olark-store/constants';
 
 /**

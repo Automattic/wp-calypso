@@ -1,49 +1,38 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import {
-	deburr,
-	endsWith,
-	get,
-	includes,
-	isEqual,
-	keys,
-	omit,
-	pick,
-	snakeCase,
-} from 'lodash';
-import page from 'page';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { deburr, endsWith, get, includes, isEqual, keys, omit, pick, snakeCase } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import FormCountrySelect from 'my-sites/domains/components/form/country-select';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormStateSelect from 'my-sites/domains/components/form/state-select';
-import FormInput from 'my-sites/domains/components/form/input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import ValidationErrorList from 'notices/validation-error-list';
 import countriesListBuilder from 'lib/countries-list';
-import formState from 'lib/form-state';
-import notices from 'notices';
-import paths from 'my-sites/domains/paths';
-import upgradesActions from 'lib/upgrades/actions';
-import wp from 'lib/wp';
-import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
+import formState from 'lib/form-state';
+import upgradesActions from 'lib/upgrades/actions';
+import support from 'lib/url/support';
+import wp from 'lib/wp';
+import FormCountrySelect from 'my-sites/domains/components/form/country-select';
+import FormInput from 'my-sites/domains/components/form/input';
+import FormStateSelect from 'my-sites/domains/components/form/state-select';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import Dialog from 'components/dialog';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import paths from 'my-sites/domains/paths';
+import notices from 'notices';
+import ValidationErrorList from 'notices/validation-error-list';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { successNotice } from 'state/notices/actions';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();

@@ -1,29 +1,26 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatTabs from '../stats-tabs';
+import Card from 'components/card';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
-import StatTabs from '../stats-tabs';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { rangeOfPeriod } from 'state/stats/lists/utils';
 import { getSiteOption } from 'state/sites/selectors';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { rangeOfPeriod } from 'state/stats/lists/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {

@@ -1,16 +1,7 @@
 /**
  * External dependencies
  */
-
-import {
-	assign,
-	forEach,
-	groupBy,
-	includes,
-	map,
-	reduce,
-	sortBy,
-} from 'lodash';
+import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
 
 // Helpers used by sortPagesHierarchically but not exposed externally
 const sortByMenuOrder = list => sortBy( list, 'menu_order' );

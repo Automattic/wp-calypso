@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { commentsTree } from 'blocks/conversations/docs/fixtures';
 import { ConversationCommentList } from 'blocks/conversations/list';
 import { posts } from 'blocks/reader-post-card/docs/fixtures';
-import { commentsTree } from 'blocks/conversations/docs/fixtures';
 
 const ConversationCommentListExample = () => {
 	const post = posts[ 0 ];

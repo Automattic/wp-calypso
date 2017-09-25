@@ -1,25 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormTextInput from 'components/forms/form-text-input';
-import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import {
-	getCurrentlyEditingShippingZone,
-	generateCurrentlyEditingZoneName,
-} from 'woocommerce/state/ui/shipping/zones/selectors';
+import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
+import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
+import { getCurrentlyEditingShippingZone, generateCurrentlyEditingZoneName } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, actions, translate } ) => {
 	const onNameChange = ( event ) => {

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
 import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies

@@ -1,35 +1,34 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { includes, map } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { includes, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import QueryPostTypes from 'components/data/query-post-types';
 import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
-import * as paths from 'lib/paths';
-import PostMetadata from 'lib/post-metadata';
-import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
-import siteUtils from 'lib/site/utils';
+import QueryPostTypes from 'components/data/query-post-types';
+import * as paths from 'lib/paths';
+import PopupMonitor from 'lib/popup-monitor';
+import PostMetadata from 'lib/post-metadata';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { postTypeSupports } from 'state/post-types/selectors';
+import siteUtils from 'lib/site/utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { postTypeSupports } from 'state/post-types/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const EditorSharingPublicizeOptions = React.createClass( {
 	connectionPopupMonitor: false,

@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.

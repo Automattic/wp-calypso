@@ -6,9 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-
 import guestSandboxTicket from '../guest-sandbox-ticket';
+import useMockery from 'test/helpers/use-mockery';
 
 let deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler;
 

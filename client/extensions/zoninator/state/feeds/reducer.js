@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import { ZONINATOR_UPDATE_FEED } from '../action-types';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 const feed = createReducer( {}, {
 	[ ZONINATOR_UPDATE_FEED ]: ( state, { posts } ) => posts,

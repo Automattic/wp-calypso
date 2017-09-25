@@ -7,10 +7,10 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import wporg from 'lib/wporg';
+import { debounce } from 'lib/impure-lodash';
 import utils from 'lib/plugins/utils';
 import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
-import { debounce } from 'lib/impure-lodash';
+import wporg from 'lib/wporg';
 
 /**
  * Constants

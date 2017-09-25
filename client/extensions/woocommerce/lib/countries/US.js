@@ -6,11 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	DESTINATION_BASED_SALES_TAX,
-	NO_SALES_TAX,
-	ORIGIN_BASED_SALES_TAX
-} from './constants';
+import { DESTINATION_BASED_SALES_TAX, NO_SALES_TAX, ORIGIN_BASED_SALES_TAX } from './constants';
 
 export default () => {
 	return (

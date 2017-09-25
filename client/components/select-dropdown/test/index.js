@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import SelectDropdown from '../index';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'index', function() {
 	useFakeDom();

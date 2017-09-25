@@ -1,12 +1,17 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
-import Dispatcher from 'dispatcher';
 import { partial } from 'lodash';
 
-import { nock, useNock } from 'test/helpers/use-nock';
-
+/**
+ * Internal dependencies
+ */
 import { fetchState } from '../actions';
-import { IMPORTS_STORE_RESET } from 'state/action-types';
 import store from '../store';
+import Dispatcher from 'dispatcher';
+import { IMPORTS_STORE_RESET } from 'state/action-types';
+import { nock, useNock } from 'test/helpers/use-nock';
 
 const testSiteId = 'en.blog.wordpress.com';
 const fetchTestState = partial( fetchState, testSiteId );

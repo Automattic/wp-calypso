@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	isArray,
-	mergeWith,
-} from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 
 /**
  * Merge handler for lodash.mergeWith

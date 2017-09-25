@@ -1,27 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
-
 import Card from 'components/card';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ViewersActions from 'lib/viewers/actions';
-import ViewersStore from 'lib/viewers/store';
-import InfiniteList from 'components/infinite-list';
 import ViewersData from 'components/data/viewers-data';
 import EmptyContent from 'components/empty-content';
-import analytics from 'lib/analytics';
-import accept from 'lib/accept';
+import InfiniteList from 'components/infinite-list';
 import ListEnd from 'components/list-end';
+import accept from 'lib/accept';
+import analytics from 'lib/analytics';
+import ViewersActions from 'lib/viewers/actions';
+import ViewersStore from 'lib/viewers/store';
+import PeopleListItem from 'my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 
 const Viewers = localize( React.createClass( {
 

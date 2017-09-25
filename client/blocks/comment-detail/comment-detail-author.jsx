@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { some } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,20 +16,15 @@ import Button from 'components/button';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
-import { urlToDomainAndPath } from 'lib/url';
-import { getSite } from 'state/sites/selectors';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
-import { saveSiteSettings } from 'state/site-settings/actions';
+import { urlToDomainAndPath } from 'lib/url';
+import { bumpStat, composeAnalytics, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { successNotice } from 'state/notices/actions';
 import { canCurrentUser } from 'state/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { getSite } from 'state/sites/selectors';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {

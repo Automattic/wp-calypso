@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import { displayRequestTransferCodeResponseNotice } from './shared';
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
 import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
-import notices from 'notices';
-import { displayRequestTransferCodeResponseNotice } from './shared';
 import support from 'lib/url/support';
+import notices from 'notices';
 
 class Unlocked extends React.Component {
 	state = {

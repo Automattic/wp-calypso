@@ -7,18 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	COUNTRY_STATES_RECEIVE,
-	COUNTRY_STATES_REQUEST,
-	COUNTRY_STATES_REQUEST_FAILURE,
-	COUNTRY_STATES_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import reducer, {
-	items,
-	isFetching,
-} from '../reducer';
+import reducer, { items, isFetching } from '../reducer';
+import { COUNTRY_STATES_RECEIVE, COUNTRY_STATES_REQUEST, COUNTRY_STATES_REQUEST_FAILURE, COUNTRY_STATES_REQUEST_SUCCESS, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalCountryStates = [

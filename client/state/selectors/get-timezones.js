@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	get,
-	map,
-	toPairs,
-} from 'lodash';
+import { get, map, toPairs } from 'lodash';
 
 /**
  * Internal dependencies

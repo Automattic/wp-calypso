@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import {
-	GEO_RECEIVE,
-	GEO_REQUEST,
-	GEO_REQUEST_FAILURE,
-	GEO_REQUEST_SUCCESS
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
 import { geoSchema } from './schema';
+import { GEO_RECEIVE, GEO_REQUEST, GEO_REQUEST_FAILURE, GEO_REQUEST_SUCCESS } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.

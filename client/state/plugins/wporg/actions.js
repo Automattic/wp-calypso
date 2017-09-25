@@ -3,14 +3,14 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:wporg-data:actions' );
-
 /**
  * Internal dependencies
  */
-import wporg from 'lib/wporg';
 import utils from 'lib/plugins/utils';
+import wporg from 'lib/wporg';
 import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
+
+const debug = debugFactory( 'calypso:wporg-data:actions' );
 
 /**
  *  Local variables;

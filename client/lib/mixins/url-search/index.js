@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:url-search' );
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import buildUrl from 'lib/build-url';
+
+const debug = debugFactory( 'calypso:url-search' );
 
 export default {
 

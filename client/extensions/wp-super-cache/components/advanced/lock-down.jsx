@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { pick } from 'lodash';
 import Gridicon from 'gridicons';
+import { pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import FormToggle from 'components/forms/form-toggle/compact';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import WrapSettingsForm from '../wrap-settings-form';
+import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
 
 const LockDown = ( {
 	fields: {

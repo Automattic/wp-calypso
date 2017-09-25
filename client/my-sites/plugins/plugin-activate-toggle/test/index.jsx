@@ -2,18 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { mount } from 'enzyme';
+import mockery from 'mockery';
 import React from 'react';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import mockedPluginAction from './mocks/plugin-action';
+import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 

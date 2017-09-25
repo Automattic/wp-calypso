@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { filter, map } from 'lodash';
+import React from 'react';
 import { test } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './lib/fixtures';
+import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 

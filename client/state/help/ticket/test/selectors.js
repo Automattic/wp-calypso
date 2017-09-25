@@ -6,13 +6,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isTicketSupportEligible,
-	isTicketSupportConfigurationReady,
-	isRequestingTicketSupportConfiguration,
-	getTicketSupportRequestError,
-} from '../selectors';
-
+import { isTicketSupportEligible, isTicketSupportConfigurationReady, isRequestingTicketSupportConfiguration, getTicketSupportRequestError } from '../selectors';
 import { dummyError } from './test-data';
 
 describe( 'ticket-support/configuration/selectors', () => {

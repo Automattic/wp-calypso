@@ -6,15 +6,9 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
 import { itemsSchema } from './schema';
-import {
-	HAPPINESS_ENGINEERS_FETCH,
-	HAPPINESS_ENGINEERS_RECEIVE,
-	HAPPINESS_ENGINEERS_FETCH_FAILURE,
-	HAPPINESS_ENGINEERS_FETCH_SUCCESS
-} from 'state/action-types';
+import { HAPPINESS_ENGINEERS_FETCH, HAPPINESS_ENGINEERS_RECEIVE, HAPPINESS_ENGINEERS_FETCH_FAILURE, HAPPINESS_ENGINEERS_FETCH_SUCCESS } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.

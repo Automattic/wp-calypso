@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostCard from 'blocks/reader-post-card';
+import DisplayTypes from 'state/reader/posts/display-types';
 
 export class ReaderPreview extends PureComponent {
 	render() {

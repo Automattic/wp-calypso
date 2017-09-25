@@ -6,26 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isSessionEligibleForNpsSurvey,
-	isSectionEligibleForNpsSurvey,
-	isSectionAndSessionEligibleForNpsSurvey,
-	wasNpsSurveyShownThisSession,
-	isNpsSurveyNotSubmitted,
-	isNpsSurveySubmitting,
-	isNpsSurveySubmitted,
-	isNpsSurveySubmitFailure,
-	getNpsSurveyName,
-	getNpsSurveyScore,
-	hasAnsweredNpsSurvey,
-	hasAnsweredNpsSurveyWithNoScore
-} from '../selectors';
-import {
-	NOT_SUBMITTED,
-	SUBMITTING,
-	SUBMIT_FAILURE,
-	SUBMITTED,
-} from '../constants';
+import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from '../constants';
+import { isSessionEligibleForNpsSurvey, isSectionEligibleForNpsSurvey, isSectionAndSessionEligibleForNpsSurvey, wasNpsSurveyShownThisSession, isNpsSurveyNotSubmitted, isNpsSurveySubmitting, isNpsSurveySubmitted, isNpsSurveySubmitFailure, getNpsSurveyName, getNpsSurveyScore, hasAnsweredNpsSurvey, hasAnsweredNpsSurveyWithNoScore } from '../selectors';
 
 describe( 'isSessionEligibleForNpsSurvey', () => {
 	it( 'should return true if the session is eligible for the NPS survey', () => {

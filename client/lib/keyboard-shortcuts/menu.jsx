@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
-import classNames from 'classnames';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-
 import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import SelectDropdownItem from '../item';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'item', function() {
 	useFakeDom();

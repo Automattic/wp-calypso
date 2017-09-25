@@ -7,10 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getProductDisplayCost,
-	isProductsListFetching,
-} from '../selectors';
+import { getProductDisplayCost, isProductsListFetching } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getProductDisplayCost()', () => {

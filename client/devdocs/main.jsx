@@ -2,9 +2,9 @@
  * External dependencies
  */
 import debug from 'debug';
+import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies

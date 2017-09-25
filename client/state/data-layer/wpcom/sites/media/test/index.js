@@ -7,23 +7,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { handleMediaItemRequest, receiveMediaItem, receiveMediaItemError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestMediaSuccess, requestMediaError, requestMedia } from '../';
 import { MEDIA_ITEM_REQUEST } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { failMediaItemRequest, failMediaRequest, receiveMedia, requestingMedia, requestingMediaItem, successMediaItemRequest, successMediaRequest } from 'state/media/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	failMediaItemRequest,
-	failMediaRequest,
-	receiveMedia,
-	requestingMedia,
-	requestingMediaItem,
-	successMediaItemRequest,
-	successMediaRequest,
-} from 'state/media/actions';
-import {
-	requestMediaSuccess,
-	requestMediaError,
-	requestMedia
-} from '../';
 
 describe( 'media request', () => {
 	let dispatch;

@@ -2,20 +2,20 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import store from 'store';
 import { assign, find, isEmpty, some } from 'lodash';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+import Searchable from 'lib/mixins/searchable';
+import { isPlan } from 'lib/products-values';
 import Site from 'lib/site';
 import JetpackSite from 'lib/site/jetpack';
-import Searchable from 'lib/mixins/searchable';
-import Emitter from 'lib/mixins/emitter';
-import { isPlan } from 'lib/products-values';
-import userUtils from 'lib/user/utils';
 import { withoutHttp } from 'lib/url';
+import userUtils from 'lib/user/utils';
+import wpcom from 'lib/wp';
 
 const debug = debugModule( 'calypso:sites-list' );
 

@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getSerializedQuery,
-	normalizeFollower
-} from '../utils';
+import { getSerializedQuery, normalizeFollower } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#getSerializedQuery()', () => {

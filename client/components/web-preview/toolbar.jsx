@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { partial } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { partial } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Button from 'components/button';
+import ClipboardButtonInput from 'components/clipboard-button-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
-import ClipboardButtonInput from 'components/clipboard-button-input';
 
 const possibleDevices = [
 	'computer',

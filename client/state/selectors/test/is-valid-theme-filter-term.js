@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isValidThemeFilterTerm } from '../';
-import { state } from './fixtures/theme-filters';
+import { isValidThemeFilterTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'isValidThemeFilterTerm()', () => {
 	it( 'should return true for a valid term string', () => {

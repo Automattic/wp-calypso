@@ -1,14 +1,10 @@
 /**
- * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http://github.com/webmodules/jsonp
- */
-
-/**
  * External dependencies
  */
 import debugFactory from 'debug';
+import qs from 'qs';
 
 const debug = debugFactory( 'jsonp' );
-import qs from 'qs';
 
 /**
  * Module exports.

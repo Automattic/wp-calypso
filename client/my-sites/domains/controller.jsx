@@ -1,38 +1,33 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
 import qs from 'qs';
-import i18n from 'i18n-calypso';
 import React from 'react';
-import { get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import route from 'lib/route';
-import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import productsFactory from 'lib/products-list';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import { canCurrentUser } from 'state/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug
-} from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-
-import CartData from 'components/data/cart';
 import DomainSearch from './domain-search';
-import CartData from 'components/data/cart';
 import SiteRedirect from './domain-search/site-redirect';
 import CartData from 'components/data/cart';
-import MapDomain from 'my-sites/domains/map-domain';
 import CartData from 'components/data/cart';
+import CartData from 'components/data/cart';
+import CartData from 'components/data/cart';
+import Main from 'components/main';
 import GoogleApps from 'components/upgrades/google-apps';
+import analytics from 'lib/analytics';
+import productsFactory from 'lib/products-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
+import upgradesActions from 'lib/upgrades/actions';
+import MapDomain from 'my-sites/domains/map-domain';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { canCurrentUser } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Module variables

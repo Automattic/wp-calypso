@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { isEqual, omit } from 'lodash';
 import classNames from 'classnames';
+import { isEqual, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 import ResizableIframe from 'components/resizable-iframe';
+import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 
 export default React.createClass( {
 	displayName: 'ShortcodeFrame',

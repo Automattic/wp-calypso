@@ -1,33 +1,16 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
 import { flowRight, includes, partial } from 'lodash';
-const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
-import {
-	IMPORTS_AUTHORS_SET_MAPPING,
-	IMPORTS_AUTHORS_START_MAPPING,
-	IMPORTS_FETCH,
-	IMPORTS_FETCH_FAILED,
-	IMPORTS_FETCH_COMPLETED,
-	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_LOCK,
-	IMPORTS_IMPORT_RECEIVE,
-	IMPORTS_IMPORT_RESET,
-	IMPORTS_IMPORT_START,
-	IMPORTS_IMPORT_UNLOCK,
-	IMPORTS_START_IMPORTING,
-	IMPORTS_UPLOAD_FAILED,
-	IMPORTS_UPLOAD_COMPLETED,
-	IMPORTS_UPLOAD_SET_PROGRESS,
-	IMPORTS_UPLOAD_START,
-} from 'state/action-types';
-import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
+import Dispatcher from 'dispatcher';
+import { IMPORTS_AUTHORS_SET_MAPPING, IMPORTS_AUTHORS_START_MAPPING, IMPORTS_FETCH, IMPORTS_FETCH_FAILED, IMPORTS_FETCH_COMPLETED, IMPORTS_IMPORT_CANCEL, IMPORTS_IMPORT_LOCK, IMPORTS_IMPORT_RECEIVE, IMPORTS_IMPORT_RESET, IMPORTS_IMPORT_START, IMPORTS_IMPORT_UNLOCK, IMPORTS_START_IMPORTING, IMPORTS_UPLOAD_FAILED, IMPORTS_UPLOAD_COMPLETED, IMPORTS_UPLOAD_SET_PROGRESS, IMPORTS_UPLOAD_START } from 'state/action-types';
+import { appStates } from 'state/imports/constants';
+const wpcom = require( 'lib/wp' ).undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { getLocaleSlug } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { addLocaleToPath } from 'lib/i18n-utils';
 import LocaleSuggestionListItem from './list-item';
-import LocaleSuggestionStore from 'lib/locale-suggestions';
 import Notice from 'components/notice';
+import { addLocaleToPath } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
+import LocaleSuggestionStore from 'lib/locale-suggestions';
 
 class LocaleSuggestions extends Component {
 	constructor( props ) {

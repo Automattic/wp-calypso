@@ -6,19 +6,11 @@ import { get, isEqual, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	CURRENT_USER_ID_SET,
-	CURRENT_USER_FLAGS_RECEIVE,
-	SITE_RECEIVE,
-	SITE_PLANS_FETCH_COMPLETED,
-	SITES_RECEIVE,
-	SITES_UPDATE,
-	PLANS_RECEIVE
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
-import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
+import gravatarStatus from './gravatar-status/reducer';
+import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+import { CURRENT_USER_ID_SET, CURRENT_USER_FLAGS_RECEIVE, SITE_RECEIVE, SITE_PLANS_FETCH_COMPLETED, SITES_RECEIVE, SITES_UPDATE, PLANS_RECEIVE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Tracks the current user ID.

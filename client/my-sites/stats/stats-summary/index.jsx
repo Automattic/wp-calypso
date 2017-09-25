@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isEqual, find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isEqual, find, flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ElementChart from 'components/chart';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
+import ElementChart from 'components/chart';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSummaryChart extends Component {

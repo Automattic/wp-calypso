@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { sum } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
-import FormTextInput from 'components/forms/form-text-input';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-taxes';
 import OrderDiscountRow from './row-discount';
 import OrderRefundRow from './row-refund';
-import OrderShippingRefundRow from './row-shipping-refund';
 import OrderShippingRow from './row-shipping';
+import OrderShippingRefundRow from './row-shipping-refund';
 import OrderTotalRow from './row-total';
+import FormTextInput from 'components/forms/form-text-input';
+import formatCurrency from 'lib/format-currency';
 import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-taxes';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {

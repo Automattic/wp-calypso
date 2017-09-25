@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { compact, toArray } from 'lodash';
 import debugFactory from 'debug';
+import { compact, toArray } from 'lodash';
 const debug = debugFactory( 'calypso:highlight' );
 
 /**

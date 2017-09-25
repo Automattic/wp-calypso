@@ -6,17 +6,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	requestReset,
-	updatePasswordResetUserData,
-	setResetMethod,
-} from '../actions';
-
-import {
-	ACCOUNT_RECOVERY_RESET_SET_METHOD,
-	ACCOUNT_RECOVERY_RESET_REQUEST,
-	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-} from 'state/action-types';
+import { requestReset, updatePasswordResetUserData, setResetMethod } from '../actions';
+import { ACCOUNT_RECOVERY_RESET_SET_METHOD, ACCOUNT_RECOVERY_RESET_REQUEST, ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA } from 'state/action-types';
 
 describe( '#updatePasswordResetUserData', () => {
 	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {

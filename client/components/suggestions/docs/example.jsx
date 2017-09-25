@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { noop } from 'lodash';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

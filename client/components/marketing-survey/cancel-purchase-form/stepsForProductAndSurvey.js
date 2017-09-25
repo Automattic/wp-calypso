@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
+import * as steps from './steps';
+import { abtest } from 'lib/abtest';
 import * as plans from 'lib/plans/constants';
 import { includesProduct } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
-import * as steps from './steps';
 
 const BUSINESS_PLANS = [ plans.PLAN_BUSINESS ];
 const PERSONAL_PREMIUM_PLANS = [ plans.PLAN_PERSONAL, plans.PLAN_PREMIUM ];

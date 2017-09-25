@@ -1,16 +1,16 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { noop, map } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { noop, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
 import { CalendarEvent } from './event';
+import Tooltip from 'components/tooltip';
 
 class EventsTooltip extends Component {
 	static propTypes = {

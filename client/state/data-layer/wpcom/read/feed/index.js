@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import { map, truncate } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { READER_FEED_SEARCH_REQUEST } from 'state/action-types';
-import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
+import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import queryKey from 'state/reader/feed-searches/query-key';
 
 export function initiateFeedSearch( store, action ) {

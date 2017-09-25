@@ -1,10 +1,10 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
 

@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
+import ActionButtons from '../settings-form/actions';
+import EmailCategory from './email-category';
 import Card from 'components/card';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import ActionButtons from '../settings-form/actions';
+import Main from 'components/main';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import ReauthRequired from 'me/reauth-required';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import EmailCategory from './email-category';
 
 /**
  * Module variables

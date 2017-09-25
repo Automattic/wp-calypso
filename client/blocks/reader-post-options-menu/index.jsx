@@ -2,32 +2,32 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import page from 'page';
-import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { requestSiteBlock } from 'state/reader/site-blocks/actions';
-import PostUtils from 'lib/posts/utils';
-import FollowButton from 'reader/follow-button';
-import * as DiscoverHelper from 'reader/discover/helper';
-import * as stats from 'reader/stats';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSite } from 'state/reader/sites/selectors';
+import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderTeams from 'components/data/query-reader-teams';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import PostUtils from 'lib/posts/utils';
+import * as DiscoverHelper from 'reader/discover/helper';
+import FollowButton from 'reader/follow-button';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
+import * as stats from 'reader/stats';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { requestSiteBlock } from 'state/reader/site-blocks/actions';
+import { getSite } from 'state/reader/sites/selectors';
 import { getReaderTeams } from 'state/selectors';
-import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {

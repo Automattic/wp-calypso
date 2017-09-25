@@ -3,11 +3,7 @@
  */
 import { COMMENTS_WRITE } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import {
-	dispatchNewCommentRequest,
-	updatePlaceholderComment,
-	handleWriteCommentFailure,
-} from 'state/data-layer/wpcom/sites/utils';
+import { dispatchNewCommentRequest, updatePlaceholderComment, handleWriteCommentFailure } from 'state/data-layer/wpcom/sites/utils';
 
 export const writePostComment = ( { dispatch }, action ) => dispatchNewCommentRequest(
 	dispatch,

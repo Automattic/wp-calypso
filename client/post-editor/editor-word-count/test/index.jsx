@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

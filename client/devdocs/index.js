@@ -2,12 +2,12 @@
  * External dependencies
  */
 import page from 'page';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import controller from './controller';
+import config from 'config';
 
 export default function() {
 	if ( config.isEnabled( 'devdocs' ) ) {

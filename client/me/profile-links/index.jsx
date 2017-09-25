@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ProfileLink from 'me/profile-link';
-import observe from 'lib/mixins/data-observe';
-import AddProfileLinksButtons from 'me/profile-links/add-buttons';
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
+import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
-import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
+import ProfileLink from 'me/profile-link';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
+import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
+import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 
 export default localize( React.createClass( {
 

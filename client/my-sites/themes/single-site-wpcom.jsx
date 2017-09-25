@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import { connectOptions } from './theme-options';
+import { connectOptions } from './theme-options';
+import ThemeShowcase from './theme-showcase';
 import Banner from 'components/banner';
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import ThemeShowcase from './theme-showcase';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import CurrentTheme from 'my-sites/themes/current-theme';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 const ConnectedSingleSiteWpcom = connectOptions(
 	( props ) => {

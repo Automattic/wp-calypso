@@ -6,12 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SIGNUP_DEPENDENCY_STORE_UPDATE,
-	SIGNUP_COMPLETE_RESET,
-} from 'state/action-types';
-
 import signupDependencyStore from '../reducer';
+import { SIGNUP_DEPENDENCY_STORE_UPDATE, SIGNUP_COMPLETE_RESET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should update the signup store', () => {

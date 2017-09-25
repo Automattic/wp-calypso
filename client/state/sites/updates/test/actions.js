@@ -7,22 +7,8 @@ import sinon, { match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	SITE_UPDATES_RECEIVE,
-	SITE_UPDATES_REQUEST,
-	SITE_UPDATES_REQUEST_SUCCESS,
-	SITE_UPDATES_REQUEST_FAILURE,
-	SITE_WORDPRESS_UPDATE_REQUEST,
-	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
-	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
-} from 'state/action-types';
-import {
-	siteUpdatesReceiveAction,
-	siteUpdatesRequestAction,
-	siteUpdatesRequestSuccessAction,
-	siteUpdatesRequestFailureAction,
-	updateWordPress,
-} from '../actions';
+import { siteUpdatesReceiveAction, siteUpdatesRequestAction, siteUpdatesRequestSuccessAction, siteUpdatesRequestFailureAction, updateWordPress } from '../actions';
+import { SITE_UPDATES_RECEIVE, SITE_UPDATES_REQUEST, SITE_UPDATES_REQUEST_SUCCESS, SITE_UPDATES_REQUEST_FAILURE, SITE_WORDPRESS_UPDATE_REQUEST, SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS, SITE_WORDPRESS_UPDATE_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

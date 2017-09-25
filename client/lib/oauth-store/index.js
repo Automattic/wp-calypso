@@ -3,15 +3,15 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:auth:store' );
-
 /**
  * Internal dependencies
  */
-import { createReducerStore } from 'lib/store';
 import { actions as ActionTypes } from './constants';
 import { errors as errorTypes } from './constants';
 import * as OAuthToken from 'lib/oauth-token';
+import { createReducerStore } from 'lib/store';
+
+const debug = debugFactory( 'calypso:auth:store' );
 
 /**
  * Module variables

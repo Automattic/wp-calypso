@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { getLocaleSlug, localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { isEmpty } from 'lodash';
-import { getLocaleSlug, localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HelpSearchStore from 'lib/help-search/store';
+import CompactCard from 'components/card/compact';
+import SearchCard from 'components/search-card';
+import analytics from 'lib/analytics';
 import HelpSearchActions from 'lib/help-search/actions';
+import HelpSearchStore from 'lib/help-search/store';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
-import SearchCard from 'components/search-card';
-import CompactCard from 'components/card/compact';
-import analytics from 'lib/analytics';
 
 export default localize( React.createClass( {
 	displayName: 'HelpSearch',

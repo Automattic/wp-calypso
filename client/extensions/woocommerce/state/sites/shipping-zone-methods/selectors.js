@@ -6,8 +6,8 @@ import { find, get, isArray, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones } from '../shipping-zones/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getAPIShippingZoneMethods = ( state, siteId = getSelectedSiteId( state ) ) => {

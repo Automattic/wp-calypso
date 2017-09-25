@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
+import PostSchedule from 'components/post-schedule';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';

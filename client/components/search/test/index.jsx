@@ -3,8 +3,12 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import useMockery from 'test/helpers/use-mockery';
+
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Search', function() {
 	let React, TestUtils, EMPTY_COMPONENT;

@@ -8,9 +8,9 @@ import React from 'react';
  */
 import PostList from './post-list';
 import PostListFetcher from 'components/post-list-fetcher';
-import PostTypeList from 'my-sites/post-type-list';
 import config from 'config';
 import { mapPostStatus } from 'lib/route/path';
+import PostTypeList from 'my-sites/post-type-list';
 
 class PostListWrapper extends React.Component {
 

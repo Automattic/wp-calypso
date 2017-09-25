@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -10,10 +10,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
-import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 

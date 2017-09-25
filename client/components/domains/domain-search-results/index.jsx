@@ -1,29 +1,25 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { endsWith, includes, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import classNames from 'classnames';
-import {
-	endsWith,
-	includes,
-	times
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
+import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {

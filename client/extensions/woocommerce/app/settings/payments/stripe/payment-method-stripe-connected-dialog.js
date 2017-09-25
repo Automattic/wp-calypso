@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
+import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
+import StripeConnectAccount from './payment-method-stripe-connect-account';
+import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils.js';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils.js';
-import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
-import StripeConnectAccount from './payment-method-stripe-connect-account';
+import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
 
 class PaymentMethodStripeConnectedDialog extends Component {
 

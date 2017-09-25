@@ -1,17 +1,18 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import config from 'config';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {

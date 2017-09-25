@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { isArray } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StickyPanel from 'components/sticky-panel';
 import Notice from 'components/notice';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 const ActionHeader = ( { children, breadcrumbs } ) => {
 	// TODO: Implement proper breadcrumbs component.

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import Dialog from 'components/dialog';
 import Button from 'components/button';
+import Dialog from 'components/dialog';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackDialog extends PureComponent {

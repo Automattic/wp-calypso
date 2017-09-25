@@ -7,15 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
-	POST_LIKES_REQUEST_FAILURE,
-	POST_LIKES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { POST_LIKES_RECEIVE, POST_LIKES_REQUEST, POST_LIKES_REQUEST_FAILURE, POST_LIKES_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

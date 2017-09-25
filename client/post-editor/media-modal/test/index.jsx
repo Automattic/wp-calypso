@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { identity, noop } from 'lodash';
-import React from 'react';
-import { shallow } from 'enzyme';
-import mockery from 'mockery';
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { identity, noop } from 'lodash';
+import mockery from 'mockery';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import { useSandbox } from 'test/helpers/use-sinon';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
  * Module variables

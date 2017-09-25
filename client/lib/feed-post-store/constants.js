@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import keyMirror from 'key-mirror';
 
 export default {

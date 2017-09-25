@@ -1,52 +1,40 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, isEmpty, some } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { find, isEmpty, some } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import NoPermissionsError from './no-permissions-error';
+import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import PluginItem from './plugin-item/plugin-item';
-import DocumentHead from 'components/data/document-head';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import URLSearch from 'lib/mixins/url-search';
-import EmptyContent from 'components/empty-content';
-import PluginsStore from 'lib/plugins/store';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import PluginsBrowser from './plugins-browser';
 import PluginsList from './plugins-list';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
+import HeaderButton from 'components/header-button';
+import Main from 'components/main';
+import Search from 'components/search';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import { isEnabled } from 'config';
+import URLSearch from 'lib/mixins/url-search';
+import PluginsStore from 'lib/plugins/store';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
-import PluginsBrowser from './plugins-browser';
-import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
-import NoPermissionsError from './no-permissions-error';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins
-} from 'state/selectors';
-import {
-	canJetpackSiteManage,
-	canJetpackSiteUpdateFiles,
-	isJetpackSite,
-	isRequestingSites
-} from 'state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug
-} from 'state/ui/selectors';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
+import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins } from 'state/selectors';
 import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
-import HeaderButton from 'components/header-button';
-import { isEnabled } from 'config';
+import { canJetpackSiteManage, canJetpackSiteUpdateFiles, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],

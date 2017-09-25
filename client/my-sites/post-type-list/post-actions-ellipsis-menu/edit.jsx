@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
+import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
-import { canCurrentUser } from 'state/selectors';
-import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import { getPost } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 function PostActionsEllipsisMenuEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {

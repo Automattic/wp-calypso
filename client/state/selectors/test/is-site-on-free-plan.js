@@ -1,17 +1,14 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	PLAN_BUSINESS,
-	PLAN_FREE
-} from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'isSiteOnFreePlan', () => {

@@ -1,5 +1,5 @@
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getReaderFollowsLastSyncTime } from 'state/selectors';
 

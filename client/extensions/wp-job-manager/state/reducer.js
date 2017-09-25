@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
 import settings from './settings/reducer';
 import setup from './setup/reducer';
+import { combineReducers } from 'state/utils';
 
 export default combineReducers( { settings, setup } );

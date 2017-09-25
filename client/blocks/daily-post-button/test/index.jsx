@@ -1,19 +1,19 @@
 /** @format */
 /**
- * External  dependencies
+ * External dependencies
  */
-import React from 'react';
-import { shallow } from 'enzyme';
 import { assert } from 'chai';
-import { stub, spy } from 'sinon';
-import qs from 'qs';
+import { shallow } from 'enzyme';
 import { noop } from 'lodash';
+import qs from 'qs';
+import React from 'react';
+import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import { sites, dailyPromptPost } from './fixtures';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'DailyPostButton', () => {
 	const SitesPopover = props => <span { ...props } />;

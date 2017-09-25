@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import TraceKit from 'tracekit';
 import debug from 'debug';
+import TraceKit from 'tracekit';
 
 /**
  * Module variables

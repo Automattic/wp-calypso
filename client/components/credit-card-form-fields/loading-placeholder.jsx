@@ -4,10 +4,10 @@
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
 
 const CreditCardFormLoadingPlaceholder = () => {
 	return (

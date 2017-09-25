@@ -6,21 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	EXPORT_ADVANCED_SETTINGS_FAIL,
-	EXPORT_ADVANCED_SETTINGS_FETCH,
-	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	EXPORT_POST_TYPE_FIELD_SET,
-} from 'state/action-types';
-import {
-	selectedAdvancedSettings,
-	advancedSettings,
-	fetchingAdvancedSettings
-} from '../reducers';
-import {
-	SAMPLE_ADVANCED_SETTINGS,
-	SAMPLE_ADVANCED_SETTINGS_EMPTY,
-} from './data';
+import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducers';
+import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
+import { EXPORT_ADVANCED_SETTINGS_FAIL, EXPORT_ADVANCED_SETTINGS_FETCH, EXPORT_ADVANCED_SETTINGS_RECEIVE, EXPORT_POST_TYPE_FIELD_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'selectedAdvancedSettings', () => {

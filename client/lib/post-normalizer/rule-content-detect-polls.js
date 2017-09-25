@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { forEach } from 'lodash';
 import i18n from 'i18n-calypso';
+import { forEach } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { domForHtml } from './utils';
 

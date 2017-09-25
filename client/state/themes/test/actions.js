@@ -1,61 +1,17 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
-import useMockery from 'test/helpers/use-mockery';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE,
-	THEME_ACTIVATE_SUCCESS,
-	THEME_ACTIVATE_FAILURE,
-	THEME_CLEAR_ACTIVATED,
-	THEME_DELETE_SUCCESS,
-	THEME_DELETE_FAILURE,
-	THEME_FILTERS_REQUEST,
-	THEME_INSTALL,
-	THEME_INSTALL_SUCCESS,
-	THEME_INSTALL_FAILURE,
-	THEME_REQUEST,
-	THEME_REQUEST_SUCCESS,
-	THEME_REQUEST_FAILURE,
-	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_TRANSFER_INITIATE_REQUEST,
-	THEME_TRANSFER_INITIATE_SUCCESS,
-	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_TRANSFER_STATUS_RECEIVE,
-	THEMES_REQUEST,
-	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE,
-} from 'state/action-types';
-import {
-	themeActivated,
-	clearActivated,
-	activateTheme,
-	installAndActivateTheme,
-	activate,
-	requestActiveTheme,
-	receiveTheme,
-	receiveThemes,
-	requestThemes,
-	requestTheme,
-	pollThemeTransferStatus,
-	initiateThemeTransfer,
-	installTheme,
-	installAndTryAndCustomizeTheme,
-	tryAndCustomizeTheme,
-	tryAndCustomize,
-	deleteTheme,
-	requestThemeFilters,
-} from '../actions';
-import useNock from 'test/helpers/use-nock';
+import { themeActivated, clearActivated, activateTheme, installAndActivateTheme, activate, requestActiveTheme, receiveTheme, receiveThemes, requestThemes, requestTheme, pollThemeTransferStatus, initiateThemeTransfer, installTheme, installAndTryAndCustomizeTheme, tryAndCustomizeTheme, tryAndCustomize, deleteTheme, requestThemeFilters } from '../actions';
 import ThemeQueryManager from 'lib/query-manager/theme';
+import { ACTIVE_THEME_REQUEST, ACTIVE_THEME_REQUEST_SUCCESS, ACTIVE_THEME_REQUEST_FAILURE, THEME_ACTIVATE, THEME_ACTIVATE_SUCCESS, THEME_ACTIVATE_FAILURE, THEME_CLEAR_ACTIVATED, THEME_DELETE_SUCCESS, THEME_DELETE_FAILURE, THEME_FILTERS_REQUEST, THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE, THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE, THEME_TRANSFER_INITIATE_FAILURE, THEME_TRANSFER_INITIATE_REQUEST, THEME_TRANSFER_INITIATE_SUCCESS, THEME_TRANSFER_STATUS_FAILURE, THEME_TRANSFER_STATUS_RECEIVE, THEMES_REQUEST, THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE } from 'state/action-types';
+import useMockery from 'test/helpers/use-mockery';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

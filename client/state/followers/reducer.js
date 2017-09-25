@@ -6,17 +6,10 @@ import { keyBy, mapValues, omit, union, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	FOLLOWERS_RECEIVE,
-	FOLLOWERS_REQUEST,
-	FOLLOWERS_REQUEST_ERROR,
-	FOLLOWER_REMOVE_ERROR,
-	FOLLOWER_REMOVE_REQUEST,
-	FOLLOWER_REMOVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
-import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
+import { FOLLOWERS_RECEIVE, FOLLOWERS_REQUEST, FOLLOWERS_REQUEST_ERROR, FOLLOWER_REMOVE_ERROR, FOLLOWER_REMOVE_REQUEST, FOLLOWER_REMOVE_SUCCESS } from 'state/action-types';
 import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
+import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
+import { combineReducers } from 'state/utils';
 
 export function items( state = {}, action ) {
 	switch ( action.type ) {

@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
 import SetupHeader from './setup-header';
+import ProgressBar from 'components/progress-bar';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
 
 class RequiredPagesSetupView extends Component {

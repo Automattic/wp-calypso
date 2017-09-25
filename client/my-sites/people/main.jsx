@@ -1,30 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
-import TeamList from 'my-sites/people/team-list';
 import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
-import PeopleNotices from 'my-sites/people/people-notices';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
+import TeamList from 'my-sites/people/team-list';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import {
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
 import { canCurrentUser, isPrivateSite } from 'state/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables

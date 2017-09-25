@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
+import QueryPostStats from 'components/data/query-post-stats';
 import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import QueryPostStats from 'components/data/query-post-stats';
 import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
 class StatsPostSummary extends Component {

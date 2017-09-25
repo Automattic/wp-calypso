@@ -1,23 +1,20 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
 import { startsWith } from 'lodash';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ThemeSheetComponent from './main';
 import ThemeNotFoundError from './theme-not-found-error';
-import LayoutLoggedOut from 'layout/logged-out';
-import {
-	requestTheme,
-	setBackPath
-} from 'state/themes/actions';
-import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
 import config from 'config';
+import LayoutLoggedOut from 'layout/logged-out';
+import { requestTheme, setBackPath } from 'state/themes/actions';
+import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
 

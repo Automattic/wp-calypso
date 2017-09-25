@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import { assign, filter, isEqual, pickBy, without } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:posts:post-edit-store' );
-import emitter from 'lib/mixins/emitter';
+import { assign, filter, isEqual, pickBy, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import utils from './utils';
 import Dispatcher from 'dispatcher';
 
 import { decodeEntities } from 'lib/formatting';
-import utils from './utils';
+import emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:posts:post-edit-store' );
 
 /**
  * Module variables

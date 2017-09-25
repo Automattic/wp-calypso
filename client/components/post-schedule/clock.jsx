@@ -1,32 +1,22 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { localize, moment } from 'i18n-calypso';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
+import { is12hr, isValidGMTOffset, parseAndValidateNumber, convertHoursToHHMM, convertMinutesToHHMM } from './utils';
 import InfoPopover from 'components/info-popover';
-import { getSiteSetting } from 'state/selectors';
 import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 import viewport from 'lib/viewport';
-
-/**
- * Local dependencies
- */
-import {
-	is12hr,
-	isValidGMTOffset,
-	parseAndValidateNumber,
-	convertHoursToHHMM,
-	convertMinutesToHHMM,
-} from './utils';
+import { getSiteSetting } from 'state/selectors';
 
 class PostScheduleClock extends Component {
 	constructor() {

@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
 

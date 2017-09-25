@@ -7,21 +7,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	createProductVariation,
-	deleteProductVariation,
-	fetchProductVariations,
-	updateProductVariation,
-} from 'woocommerce/state/sites/product-variations/actions';
-import {
-	handleProductVariationCreate,
-	handleProductVariationDelete,
-	handleProductVariationUpdate,
-	handleProductVariationsRequest,
-} from '../';
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { handleProductVariationCreate, handleProductVariationDelete, handleProductVariationUpdate, handleProductVariationsRequest } from '../';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
+import { createProductVariation, deleteProductVariation, fetchProductVariations, updateProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleProductVariationsRequest', () => {

@@ -6,13 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	CONNECTION_LOST,
-	CONNECTION_RESTORED,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import { connectionState } from '../reducer';
+import { CONNECTION_LOST, CONNECTION_RESTORED, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'state/application reducer', () => {
 	describe( '#connectionState()', () => {

@@ -1,11 +1,13 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
+import { HAPPYCHAT_OPEN, HAPPYCHAT_MINIMIZING } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import {
-	HAPPYCHAT_OPEN,
-	HAPPYCHAT_MINIMIZING
-} from 'state/action-types';
 
 const open = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -15,7 +17,6 @@ const open = ( state = false, action ) => {
 	return state;
 };
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:ui-reducer' );
 
 /**

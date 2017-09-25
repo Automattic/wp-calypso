@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { partial } from 'lodash';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
+import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostTotalViews from 'my-sites/posts/post-total-views';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, post ) => {

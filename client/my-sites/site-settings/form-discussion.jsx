@@ -1,35 +1,32 @@
 /**
  * External dependencies
  */
+import { flowRight, pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import CommentDisplaySettings from './comment-display-settings';
+import JetpackModuleToggle from './jetpack-module-toggle';
+import Subscriptions from './subscriptions';
+import wrapSettingsForm from './wrap-settings-form';
 import Button from 'components/button';
 import Card from 'components/card';
-import CommentDisplaySettings from './comment-display-settings';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionHeader from 'components/section-header';
-import Subscriptions from './subscriptions';
-import wrapSettingsForm from './wrap-settings-form';
-import {
-	isJetpackSite,
-	siteSupportsJetpackSettingsUi
-} from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import JetpackModuleToggle from './jetpack-module-toggle';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {

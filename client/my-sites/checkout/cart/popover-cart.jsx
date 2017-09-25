@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { reject } from 'lodash';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { reject } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessagesMixin from './cart-messages-mixin';
 import CartButtons from './cart-buttons';
+import CartEmpty from './cart-empty';
+import CartMessagesMixin from './cart-messages-mixin';
+import CartPlanAd from './cart-plan-ad';
 import Count from 'components/count';
 import Popover from 'components/popover';
-import CartEmpty from './cart-empty';
-import CartPlanAd from './cart-plan-ad';
-import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { isCredits } from 'lib/products-values';
 
 const PopoverCart = React.createClass( {
 	propTypes: {

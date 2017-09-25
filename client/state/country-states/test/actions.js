@@ -1,22 +1,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	COUNTRY_STATES_RECEIVE,
-	COUNTRY_STATES_REQUEST,
-	COUNTRY_STATES_REQUEST_FAILURE,
-	COUNTRY_STATES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import {
-	receiveCountryStates,
-	requestCountryStates,
-} from '../actions';
+import { receiveCountryStates, requestCountryStates } from '../actions';
+import { COUNTRY_STATES_RECEIVE, COUNTRY_STATES_REQUEST, COUNTRY_STATES_REQUEST_FAILURE, COUNTRY_STATES_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

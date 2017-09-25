@@ -6,8 +6,8 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import usersData from './users';
 import moreUsersData from './more-users';
+import usersData from './users';
 
 const clonedMoreUsers = cloneDeep( moreUsersData.users );
 const updatedUsers = clonedMoreUsers.map( ( user ) => {

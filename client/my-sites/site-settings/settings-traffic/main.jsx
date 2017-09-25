@@ -1,33 +1,33 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
-import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
-import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
-import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
-import JetpackAds from 'my-sites/site-settings/jetpack-ads';
-import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import Sitemaps from 'my-sites/site-settings/sitemaps';
+import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
+import JetpackAds from 'my-sites/site-settings/jetpack-ads';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
+import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import RelatedPosts from 'my-sites/site-settings/related-posts';
+import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
+import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
+import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
+import Sitemaps from 'my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const SiteSettingsTraffic = ( {
 	fields,

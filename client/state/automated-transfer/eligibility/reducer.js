@@ -6,9 +6,7 @@ import { property, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export const eligibilityHolds = ( state = [], action ) =>

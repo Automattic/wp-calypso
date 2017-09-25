@@ -1,39 +1,32 @@
 /**
  * External dependencies
  */
+import { pickBy } from 'lodash';
 import React from 'react';
-import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import config from 'config';
+import { addTracking } from './helpers';
+import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
-import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import { connectOptions } from './theme-options';
-import Banner from 'components/banner';
-import {
-	PLAN_JETPACK_PREMIUM
-} from 'lib/plans/constants';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
-import { addTracking } from './helpers';
-import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import {
-	canJetpackSiteManage,
-	hasJetpackSiteJetpackThemes,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite
-} from 'state/sites/selectors';
+import Banner from 'components/banner';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import config from 'config';
+import { PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import CurrentTheme from 'my-sites/themes/current-theme';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { canJetpackSiteManage, hasJetpackSiteJetpackThemes, hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 
 const ConnectedThemesSelection = connectOptions(
 	( props ) => {

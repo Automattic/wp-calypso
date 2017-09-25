@@ -2,21 +2,21 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import { sortBy, keys } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy, keys } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
-import Card from 'components/card';
+import OrderNotesByDay from './day';
 import CreateOrderNote from './new-note';
 import OrderNote from './note';
-import OrderNotesByDay from './day';
+import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
 
 function getSortedNotes( notes ) {
 	const notesByDay = {};

@@ -3,14 +3,8 @@
  */
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
-import {
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import {
-	areSettingsProductsLoaded,
-	areSettingsProductsLoading,
-} from './selectors';
+import { areSettingsProductsLoaded, areSettingsProductsLoading } from './selectors';
+import { WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST, WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 export const fetchSettingsProducts = ( siteId ) => ( dispatch, getState ) => {
 	if (

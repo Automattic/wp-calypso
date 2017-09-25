@@ -1,21 +1,20 @@
-import { find } from 'lodash';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import { isEnabled } from 'config';
-import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import { isEnabled } from 'config';
+import analytics from 'lib/analytics';
+import { isBusiness } from 'lib/products-values';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );

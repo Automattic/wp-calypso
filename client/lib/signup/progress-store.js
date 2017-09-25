@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:signup-progress-store' );
+import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
 import store from 'store';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-
-import emitter from 'lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 import steps from 'signup/config/steps';
+
+const debug = debugFactory( 'calypso:signup-progress-store' );
 
 /**
  * Constants

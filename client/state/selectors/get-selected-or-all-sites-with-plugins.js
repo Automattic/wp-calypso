@@ -3,8 +3,8 @@
  */
 import createSelector from 'lib/create-selector';
 import { getSelectedOrAllSites, canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Return an array with the selected site or all sites able to have plugins

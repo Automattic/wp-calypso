@@ -1,25 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleHeader from '../stats-module/header';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
 
 const StatModuleVideoDetails = ( props ) => {
 	const { data, query, requesting, siteId, translate } = props;

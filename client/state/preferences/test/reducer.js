@@ -7,17 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	PREFERENCES_SET,
-	PREFERENCES_RECEIVE,
-	PREFERENCES_FETCH,
-	PREFERENCES_FETCH_SUCCESS,
-	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import reducer, { localValues, remoteValues, fetching } from '../reducer';
+import { PREFERENCES_SET, PREFERENCES_RECEIVE, PREFERENCES_FETCH, PREFERENCES_FETCH_SUCCESS, PREFERENCES_FETCH_FAILURE, PREFERENCES_SAVE_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

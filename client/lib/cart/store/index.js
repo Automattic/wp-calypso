@@ -6,16 +6,17 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-
-import emitter from 'lib/mixins/emitter';
-import cartSynchronizer from './cart-synchronizer';
-import PollerPool from 'lib/data-poller';
 import cartAnalytics from './cart-analytics';
-import productsListFactory from 'lib/products-list';
-const productsList = productsListFactory();
+import cartSynchronizer from './cart-synchronizer';
 import Dispatcher from 'dispatcher';
 import cartValues from 'lib/cart-values';
+import PollerPool from 'lib/data-poller';
+
+import emitter from 'lib/mixins/emitter';
+import productsListFactory from 'lib/products-list';
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+
+const productsList = productsListFactory();
 
 /**
  * Internal dependencies

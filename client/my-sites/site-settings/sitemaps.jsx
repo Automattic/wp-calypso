@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import SectionHeader from 'components/section-header';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import { getJetpackModule, isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class Sitemaps extends Component {
 	static defaultProps = {

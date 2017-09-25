@@ -8,14 +8,10 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import { INSTALL_PLUGIN, DEACTIVATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from '../constants';
 import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import {
-	INSTALL_PLUGIN,
-	DEACTIVATE_PLUGIN,
-	ENABLE_AUTOUPDATE_PLUGIN,
-} from '../constants';
 
 const createError = function( error, message, name = false ) {
 	const errorObj = new Error( message );

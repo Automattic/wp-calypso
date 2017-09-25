@@ -1,5 +1,5 @@
 /** @format */
-/***
+/**
  * External dependencies
  */
 import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
@@ -7,8 +7,8 @@ import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pick
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { getStateKey, deconstructStateKey, fetchStatusInitialState } from './reducer';
+import createSelector from 'lib/create-selector';
 
 /***
  * Gets comment items for post

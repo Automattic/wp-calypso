@@ -1,42 +1,31 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { isEmpty, round } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { isEmpty, round } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import {
-	areSettingsGeneralLoaded,
-	areTaxCalculationsEnabled,
-	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import {
-	areTaxRatesLoaded,
-	getTaxRates,
-} from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
-import {
-	DESTINATION_BASED_SALES_TAX,
-	NO_SALES_TAX,
-	ORIGIN_BASED_SALES_TAX,
-} from 'woocommerce/lib/countries/constants';
-import { getCountryData, getStateData } from 'woocommerce/lib/countries';
-import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
-import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import Table from 'woocommerce/components/table';
+import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import { getCountryData, getStateData } from 'woocommerce/lib/countries';
+import { DESTINATION_BASED_SALES_TAX, NO_SALES_TAX, ORIGIN_BASED_SALES_TAX } from 'woocommerce/lib/countries/constants';
+import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
+import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
+import { areSettingsGeneralLoaded, areTaxCalculationsEnabled, getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 
 class TaxesRates extends Component {
 

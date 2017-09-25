@@ -2,13 +2,13 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import assert from 'assert';
 import { noop } from 'lodash';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import assert from 'assert';
 import { createReduxStore } from 'state';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';

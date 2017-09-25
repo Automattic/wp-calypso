@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
 import { getCurrentLyric } from '../selectors';
 
 describe( 'selectors', () => {

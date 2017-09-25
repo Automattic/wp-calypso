@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Gridicon from 'gridicons';
 import Site from 'blocks/site';
+import Button from 'components/button';
 
 const StoreGroundControl = ( { site, translate } ) => {
 	const isPlaceholder = ! site;

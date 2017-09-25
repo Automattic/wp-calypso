@@ -7,15 +7,12 @@ import { pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReduxStore, reducer } from 'state';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import localforage from 'lib/localforage';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
+import localforage from 'lib/localforage';
 import User from 'lib/user';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { createReduxStore, reducer } from 'state';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 /**
  * Module variables

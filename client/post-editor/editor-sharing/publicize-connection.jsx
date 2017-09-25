@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FormCheckbox from 'components/forms/form-checkbox';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 
 export default localize( React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',

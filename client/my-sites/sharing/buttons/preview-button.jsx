@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import classNames from 'classnames';
 import photon from 'photon';
+import PropTypes from 'prop-types';
+import React from 'react';
 import SocialLogo from 'social-logos';
 
 /**

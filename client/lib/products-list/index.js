@@ -2,16 +2,15 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:ProductsList' );
 import store from 'store';
 
 /**
  * Internal dependencies
  */
+import Emitter from 'lib/mixins/emitter';
 import wpcom from 'lib/wp';
 
-import Emitter from 'lib/mixins/emitter';
+const debug = debugFactory( 'calypso:ProductsList' );
 
 /**
  * Initialize a new list of products.

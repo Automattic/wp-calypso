@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
+import i18n, { localize } from 'i18n-calypso';
 import { identity, noop } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Gridicon from 'gridicons';
 import Site from 'blocks/site';
+import Button from 'components/button';
+import Card from 'components/card';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import { recordEvent, recordStat } from 'lib/posts/stats';
-import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
-import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 
 export class EditorGroundControl extends PureComponent {

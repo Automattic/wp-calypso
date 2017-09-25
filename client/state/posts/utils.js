@@ -1,31 +1,14 @@
 /**
  * External dependencies
  */
-import {
-	isEmpty,
-	isPlainObject,
-	flow,
-	map,
-	mapValues,
-	mergeWith,
-	omit,
-	omitBy,
-	reduce,
-	toArray,
-	cloneDeep,
-	pickBy,
-	isString,
-	every,
-	unset,
-	xor,
-} from 'lodash';
+import { isEmpty, isPlainObject, flow, map, mapValues, mergeWith, omit, omitBy, reduce, toArray, cloneDeep, pickBy, isString, every, unset, xor } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { DEFAULT_POST_QUERY } from './constants';
-import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
 /**

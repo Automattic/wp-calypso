@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducerStore } from 'lib/store';
 import { reducer, initialState } from 'lib/invites/reducers/invites-list';
+import { createReducerStore } from 'lib/store';
 
 const InvitesStore = createReducerStore( reducer, initialState );
 

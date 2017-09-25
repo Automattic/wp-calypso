@@ -1,24 +1,22 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FilePicker from 'components/file-picker';
 import DropZone from 'components/drop-zone';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FilePicker from 'components/file-picker';
+import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
 import notices from 'notices';
-import debugFactory from 'debug';
-import {
-	MAX_UPLOAD_ZIP_SIZE
-} from 'lib/automated-transfer/constants';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:upload-drop-zone' );
 

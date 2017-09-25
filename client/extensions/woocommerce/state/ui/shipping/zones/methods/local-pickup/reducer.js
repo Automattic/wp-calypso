@@ -2,10 +2,7 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE, WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST } from 'woocommerce/state/action-types';
 
 const initialState = {
 	tax_status: 'none',

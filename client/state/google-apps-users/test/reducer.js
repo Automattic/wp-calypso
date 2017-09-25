@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	GOOGLE_APPS_USERS_FETCH,
-	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-} from 'state/action-types';
-
-import {
-	items,
-	loaded
-} from '../reducer';
+import { items, loaded } from '../reducer';
+import assert from 'assert';
+import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

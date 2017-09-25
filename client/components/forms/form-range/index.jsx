@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { omit, noop } from 'lodash';
 import classnames from 'classnames';
+import { omit, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 export default class extends React.Component {
 	static displayName = 'FormRange';

@@ -8,13 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import {
-	getRequestError,
-	getTwoFactorAuthRequestError,
-	getCreateSocialAccountError,
-	getRequestSocialAccountError,
-} from 'state/login/selectors';
 import Notice from 'components/notice';
+import { getRequestError, getTwoFactorAuthRequestError, getCreateSocialAccountError, getRequestSocialAccountError } from 'state/login/selectors';
 
 class ErrorNotice extends Component {
 	static propTypes = {

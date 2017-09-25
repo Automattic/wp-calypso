@@ -8,13 +8,8 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import notices from 'notices';
-import {
-	NPS_SURVEY_DIALOG_IS_SHOWING,
-} from 'state/action-types';
-import {
-	setNpsSurveyEligibility,
-	markNpsSurveyShownThisSession,
-} from 'state/nps-survey/actions';
+import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
+import { setNpsSurveyEligibility, markNpsSurveyShownThisSession } from 'state/nps-survey/actions';
 
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {

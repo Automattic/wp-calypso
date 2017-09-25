@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { memoize, omitBy, reduce, some, trim } from 'lodash';
 import validator from 'is-my-json-valid';
+import { memoize, omitBy, reduce, some, trim } from 'lodash';
 
 const memoizedValidator = memoize( ( schema ) => validator( schema, { greedy: true } ) );
 

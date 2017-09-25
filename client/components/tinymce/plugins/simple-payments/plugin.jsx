@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import tinymce from 'tinymce/tinymce';
 import { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
+import tinymce from 'tinymce/tinymce';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import SimplePaymentsDialog from './dialog';
 import { serialize, deserialize } from './shortcode-utils';

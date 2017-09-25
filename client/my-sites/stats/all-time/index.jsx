@@ -1,27 +1,23 @@
 /**
-* External dependencies
-*/
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
+ * External dependencies
+ */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { pick } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
+import { pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
+import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
+import SectionHeader from 'components/section-header';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
 
 class StatsAllTime extends Component {
 

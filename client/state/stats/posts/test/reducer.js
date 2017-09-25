@@ -7,17 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
-	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
 import { requesting, items as unwrappedItems } from '../reducer';
+import { POST_STATS_RECEIVE, POST_STATS_REQUEST, POST_STATS_REQUEST_FAILURE, POST_STATS_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 

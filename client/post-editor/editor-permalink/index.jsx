@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { pick } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Slug from 'post-editor/editor-slug';
+import ClipboardButton from 'components/forms/clipboard-button';
 import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';
-import ClipboardButton from 'components/forms/clipboard-button';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import Slug from 'post-editor/editor-slug';
 import { getEditedPostSlug } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorPermalink extends Component {
 	static propTypes = {

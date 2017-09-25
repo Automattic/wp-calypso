@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 import { removeNotice, successNotice, errorNotice } from '../actions';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 
 describe( 'actions', function() {
 	describe( 'removeNotice()', function() {

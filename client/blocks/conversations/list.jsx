@@ -2,26 +2,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { map, zipObject, fill, size } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
-/***
+/**
  * Internal dependencies
  */
+import PostCommentForm from 'blocks/comments/form';
 import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import {
-	commentsFetchingStatus,
-	getPostCommentsTree,
-	getExpansionsForPost,
-	getHiddenCommentsForPost,
-} from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentForm from 'blocks/comments/form';
 import { requestPostComments } from 'state/comments/actions';
+import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import { commentsFetchingStatus, getPostCommentsTree, getExpansionsForPost, getHiddenCommentsForPost } from 'state/comments/selectors';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream

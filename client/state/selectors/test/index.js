@@ -3,13 +3,13 @@
  */
 import { expect } from 'chai';
 import { camelCase, each, kebabCase } from 'lodash';
-import fs from 'fs';
-import path from 'path';
 
 /**
  * Internal dependencies
  */
 import * as selectors from '../';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Constants

@@ -1,24 +1,24 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import page from 'page';
-import route from 'lib/route';
 import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
-import PeopleLogStore from 'lib/people/log-store';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
+import PeopleList from './main';
+import analytics from 'lib/analytics';
+import PeopleLogStore from 'lib/people/log-store';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import route from 'lib/route';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export default {

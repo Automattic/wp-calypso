@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

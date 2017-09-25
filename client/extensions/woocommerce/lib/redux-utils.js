@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { bindActionCreators } from 'redux';
 import { isFunction, reduce } from 'lodash';
+import { bindActionCreators } from 'redux';
 
 /**
  * Calls Redux' bindActionCreators on the passed in actionCreators

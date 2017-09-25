@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { trim } from 'lodash';
 import stripTags from 'striptags';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import decode from './decode-entities';
 

@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { map } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import CommentFaker from './comment-faker';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentFaker from './comment-faker';
 
 // Mock data
 const mockComment = {

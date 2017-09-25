@@ -3,12 +3,12 @@
  */
 import superagent from 'superagent';
 
-/***
+/**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
 import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'state/utils';
 
 const isAllHeadersValid = headers =>
 	headers.every( headerPair => Array.isArray( headerPair ) &&

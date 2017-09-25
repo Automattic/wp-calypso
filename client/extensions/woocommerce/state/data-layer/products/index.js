@@ -1,15 +1,11 @@
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { WOOCOMMERCE_PRODUCT_CREATE, WOOCOMMERCE_PRODUCT_UPDATE, WOOCOMMERCE_PRODUCT_REQUEST } from 'woocommerce/state/action-types';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { productUpdated } from 'woocommerce/state/sites/products/actions';
-import {
-	WOOCOMMERCE_PRODUCT_CREATE,
-	WOOCOMMERCE_PRODUCT_UPDATE,
-	WOOCOMMERCE_PRODUCT_REQUEST,
-} from 'woocommerce/state/action-types';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],

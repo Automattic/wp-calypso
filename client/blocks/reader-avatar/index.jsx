@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { startsWith, endsWith, noop, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startsWith, endsWith, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
+import Gravatar from 'components/gravatar';
 import safeImageUrl from 'lib/safe-image-url';
 
 const ReaderAvatar = ( {

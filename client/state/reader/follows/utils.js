@@ -1,6 +1,6 @@
 /** @format */
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import untrailingslashit from 'lib/route/untrailingslashit';
 

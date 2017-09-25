@@ -1,32 +1,32 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
-import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
-import { hideSharePanel } from 'state/ui/post-type-list/actions';
-import Card from 'components/card';
-import PostTime from 'blocks/post-time';
-import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
-import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
+import PostStatus from 'blocks/post-status';
+import PostTime from 'blocks/post-time';
+import Card from 'components/card';
+import { isEnabled } from 'config';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
-import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
+import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
+import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
+import { getNormalizedPost } from 'state/posts/selectors';
+import { areAllSitesSingleUser } from 'state/selectors';
+import { isSingleUserSite } from 'state/sites/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
+import { hideSharePanel } from 'state/ui/post-type-list/actions';
+import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PostItem extends React.Component {
 	static defaultProps = {

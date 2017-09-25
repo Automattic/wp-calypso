@@ -1,25 +1,25 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
-import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isPluginActive, isSiteOnPaidPlan } from 'state/selectors';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import SegmentedControl from 'components/segmented-control';
 import config from 'config';
+import { isPluginActive, isSiteOnPaidPlan } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const StatsNavigation = props => {
 	const { translate, section, slug, siteId, isJetpack, isStore, hasPaidPlan } = props;

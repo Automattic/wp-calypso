@@ -6,14 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	STATUS_ERROR,
-	STATUS_INITIALIZING,
-	STATUS_READY,
-	STATUS_UNINITIALIZED,
-} from 'state/help/directly/constants';
-
 import { isDirectlyReady } from '../';
+import { STATUS_ERROR, STATUS_INITIALIZING, STATUS_READY, STATUS_UNINITIALIZED } from 'state/help/directly/constants';
 
 describe( 'isDirectlyReady()', () => {
 	it( 'should be false when uninitialized', () => {

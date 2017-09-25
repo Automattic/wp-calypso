@@ -1,19 +1,19 @@
 /**
- * External depedencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getReviewReplies } from 'woocommerce/state/sites/review-replies/selectors';
 import ReviewReply from './review-reply';
+import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
+import { getReviewReplies } from 'woocommerce/state/sites/review-replies/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class ReviewReplies extends Component {
 	static propTypes = {

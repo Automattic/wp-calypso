@@ -3,6 +3,10 @@
  */
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { withoutHttp } from 'lib/url';
 
 export default {

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { assign, values } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:viewers:store' );
+import { assign, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:viewers:store' );
 
 let _fetchingViewers = {},
 	_viewersBySite = {},

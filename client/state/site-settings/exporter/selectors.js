@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { States } from './constants.js';
-import { get } from 'lodash';
 
 export const getExportingState = ( state, siteId ) => {
 	const exportingState = state.siteSettings.exporter.exportingState;

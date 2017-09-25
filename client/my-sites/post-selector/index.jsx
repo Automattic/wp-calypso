@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import { reduce, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { reduce, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies

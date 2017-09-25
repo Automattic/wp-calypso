@@ -1,13 +1,10 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import {
-	isEmpty,
-	omit,
-} from 'lodash';
 import debugFactory from 'debug';
+import { isEmpty, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 /**
  * Internal dependencies

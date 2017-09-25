@@ -1,26 +1,21 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import Label from 'components/forms/form-label';
 import Select from './select';
+import Label from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 import Tooltip from 'components/tooltip';
-
 import { setPostType } from 'state/site-settings/exporter/actions';
-import {
-	getSelectedPostType,
-	isDateRangeValid as isExportDateRangeValid,
-} from 'state/site-settings/exporter/selectors';
+import { getSelectedPostType, isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;

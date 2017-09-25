@@ -7,15 +7,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
-
-import Notices from './notices';
 import ExportCard from './export-card';
 import GuidedTransferCard from './guided-transfer-card';
 import InProgressCard from './guided-transfer-card/in-progress';
+import Notices from './notices';
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
+import config from 'config';
+import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class Exporter extends Component {
 	render() {

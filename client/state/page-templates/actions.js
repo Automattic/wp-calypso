@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	PAGE_TEMPLATES_RECEIVE,
-	PAGE_TEMPLATES_REQUEST,
-	PAGE_TEMPLATES_REQUEST_FAILURE,
-	PAGE_TEMPLATES_REQUEST_SUCCESS
-} from 'state/action-types';
+import { PAGE_TEMPLATES_RECEIVE, PAGE_TEMPLATES_REQUEST, PAGE_TEMPLATES_REQUEST_FAILURE, PAGE_TEMPLATES_REQUEST_SUCCESS } from 'state/action-types';
 
 /**
  * Returns an action object used in signalling that a set of templates has been

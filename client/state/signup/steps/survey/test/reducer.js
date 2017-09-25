@@ -6,12 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SIGNUP_STEPS_SURVEY_SET,
-	SIGNUP_COMPLETE_RESET,
-} from 'state/action-types';
-
 import signupSurveyReducer from '../reducer';
+import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should update the survey', () => {

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import HeaderCakeBack from './back';
+import Card from 'components/card';
 
 export default class HeaderCake extends Component {
 	render() {

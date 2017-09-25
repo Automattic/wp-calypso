@@ -1,30 +1,27 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import Popover from 'components/popover';
-import Count from 'components/count';
-import { getMyPostCounts } from 'state/posts/counts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery
-} from 'state/posts/selectors';
-import Draft from 'my-sites/draft';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostCounts from 'components/data/query-post-counts';
-import Button from 'components/button';
 import Site from 'blocks/site';
+import Button from 'components/button';
+import Count from 'components/count';
+import QueryPostCounts from 'components/data/query-post-counts';
+import QueryPosts from 'components/data/query-posts';
+import Popover from 'components/popover';
+import Draft from 'my-sites/draft';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getMyPostCounts } from 'state/posts/counts/selectors';
+import { getSitePostsForQueryIgnoringPage, isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class MasterbarDrafts extends Component {
 	static propTypes = {

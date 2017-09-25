@@ -1,7 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import photon from 'photon';
+
+/**
+ * Internal dependencies
+ */
 import { parse as parseUrl } from 'url';
 
 /**

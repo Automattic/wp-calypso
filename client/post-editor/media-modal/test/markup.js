@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import ReactDomServer from 'react-dom/server';
 import { expect } from 'chai';
 import { noop } from 'lodash';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies

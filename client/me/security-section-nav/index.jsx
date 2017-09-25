@@ -1,20 +1,19 @@
-import { find } from 'lodash';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import config from 'config';
 
 export default React.createClass( {
 	propTypes: {

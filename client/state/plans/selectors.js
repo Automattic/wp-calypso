@@ -1,10 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { get, find } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
 

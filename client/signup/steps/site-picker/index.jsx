@@ -6,8 +6,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import SitePickerSubmit from './site-picker-submit';
+import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
 

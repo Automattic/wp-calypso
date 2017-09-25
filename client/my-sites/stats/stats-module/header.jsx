@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 
 export default localize( React.createClass( {
 	displayName: 'StatsModuleHeader',

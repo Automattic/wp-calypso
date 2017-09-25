@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
 import Card from 'components/card';
+import InputChrono from 'components/input-chrono';
 
 /**
  * Date Picker Demo

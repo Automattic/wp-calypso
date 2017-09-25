@@ -1,27 +1,25 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { identity, memoize, transform } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
+import { BlogImage, PageImage, GridImage } from '../design-type-with-store/type-images';
 import Card from 'components/card';
 
-import { BlogImage, PageImage, GridImage } from '../design-type-with-store/type-images';
-
-import { setDesignType } from 'state/signup/steps/design-type/actions';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
+import { getThemeForDesignType } from 'signup/utils';
 
 import { recordTracksEvent } from 'state/analytics/actions';
-
-import { getThemeForDesignType } from 'signup/utils';
+import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 export class DesignTypeStep extends Component {
 	static propTypes = {

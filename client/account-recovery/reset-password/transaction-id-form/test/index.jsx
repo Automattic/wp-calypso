@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { TransactionIdFormComponent } from '..';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'TransactionIdForm', () => {
 	it( 'should render as expected', () => {

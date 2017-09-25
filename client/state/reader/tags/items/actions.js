@@ -7,13 +7,7 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	READER_TAGS_REQUEST,
-	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_REQUEST,
-	READER_UNFOLLOW_TAG_RECEIVE,
-	READER_FOLLOW_TAG_REQUEST,
-} from 'state/action-types';
+import { READER_TAGS_REQUEST, READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_REQUEST, READER_UNFOLLOW_TAG_RECEIVE, READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.

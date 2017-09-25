@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import { expect } from 'chai';
+import nock from 'nock';
 
 /**
  * Internal dependencies
  */
-import { useNock } from 'test/helpers/use-nock';
 import { geocode } from '../';
+import { useNock } from 'test/helpers/use-nock';
 
 /**
  * Module variables

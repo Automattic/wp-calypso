@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 import Gridicon from 'gridicons';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 export default class PopoverMenuItem extends Component {
 	static propTypes = {

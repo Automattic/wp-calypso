@@ -2,18 +2,17 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import postListStoreFactory from 'lib/posts/post-list-store-factory';
+import Dispatcher from 'dispatcher';
+import pollers from 'lib/data-poller';
+import actions from 'lib/posts/actions';
 
 import PostContentImagesStore from 'lib/posts/post-content-images-store';
-import Dispatcher from 'dispatcher';
-import actions from 'lib/posts/actions';
-import pollers from 'lib/data-poller';
+import postListStoreFactory from 'lib/posts/post-list-store-factory';
 
 let PostListFetcher;
 

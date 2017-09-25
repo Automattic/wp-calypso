@@ -1,34 +1,33 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, includes, noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { flowRight, get, includes, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
-import url from 'url';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import EditorMediaModalDetailFields from './detail-fields';
 import EditorMediaModalDetailFileInfo from './detail-file-info';
-import EditorMediaModalDetailPreviewImage from './detail-preview-image';
-import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
+import EditorMediaModalDetailPreviewImage from './detail-preview-image';
+import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import Button from 'components/button';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import config from 'config';
+import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import { userCan } from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
-import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
-import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { isPrivateSite } from 'state/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import url from 'url';
 
 /**
  * This function return true if the image editor can be

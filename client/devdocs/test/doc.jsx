@@ -6,9 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-
-import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'SingleDoc', () => {
 	let React, ReactDom, TestUtils, SingleDocClass;

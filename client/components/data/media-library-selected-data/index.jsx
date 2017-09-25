@@ -2,14 +2,12 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-
 import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {

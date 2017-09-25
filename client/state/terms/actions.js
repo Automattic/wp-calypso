@@ -6,19 +6,13 @@ import { filter, get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import {
-	TERM_REMOVE,
-	TERMS_RECEIVE,
-	TERMS_REQUEST,
-	TERMS_REQUEST_SUCCESS,
-	TERMS_REQUEST_FAILURE
-} from 'state/action-types';
-import { editPost } from 'state/posts/actions';
-import { updateSiteSettings } from 'state/site-settings/actions';
-import { getSitePostsByTerm } from 'state/posts/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
+import wpcom from 'lib/wp';
+import { TERM_REMOVE, TERMS_RECEIVE, TERMS_REQUEST, TERMS_REQUEST_SUCCESS, TERMS_REQUEST_FAILURE } from 'state/action-types';
+import { editPost } from 'state/posts/actions';
+import { getSitePostsByTerm } from 'state/posts/selectors';
+import { updateSiteSettings } from 'state/site-settings/actions';
+import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term

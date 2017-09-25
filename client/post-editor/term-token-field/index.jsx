@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
+import _debug from 'debug';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
-import _debug from 'debug';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getTerms } from 'state/terms/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { editPost } from 'state/posts/actions';
+import QueryTerms from 'components/data/query-terms';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import QueryTerms from 'components/data/query-terms';
+import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import { editPost } from 'state/posts/actions';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getTerms } from 'state/terms/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
 const DEFAULT_NON_HIERARCHICAL_QUERY = {

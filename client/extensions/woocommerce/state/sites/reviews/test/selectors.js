@@ -7,15 +7,9 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	areReviewsLoaded,
-	areReviewsLoading,
-	getReview,
-	getReviews,
-	getTotalReviews,
-} from '../selectors';
-import reviews from './fixtures/reviews';
+import { areReviewsLoaded, areReviewsLoading, getReview, getReviews, getTotalReviews } from '../selectors';
 import review from './fixtures/review';
+import reviews from './fixtures/reviews';
 const additionalReviews = [ review ];
 
 const preInitializedState = {

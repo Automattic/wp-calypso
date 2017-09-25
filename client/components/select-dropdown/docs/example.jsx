@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import Gridicon from 'gridicons';
+import React from 'react';
 
 /**
  * Internal dependencies

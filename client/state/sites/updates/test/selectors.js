@@ -6,10 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingSiteUpdates,
-	getUpdatesBySiteId
-} from '../selectors';
+import { isRequestingSiteUpdates, getUpdatesBySiteId } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingSiteUpdates()', () => {

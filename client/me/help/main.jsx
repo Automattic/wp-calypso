@@ -1,37 +1,31 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import debugModule from 'debug';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import analytics from 'lib/analytics';
-import {
-	getCurrentUserId,
-	isCurrentUserEmailVerified
-} from 'state/current-user/selectors';
-import HappinessEngineers from 'me/help/help-happiness-engineers';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpTeaserButton from './help-teaser-button';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import HelpResult from './help-results/item';
 import HelpUnverifiedWarning from './help-unverified-warning';
-import {
-	getUserPurchases,
-	isFetchingUserPurchases
-} from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import Button from 'components/button';
+import CompactCard from 'components/card/compact';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import Main from 'components/main';
+import SectionHeader from 'components/section-header';
+import analytics from 'lib/analytics';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import HappinessEngineers from 'me/help/help-happiness-engineers';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
 
 /**
  * Module variables

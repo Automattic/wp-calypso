@@ -6,18 +6,12 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	FIRST_VIEW_HIDE
-} from 'state/action-types';
+import { bucketedTimeSpentOnCurrentView, getConfigForCurrentView } from './selectors';
+import { FIRST_VIEW_HIDE } from 'state/action-types';
 
-import {
-	bumpStat,
-	recordTracksEvent,
-} from 'state/analytics/actions';
-
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { bucketedTimeSpentOnCurrentView, getConfigForCurrentView } from './selectors';
 
 export function hideView( { enabled } ) {
 	return ( dispatch, getState ) => {

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import ExtendedHeader from 'woocommerce/components/extended-header';
 import PaymentMethodList from './payment-method-list';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 
 class SettingsPaymentsOnSite extends Component {
 

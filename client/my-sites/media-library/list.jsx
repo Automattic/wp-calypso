@@ -1,30 +1,28 @@
-import { connect } from 'react-redux';
-import { moment, translate } from 'i18n-calypso';
-import { clone, filter, findIndex, noop } from 'lodash';
-import ReactDom from 'react-dom';
-
 /**
  * External dependencies
  */
+import { moment, translate } from 'i18n-calypso';
+import { clone, filter, findIndex, noop } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React from 'react';
+
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-
-import MediaUtils from 'lib/media/utils';
 import ListItem from './list-item';
-import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-import userFactory from 'lib/user';
-const user = userFactory();
-
-import SortedGrid from 'components/sorted-grid';
+import ListNoResults from './list-no-results';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import SortedGrid from 'components/sorted-grid';
+import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
+import userFactory from 'lib/user';
 import { getPreference } from 'state/preferences/selectors';
+
+const user = userFactory();
 
 const GOOGLE_MAX_RESULTS = 1000;
 

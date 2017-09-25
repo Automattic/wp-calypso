@@ -6,9 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isSharePanelOpen,
-} from '../selectors';
+import { isSharePanelOpen } from '../selectors';
 
 describe( 'isSharePanelOpen', () => {
 	it( 'should return true if the Share panel is open', () => {

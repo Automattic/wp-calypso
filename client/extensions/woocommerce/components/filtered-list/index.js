@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { filter, startsWith } from 'lodash';
 import classNames from 'classnames';
+import { filter, startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

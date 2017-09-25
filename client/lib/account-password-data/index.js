@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { map, merge, pick, random, sample } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:password-generator' );
+import { map, merge, pick, random, sample } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import makeEmitter from 'lib/mixins/emitter';
+
+const debug = debugFactory( 'calypso:password-generator' );
 
 /**
  * Internal dependencies

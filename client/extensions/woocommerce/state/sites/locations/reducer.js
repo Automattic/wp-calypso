@@ -2,10 +2,7 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_LOCATIONS_REQUEST,
-	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_LOCATIONS_REQUEST, WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
 // TODO: Handle error

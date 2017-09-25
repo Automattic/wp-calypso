@@ -1,40 +1,39 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { partial, noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import shallowEqual from 'react-pure-render/shallowEqual';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { partial, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Card from 'components/card';
-import PostControls from './post-controls';
-import PostFormat from 'components/post-format';
-import PostHeader from './post-header';
 import PostImage from '../post/post-image';
+import PostControls from './post-controls';
+import PostHeader from './post-header';
+import Comments from 'blocks/comments';
+import PostActions from 'blocks/post-actions';
+import PostShare from 'blocks/post-share';
+import Card from 'components/card';
 import PostExcerpt from 'components/post-excerpt';
+import PostFormat from 'components/post-format';
 import updatePostStatus from 'components/update-post-status';
-import utils from 'lib/posts/utils';
+import { isEnabled } from 'config';
 import config from 'config';
+import utils from 'lib/posts/utils';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPostPreviewUrl } from 'state/posts/selectors';
 import { isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
-
-import Comments from 'blocks/comments';
-import PostShare from 'blocks/post-share';
-import PostActions from 'blocks/post-actions';
+import { getEditorPath } from 'state/ui/editor/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const recordEvent = partial( recordGoogleEvent, 'Posts' );
 

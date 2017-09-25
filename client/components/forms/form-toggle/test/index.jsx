@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
+import { mount, shallow } from 'enzyme';
+import { noop, uniq } from 'lodash';
 import React from 'react';
-import { noop, uniq } from 'lodash';
-import { mount, shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import FormToggle from '../';
 import CompactFormToggle from '../compact';
+import assert from 'assert';
 
 describe( 'index', function() {
 	describe( 'rendering', function() {

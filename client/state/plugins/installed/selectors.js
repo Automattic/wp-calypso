@@ -1,27 +1,12 @@
 /**
  * External dependencies
  */
-import {
-	every,
-	filter,
-	find,
-	get,
-	pick,
-	reduce,
-	some,
-	sortBy,
-	values
-} from 'lodash';
+import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getSite,
-	getSiteTitle,
-	isJetpackSite,
-	isJetpackSiteSecondaryNetworkSite
-} from 'state/sites/selectors';
+import { getSite, getSiteTitle, isJetpackSite, isJetpackSiteSecondaryNetworkSite } from 'state/sites/selectors';
 
 const _filters = {
 	none: function() {

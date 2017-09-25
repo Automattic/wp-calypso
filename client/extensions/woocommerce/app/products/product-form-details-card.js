@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import i18n from 'i18n-calypso';
 import { trim, debounce, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import ProductFormImages from './product-form-images';
 import Card from 'components/card';
-import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
-import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import ProductFormImages from './product-form-images';
+import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
+import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 
 export default class ProductFormDetailsCard extends Component {
 

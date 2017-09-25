@@ -1,11 +1,4 @@
 /**
- * Adapted from the WordPress wp-editimage TinyMCE plugin.
- *
- * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
-*/
-
-/**
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';

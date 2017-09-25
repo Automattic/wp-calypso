@@ -2,16 +2,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import ProgressBar from 'components/progress-bar';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
+import ProgressBar from 'components/progress-bar';
 
 function ProgressBanner( {
 	applySiteOffset,

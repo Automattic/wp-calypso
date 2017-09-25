@@ -1,14 +1,13 @@
-import { map } from 'lodash';
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import scrollIntoView from 'dom-scroll-into-view';
+import { map } from 'lodash';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 const SuggestionsList = React.createClass( {
 	propTypes: {

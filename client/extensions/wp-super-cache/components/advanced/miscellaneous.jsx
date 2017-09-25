@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { pick } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
+import WrapSettingsForm from '../wrap-settings-form';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
 import Notice from 'components/notice';
-import WrapSettingsForm from '../wrap-settings-form';
+import SectionHeader from 'components/section-header';
 
 const Miscellaneous = ( {
 	fields: {

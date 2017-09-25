@@ -1,13 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	SELECTED_SITE_SET,
-	ROUTE_SET,
-	SECTION_SET,
-	PREVIEW_IS_SHOWING,
-	NOTIFICATIONS_PANEL_TOGGLE
-} from 'state/action-types';
+import { SELECTED_SITE_SET, ROUTE_SET, SECTION_SET, PREVIEW_IS_SHOWING, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site has been set

@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { noop, omitBy, isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, omitBy, isUndefined } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import FollowButton from './button';
-import { isFollowing } from 'state/selectors';
 import { follow, unfollow } from 'state/reader/follows/actions';
+import { isFollowing } from 'state/selectors';
 
 class FollowButtonContainer extends Component {
 	static propTypes = {

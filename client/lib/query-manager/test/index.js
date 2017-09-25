@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import QueryManager, { DELETE_PATCH_KEY } from '../';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'QueryManager', () => {
 	let sandbox, manager;

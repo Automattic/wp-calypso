@@ -1,28 +1,26 @@
-import classnames from 'classnames';
-
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import Card from 'components/card';
-import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
-import HeaderBack from 'reader/header-back';
-import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
-import SiteIcon from 'blocks/site-icon';
-import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
+import BlogStickers from 'blocks/blog-stickers';
 import ReaderEmailSettings from 'blocks/reader-email-settings';
+import SiteIcon from 'blocks/site-icon';
+import Card from 'components/card';
 import userSettings from 'lib/user-settings';
+import ReaderFollowButton from 'reader/follow-button';
+import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
+import HeaderBack from 'reader/header-back';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import { isFollowing } from 'state/selectors';
 
 class FeedHeader extends Component {

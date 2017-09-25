@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE, WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST } from 'woocommerce/state/action-types';
 
 /**
  * Changes the "tax_status" setting.

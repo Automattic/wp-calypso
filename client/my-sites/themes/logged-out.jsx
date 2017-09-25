@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ThemeShowcase from './theme-showcase';
 import { connectOptions } from './theme-options';
+import ThemeShowcase from './theme-showcase';
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 

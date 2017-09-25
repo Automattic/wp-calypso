@@ -6,9 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-
 import plugin from '../plugin';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'wpcom-sourcecode', () => {
 	let wrapPre, unwrapPre;

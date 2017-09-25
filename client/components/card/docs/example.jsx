@@ -1,13 +1,12 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-
 import CompactCard from 'components/card/compact';
 
 var Cards = React.createClass( {

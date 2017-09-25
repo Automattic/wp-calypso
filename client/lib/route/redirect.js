@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import page from 'page';
+
+/**
+ * Internal dependencies
+ */
 import config from 'config';
 
 export default function redirect( path ) {

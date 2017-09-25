@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
+import { WP_SUPER_CACHE_RECEIVE_STATUS, WP_SUPER_CACHE_REQUEST_STATUS, WP_SUPER_CACHE_REQUEST_STATUS_FAILURE } from '../action-types';
 import { itemsSchema } from './schema';
-import {
-	WP_SUPER_CACHE_RECEIVE_STATUS,
-	WP_SUPER_CACHE_REQUEST_STATUS,
-	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
-} from '../action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.

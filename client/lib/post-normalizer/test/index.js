@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import { spy } from 'sinon';
 import { trim } from 'lodash';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 
 function identifyTransform( post, callback ) {
 	callback();

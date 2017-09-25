@@ -6,14 +6,9 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST, SITE_MEDIA_STORAGE_REQUEST_SUCCESS, SITE_MEDIA_STORAGE_REQUEST_FAILURE } from 'state/action-types';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks media-storage information, indexed by site ID.

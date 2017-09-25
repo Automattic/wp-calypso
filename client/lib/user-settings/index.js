@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user:settings' );
-import { decodeEntities } from 'lib/formatting';
+import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { decodeEntities } from 'lib/formatting';
 import emitterClass from 'lib/mixins/emitter';
 
 import userFactory from 'lib/user';
-const user = userFactory();
 import userUtils from 'lib/user/utils';
+
+const debug = debugFactory( 'calypso:user:settings' );
+const user = userFactory();
 
 /**
  * Internal dependencies

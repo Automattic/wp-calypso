@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import accept from 'lib/accept';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
+import accept from 'lib/accept';
+import analytics from 'lib/analytics';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
 import utils from 'lib/site/utils';
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 
 export default localize( React.createClass( {
 

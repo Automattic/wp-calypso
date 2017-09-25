@@ -1,8 +1,7 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 var Selects = React.createClass( {

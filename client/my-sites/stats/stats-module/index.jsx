@@ -1,35 +1,32 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ErrorPanel from '../stats-error';
-import StatsModuleExpand from './expand';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
-import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import ErrorPanel from '../stats-error';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
 import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import StatsModuleExpand from './expand';
+import StatsModulePlaceholder from './placeholder';
+import Card from 'components/card';
+import QuerySiteStats from 'components/data/query-site-stats';
+import SectionHeader from 'components/section-header';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSiteSlug } from 'state/sites/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
+import { isRequestingSiteStatsForQuery, getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsModule extends Component {
 	static propTypes = {

@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
-import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import { getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import PaymentMethodItem from './payment-method-item';
+import PaymentMethodItemPlaceholder from './payment-method-item-placeholder';
 import List from 'woocommerce/components/list/list';
 import ListHeader from 'woocommerce/components/list/list-header';
 import ListItemField from 'woocommerce/components/list/list-item-field';
-import PaymentMethodItem from './payment-method-item';
-import PaymentMethodItemPlaceholder from './payment-method-item-placeholder';
+import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
+import { arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/selectors';
 
 class SettingsPaymentsMethodList extends Component {
 	static propTypes = {

@@ -1,44 +1,33 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PostsNavigation from './posts-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostListWrapper from './post-list-wrapper';
-import config from 'config';
-import Main from 'components/main';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostCounts from 'components/data/query-post-counts';
+import PostsNavigation from './posts-navigation';
 import PostItem from 'blocks/post-item';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery
-} from 'state/posts/selectors';
 import Button from 'components/button';
 import Count from 'components/count';
+import QueryPostCounts from 'components/data/query-post-counts';
+import QueryPosts from 'components/data/query-posts';
+import Main from 'components/main';
 import SectionHeader from 'components/section-header';
+import config from 'config';
 import { sectionify } from 'lib/route/path';
-import {
-	getAllPostCount,
-	getMyPostCount
-} from 'state/posts/counts/selectors';
-import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { warningNotice } from 'state/notices/actions';
-import {
-	getSiteAdminUrl,
-	getSiteSlug,
-	isJetpackSite,
-	siteHasMinimumJetpackVersion
-} from 'state/sites/selectors';
+import { getAllPostCount, getMyPostCount } from 'state/posts/counts/selectors';
+import { getSitePostsForQueryIgnoringPage, isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite, siteHasMinimumJetpackVersion } from 'state/sites/selectors';
+import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const PostsMain = React.createClass( {
 	componentWillMount() {

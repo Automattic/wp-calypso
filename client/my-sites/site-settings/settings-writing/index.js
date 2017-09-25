@@ -6,10 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import controller from './controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
+import config from 'config';
 import mySitesController from 'my-sites/controller';
+import settingsController from 'my-sites/site-settings/settings-controller';
 
 export default function() {
 	page(

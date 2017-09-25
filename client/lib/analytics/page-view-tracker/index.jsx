@@ -2,9 +2,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { flowRight, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**

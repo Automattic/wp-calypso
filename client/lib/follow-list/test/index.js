@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {
 	let FollowList, FollowListSite, followList, site;

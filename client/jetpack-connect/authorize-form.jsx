@@ -2,45 +2,29 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import {
-	createAccount,
-	authorize,
-	goBackToWpAdmin,
-	retryAuth,
-	goToXmlrpcErrorFallbackUrl,
-} from 'state/jetpack-connect/actions';
-import {
-	getAuthorizationData,
-	getAuthorizationRemoteSite,
-	isCalypsoStartedConnection,
-	hasXmlrpcError,
-	hasExpiredSecretError,
-	isRemoteSiteOnSitesList,
-	getAuthAttempts,
-	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
-} from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
-import EmptyContent from 'components/empty-content';
-import { requestSites } from 'state/sites/actions';
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
-import MainWrapper from './main-wrapper';
-import HelpButton from './help-button';
-import { urlToSlug } from 'lib/url';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
+import HelpButton from './help-button';
+import MainWrapper from './main-wrapper';
+import EmptyContent from 'components/empty-content';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import Main from 'components/main';
+import { urlToSlug } from 'lib/url';
+import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { createAccount, authorize, goBackToWpAdmin, retryAuth, goToXmlrpcErrorFallbackUrl } from 'state/jetpack-connect/actions';
+import { getAuthorizationData, getAuthorizationRemoteSite, isCalypsoStartedConnection, hasXmlrpcError, hasExpiredSecretError, isRemoteSiteOnSitesList, getAuthAttempts, getSiteIdFromQueryObject, getUserAlreadyConnected } from 'state/jetpack-connect/selectors';
+import { requestSites } from 'state/sites/actions';
+import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {

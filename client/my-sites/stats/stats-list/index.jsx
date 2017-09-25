@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:list' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import StatsListItem from './stats-list-item';
+
+const debug = debugFactory( 'calypso:stats:list' );
 
 export default React.createClass( {
 	displayName: 'StatsList',

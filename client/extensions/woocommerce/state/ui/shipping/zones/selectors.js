@@ -1,21 +1,18 @@
 /**
  * External dependencies
  */
-import { get, find, findIndex, flatten, isNumber, map, remove, some } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { get, find, findIndex, flatten, isNumber, map, remove, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getCurrentlyEditingShippingZoneLocationsList, getShippingZoneLocationsList } from './locations/selectors';
+import { getShippingZoneMethods } from './methods/selectors';
 import createSelector from 'lib/create-selector';
+import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
-import { getShippingZoneMethods } from './methods/selectors';
-import {
-	getCurrentlyEditingShippingZoneLocationsList,
-	getShippingZoneLocationsList,
-} from './locations/selectors';
-import { decodeEntities } from 'lib/formatting';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );

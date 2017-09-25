@@ -1,19 +1,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	KEYRING_SERVICES_RECEIVE,
-	KEYRING_SERVICES_REQUEST,
-	KEYRING_SERVICES_REQUEST_FAILURE,
-	KEYRING_SERVICES_REQUEST_SUCCESS,
-} from 'state/action-types';
 import { requestKeyringServices } from '../actions';
+import { KEYRING_SERVICES_RECEIVE, KEYRING_SERVICES_REQUEST, KEYRING_SERVICES_REQUEST_FAILURE, KEYRING_SERVICES_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

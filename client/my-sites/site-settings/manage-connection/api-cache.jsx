@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { flowRight, pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import CompactCard from 'components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import config from 'config';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ApiCache = ( {
 	fields,

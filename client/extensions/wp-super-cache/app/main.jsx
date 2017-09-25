@@ -1,28 +1,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ExtensionRedirect from 'blocks/extension-redirect';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
+import QueryStatus from '../components/data/query-status';
 import DebugTab from '../components/debug';
 import EasyTab from '../components/easy';
-import Main from 'components/main';
 import Navigation from '../components/navigation';
-import Notice from 'components/notice';
 import PreloadTab from '../components/preload';
-import QueryStatus from '../components/data/query-status';
-import { Tabs } from './constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
+import { Tabs } from './constants';
+import ExtensionRedirect from 'blocks/extension-redirect';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class WPSuperCache extends Component {
 	static propTypes = {

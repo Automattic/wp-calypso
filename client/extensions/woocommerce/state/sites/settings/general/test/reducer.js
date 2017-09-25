@@ -6,13 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
+import { WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS, WOOCOMMERCE_SETTINGS_GENERAL_REQUEST, WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
 import { ERROR, LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
-} from 'woocommerce/state/action-types';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'generalRequest', () => {

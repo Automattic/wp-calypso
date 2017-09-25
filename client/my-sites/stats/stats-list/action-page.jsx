@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 
 import { localize } from 'i18n-calypso';
-
 import page from 'page';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-page' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 
-import Gridicon from 'gridicons';
+const debug = debugFactory( 'calypso:stats:action-page' );
 
 export default localize( React.createClass( {
 	displayName: 'StatsActionPage',

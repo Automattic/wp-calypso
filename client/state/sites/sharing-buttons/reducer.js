@@ -1,24 +1,14 @@
 /**
  * External dependencies
  */
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-
 import { items as itemSchemas } from './schema';
-import {
-	SHARING_BUTTONS_RECEIVE,
-	SHARING_BUTTONS_REQUEST,
-	SHARING_BUTTONS_REQUEST_FAILURE,
-	SHARING_BUTTONS_REQUEST_SUCCESS,
-	SHARING_BUTTONS_SAVE,
-	SHARING_BUTTONS_SAVE_FAILURE,
-	SHARING_BUTTONS_SAVE_SUCCESS,
-	SHARING_BUTTONS_UPDATE
-} from 'state/action-types';
+import { SHARING_BUTTONS_RECEIVE, SHARING_BUTTONS_REQUEST, SHARING_BUTTONS_REQUEST_FAILURE, SHARING_BUTTONS_REQUEST_SUCCESS, SHARING_BUTTONS_SAVE, SHARING_BUTTONS_SAVE_FAILURE, SHARING_BUTTONS_SAVE_SUCCESS, SHARING_BUTTONS_UPDATE } from 'state/action-types';
+import { combineReducers, createReducer } from 'state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

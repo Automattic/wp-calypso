@@ -1,27 +1,27 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import page from 'page';
 import { capitalize, some } from 'lodash';
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import route from 'lib/route';
-import notices from 'notices';
-import analytics from 'lib/analytics';
 import PlanSetup from './jetpack-plugins-setup';
-import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
-import PluginBrowser from './plugins-browser';
+import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
+import PluginBrowser from './plugins-browser';
+import analytics from 'lib/analytics';
 import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
+import route from 'lib/route';
+import notices from 'notices';
+import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 
 /**
  * Module variables

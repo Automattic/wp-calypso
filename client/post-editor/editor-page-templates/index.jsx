@@ -1,28 +1,27 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import { find, size, map } from 'lodash';
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, size, map } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import QueryPageTemplates from 'components/data/query-page-templates';
 import AccordionSection from 'components/accordion/section';
+import QueryPageTemplates from 'components/data/query-page-templates';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPageTemplates } from 'state/page-templates/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { editPost } from 'state/posts/actions';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
+import { getPageTemplates } from 'state/page-templates/selectors';
+import { editPost } from 'state/posts/actions';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getSiteOption } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorPageTemplates extends Component {
 	static propTypes = {

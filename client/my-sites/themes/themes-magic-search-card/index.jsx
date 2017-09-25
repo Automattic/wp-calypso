@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import wrapWithClickOutside from 'react-click-outside';
-import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { debounce, intersection, difference, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import wrapWithClickOutside from 'react-click-outside';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import MagicSearchWelcome from './welcome';
+import KeyedSuggestions from 'components/keyed-suggestions';
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
-import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { localize } from 'i18n-calypso';
-import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
 
 //We want those taxonomies if they are used to be presented in this order

@@ -7,13 +7,8 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
+import { SHORTCODE_RECEIVE, SHORTCODE_REQUEST, SHORTCODE_REQUEST_FAILURE, SHORTCODE_REQUEST_SUCCESS } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	SHORTCODE_RECEIVE,
-	SHORTCODE_REQUEST,
-	SHORTCODE_REQUEST_FAILURE,
-	SHORTCODE_REQUEST_SUCCESS
-} from 'state/action-types';
 
 const createRequestingReducer = ( requesting ) => {
 	return ( state, { siteId, shortcode } ) => {

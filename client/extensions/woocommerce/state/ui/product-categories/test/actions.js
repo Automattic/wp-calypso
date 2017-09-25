@@ -7,10 +7,7 @@ import { isObject, isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	generateProductCategoryId,
-	editProductCategory,
-} from '../actions';
+import { generateProductCategoryId, editProductCategory } from '../actions';
 
 const siteId = 123;
 

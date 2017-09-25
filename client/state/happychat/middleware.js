@@ -1,72 +1,20 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { has, isEmpty, throttle } from 'lodash';
 import moment from 'moment';
-import {
-	has,
-	isEmpty,
-	throttle
-} from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { receiveChatEvent, receiveChatTranscript, requestChatTranscript, setConnected, setConnecting, setDisconnected, setHappychatAvailable, setHappychatChatStatus, setReconnecting, setGeoLocation } from './actions';
+import { isHappychatConnectionUninitialized, wasHappychatRecentlyActive, isHappychatClientConnected, isHappychatChatAssigned, getGeoLocation, getGroups } from './selectors';
 import wpcom from 'lib/wp';
-import {
-	ANALYTICS_EVENT_RECORD,
-	HAPPYCHAT_CONNECT,
-	HAPPYCHAT_INITIALIZE,
-	HAPPYCHAT_SEND_USER_INFO,
-	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
-	HELP_CONTACT_FORM_SITE_SELECT,
-	ROUTE_SET,
-
-	COMMENTS_CHANGE_STATUS,
-	EXPORT_COMPLETE,
-	EXPORT_FAILURE,
-	EXPORT_STARTED,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_FOCUS,
-	IMPORTS_IMPORT_START,
-	JETPACK_CONNECT_AUTHORIZE,
-	MEDIA_DELETE,
-	PLUGIN_ACTIVATE_REQUEST,
-	PLUGIN_SETUP_ACTIVATE,
-	POST_SAVE_SUCCESS,
-	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_DELETE,
-	PURCHASE_REMOVE_COMPLETED,
-	SITE_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
-import {
-	receiveChatEvent,
-	receiveChatTranscript,
-	requestChatTranscript,
-	setConnected,
-	setConnecting,
-	setDisconnected,
-	setHappychatAvailable,
-	setHappychatChatStatus,
-	setReconnecting,
-	setGeoLocation,
-} from './actions';
-import {
-	isHappychatConnectionUninitialized,
-	wasHappychatRecentlyActive,
-	isHappychatClientConnected,
-	isHappychatChatAssigned,
-	getGeoLocation,
-	getGroups,
-} from './selectors';
-import {
-	getCurrentUser,
-	getCurrentUserLocale,
-} from 'state/current-user/selectors';
+import { ANALYTICS_EVENT_RECORD, HAPPYCHAT_CONNECT, HAPPYCHAT_INITIALIZE, HAPPYCHAT_SEND_USER_INFO, HAPPYCHAT_SEND_MESSAGE, HAPPYCHAT_SET_MESSAGE, HAPPYCHAT_TRANSCRIPT_REQUEST, HELP_CONTACT_FORM_SITE_SELECT, ROUTE_SET, COMMENTS_CHANGE_STATUS, EXPORT_COMPLETE, EXPORT_FAILURE, EXPORT_STARTED, HAPPYCHAT_BLUR, HAPPYCHAT_FOCUS, IMPORTS_IMPORT_START, JETPACK_CONNECT_AUTHORIZE, MEDIA_DELETE, PLUGIN_ACTIVATE_REQUEST, PLUGIN_SETUP_ACTIVATE, POST_SAVE_SUCCESS, PUBLICIZE_CONNECTION_CREATE, PUBLICIZE_CONNECTION_DELETE, PURCHASE_REMOVE_COMPLETED, SITE_SETTINGS_SAVE_SUCCESS } from 'state/action-types';
+import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:actions' );
 
 const sendTyping = throttle( ( connection, message ) => {

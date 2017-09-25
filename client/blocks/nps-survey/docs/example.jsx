@@ -8,14 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import NpsSurvey from '../';
-import {
-	isNpsSurveySubmitted,
-	isNpsSurveySubmitFailure,
-	hasAnsweredNpsSurvey,
-	hasAnsweredNpsSurveyWithNoScore,
-	getNpsSurveyName,
-	getNpsSurveyScore,
-} from 'state/nps-survey/selectors';
+import { isNpsSurveySubmitted, isNpsSurveySubmitFailure, hasAnsweredNpsSurvey, hasAnsweredNpsSurveyWithNoScore, getNpsSurveyName, getNpsSurveyScore } from 'state/nps-survey/selectors';
 
 class NpsSurveyExample extends PureComponent {
 	static displayName = 'NpsSurvey';

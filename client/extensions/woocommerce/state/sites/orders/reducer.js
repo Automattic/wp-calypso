@@ -6,21 +6,11 @@ import { keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import { getSerializedOrdersQuery } from './utils';
 import notes from './notes/reducer';
-import {
-	WOOCOMMERCE_ORDER_REQUEST,
-	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
-	WOOCOMMERCE_ORDER_UPDATE,
-	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
-	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
-	WOOCOMMERCE_ORDERS_REQUEST,
-	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
-	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
 import refunds from './refunds/reducer';
+import { getSerializedOrdersQuery } from './utils';
+import { combineReducers } from 'state/utils';
+import { WOOCOMMERCE_ORDER_REQUEST, WOOCOMMERCE_ORDER_REQUEST_FAILURE, WOOCOMMERCE_ORDER_REQUEST_SUCCESS, WOOCOMMERCE_ORDER_UPDATE, WOOCOMMERCE_ORDER_UPDATE_SUCCESS, WOOCOMMERCE_ORDER_UPDATE_FAILURE, WOOCOMMERCE_ORDERS_REQUEST, WOOCOMMERCE_ORDERS_REQUEST_FAILURE, WOOCOMMERCE_ORDERS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
 
 /**
  * Returns the updated order requests state after an action has been

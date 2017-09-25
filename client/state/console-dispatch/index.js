@@ -1,20 +1,4 @@
 /**
- * Console dispatcher Redux store enhancer
- *
- * Inject into the `createStore` enhancer chain in order
- * to provide access to the store directly from the console.
- *
- * Will only attach if the `window` variable is available
- * globally. If not it will simply be an empty link in the
- * chain, passing straight through.
- *
- * A few helpers have also been attached to the window in
- * order to make debugging and interacting easier. Please
- * see the README for more information.
- *
- */
-
-/**
  * External dependencies
  */
 import { matchesProperty } from 'lodash';

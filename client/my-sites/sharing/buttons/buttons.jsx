@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
-import React, { Component } from 'react';
-import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,19 +13,19 @@ import { localize } from 'i18n-calypso';
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
 import QuerySharingButtons from 'components/data/query-sharing-buttons';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import { protectForm } from 'lib/protect-form';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSharingButtons, isSavingSharingButtons, isSharingButtonsSaveSuccessful } from 'state/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { getSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
-import { getSharingButtons, isSavingSharingButtons, isSharingButtonsSaveSuccessful } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { protectForm } from 'lib/protect-form';
 
 class SharingButtons extends Component {
 	state = {

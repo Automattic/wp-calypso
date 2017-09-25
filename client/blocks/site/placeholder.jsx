@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import React from 'react';
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:site' );
 
 export default class extends React.Component {

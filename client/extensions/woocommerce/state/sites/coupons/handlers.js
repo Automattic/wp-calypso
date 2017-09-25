@@ -1,13 +1,15 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import debugFactory from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import request from 'woocommerce/state/sites/http-request';
-import {
-	WOOCOMMERCE_COUPONS_REQUEST_PAGE,
-} from 'woocommerce/state/action-types';
+
+/**
+ * Internal dependencies
+ */
 import { couponsPageUpdated } from './actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { WOOCOMMERCE_COUPONS_REQUEST_PAGE } from 'woocommerce/state/action-types';
+import request from 'woocommerce/state/sites/http-request';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 

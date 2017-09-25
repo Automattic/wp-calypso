@@ -1,29 +1,23 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import {
-	getOptedOutOfShippingSetup,
-	getOptedOutofTaxesSetup,
-	getTriedCustomizerDuringInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import {
-	setFinishedInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupTasks from './setup-tasks';
-import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
+import analytics from 'lib/analytics';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
+import { setFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
+import { getOptedOutOfShippingSetup, getOptedOutofTaxesSetup, getTriedCustomizerDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasksView extends Component {

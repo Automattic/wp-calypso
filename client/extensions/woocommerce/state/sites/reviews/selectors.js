@@ -6,8 +6,8 @@ import { get, omit, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

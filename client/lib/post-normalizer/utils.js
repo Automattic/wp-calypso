@@ -1,13 +1,13 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { find, forEach, some, endsWith, findIndex } from 'lodash';
-import url from 'url';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
+import url from 'url';
 
 const IMAGE_SCALE_FACTOR = typeof window !== 'undefined' &&
 	window.devicePixelRatio &&

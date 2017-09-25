@@ -1,9 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
 
 /**
  * Creates an action list to save payment settings

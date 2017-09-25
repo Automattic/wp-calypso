@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import wpcomUndocumented from 'lib/wpcom-undocumented';
-import config from 'config';
 import { injectLocalization } from './localization';
+import config from 'config';
+import wpcomUndocumented from 'lib/wpcom-undocumented';
 
 let wpcom = wpcomUndocumented( require( 'wpcom-xhr-request' ) );
 

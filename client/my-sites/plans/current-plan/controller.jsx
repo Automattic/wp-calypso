@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import page from 'page';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import CurrentPlan from './';
 import { isFreePlan } from 'lib/products-values';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export default {

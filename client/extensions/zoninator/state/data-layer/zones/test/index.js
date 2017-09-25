@@ -2,34 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { announceDeleteFailure, announceSaveFailure, announceZoneSaved, createZone, deleteZone, handleZoneSaved, requestZonesError, requestZonesList, saveZone, updateZonesList } from '../';
+import { fromApi } from '../utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import {
-	announceDeleteFailure,
-	announceSaveFailure,
-	announceZoneSaved,
-	createZone,
-	deleteZone,
-	handleZoneSaved,
-	requestZonesError,
-	requestZonesList,
-	saveZone,
-	updateZonesList,
-} from '../';
-import {
-	requestError,
-	requestZones,
-	updateZone,
-	updateZones,
-} from 'zoninator/state/zones/actions';
-import { fromApi } from '../utils';
+import { requestError, requestZones, updateZone, updateZones } from 'zoninator/state/zones/actions';
 
 const apiResponse = {
 	data: [

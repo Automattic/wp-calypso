@@ -3,30 +3,28 @@
  */
 import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:connected-applications' );
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import ConnectedAppItem from 'me/connected-application-item';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import notices from 'notices';
-/* eslint-disable no-restricted-imports */
-// FIXME: Remove use of this mixin
 import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
+import twoStepAuthorization from 'lib/two-step-authorization';
+import ConnectedAppItem from 'me/connected-application-item';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
+
+const debug = debugFactory( 'calypso:me:connected-applications' );
 
 /* eslint-disable react/prefer-es6-class */
 // FIXME: Remove use of createReactClass

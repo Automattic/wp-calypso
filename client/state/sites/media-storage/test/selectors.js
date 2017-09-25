@@ -6,11 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getMediaStorage,
-	isRequestingMediaStorage,
-	isOverMediaLimit
-} from '../selectors';
+import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getMediaStorage()', () => {

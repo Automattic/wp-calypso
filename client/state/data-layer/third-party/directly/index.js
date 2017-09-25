@@ -1,19 +1,10 @@
 /**
  * Internal dependencies
  */
-import {
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
-import {
-	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_START,
-} from 'state/action-types';
-import {
-	initializationCompleted,
-	initializationFailed,
-} from 'state/help/directly/actions';
 import * as directly from 'lib/directly';
+import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { initializationCompleted, initializationFailed } from 'state/help/directly/actions';
 
 export function askQuestion( { dispatch }, action ) {
 	return directly.askQuestion( action.questionText, action.name, action.email )

@@ -1,30 +1,28 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ShippingZoneEntry from './shipping-zone-list-entry';
 import Button from 'components/button';
 import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import ShippingZoneEntry from './shipping-zone-list-entry';
-import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 import Notice from 'components/notice';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import {
-	createAddDefultShippingZoneActionList,
-} from 'woocommerce/state/ui/shipping/zones/actions';
+import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
+import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
+import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class ShippingZoneList extends Component {
 	componentWillMount() {

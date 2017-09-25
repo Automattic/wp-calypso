@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { settingsPath } from '../../../app/util';
 import CompactCard from 'components/card/compact';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { settingsPath } from '../../../app/util';
 
 const ZoneItem = ( { siteSlug, zone } ) => {
 	const { id, name, description } = zone;

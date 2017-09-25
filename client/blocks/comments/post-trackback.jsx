@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React from 'react';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/***
+/**
  * Internal dependencies
  */
 import PostTime from 'reader/post-time';

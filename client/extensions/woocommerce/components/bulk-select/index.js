@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const BulkSelect = ( { totalElements, selectedElements, className, disabled, readOnly, onToggle } ) => {
 	const hasAllElementsSelected = selectedElements && selectedElements === totalElements;

@@ -1,17 +1,11 @@
 /**
  * Internal dependencies
  */
-import {
-	AUTOMATED_TRANSFER_STATUS_SET,
-	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_TRANSFER_INITIATE_REQUEST,
-	THEME_TRANSFER_INITIATE_SUCCESS,
-} from 'state/action-types';
 import { pauseAll, resumePaused } from 'lib/data-poller';
-
 import sitesFactory from 'lib/sites-list';
+import sitesFactory from 'lib/sites-list';
+import { AUTOMATED_TRANSFER_STATUS_SET, THEME_TRANSFER_INITIATE_FAILURE, THEME_TRANSFER_INITIATE_REQUEST, THEME_TRANSFER_INITIATE_SUCCESS } from 'state/action-types';
 const sites = sitesFactory();
-import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
 const pauseFetching = () => {

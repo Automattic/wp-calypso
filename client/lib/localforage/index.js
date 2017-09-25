@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import debug from 'debug';
 import localforage from 'localforage';
 import { reduce } from 'lodash';
-import debug from 'debug';
 
 /**
  * Internal dependencies

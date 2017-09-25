@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	RECEIPT_FETCH,
-	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED,
-} from 'state/action-types';
+import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export const initialReceiptState = {

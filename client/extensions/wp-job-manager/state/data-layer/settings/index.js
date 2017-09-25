@@ -7,12 +7,12 @@ import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 're
 /**
  * Internal dependencies
  */
+import { fetchError, updateSettings } from '../../settings/actions';
+import { fromApi, toApi } from './utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { fetchError, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
-import { fromApi, toApi } from './utils';
 
 export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;

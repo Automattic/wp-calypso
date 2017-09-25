@@ -7,14 +7,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	FOLLOWERS_RECEIVE,
-	FOLLOWER_REMOVE_SUCCESS
-} from 'state/action-types';
-import {
-	items,
-	queries
-} from '../reducer';
+import { items, queries } from '../reducer';
+import { FOLLOWERS_RECEIVE, FOLLOWER_REMOVE_SUCCESS } from 'state/action-types';
 import { getSerializedQuery } from 'state/followers/utils';
 
 describe( 'reducer', () => {

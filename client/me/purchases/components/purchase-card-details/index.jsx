@@ -1,17 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { curry } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
-import { curry } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import { createPaygateToken } from 'lib/store-transactions';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 import paths from 'me/purchases/paths';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
 
 class PurchaseCardDetails extends Component {
 	constructor( props ) {

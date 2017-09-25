@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { isNumber, noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -14,8 +14,8 @@ import { isNumber, noop } from 'lodash';
 import Button from 'components/button';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import ImagePreloader from 'components/image-preloader';
-import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
+import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 
 class ProductFormImages extends Component {
 	static propTypes = {

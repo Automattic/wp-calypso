@@ -8,15 +8,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	READER_SITE_BLOCK_REQUEST,
-	READER_SITE_BLOCK_REQUEST_SUCCESS,
-	READER_SITE_BLOCK_REQUEST_FAILURE,
-	READER_SITE_UNBLOCK_REQUEST,
-	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
-	READER_SITE_UNBLOCK_REQUEST_FAILURE,
-} from 'state/action-types';
 import { items } from '../reducer';
+import { READER_SITE_BLOCK_REQUEST, READER_SITE_BLOCK_REQUEST_SUCCESS, READER_SITE_BLOCK_REQUEST_FAILURE, READER_SITE_UNBLOCK_REQUEST, READER_SITE_UNBLOCK_REQUEST_SUCCESS, READER_SITE_UNBLOCK_REQUEST_FAILURE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
