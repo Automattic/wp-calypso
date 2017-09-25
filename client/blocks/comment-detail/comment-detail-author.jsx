@@ -67,7 +67,9 @@ export class CommentDetailAuthor extends Component {
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
-	showMoreInfo = () => some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
+	showMoreInfo = () =>
+		( 'comment' === this.props.commentType ) &&
+		some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
 
 	toggleBlockUser = () => {
 		const {
@@ -266,7 +268,7 @@ export class CommentDetailAuthor extends Component {
 							</div>
 						}
 
-						{ this.showMoreInfo() && 'comment' === commentType &&
+						{ this.showMoreInfo() &&
 							<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
 								<Gridicon icon="info-outline" />
 							</a>
