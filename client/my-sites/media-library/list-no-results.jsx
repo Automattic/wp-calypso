@@ -3,12 +3,14 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import NoResults from 'my-sites/no-results';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'MediaLibraryListNoResults',
 
 	propTypes: {
@@ -27,7 +29,7 @@ export default React.createClass( {
 
 		switch ( this.props.filter ) {
 			case 'images':
-				label = this.translate( 'No images match your search for {{searchTerm/}}.', {
+				label = this.props.translate( 'No images match your search for {{searchTerm/}}.', {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
@@ -35,7 +37,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'videos':
-				label = this.translate( 'No videos match your search for {{searchTerm/}}.', {
+				label = this.props.translate( 'No videos match your search for {{searchTerm/}}.', {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
@@ -43,7 +45,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'audio':
-				label = this.translate( 'No audio files match your search for {{searchTerm/}}.', {
+				label = this.props.translate( 'No audio files match your search for {{searchTerm/}}.', {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
@@ -51,7 +53,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'documents':
-				label = this.translate( 'No documents match your search for {{searchTerm/}}.', {
+				label = this.props.translate( 'No documents match your search for {{searchTerm/}}.', {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
@@ -59,7 +61,7 @@ export default React.createClass( {
 				} );
 				break;
 			default:
-				label = this.translate( 'No media files match your search for {{searchTerm/}}.', {
+				label = this.props.translate( 'No media files match your search for {{searchTerm/}}.', {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
@@ -78,4 +80,4 @@ export default React.createClass( {
 				image="/calypso/images/pages/illustration-pages.svg" />
 		);
 	}
-} );
+} ) );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -39,7 +40,7 @@ const StatsSiteOverview = React.createClass( {
 		const headerPath = siteStatsPath;
 
 		return (
-			<div>
+		    <div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
 				<SectionHeader label={ title } href={ headerPath } />
 				<Card className="stats__overview stats-module is-site-overview">
@@ -48,25 +49,25 @@ const StatsSiteOverview = React.createClass( {
 							className={ this.isValueLow( views ) ? 'is-low' : null }
 							href={ siteStatsPath }
 							gridicon="visible"
-							label={ this.translate( 'Views', { context: 'noun' } ) }
+							label={ this.props.translate( 'Views', { context: 'noun' } ) }
 							value={ views } />
 						<StatsTab
 							className={ this.isValueLow( visitors ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=visitors' }
 							gridicon="user"
-							label={ this.translate( 'Visitors', { context: 'noun' } ) }
+							label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
 							value={ visitors } />
 						<StatsTab
 							className={ this.isValueLow( likes ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=likes' }
 							gridicon="star"
-							label={ this.translate( 'Likes', { context: 'noun' } ) }
+							label={ this.props.translate( 'Likes', { context: 'noun' } ) }
 							value={ likes } />
 						<StatsTab
 							className={ this.isValueLow( comments ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=comments' }
 							gridicon="comment"
-							label={ this.translate( 'Comments', { context: 'noun' } ) }
+							label={ this.props.translate( 'Comments', { context: 'noun' } ) }
 							value={ comments } />
 					</StatsTabs>
 				</Card>
@@ -89,5 +90,5 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: slug,
 		query
 	};
-} )( StatsSiteOverview );
+} )( localize( StatsSiteOverview ) );
 

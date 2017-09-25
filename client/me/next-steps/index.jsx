@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -17,7 +18,7 @@ import productsValues from 'lib/products-values';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 
@@ -93,10 +94,10 @@ export default React.createClass( {
 	introMessage: function() {
 		if ( this.props.isWelcome ) {
 			return (
-				<div className="next-steps__intro">
-				<h3 className="next-steps__title">{ this.translate( 'Thanks for signing up for WordPress.com.' ) }</h3>
+			    <div className="next-steps__intro">
+				<h3 className="next-steps__title">{ this.props.translate( 'Thanks for signing up for WordPress.com.' ) }</h3>
 				<p className="next-steps__intro">
-					{ this.translate(
+					{ this.props.translate(
 						'Next you can take any of the following steps, ' +
 						'join a {{bloggingUniversityLink}}guided blogging course{{/bloggingUniversityLink}}, ' +
 						'or check out our {{docsLink}}support documentation{{/docsLink}}.', {
@@ -135,9 +136,9 @@ export default React.createClass( {
 			dismissLink = '/stats/insights/' + ( site ? site.slug : '' );
 
 			return (
-				<div className="next-steps__outro">
+			    <div className="next-steps__outro">
 				<p>{
-					this.translate( 'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.', {
+					this.props.translate( 'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.', {
 						components: {
 							a: <a href={ dismissLink } onClick={ this.dismissLinkRecordEvent } />
 						}
@@ -193,4 +194,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

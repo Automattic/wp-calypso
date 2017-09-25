@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -11,7 +13,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'PluginSiteUpdateIndicator',
 
@@ -55,11 +57,11 @@ export default React.createClass( {
 			isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
-			message = this.translate( 'Updating to version %(version)s', {
+			message = this.props.translate( 'Updating to version %(version)s', {
 				args: { version: ongoingUpdates[ 0 ].plugin.update.new_version }
 			} );
 		} else {
-			message = this.translate( 'Update to %(version)s', {
+			message = this.props.translate( 'Update to %(version)s', {
 				args: { version: this.props.site.plugin.update.new_version }
 			} );
 		}
@@ -89,4 +91,4 @@ export default React.createClass( {
 		return null;
 	}
 
-} );
+} ) );

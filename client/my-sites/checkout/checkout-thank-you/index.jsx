@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
 import React, { PropTypes } from 'react';
@@ -149,12 +150,12 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-			<Notice
+		    <Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
 				status="is-warning"
 				>
-				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
+				{ this.props.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 					'Please check your email to confirm your address.', {
 						args: { email: this.props.user.email },
 						components: { strong: <strong className="checkout-thank-you__verification-notice-email" />
@@ -276,22 +277,22 @@ const CheckoutThankYou = React.createClass( {
 			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
-				<Main className="checkout-thank-you">
+			    <Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
 						name={ domainName }
 						price={ this.props.receipt.data.displayPrice }
-						heading={ this.translate( 'Thank you for your purchase!' ) }
-						description={ this.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
+						heading={ this.props.translate( 'Thank you for your purchase!' ) }
+						description={ this.props.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
 						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ this.translate( 'Go To Your Domain' ) }
+						buttonText={ this.props.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
 			);
 		}
 
-		const goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
+		const goBackText = this.props.selectedSite ? this.props.translate( 'Back to my site' ) : this.props.translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
@@ -450,4 +451,4 @@ export default connect(
 			}
 		};
 	}
-)( CheckoutThankYou );
+)( localize( CheckoutThankYou ) );

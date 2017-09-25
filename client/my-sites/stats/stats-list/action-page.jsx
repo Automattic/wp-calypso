@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import page from 'page';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:action-page' );
@@ -14,7 +16,7 @@ import analytics from 'lib/analytics';
 
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'StatsActionPage',
 
 	clickHandler: function( event ) {
@@ -28,12 +30,12 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<li className="module-content-list-item-action">
-				<a href="#" onClick={ this.clickHandler } className="module-content-list-item-action-wrapper" title={ this.translate( 'View in a new window', { textOnly: true, context: 'Stats action tooltip: View content in a new window' } ) } aria-label={ this.translate( 'View in a new window', { textOnly: true, context: 'Stats ARIA label: View content in a new window' } ) }>
+		    <li className="module-content-list-item-action">
+				<a href="#" onClick={ this.clickHandler } className="module-content-list-item-action-wrapper" title={ this.props.translate( 'View in a new window', { textOnly: true, context: 'Stats action tooltip: View content in a new window' } ) } aria-label={ this.props.translate( 'View in a new window', { textOnly: true, context: 'Stats ARIA label: View content in a new window' } ) }>
 					<Gridicon icon="stats" size={ 18 } />
-					<span className="module-content-list-item-action-label">{ this.translate( 'View', { context: 'Stats: List item action to view content' } ) }</span>
+					<span className="module-content-list-item-action-label">{ this.props.translate( 'View', { context: 'Stats: List item action to view content' } ) }</span>
 				</a>
 			</li>
 		);
 	}
-} );
+} ) );

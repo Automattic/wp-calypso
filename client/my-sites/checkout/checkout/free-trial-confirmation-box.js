@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -16,17 +17,17 @@ import TermsOfService from './terms-of-service';
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+		    <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
 					{
-						this.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
+						this.props.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
 					}
 					</h6>
 
 					<span>
 					{
-						this.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
+						this.props.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
 					}
 					</span>
 				</div>
@@ -56,4 +57,4 @@ const FreeTrialConfirmationBox = React.createClass( {
 	}
 } );
 
-export default FreeTrialConfirmationBox;
+export default localize( FreeTrialConfirmationBox );

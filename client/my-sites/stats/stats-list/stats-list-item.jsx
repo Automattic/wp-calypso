@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import classNames from 'classnames';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:list-item' );
@@ -21,7 +23,7 @@ import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'StatsListItem',
 
 	getInitialState: function() {
@@ -225,11 +227,11 @@ export default React.createClass( {
 
 		switch ( valueData.type ) {
 			case 'relative-date':
-				value = this.moment( valueData.value ).fromNow( true );
+				value = this.props.moment( valueData.value ).fromNow( true );
 				break;
 			default:
 			case 'number':
-				value = this.numberFormat( valueData.value );
+				value = this.props.numberFormat( valueData.value );
 				break;
 		}
 
@@ -273,7 +275,7 @@ export default React.createClass( {
 						classNames( toggleOptions )
 					}
 					title={
-						this.translate(
+						this.props.translate(
 							'Show Actions',
 							{ context: 'Label for hidden menu in a list on the Stats page.' }
 						)
@@ -301,4 +303,4 @@ export default React.createClass( {
 			</li>
 		);
 	}
-} );
+} ) );

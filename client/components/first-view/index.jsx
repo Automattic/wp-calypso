@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
@@ -56,7 +57,7 @@ const FirstView = React.createClass( {
 		const firstViewHidePreferenceClasses = classNames( 'first-view__hide-preference' );
 
 		return (
-			<RootChild className={ classes }>
+		    <RootChild className={ classes }>
 				<ReactCSSTransitionGroup transitionName="first-view-transition"
 						component={ TransitionGroupComponent }
 						transitionEnter={ false } transitionEnterTimeout={ 0 }
@@ -66,7 +67,7 @@ const FirstView = React.createClass( {
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
-								{ this.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
+								{ this.props.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
 							</Button>
 
 							<div className={ firstViewHidePreferenceClasses }>
@@ -74,7 +75,7 @@ const FirstView = React.createClass( {
 									<input type="checkbox"
 											checked={ ! this.state.isEnabled }
 											onChange={ this.enableOrDisableNextTime } />
-									{ this.translate( "Don't show this again" ) }
+									{ this.props.translate( "Don't show this again" ) }
 								</label>
 							</div>
 						</Card>
@@ -134,4 +135,4 @@ export default connect(
 	{
 		hideView
 	}
-)( FirstView );
+)( localize( FirstView ) );

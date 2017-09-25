@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -11,7 +13,7 @@ import Card from 'components/card';
 import Gridicon from 'gridicons';
 import SectionHeader from 'components/section-header';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'PluginsBrowserList',
 
@@ -56,10 +58,12 @@ export default React.createClass( {
 
 	renderLink() {
 		if ( this.props.expandedListLink ) {
-			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
-				{ this.translate( 'See All' ) }
-				<Gridicon icon="chevron-right" size={ 18 } />
-			</a>;
+			return (
+			    <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
+					{ this.props.translate( 'See All' ) }
+					<Gridicon icon="chevron-right" size={ 18 } />
+				</a>
+			);
 		}
 	},
 
@@ -75,4 +79,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

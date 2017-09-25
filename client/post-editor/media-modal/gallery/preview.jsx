@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -13,7 +15,7 @@ import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'EditorMediaModalGalleryPreview',
 
 	propTypes: {
@@ -41,16 +43,16 @@ export default React.createClass( {
 
 	renderPreviewModeToggle() {
 		return (
-			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
+		    <SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: false } ) }>
-					{ this.translate( 'Preview' ) }
+					{ this.props.translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
 					selected={ this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: true } ) }>
-					{ this.translate( 'Edit' ) }
+					{ this.props.translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
@@ -88,10 +90,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="editor-media-modal-gallery__preview">
+		    <div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
 					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
+						{ this.props.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
 					</Notice>
 				) }
 				<div className="editor-media-modal-gallery__preview-wrapper">
@@ -101,5 +103,5 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
 

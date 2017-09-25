@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
@@ -23,7 +25,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'Security2faCodePrompt',
 
@@ -113,7 +115,7 @@ export default React.createClass( {
 			this.setState(
 				{
 					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
+					lastError: this.props.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
 					lastErrorType: 'is-info'
 				}
 			);
@@ -143,14 +145,14 @@ export default React.createClass( {
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+					lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
 					lastErrorType: 'is-error'
 				}
 			);
 		} else if ( ! data.success ) {
 			this.setState(
 				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
 					lastErrorType: 'is-error'
 				}
 			);
@@ -164,13 +166,13 @@ export default React.createClass( {
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Disabling Two-Step…' ) : this.props.translate( 'Disable Two-Step' );
 				break;
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Enabling Two-Step…' ) : this.props.translate( 'Enable Two-Step' );
 				break;
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				label = this.state.submittingCode ? this.props.translate( 'Submitting…' ) : this.props.translate( 'Submit' );
 		}
 
 		return label;
@@ -204,9 +206,9 @@ export default React.createClass( {
 			: constants.sixDigit2faPlaceholder;
 
 		return (
-			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
+		    <form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
+					<FormLabel htmlFor="verification-code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
 					<FormTelInput
 						autoFocus
 						className="security-2fa-code-prompt__verification-code"
@@ -224,7 +226,7 @@ export default React.createClass( {
 						? (
 							<FormSettingExplanation>
 								{
-									this.translate(
+									this.props.translate(
 										'A code has been sent to your device via SMS.  ' +
 										'You may request another code after one minute.'
 									)
@@ -258,7 +260,7 @@ export default React.createClass( {
 									this.onRequestCode( event );
 								}.bind( this ) }
 							>
-								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
+								{ this.state.codeRequestPerformed ? this.props.translate( 'Resend Code' ) : this.props.translate( 'Send Code via SMS' ) }
 							</FormButton>
 						)
 						: null
@@ -275,7 +277,7 @@ export default React.createClass( {
 									this.onCancel( event );
 								}.bind( this ) }
 							>
-								{ this.translate( 'Cancel' ) }
+								{ this.props.translate( 'Cancel' ) }
 							</FormButton>
 						)
 						: null
@@ -284,4 +286,4 @@ export default React.createClass( {
 			</form>
 		);
 	}
-} );
+} ) );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -44,7 +45,7 @@ const PremiumPopover = React.createClass( {
 			( ! exclusiveViewLock || exclusiveViewLock === this );
 	},
 	priceMessage( price ) {
-		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
+		return this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: price },
 			components: { small: <small /> }
 		} );
@@ -84,7 +85,7 @@ const PremiumPopover = React.createClass( {
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
-			<div>
+		    <div>
 				<QueryPlans />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<span
@@ -105,19 +106,19 @@ const PremiumPopover = React.createClass( {
 				>
 					<div className="premium-popover__content">
 						<div className="premium-popover__header">
-							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							<h3>{ this.props.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
 							{ premiumPlan
 								? <PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 								: <h5>Loading</h5> }
 						</div>
 						<ul className="premium-popover__items">
 							{ [
-								this.translate( 'A custom domain' ),
-								this.translate( 'Advanced design customization' ),
-								this.translate( '13GB of space for file and media' ),
-								this.translate( 'Video Uploads' ),
-								this.translate( 'No Ads' ),
-								this.translate( 'Email and live chat support' )
+								this.props.translate( 'A custom domain' ),
+								this.props.translate( 'Advanced design customization' ),
+								this.props.translate( '13GB of space for file and media' ),
+								this.props.translate( 'Video Uploads' ),
+								this.props.translate( 'No Ads' ),
+								this.props.translate( 'Email and live chat support' )
 							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 } /> { message }
 							</li> ) }
 						</ul>
@@ -136,4 +137,4 @@ export default connect( ( state ) => {
 		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
 		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM )
 	};
-} )( PremiumPopover );
+} )( localize( PremiumPopover ) );

@@ -2,10 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'StatsTabsTab',
 
 	propTypes: {
@@ -37,7 +38,7 @@ export default React.createClass( {
 		}
 
 		if ( ( ! loading ) && ( value || value === 0 ) ) {
-			return this.numberFormat( value );
+			return this.props.numberFormat( value );
 		}
 
 		return String.fromCharCode( 8211 );
@@ -75,4 +76,4 @@ export default React.createClass( {
 			</li>
 		);
 	}
-} );
+} ) );

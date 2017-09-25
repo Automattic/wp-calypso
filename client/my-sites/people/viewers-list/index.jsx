@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -21,7 +23,7 @@ import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
-const Viewers = React.createClass( {
+const Viewers = localize( React.createClass( {
 
 	displayName: 'Viewers',
 
@@ -52,13 +54,13 @@ const Viewers = React.createClass( {
 			<div>
 				<p>
 				{
-					this.translate(
+					this.props.translate(
 						'If you remove this viewer, he or she will not be able to visit this site.'
 					)
 				}
 				</p>
 				<p>
-					{ this.translate( 'Would you still like to remove this viewer?' ) }
+					{ this.props.translate( 'Would you still like to remove this viewer?' ) }
 				</p>
 			</div>
 			),
@@ -70,7 +72,7 @@ const Viewers = React.createClass( {
 					analytics.ga.recordEvent( 'People', 'Clicked Cancel Button In Remove Viewer Confirmation' );
 				}
 			},
-			this.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
+			this.props.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
 	},
 
@@ -107,8 +109,8 @@ const Viewers = React.createClass( {
 		let viewers,
 			emptyContentArgs = {
 				title: this.props.site && this.props.site.jetpack
-					? this.translate( "Oops, Jetpack sites don't support viewers." )
-					: this.translate( "You don't have any viewers yet." )
+					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.props.translate( "You don't have any viewers yet." )
 			},
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null;
 
@@ -117,11 +119,11 @@ const Viewers = React.createClass( {
 				emptyContentArgs = Object.assign(
 					emptyContentArgs,
 					{
-						line: this.translate(
+						line: this.props.translate(
 							'Only private sites can have viewers. You can make your site private by ' +
 							'changing its visibility settings.'
 						),
-						action: this.translate( 'Visit Site Settings' ),
+						action: this.props.translate( 'Visit Site Settings' ),
 						actionURL: '/settings/general/' + this.props.site.slug
 					}
 				);
@@ -165,7 +167,7 @@ const Viewers = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
 
 export default React.createClass( {
 	displayName: 'ViewersList',

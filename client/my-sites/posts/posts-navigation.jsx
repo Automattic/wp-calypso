@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Debug from 'debug';
 
@@ -93,20 +94,20 @@ const PostsNavigation = React.createClass( {
 		let showMyFilter = true;
 
 		this.filterStatuses = {
-			publish: this.translate( 'Published', { context: 'Filter label for posts list' } ),
-			draft: this.translate( 'Drafts', { context: 'Filter label for posts list' } ),
-			future: this.translate( 'Scheduled', { context: 'Filter label for posts list' } ),
-			trash: this.translate( 'Trashed', { context: 'Filter label for posts list' } )
+			publish: this.props.translate( 'Published', { context: 'Filter label for posts list' } ),
+			draft: this.props.translate( 'Drafts', { context: 'Filter label for posts list' } ),
+			future: this.props.translate( 'Scheduled', { context: 'Filter label for posts list' } ),
+			trash: this.props.translate( 'Trashed', { context: 'Filter label for posts list' } )
 		};
 
 		this.filterScope = {
-			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
-			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } )
+			me: this.props.translate( 'Me', { context: 'Filter label for posts list' } ),
+			everyone: this.props.translate( 'Everyone', { context: 'Filter label for posts list' } )
 		};
 
 		this.strings = {
-			status: this.translate( 'Status', { context: 'Filter group label for tabs' } ),
-			author: this.translate( 'Author', { context: 'Filter group label for segmented' } ),
+			status: this.props.translate( 'Status', { context: 'Filter group label for tabs' } ),
+			author: this.props.translate( 'Author', { context: 'Filter group label for segmented' } ),
 		};
 
 		const statusTabs = this._getStatusTabs( author, siteFilter );
@@ -387,4 +388,4 @@ export default connect(
 			siteId
 		};
 	}
-)( PostsNavigation );
+)( localize( PostsNavigation ) );

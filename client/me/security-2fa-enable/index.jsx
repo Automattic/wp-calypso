@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-enable' );
@@ -25,7 +27,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'Security2faEnable',
 
@@ -97,7 +99,7 @@ export default React.createClass( {
 			this.setState(
 				{
 					smsRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
+					lastError: this.props.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
 					lastErrorType: 'is-info'
 				}
 			);
@@ -131,7 +133,7 @@ export default React.createClass( {
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'Unable to obtain authorization application setup information. Please try again later.' ),
+					lastError: this.props.translate( 'Unable to obtain authorization application setup information. Please try again later.' ),
 					lastErrorType: 'is-error'
 				}
 			);
@@ -170,14 +172,14 @@ export default React.createClass( {
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+					lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
 					lastErrorType: 'is-error'
 				}
 			);
 		} else if ( ! data.success ) {
 			this.setState(
 				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
 					lastErrorType: 'is-error'
 				}
 			);
@@ -204,10 +206,10 @@ export default React.createClass( {
 		} );
 
 		return (
-			<div className="security-2fa-enable__qr-code-block">
+		    <div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
 					{
-						this.translate(
+						this.props.translate(
 							"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}", {
 								components: {
 									toggleMethodLink: this.getToggleLink()
@@ -227,10 +229,10 @@ export default React.createClass( {
 
 	renderTimeCode: function() {
 		return (
-			<div className="security-2fa-enable__time-code-block">
+		    <div className="security-2fa-enable__time-code-block">
 				<p className="security-2fa-enable__time-instruction">
 					{
-						this.translate(
+						this.props.translate(
 							'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}', {
 								components: {
 									toggleMethodLink: this.getToggleLink()
@@ -260,14 +262,12 @@ export default React.createClass( {
 
 	renderInputHelp: function() {
 		if ( 'sms' === this.state.method ) {
-			return (
-				<FormLabel htmlFor="verification-code">{ this.translate( 'Enter the code you receive via SMS:' ) }</FormLabel>
-			);
+			return <FormLabel htmlFor="verification-code">{ this.props.translate( 'Enter the code you receive via SMS:' ) }</FormLabel>;
 		}
 
 		return (
-			<p>
-				{ this.translate( 'Then enter the six digit code provided by the app:' ) }
+		    <p>
+				{ this.props.translate( 'Then enter the six digit code provided by the app:' ) }
 			</p>
 		);
 	},
@@ -283,10 +283,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="security-2fa-enable__app-options">
+		    <div className="security-2fa-enable__app-options">
 				<p>
 					{
-						this.translate(
+						this.props.translate(
 							'Not sure what this screen means? You may need to download ' +
 							'{{authyLink}}Authy{{/authyLink}} or ' +
 							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
@@ -338,7 +338,7 @@ export default React.createClass( {
 
 	renderInputBlock: function() {
 		return (
-			<div className="security-2fa-enable__next">
+		    <div className="security-2fa-enable__next">
 				{ this.renderInputHelp() }
 				<FormTelInput
 					autoComplete="off"
@@ -356,7 +356,7 @@ export default React.createClass( {
 					? (
 						<FormSettingExplanation>
 							{
-								this.translate(
+								this.props.translate(
 									'A code has been sent to your device via SMS.  ' +
 									'You may request another code after one minute.'
 								)
@@ -373,7 +373,7 @@ export default React.createClass( {
 
 	renderButtons: function() {
 		return (
-			<FormButtonsBar className="security-2fa-enable__buttons-bar">
+		    <FormButtonsBar className="security-2fa-enable__buttons-bar">
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
@@ -381,7 +381,7 @@ export default React.createClass( {
 						analytics.ga.recordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
 					}.bind( this ) }
 				>
-					{ this.state.submittingCode ? this.translate( 'Enabling…', { context: 'A button label used during Two-Step setup.' } ) : this.translate( 'Enable', { context: 'A button label used during Two-Step setup.' } ) }
+					{ this.state.submittingCode ? this.props.translate( 'Enabling…', { context: 'A button label used during Two-Step setup.' } ) : this.props.translate( 'Enable', { context: 'A button label used during Two-Step setup.' } ) }
 				</FormButton>
 
 				<FormButton
@@ -392,7 +392,7 @@ export default React.createClass( {
 						this.props.onCancel( event );
 					}.bind( this ) }
 				>
-					{ this.translate( 'Cancel' ) }
+					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 
 				{
@@ -406,7 +406,7 @@ export default React.createClass( {
 								this.onResendCode( event );
 							}.bind( this ) }
 						>
-							{ this.translate( 'Resend Code', { context: 'A button label to let a user get the SMS code sent again.' } ) }
+							{ this.props.translate( 'Resend Code', { context: 'A button label to let a user get the SMS code sent again.' } ) }
 						</FormButton>
 					)
 					: (
@@ -417,7 +417,7 @@ export default React.createClass( {
 								this.onVerifyBySMS( event );
 							}.bind( this ) }
 						>
-							{ this.translate( 'Use SMS', { context: 'A button label to let a user switch to enabling Two-Step by SMS.' } ) }
+							{ this.props.translate( 'Use SMS', { context: 'A button label to let a user switch to enabling Two-Step by SMS.' } ) }
 						</FormButton>
 					)
 
@@ -440,4 +440,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

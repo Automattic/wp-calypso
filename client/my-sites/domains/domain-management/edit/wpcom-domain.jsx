@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -29,12 +31,12 @@ const WpcomDomain = React.createClass( {
 		}
 
 		return (
-			<VerticalNav>
+		    <VerticalNav>
 				<VerticalNavItem
 					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
 					external={ true }
 					onClick={ this.handleEditSiteAddressClick }>
-					{ this.translate( 'Edit Site Address' ) }
+					{ this.props.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
 		);
@@ -42,17 +44,17 @@ const WpcomDomain = React.createClass( {
 
 	render() {
 		return (
-			<div>
+		    <div>
 				<div className="domain-details-card">
 					<Header { ...this.props } />
 
 					<Card>
-						<Property label={ this.translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ this.translate( 'Included with Site' ) }
+						<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
+							{ this.props.translate( 'Included with Site' ) }
 						</Property>
 
-						<Property label={ this.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
-							<em>{ this.translate( 'Never Expires' ) }</em>
+						<Property label={ this.props.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
+							<em>{ this.props.translate( 'Never Expires' ) }</em>
 						</Property>
 					</Card>
 				</div>
@@ -62,4 +64,4 @@ const WpcomDomain = React.createClass( {
 	}
 } );
 
-export default WpcomDomain;
+export default localize( WpcomDomain );

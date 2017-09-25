@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 import {
@@ -39,8 +40,8 @@ export const SearchPreview = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.translate( 'Search Preview' ) }</h2>
+		    <div className="seo-search-preview">
+				<h2 className="seo-search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">
 						{ googleTitle( title ) }
@@ -69,4 +70,4 @@ SearchPreview.defaultProps = {
 	snippet: ''
 };
 
-export default SearchPreview;
+export default localize( SearchPreview );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 
@@ -60,9 +61,9 @@ const PluginsBrowserListElement = React.createClass( {
 		const sites = this.getSites();
 		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
 			return (
-				<div className="plugins-browser-item__installed">
+			    <div className="plugins-browser-item__installed">
 						<Gridicon icon="checkmark" size={ 18 } />
-						{ this.translate( 'Installed' ) }
+						{ this.props.translate( 'Installed' ) }
 				</div>
 			);
 		}
@@ -112,4 +113,4 @@ export default connect(
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 		};
 	}
-)( PluginsBrowserListElement );
+)( localize( PluginsBrowserListElement ) );

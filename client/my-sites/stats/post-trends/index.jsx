@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { throttle } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -148,10 +148,9 @@ const PostTrends = React.createClass( {
 		} );
 
 		return (
-
-			<div className="post-trends">
+		    <div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.translate( 'Posting Activity' ) }></SectionHeader>
+				<SectionHeader label={ this.props.translate( 'Posting Activity' ) }></SectionHeader>
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
 					<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
@@ -160,7 +159,7 @@ const PostTrends = React.createClass( {
 							{ this.getMonthComponents() }
 						</div>
 						<div className="post-trends__key-container">
-							<span className="post-trends__key-label">{ this.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">{ this.props.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
 							<ul className="post-trends__key">
 								<li className="post-trends__key-day is-today"></li>
 								<li className="post-trends__key-day is-level-1"></li>
@@ -168,7 +167,7 @@ const PostTrends = React.createClass( {
 								<li className="post-trends__key-day is-level-3"></li>
 								<li className="post-trends__key-day is-level-4"></li>
 							</ul>
-							<span className="post-trends__key-label">{ this.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">{ this.props.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
 						</div>
 					</div>
 				</Card>
@@ -193,4 +192,4 @@ export default connect( ( state ) => {
 		query,
 		siteId
 	};
-} )( PostTrends );
+} )( localize( PostTrends ) );

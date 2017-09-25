@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { reject } from 'lodash';
 import Gridicon from 'gridicons';
@@ -12,7 +13,7 @@ import Gridicon from 'gridicons';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'EditorMediaModalGalleryRemoveButton',
 
 	mixins: [ PureRenderMixin ],
@@ -36,13 +37,13 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<button
+		    <button
 				onClick={ this.remove }
 				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove">
-				<span className="screen-reader-text">{ this.translate( 'Remove' ) }</span>
+				<span className="screen-reader-text">{ this.props.translate( 'Remove' ) }</span>
 				<Gridicon icon="cross" />
 			</button>
 		);
 	}
-} );
+} ) );

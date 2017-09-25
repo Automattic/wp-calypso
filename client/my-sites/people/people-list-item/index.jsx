@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { omit } from 'lodash';
@@ -14,7 +15,7 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'PeopleListItem',
 
@@ -47,7 +48,7 @@ export default React.createClass( {
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
-			<CompactCard
+		    <CompactCard
 				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
@@ -60,11 +61,11 @@ export default React.createClass( {
 				this.props.onRemove &&
 				<div className="people-list-item__actions">
 					<button className="button is-link people-list-item__remove-button" onClick={ this.props.onRemove }>
-						{ this.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
+						{ this.props.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
 					</button>
 				</div>
 				}
 			</CompactCard>
 		);
 	}
-} );
+} ) );

@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import qs from 'querystring';
 
 /**
@@ -21,7 +23,7 @@ import Notice from 'components/notice';
  */
 const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
@@ -117,15 +119,15 @@ export default React.createClass( {
 		if ( this.state.error ) {
 			error = (
 				<Notice status="is-error" onDismissClick={ this.resetError } isCompact>
-					{ this.translate( 'We couldn\'t find your current location.', { context: 'Post editor geolocation' } ) }
+					{ this.props.translate( 'We couldn\'t find your current location.', { context: 'Post editor geolocation' } ) }
 				</Notice>
 			);
 		}
 
 		if ( this.state.locating ) {
-			buttonText = this.translate( 'Locating…', { context: 'Post editor geolocation' } );
+			buttonText = this.props.translate( 'Locating…', { context: 'Post editor geolocation' } );
 		} else {
-			buttonText = this.translate( 'Get current location', { context: 'Post editor geolocation' } );
+			buttonText = this.props.translate( 'Get current location', { context: 'Post editor geolocation' } );
 		}
 
 		return (
@@ -146,4 +148,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

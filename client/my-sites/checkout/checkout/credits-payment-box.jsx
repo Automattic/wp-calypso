@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import {
 	some,
 } from 'lodash';
@@ -29,12 +30,12 @@ const CreditsPaymentBox = React.createClass( {
 			hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+		    <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
+					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
 					<span>
-						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+						{ this.props.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
 									credits: cart.credits,
@@ -72,13 +73,13 @@ const CreditsPaymentBox = React.createClass( {
 
 	render: function() {
 		return (
-			<PaymentBox
+		    <PaymentBox
 				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+				title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
 	}
 } );
 
-export default CreditsPaymentBox;
+export default localize( CreditsPaymentBox );

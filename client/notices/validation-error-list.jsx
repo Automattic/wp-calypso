@@ -2,9 +2,10 @@
  * External dependencies
  */
 import { map } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'ValidationErrorList',
 
 	propTypes: {
@@ -13,9 +14,9 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+		    <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Please correct the issue below and try again.',
 						'Please correct the issues listed below and try again.',
 						{
@@ -31,4 +32,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

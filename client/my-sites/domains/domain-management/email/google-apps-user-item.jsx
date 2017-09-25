@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -25,7 +27,7 @@ const GoogleAppsUserItem = React.createClass( {
 
 	render() {
 		return (
-			<li>
+		    <li>
 				<span className="google-apps-user-item__email">
 					{ this.props.user.email }
 				</span>
@@ -37,11 +39,11 @@ const GoogleAppsUserItem = React.createClass( {
 					onClick={ this.props.onClick }
 					target="_blank"
 					rel="noopener noreferrer">
-					{ this.translate( 'Manage', { context: 'G Suite user item' } ) }
+					{ this.props.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
 		);
 	}
 } );
 
-export default GoogleAppsUserItem;
+export default localize( GoogleAppsUserItem );

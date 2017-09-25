@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -68,13 +69,13 @@ const EditorSticky = React.createClass( {
 		);
 
 		return (
-			<Button
+		    <Button
 				borderless
 				className={ classes }
 				onClick={ this.toggleStickyStatus }
 				onMouseEnter={ this.enableTooltip }
 				onMouseLeave={ this.disableTooltip }
-				aria-label={ this.translate( 'Stick post to the front page' ) }
+				aria-label={ this.props.translate( 'Stick post to the front page' ) }
 				ref="stickyPostButton"
 			>
 				<Gridicon icon="bookmark" />
@@ -85,7 +86,7 @@ const EditorSticky = React.createClass( {
 						isVisible={ this.state.tooltip }
 						position="bottom left"
 					>
-						<span>{ this.translate( 'Marked as sticky' ) }</span>
+						<span>{ this.props.translate( 'Marked as sticky' ) }</span>
 					</Tooltip>
 				}
 			</Button>
@@ -106,4 +107,4 @@ export default connect(
 		};
 	},
 	{ editPost }
-)( EditorSticky );
+)( localize( EditorSticky ) );

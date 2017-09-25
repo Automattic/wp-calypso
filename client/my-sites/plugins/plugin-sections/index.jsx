@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { filter, find } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
@@ -16,7 +17,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 
@@ -46,35 +47,35 @@ export default React.createClass( {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'installation',
-				title: this.translate( 'Installation', {
+				title: this.props.translate( 'Installation', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'changelog',
-				title: this.translate( 'Changelog', {
+				title: this.props.translate( 'Changelog', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'faq',
-				title: this.translate( 'FAQs', {
+				title: this.props.translate( 'FAQs', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'other_notes',
-				title: this.translate( 'Other Notes', {
+				title: this.props.translate( 'Other Notes', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
@@ -86,7 +87,7 @@ export default React.createClass( {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
@@ -148,7 +149,7 @@ export default React.createClass( {
 		const button = (
 			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
 				<span className="plugin-sections__read-more-text">
-					{ this.translate( 'Read More' ) }
+					{ this.props.translate( 'Read More' ) }
 				</span>
 			</button>
 		);
@@ -207,4 +208,4 @@ export default React.createClass( {
 		);
 		/*eslint-enable react/no-danger*/
 	}
-} );
+} ) );

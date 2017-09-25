@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -33,12 +34,12 @@ const AdvancedSettings = React.createClass( {
 
 	render() {
 		return (
-			<div className="export-card__advanced-settings">
+		    <div className="export-card__advanced-settings">
 				<h1 className="export-card__advanced-settings-title">
-					{ this.translate( 'Select specific content to export' ) }
+					{ this.props.translate( 'Select specific content to export' ) }
 				</h1>
 				<p className="export-card__advanced-settings-description">
-					{ this.translate(
+					{ this.props.translate(
 						'Use the options below to select a specific content ' +
 						'type to download. You can select Posts, Pages, ' +
 						'or Feedback, and filter by the listed parameters. ' +
@@ -46,11 +47,11 @@ const AdvancedSettings = React.createClass( {
 						'content in an .xml file.' ) }
 				</p>
 				<div className="export-card__advanced-settings-row">
-					<PostTypeOptions postType="post" legend={ this.translate( 'Posts' ) } />
-					<PostTypeOptions postType="page" legend={ this.translate( 'Pages' ) } />
+					<PostTypeOptions postType="post" legend={ this.props.translate( 'Posts' ) } />
+					<PostTypeOptions postType="page" legend={ this.props.translate( 'Pages' ) } />
 					<PostTypeOptions postType="feedback"
-						legend={ this.translate( 'Feedback' ) }
-						description={ this.translate( 'Survey results etc.' ) }
+						legend={ this.props.translate( 'Feedback' ) }
+						description={ this.props.translate( 'Survey results etc.' ) }
 					/>
 				</div>
 				<SpinnerButton
@@ -59,8 +60,8 @@ const AdvancedSettings = React.createClass( {
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }
 					onClick={ this.props.onClickExport }
-					text={ this.translate( 'Export Selected Content' ) }
-					loadingText={ this.translate( 'Exporting…' ) } />
+					text={ this.props.translate( 'Export Selected Content' ) }
+					loadingText={ this.props.translate( 'Exporting…' ) } />
 			</div>
 		);
 	}
@@ -76,4 +77,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( AdvancedSettings );
+export default connect( mapStateToProps )( localize( AdvancedSettings ) );

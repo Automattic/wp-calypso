@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { find, groupBy } from 'lodash';
 
 /**
@@ -47,7 +48,7 @@ const GoogleAppsUsers = React.createClass( {
 	isNewUser( user ) {
 		const domain = find( this.props.domains.list, { name: user.domain } );
 
-		return this.moment().subtract( 1, 'day' ).isBefore( domain.googleAppsSubscription.subscribedDate );
+		return this.props.moment().subtract( 1, 'day' ).isBefore( domain.googleAppsSubscription.subscribedDate );
 	},
 
 	generateClickHandler( user ) {
@@ -62,7 +63,7 @@ const GoogleAppsUsers = React.createClass( {
 
 	renderDomain( domain, users ) {
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
+		    <div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
 				<SectionHeader
 					label={ domain }>
 					{ this.canAddUsers() && (
@@ -73,7 +74,7 @@ const GoogleAppsUsers = React.createClass( {
 								this.props.selectedSite.slug, domain
 							) }
 							onClick={ this.goToAddGoogleApps }>
-							{ this.translate( 'Add G Suite User' ) }
+							{ this.props.translate( 'Add G Suite User' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -90,11 +91,11 @@ const GoogleAppsUsers = React.createClass( {
 		if ( user.error ) {
 			let status = 'is-warning',
 				text = user.error,
-				supportLink = <a href={ support.CALYPSO_CONTACT }><strong>{ this.translate( 'Please contact support' ) }</strong></a>;
+				supportLink = <a href={ support.CALYPSO_CONTACT }><strong>{ this.props.translate( 'Please contact support' ) }</strong></a>;
 
 			if ( this.isNewUser( user ) ) {
 				status = null;
-				text = this.translate(
+				text = this.props.translate(
 					'We are setting up %(email)s for you. It should start working immediately, but may take up to 24 hours.',
 					{ args: { email: user.email } }
 				);
@@ -139,4 +140,4 @@ const GoogleAppsUsers = React.createClass( {
 	}
 } );
 
-export default GoogleAppsUsers;
+export default localize( GoogleAppsUsers );

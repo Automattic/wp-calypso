@@ -2,6 +2,7 @@
  * External dependencies
  */
 import deterministicStringify from 'json-stable-stringify';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
@@ -24,7 +25,7 @@ import ListEnd from 'components/list-end';
 /**
  * Module Variables
  */
-const Team = React.createClass( {
+const Team = localize( React.createClass( {
 	displayName: 'Team',
 
 	getInitialState: function() {
@@ -39,16 +40,16 @@ const Team = React.createClass( {
 
 	render: function() {
 		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
+			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			people;
 
 		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
 			return (
-				<NoResults
+			    <NoResults
 					image="/calypso/images/people/mystery-person.svg"
 					text={
-						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
+						this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
 								args: { searchTerm: this.props.search },
 								components: { em: <em /> }
@@ -60,7 +61,7 @@ const Team = React.createClass( {
 
 		if ( this.props.site && this.props.users.length ) {
 			if ( this.props.search && this.props.totalUsers ) {
-				headerText = this.translate(
+				headerText = this.props.translate(
 					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
 					'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
 					{
@@ -136,7 +137,7 @@ const Team = React.createClass( {
 		return <PeopleListItem key="people-list-item-placeholder" />;
 	}
 
-} );
+} ) );
 
 export default React.createClass( {
 	displayName: 'TeamList',

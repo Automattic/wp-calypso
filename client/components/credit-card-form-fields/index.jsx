@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -56,11 +57,11 @@ const CreditCardFormFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="credit-card-form-fields">
+		    <div className="credit-card-form-fields">
 				{ this.field( 'name', Input, {
 					labelClass: 'credit-card-form-fields__label',
 					autoFocus: true,
-					label: this.translate( 'Name on Card', {
+					label: this.props.translate( 'Name on Card', {
 						context: 'Card holder name label on credit card form'
 					} )
 				} ) }
@@ -68,7 +69,7 @@ const CreditCardFormFields = React.createClass( {
 				{ this.field( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
 					labelClass: 'credit-card-form-fields__label',
-					label: this.translate( 'Card Number', {
+					label: this.props.translate( 'Card Number', {
 						context: 'Card number label on credit card form'
 					} )
 				} ) }
@@ -77,7 +78,7 @@ const CreditCardFormFields = React.createClass( {
 					{ this.field( 'expiration-date', Input, {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'MM/YY', {
+						label: this.props.translate( 'MM/YY', {
 							context: 'Expiry label on credit card form'
 						} )
 					} ) }
@@ -85,19 +86,19 @@ const CreditCardFormFields = React.createClass( {
 					{ this.field( 'cvv', Input, {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'CVV', {
+						label: this.props.translate( 'CVV', {
 							context: '3 digit security number on credit card form'
 						} )
 					} ) }
 
 					{ this.field( 'country', CountrySelect, {
-						label: this.translate( 'Country' ),
+						label: this.props.translate( 'Country' ),
 						countriesList: this.props.countriesList
 					} ) }
 
 					{ this.field( 'postal-code', Input, {
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'Postal Code', {
+						label: this.props.translate( 'Postal Code', {
 							context: 'Postal code on credit card form'
 						} )
 					} ) }
@@ -107,4 +108,4 @@ const CreditCardFormFields = React.createClass( {
 	}
 } );
 
-export default CreditCardFormFields;
+export default localize( CreditCardFormFields );

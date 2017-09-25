@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -10,7 +12,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	propTypes: {
 		hosts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -25,10 +27,10 @@ export default React.createClass( {
 		const { hosts } = this.props;
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Set up Guided Transfer' ) } />
+		    <div>
+				<SectionHeader label={ this.props.translate( 'Set up Guided Transfer' ) } />
 				<Card>
-					<p>{ this.translate(
+					<p>{ this.props.translate(
 '{{strong}}Please choose{{/strong}} one of our Guided Transfer compatible ' +
 '{{partner_link}}partner hosts{{/partner_link}}. Visit the {{lobby_link}}Guided ' +
 'Transfer Lobby{{/lobby_link}} if you have any questions before starting, or ' +
@@ -60,4 +62,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

@@ -3,12 +3,14 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import getLabel from './locales';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'ContactFormDialogFieldHeader',
 
 	propTypes: {
@@ -23,7 +25,7 @@ export default React.createClass( {
 			const count = this.props.options.split( ',' ).length;
 
 			if ( this.props.required ) {
-				return this.translate(
+				return this.props.translate(
 					'Required field "%(fieldName)s" with %(numOption)d option',
 					'Required field "%(fieldName)s" with %(numOption)d options', {
 						count,
@@ -35,7 +37,7 @@ export default React.createClass( {
 					} );
 			}
 
-			return this.translate(
+			return this.props.translate(
 				'Optional field "%(fieldName)s" with %(numOption)d option',
 				'Optional field "%(fieldName)s" with %(numOption)d options', {
 					count,
@@ -48,7 +50,7 @@ export default React.createClass( {
 		}
 
 		if ( this.props.required ) {
-			return this.translate( 'Required field "%(fieldName)s"', {
+			return this.props.translate( 'Required field "%(fieldName)s"', {
 				args: {
 					fieldName: getLabel( this.props.type )
 				},
@@ -56,7 +58,7 @@ export default React.createClass( {
 			} );
 		}
 
-		return this.translate( 'Optional field "%(fieldName)s"', {
+		return this.props.translate( 'Optional field "%(fieldName)s"', {
 			args: {
 				fieldName: getLabel( this.props.type )
 			},
@@ -72,4 +74,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

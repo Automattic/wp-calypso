@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -200,7 +201,7 @@ const PushNotificationSettings = React.createClass( {
 										<rect id="Rectangle-70-Copy" fill="#E9EFF3" fillRule="evenodd" x="67" y="62" width="97" height="11" />
 										<text id="Notifications:-Ask-b" fill="none" fontFamily="SFUIText-Regular, SF UI Text" fontSize="10.442623" fontWeight="normal">
 											<tspan x="91" y="148" fill="#3D596D">{
-												this.translate( 'Notifications: Ask by default', {
+												this.props.translate( 'Notifications: Ask by default', {
 													comment: 'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".'
 												} )
 											}</tspan>
@@ -217,7 +218,7 @@ const PushNotificationSettings = React.createClass( {
 											</g>
 											<text id="Always-allow-on-this" fontFamily="SFUIText-Regular, SF UI Text" fontSize="9.56521739" fontWeight="normal" fill="#3D596D">
 												<tspan x="26.434555" y="20.1594203">{
-													this.translate( 'Always allow on this site', {
+													this.props.translate( 'Always allow on this site', {
 														comment: 'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".'
 													} )
 												}</tspan>
@@ -235,21 +236,21 @@ const PushNotificationSettings = React.createClass( {
 		);
 
 		return (
-			<Dialog isVisible={ this.props.showDialog } className=".notification-settings-push-notification-settings__instruction-dialog" onClose={ this.props.toggleUnblockInstructions }>
+		    <Dialog isVisible={ this.props.showDialog } className=".notification-settings-push-notification-settings__instruction-dialog" onClose={ this.props.toggleUnblockInstructions }>
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
-						<div className="notification-settings-push-notification-settings__instruction-title">{ this.translate( 'Enable Browser Notifications' ) }</div>
+						<div className="notification-settings-push-notification-settings__instruction-title">{ this.props.translate( 'Enable Browser Notifications' ) }</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAddressBar />
 							</div>
-							<p>{ this.translate( 'Click the lock icon in your address bar.' ) }</p>
+							<p>{ this.props.translate( 'Click the lock icon in your address bar.' ) }</p>
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAlwaysAllow />
 							</div>
-							<p>{ this.translate(
+							<p>{ this.props.translate(
 								'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.', {
 									components: {
 										strong: <strong />,
@@ -258,11 +259,11 @@ const PushNotificationSettings = React.createClass( {
 							) }</p>
 						</div>
 					</div>
-					<Notice className="push-notification-settings__instruction-refresh-notice" showDismiss={ false } text={ this.translate( 'Once you\'ve allowed notifications, you may need to refresh your browser.' ) } />
+					<Notice className="push-notification-settings__instruction-refresh-notice" showDismiss={ false } text={ this.props.translate( 'Once you\'ve allowed notifications, you may need to refresh your browser.' ) } />
 				</div>
 				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.props.toggleUnblockInstructions } >
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
+					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
 				</span>
 			</Dialog>
 		);
@@ -285,43 +286,43 @@ const PushNotificationSettings = React.createClass( {
 			case 'disabling':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 				break;
 			case 'enabling':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Disable' );
+				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
-				stateText = this.translate( 'Enabled' );
+				stateText = this.props.translate( 'Enabled' );
 				break;
 			case 'unsubscribed':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 				break;
 			case 'subscribed':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = false;
-				buttonText = this.translate( 'Disable' );
+				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
-				stateText = this.translate( 'Enabled' );
+				stateText = this.props.translate( 'Enabled' );
 				break;
 			case 'denied':
 				blockedInstruction = this.getBlockedInstruction();
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 
 				deniedText = <Notice className="notification-settings-push-notification-settings__instruction" showDismiss={ false } text={
 					<div>
-						<div>{ this.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
-						<div>{ this.translate(
+						<div>{ this.props.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
+						<div>{ this.props.translate(
 							'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}', {
 								components: {
 									instructionsButton: <Button className={ 'is-link' } onClick={ this.props.toggleUnblockInstructions } />
@@ -337,20 +338,20 @@ const PushNotificationSettings = React.createClass( {
 		}
 
 		return (
-			<Card className="notification-settings-push-notification-settings__settings">
+		    <Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
 					<Gridicon size={ 24 } className="notification-settings-push-notification-settings__settings-icon" icon="bell" />
-					{ this.translate( 'Browser Notifications' ) }
+					{ this.props.translate( 'Browser Notifications' ) }
 					<small className={ classNames( 'notification-settings-push-notification-settings__settings-state', stateClass ) }>{ stateText }</small>
 				</h2>
 
-				<p className="notification-settings-push-notification-settings__settings-description">{ this.translate( 'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.' ) }</p>
+				<p className="notification-settings-push-notification-settings__settings-description">{ this.props.translate( 'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.' ) }</p>
 
 				<Button className={ classNames( 'notification-settings-push-notification-settings__settings-button', buttonClass ) } disabled={ buttonDisabled } onClick={ this.clickHandler } >{ buttonText }</Button>
 
 				{ deniedText }
 			</Card>
-	);
+		);
 	}
 } );
 
@@ -367,4 +368,4 @@ export default connect(
 		toggleEnabled,
 		toggleUnblockInstructions
 	}
-)( PushNotificationSettings );
+)( localize( PushNotificationSettings ) );

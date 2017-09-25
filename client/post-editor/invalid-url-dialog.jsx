@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { noop, startsWith } from 'lodash';
 import page from 'page';
 
@@ -12,7 +13,7 @@ import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import { getSiteFragment } from 'lib/route/path';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'EditorTrashedDialog',
 
@@ -39,7 +40,7 @@ export default React.createClass( {
 	},
 
 	getDialogButtons() {
-		const newText = this.state.isPage ? this.translate( 'New Page' ) : this.translate( 'New Post' );
+		const newText = this.state.isPage ? this.props.translate( 'New Page' ) : this.props.translate( 'New Post' );
 		return [
 			<FormButton
 				key="startNewPage"
@@ -51,7 +52,7 @@ export default React.createClass( {
 				key="back"
 				isPrimary={ false }
 				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
+					{ this.props.translate( 'Close' ) }
 			</FormButton>
 		];
 	},
@@ -65,13 +66,13 @@ export default React.createClass( {
 	getStrings( isPage ) {
 		if ( isPage ) {
 			return {
-				dialogTitle: this.translate( 'Invalid Page Address' ),
-				dialogContent: this.translate( 'This page cannot be found. Check the web address or start a new page.' ),
+				dialogTitle: this.props.translate( 'Invalid Page Address' ),
+				dialogContent: this.props.translate( 'This page cannot be found. Check the web address or start a new page.' ),
 			};
 		}
 		return {
-			dialogTitle: this.translate( 'Invalid Post Address' ),
-			dialogContent: this.translate( 'This post cannot be found. Check the web address or start a new post.' ),
+			dialogTitle: this.props.translate( 'Invalid Post Address' ),
+			dialogContent: this.props.translate( 'This post cannot be found. Check the web address or start a new post.' ),
 		};
 	},
 
@@ -87,4 +88,4 @@ export default React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+} ) );

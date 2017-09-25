@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 
 /**
@@ -17,7 +18,7 @@ import Buttons from './buttons';
  */
 const countriesList = require( 'lib/countries-list' ).forSms();
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
 	propTypes: {
@@ -51,7 +52,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<FormFieldset>
 					<FormPhoneInput
 						countriesList={ countriesList }
@@ -68,7 +69,7 @@ export default React.createClass( {
 				<Buttons
 					isSavable={ this.isSavable() }
 					isDeletable={ havePhone }
-					saveText={ this.translate( 'Save Number' ) }
+					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
 					onCancel={ this.onCancel }
@@ -109,7 +110,7 @@ export default React.createClass( {
 		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
-			this.setState( { validation: this.translate( 'Please enter a valid phone number.' ) } );
+			this.setState( { validation: this.props.translate( 'Please enter a valid phone number.' ) } );
 			return;
 		}
 
@@ -129,4 +130,4 @@ export default React.createClass( {
 	onDelete: function() {
 		this.props.onDelete();
 	}
-} );
+} ) );

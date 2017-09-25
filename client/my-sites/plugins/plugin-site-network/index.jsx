@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -18,7 +20,7 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'PluginSiteNetwork',
 
@@ -49,12 +51,12 @@ export default React.createClass( {
 
 	renderMultisiteHeader: function() {
 		return (
-			<div className="plugin-site-network__header">
+		    <div className="plugin-site-network__header">
 				<AllSites
 					sites={ this.props.secondarySites }
 					count={ this.props.secondarySites.length }
 					domain={ this.props.site.domain }
-					title={ this.translate( '%(mainSiteName)s\'s Network', {
+					title={ this.props.translate( '%(mainSiteName)s\'s Network', {
 						args: {
 							mainSiteName: this.props.site.name
 						},
@@ -154,4 +156,4 @@ export default React.createClass( {
 
 		return this.renderPluginSite();
 	}
-} );
+} ) );

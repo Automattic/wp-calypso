@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
@@ -11,7 +12,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Popover from 'components/popover';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'ContactFormDialogFieldRemoveButton',
 
 	mixins: [ PureRenderMixin ],
@@ -28,7 +29,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
+		    <div>
 				<Button
 					ref="removeField"
 					borderless
@@ -43,9 +44,9 @@ export default React.createClass( {
 					onClose={ () => {} }
 					position="bottom"
 					className="popover tooltip is-dialog-visible">
-					{ this.translate( 'Remove Field', { context: 'button tooltip' } ) }
+					{ this.props.translate( 'Remove Field', { context: 'button tooltip' } ) }
 				</Popover>
 			</div>
 		);
 	}
-} );
+} ) );

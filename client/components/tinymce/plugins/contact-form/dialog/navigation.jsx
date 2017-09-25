@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -10,7 +12,7 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'ContactFormDialogNavigation',
 
 	propTypes: {
@@ -23,7 +25,7 @@ export default React.createClass( {
 		const tabs = [ 'fields', 'settings' ];
 
 		return (
-			<SectionNav selectedText="Form Fields">
+		    <SectionNav selectedText="Form Fields">
 				<SectionNavTabs>
 					{ tabs.map( tab => (
 						<SectionNavTabItem
@@ -31,11 +33,11 @@ export default React.createClass( {
 							selected={ this.props.activeTab === tab }
 							count={ tab === 'fields' ? this.props.fieldCount : null }
 							onClick={ () => this.props.onChangeTabs( tab ) } >
-							{ tab === 'fields' ? this.translate( 'Form Fields' ) : this.translate( 'Settings' ) }
+							{ tab === 'fields' ? this.props.translate( 'Form Fields' ) : this.props.translate( 'Settings' ) }
 						</SectionNavTabItem>
 					) ) }
 				</SectionNavTabs>
 			</SectionNav>
 		);
 	}
-} );
+} ) );

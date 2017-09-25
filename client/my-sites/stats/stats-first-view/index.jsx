@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -9,17 +10,17 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import FirstView from 'components/first-view';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
 		return (
-			<FirstView>
+		    <FirstView>
 				<div>
 					{ this.renderIcon() }
-					<h1>{ this.translate( 'See How Your Site Is Performing' ) }</h1>
+					<h1>{ this.props.translate( 'See How Your Site Is Performing' ) }</h1>
 					{ /* eslint-disable max-len */ }
-					<p>{ this.translate( 'The Stats page tells you everything you need to know about your site\'s traffic and visitors — which of your posts are taking off, where your audience is coming from, and who\'s now following you.' ) }</p>
+					<p>{ this.props.translate( 'The Stats page tells you everything you need to know about your site\'s traffic and visitors — which of your posts are taking off, where your audience is coming from, and who\'s now following you.' ) }</p>
 					{ /* eslint-enable max-len */ }
 				</div>
 			</FirstView>
@@ -75,4 +76,4 @@ export default React.createClass( {
 		);
 		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
 	}
-} );
+} ) );

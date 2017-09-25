@@ -3,12 +3,14 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {
@@ -31,10 +33,10 @@ export default React.createClass( {
 
 	getOptions: function() {
 		return [
-			{ value: 'icon-text', label: this.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'icon', label: this.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'text', label: this.translate( 'Text Only', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'official', label: this.translate( 'Official Buttons', { context: 'Sharing: Sharing button option label' } ) }
+			{ value: 'icon-text', label: this.props.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ) },
+			{ value: 'icon', label: this.props.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ) },
+			{ value: 'text', label: this.props.translate( 'Text Only', { context: 'Sharing: Sharing button option label' } ) },
+			{ value: 'official', label: this.props.translate( 'Official Buttons', { context: 'Sharing: Sharing button option label' } ) }
 		].map( function( option ) {
 			return (
 				<label key={ option.value }>
@@ -47,10 +49,10 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<fieldset className="sharing-buttons__fieldset">
-				<legend className="sharing-buttons__fieldset-heading">{ this.translate( 'Button style', { context: 'Sharing: Sharing button option heading' } ) }</legend>
+		    <fieldset className="sharing-buttons__fieldset">
+				<legend className="sharing-buttons__fieldset-heading">{ this.props.translate( 'Button style', { context: 'Sharing: Sharing button option heading' } ) }</legend>
 				{ this.getOptions() }
 			</fieldset>
 		);
 	}
-} );
+} ) );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -12,7 +13,7 @@ import CreditCardFormFields from 'components/credit-card-form-fields';
 
 import upgradesActions from 'lib/upgrades/actions';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'NewCardForm',
 
 	propTypes: {
@@ -29,17 +30,17 @@ export default React.createClass( {
 		const classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
 
 		return (
-			<div className="new-card">
+		    <div className="new-card">
 				<button type="button" className="new-card-toggle">
-					{ this.translate( '+ Use a New Credit/Debit Card' ) }
+					{ this.props.translate( '+ Use a New Credit/Debit Card' ) }
 				</button>
 
 				<div className="new-card-fields">
 					{ this.props.hasStoredCards ?
-						<h6 className="new-card-header">{ this.translate( 'Use New Credit/Debit Card' ) }:</h6> : null
+						<h6 className="new-card-header">{ this.props.translate( 'Use New Credit/Debit Card' ) }:</h6> : null
 					}
 
-					<span className={ classes }>{ this.translate( 'All fields required' ) }</span>
+					<span className={ classes }>{ this.props.translate( 'All fields required' ) }</span>
 
 					<CreditCardFormFields
 						card={ this.props.transaction.newCardFormFields }
@@ -58,4 +59,4 @@ export default React.createClass( {
 			maskedDetails: maskedDetails
 		} );
 	}
-} );
+} ) );

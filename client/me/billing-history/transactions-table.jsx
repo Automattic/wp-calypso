@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { defer, isEmpty, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import { capitalPDangit } from 'lib/formatting';
@@ -86,9 +87,9 @@ const TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<SearchCard
-					placeholder={ this.translate( 'Search all receipts…', { textOnly: true } ) }
+					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
 					onSearch={ this.onSearch }
 				/>
 				<table className="billing-history__transactions">
@@ -110,7 +111,7 @@ const TransactionsTable = React.createClass( {
 			item.plan = capitalPDangit( titleCase( item.variation ) );
 			name = this.serviceNameDescription( item );
 		} else {
-			name = <strong>{ this.translate( 'Multiple items' ) }</strong>;
+			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
 		}
 
 		return name;
@@ -188,4 +189,4 @@ const TransactionsTable = React.createClass( {
 	}
 } );
 
-export default TransactionsTable;
+export default localize( TransactionsTable );

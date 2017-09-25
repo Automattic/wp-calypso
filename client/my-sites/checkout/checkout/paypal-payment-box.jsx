@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { assign, some } from 'lodash';
 import React from 'react';
 
@@ -30,7 +31,7 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'PaypalPaymentBox',
 
 	getInitialState: function() {
@@ -81,7 +82,7 @@ export default React.createClass( {
 		transaction = this.props.transaction;
 
 		this.setSubmitState( {
-			info: this.translate( 'Sending details to PayPal' ),
+			info: this.props.translate( 'Sending details to PayPal' ),
 			disabled: true
 		} );
 
@@ -107,7 +108,7 @@ export default React.createClass( {
 				if ( error.message ) {
 					errorMessage = error.message;
 				} else {
-					errorMessage = this.translate( 'Please specify a country and postal code.' );
+					errorMessage = this.props.translate( 'Please specify a country and postal code.' );
 				}
 
 				this.setSubmitState( {
@@ -118,7 +119,7 @@ export default React.createClass( {
 
 			if ( paypalExpressURL ) {
 				this.setSubmitState( {
-					info: this.translate( 'Redirecting you to PayPal' ),
+					info: this.props.translate( 'Redirecting you to PayPal' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
@@ -130,13 +131,13 @@ export default React.createClass( {
 
 	renderButtonText: function() {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
-			return this.translate( 'Purchase %(price)s subscription with PayPal', {
+			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
 				context: 'Pay button on /checkout'
 			} );
 		}
 
-		return this.translate( 'Pay %(price)s with PayPal', {
+		return this.props.translate( 'Pay %(price)s with PayPal', {
 			args: { price: this.props.cart.total_cost_display },
 			context: 'Pay button on /checkout'
 		} );
@@ -152,12 +153,12 @@ export default React.createClass( {
 			'credit-card-payment-box__switch-link-left': showPaymentChatButton
 		} );
 		return (
-			<form onSubmit={ this.redirectToPayPal }>
+		    <form onSubmit={ this.redirectToPayPal }>
 				<div className="payment-box-section">
 					<CountrySelect
 						additionalClasses="checkout-field"
 						name="country"
-						label={ this.translate( 'Country', { textOnly: true } ) }
+						label={ this.props.translate( 'Country', { textOnly: true } ) }
 						countriesList={ this.props.countriesList }
 						value={ this.state.country }
 						onChange={ this.handleChange }
@@ -166,7 +167,7 @@ export default React.createClass( {
 					<Input
 						additionalClasses="checkout-field"
 						name="postal-code"
-						label={ this.translate( 'Postal Code', { textOnly: true } ) }
+						label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
 						onChange={ this.handleChange }
 						disabled={ this.state.formDisabled }
 						eventFormName="Checkout Form" />
@@ -185,7 +186,7 @@ export default React.createClass( {
 
 					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
 						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
-							{ this.translate( 'or use a credit card', {
+							{ this.props.translate( 'or use a credit card', {
 								context: 'Upgrades: PayPal checkout screen',
 								comment: 'Checkout with PayPal -- or use a credit card'
 							} ) }
@@ -208,11 +209,11 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<PaymentBox
+		    <PaymentBox
 				classSet="paypal-payment-box"
-				title={ this.translate( 'Secure Payment with PayPal' ) }>
+				title={ this.props.translate( 'Secure Payment with PayPal' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
 	}
-} );
+} ) );

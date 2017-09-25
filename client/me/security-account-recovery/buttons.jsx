@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -11,7 +13,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',
 
 	propTypes: {
@@ -25,18 +27,18 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<FormButtonsBar>
+		    <FormButtonsBar>
 				<FormButton
 					disabled={ ! this.props.isSavable }
 					onClick={ this.props.onSave }>
-					{ this.props.saveText ? this.props.saveText : this.translate( 'Save' ) }
+					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
 				</FormButton>
 
 				<FormButton
 					isPrimary={ false }
 					onClick={ this.props.onCancel }
 					>
-					{ this.translate( 'Cancel' ) }
+					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 
 				{
@@ -44,7 +46,7 @@ export default React.createClass( {
 					? (
 						<button className={ 'security-account-recovery-contact__remove' } onClick={ this.props.onDelete }>
 							<Gridicon icon="trash" size={ 24 } />
-							<span>{ this.translate( 'Remove' ) }</span>
+							<span>{ this.props.translate( 'Remove' ) }</span>
 						</button>
 					)
 					: null
@@ -52,4 +54,4 @@ export default React.createClass( {
 			</FormButtonsBar>
 		);
 	}
-} );
+} ) );

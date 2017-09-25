@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -10,7 +12,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'PostRelativeTime',
 
@@ -51,10 +53,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<span className="post-relative-time-status__time">
+		    <span className="post-relative-time-status__time">
 				<Gridicon icon="time" size={ 18 } />
 				<time className="post-relative-time-status__time-text" dateTime={ time }>
-					{ this.moment( time ).fromNow() }
+					{ this.props.moment( time ).fromNow() }
 				</time>
 			</span>
 		);
@@ -67,27 +69,27 @@ export default React.createClass( {
 			statusText;
 
 		if ( this.props.post.sticky ) {
-			statusText = this.translate( 'sticky' );
+			statusText = this.props.translate( 'sticky' );
 			statusClassName += ' is-sticky';
 			statusIcon = 'bookmark-outline';
 		} else if ( status === 'pending' ) {
-			statusText = this.translate( 'pending review' );
+			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
-			statusText = this.translate( 'scheduled' );
+			statusText = this.props.translate( 'scheduled' );
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
 		} else if ( status === 'trash' ) {
-			statusText = this.translate( 'trashed' );
+			statusText = this.props.translate( 'trashed' );
 			statusClassName += ' is-trash';
 			statusIcon = 'trash';
 		} else if ( this.props.includeBasicStatus ) {
 			if ( status === 'draft' ) {
-				statusText = this.translate( 'draft' );
+				statusText = this.props.translate( 'draft' );
 			} else if ( status === 'publish' ) {
-				statusText = this.translate( 'published' );
+				statusText = this.props.translate( 'published' );
 			} else if ( status === 'new' ) {
-				statusText = this.translate( 'Publish immediately' );
+				statusText = this.props.translate( 'Publish immediately' );
 			}
 		}
 
@@ -123,4 +125,4 @@ export default React.createClass( {
 			</p>
 		);
 	}
-} );
+} ) );

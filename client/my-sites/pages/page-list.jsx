@@ -86,7 +86,7 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = localize( React.createClass( {
+const Pages = localize( localize( React.createClass( {
 
 	displayName: 'Pages',
 
@@ -128,11 +128,11 @@ const Pages = localize( React.createClass( {
 
 	_insertTimeMarkers( pages ) {
 		const markedPages = [],
-			now = this.moment();
+			now = this.props.moment();
 		let lastMarker;
 
 		const buildMarker = function( pageDate ) {
-			pageDate = this.moment( pageDate );
+			pageDate = this.props.moment( pageDate );
 			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
 				return this.props.translate( 'Today' );
@@ -144,7 +144,7 @@ const Pages = localize( React.createClass( {
 		}.bind( this );
 
 		pages.forEach( function( page ) {
-			const date = this.moment( page.date ),
+			const date = this.props.moment( page.date ),
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
 				markedPages.push(
@@ -339,7 +339,7 @@ const Pages = localize( React.createClass( {
 		return this.renderLoading();
 	},
 
-} ) );
+} ) ) );
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),

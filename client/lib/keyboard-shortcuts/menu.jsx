@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import classNames from 'classnames';
 
 /**
@@ -14,7 +16,7 @@ import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'KeyboardShortcutsMenu',
 
 	componentDidMount: function() {
@@ -50,24 +52,24 @@ export default React.createClass( {
 		let allShortcuts = KeyBindings.get(),
 			shortcutsByCategory = [
 				{
-					name: this.translate( 'List Navigation' ),
+					name: this.props.translate( 'List Navigation' ),
 					shortcuts: allShortcuts.listNavigation,
 					className: 'keyboard-shortcuts__list-navigation',
 					disabled: true
 				},
 				{
-					name: this.translate( 'Site Navigation' ),
+					name: this.props.translate( 'Site Navigation' ),
 					shortcuts: allShortcuts.siteNavigation,
 					className: 'keyboard-shortcuts__site-navigation'
 				},
 				{
-					name: this.translate( 'Reader' ),
+					name: this.props.translate( 'Reader' ),
 					shortcuts: allShortcuts.reader,
 					className: 'keyboard-shortcuts__reader',
 					disabled: true
 				},
 				{
-					name: this.translate( 'Blog Posts and Pages' ),
+					name: this.props.translate( 'Blog Posts and Pages' ),
 					shortcuts: allShortcuts.blogPostsAndPages,
 					className: 'keyboard-shortcuts__blog-posts-and-pages',
 					disabled: true
@@ -77,7 +79,7 @@ export default React.createClass( {
 		if ( config.isEnabled( 'devdocs' ) ) {
 			shortcutsByCategory = shortcutsByCategory.concat(
 				{
-					name: this.translate( 'Developer' ),
+					name: this.props.translate( 'Developer' ),
 					shortcuts: allShortcuts.developer,
 					className: 'keyboard-shortcuts__developer'
 				}
@@ -119,10 +121,10 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
-				<h1 className="keyboard-shortcuts__title">{ this.translate( 'Keyboard Shortcuts' ) }</h1>
+		    <Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
+				<h1 className="keyboard-shortcuts__title">{ this.props.translate( 'Keyboard Shortcuts' ) }</h1>
 				<ul className="keyboard-shortcuts__categories">{ this.getShortcutsByCategory() }</ul>
 			</Dialog>
 		);
 	}
-} );
+} ) );

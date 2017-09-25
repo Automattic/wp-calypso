@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -15,7 +16,7 @@ import ButtonsTray from './tray';
 import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {
@@ -82,15 +83,15 @@ export default React.createClass( {
 	getButtonsTrayToggleButtonLabel: function( visibility, enabledButtonsExist ) {
 		if ( 'visible' === visibility ) {
 			if ( enabledButtonsExist ) {
-				return this.translate( 'Edit sharing buttons', { context: 'Sharing: Buttons edit label' } );
+				return this.props.translate( 'Edit sharing buttons', { context: 'Sharing: Buttons edit label' } );
 			} else {
-				return this.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
+				return this.props.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
 			}
 		} else if ( enabledButtonsExist ) {
-			return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
+			return this.props.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
 		}
 
-		return this.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
+		return this.props.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
 	},
 
 	getButtonsTrayToggleButtonElement: function( visibility ) {
@@ -113,8 +114,8 @@ export default React.createClass( {
 	getReblogButtonElement: function() {
 		if ( this.props.showReblog ) {
 			return (
-				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-					<span className="noticon noticon-reblog" />{ this.translate( 'Reblog' ) }
+			    <a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
+					<span className="noticon noticon-reblog" />{ this.props.translate( 'Reblog' ) }
 				</a>
 			);
 		}
@@ -123,14 +124,14 @@ export default React.createClass( {
 	getLikeButtonElement: function() {
 		if ( this.props.showLike ) {
 			return (
-				<span>
+			    <span>
 					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						<span className="noticon noticon-like" />{ this.translate( 'Like' ) }
+						<span className="noticon noticon-like" />{ this.props.translate( 'Like' ) }
 					</a>
 					<div className="sharing-buttons-preview__fake-user">
 						<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
 					</div>
-					<div className="sharing-buttons-preview__fake-like">{ this.translate( 'One blogger likes this.' ) }</div>
+					<div className="sharing-buttons-preview__fake-like">{ this.props.translate( 'One blogger likes this.' ) }</div>
 				</span>
 			);
 		}
@@ -153,9 +154,9 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="sharing-buttons-preview">
+		    <div className="sharing-buttons-preview">
 				<ButtonsPreviewAction active={ ! this.state.isEditingLabel } onClick={ this.toggleEditLabel } icon="pencil" position="top-left">
-					{ this.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
+					{ this.props.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
 				</ButtonsPreviewAction>
 				<ButtonsLabelEditor
 					active={ this.state.isEditingLabel }
@@ -164,7 +165,7 @@ export default React.createClass( {
 					onClose={ this.toggleEditLabel }
 					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) } />
 
-				<h2 className="sharing-buttons-preview__heading">{ this.translate( 'Preview' ) }</h2>
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
 				<div className="sharing-buttons-preview__display">
 					<span className="sharing-buttons-preview__label">{ decodeEntities( this.props.label ) }</span>
 					<div className="sharing-buttons-preview__buttons">
@@ -193,4 +194,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

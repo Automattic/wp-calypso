@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
 
 /**
@@ -21,7 +22,7 @@ const PlanPrice = React.createClass( {
 			formattedPrice = isUndefined( plan.formattedPrice ) ? plan.formatted_price : plan.formattedPrice;
 
 			if ( rawPrice === 0 ) {
-				return this.translate( 'Free', { context: 'Zero cost product price' } );
+				return this.props.translate( 'Free', { context: 'Zero cost product price' } );
 			}
 
 			months = isJetpackMonthlyPlan( plan ) ? 1 : 12;
@@ -38,7 +39,7 @@ const PlanPrice = React.createClass( {
 			return `${ currencySymbol }${ monthlyPrice }`;
 		}
 
-		return this.translate( 'Loading' );
+		return this.props.translate( 'Loading' );
 	},
 
 	getPrice() {
@@ -65,12 +66,12 @@ const PlanPrice = React.createClass( {
 			periodLabel = '';
 		} else if ( plan.raw_price > 0 ) {
 			if ( isJetpackMonthlyPlan( plan ) ) {
-				periodLabel = this.translate( 'per month, billed monthly' );
+				periodLabel = this.props.translate( 'per month, billed monthly' );
 			} else {
-				periodLabel = this.translate( 'per month, billed yearly' );
+				periodLabel = this.props.translate( 'per month, billed yearly' );
 			}
 		} else {
-			periodLabel = hasDiscount ? this.translate( 'due today when you upgrade' ) : plan.bill_period_label;
+			periodLabel = hasDiscount ? this.props.translate( 'due today when you upgrade' ) : plan.bill_period_label;
 		}
 
 		return (
@@ -82,4 +83,4 @@ const PlanPrice = React.createClass( {
 	}
 } );
 
-export default PlanPrice;
+export default localize( PlanPrice );

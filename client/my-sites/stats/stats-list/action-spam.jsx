@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import classNames from 'classnames';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:action-spam' );
@@ -15,7 +17,7 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'StatsActionSpam',
 
 	getInitialState: function() {
@@ -45,15 +47,15 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		let label = this.state.spammed ? this.translate( 'Not Spam' ) : this.translate( 'Spam', {
+		let label = this.state.spammed ? this.props.translate( 'Not Spam' ) : this.props.translate( 'Spam', {
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
 			} ),
-			title = this.state.spammed ? this.translate( 'Not Spam', {
+			title = this.state.spammed ? this.props.translate( 'Not Spam', {
 				textOnly: true,
 				context: 'Stats: Action to undo marking an item as spam',
 				comment: 'Secondary label (default label is "Spam"). Recommended to use a very short label.'
-			} ) : this.translate( 'Spam', {
+			} ) : this.props.translate( 'Spam', {
 				textOnly: true,
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
@@ -76,4 +78,4 @@ export default React.createClass( {
 			</li>
 		);
 	}
-} );
+} ) );

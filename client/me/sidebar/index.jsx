@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 
@@ -100,25 +101,25 @@ const MeSidebar = React.createClass( {
 		}
 
 		return (
-			<Sidebar>
+		    <Sidebar>
 				<ProfileGravatar user={ this.props.currentUser } />
 				<div className="me-sidebar__signout">
 					<Button
 						compact
 						className="me-sidebar__signout-button"
 						onClick={ this.onSignOut }
-						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
+						title={ this.props.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 					>
-						{ this.translate( 'Sign Out' ) }
+						{ this.props.translate( 'Sign Out' ) }
 					</Button>
 				</div>
 				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
+					<SidebarHeading>{ this.props.translate( 'Profile' ) }</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'profile' }
 							link={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-							label={ this.translate( 'My Profile' ) }
+							label={ this.props.translate( 'My Profile' ) }
 							icon="user"
 							onNavigate={ this.onNavigate }
 						/>
@@ -126,7 +127,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'account' }
 							link={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-							label={ this.translate( 'Account Settings' ) }
+							label={ this.props.translate( 'Account Settings' ) }
 							icon="cog"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="account"
@@ -135,7 +136,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'purchases' }
 							link={ purchasesPaths.purchasesRoot() }
-							label={ this.translate( 'Manage Purchases' ) }
+							label={ this.props.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="purchases"
@@ -144,7 +145,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'security' }
 							link={ '/me/security' }
-							label={ this.translate( 'Security' ) }
+							label={ this.props.translate( 'Security' ) }
 							icon="lock"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="security"
@@ -153,7 +154,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-							label={ this.translate( 'Notification Settings' ) }
+							label={ this.props.translate( 'Notification Settings' ) }
 							icon="bell"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="notification-settings"
@@ -162,12 +163,12 @@ const MeSidebar = React.createClass( {
 					</ul>
 				</SidebarMenu>
 				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
+					<SidebarHeading>{ this.props.translate( 'Special' ) }</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'get-apps' }
 							link={ '/me/get-apps' }
-							label={ this.translate( 'Get Apps' ) }
+							label={ this.props.translate( 'Get Apps' ) }
 							icon="my-sites"
 							onNavigate={ this.onNavigate }
 						/>
@@ -183,10 +184,10 @@ const MeSidebar = React.createClass( {
 		const currentUser = this.props.currentUser;
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
-				<SidebarItem
+			    <SidebarItem
 					selected={ selected === 'next' }
 					link="/me/next"
-					label={ this.translate( 'Next Steps' ) }
+					label={ this.props.translate( 'Next Steps' ) }
 					icon="list-checkmark"
 					onNavigate={ this.onNavigate }
 				/>
@@ -201,4 +202,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( MeSidebar );
+export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( localize( MeSidebar ) );

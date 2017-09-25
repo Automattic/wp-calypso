@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 
@@ -46,15 +47,17 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 			case 'team':
 				return <TeamList site={ site } search={ this.props.search } />;
 			case 'followers':
-				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
+				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
 			case 'email-followers':
-				return <FollowersList
-					site={ site }
-					search={ this.props.search }
-					label={ this.translate( 'Email Followers' ) }
-					type="email" />;
+				return (
+				    <FollowersList
+						site={ site }
+						search={ this.props.search }
+						label={ this.props.translate( 'Email Followers' ) }
+						type="email" />
+				);
 			case 'viewers':
-				return <ViewersList site={ site } label={ this.translate( 'Viewers' ) } />;
+				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}
@@ -87,10 +90,10 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 		}
 		if ( siteId && ! canViewPeople ) {
 			return (
-				<Main>
+			    <Main>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.translate( 'You are not authorized to view this page' ) }
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
@@ -128,4 +131,4 @@ export default connect(
 			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
 		};
 	}
-)( People );
+)( localize( People ) );

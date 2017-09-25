@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import page from 'page';
 
 /**
@@ -37,9 +39,9 @@ const PrimaryDomainButton = React.createClass( {
 
 		if ( domain && ! domain.isPrimary ) {
 			if ( this.props.settingPrimaryDomain ) {
-				label = this.translate( 'Saving…' );
+				label = this.props.translate( 'Saving…' );
 			} else {
-				label = this.translate( 'Make Primary' );
+				label = this.props.translate( 'Make Primary' );
 			}
 
 			return (
@@ -56,4 +58,4 @@ const PrimaryDomainButton = React.createClass( {
 	}
 } );
 
-export default PrimaryDomainButton;
+export default localize( PrimaryDomainButton );

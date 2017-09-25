@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 import userFactory from 'lib/user';
@@ -27,7 +29,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'Security2faBackupCodesList',
 
@@ -77,7 +79,7 @@ export default React.createClass( {
 		if ( null === this.popup ) {
 			this.setState(
 				{
-					lastError: this.translate( 'Please disable your pop-up blocker and try again.' )
+					lastError: this.props.translate( 'Please disable your pop-up blocker and try again.' )
 				}
 			);
 			return false;
@@ -92,7 +94,7 @@ export default React.createClass( {
 
 		if ( config.isEnabled( 'desktop' ) ) {
 			require( 'lib/desktop' ).print(
-				this.translate( 'Backup verification codes' ),
+				this.props.translate( 'Backup verification codes' ),
 				this.getBackupCodeHTML( this.props.backupCodes )
 			);
 		} else if ( this.openPopup() ) {
@@ -146,18 +148,18 @@ export default React.createClass( {
 	},
 
 	getBackupCodeHTML: function( codes ) {
-		const datePrinted = this.moment().format( 'MMM DD, YYYY @ h:mm a' );
+		const datePrinted = this.props.moment().format( 'MMM DD, YYYY @ h:mm a' );
 		let row;
 		let html = '<html><head><title>';
 
-		html += this.translate( 'Backup verification codes' );
+		html += this.props.translate( 'Backup verification codes' );
 		html += '</title></head>';
 		html += '<body style="font-family:sans-serif">';
 
 		html += '<div style="padding:10px; border:1px dashed black; display:inline-block">';
 		html += (
 			'<p style="margin-top:0"><strong>' +
-			this.translate( 'Backup verification codes' ) +
+			this.props.translate( 'Backup verification codes' ) +
 			'</strong></p>'
 		);
 
@@ -181,7 +183,7 @@ export default React.createClass( {
 
 		html += (
 			'<p style="margin-bottom:0">' +
-			this.translate(
+			this.props.translate(
 				'Printed: %(datePrinted)s',
 				{
 					args: {
@@ -240,10 +242,10 @@ export default React.createClass( {
 							: this.getPlaceholders();
 
 		return (
-			<div>
+		    <div>
 				<p>
 					{
-						this.translate(
+						this.props.translate(
 							'We ask that you print this list of ten unique, ' +
 							'one-time-use backup codes and keep the list in a safe place.'
 						)
@@ -266,7 +268,7 @@ export default React.createClass( {
 
 				<p className="security-2fa-backup-codes-list__warning">
 					<Gridicon icon="notice" />
-					{ this.translate( 'Without access to the app, your phone, or a backup code, you will lose access to your account.' ) }
+					{ this.props.translate( 'Without access to the app, your phone, or a backup code, you will lose access to your account.' ) }
 				</p>
 
 				{ this.possiblyRenderError() }
@@ -279,7 +281,7 @@ export default React.createClass( {
 						/>
 						<span>
 							{
-								this.translate( 'I have printed or saved these codes',
+								this.props.translate( 'I have printed or saved these codes',
 								{ context: 'The codes are the backup codes for Two-Step Authentication.' } )
 							}
 						</span>
@@ -294,7 +296,7 @@ export default React.createClass( {
 						disabled={ this.getSubmitDisabled() }
 					>
 						{
-							this.translate( 'All Finished!',
+							this.props.translate( 'All Finished!',
 							{ context: 'The user presses the All Finished button at the end of Two-Step setup.' } )
 						}
 					</FormButton>
@@ -312,7 +314,7 @@ export default React.createClass( {
 								isVisible={ this.state.copyCodesTooltip }
 								position="top"
 							>
-								{ this.translate( 'Copy Codes' ) }
+								{ this.props.translate( 'Copy Codes' ) }
 							</Tooltip>
 						</Button>
 
@@ -329,7 +331,7 @@ export default React.createClass( {
 								isVisible={ this.state.printCodesTooltip }
 								position="top"
 							>
-								{ this.translate( 'Print Codes' ) }
+								{ this.props.translate( 'Print Codes' ) }
 							</Tooltip>
 						</Button>
 
@@ -346,7 +348,7 @@ export default React.createClass( {
 								isVisible={ this.state.downloadCodesTooltip }
 								position="top"
 							>
-								{ this.translate( 'Download Codes' ) }
+								{ this.props.translate( 'Download Codes' ) }
 							</Tooltip>
 						</Button>
 					</ButtonGroup>
@@ -380,4 +382,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Local dependencies
  */
@@ -14,7 +16,7 @@ import classNames from 'classnames';
  */
 const noop = () => {};
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	propTypes: {
 		date: React.PropTypes.object,
 		inputChronoDisplayed: React.PropTypes.bool,
@@ -35,17 +37,17 @@ export default React.createClass( {
 	},
 
 	setToCurrentMonth() {
-		const month = this.moment().month();
+		const month = this.props.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
 	},
 
 	setToCurrentYear() {
-		const year = this.moment().year();
+		const year = this.props.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
 	},
 
 	setYear( modifier ) {
-		const date = this.moment( this.props.date );
+		const date = this.props.moment( this.props.date );
 		date.year( date.year() + modifier );
 
 		if ( 0 > date.year() || date.year() > 9999 ) {
@@ -89,4 +91,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

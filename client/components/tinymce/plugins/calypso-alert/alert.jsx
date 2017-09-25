@@ -3,13 +3,15 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'Alert',
 
 	propTypes: {
@@ -27,10 +29,10 @@ export default React.createClass( {
 		return [
 			<FormButton
 				isPrimary={ false }
-				aria-label={ this.translate( 'Dismiss alert message' ) }
+				aria-label={ this.props.translate( 'Dismiss alert message' ) }
 				onClick={ this.props.onClose }
 			>
-				{ this.translate( 'OK' ) }
+				{ this.props.translate( 'OK' ) }
 			</FormButton>
 		];
 	},
@@ -47,4 +49,4 @@ export default React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+} ) );

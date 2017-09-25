@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
@@ -188,10 +189,10 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<AccordionSection>
+		    <AccordionSection>
 				<EditorDrawerLabel
-					labelText={ this.translate( 'Excerpt' ) }
-					helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+					labelText={ this.props.translate( 'Excerpt' ) }
+					helpText={ this.props.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
 				>
 					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
 						<FormTextarea
@@ -199,8 +200,8 @@ const EditorDrawer = React.createClass( {
 							name="excerpt"
 							onChange={ this.onExcerptChange }
 							value={ excerpt }
-							placeholder={ this.translate( 'Write an excerpt…' ) }
-							aria-label={ this.translate( 'Write an excerpt…' ) }
+							placeholder={ this.props.translate( 'Write an excerpt…' ) }
+							aria-label={ this.props.translate( 'Write an excerpt…' ) }
 						/>
 					</TrackInputChanges>
 				</EditorDrawerLabel>
@@ -218,8 +219,8 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<AccordionSection>
-				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
+		    <AccordionSection>
+				<EditorDrawerLabel labelText={ this.props.translate( 'Location' ) } />
 				<AsyncLoad
 					require="post-editor/editor-location"
 					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
@@ -295,8 +296,8 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<Accordion
-				title={ this.translate( 'More Options' ) }
+		    <Accordion
+				title={ this.props.translate( 'More Options' ) }
 				className="editor-drawer__more-options"
 			>
 				{ isPermalinkEditable && <EditorMoreOptionsSlug /> }
@@ -322,7 +323,7 @@ const EditorDrawer = React.createClass( {
 		const postStatus = get( this.props.post, 'status', null );
 
 		return (
-			<Accordion title={ this.translate( 'Status' ) }>
+		    <Accordion title={ this.props.translate( 'Status' ) }>
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
@@ -383,4 +384,4 @@ export default connect(
 	null,
 	null,
 	{ pure: false }
-)( EditorDrawer );
+)( localize( EditorDrawer ) );

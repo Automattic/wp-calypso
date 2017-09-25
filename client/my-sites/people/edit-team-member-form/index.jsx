@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
 import { assign, filter, omit, pick } from 'lodash';
@@ -43,7 +44,7 @@ import {
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 const user = userModule();
 
-const EditUserForm = React.createClass( {
+const EditUserForm = localize( React.createClass( {
 	displayName: 'EditUserForm',
 
 	mixins: [ PureRenderMixin ],
@@ -157,7 +158,7 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="first_name">
 						<FormLabel htmlFor="first_name">
-							{ this.translate( 'First Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.props.translate( 'First Name', { context: 'Text that is displayed in a label of a form.' } ) }
 						</FormLabel>
 						<FormTextInput
 							id="first_name"
@@ -173,7 +174,7 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="last_name">
 						<FormLabel htmlFor="last_name">
-							{ this.translate( 'Last Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.props.translate( 'Last Name', { context: 'Text that is displayed in a label of a form.' } ) }
 						</FormLabel>
 						<FormTextInput
 							id="last_name"
@@ -189,7 +190,7 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="name">
 						<FormLabel htmlFor="name">
-							{ this.translate( 'Public Display Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.props.translate( 'Public Display Name', { context: 'Text that is displayed in a label of a form.' } ) }
 						</FormLabel>
 						<FormTextInput
 							id="name"
@@ -223,7 +224,7 @@ const EditUserForm = React.createClass( {
 		} );
 
 		return (
-			<form
+		    <form
 				className="edit-team-member-form__form" // eslint-disable-line
 				disabled={ this.props.disabled }
 				onSubmit={ this.updateUser }
@@ -232,13 +233,13 @@ const EditUserForm = React.createClass( {
 				{ editableFields }
 				<FormButtonsBar>
 					<FormButton disabled={ ! this.hasUnsavedSettings() }>
-						{ this.translate( 'Save changes', { context: 'Button label that prompts user to save form' } ) }
+						{ this.props.translate( 'Save changes', { context: 'Button label that prompts user to save form' } ) }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
 		);
 	}
-} );
+} ) );
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {

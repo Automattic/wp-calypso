@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq, upperFirst } from 'lodash';
 
@@ -101,7 +102,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	buildPageTitle( pluginName ) {
-		return this.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
+		return this.props.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
 			count: pluginName.toLowerCase() !== 'standard' | 0,
 			args: { pluginName: upperFirst( this._currentPageTitle ) },
 			textOnly: true,
@@ -203,13 +204,13 @@ const SinglePlugin = React.createClass( {
 
 	getPluginDoesNotExistView( selectedSite ) {
 		const actionUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' ),
-			action = this.translate( 'Browse all plugins' );
+			action = this.props.translate( 'Browse all plugins' );
 
 		return (
-			<MainComponent>
+		    <MainComponent>
 				<JetpackManageErrorPage
-					title={ this.translate( 'Oops! We can\'t find this plugin!' ) }
-					line={ this.translate( 'The plugin you are looking for doesn\'t exist.' ) }
+					title={ this.props.translate( 'Oops! We can\'t find this plugin!' ) }
+					line={ this.props.translate( 'The plugin you are looking for doesn\'t exist.' ) }
 					actionURL={ actionUrl }
 					action={ action }
 					illustration="/calypso/images/illustrations/illustration-404.svg" />
@@ -242,16 +243,16 @@ const SinglePlugin = React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<PluginSiteList
 					className="plugin__installed-on"
-					title={ this.translate( 'Installed on', { comment: 'header for list of sites a plugin is installed on' } ) }
+					title={ this.props.translate( 'Installed on', { comment: 'header for list of sites a plugin is installed on' } ) }
 					sites={ this.state.sites }
 					plugin={ plugin }
 					notices={ this.state.notices } />
 				{ plugin.wporg && <PluginSiteList
 					className="plugin__not-installed-on"
-					title={ this.translate( 'Available sites', { comment: 'header for list of sites a plugin can be installed on' } ) }
+					title={ this.props.translate( 'Available sites', { comment: 'header for list of sites a plugin can be installed on' } ) }
 					sites={ this.state.notInstalledSites }
 					plugin={ plugin }
 					notices={ this.state.notices } /> }
@@ -339,12 +340,12 @@ const SinglePlugin = React.createClass( {
 
 		if ( selectedSite && this.props.isJetpackSite( selectedSite.ID ) && ! this.props.canJetpackSiteManage( selectedSite.ID ) ) {
 			return (
-				<MainComponent>
+			    <MainComponent>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 						siteId={ selectedSite.ID }
 						section="plugins"
 						featureExample={ this.getMockPlugin() } />
@@ -418,4 +419,4 @@ export default connect(
 		recordGoogleEvent,
 		wporgFetchPluginData
 	}
-)( SinglePlugin );
+)( localize( SinglePlugin ) );

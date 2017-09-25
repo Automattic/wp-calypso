@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
 
@@ -11,7 +13,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
  */
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'Security2faAppChooserItem',
 
@@ -51,9 +53,9 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+		    <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'You selected {{strong}}%(deviceName)s{{/strong}}. If you do not ' +
 						'already have an authentication app on your smartphone, you will ' +
 						'need to choose from one of the following options:',
@@ -69,7 +71,7 @@ export default React.createClass( {
 				</p>
 				<ul>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'{{downloadLink}}Download %(appName)s to this device ' +
 							'from %(appStoreName)s.{{/downloadLink}}',
 							{
@@ -91,7 +93,7 @@ export default React.createClass( {
 						) }
 					</li>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'Search for %(appName)s on %(appStoreName)s.',
 							{
 								args: {
@@ -102,7 +104,7 @@ export default React.createClass( {
 						) }
 					</li>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'{{codeRevealAnchor}}Scan this code{{/codeRevealAnchor}} with your ' +
 							'device to be directed to %(appName)s on %(appStoreName)s.',
 							{
@@ -127,4 +129,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

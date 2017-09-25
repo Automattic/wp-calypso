@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -30,7 +32,7 @@ const DomainsSelect = React.createClass( {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.translate( 'Loading' ) }...</option>;
+			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
 		}
 
 		return (
@@ -44,4 +46,4 @@ const DomainsSelect = React.createClass( {
 	}
 } );
 
-export default DomainsSelect;
+export default localize( DomainsSelect );

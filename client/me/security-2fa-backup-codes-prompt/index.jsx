@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
@@ -21,7 +23,7 @@ import constants from 'me/constants';
 
 import Notice from 'components/notice';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
 
@@ -69,12 +71,12 @@ export default React.createClass( {
 	onRequestComplete: function( error, data ) {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
-			this.setState( { lastError: this.translate( 'Unable to validate codes right now. Please try again later.' ) } );
+			this.setState( { lastError: this.props.translate( 'Unable to validate codes right now. Please try again later.' ) } );
 			return;
 		}
 
 		if ( ! data.success ) {
-			this.setState( { lastError: this.translate( 'You entered an invalid code. Please try again.' ), } );
+			this.setState( { lastError: this.props.translate( 'You entered an invalid code. Please try again.' ), } );
 			return;
 		}
 
@@ -101,14 +103,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<FormButton
+		    <FormButton
 				className="security-2fa-backup-codes-prompt__print"
 				disabled={ this.state.submittingCode }
 				isPrimary={ false }
 				onClick={ this.onClickPrintButton }
 				type="button"
 			>
-				{ this.translate( "Didn't Print The Codes?" ) }
+				{ this.props.translate( "Didn't Print The Codes?" ) }
 			</FormButton>
 		);
 	},
@@ -129,9 +131,9 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
+		    <form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
-					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
+					<FormLabel htmlFor="backup-code-entry">{ this.props.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
 					<FormTelInput
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
@@ -156,9 +158,9 @@ export default React.createClass( {
 						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>
-					{ this.state.submittingCode ? this.translate( 'Verifying…' ) : this.translate( 'Verify' ) }
+					{ this.state.submittingCode ? this.props.translate( 'Verifying…' ) : this.props.translate( 'Verify' ) }
 				</FormButton>
 			</form>
 		);
 	}
-} );
+} ) );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 import Gridicon from 'gridicons';
@@ -40,7 +41,7 @@ const EditorPostFormats = React.createClass( {
 
 	getPostFormats() {
 		let formats = {
-			standard: this.translate( 'Standard', {
+			standard: this.props.translate( 'Standard', {
 				context: 'Post format'
 			} )
 		};
@@ -125,4 +126,4 @@ export default connect(
 			postFormats: getPostFormats( state, siteId )
 		};
 	}
-)( EditorPostFormats );
+)( localize( EditorPostFormats ) );

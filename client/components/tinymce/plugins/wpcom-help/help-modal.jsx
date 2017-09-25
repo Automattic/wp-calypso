@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { forEach } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -23,27 +24,27 @@ const HelpModal = React.createClass( {
 
 	defaultShortcuts() {
 		return [
-			{ c: this.translate( 'Copy' ),      x: this.translate( 'Cut' )              },
-			{ v: this.translate( 'Paste' ),     a: this.translate( 'Select all' )       },
-			{ z: this.translate( 'Undo' ),      y: this.translate( 'Redo' )             },
-			{ b: this.translate( 'Bold' ),      i: this.translate( 'Italic' )           },
-			{ u: this.translate( 'Underline' ), k: this.translate( 'Insert/edit link' ) }
+			{ c: this.props.translate( 'Copy' ),      x: this.props.translate( 'Cut' )              },
+			{ v: this.props.translate( 'Paste' ),     a: this.props.translate( 'Select all' )       },
+			{ z: this.props.translate( 'Undo' ),      y: this.props.translate( 'Redo' )             },
+			{ b: this.props.translate( 'Bold' ),      i: this.props.translate( 'Italic' )           },
+			{ u: this.props.translate( 'Underline' ), k: this.props.translate( 'Insert/edit link' ) }
 		];
 	},
 
 	additionalShortcuts() {
 		return [
-			{ 1: this.translate( 'Heading 1' ),             2: this.translate( 'Heading 2' ) },
-			{ 3: this.translate( 'Heading 3' ),             4: this.translate( 'Heading 4' ) },
-			{ 5: this.translate( 'Heading 5' ),             6: this.translate( 'Heading 6' ) },
-			{ l: this.translate( 'Align left' ),            c: this.translate( 'Align center' ) },
-			{ r: this.translate( 'Align right' ),           j: this.translate( 'Justify' ) },
-			{ d: this.translate( 'Strikethrough' ),         q: this.translate( 'Blockquote' ) },
-			{ u: this.translate( 'Bullet list' ),           o: this.translate( 'Numbered list' ) },
-			{ a: this.translate( 'Insert/edit link' ),      s: this.translate( 'Remove link' ) },
-			{ m: this.translate( 'Insert/edit image' ),     t: this.translate( 'Insert Read More tag' ) },
-			{ h: this.translate( 'Keyboard Shortcuts' ),    x: this.translate( 'Code' ) },
-			{ p: this.translate( 'Insert Page Break tag' ) }
+			{ 1: this.props.translate( 'Heading 1' ),             2: this.props.translate( 'Heading 2' ) },
+			{ 3: this.props.translate( 'Heading 3' ),             4: this.props.translate( 'Heading 4' ) },
+			{ 5: this.props.translate( 'Heading 5' ),             6: this.props.translate( 'Heading 6' ) },
+			{ l: this.props.translate( 'Align left' ),            c: this.props.translate( 'Align center' ) },
+			{ r: this.props.translate( 'Align right' ),           j: this.props.translate( 'Justify' ) },
+			{ d: this.props.translate( 'Strikethrough' ),         q: this.props.translate( 'Blockquote' ) },
+			{ u: this.props.translate( 'Bullet list' ),           o: this.props.translate( 'Numbered list' ) },
+			{ a: this.props.translate( 'Insert/edit link' ),      s: this.props.translate( 'Remove link' ) },
+			{ m: this.props.translate( 'Insert/edit image' ),     t: this.props.translate( 'Insert Read More tag' ) },
+			{ h: this.props.translate( 'Keyboard Shortcuts' ),    x: this.props.translate( 'Code' ) },
+			{ p: this.props.translate( 'Insert Page Break tag' ) }
 		];
 	},
 
@@ -66,17 +67,17 @@ const HelpModal = React.createClass( {
 				key="close"
 				isPrimary={ false }
 				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
+					{ this.props.translate( 'Close' ) }
 			</FormButton>
 		];
 	},
 
 	getKeyLabel() {
-		return this.translate( 'Key', { context: 'Computer key used in keyboard shortcut' } );
+		return this.props.translate( 'Key', { context: 'Computer key used in keyboard shortcut' } );
 	},
 
 	getActionLabel() {
-		return this.translate( 'Action', { context: 'Action taken when pressing keyboard shortcut' } );
+		return this.props.translate( 'Action', { context: 'Action taken when pressing keyboard shortcut' } );
 	},
 
 	getTableHead() {
@@ -94,20 +95,20 @@ const HelpModal = React.createClass( {
 
 	render() {
 		const defaultText = this.props.macosx ?
-			this.translate( 'Default shortcuts, Command + key:', { context: 'Mac shortcuts' } ) :
-			this.translate( 'Default shortcuts, Ctrl + key:', { context: 'Windows shortcuts' } );
+			this.props.translate( 'Default shortcuts, Command + key:', { context: 'Mac shortcuts' } ) :
+			this.props.translate( 'Default shortcuts, Ctrl + key:', { context: 'Windows shortcuts' } );
 
 		const additionalText = this.props.macosx ?
-			this.translate( 'Additional shortcuts, Control + Option + key:', { context: 'Mac shortcuts' } ) :
-			this.translate( 'Additional shortcuts, Shift + Alt + key:', { context: 'Windows shortcuts' } );
+			this.props.translate( 'Additional shortcuts, Control + Option + key:', { context: 'Mac shortcuts' } ) :
+			this.props.translate( 'Additional shortcuts, Shift + Alt + key:', { context: 'Windows shortcuts' } );
 
 		return (
-			<Dialog
+		    <Dialog
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-help__dialog"
 				onClose={ this.props.onClose }>
-				<h2 className="wpcom-help__heading">{ this.translate( 'Keyboard Shortcuts' ) }</h2>
+				<h2 className="wpcom-help__heading">{ this.props.translate( 'Keyboard Shortcuts' ) }</h2>
 				<p>{ defaultText }</p>
 				<table className="wpcom-help__table">
 					{ this.getTableHead() }
@@ -128,4 +129,4 @@ const HelpModal = React.createClass( {
 
 } );
 
-export default HelpModal;
+export default localize( HelpModal );

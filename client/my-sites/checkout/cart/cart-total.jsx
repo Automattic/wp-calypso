@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -14,8 +16,8 @@ const CartTotal = React.createClass( {
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
-				<div className="cart-total">
-					{ this.translate( 'Recalculating…', {
+			    <div className="cart-total">
+					{ this.props.translate( 'Recalculating…', {
 						context: 'Upgrades: Updating cart cost in checkout'
 					} ) }
 				</div>
@@ -42,15 +44,15 @@ const CartTotal = React.createClass( {
 		const cart = this.props.cart;
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
-			return this.translate( 'Total Due Now:', {
+			return this.props.translate( 'Total Due Now:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a free trial'
 			} );
 		} else {
-			return this.translate( 'Total:', {
+			return this.props.translate( 'Total:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a full price upgrade'
 			} );
 		}
 	}
 } );
 
-export default CartTotal;
+export default localize( CartTotal );

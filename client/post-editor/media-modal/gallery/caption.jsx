@@ -3,13 +3,15 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'EditorMediaModalGalleryCaption',
 
 	propTypes: {
@@ -56,13 +58,13 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<FormTextInput
+		    <FormTextInput
 				value={ this.getValue() }
-				placeholder={ this.translate( 'Caption this image…' ) }
+				placeholder={ this.props.translate( 'Caption this image…' ) }
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
 				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__caption" />
 		);
 	}
-} );
+} ) );

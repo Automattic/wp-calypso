@@ -2,6 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugModule from 'debug';
 import { trim } from 'lodash';
@@ -25,7 +26,7 @@ import { hasTouch } from 'lib/touch-detect';
 const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
-const SwitcherShell = React.createClass( {
+const SwitcherShell = localize( React.createClass( {
 	displayName: 'AuthorSwitcherShell',
 	propTypes: {
 		users: React.PropTypes.array,
@@ -74,7 +75,7 @@ const SwitcherShell = React.createClass( {
 		}
 
 		return (
-			<span>
+		    <span>
 				<span
 					className="author-selector__author-toggle"
 					onClick={ this._toggleShowAuthor }
@@ -96,7 +97,7 @@ const SwitcherShell = React.createClass( {
 						<Search
 							compact
 							onSearch={ this._onSearch }
-							placeholder={ this.translate( 'Find Author…', { context: 'search label' } ) }
+							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
 							ref="authorSelectorSearch"
 						/>
@@ -190,8 +191,8 @@ const SwitcherShell = React.createClass( {
 
 	_noUsersFound: function() {
 		return (
-			<div className="author-selector__no-users">
-				{ this.translate( 'No matching users found.' ) }
+		    <div className="author-selector__no-users">
+				{ this.props.translate( 'No matching users found.' ) }
 			</div>
 		);
 	},
@@ -228,7 +229,7 @@ const SwitcherShell = React.createClass( {
 	_onSearch: function( searchTerm ) {
 		this.props.updateSearch( searchTerm );
 	}
-} );
+} ) );
 
 export default React.createClass( {
 	displayName: 'AuthorSelector',
