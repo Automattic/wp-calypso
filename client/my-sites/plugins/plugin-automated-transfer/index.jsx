@@ -147,7 +147,6 @@ class PluginAutomatedTransfer extends Component {
 			return null;
 		}
 
-
 		return (
 			<div>
 				<Notice
