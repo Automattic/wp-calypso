@@ -27,16 +27,10 @@ const PostTypeFilter = React.createClass( {
 	propTypes: {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
-		query: PropTypes.object,
+		query: PropTypes.object.isRequired, // We need at least query.type
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object
-	},
-
-	getDefaultProps() {
-		return {
-			query: {}
-		};
 	},
 
 	getNavItems() {
@@ -107,7 +101,7 @@ const PostTypeFilter = React.createClass( {
 
 		return (
 			<div>
-				{ query && siteId && false === jetpack && (
+				{ siteId && false === jetpack && (
 					<QueryPostCounts
 						siteId={ siteId }
 						type={ query.type } />
@@ -120,27 +114,27 @@ const PostTypeFilter = React.createClass( {
 						</span>
 					}
 					selectedCount={ selectedItem.count }>
-					{ query && [
-						<NavTabs
-							key="tabs"
-							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
-							selectedText={ selectedItem.children }
-							selectedCount={ selectedItem.count }>
-							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
-						</NavTabs>,
-						! authorToggleHidden && <AuthorSegmented
+					<NavTabs
+						key="tabs"
+						label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
+						selectedText={ selectedItem.children }
+						selectedCount={ selectedItem.count }>
+						{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
+					</NavTabs>
+					{ ! authorToggleHidden &&
+						<AuthorSegmented
 							key="author"
 							author={ query.author }
 							siteId={ siteId }
-							statusSlug={ statusSlug } />,
-						<Search
-							key="search"
-							pinned
-							fitsContainer
-							onSearch={ this.doSearch }
-							placeholder={ this.translate( 'Search…' ) }
-							delaySearch={ true } />
-					] }
+							statusSlug={ statusSlug } />
+					}
+					<Search
+						key="search"
+						pinned
+						fitsContainer
+						onSearch={ this.doSearch }
+						placeholder={ this.translate( 'Search…' ) }
+						delaySearch={ true } />
 				</SectionNav>
 			</div>
 		);
