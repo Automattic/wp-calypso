@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	paths = require( 'my-sites/domains/paths' ),
-	Button = require( 'components/button' );
+import analyticsMixin from 'lib/mixins/analytics';
+
+import paths from 'my-sites/domains/paths';
+import Button from 'components/button';
 
 const PrimaryDomainButton = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -31,7 +33,7 @@ const PrimaryDomainButton = React.createClass( {
 
 	render() {
 		const domain = this.props.domain;
-		var label;
+		let label;
 
 		if ( domain && ! domain.isPrimary ) {
 			if ( this.props.settingPrimaryDomain ) {

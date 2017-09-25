@@ -13,7 +13,7 @@ import { isDefaultLocale } from './utils';
 const debug = debugFactory( 'calypso:i18n' );
 
 function languageFileUrl( localeSlug ) {
-	var protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
+	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 }
 

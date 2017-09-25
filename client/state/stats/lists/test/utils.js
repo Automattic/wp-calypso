@@ -19,7 +19,6 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
-
 	const orderPayload = {
 		date: '2017',
 		unit: 'year',

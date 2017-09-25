@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:list' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:stats:list' );
 
 /**
  * Internal dependencies
  */
-var StatsListItem = require( './stats-list-item' );
+import StatsListItem from './stats-list-item';
 
 module.exports = React.createClass( {
 	displayName: 'StatsList',
@@ -31,7 +33,7 @@ module.exports = React.createClass( {
 	},
 
 	buildLists: function( groups, parentKey ) {
-		var results,
+		let results,
 			listClass = classNames(
 				'module-content-list',
 				{
@@ -42,7 +44,7 @@ module.exports = React.createClass( {
 
 		if ( groups ) {
 			results = groups.map( function( group, groupIndex ) {
-				var childResults,
+				let childResults,
 					active,
 					groupTree = parentKey ? [ parentKey ] : [],
 					groupKey,
@@ -67,7 +69,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var list = this.buildLists( this.props.data );
+		const list = this.buildLists( this.props.data );
 		return ( list );
 	}
 } );

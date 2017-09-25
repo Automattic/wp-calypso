@@ -7,7 +7,7 @@ import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import { action as actionTypes } from './constants';
 
-var fetchingLists = {};
+const fetchingLists = {};
 
 const ReaderListActions = {
 	fetchSubscriptions: function() {
@@ -29,7 +29,7 @@ const ReaderListActions = {
 	},
 
 	follow: function( owner, slug ) {
-		var query = { owner, slug };
+		const query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.FOLLOW_LIST,
@@ -63,7 +63,7 @@ const ReaderListActions = {
 	},
 
 	unfollow: function( owner, slug ) {
-		var query = { owner, slug };
+		const query = { owner, slug };
 
 		Dispatcher.handleViewAction( {
 			type: actionTypes.UNFOLLOW_LIST,

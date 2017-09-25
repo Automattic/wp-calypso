@@ -27,7 +27,7 @@ const DUMMY_SITE = {
 };
 
 describe( 'EditorDiscussion', function() {
-	var editPost, EditorDiscussion;
+	let editPost, EditorDiscussion;
 
 	useMockery();
 	useFakeDom();
@@ -56,7 +56,7 @@ describe( 'EditorDiscussion', function() {
 
 	describe( '#getDiscussionSetting()', function() {
 		it( 'should return an empty object if both post and site are unknown', function() {
-			var tree = TestUtils.renderIntoDocument(
+			const tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion />
 			);
 
@@ -64,14 +64,14 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should return the site default comments open if site exists and post is new', function() {
-			var site = {
-				options: {
-					default_comment_status: true,
-					default_ping_status: false
-				}
-			}, post = {
-				type: 'post'
-			}, tree;
+			let site = {
+					options: {
+						default_comment_status: true,
+						default_ping_status: false
+					}
+				}, post = {
+					type: 'post'
+				}, tree;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion site={ site } post={ post } isNew />
@@ -84,14 +84,14 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should return the site default pings open if site exists and post is new', function() {
-			var site = {
-				options: {
-					default_comment_status: false,
-					default_ping_status: true
-				}
-			}, post = {
-				type: 'post'
-			}, tree;
+			let site = {
+					options: {
+						default_comment_status: false,
+						default_ping_status: true
+					}
+				}, post = {
+					type: 'post'
+				}, tree;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion site={ site } post={ post } isNew />
@@ -104,14 +104,14 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should return comments closed if site exists, post is new, and post is type page', function() {
-			var site = {
-				options: {
-					default_comment_status: false,
-					default_ping_status: true
-				}
-			}, post = {
-				type: 'page'
-			}, tree;
+			let site = {
+					options: {
+						default_comment_status: false,
+						default_ping_status: true
+					}
+				}, post = {
+					type: 'page'
+				}, tree;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion site={ site } post={ post } isNew />
@@ -124,12 +124,12 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should return the saved post values', function() {
-			var post = {
-				discussion: {
-					comment_status: 'open',
-					ping_status: 'closed'
-				}
-			}, tree;
+			let post = {
+					discussion: {
+						comment_status: 'open',
+						ping_status: 'closed'
+					}
+				}, tree;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion post={ post } site={ DUMMY_SITE } />
@@ -140,7 +140,7 @@ describe( 'EditorDiscussion', function() {
 	} );
 
 	describe( '#onChange', function() {
-		var post = {
+		const post = {
 			discussion: {
 				comment_status: 'closed',
 				comments_open: false,
@@ -150,7 +150,7 @@ describe( 'EditorDiscussion', function() {
 		};
 
 		it( 'should include modified comment status on the post object', function() {
-			var tree, checkbox;
+			let tree, checkbox;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } />
@@ -173,7 +173,7 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		it( 'should include modified ping status on the post object', function() {
-			var tree, checkbox;
+			let tree, checkbox;
 
 			tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion post={ post } site={ DUMMY_SITE } setDiscussionSettings={ function() {} } />

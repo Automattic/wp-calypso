@@ -39,7 +39,7 @@ function touchScrollToolbar( editor ) {
 				}
 
 				if ( action ) {
-					let elements = editor.$( target );
+					const elements = editor.$( target );
 					if ( ! elements.hasClass( 'mce-container-body' ) ) {
 						elements.add( tinymce.DOM.getParent( target, '.mce-container-body' ) );
 					}

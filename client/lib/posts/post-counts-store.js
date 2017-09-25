@@ -3,25 +3,28 @@
  */
 
 import { isEqual } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
 	return Object.keys( obj )
 		.reduce( function( _sum, key ) {
 			return _sum + parseFloat( obj[ key ] );
 		}, 0 );
-}
+};
 
 /**
  * Internal dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	PostListStore = require( './post-list-store-factory' )(),
-	PostsStore = require( './posts-store' ),
-	postUtils = require( 'lib/posts/utils' ),
-	Dispatcher = require( 'dispatcher' );
+import emitter from 'lib/mixins/emitter';
 
-var _counts = {},
+import PostListStoreFactory from './post-list-store-factory';
+const PostListStore = PostListStoreFactory();
+import PostsStore from './posts-store';
+import postUtils from 'lib/posts/utils';
+import Dispatcher from 'dispatcher';
+
+let _counts = {},
 	PostCountsStore;
 
 /**
@@ -46,7 +49,7 @@ PostCountsStore = {
 	 * @return {Object} statuses
 	 */
 	get: function( id, scope ) {
-		var statuses, siteId;
+		let statuses, siteId;
 
 		siteId = getSiteId( id );
 
@@ -63,7 +66,7 @@ PostCountsStore = {
 	},
 
 	getTotalCount: function( id, scope ) {
-		var statuses, total, siteId;
+		let statuses, total, siteId;
 
 		scope = scope || 'all';
 		siteId = getSiteId( id );
@@ -88,8 +91,8 @@ PostCountsStore = {
 emitter( PostCountsStore );
 
 PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
-	var data = action.data;
+	const action = payload.action;
+	const data = action.data;
 
 	Dispatcher.waitFor( [ PostsStore.dispatchToken ] );
 
@@ -135,7 +138,7 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
  * @return {void}
  */
 function setPostCounts( responseSource, counts, siteID ) {
-	var siteId = getSiteId( siteID );
+	const siteId = getSiteId( siteID );
 
 	if ( isEqual( counts, _counts[ siteId ] ) ) {
 		return debug( 'No changes' );
@@ -159,7 +162,7 @@ function setPostCounts( responseSource, counts, siteID ) {
  * @return {void}
  */
 function updateCountsWhenPostChanges( post, original ) {
-	var siteId;
+	let siteId;
 
 	if ( ! post || ! original ) {
 		return debug( 'Post states are not defined' );
@@ -189,7 +192,7 @@ function updateCountsWhenPostChanges( post, original ) {
  * @param {Object} post - current post state
  */
 function updateCountsOnNewPost( post ) {
-	var siteId = post.site_ID;
+	const siteId = post.site_ID;
 
 	if ( ! siteId ) {
 		return debug( 'No site ID defined' );

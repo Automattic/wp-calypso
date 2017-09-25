@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { compact, toArray } from 'lodash';
-var debug = require( 'debug' )( 'calypso:highlight' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:highlight' );
 
 /**
  * @private
  */
 function wrap( innerHtml, wrapperNode ) {
-	var node = wrapperNode.cloneNode();
+	const node = wrapperNode.cloneNode();
 	node.innerHTML = innerHtml;
 	return node;
 }
 
 function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
-	var child = newChildren.pop(),
+	let child = newChildren.pop(),
 		last;
 	if ( child ) {
 		node.replaceChild( child, oldChild );
@@ -30,7 +31,7 @@ function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
  * @private
  */
 function highlightNode( node, term, wrapperNode ) {
-	var nodes = [],
+	let nodes = [],
 		found = false,
 		pos,
 		leftText,
@@ -42,7 +43,7 @@ function highlightNode( node, term, wrapperNode ) {
 
 	while ( true ) {
 		pos = remainingText.toLowerCase().indexOf( term.toLowerCase() );
-		if ( !remainingText || pos === -1 ) {
+		if ( ! remainingText || pos === -1 ) {
 			break;
 		}
 		found = true;
@@ -67,15 +68,14 @@ function highlightNode( node, term, wrapperNode ) {
  * @private
  */
 function walk( node, term, wrapperNode ) {
-	var children;
+	let children;
 	debug( 'Node type', node.nodeName );
 	if ( node.childNodes.length ) {
 		children = toArray( node.childNodes );
 
-		for ( var i = 0; i < children.length; i++ ) {
+		for ( let i = 0; i < children.length; i++ ) {
 			walk( children[ i ], term, wrapperNode );
 		}
-
 	} else if ( node.nodeName === '#text' ) {
 		debug( 'Parsing node with value:', node.nodeValue );
 		highlightNode( node, term, wrapperNode );
@@ -97,7 +97,7 @@ function highlight( term, html, wrapperNode ) {
 	if ( ! term || ! html ) {
 		return html;
 	}
-	var root = document.createElement( 'div' );
+	const root = document.createElement( 'div' );
 	root.innerHTML = html;
 	walk( root, term, wrapperNode );
 	return root.innerHTML;

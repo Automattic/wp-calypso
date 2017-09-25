@@ -65,7 +65,7 @@ export function saveCustomizations() {
 		debug( 'saving customizations', customizations );
 		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
 		dispatch( customizationsSaved( siteId ) );
-	}
+	};
 }
 
 function saveCustomizationsFor( id, customizations, siteId, dispatch ) {

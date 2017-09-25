@@ -17,6 +17,8 @@ import {
 import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
 
+import actions from '../actions';
+
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ],
 		userId = 1337,
@@ -29,11 +31,9 @@ describe( 'actions', () => {
 		fetchUserPurchases,
 		removePurchase;
 	useMockery( mockery => {
-		mockery.registerMock( 'lib/olark', {
-			updateOlarkGroupAndEligibility: () => {}
-		} );
-
-		const actions = require( '../actions' );
+	    mockery.registerMock( 'lib/olark', {
+		updateOlarkGroupAndEligibility: () => {}
+	} );
 
 		cancelPrivacyProtection = actions.cancelPrivacyProtection;
 		clearPurchases = actions.clearPurchases;
@@ -169,5 +169,4 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
-
 } );

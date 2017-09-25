@@ -22,7 +22,7 @@ export default React.createClass( {
 
 	getStateIcon() {
 		if ( this.hasSomeElementsSelected() ) {
-			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 }/>;
+			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 } />;
 		}
 	},
 

@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-var chai = require( 'chai' ),
-	expect = chai.expect;
+import chai from 'chai';
+
+/**
+ * External dependencies
+ */
+const expect = chai.expect;
 
 /**
  * Internal dependencies
@@ -25,7 +29,7 @@ describe( 'highlight', function() {
 		} );
 
 		it( 'should wrap the term with the custom wrapper node when provided', function() {
-			var span = document.createElement( 'span' );
+			const span = document.createElement( 'span' );
 			span.setAttribute( 'class', 'marker' );
 			expect( highlight( 'hello', 'hello world', span ) )
 				.to.contain( '<span class="marker">hello</span> world' );

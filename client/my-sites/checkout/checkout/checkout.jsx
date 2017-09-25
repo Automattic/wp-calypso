@@ -10,26 +10,27 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-const analytics = require( 'lib/analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
-	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
-	DomainDetailsForm = require( './domain-details-form' ).default,
-	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
-	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
-	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
-	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails,
-	notices = require( 'notices' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	purchasePaths = require( 'me/purchases/paths' ),
-	QueryStoredCards = require( 'components/data/query-stored-cards' ),
-	QueryGeo = require( 'components/data/query-geo' ),
-	SecurePaymentForm = require( './secure-payment-form' ),
-	SecurePaymentFormPlaceholder = require( './secure-payment-form-placeholder' ),
-	supportPaths = require( 'lib/url/support' ),
-	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
-	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
+
+import { cartItems } from 'lib/cart-values';
+import { clearSitePlans } from 'state/sites/plans/actions';
+import { clearPurchases } from 'state/purchases/actions';
+import DomainDetailsForm from './domain-details-form';
+import { domainMapping } from 'lib/cart-values/cart-items';
+import { fetchReceiptCompleted } from 'state/receipts/actions';
+import { getExitCheckoutUrl } from 'lib/checkout';
+import { hasDomainDetails } from 'lib/store-transactions';
+import notices from 'notices';
+import observe from 'lib/mixins/data-observe';
+import purchasePaths from 'me/purchases/paths';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import QueryGeo from 'components/data/query-geo';
+import SecurePaymentForm from './secure-payment-form';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
+import supportPaths from 'lib/url/support';
+import { themeItem } from 'lib/cart-values/cart-items';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+import upgradesActions from 'lib/upgrades/actions';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import {
 	isValidFeatureKey,

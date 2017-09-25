@@ -35,7 +35,7 @@ function normalizeInvite( data ) {
 		site: Object.assign( filterObjectProperties( data.blog_details ), { ID: parseInt( data.invite.blog_id, 10 ) } ),
 		inviter: filterObjectProperties( data.inviter ),
 		knownUser: data.invite.meta.known
-	}
+	};
 }
 
 const reducer = ( state = initialState, payload ) => {
@@ -47,6 +47,6 @@ const reducer = ( state = initialState, payload ) => {
 			return state.setIn( [ 'errors', action.siteId, action.inviteKey ], action.error );
 	}
 	return state;
-}
+};
 
 export { initialState, reducer };

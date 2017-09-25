@@ -3,32 +3,33 @@
  */
 import debug from 'debug';
 import { assign } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import url from 'url';
+import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'lib/analytics';
+
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:layout' );
 
-var LoadingError = React.createClass( {
+const LoadingError = React.createClass( {
 
 	statics: {
 		isRetry: function() {
-			var parsed = url.parse( location.href, true );
+			const parsed = url.parse( location.href, true );
 			return parsed.query.retry === '1';
 		},
 
 		retry: function( chunkName ) {
-			var parsed;
+			let parsed;
 			if ( ! LoadingError.isRetry() ) {
 				parsed = url.parse( location.href, true );
 

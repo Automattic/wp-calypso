@@ -1,8 +1,8 @@
-var debug = require( 'debug' )( 'calypso:data-observe' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:data-observe' );
 
 module.exports = function() {
-	var propNames = Array.prototype.slice.call( arguments );
-
+	const propNames = Array.prototype.slice.call( arguments );
 
 	return {
 		componentDidMount: function() {
@@ -37,7 +37,6 @@ module.exports = function() {
 					}
 				}
 			}, this );
-
 		},
 
 		update: function() {

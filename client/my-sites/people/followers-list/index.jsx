@@ -9,20 +9,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-const PeopleListItem = require( 'my-sites/people/people-list-item' ),
-	Card = require( 'components/card' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
-	FollowersActions = require( 'lib/followers/actions' ),
-	EmailFollowersActions = require( 'lib/email-followers/actions' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	FollowersData = require( 'components/data/followers-data' ),
-	EmailFollowersData = require( 'components/data/email-followers-data' ),
-	NoResults = require( 'my-sites/no-results' ),
-	EmptyContent = require( 'components/empty-content' ),
-	FollowersStore = require( 'lib/followers/store' ),
-	EmailFollowersStore = require( 'lib/email-followers/store' ),
-	accept = require( 'lib/accept' ),
-	analytics = require( 'lib/analytics' );
+import PeopleListItem from 'my-sites/people/people-list-item';
+
+import Card from 'components/card';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
+import FollowersActions from 'lib/followers/actions';
+import EmailFollowersActions from 'lib/email-followers/actions';
+import InfiniteList from 'components/infinite-list';
+import FollowersData from 'components/data/followers-data';
+import EmailFollowersData from 'components/data/email-followers-data';
+import NoResults from 'my-sites/no-results';
+import EmptyContent from 'components/empty-content';
+import FollowersStore from 'lib/followers/store';
+import EmailFollowersStore from 'lib/email-followers/store';
+import accept from 'lib/accept';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import ListEnd from 'components/list-end';
 

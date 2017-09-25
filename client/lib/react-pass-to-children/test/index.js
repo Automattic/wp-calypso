@@ -2,19 +2,19 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-var React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	expect = require( 'chai' ).expect;
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var passToChildren = require( '../' );
+import passToChildren from '../';
 
 /**
  * Module variables
  */
-var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
+let DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 	PassThrough;
 
 PassThrough = React.createClass( {
@@ -24,14 +24,14 @@ PassThrough = React.createClass( {
 } );
 
 describe( 'index', function() {
-	var renderer;
+	let renderer;
 
 	beforeEach( function() {
 		renderer = TestUtils.createRenderer();
 	} );
 
 	it( 'should accept a single child and pass along props', function() {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough><div /></PassThrough> );
 		result = renderer.getRenderOutput();
@@ -41,7 +41,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept multiple children and wrap them in a div', function() {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough><div /><div /></PassThrough> );
 		result = renderer.getRenderOutput();
@@ -52,7 +52,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept multiple children and pass along props to each', function( done ) {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough><div /><div /></PassThrough> );
 		result = renderer.getRenderOutput();
@@ -68,7 +68,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept multiple children, including nulls', function() {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough>{ null }<div /></PassThrough> );
 		result = renderer.getRenderOutput();
@@ -78,7 +78,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should preserve props passed to the children', function() {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough><div data-preserve /></PassThrough> );
 		result = renderer.getRenderOutput();
@@ -90,7 +90,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should preserve props passed to the instance itself', function() {
-		var result;
+		let result;
 
 		renderer.render( <PassThrough data-preserve><div /></PassThrough> );
 		result = renderer.getRenderOutput();

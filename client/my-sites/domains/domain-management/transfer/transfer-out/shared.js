@@ -27,7 +27,7 @@ export const displayResponseError = ( responseError ) => {
 		)
 	};
 
-	if ( responseError.error && Object.keys( errorMessages ).indexOf( responseError.error ) !== - 1 ) {
+	if ( responseError.error && Object.keys( errorMessages ).indexOf( responseError.error ) !== -1 ) {
 		notices.error(
 			translate(
 				'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
@@ -36,7 +36,7 @@ export const displayResponseError = ( responseError ) => {
 					args: errorMessages[ responseError.error ],
 					components: {
 						strong: <strong />,
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>
+						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
 					}
 				}
 			)
@@ -49,7 +49,7 @@ export const displayResponseError = ( responseError ) => {
 				'to have trouble.',
 				{
 					components: {
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>
+						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
 					}
 				}
 			)

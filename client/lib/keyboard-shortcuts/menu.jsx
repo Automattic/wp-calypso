@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
-	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
-	KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
+import Dialog from 'components/dialog';
 
-module.exports = React.createClass({
+import config from 'config';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+
+module.exports = React.createClass( {
 	displayName: 'KeyboardShortcutsMenu',
 
 	componentDidMount: function() {
@@ -45,7 +47,7 @@ module.exports = React.createClass({
 	},
 
 	getShortcutsByCategory: function() {
-		var allShortcuts = KeyBindings.get(),
+		let allShortcuts = KeyBindings.get(),
 			shortcutsByCategory = [
 				{
 					name: this.translate( 'List Navigation' ),
@@ -83,7 +85,7 @@ module.exports = React.createClass({
 		}
 
 		return shortcutsByCategory.map( function( category ) {
-			var classes = {};
+			const classes = {};
 			classes[ 'keyboard-shortcuts__category' ] = true;
 			classes[ category.className ] = true;
 			classes[ 'keyboard-shortcuts__category-disabled' ] = category.disabled;
@@ -102,9 +104,9 @@ module.exports = React.createClass({
 	getShortcutList: function( shortcuts ) {
 		return shortcuts.map( function( shortcut ) {
 			// process the list of keys in this shortcut into individual elements
-			var keys = shortcut.description.keys.map( function( key, index ) {
+			const keys = shortcut.description.keys.map( function( key, index ) {
 				return ( <div className="keyboard-shortcuts__key" key={ shortcut.eventName + index } >{ key }</div> );
-			});
+			} );
 
 			return (
 				<li key={ shortcut.eventName }>
@@ -123,4 +125,4 @@ module.exports = React.createClass({
 			</Dialog>
 		);
 	}
-});
+} );

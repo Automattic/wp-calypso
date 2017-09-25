@@ -9,7 +9,7 @@
 'use strict';
 /* eslint-enable */
 
-var queuedMessages = [];
+const queuedMessages = [];
 
 /**
  *  We want to make sure that if the service worker gets updated that we
@@ -26,7 +26,7 @@ self.addEventListener( 'activate', function( event ) {
 } );
 
 self.addEventListener( 'push', function( event ) {
-	var notification;
+	let notification;
 
 	if ( typeof event.data !== 'object' && typeof event.data.json !== 'function' ) {
 		return;
@@ -51,7 +51,7 @@ self.addEventListener( 'push', function( event ) {
 } );
 
 self.addEventListener( 'notificationclick', function( event ) {
-	var notification = event.notification;
+	const notification = event.notification;
 	notification.close();
 
 	event.waitUntil(
@@ -81,7 +81,7 @@ self.addEventListener( 'message', function( event ) {
 	switch ( event.data.action ) {
 		case 'sendQueuedMessages':
 			self.clients.matchAll().then( function( clientList ) {
-				var queuedMessage;
+				let queuedMessage;
 
 				if ( clientList.length > 0 ) {
 					queuedMessage = queuedMessages.shift();

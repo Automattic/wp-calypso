@@ -10,7 +10,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import PopupMonitor from '../';
 
 describe( 'PopupMonitor', function() {
-	var popupMonitor;
+	let popupMonitor;
 
 	useFakeDom();
 
@@ -29,7 +29,7 @@ describe( 'PopupMonitor', function() {
 
 	describe( '#getScreenCenterSpecs()', function() {
 		it( 'should generate a popup specification string given the desired width and height', function() {
-			var specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
+			const specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
 
 			expect( specs ).to.equal( 'width=650,height=500,top=110,left=315' );
 		} );

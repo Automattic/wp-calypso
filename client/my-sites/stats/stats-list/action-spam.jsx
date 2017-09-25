@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:action-spam' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:stats:action-spam' );
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import wpcom from 'lib/wp';
+
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'StatsActionSpam',
@@ -22,7 +25,7 @@ module.exports = React.createClass( {
 	},
 
 	clickHandler: function( event ) {
-		var spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
+		let spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
 			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
 			wpcomSite;
 		event.stopPropagation();
@@ -42,7 +45,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var label = this.state.spammed ? this.translate( 'Not Spam' ) : this.translate( 'Spam', {
+		let label = this.state.spammed ? this.translate( 'Not Spam' ) : this.translate( 'Spam', {
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
 			} ),

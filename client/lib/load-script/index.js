@@ -5,17 +5,17 @@
 /**
  * Internal dependency.
  */
-var config = require( 'config' );
+import config from 'config';
 
-var JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js',
+let JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js',
 	callbacksForURLsInProgress = {};
 
-var loadScript = function( url, callback ) {
-	var script = document.createElement( 'script' ),
+const loadScript = function( url, callback ) {
+	let script = document.createElement( 'script' ),
 		loaded = false;
 
 	function handleCompletedRequest( event ) {
-		var errorArgument = null;
+		let errorArgument = null;
 		if ( loaded || ( this.readyState && this.readyState !== 'complete' ) ) {
 			return;
 		}
@@ -49,7 +49,7 @@ var loadScript = function( url, callback ) {
 	document.getElementsByTagName( 'head' )[ 0 ].appendChild( script );
 };
 
-var loadjQueryDependentScript = function( scriptURL, callback ) {
+const loadjQueryDependentScript = function( scriptURL, callback ) {
 	// It is not possible to expose jQuery globally in Electron App: https://github.com/atom/electron/issues/254.
 	// It needs to be loaded using require and npm package.
 	if ( config.isEnabled( 'desktop' ) ) {

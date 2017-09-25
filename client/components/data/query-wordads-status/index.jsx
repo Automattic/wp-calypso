@@ -17,14 +17,14 @@ class QueryWordadsStatus extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
-			this.refreshSite( nextProps.siteId );			
+			this.refreshSite( nextProps.siteId );
 		}
 	}
 
 	refreshSite( siteId ) {
 		if ( ! this.props.isRequestingWordadsStatus ) {
 			this.props.requestWordadsStatus( siteId );
-		}		
+		}
 	}
 
 	render() {

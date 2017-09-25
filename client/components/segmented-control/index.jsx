@@ -2,24 +2,24 @@
  * External dependencies
  */
 import { filter, map } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ControlItem = require( 'components/segmented-control/item' );
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Internal variables
  */
-var _instance = 1;
+let _instance = 1;
 
 /**
  * SegmentedControl
  */
-var SegmentedControl = React.createClass( {
+const SegmentedControl = React.createClass( {
 	propTypes: {
 		initialSelected: React.PropTypes.string,
 		compact: React.PropTypes.bool,
@@ -42,7 +42,7 @@ var SegmentedControl = React.createClass( {
 	},
 
 	getInitialState: function() {
-		var initialSelected;
+		let initialSelected;
 
 		if ( this.props.options ) {
 			initialSelected = this.props.initialSelected || this.props.options[ 0 ].value;
@@ -64,7 +64,7 @@ var SegmentedControl = React.createClass( {
 	},
 
 	render: function() {
-		var segmentedClasses = {
+		const segmentedClasses = {
 			'segmented-control': true,
 			'keyboard-navigation': this.state.keyboardNavigation,
 			'is-compact': this.props.compact,
@@ -91,11 +91,11 @@ var SegmentedControl = React.createClass( {
 	},
 
 	getSegmentedItems: function() {
-		var refIndex = 0;
+		let refIndex = 0;
 		if ( this.props.children ) {
 			// add keys and refs to children
 			return React.Children.map( this.props.children, function( child, index ) {
-				var newChild = React.cloneElement( child, {
+				const newChild = React.cloneElement( child, {
 					ref: ( child.type === ControlItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
@@ -175,7 +175,7 @@ var SegmentedControl = React.createClass( {
 	},
 
 	navigateItemByTabKey: function( event ) {
-		var direction = ( event.shiftKey ) ? 'previous' : 'next',
+		let direction = ( event.shiftKey ) ? 'previous' : 'next',
 			newIndex = this.focusSibling( direction );
 
 		// allow tabbing out of control
@@ -190,7 +190,7 @@ var SegmentedControl = React.createClass( {
 	 * @return {Number|Boolean} - returns false if the newIndex is out of bounds
 	 */
 	focusSibling: function( direction ) {
-		var increment, items, newIndex;
+		let increment, items, newIndex;
 
 		if ( this.props.options ) {
 			items = filter( map( this.props.options, 'value' ), Boolean );
@@ -218,7 +218,7 @@ var SegmentedControl = React.createClass( {
 
 	getCurrentFocusedIndex: function() {
 		// item is the <li> element containing the focused link
-		var activeItem = document.activeElement.parentNode,
+		let activeItem = document.activeElement.parentNode,
 			siblings = Array.prototype.slice( activeItem.parentNode.children ),
 			index = siblings.indexOf( activeItem );
 

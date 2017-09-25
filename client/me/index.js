@@ -34,4 +34,4 @@ export default function() {
 	}
 
 	page( '/me/get-apps', controller.sidebar, controller.apps );
-};
+}

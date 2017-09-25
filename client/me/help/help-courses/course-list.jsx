@@ -17,7 +17,7 @@ class CourseList extends Component {
 		return (
 			<div className="help-courses__course-list">
 				{ courses.map( ( course, key ) => {
-					return <Course { ...course } key={ key } isBusinessPlanUser={ isBusinessPlanUser }/>;
+					return <Course { ...course } key={ key } isBusinessPlanUser={ isBusinessPlanUser } />;
 				} ) }
 			</div>
 		);

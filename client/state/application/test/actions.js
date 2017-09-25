@@ -40,7 +40,6 @@ describe( 'state/application actions', () => {
 				}
 			} ) ).ok;
 		} );
-
 	} );
 
 	describe( '#connectionRestored()', () => {
@@ -67,6 +66,5 @@ describe( 'state/application actions', () => {
 				}
 			} ) ).ok;
 		} );
-
 	} );
 } );

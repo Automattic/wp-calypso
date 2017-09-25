@@ -65,7 +65,6 @@ describe( 'isPublicizeEnabled()', () => {
 		expect( result ).to.be.true;
 	} );
 
-
 	it( 'should return true for regular site and post type', () => {
 		const result = isPublicizeEnabled( {
 			sites: {

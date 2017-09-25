@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:trophies-data' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:trophies-data' );
+import Emitter from 'lib/mixins/emitter';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+const wpcom = require( 'lib/wp' ).undocumented();
 
 function TrophiesData() {
 	if ( ! ( this instanceof TrophiesData ) ) {
@@ -21,7 +23,7 @@ function TrophiesData() {
 Emitter( TrophiesData.prototype );
 
 TrophiesData.prototype.get = function() {
-	var data;
+	let data;
 	if ( ! this.data ) {
 		data = store.get( 'TrophiesData' );
 

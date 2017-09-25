@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'gridicons' );
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemFileDetails',

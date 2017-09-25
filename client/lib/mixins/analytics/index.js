@@ -124,7 +124,7 @@ const EVENTS = {
 
 				analytics.ga.recordEvent(
 					'Domain Management',
-					`Clicked "Make Primary" link on a ${domainType} in Edit`,
+					`Clicked "Make Primary" link on a ${ domainType } in Edit`,
 					'Domain Name',
 					domain.name
 				);
@@ -140,7 +140,7 @@ const EVENTS = {
 
 				analytics.ga.recordEvent(
 					'Domain Management',
-					`Clicked "${action}" navigation link on a ${domainType} in Edit`,
+					`Clicked "${ action }" navigation link on a ${ domainType } in Edit`,
 					'Domain Name',
 					domain.name
 				);
@@ -170,7 +170,7 @@ const EVENTS = {
 
 				analytics.ga.recordEvent(
 					'Domain Management',
-					`Clicked "Payment Settings" Button on a ${domainType} in Edit`,
+					`Clicked "Payment Settings" Button on a ${ domainType } in Edit`,
 					'Domain Name',
 					domain.name
 				);

@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-const tinymce = require( 'tinymce/tinymce' );
+import tinymce from 'tinymce/tinymce';
 
 function wpEditImage( editor ) {
 	let toolbar, serializer, pasteInCaption;

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { MediaTypes } from '../constants'
+import { MediaTypes } from '../constants';
 
 /**
  * Given an unknown media object, returns an object with empty attributes.

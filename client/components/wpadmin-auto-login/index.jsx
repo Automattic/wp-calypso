@@ -45,4 +45,4 @@ export default class WpadminAutoLogin extends Component {
 	render() {
 		return null;
 	}
-};
+}

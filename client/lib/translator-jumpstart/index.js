@@ -36,7 +36,7 @@ const user = new User(),
  * Local variables
  */
 
-var	injectUrl, initialized,
+let	injectUrl, initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
 

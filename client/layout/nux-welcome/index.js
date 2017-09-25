@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var store = require( 'store' );
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * This module stores the current and previous
@@ -16,7 +16,7 @@ var Emitter = require( 'lib/mixins/emitter' );
  * These focus area values are whitelisted and used for informing
  * what the focus for any view of Calypso should be.
  */
-var nuxWelcome = {
+const nuxWelcome = {
 
 	tempWelcome: false,
 

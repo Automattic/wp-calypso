@@ -4,18 +4,20 @@
 import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import ReactDom from 'react-dom';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	ListItem = require( './list-item' ),
-	ListNoResults = require( './list-no-results' ),
-	ListNoContent = require( './list-no-content' ),
-	user = require( 'lib/user' )();
+import MediaActions from 'lib/media/actions';
+
+import MediaUtils from 'lib/media/utils';
+import ListItem from './list-item';
+import ListNoResults from './list-no-results';
+import ListNoContent from './list-no-content';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
@@ -82,7 +84,7 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	getMediaItemStyle: function( index ) {
-		var itemsPerRow = this.getItemsPerRow(),
+		let itemsPerRow = this.getItemsPerRow(),
 			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
 			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
 			style, marginValue;
@@ -128,7 +130,7 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			let interimIndex = findIndex( selectedItems, {
+			const interimIndex = findIndex( selectedItems, {
 				ID: this.props.media[ i ].ID
 			} );
 
@@ -168,7 +170,7 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	renderItem: function( item ) {
-		var index = findIndex( this.props.media, { ID: item.ID } ),
+		let index = findIndex( this.props.media, { ID: item.ID } ),
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
 			ref = this.getItemRef( item ),
@@ -197,7 +199,7 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	renderLoadingPlaceholders: function() {
-		var itemsPerRow = this.getItemsPerRow(),
+		let itemsPerRow = this.getItemsPerRow(),
 			itemsVisible = ( this.props.media || [] ).length,
 			placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
@@ -226,7 +228,7 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	render: function() {
-		var onFetchNextPage;
+		let onFetchNextPage;
 
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;

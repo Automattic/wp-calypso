@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
 
-var TokenInput = React.createClass( {
+import PureRenderMixin from 'react-pure-render/mixin';
+
+const TokenInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
 		onBlur: React.PropTypes.func,

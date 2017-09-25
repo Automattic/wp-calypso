@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:followers-actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:followers-actions' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	FollowersStore = require( 'lib/followers/store' );
+import Dispatcher from 'dispatcher';
 
-var FollowersActions = {
+import wpcom from 'lib/wp';
+import FollowersStore from 'lib/followers/store';
+
+const FollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		const paginationData = FollowersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {

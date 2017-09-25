@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
-const i18n = require( 'i18n-calypso' ),
-	emailValidator = require( 'email-validator' );
+import i18n from 'i18n-calypso';
+import emailValidator from 'email-validator';
 
 function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {
-		var isFirst = index === 0,
+		let isFirst = index === 0,
 			hasInput = some( Object.keys( fields ), function( name ) {
 				return user[ name ].value;
 			} );
@@ -17,12 +17,12 @@ function filter( { users, fields } ) {
 }
 
 function validate( { users, fields } ) {
-	var errors;
+	let errors;
 
 	users = filter( { users, fields } );
 	users = users.map( function( user ) {
 		return mapValues( user, function( field, key ) {
-			var error = null;
+			let error = null;
 
 			if ( isEmpty( field.value ) ) {
 				error = i18n.translate( 'This field is required.' );

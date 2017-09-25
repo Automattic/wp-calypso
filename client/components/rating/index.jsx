@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 module.exports = React.createClass( {
 
@@ -17,7 +17,7 @@ module.exports = React.createClass( {
 	},
 
 	getStars: function() {
-		var i,
+		let i,
 			stars = [],
 			ratingOverTen = Math.ceil( this.props.rating / 10 ),
 			numberOfStars = Math.floor( ratingOverTen / 2 ),
@@ -62,7 +62,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var ratingStyles = {
+		const ratingStyles = {
 			width: this.props.size
 				? ( this.props.size * 5 ) + 'px'
 				: '100%'

@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' ),
-	PluginsActions = require( 'lib/plugins/actions' );
+import analytics from 'lib/analytics';
+
+import Gridicon from 'gridicons';
+import PluginsActions from 'lib/plugins/actions';
 
 module.exports = React.createClass( {
 

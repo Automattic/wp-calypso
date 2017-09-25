@@ -8,14 +8,15 @@ import { expect } from 'chai';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 
+import restrictSize from '../';
+
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;
 
 	useFakeDom();
 
 	before( () => {
-		const restrictSize = require( '../' );
-		getMaxWidth = restrictSize.getMaxWidth;
+	    getMaxWidth = restrictSize.getMaxWidth;
 		resetImages = restrictSize.resetImages;
 		setImages = restrictSize.setImages;
 	} );

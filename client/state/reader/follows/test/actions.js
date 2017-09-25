@@ -16,17 +16,18 @@ import {
 } from 'state/action-types';
 import { recordFollowError } from '../actions';
 
+import actions from '../actions';
+
 describe( 'actions', () => {
 	let recordFollow, recordUnfollow;
 
 	useMockery( mockery => {
-		mockery.registerMock( 'state/reader/posts/actions', {
-			receivePosts: posts => {
-				return Promise.resolve( posts );
-			},
-		} );
+	    mockery.registerMock( 'state/reader/posts/actions', {
+		receivePosts: posts => {
+			return Promise.resolve( posts );
+		},
+	} );
 
-		const actions = require( '../actions' );
 		recordFollow = actions.recordFollow;
 		recordUnfollow = actions.recordUnfollow;
 	} );

@@ -82,7 +82,7 @@ export default React.createClass( {
 	},
 
 	getAttributes() {
-		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
+		const attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
 			assign( attributes, parseShortcode( this.props.children ).attrs.named );

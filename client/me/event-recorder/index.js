@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = {
 	recordEvent: function( eventAction ) {
@@ -40,7 +40,7 @@ module.exports = {
 
 	recordCheckboxEvent: function( checkboxName, callback ) {
 		return function( event ) {
-			var eventAction = 'Clicked ' + checkboxName + ' checkbox',
+			let eventAction = 'Clicked ' + checkboxName + ' checkbox',
 				optionValue = event.target.checked ? 1 : 0;
 
 			analytics.ga.recordEvent( 'Me', eventAction, 'checked', optionValue );
@@ -53,7 +53,7 @@ module.exports = {
 
 	recordRadioEvent: function( radioName, callback ) {
 		return function( event ) {
-			var eventAction = 'Clicked ' + radioName + ' radio';
+			const eventAction = 'Clicked ' + radioName + ' radio';
 
 			analytics.ga.recordEvent( 'Me', eventAction, 'checked', event.target.value );
 

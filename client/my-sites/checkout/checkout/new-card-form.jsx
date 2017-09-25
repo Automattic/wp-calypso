@@ -2,14 +2,15 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var CreditCardFormFields = require( 'components/credit-card-form-fields' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import CreditCardFormFields from 'components/credit-card-form-fields';
+
+import upgradesActions from 'lib/upgrades/actions';
 
 module.exports = React.createClass( {
 	displayName: 'NewCardForm',
@@ -25,7 +26,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		let classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
+		const classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
 
 		return (
 			<div className="new-card">

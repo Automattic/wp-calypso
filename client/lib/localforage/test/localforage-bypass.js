@@ -45,21 +45,21 @@ describe( 'localforage-bypass', () => {
 			return () => {
 				return length()
 					.then( ( l ) => expect( l ).to.equal( expected ) );
-			}
+			};
 		};
 		const addItem = ( key, value ) => {
-			return () => localForage.setItem( key, value )
+			return () => localForage.setItem( key, value );
 		};
 
 		it( 'should be zero when initialized', () => {
 			return expectLength( 0 )();
-		} )
+		} );
 
 		it( 'should match number of items', () => {
 			db.one = 1;
 			db.two = 2;
 			return expectLength( 2 )();
-		} )
+		} );
 
 		it( 'should increment after setItem', () => {
 			db.one = 1;
@@ -68,7 +68,7 @@ describe( 'localforage-bypass', () => {
 			return expectLength( 2 )()
 				.then( addItem( 'eight', 8 ) )
 				.then( expectLength( 3 ) );
-		} )
+		} );
 
 		it( 'should not increment after setItem where key already exists', () => {
 			db.one = 1;
@@ -78,7 +78,7 @@ describe( 'localforage-bypass', () => {
 				.then( addItem( 'two', 9 ) )
 				.then( length )
 				.then( expectLength( 2 ) );
-		} )
+		} );
 	} );
 
 	describe( 'clear', () => {
@@ -89,7 +89,7 @@ describe( 'localforage-bypass', () => {
 				.then( () => {
 					expect( db ).to.be.empty;
 				} );
-		} )
+		} );
 	} );
 
 	describe( 'getItem', () => {

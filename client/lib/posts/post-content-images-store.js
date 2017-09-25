@@ -6,22 +6,22 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	Dispatcher = require( 'dispatcher' ),
-	utils = require( './utils' ),
-	PostsStore = require( './posts-store' );
+import Emitter from 'lib/mixins/emitter';
 
+import Dispatcher from 'dispatcher';
+import utils from './utils';
+import PostsStore from './posts-store';
 
-var _contentImages = {},
+let _contentImages = {},
 	PostContentImagesStore;
 
 function scrapeAll( posts ) {
 	posts.forEach( scrapePost );
 }
 function scrapePost( post ) {
-	var imagesFromPost = pick( PostsStore.get( post.global_ID ), 'content_images', 'canonical_image', 'featured_image', 'images', 'global_ID' );
+	const imagesFromPost = pick( PostsStore.get( post.global_ID ), 'content_images', 'canonical_image', 'featured_image', 'images', 'global_ID' );
 	utils.normalizeAsync( imagesFromPost, function( error, normalizedPostImages ) {
-		var cachedImages = PostContentImagesStore.get( normalizedPostImages.global_ID );
+		const cachedImages = PostContentImagesStore.get( normalizedPostImages.global_ID );
 		if ( isEqual( normalizedPostImages, cachedImages ) ) {
 			return;
 		}
@@ -42,11 +42,11 @@ PostContentImagesStore = {
 Emitter( PostContentImagesStore );
 
 PostContentImagesStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ PostsStore.dispatchToken ] );
 
-	switch( action.type ) {
+	switch ( action.type ) {
 		case 'RECEIVE_POSTS_PAGE':
 		case 'RECEIVE_UPDATED_POSTS':
 			if ( ! action.error && action.data.posts ) {
@@ -60,7 +60,6 @@ PostContentImagesStore.dispatchToken = Dispatcher.register( function( payload ) 
 			break;
 
 	}
-
 } );
 
 module.exports = PostContentImagesStore;

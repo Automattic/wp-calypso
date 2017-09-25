@@ -16,7 +16,7 @@ export default function detectPolls( post, dom ) {
 
 	// Polldaddy embed markup isn't very helpfully structured, but we can look for the noscript tag,
 	// which contains the information we need, and replace it with a paragraph.
-	let noscripts = dom.querySelectorAll( 'noscript' );
+	const noscripts = dom.querySelectorAll( 'noscript' );
 
 	forEach( noscripts, noscript => {
 		if ( ! noscript.firstChild ) {
@@ -26,11 +26,11 @@ export default function detectPolls( post, dom ) {
 		// some browers don't require this and let us query the dom inside a noscript. some do not. maybe just jsdom.
 		const noscriptDom = domForHtml( noscript.innerHTML );
 
-		let pollLink = noscriptDom.querySelector( 'a[href^="http://polldaddy.com/poll/"]' );
+		const pollLink = noscriptDom.querySelector( 'a[href^="http://polldaddy.com/poll/"]' );
 		if ( pollLink ) {
 			const pollId = pollLink.href.match( /https?:\/\/polldaddy.com\/poll\/([0-9]+)/ )[ 1 ];
 			if ( pollId ) {
-				let p = document.createElement( 'p' );
+				const p = document.createElement( 'p' );
 				p.innerHTML = '<a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/' + pollId + '">' + i18n.translate( 'Take our poll' ) + '</a>';
 				noscript.parentNode.replaceChild( p, noscript );
 			}

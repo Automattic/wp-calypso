@@ -11,6 +11,9 @@ import sitesFactory from 'lib/sites-list';
 import Dispatcher from 'dispatcher';
 import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
 
+import PostListStoreFactory from './post-list-store-factory';
+const PostListStore = PostListStoreFactory();
+
 let cache = {};
 const _canonicalCache = {};
 const TTL_IN_MS = 5 * 60 * 1000; // five minutes
@@ -91,7 +94,7 @@ function markDirty( post, oldStatus ) {
 	// clear api cache for records with matching site/status
 	cacheIndex.clearRecordsByParamFilter( ( reqParams ) => {
 		const siteIdentifiers = affectedSites.slice( 0, -1 ); // remove the `false` value from above
-		const affectedPaths = [ '/me/posts', ...siteIdentifiers.map( status => `/sites/${status}/posts` ) ]; // construct matching api routes
+		const affectedPaths = [ '/me/posts', ...siteIdentifiers.map( status => `/sites/${ status }/posts` ) ]; // construct matching api routes
 		const recordStatuses = ( reqParams.query && reqParams.query.status ) ? reqParams.query.status.split( ',' ) : [];
 		const intersectingStatuses = intersection( recordStatuses, affectedStatuses );
 		if ( affectedPaths.indexOf( reqParams.path ) === -1 ) {
@@ -109,8 +112,7 @@ function isListKeyFresh( listKey ) {
 }
 
 PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		PostListStore = require( './post-list-store-factory' )();
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ PostListStore.dispatchToken ] );
 

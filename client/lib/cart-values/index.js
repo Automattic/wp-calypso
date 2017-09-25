@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { extend } from 'lodash';
-var update = require( 'react-addons-update' ),
-	i18n = require( 'i18n-calypso' ),
-	config = require( 'config' );
+import update from 'react-addons-update';
+import i18n from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( './cart-items' ),
-	productsValues = require( 'lib/products-values' );
+import cartItems from './cart-items';
+
+import productsValues from 'lib/products-values';
 
 /**
  * Create a new empty cart.
@@ -60,7 +61,7 @@ function canRemoveFromCart( cart, cartItem ) {
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
 function getNewMessages( previousCartValue, nextCartValue ) {
-	var previousDate, nextDate, hasNewServerData, nextCartMessages;
+	let previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
 	nextCartMessages = nextCartValue.messages || [];
@@ -103,7 +104,7 @@ function fillInAllCartItemAttributes( cart, products ) {
 }
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
-	var product = products[ cartItem.product_slug ],
+	let product = products[ cartItem.product_slug ],
 		attributes = productsValues.whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );

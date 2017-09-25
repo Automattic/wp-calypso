@@ -24,7 +24,7 @@ describe( '#preloadImage()', function() {
 	} );
 
 	it( 'should load an image', function() {
-		var src = 'example.jpg';
+		const src = 'example.jpg';
 
 		preloadImage( src );
 

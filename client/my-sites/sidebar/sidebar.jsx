@@ -109,7 +109,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	itemLinkClass = ( paths, existingClasses ) => {
-		var classSet = {};
+		const classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
 			if ( ! Array.isArray( existingClasses ) ) {

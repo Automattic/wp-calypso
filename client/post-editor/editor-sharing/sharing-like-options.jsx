@@ -56,7 +56,7 @@ const SharingLikeOptions = React.createClass( {
 		return (
 			<label>
 				<FormCheckbox
-					name='sharing_enabled'
+					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
 					onChange={ this.onChange } />
 				<span>{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
@@ -72,7 +72,7 @@ const SharingLikeOptions = React.createClass( {
 		return (
 				<label>
 					<FormCheckbox
-						name='likes_enabled'
+						name="likes_enabled"
 						checked={ this.isShowingLikeButton() }
 						onChange={ this.onChange } />
 					<span>{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>

@@ -14,16 +14,18 @@ import { createReduxStore } from 'state';
 
 import { sites } from './fixtures';
 
+import emptyComponent from 'test/helpers/react/empty-component';
+import ReactClass from 'react/lib/ReactClass';
+
 describe( 'PluginsList', () => {
 	let React, testRenderer, PluginsList, TestUtils;
 
 	useFakeDom();
 
 	useMockery( mockery => {
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
+	    mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
 
-		const emptyComponent = require( 'test/helpers/react/empty-component' );
 		mockery.registerMock( 'my-sites/plugins/plugin-item/plugin-item', emptyComponent );
 		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
 
@@ -31,9 +33,8 @@ describe( 'PluginsList', () => {
 	} );
 
 	before( () => {
-		React = require( 'react' );
+	    React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		const ReactClass = require( 'react/lib/ReactClass' );
 
 		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
 

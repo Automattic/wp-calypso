@@ -73,7 +73,7 @@ export default React.createClass( {
 		}
 
 		const classes = classnames( 'editor-delete-post__button', { 'is-trashing': this.state.isTrashing } );
-		const label = this.state.isTrashing ? this.translate( 'Trashing...' ) : this.translate( 'Move to trash' );
+		const label = this.state.isTrashing ? this.translate( Trashing… ) : this.translate( 'Move to trash' );
 
 		return (
 			<div className="editor-delete-post">

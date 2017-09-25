@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:local-storage' );
+import debugFactory from 'debug';
 
-var _data = {},
+const debug = debugFactory( 'calypso:local-storage' );
+
+let _data = {},
 	storage = {
 		setItem: function( id, val ) {
 			_data[ id ] = String( val );
@@ -41,7 +43,7 @@ module.exports = function( root ) {
 		root.localStorage.setItem( 'localStorageTest', '' );
 		root.localStorage.removeItem( 'localStorageTest' );
 		debug( 'localStorage tested and working correctly' );
-	} catch( error ) {
+	} catch ( error ) {
 		debug( 'localStorage not working correctly, setting to polyfill' );
 		// we cannot overwrite window.localStorage directly, but we can overwrite its methods
 		root.localStorage.setItem = storage.setItem;

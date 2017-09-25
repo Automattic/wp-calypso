@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:email-followers-actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:email-followers-actions' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	EmailFollowersStore = require( 'lib/email-followers/store' );
+import Dispatcher from 'dispatcher';
 
-var EmailFollowersActions = {
+import wpcom from 'lib/wp';
+import EmailFollowersStore from 'lib/email-followers/store';
+
+const EmailFollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		Object.assign( fetchOptions, { type: 'email' } );
 		const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );

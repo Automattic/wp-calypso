@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { assign, isEqual } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaListStore = require( 'lib/media/list-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+import MediaActions from 'lib/media/actions';
+
+import MediaListStore from 'lib/media/list-store';
+import passToChildren from 'lib/react-pass-to-children';
+import utils from './utils';
 
 function getStateData( siteId ) {
 	return {
@@ -46,7 +47,7 @@ module.exports = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var nextQuery = this.getQuery( nextProps );
+		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );

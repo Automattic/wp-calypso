@@ -67,7 +67,7 @@ describe( 'MediaUtils', function() {
 	} );
 
 	describe( '#url()', function() {
-		var media;
+		let media;
 
 		beforeEach( function() {
 			media = {
@@ -79,7 +79,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should simply return the URL if media is transient', function() {
-			var url;
+			let url;
 
 			media.transient = true;
 
@@ -91,13 +91,13 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should accept a media object without options, returning the URL', function() {
-			var url = MediaUtils.url( media );
+			const url = MediaUtils.url( media );
 
 			expect( url ).to.equal( media.URL );
 		} );
 
 		it( 'should accept a photon option to use the photon service', function() {
-			var url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				photon: true
 			} );
 
@@ -105,7 +105,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should generate the correct width-constrained photon URL', function() {
-			var url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				photon: true,
 				maxWidth: 450
 			} );
@@ -114,7 +114,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should generate the correct width-constrained URL', function() {
-			var url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				maxWidth: 450
 			} );
 
@@ -122,7 +122,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should attempt to find and return a desired thumbnail size', function() {
-			var url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				size: 'thumbnail'
 			} );
 
@@ -130,7 +130,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should gracefully handle empty media objects', function() {
-			var url = MediaUtils.url( {}, {
+			const url = MediaUtils.url( {}, {
 				size: 'thumbnail',
 				maxWidth: 450
 			} );
@@ -247,7 +247,7 @@ describe( 'MediaUtils', function() {
 
 	describe( '#filterItemsByMimePrefix()', function() {
 		it( 'should return an array filtered to the matching mime prefix', function() {
-			var items = [
+			const items = [
 				{ ID: 100, mime_type: 'image/jpg' },
 				{ ID: 200, mime_type: 'video/mp4' }
 			];
@@ -256,7 +256,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should gracefully omit items where a mime type could not be determined', function() {
-			var items = [
+			const items = [
 				{ ID: 100, mime_type: 'image/jpg' },
 				{ ID: 200 },
 				undefined
@@ -267,7 +267,7 @@ describe( 'MediaUtils', function() {
 	} );
 
 	describe( '#sortItemsByDate()', function() {
-		var items;
+		let items;
 
 		beforeEach( function() {
 			items = [
@@ -315,14 +315,14 @@ describe( 'MediaUtils', function() {
 
 	describe( '#getAllowedFileTypesForSite()', function() {
 		it( 'should return an empty array for a falsey site', function() {
-			var extensions = MediaUtils.getAllowedFileTypesForSite();
+			const extensions = MediaUtils.getAllowedFileTypesForSite();
 
 			expect( extensions ).to.be.an.instanceof( Array );
 			expect( extensions ).to.be.empty;
 		} );
 
 		it( 'should return an array of supported file type extensions', function() {
-			var extensions = MediaUtils.getAllowedFileTypesForSite( {
+			const extensions = MediaUtils.getAllowedFileTypesForSite( {
 				options: {
 					allowed_file_types: [ 'pdf', 'gif' ]
 				}
@@ -334,7 +334,7 @@ describe( 'MediaUtils', function() {
 	} );
 
 	describe( '#isSupportedFileTypeForSite()', function() {
-		var site = {
+		const site = {
 			options: {
 				allowed_file_types: [ 'pdf', 'gif' ]
 			}
@@ -349,14 +349,14 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return false if the site doesn\'t support the item\'s extension', function() {
-			var item = { extension: 'avi' },
+			let item = { extension: 'avi' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.false;
 		} );
 
 		it( 'should return true for versions of Jetpack where option is not synced', function() {
-			var isSupported = MediaUtils.isSupportedFileTypeForSite( { extension: 'exe' }, new JetpackSite( {
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( { extension: 'exe' }, new JetpackSite( {
 				jetpack: true,
 				options: {
 					jetpack_version: '3.8.0'
@@ -367,14 +367,14 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return true if the site supports the item\'s extension', function() {
-			var item = { extension: 'pdf' },
+			let item = { extension: 'pdf' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
 
 		it( 'should return true despite even if different case', function() {
-			var item = { extension: 'PdF' },
+			let item = { extension: 'PdF' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
@@ -520,7 +520,7 @@ describe( 'MediaUtils', function() {
 
 	describe( '#getThumbnailSizeDimensions()', function() {
 		it( 'should return the site dimensions if exists', function() {
-			var dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail', {
+			const dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail', {
 				options: {
 					image_thumbnail_width: 200,
 					image_thumbnail_height: 200
@@ -534,7 +534,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return default values if site doesn\'t exist', function() {
-			var dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail' );
+			const dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail' );
 
 			expect( dimensions ).to.eql( {
 				width: 150,
@@ -543,7 +543,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return undefined values for unknown size', function() {
-			var dimensions = MediaUtils.getThumbnailSizeDimensions( null, null );
+			const dimensions = MediaUtils.getThumbnailSizeDimensions( null, null );
 
 			expect( dimensions ).to.eql( {
 				width: undefined,
@@ -554,13 +554,13 @@ describe( 'MediaUtils', function() {
 
 	describe( '#generateGalleryShortcode()', function() {
 		it( 'should generate a gallery shortcode', function() {
-			var value = MediaUtils.generateGalleryShortcode( { items: [ { ID: 100 }, { ID: 200 } ] } );
+			const value = MediaUtils.generateGalleryShortcode( { items: [ { ID: 100 }, { ID: 200 } ] } );
 
 			expect( value ).to.equal( '[gallery ids="100,200"]' );
 		} );
 
 		it( 'should accept an optional set of parameters', function() {
-			var value = MediaUtils.generateGalleryShortcode( {
+			const value = MediaUtils.generateGalleryShortcode( {
 				items: [ { ID: 100 }, { ID: 200 } ],
 				type: 'square',
 				columns: 2
@@ -570,7 +570,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should omit size and columns attributes if not used', function() {
-			var value = MediaUtils.generateGalleryShortcode( {
+			const value = MediaUtils.generateGalleryShortcode( {
 				items: [ { ID: 100 }, { ID: 200 } ],
 				type: 'rectangular',
 				columns: 2

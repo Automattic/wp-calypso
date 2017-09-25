@@ -69,7 +69,7 @@ const PopoverCart = React.createClass( {
 							ref="toggleButton"
 							onClick={ this.onToggle }>
 						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon='cart' size={ 24 } />
+						<Gridicon icon="cart" size={ 24 } />
 						{ countBadge }
 					</button>
 				</div>

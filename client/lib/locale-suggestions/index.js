@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	LocaleSuggestionActions = require( './actions' );
+import Emitter from 'lib/mixins/emitter';
 
-var localeSuggestions = null;
+import LocaleSuggestionActions from './actions';
 
-var LocaleSuggestionStore = {
+let localeSuggestions = null;
+
+const LocaleSuggestionStore = {
 	get: function() {
 		if ( ! localeSuggestions ) {
 			LocaleSuggestionActions.fetch();
@@ -28,7 +29,7 @@ var LocaleSuggestionStore = {
 Emitter( LocaleSuggestionStore );
 
 LocaleSuggestionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'RECEIVE_LOCALE_SUGGESTIONS':

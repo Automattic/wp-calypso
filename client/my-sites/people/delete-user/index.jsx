@@ -7,19 +7,20 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-const Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'gridicons' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	AuthorSelector = require( 'blocks/author-selector' ),
-	UsersActions = require( 'lib/users/actions' ),
-	accept = require( 'lib/accept' ),
-	analytics = require( 'lib/analytics' );
+import Card from 'components/card';
+
+import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import AuthorSelector from 'blocks/author-selector';
+import UsersActions from 'lib/users/actions';
+import accept from 'lib/accept';
+import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 

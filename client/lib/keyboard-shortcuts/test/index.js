@@ -18,7 +18,7 @@ describe( 'KeyboardShortcuts', function() {
 	} );
 
 	it( 'should emit events to subscribers', function() {
-		var arbitraryData = 'hello, world?',
+		let arbitraryData = 'hello, world?',
 			eventResult = '',
 			handleEvent = function( data ) {
 				eventResult = data;

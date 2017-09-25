@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ module.exports = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var nextVisible = !! nextProps.isVisible;
+		const nextVisible = !! nextProps.isVisible;
 		if ( nextVisible !== this.state.visible ) {
 			this.setState( {
 				visible: nextVisible
@@ -33,13 +33,13 @@ module.exports = React.createClass( {
 			visible: false
 		} );
 
-		if( 'function' === typeof( this.props.closeAction ) ) {
+		if ( 'function' === typeof( this.props.closeAction ) ) {
 			this.props.closeAction();
 		}
 	},
 
 	render: function() {
-		var welcomeClassName = ( this.props.additionalClassName ) ? this.props.additionalClassName + ' welcome-message' : 'welcome-message';
+		const welcomeClassName = ( this.props.additionalClassName ) ? this.props.additionalClassName + ' welcome-message' : 'welcome-message';
 
 		if ( this.state.visible ) {
 			return (

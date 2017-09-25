@@ -24,7 +24,7 @@ class NotificationSettingsFormStream extends PureComponent {
 			PropTypes.string,
 			PropTypes.number
 		] ),
-		settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.oneOfType( [
 			PropTypes.instanceOf( Immutable.List ),
 			PropTypes.instanceOf( Immutable.Map )

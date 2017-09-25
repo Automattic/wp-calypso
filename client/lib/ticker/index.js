@@ -2,10 +2,11 @@
  * External dependencies
  */
 import { wrap } from 'lodash';
-var Emitter = require( 'lib/mixins/emitter' ),
-	debug = require( 'debug' )( 'calypso:ticker' );
+import Emitter from 'lib/mixins/emitter';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:ticker' );
 
-var ticker = {};
+const ticker = {};
 
 Emitter( ticker );
 
@@ -64,7 +65,7 @@ ticker.off = wrap( ticker.off, function( func, type, callback ) {
 } );
 
 ticker.handleVisibilityChange = function() {
-	debug( 'viz change');
+	debug( 'viz change' );
 	if ( document.hidden ) {
 		debug( 'stopping' );
 		ticker._stop();

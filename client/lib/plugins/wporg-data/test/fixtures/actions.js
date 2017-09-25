@@ -1,4 +1,4 @@
-var dummyPluginList = [
+const dummyPluginList = [
 	{
 		name: 'Jetpack',
 		slug: 'jetpack',
@@ -18,7 +18,7 @@ var dummyPluginList = [
 		homepage: 'http://jetpack.me/',
 		short_description: 'Your WordPress, Simplified.',
 		banners: [],
-		icons: { default: 'image.png' }
+		icons: { 'default': 'image.png' }
 	}
 ];
 

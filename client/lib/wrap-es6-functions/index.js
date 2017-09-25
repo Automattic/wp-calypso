@@ -11,12 +11,12 @@ function wrapFnWithWarning( fn, name ) {
 		const err = new Error( `${ name } is not supported on all browsers. You must use a replacement method from lodash.` );
 		consoleFn( err );
 		return fn.apply( this, arguments );
-	}
+	};
 }
 
 function wrapObjectFn( obj, objectName, key ) {
 	if ( isFunction( obj[ key ] ) ) {
-		Object.defineProperty( obj, key, { value: wrapFnWithWarning( obj[ key ], `${ objectName }${ key}` ) } );
+		Object.defineProperty( obj, key, { value: wrapFnWithWarning( obj[ key ], `${ objectName }${ key }` ) } );
 	}
 }
 

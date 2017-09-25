@@ -45,7 +45,7 @@ const PostsNavigation = React.createClass( {
 	mixins: [ URLSearch ],
 
 	getInitialState() {
-		var counts = this._getCounts(),
+		let counts = this._getCounts(),
 			state = {
 				show: true,
 				loading: true,
@@ -109,8 +109,8 @@ const PostsNavigation = React.createClass( {
 			author: this.translate( 'Author', { context: 'Filter group label for segmented' } ),
 		};
 
-		let statusTabs = this._getStatusTabs( author, siteFilter );
-		let authorSegmented = this._getAuthorSegmented( statusSlug, siteFilter );
+		const statusTabs = this._getStatusTabs( author, siteFilter );
+		const authorSegmented = this._getAuthorSegmented( statusSlug, siteFilter );
 
 		if ( this.props.siteId ) {
 			if ( this.props.isSingleUser || this.props.isJetpack ) {
@@ -120,7 +120,7 @@ const PostsNavigation = React.createClass( {
 			showMyFilter = false;
 		}
 
-		let mobileHeaderText = this._getMobileHeaderText(
+		const mobileHeaderText = this._getMobileHeaderText(
 			showMyFilter, statusTabs.selectedText, authorSegmented.selectedText
 		);
 
@@ -143,7 +143,7 @@ const PostsNavigation = React.createClass( {
 	},
 
 	_getStatusTabs( author, siteFilter ) {
-		var statusItems = [],
+		let statusItems = [],
 			status, selectedText, selectedCount;
 
 		for ( status in this.filterStatuses ) {
@@ -151,11 +151,11 @@ const PostsNavigation = React.createClass( {
 				continue;
 			}
 
-			let path = '/posts' + author +
+			const path = '/posts' + author +
 				( 'publish' === status ? '' : '/' + statusToDescription[ status ] ) +
 				siteFilter;
 
-			let textItem = this.filterStatuses[ status ];
+			const textItem = this.filterStatuses[ status ];
 
 			let count = this.state.counts[ status ];
 
@@ -190,7 +190,7 @@ const PostsNavigation = React.createClass( {
 		selectedText = selectedText || 'published';
 		selectedCount = selectedCount || this.getCountByStatus( 'publish' );
 
-		let tabs = (
+		const tabs = (
 			<NavTabs
 				label={ this.strings.status }
 				selectedText={ selectedText }
@@ -207,13 +207,13 @@ const PostsNavigation = React.createClass( {
 	},
 
 	_getAuthorSegmented( statusSlug, siteFilter ) {
-		var scopeItems = [],
+		let scopeItems = [],
 			selectedText, scope;
 
 		for ( scope in this.filterScope ) {
-			let textItem = this.filterScope[ scope ];
+			const textItem = this.filterScope[ scope ];
 			const isMe = 'me' === scope;
-			let path = ( isMe ? '/posts/my' : '/posts' ) + statusSlug + siteFilter;
+			const path = ( isMe ? '/posts/my' : '/posts' ) + statusSlug + siteFilter;
 
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
@@ -255,7 +255,7 @@ const PostsNavigation = React.createClass( {
 	},
 
 	_defaultCounts() {
-		var default_options = {},
+		let default_options = {},
 			status;
 
 		for ( status in statusToDescription ) {
@@ -336,7 +336,7 @@ const PostsNavigation = React.createClass( {
 	 * @return {Object} counts
 	 */
 	_getCounts( siteId = this.props.siteId, scope ) {
-		var counts = {},
+		let counts = {},
 			status;
 
 		scope = scope || ( this.props.author ? 'mine' : 'all' );

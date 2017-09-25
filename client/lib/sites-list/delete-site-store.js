@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
 
-var _deletedSite = {},
+import Emitter from 'lib/mixins/emitter';
+
+let _deletedSite = {},
 	DeletedSiteStore;
 
 function storeDeletedSite( site ) {
@@ -34,7 +35,7 @@ DeletedSiteStore = {
 Emitter( DeletedSiteStore );
 
 DeletedSiteStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'DELETE_SITE':
 			storeDeletedSite( action.site );

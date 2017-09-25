@@ -11,7 +11,7 @@ import emitter from 'lib/mixins/emitter';
 /**
  * Module variables
  **/
-var olarkEvents = [
+let olarkEvents = [
 		'api.box.onShow',
 		'api.box.onHide',
 		'api.box.onExpand',
@@ -34,7 +34,7 @@ var olarkEvents = [
  * OlarkEventEmitter An eventemitter that listens for events from the olark api and emits them.
  * @type {Object}
  */
-var OlarkEventEmitter = {
+const OlarkEventEmitter = {
 	/**
 	 * Initialize the OlarkEventEmitter object. This should only be called when the olark api object becomes available
 	 */

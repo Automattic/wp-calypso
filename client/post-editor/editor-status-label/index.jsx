@@ -90,7 +90,7 @@ export default React.createClass( {
 	},
 
 	renderLabel: function() {
-		var post = this.props.post,
+		let post = this.props.post,
 			editedTime = this.moment( postUtils.getEditedTime( post ) ),
 			label;
 

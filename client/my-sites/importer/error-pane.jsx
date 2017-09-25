@@ -59,7 +59,7 @@ export default React.createClass( {
 	},
 
 	getErrorMessage: function() {
-		var actionMessage;
+		let actionMessage;
 
 		switch ( this.props.type ) {
 			case 'uploadError':

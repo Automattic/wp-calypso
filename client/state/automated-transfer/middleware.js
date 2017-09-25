@@ -9,15 +9,18 @@ import {
 } from 'state/action-types';
 import { pauseAll, resumePaused } from 'lib/data-poller';
 
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+
 const pauseFetching = () => {
 	pauseAll();
-	const sites = require( 'lib/sites-list' )();
 	sites.pauseFetching();
 };
 
 const resumeFetching = () => {
 	resumePaused();
-	const sites = require( 'lib/sites-list' )();
 	sites.resumeFetching();
 };
 

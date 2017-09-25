@@ -100,7 +100,7 @@ const DesignMenu = React.createClass( {
 		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 		// If this route has nothing but the preview, redirect to somewhere else
 		if ( isEmptyRoute ) {
-			page.redirect( `/stats/${siteFragment}` );
+			page.redirect( `/stats/${ siteFragment }` );
 		}
 	},
 
@@ -137,7 +137,7 @@ const DesignMenu = React.createClass( {
 			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar'
 		} );
 		if ( ! this.props.selectedSite ) {
-			return <RootChild><div className={ classNames }/></RootChild>;
+			return <RootChild><div className={ classNames } /></RootChild>;
 		}
 		const onShowPreview = () => this.props.setLayoutFocus( 'preview' );
 		return (

@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' );
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
-var Searchable = require( '../' );
+import Searchable from '../';
 
-var makeCollection = function() {
-	var Collection = function() {
+const makeCollection = function() {
+	const Collection = function() {
 		this.items = [
 			{
 				title: 'this title',
 				author: 'bob ralian',
 				urls: {
-					public: 'wordpress.com',
-					private: 'notwordpress.com'
+					'public': 'wordpress.com',
+					'private': 'notwordpress.com'
 				},
 				editor: {
 					primary: 'Susan',
@@ -27,8 +27,8 @@ var makeCollection = function() {
 				title: 'another title',
 				author: 'Jill',
 				urls: {
-					public: 'test.com',
-					private: 'blah.com'
+					'public': 'test.com',
+					'private': 'blah.com'
 				},
 				editor: {
 					primary: 'Edith',
@@ -48,7 +48,7 @@ var makeCollection = function() {
 describe( 'index', function() {
 	describe( 'searchNodes as array', function() {
 		it( 'should find node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title', 'author' ] );
 			collection = new Collection();
@@ -58,7 +58,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should not find a node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title', 'author' ] );
 			collection = new Collection();
@@ -68,7 +68,7 @@ describe( 'index', function() {
 
 	describe( 'searchNodes as string', function() {
 		it( 'should find node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, 'title' );
 			collection = new Collection();
@@ -77,7 +77,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should not find a node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, 'title' );
 			collection = new Collection();
@@ -87,7 +87,7 @@ describe( 'index', function() {
 
 	describe( 'searchNodes as object', function() {
 		it( 'should find node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title',
 				'author',
@@ -100,7 +100,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should not find a node', function() {
-			var Collection = makeCollection(),
+			let Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title',
 				'author',

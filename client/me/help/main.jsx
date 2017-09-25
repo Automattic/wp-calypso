@@ -81,7 +81,7 @@ const Help = React.createClass( {
 						} );
 					};
 
-					return <HelpResult key={ result.link } helpLink={ result } iconTypeDescription="book" onClick={ trackClick } />
+					return <HelpResult key={ result.link } helpLink={ result } iconTypeDescription="book" onClick={ trackClick } />;
 				} ) }
 			</div>
 		);

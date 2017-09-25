@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:url-search' ),
-	page = require( 'page' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:url-search' );
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -26,7 +28,7 @@ module.exports = {
 	},
 
 	doSearch: function( keywords ) {
-		var searchURL;
+		let searchURL;
 
 		this.setState( {
 			searchOpen: ( false !== keywords )

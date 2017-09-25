@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems;
+import { cartItems } from 'lib/cart-values';
 
-var CartTotal = React.createClass({
+const CartTotal = React.createClass( {
 	render: function() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
 				<div className="cart-total">
 					{ this.translate( 'Recalculating…', {
-							context: 'Upgrades: Updating cart cost in checkout'
-						} ) }
+						context: 'Upgrades: Updating cart cost in checkout'
+					} ) }
 				</div>
 			);
 		}
@@ -39,7 +39,7 @@ var CartTotal = React.createClass({
 	},
 
 	totalLabel: function() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
 			return this.translate( 'Total Due Now:', {
@@ -51,6 +51,6 @@ var CartTotal = React.createClass({
 			} );
 		}
 	}
-});
+} );
 
 module.exports = CartTotal;

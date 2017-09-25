@@ -17,7 +17,7 @@ const debug = debugFactory( 'wporg' );
 /**
  * Constants
  */
-var _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins',
+let _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins',
 	_DEFAULT_PAGE_SIZE = 24,
 	_DEFAULT_CATEGORY = 'all',
 	_DEFAULT_FIRST_PAGE = 1;
@@ -25,7 +25,7 @@ var _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=qu
 const _WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode( ) {
-	var currentLocaleCode,
+	let currentLocaleCode,
 		wpOrgLocaleCode;
 
 	currentLocaleCode = i18n.getLocaleSlug();
@@ -49,7 +49,7 @@ module.exports = {
 	 * @param {function} callback Callback that gets executed after the XHR returns the results.
 	 */
 	fetchPluginInformation: function( pluginSlug, callback ) {
-		var baseUrl,
+		let baseUrl,
 			query = { fields: 'icons,banners,compatibility,ratings,-contributors', locale: getWporgLocaleCode() };
 
 		pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
@@ -72,7 +72,7 @@ module.exports = {
 		} );
 	},
 	fetchPluginsList: function( options, callback ) {
-		var payload;
+		let payload;
 		// default variables;
 		options.page = options.page || _DEFAULT_FIRST_PAGE;
 		options.pageSize = options.pageSize || _DEFAULT_PAGE_SIZE;

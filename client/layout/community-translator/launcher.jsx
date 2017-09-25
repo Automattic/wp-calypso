@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var translator = require( 'lib/translator-jumpstart' ),
-	localStorageHelper = require( 'store' ),
-	Dialog = require( 'components/dialog' ),
-	analytics = require( 'lib/analytics' );
+import translator from 'lib/translator-jumpstart';
+
+import localStorageHelper from 'store';
+import Dialog from 'components/dialog';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',

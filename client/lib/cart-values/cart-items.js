@@ -23,28 +23,15 @@ import {
 /**
  * Internal dependencies
  */
-var productsValues = require( 'lib/products-values' ),
-	formatProduct = productsValues.formatProduct,
-	isCustomDesign = productsValues.isCustomDesign,
-	isDependentProduct = productsValues.isDependentProduct,
-	isDomainMapping = productsValues.isDomainMapping,
-	isDomainProduct = productsValues.isDomainProduct,
-	isDomainRedemption = productsValues.isDomainRedemption,
-	isDomainRegistration = productsValues.isDomainRegistration,
-	isGoogleApps = productsValues.isGoogleApps,
-	isNoAds = productsValues.isNoAds,
-	isPlan = productsValues.isPlan,
-	isPremium = productsValues.isPremium,
-	isPrivacyProtection = productsValues.isPrivacyProtection,
-	isSiteRedirect = productsValues.isSiteRedirect,
-	isSpaceUpgrade = productsValues.isSpaceUpgrade,
-	isUnlimitedSpace = productsValues.isUnlimitedSpace,
-	isUnlimitedThemes = productsValues.isUnlimitedThemes,
-	isVideoPress = productsValues.isVideoPress,
-	isJetpackPlan = productsValues.isJetpackPlan,
-	isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain,
-	sortProducts = require( 'lib/products-values/sort' ),
-	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
+import productsValues from 'lib/products-values';
+
+import sortProducts from 'lib/products-values/sort';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
+
+/**
+ * Internal dependencies
+ */
+let formatProduct = productsValues.formatProduct, isCustomDesign = productsValues.isCustomDesign, isDependentProduct = productsValues.isDependentProduct, isDomainMapping = productsValues.isDomainMapping, isDomainProduct = productsValues.isDomainProduct, isDomainRedemption = productsValues.isDomainRedemption, isDomainRegistration = productsValues.isDomainRegistration, isGoogleApps = productsValues.isGoogleApps, isNoAds = productsValues.isNoAds, isPlan = productsValues.isPlan, isPremium = productsValues.isPremium, isPrivacyProtection = productsValues.isPrivacyProtection, isSiteRedirect = productsValues.isSiteRedirect, isSpaceUpgrade = productsValues.isSpaceUpgrade, isUnlimitedSpace = productsValues.isUnlimitedSpace, isUnlimitedThemes = productsValues.isUnlimitedThemes, isVideoPress = productsValues.isVideoPress, isJetpackPlan = productsValues.isJetpackPlan, isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain;
 
 import {
 	PLAN_FREE,
@@ -64,7 +51,7 @@ import {
  */
 function add( newCartItem ) {
 	function appendItem( products ) {
-		var isDuplicate;
+		let isDuplicate;
 
 		products = products || [];
 
@@ -149,7 +136,7 @@ function remove( cartItemToRemove ) {
  * @returns {Function} the function that removes the items from a shopping cart
  */
 function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
-	var dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
+	let dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
@@ -405,7 +392,7 @@ function businessPlan( slug, properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainItem( productSlug, domain, source ) {
-	var extra = source ? { extra: { source: source } } : undefined;
+	const extra = source ? { extra: { source: source } } : undefined;
 
 	return Object.assign( {
 		product_slug: productSlug,
@@ -485,7 +472,7 @@ function googleApps( properties ) {
 }
 
 function googleAppsExtraLicenses( properties ) {
-	var item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
+	const item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -494,7 +481,7 @@ function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
 	return flow.apply( null, googleAppsItems.map( function( item ) {
 		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-		return add( item )
+		return add( item );
 	} ) );
 }
 

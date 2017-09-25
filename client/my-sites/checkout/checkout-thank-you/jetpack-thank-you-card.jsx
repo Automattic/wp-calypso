@@ -599,7 +599,6 @@ class JetpackThankYouCard extends Component {
 	}
 
 	getProgress() {
-
 		const features = this.getFeaturesWithStatus() || [ '' ];
 		const completed = this.shouldRenderPlaceholders()
 			? 0

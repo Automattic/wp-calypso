@@ -42,7 +42,7 @@ const PluginSiteJetpack = React.createClass( {
 	},
 
 	renderInstallButton: function() {
-		var installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
+		const installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
 
 		return <PluginInstallButton
 			isEmbed={ true }

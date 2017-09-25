@@ -13,13 +13,14 @@ import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
+import AccountComponent from 'me/account/main';
+import username from 'lib/username';
+
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	account( context ) {
-		const AccountComponent = require( 'me/account/main' );
-		const username = require( 'lib/username' );
-		const basePath = context.path;
+	    const basePath = context.path;
 		let showNoticeInitially = false;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.

@@ -6,10 +6,16 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	productsList = require( 'lib/products-list' )(),
-	cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems;
+import wpcom from 'lib/wp';
+
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import cartValues from 'lib/cart-values';
+
+/**
+ * Internal dependencies
+ */
+const cartItems = cartValues.cartItems;
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {

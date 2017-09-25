@@ -76,16 +76,16 @@ class EditorConfirmationSidebar extends React.Component {
 	getBusyButtonLabel( publishButtonStatus ) {
 		switch ( publishButtonStatus ) {
 			case 'update':
-				return this.props.translate( 'Updating...' );
+				return this.props.translate( Updating… );
 			case 'schedule':
-				return this.props.translate( 'Scheduling...' );
+				return this.props.translate( Scheduling… );
 			case 'publish':
-				return this.props.translate( 'Publishing...' );
+				return this.props.translate( Publishing… );
 			case 'requestReview':
-				return this.props.translate( 'Submitting for Review...' );
+				return this.props.translate( Submitting for Review… );
 		}
 
-		return this.props.translate( 'Publishing...' );
+		return this.props.translate( Publishing… );
 	}
 
 	renderPrivacyControl() {

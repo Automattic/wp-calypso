@@ -2,19 +2,21 @@
  * External dependencies
  */
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:token-field' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:token-field' );
 
 /**
  * Internal dependencies
  */
-var SuggestionsList = require( './suggestions-list' ),
-	Token = require( './token' ),
-	TokenInput = require( './token-input' );
+import SuggestionsList from './suggestions-list';
 
-var TokenField = React.createClass( {
+import Token from './token';
+import TokenInput from './token-input';
+
+const TokenField = React.createClass( {
 	propTypes: {
 		suggestions: React.PropTypes.array,
 		maxSuggestions: React.PropTypes.number,
@@ -91,12 +93,12 @@ var TokenField = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'token-field', {
+		const classes = classNames( 'token-field', {
 			'is-active': this.state.isActive,
 			'is-disabled': this.props.disabled
 		} );
 
-		var tokenFieldProps = {
+		let tokenFieldProps = {
 			ref: 'main',
 			className: classes,
 			tabIndex: '-1'
@@ -135,7 +137,7 @@ var TokenField = React.createClass( {
 	},
 
 	_renderTokensAndInput: function() {
-		var components = map( this.props.value, this._renderToken );
+		const components = map( this.props.value, this._renderToken );
 
 		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
 
@@ -209,7 +211,7 @@ var TokenField = React.createClass( {
 	},
 
 	_onSuggestionHovered: function( suggestion ) {
-		var index = this._getMatchingSuggestions().indexOf( suggestion );
+		const index = this._getMatchingSuggestions().indexOf( suggestion );
 
 		if ( index >= 0 ) {
 			this.setState( {
@@ -249,7 +251,7 @@ var TokenField = React.createClass( {
 	},
 
 	_onKeyDown: function( event ) {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		switch ( event.keyCode ) {
 			case 8: // backspace (delete to left)
@@ -291,7 +293,7 @@ var TokenField = React.createClass( {
 	},
 
 	_onKeyPress: function( event ) {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		switch ( event.charCode ) {
 			case 44: // comma
@@ -307,7 +309,7 @@ var TokenField = React.createClass( {
 	},
 
 	_handleDeleteKey: function( deleteToken ) {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this.refs.input.hasFocus() && this._isInputEmpty() ) {
 			deleteToken();
@@ -318,7 +320,7 @@ var TokenField = React.createClass( {
 	},
 
 	_getMatchingSuggestions: function() {
-		var suggestions = this.props.suggestions,
+		let suggestions = this.props.suggestions,
 			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
 			containsMatch = [];
@@ -329,7 +331,7 @@ var TokenField = React.createClass( {
 			match = match.toLocaleLowerCase();
 
 			each( suggestions, function( suggestion ) {
-				var index = suggestion.toLocaleLowerCase().indexOf( match );
+				const index = suggestion.toLocaleLowerCase().indexOf( match );
 				if ( this.props.value.indexOf( suggestion ) === -1 ) {
 					if ( index === 0 ) {
 						startsWithMatch.push( suggestion );
@@ -352,7 +354,7 @@ var TokenField = React.createClass( {
 	},
 
 	_addCurrentToken: function() {
-		var preventDefault = false,
+		let preventDefault = false,
 			selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
@@ -367,7 +369,7 @@ var TokenField = React.createClass( {
 	},
 
 	_handleLeftArrowKey: function() {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputBeforePreviousToken();
@@ -378,7 +380,7 @@ var TokenField = React.createClass( {
 	},
 
 	_handleRightArrowKey: function() {
-		var preventDefault = false;
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputAfterNextToken();
@@ -410,7 +412,7 @@ var TokenField = React.createClass( {
 	},
 
 	_handleCommaKey: function() {
-		var preventDefault = true;
+		const preventDefault = true;
 
 		if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
@@ -428,7 +430,7 @@ var TokenField = React.createClass( {
 	},
 
 	_deleteTokenBeforeInput: function() {
-		var index = this._getIndexOfInput() - 1;
+		const index = this._getIndexOfInput() - 1;
 
 		if ( index > -1 ) {
 			this._deleteToken( this.props.value[ index ] );
@@ -436,7 +438,7 @@ var TokenField = React.createClass( {
 	},
 
 	_deleteTokenAfterInput: function() {
-		var index = this._getIndexOfInput();
+		const index = this._getIndexOfInput();
 
 		if ( index < this.props.value.length ) {
 			this._deleteToken( this.props.value[ index ] );

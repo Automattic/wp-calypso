@@ -43,7 +43,7 @@ const wrapOriginalFunc = ( promise, original ) => {
 	return function( ...args ) {
 		return promise.then( ( context ) => original.apply( context, args ) );
 	};
-}
+};
 
 // List of localforage methods that should wait for localForagePromise to resolve
 const wrapFuncs = [
@@ -68,6 +68,6 @@ localForageProxy.bypass = () => {
 	} else {
 		config.driver = [ localforageBypass._driver ];
 	}
-}
+};
 
 export default Object.assign( {}, localforage, localForageProxy );

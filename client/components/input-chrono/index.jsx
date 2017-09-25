@@ -64,7 +64,7 @@ export default React.createClass( {
 	},
 
 	setDateText( event ) {
-		var date = chrono.parseDate( event.target.value );
+		const date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
 			this.setState( { value: this.moment( date ).calendar() } );

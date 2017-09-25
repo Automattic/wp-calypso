@@ -115,7 +115,7 @@ const GoogleAppsUsers = React.createClass( {
 			<GoogleAppsUserItem
 				key={ `google-apps-user-${ user.domain }-${ index }` }
 				user={ user }
-				onClick={ this.generateClickHandler( user ) }/>
+				onClick={ this.generateClickHandler( user ) } />
 		);
 	},
 

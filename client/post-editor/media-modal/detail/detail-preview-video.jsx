@@ -7,8 +7,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-const MediaUtils = require( 'lib/media/utils' ),
-	EditorMediaModalDetailItemVideoPress = require( './detail-preview-videopress' );
+import MediaUtils from 'lib/media/utils';
+
+import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewVideo',

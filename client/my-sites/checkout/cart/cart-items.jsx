@@ -39,7 +39,7 @@ export class CartItems extends React.Component {
 	}
 
 	collapseItems( items ) {
-		var collapsedItemsCount = items.length - COLLAPSED_ITEMS_COUNT,
+		let collapsedItemsCount = items.length - COLLAPSED_ITEMS_COUNT,
 			collapsedItems = items.slice( 0, COLLAPSED_ITEMS_COUNT );
 
 		collapsedItems.push(

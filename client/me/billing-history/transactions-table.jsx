@@ -2,23 +2,24 @@
  * External dependencies
  */
 import { defer, isEmpty, pick } from 'lodash';
-var React = require( 'react' ),
-	titleCase = require( 'to-title-case' ),
-	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;
+import React from 'react';
+import titleCase from 'to-title-case';
+import { capitalPDangit } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
-var TransactionsHeader = require( './transactions-header' ),
-	tableRows = require( './table-rows' );
+import TransactionsHeader from './transactions-header';
+
+import tableRows from './table-rows';
 
 import SearchCard from 'components/search-card';
 
-var TransactionsTable = React.createClass( {
+const TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',
 
 	getInitialState: function() {
-		var initialTransactions;
+		let initialTransactions;
 
 		if ( this.props.transactions ) {
 			initialTransactions = tableRows.filter( this.props.transactions, this.props.initialFilter );
@@ -46,7 +47,7 @@ var TransactionsTable = React.createClass( {
 	},
 
 	filterTransactions: function( filter ) {
-		var newFilter, newTransactions;
+		let newFilter, newTransactions;
 
 		if ( ! this.props.transactions ) {
 			return;
@@ -75,7 +76,7 @@ var TransactionsTable = React.createClass( {
 	},
 
 	render: function() {
-		var header;
+		let header;
 
 		if ( false !== this.props.header ) {
 			header = <TransactionsHeader
@@ -99,7 +100,7 @@ var TransactionsTable = React.createClass( {
 	},
 
 	serviceName: function( transaction ) {
-		var item,
+		let item,
 			name;
 
 		if ( ! transaction.items ) {
@@ -116,7 +117,7 @@ var TransactionsTable = React.createClass( {
 	},
 
 	serviceNameDescription: function( transaction ) {
-		var description;
+		let description;
 		if ( transaction.domain ) {
 			description = (
 				<div>
@@ -167,7 +168,7 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return this.state.transactions.map( function( transaction ) {
-			var date = tableRows.formatDate( transaction.date );
+			const date = tableRows.formatDate( transaction.date );
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">

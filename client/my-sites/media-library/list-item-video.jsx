@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	photon = require( 'photon' );
+import React from 'react';
+
+import photon from 'photon';
 
 /**
  * Internal dependencies
  */
-var ListItemFileDetails = require( './list-item-file-details' ),
-	Gridicon = require( 'gridicons' );
+import ListItemFileDetails from './list-item-file-details';
+
+import Gridicon from 'gridicons';
 
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
@@ -48,7 +50,7 @@ module.exports = React.createClass( {
 			return (
 				<div className="media-library__list-item-video" style={ { backgroundImage: 'url(' + url + ')' } }>
 					<span className="media-library__list-item-icon media-library__list-item-centered">
-						<Gridicon icon="video-camera"/>
+						<Gridicon icon="video-camera" />
 					</span>
 				</div>
 			);

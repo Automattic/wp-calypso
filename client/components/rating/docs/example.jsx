@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Rating = require( 'components/rating' );
+import Rating from 'components/rating';
 
 module.exports = React.createClass( {
 	displayName: 'Rating',

@@ -81,7 +81,7 @@ const EmailForwardingAddNew = React.createClass( {
 					notices.error( error.message || this.translate( 'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 						{
 							components: {
-								contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
+								contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
 							}
 						} )
 					);
@@ -172,7 +172,7 @@ const EmailForwardingAddNew = React.createClass( {
 						type="text"
 						suffix={ '@' + this.props.selectedDomainName }
 						value={ mailbox } />
-					{ ! isValidMailbox && <FormInputValidation text={ this.translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) } isError={ true }/> }
+					{ ! isValidMailbox && <FormInputValidation text={ this.translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) } isError={ true } /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -186,7 +186,7 @@ const EmailForwardingAddNew = React.createClass( {
 						placeholder={ this.translate( 'Your Existing Email Address' ) }
 						type="text"
 						value={ destination } />
-					{ ! isValidDestination && <FormInputValidation text={ this.translate( 'Invalid destination address' ) } isError={ true }/> }
+					{ ! isValidDestination && <FormInputValidation text={ this.translate( 'Invalid destination address' ) } isError={ true } /> }
 				</FormFieldset>
 			</div>
 		);

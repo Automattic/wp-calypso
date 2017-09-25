@@ -1,10 +1,10 @@
-const site = require( './site' ),
-	usersData = require( './users' ),
-	moreUsersData = require( './more-users' ),
-	deletedUserData = require( './deleted-user' ),
-	updatedUserData = require( './updated-single-user' ),
-	singleUserData = require( './single-user' ),
-	pollingUsersData = require( './polling-users' );
+import site from './site';
+import usersData from './users';
+import moreUsersData from './more-users';
+import deletedUserData from './deleted-user';
+import updatedUserData from './updated-single-user';
+import singleUserData from './single-user';
+import pollingUsersData from './polling-users';
 
 module.exports = {
 	fetched: {

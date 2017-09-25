@@ -39,7 +39,7 @@ const PostTrends = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var node = this.refs.wrapper,
+		let node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
@@ -65,7 +65,7 @@ const PostTrends = React.createClass( {
 	},
 
 	resize: function() {
-		var scrollProps = {},
+		let scrollProps = {},
 			node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -83,7 +83,7 @@ const PostTrends = React.createClass( {
 	},
 
 	scroll: function( direction ) {
-		var node = this.refs.wrapper,
+		let node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
 			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
@@ -117,7 +117,7 @@ const PostTrends = React.createClass( {
 	},
 
 	getMonthComponents: function() {
-		var i,
+		let i,
 			months = [],
 			startDate;
 

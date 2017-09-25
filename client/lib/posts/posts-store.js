@@ -2,19 +2,21 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:posts' );
 
 /**
  * Internal dependencies
  */
-var utils = require( './utils' ),
-	Dispatcher = require( 'dispatcher' );
+import utils from './utils';
 
-var _posts = {},
+import Dispatcher from 'dispatcher';
+
+let _posts = {},
 	PostsStore;
 
 function setPost( post ) {
-	var cachedPost = PostsStore.get( post.global_ID );
+	const cachedPost = PostsStore.get( post.global_ID );
 
 	if ( cachedPost && isEqual( post, cachedPost ) ) {
 		return;
@@ -54,7 +56,7 @@ PostsStore = {
 };
 
 PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'RECEIVE_POSTS_PAGE':

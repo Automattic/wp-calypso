@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { forOwn } from 'lodash';
-var store = require( 'store' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import store from 'store';
+const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( './constants' ),
-	userUtils = require( 'lib/user/utils' );
+import Dispatcher from 'dispatcher';
+
+import PreferencesConstants from './constants';
+import userUtils from 'lib/user/utils';
 /**
  * Module variables
  */
-var PreferencesActions = {},
+let PreferencesActions = {},
 	_pendingUpdates = 0;
 
 function getLocalStorage() {
@@ -22,7 +23,7 @@ function getLocalStorage() {
 }
 
 PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
-	var storage = getLocalStorage() || {};
+	const storage = getLocalStorage() || {};
 
 	forOwn( preferences, function( value, key ) {
 		if ( null === value ) {
@@ -36,7 +37,7 @@ PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
 };
 
 PreferencesActions.fetch = function() {
-	var localStorage = getLocalStorage();
+	const localStorage = getLocalStorage();
 
 	if ( ! userUtils.isLoggedIn() ) {
 		return;
@@ -67,7 +68,7 @@ PreferencesActions.fetch = function() {
 };
 
 PreferencesActions.set = function( key, value ) {
-	var preferences = {},
+	let preferences = {},
 		settings = {};
 
 	preferences[ key ] = value;

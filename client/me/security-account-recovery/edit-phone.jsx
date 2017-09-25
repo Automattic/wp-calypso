@@ -15,7 +15,7 @@ import Buttons from './buttons';
 /**
  * Internal dependencies
  */
-var countriesList = require( 'lib/countries-list' ).forSms();
+const countriesList = require( 'lib/countries-list' ).forSms();
 
 module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
@@ -39,7 +39,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var validation = null,
+		let validation = null,
 			havePhone = ! isEmpty( this.props.storedPhone );
 		if ( this.state.validation ) {
 			validation = (
@@ -106,7 +106,7 @@ module.exports = React.createClass( {
 	},
 
 	onSave: function() {
-		var phoneNumber = this.state.phoneNumber;
+		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
 			this.setState( { validation: this.translate( 'Please enter a valid phone number.' ) } );

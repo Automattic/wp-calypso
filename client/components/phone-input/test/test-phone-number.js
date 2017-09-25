@@ -232,7 +232,6 @@ describe( 'metadata:', () => {
 		} );
 	} );
 
-
 	describe( 'toIcannFormat', () => {
 		it( 'should be able to handle NANPA', () => {
 			equal( toIcannFormat( '14256559999', countries.US ), '+1.4256559999' );

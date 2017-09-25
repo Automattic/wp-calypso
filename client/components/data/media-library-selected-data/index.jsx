@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' );
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+
+import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {
 	return {

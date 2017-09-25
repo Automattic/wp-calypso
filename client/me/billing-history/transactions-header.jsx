@@ -3,15 +3,16 @@
  */
 import { last, map, range, uniq } from 'lodash';
 import Gridicon from 'gridicons';
-var React = require( 'react' ),
-	closest = require( 'component-closest' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import closest from 'component-closest';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var tableRows = require( './table-rows' ),
-	eventRecorder = require( 'me/event-recorder' );
+import tableRows from './table-rows';
+
+import eventRecorder from 'me/event-recorder';
 
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',
@@ -63,7 +64,7 @@ module.exports = React.createClass( {
 	},
 
 	renderDatePopover: function() {
-		var isVisible = ( 'date' === this.state.activePopover ),
+		let isVisible = ( 'date' === this.state.activePopover ),
 			classes = classNames( {
 				'filter-popover': true,
 				'is-popped': isVisible
@@ -72,7 +73,7 @@ module.exports = React.createClass( {
 				return this.moment().subtract( n, 'months' );
 			}, this ),
 			monthPickers = previousMonths.map( function( month, index ) {
-				var analyticsEvent = 'Current Month';
+				let analyticsEvent = 'Current Month';
 
 				if ( 1 === index ) {
 					analyticsEvent = '1 Month Before';
@@ -122,7 +123,7 @@ module.exports = React.createClass( {
 	},
 
 	togglePopover: function( name ) {
-		var activePopover;
+		let activePopover;
 		if ( this.state.activePopover === name ) {
 			activePopover = '';
 		} else {
@@ -133,10 +134,10 @@ module.exports = React.createClass( {
 	},
 
 	renderDatePicker: function( titleKey, titleTranslated, date, analyticsEvent ) {
-		var filter = { date: date },
+		let filter = { date: date },
 			isSelected, classes;
 
-		var currentDate = this.props.filter.date || {};
+		const currentDate = this.props.filter.date || {};
 
 		if ( date.newest ) {
 			isSelected = date.newest === currentDate.newest;
@@ -177,7 +178,7 @@ module.exports = React.createClass( {
 	},
 
 	renderAppsPopover: function() {
-		var isVisible = ( 'apps' === this.state.activePopover ),
+		let isVisible = ( 'apps' === this.state.activePopover ),
 			classes = classNames( {
 				'filter-popover': true,
 				'is-popped': isVisible
@@ -217,14 +218,14 @@ module.exports = React.createClass( {
 	},
 
 	renderAppPicker: function( title, app, analyticsEvent ) {
-		var filter = { app: app },
+		let filter = { app: app },
 			classes = classNames( {
 				'app-picker': true,
 				selected: app === this.props.filter.app
 			} );
 
 		return (
-			<tr key={app} className={classes} onClick={ this.recordClickEvent( 'App Popover Item: ' + analyticsEvent, this.handlePickerSelection.bind( this, filter ) ) }>
+			<tr key={ app } className={ classes } onClick={ this.recordClickEvent( 'App Popover Item: ' + analyticsEvent, this.handlePickerSelection.bind( this, filter ) ) }>
 				<td className="descriptor">{ title }</td>
 				<td className="transactions-header__count">{ this.getFilterCount( filter ) }</td>
 			</tr>

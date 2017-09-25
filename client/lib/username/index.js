@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var i18n = require( 'i18n-calypso' );
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ),
-	user = require( 'lib/user' )();
+import Emitter from 'lib/mixins/emitter';
+
+import wpcom from 'lib/wp';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 /**
  * Initialize Username with defaults
@@ -40,7 +42,7 @@ Username.prototype.validate = function( username ) {
 			};
 
 			this.emit( 'change' );
-		}  else {
+		} else {
 			wpcom.undocumented().me().validateUsername( username, function( error, data ) {
 				if ( error ) {
 					this.validation = error;

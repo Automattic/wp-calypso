@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( API_DOMAIN )
 					.persist()
-					.post( `/rest/v1.1/devices/new` )
+					.post( '/rest/v1.1/devices/new' )
 					.reply( 200, { ID: 123, settings: {} } );
 			} );
 

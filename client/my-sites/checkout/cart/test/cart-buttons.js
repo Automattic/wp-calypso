@@ -36,7 +36,7 @@ describe( 'cart-buttons', function() {
 		beforeEach( function() {
 			this.cartButtonsComponent = mount(
 				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
+					selectedSite={ { slug: 'example.com' } }
 					showKeepSearching={ true }
 					onKeepSearchingClick={ onKeepSearchingClickStub }
 					translate={ identity }
@@ -58,7 +58,7 @@ describe( 'cart-buttons', function() {
 		beforeEach( function() {
 			this.cartButtonsComponent = mount(
 				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
+					selectedSite={ { slug: 'example.com' } }
 					translate={ identity }
 					/>
 			);

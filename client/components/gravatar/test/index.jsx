@@ -105,7 +105,7 @@ describe( 'Gravatar', () => {
 			expect( img.prop( 'height' ) ).to.equal( 32 );
 		} );
 
-		describe( 'when Gravatar fails to load',  function() {
+		describe( 'when Gravatar fails to load', function() {
 			it( 'should render a span element', function() {
 				const gravatar = shallow( <Gravatar user={ genericUser } /> );
 

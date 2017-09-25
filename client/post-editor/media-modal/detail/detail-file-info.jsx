@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import createFragment from 'react-addons-create-fragment';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' );
+import MediaUtils from 'lib/media/utils';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',
@@ -79,7 +80,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		let classes = classNames( 'editor-media-modal-detail__file-info', {
+		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item
 		} );
 

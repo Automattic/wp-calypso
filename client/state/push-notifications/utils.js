@@ -33,7 +33,7 @@ export function isPushNotificationsDenied() {
 }
 
 export function isOpera() {
-	return getOperaVersion() !== -1
+	return getOperaVersion() !== -1;
 }
 
 export function getOperaVersion() {

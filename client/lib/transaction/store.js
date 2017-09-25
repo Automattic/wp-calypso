@@ -2,22 +2,23 @@
  * External dependencies
  */
 import { assign, cloneDeep, merge } from 'lodash';
-const update = require( 'react-addons-update' );
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
  */
-var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	CartStore = require( 'lib/cart/store' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	Dispatcher = require( 'dispatcher' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
-	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails;
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 
-var _transaction = createInitialTransaction();
+import { cartItems } from 'lib/cart-values';
+import CartStore from 'lib/cart/store';
+import Emitter from 'lib/mixins/emitter';
+import Dispatcher from 'dispatcher';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+import { hasDomainDetails } from 'lib/store-transactions';
 
-var TransactionStore = {
+let _transaction = createInitialTransaction();
+
+const TransactionStore = {
 	get: function() {
 		return _transaction;
 	}
@@ -63,7 +64,7 @@ function setNewCreditCardDetails( options ) {
 		return;
 	}
 
-	var newTransaction = update( _transaction, {
+	const newTransaction = update( _transaction, {
 		payment: { newCardDetails: { $merge: options.rawDetails } },
 		newCardFormFields: { $merge: options.maskedDetails }
 	} );
@@ -72,7 +73,7 @@ function setNewCreditCardDetails( options ) {
 }
 
 TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:

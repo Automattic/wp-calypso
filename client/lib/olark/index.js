@@ -34,7 +34,7 @@ const wpcomUndocumented = wpcom.undocumented();
  * This is necessary here to capture events that occur in the Olark
  * module before the React tree gets drawn.
  */
-require( 'lib/olark-store' );
+import 'lib/olark-store';
 
 const olark = {
 
@@ -85,7 +85,7 @@ const olark = {
 	},
 
 	configureOlark: function( wpcomOlarkConfig = {}, dispatch ) {
-		var userData = user.get(),
+		let userData = user.get(),
 			updateDetailsEvents = [
 				'api.chat.onReady',
 				'api.chat.onOperatorsAway',
@@ -184,7 +184,7 @@ const olark = {
 	},
 
 	updateOlarkFormatting( username, avatarURL ) {
-		var allNameNodes = document.querySelectorAll( '.hbl_pal_local_fg, .hbl_pal_remote_fg:not(.habla_conversation_notification_nickname)' ),
+		let allNameNodes = document.querySelectorAll( '.hbl_pal_local_fg, .hbl_pal_remote_fg:not(.habla_conversation_notification_nickname)' ),
 			olarkAvatars = document.querySelectorAll( '.olrk_avatar' ),
 			olarkAvatarMap = {},
 			defaultAvatarURL = '//gravatar.com/avatar?s=32&d=identicon&r=PG',
@@ -249,7 +249,7 @@ const olark = {
 			}
 
 			previousPersonClassName = personClassName;
-		};
+		}
 	},
 };
 

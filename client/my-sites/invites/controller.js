@@ -38,7 +38,7 @@ function isLocale( pathFragment ) {
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
 	if ( user.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 		return page.redirect( urlWithoutLocale );
 	}
 

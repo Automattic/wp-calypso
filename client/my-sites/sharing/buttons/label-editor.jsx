@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var decodeEntities = require( 'lib/formatting' ).decodeEntities;
+import { decodeEntities } from 'lib/formatting';
 
-var SharingButtonsLabelEditor = module.exports = React.createClass( {
+const SharingButtonsLabelEditor = module.exports = React.createClass( {
 	displayName: 'SharingButtonsLabelEditor',
 
 	propTypes: {
@@ -62,7 +63,7 @@ var SharingButtonsLabelEditor = module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'sharing-buttons-preview__panel', 'is-top', 'sharing-buttons-label-editor', {
+		const classes = classNames( 'sharing-buttons-preview__panel', 'is-top', 'sharing-buttons-label-editor', {
 			'is-active': this.props.active
 		} );
 

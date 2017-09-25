@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
 export default React.createClass( {
 	propTypes: {
@@ -31,21 +31,21 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			showYearControls: false
-		}
+		};
 	},
 
 	setToCurrentMonth() {
-		var month = this.moment().month();
+		const month = this.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
 	},
 
 	setToCurrentYear() {
-		var year = this.moment().year();
+		const year = this.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
 	},
 
 	setYear( modifier ) {
-		var date = this.moment( this.props.date );
+		const date = this.moment( this.props.date );
 		date.year( date.year() + modifier );
 
 		if ( 0 > date.year() || date.year() > 9999 ) {

@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal Dependencies
  */
 import { action as InvitesActionTypes } from 'lib/invites/constants';
-let User = require( './user' ),
-	_user = false;
+import User from './user';
+let _user = false;
 
 module.exports = function() {
 	if ( ! _user ) {
@@ -18,7 +18,7 @@ module.exports = function() {
 };
 
 User.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'RECEIVE_DELETED_SITE':
 			decrementSiteCount();
@@ -33,7 +33,7 @@ User.dispatchToken = Dispatcher.register( function( payload ) {
 } );
 
 function decrementSiteCount() {
-	var data = _user.get(),
+	let data = _user.get(),
 		attributes = {
 			visible_site_count: data.visible_site_count - 1,
 			site_count: data.site_count - 1

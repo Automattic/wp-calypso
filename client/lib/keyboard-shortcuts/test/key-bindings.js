@@ -23,7 +23,7 @@ describe( 'KeyBindings', function() {
 	} );
 
 	it( 'should return an object with strings for keys and arrays for values', function() {
-		var bindings = KeyBindings.get();
+		const bindings = KeyBindings.get();
 
 		Object.keys( bindings ).forEach( function( category ) {
 			expect( category ).to.be.a( 'string' );
@@ -32,7 +32,7 @@ describe( 'KeyBindings', function() {
 	} );
 
 	it( 'should emit an event when the language changes', function() {
-		var languageChanged = false,
+		let languageChanged = false,
 			handleLanguageChange = function() {
 				languageChanged = true;
 			};

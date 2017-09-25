@@ -8,13 +8,14 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 
+import plugin from '../plugin';
+
 describe( 'wpcom-sourcecode', () => {
 	let wrapPre, unwrapPre;
 
 	useMockery( mockery => {
-		mockery.registerMock( 'tinymce/tinymce', {} );
+	    mockery.registerMock( 'tinymce/tinymce', {} );
 
-		const plugin = require( '../plugin' );
 		wrapPre = plugin.wrapPre;
 		unwrapPre = plugin.unwrapPre;
 	} );

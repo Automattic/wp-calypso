@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:ProductsList' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:ProductsList' );
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import wpcom from 'lib/wp';
+
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.
@@ -35,7 +38,7 @@ Emitter( ProductsList.prototype );
  * @api public
  */
 ProductsList.prototype.get = function() {
-	var data;
+	let data;
 
 	if ( ! this.data ) {
 		debug( 'First time loading ProductsList, check store' );
@@ -65,7 +68,7 @@ ProductsList.prototype.fetch = function() {
 	this.isFetching = true;
 
 	wpcom.undocumented().getProducts( function( error, data ) {
-		var productsList;
+		let productsList;
 
 		if ( error ) {
 			debug( 'error fetching ProductsList from api', error );
@@ -108,7 +111,7 @@ ProductsList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;
 };
 
-var productsList = new ProductsList();
+const productsList = new ProductsList();
 
 module.exports = function() {
 	if ( ! productsList.hasLoadedFromServer() && ! productsList.isFetching ) {

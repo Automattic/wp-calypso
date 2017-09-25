@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 module.exports = React.createClass( {
 	displayName: 'Gauge',
@@ -29,7 +30,7 @@ module.exports = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		var canvas = this.refs.canvas,
+		let canvas = this.refs.canvas,
 			ctx = canvas.getContext( '2d' );
 
 		ctx.clearRect( 0, 0, this.props.width, this.props.height );
@@ -41,7 +42,7 @@ module.exports = React.createClass( {
 	},
 
 	drawArcs: function() {
-		var canvas = this.refs.canvas,
+		let canvas = this.refs.canvas,
 			x = ( this.props.width / 2 ),
 			y = ( this.props.height / 2 ),
 			ctx = canvas.getContext( '2d' ),
@@ -62,7 +63,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var wrapperStyles = {
+		let wrapperStyles = {
 				width: this.props.width,
 				height: this.props.height
 			},

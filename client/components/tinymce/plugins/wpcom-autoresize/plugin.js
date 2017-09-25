@@ -10,10 +10,10 @@
 /**
  * External dependencies
  */
-var tinymce = require( 'tinymce/tinymce' );
+import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
-	var settings = editor.settings, oldSize = 0;
+	let settings = editor.settings, oldSize = 0;
 
 	function isFullscreen() {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
@@ -25,7 +25,7 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function isEndOfEditor() {
-		var range, start, body, element, child;
+		let range, start, body, element, child;
 		range = editor.selection.getRng();
 
 		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
@@ -46,11 +46,11 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function resize( e ) {
-		var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
+		let deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
 			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
 
 		doc = editor.getDoc();
-		if ( !doc ) {
+		if ( ! doc ) {
 			return;
 		}
 
@@ -58,7 +58,7 @@ function wcpomAutoResize( editor ) {
 		docElm = doc.documentElement;
 		resizeHeight = settings.autoresize_min_height;
 
-		if ( !body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
+		if ( ! body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
 			if ( body && docElm ) {
 				body.style.overflowY = 'auto';
 				docElm.style.overflowY = 'auto'; // Old IE
@@ -155,7 +155,7 @@ function wcpomAutoResize( editor ) {
 
 	// Add padding at the bottom for better UX
 	editor.on( 'init', function() {
-		var overflowPadding, bottomMargin;
+		let overflowPadding, bottomMargin;
 
 		overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
 		bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );

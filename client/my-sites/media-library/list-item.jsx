@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { assign, isEqual, noop, omit } from 'lodash';
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Spinner = require( 'components/spinner' ),
-	Gridicon = require( 'gridicons' ),
-	ListItemImage = require( './list-item-image' ),
-	ListItemVideo = require( './list-item-video' ),
-	ListItemAudio = require( './list-item-audio' ),
-	ListItemDocument = require( './list-item-document' ),
-	MediaUtils = require( 'lib/media/utils' );
+import Spinner from 'components/spinner';
+
+import Gridicon from 'gridicons';
+import ListItemImage from './list-item-image';
+import ListItemVideo from './list-item-video';
+import ListItemAudio from './list-item-audio';
+import ListItemDocument from './list-item-document';
+import MediaUtils from 'lib/media/utils';
 
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
@@ -58,7 +59,7 @@ export default React.createClass( {
 	},
 
 	renderItem: function() {
-		var component;
+		let component;
 
 		if ( ! this.props.media ) {
 			return;
@@ -83,7 +84,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var classes, props, style, title;
+		let classes, props, style, title;
 
 		classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,

@@ -28,11 +28,11 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 /**
  * Module variables
  */
-var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+let REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
-var LinkDialog = React.createClass( {
+const LinkDialog = React.createClass( {
 	propTypes: {
 		visible: PropTypes.bool,
 		editor: PropTypes.object,
@@ -60,7 +60,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	getLink: function() {
-		var editor = this.props.editor;
+		const editor = this.props.editor;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
 	},
@@ -80,7 +80,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	updateEditor: function() {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			attrs, link, linkText;
 
 		editor.focus();
@@ -122,7 +122,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	hasSelectedText: function( linkNode ) {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			html = editor.selection.getContent(),
 			nodes, i;
 
@@ -149,7 +149,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	getInferredUrl: function() {
-		var selectedText = this.props.editor.selection.getContent(),
+		let selectedText = this.props.editor.selection.getContent(),
 			selectedNode, parsedImage, knownImage;
 
 		if ( REGEXP_EMAIL.test( selectedText ) ) {
@@ -173,7 +173,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	getState: function() {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			selectedNode = editor.selection.getNode(),
 			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
 			onlyText = this.hasSelectedText( linkNode ),
@@ -238,7 +238,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	getButtons: function() {
-		var buttonText, buttons;
+		let buttonText, buttons;
 
 		if ( this.state.isNew ) {
 			buttonText = this.translate( 'Add Link' );
@@ -273,7 +273,7 @@ var LinkDialog = React.createClass( {
 	},
 
 	setExistingContent( post ) {
-		let state = { url: post.URL };
+		const state = { url: post.URL };
 		const shouldSetLinkText = (
 			! this.state.isUserDefinedLinkText &&
 			! this.props.editor.selection.getContent() &&

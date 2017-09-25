@@ -2,19 +2,21 @@
  * External dependencies
  */
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
-var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
-	url = require( 'url' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
+import url from 'url';
 
 /**
  * Internal dependencies.
  */
-var Site = require( './site' ),
-	Me = require( './me' ),
-	MailingList = require( './mailing-list' ),
-	AccountRecoveryReset = require( './account-recovery-reset' ),
-	config = require( 'config' ),
-	i18n = require( 'lib/i18n-utils' ),
-	readerContentWidth = require( 'reader/lib/content-width' );
+import Site from './site';
+
+import Me from './me';
+import MailingList from './mailing-list';
+import AccountRecoveryReset from './account-recovery-reset';
+import config from 'config';
+import i18n from 'lib/i18n-utils';
+import readerContentWidth from 'reader/lib/content-width';
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -48,7 +50,7 @@ Undocumented.prototype.timezones = function( params, fn ) {
 		params = {};
 	}
 
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
+	const query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
 	return this.wpcom.req.get( '/timezones', query, fn );
 };
 
@@ -519,7 +521,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 		path: '/me/domain-contact-information',
 		method: 'get'
 	}, function( error, data ) {
-		var newData;
+		let newData;
 
 		if ( error ) {
 			return fn( error );
@@ -568,7 +570,7 @@ Undocumented.prototype.getSmsSupportedCountries = function( fn ) {
 
 function mapKeysRecursively( object, fn ) {
 	return Object.keys( object ).reduce( function( mapped, key ) {
-		var value = object[ key ];
+		let value = object[ key ];
 		if ( isPlainObject( value ) ) {
 			value = mapKeysRecursively( value, fn );
 		}
@@ -587,7 +589,7 @@ function mapKeysRecursively( object, fn ) {
  * @api public
  */
 Undocumented.prototype.validateDomainContactInformation = function( contactInformation, domainNames, fn ) {
-	var data = {
+	let data = {
 		contactInformation: contactInformation,
 		domainNames: domainNames
 	};
@@ -598,7 +600,7 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
 	return this.wpcom.req.post(
 		{ path: '/me/domain-contact-information/validate' },
 		data, function( error, successData ) {
-			var newData;
+			let newData;
 
 			if ( error ) {
 				return fn( error );
@@ -891,7 +893,7 @@ Undocumented.prototype.deleteSite = function( siteId, fn ) {
  * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.createConnection = function( keyringConnectionId, siteId, externalUserId, options, fn ) {
-	var body, path;
+	let body, path;
 
 	// Method overloading: Optional `options`
 	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
@@ -948,7 +950,7 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
  * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.updateConnection = function( siteId, connectionId, data, fn ) {
-	var path;
+	let path;
 
 	if ( siteId ) {
 		debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
@@ -1080,7 +1082,7 @@ Undocumented.prototype.setPrimaryDomain = function( siteId, domain, fn ) {
 Undocumented.prototype.fetchPreviewMarkup = function( siteId, path, postData ) {
 	debug( '/sites/:site_id/previews/mine' );
 	return new Promise( ( resolve, reject ) => {
-		const endpoint = `/sites/${siteId}/previews/mine`;
+		const endpoint = `/sites/${ siteId }/previews/mine`;
 		const query = { path };
 		const isPreviewCustomized = ( postData && Object.keys( postData ).length > 0 );
 		const request = isPreviewCustomized ? this.wpcom.req.post( endpoint, query, { customized: postData } ) : this.wpcom.req.get( endpoint, query );
@@ -1145,7 +1147,7 @@ Undocumented.prototype.readA8cConversations = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeed = function( query, fn ) {
-	var params = omit( query, 'ID' );
+	const params = omit( query, 'ID' );
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
 };
@@ -1156,7 +1158,7 @@ Undocumented.prototype.discoverFeed = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
-	var params = omit( query, 'ID' );
+	const params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
 	params.apiVersion = '1.3';
 	addReaderContentWidth( params );
@@ -1165,7 +1167,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeedPost = function( query, fn ) {
-	var params = omit( query, [ 'feedId', 'postId' ] );
+	const params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.3';
 	addReaderContentWidth( params );
@@ -1181,7 +1183,7 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 };
 
 Undocumented.prototype.readTagPosts = function( query, fn ) {
-	var params = omit( query, 'tag' );
+	const params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
 	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
 		params.apiVersion = '1.3';
@@ -1218,7 +1220,7 @@ Undocumented.prototype.unfollowReaderTag = function( tag, fn ) {
 };
 
 Undocumented.prototype.readLiked = function( query, fn ) {
-	var params = clone( query );
+	const params = clone( query );
 	debug( '/read/liked' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1226,14 +1228,14 @@ Undocumented.prototype.readLiked = function( query, fn ) {
 };
 
 Undocumented.prototype.readList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list' );
 	params.apiVersion = '1.2';
 	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
 };
 
 Undocumented.prototype.readListPosts = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list/:list/posts' );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
@@ -1251,7 +1253,7 @@ Undocumented.prototype.readListsNew = function( title, fn ) {
 };
 
 Undocumented.prototype.readListsUpdate = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:list/update' );
 	return this.wpcom.req.post(
 		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/update',
@@ -1262,7 +1264,7 @@ Undocumented.prototype.readListsUpdate = function( query, fn ) {
 };
 
 Undocumented.prototype.followList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/follow' );
 	return this.wpcom.req.post(
 		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/follow',
@@ -1273,7 +1275,7 @@ Undocumented.prototype.followList = function( query, fn ) {
 };
 
 Undocumented.prototype.unfollowList = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/unfollow' );
 	return this.wpcom.req.post(
 		'/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/unfollow',
@@ -1284,14 +1286,14 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 };
 
 Undocumented.prototype.readListTags = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:list/tags' );
 	params.apiVersion = '1.2';
 	return this.wpcom.req.get( '/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/tags', params, fn );
 };
 
 Undocumented.prototype.readListItems = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
+	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:list/items' );
 	params.apiVersion = '1.2';
 	return this.wpcom.req.get( '/read/lists/' + encodeURIComponent( query.owner ) + '/' + encodeURIComponent( query.slug ) + '/items', params, fn );
@@ -1307,26 +1309,26 @@ Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
 };
 
 Undocumented.prototype.readSite = function( query, fn ) {
-	var params = omit( query, 'site' );
+	const params = omit( query, 'site' );
 	debug( '/read/sites/:site' );
 	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
-	var params = omit( query, [ 'before', 'after' ] );
+	const params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
 	return this.wpcom.req.get( '/read/sites/' + siteId + '/featured', params, fn );
 };
 
 Undocumented.prototype.readSitePosts = function( query, fn ) {
-	var params = omit( query, 'site' );
+	const params = omit( query, 'site' );
 	debug( '/read/sites/:site/posts' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
 };
 
 Undocumented.prototype.readSitePost = function( query, fn ) {
-	var params = omit( query, [ 'site', 'postId' ] );
+	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
@@ -1354,31 +1356,31 @@ Undocumented.prototype.graduateNewReader = function( fn ) {
 };
 
 Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
+	const params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/post_email_subscriptions/new' );
 	return this.wpcom.req.post( '/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/new', { apiVersion: '1.2' }, params, fn );
 };
 
 Undocumented.prototype.readUpdatePostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
+	const params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/post_email_subscriptions/update' );
 	return this.wpcom.req.post( '/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/update', { apiVersion: '1.2' }, params, fn );
 };
 
 Undocumented.prototype.readDeletePostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
+	const params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/post_email_subscriptions/delete' );
 	return this.wpcom.req.post( '/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/delete', { apiVersion: '1.2' }, params, fn );
 };
 
 Undocumented.prototype.readNewCommentEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
+	const params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/comment_email_subscriptions/new' );
 	return this.wpcom.req.post( '/read/site/' + encodeURIComponent( query.site ) + '/comment_email_subscriptions/new', { apiVersion: '1.2' }, params, fn );
 };
 
 Undocumented.prototype.readDeleteCommentEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
+	const params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/comment_email_subscriptions/delete' );
 	return this.wpcom.req.post( '/read/site/' + encodeURIComponent( query.site ) + '/comment_email_subscriptions/delete', { apiVersion: '1.2' }, params, fn );
 };
@@ -1392,7 +1394,7 @@ Undocumented.prototype.readDeleteCommentEmailSubscription = function( query, fn 
  * @api public
  */
 Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
-	var data = {
+	const data = {
 		name: name,
 		variation: variation
 	};
@@ -1410,7 +1412,7 @@ Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1454,7 +1456,7 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhoneNew = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/phone/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1474,7 +1476,7 @@ Undocumented.prototype.usersPhoneNew = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhone = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/phone' );
 
 	// This API call is restricted to these OAuth keys
@@ -1495,7 +1497,7 @@ Undocumented.prototype.usersPhone = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/phone/verification' );
 
 	// This API call is restricted to these OAuth keys
@@ -1516,7 +1518,7 @@ Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailNew = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/email/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1536,7 +1538,7 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmail = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/email' );
 
 	// This API call is restricted to these OAuth keys
@@ -1557,7 +1559,7 @@ Undocumented.prototype.usersEmail = function( query, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailVerification = function( query, fn ) {
-	var args;
+	let args;
 	debug( '/users/email/verification' );
 
 	// This API call is restricted to these OAuth keys
@@ -1609,7 +1611,7 @@ Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.sitesNew = function( query, fn ) {
-	var localeSlug = i18n.getLocaleSlug();
+	const localeSlug = i18n.getLocaleSlug();
 
 	debug( '/sites/new' );
 
@@ -1638,7 +1640,7 @@ Undocumented.prototype.getLocaleSuggestions = function( fn ) {
 };
 
 Undocumented.prototype.themes = function( siteId, query, fn ) {
-	var path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
+	const path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );
 	return this.wpcom.req.get( path, query, fn );
 };
@@ -1815,7 +1817,7 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	var filtered = reject( records, 'isBeingDeleted' ),
+	let filtered = reject( records, 'isBeingDeleted' ),
 		body = { dns: JSON.stringify( filtered ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
@@ -1871,7 +1873,7 @@ Undocumented.prototype.cancelTransferRequest = function( { domainName, enablePri
 };
 
 Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'enable-privacy' } )
 	};
 
@@ -1879,7 +1881,7 @@ Undocumented.prototype.enablePrivacyProtection = function( domainName, fn ) {
 };
 
 Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'accept-transfer' } )
 	};
 
@@ -1887,7 +1889,7 @@ Undocumented.prototype.acceptTransfer = function( domainName, fn ) {
 };
 
 Undocumented.prototype.declineTransfer = function( domainName, fn ) {
-	var data = {
+	const data = {
 		domainStatus: JSON.stringify( { command: 'deny-transfer' } )
 	};
 
@@ -2067,7 +2069,7 @@ Undocumented.prototype.cancelPurchase = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
 
 	return this.wpcom.req.post( {
-		path: `/upgrades/${purchaseId}/disable-auto-renew`
+		path: `/upgrades/${ purchaseId }/disable-auto-renew`
 	}, fn );
 };
 
@@ -2075,7 +2077,7 @@ Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn 
 	debug( 'upgrades/{purchaseId}/cancel' );
 
 	return this.wpcom.req.post( {
-		path: `/upgrades/${purchaseId}/cancel`,
+		path: `/upgrades/${ purchaseId }/cancel`,
 		body: data
 	}, fn );
 };
@@ -2084,7 +2086,7 @@ Undocumented.prototype.cancelPrivacyProtection = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
 
 	return this.wpcom.req.post( {
-		path: `/upgrades/${purchaseId}/cancel-privacy-protection`,
+		path: `/upgrades/${ purchaseId }/cancel-privacy-protection`,
 		apiVersion: '1.1'
 	}, fn );
 };
@@ -2093,7 +2095,7 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 
 	return this.wpcom.req.post( {
-		path: `/upgrades/${planId}/cancel-plan-trial`
+		path: `/upgrades/${ planId }/cancel-plan-trial`
 	}, fn );
 };
 
@@ -2199,7 +2201,7 @@ Undocumented.prototype.timezones = function( params, fn ) {
 		params = {};
 	}
 
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
+	const query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
 	return this.wpcom.req.get( '/timezones', query, fn );
 };
 
@@ -2213,7 +2215,7 @@ Undocumented.prototype.timezones = function( params, fn ) {
 Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 	const parsedUrl = url.parse( targetUrl );
 	let endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
-	let params = {
+	const params = {
 		filters: filters,
 		apiVersion: '1.1',
 	};

@@ -29,7 +29,7 @@ describe( 'Interval', function() {
 
 	describe( 'Rendering and children', function() {
 		it( 'Should render an empty span with no children', function() {
-			const wrapper = shallow( <Interval onTick={ noop } period={ EVERY_SECOND }/> );
+			const wrapper = shallow( <Interval onTick={ noop } period={ EVERY_SECOND } /> );
 
 			assert( '' === wrapper.text() );
 		} );

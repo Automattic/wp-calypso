@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	emailValidator = require( 'email-validator' );
+import ReactDom from 'react-dom';
+
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
  */
-var FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	Buttons = require( './buttons' );
+import FormFieldset from 'components/forms/form-fieldset';
+
+import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Buttons from './buttons';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
@@ -44,7 +46,7 @@ module.exports = React.createClass( {
 	},
 
 	renderValidation: function() {
-		var validation = null;
+		let validation = null;
 		if ( this.state.validation ) {
 			validation = (
 				<FormInputValidation
@@ -57,7 +59,7 @@ module.exports = React.createClass( {
 	},
 
 	renderExplanation: function() {
-		var explanation = null,
+		let explanation = null,
 			text;
 
 		if ( this.props.primaryEmail ) {
@@ -125,7 +127,7 @@ module.exports = React.createClass( {
 	},
 
 	onSave: function() {
-		var email = this.state.email;
+		const email = this.state.email;
 
 		if ( ! this.isSavable() ) {
 			return;

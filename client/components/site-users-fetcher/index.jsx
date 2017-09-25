@@ -2,20 +2,22 @@
  * External dependencies
  */
 import { includes, isEqual, omit, partition } from 'lodash';
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:site-users-fetcher' );
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:site-users-fetcher' );
 
 /**
  * Internal dependencies
  */
-var UsersStore = require( 'lib/users/store' ),
-	UsersActions = require( 'lib/users/actions' ),
-	pollers = require( 'lib/data-poller' );
+import UsersStore from 'lib/users/store';
+
+import UsersActions from 'lib/users/actions';
+import pollers from 'lib/data-poller';
 
 /**
  * Module variables
  */
-var defaultOptions = {
+const defaultOptions = {
 	number: 100,
 	offset: 0
 };
@@ -68,7 +70,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
+		const childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
 		// Clone the child element along and pass along state (containing data from the store)
 		return React.cloneElement( this.props.children, childrenProps );
 	},
@@ -79,7 +81,7 @@ module.exports = React.createClass( {
 	},
 
 	_getState: function( fetchOptions ) {
-		var paginationData, users;
+		let paginationData, users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
 		paginationData = UsersStore.getPaginationData( fetchOptions );
@@ -117,7 +119,7 @@ module.exports = React.createClass( {
 		}
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			var paginationData = UsersStore.getPaginationData( fetchOptions );
+			const paginationData = UsersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}

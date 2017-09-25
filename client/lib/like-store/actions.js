@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:like-store:actions' ); //eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:like-store:actions' ); //eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	key = require( './utils' ).key,
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
 
-var inflight = {};
+import { key } from './utils';
+import wpcom from 'lib/wp';
+
+const inflight = {};
 
 function requestInflight( requestKey ) {
 	return requestKey in inflight;
@@ -29,7 +32,7 @@ function getQuery() {
 	return { source: 'reader' };
 }
 
-var LikeActions = {
+const LikeActions = {
 
 	/**
 	* Fetch a post's list of likes
@@ -46,7 +49,7 @@ var LikeActions = {
 			return;
 		}
 
-		var requestKey = key( siteId, postId ),
+		let requestKey = key( siteId, postId ),
 			callback = requestTracker( requestKey, function( error, data ) {
 				LikeActions.receivePostLikes( error, siteId, postId, data );
 			} );

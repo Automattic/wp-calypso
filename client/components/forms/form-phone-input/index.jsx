@@ -52,7 +52,7 @@ export class FormPhoneInput extends React.Component {
 	}
 
 	render() {
-		var countryValueLink = {
+		let countryValueLink = {
 				value: this.state.countryCode,
 				requestChange: this._handleCountryChange,
 			},
@@ -119,7 +119,7 @@ export class FormPhoneInput extends React.Component {
 
 	// Set the default state of the country code selector, if not already set
 	_maybeSetCountryStateFromList = () => {
-		var countries;
+		let countries;
 
 		if ( this.state.countryCode ) {
 			return;
@@ -140,7 +140,7 @@ export class FormPhoneInput extends React.Component {
 	};
 
 	getValue = () => {
-		var countryData = this._getCountryData(),
+		let countryData = this._getCountryData(),
 			numberClean = this._cleanNumber( this.state.phoneNumber ),
 			countryNumericCode = countryData ? countryData.numeric_code : '',
 			numberFull = countryNumericCode + numberClean,

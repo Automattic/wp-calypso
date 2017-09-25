@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var TokenField = require( 'components/token-field' ),
-	Card = require( 'components/card' );
+import TokenField from 'components/token-field';
+
+import Card from 'components/card';
 
 /**
  * Module variables

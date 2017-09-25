@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:help-search:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:help-search:actions' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	ActionTypes = require( './constants' ).action,
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
 
-var HelpSearchActions = {
+import { action as ActionTypes } from './constants';
+import wpcom from 'lib/wp';
+
+const HelpSearchActions = {
 	fetch: function( searchQuery ) {
 		debug( 'fetching help links' );
 

@@ -1,7 +1,7 @@
-var page = require( 'page' ),
-	config = require( 'config' ),
-	meController = require( 'me/controller' ),
-	helpController = require( './controller' );
+import page from 'page';
+import config from 'config';
+import meController from 'me/controller';
+import helpController from './controller';
 
 module.exports = function() {
 	if ( config.isEnabled( 'help' ) ) {

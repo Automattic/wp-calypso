@@ -1,18 +1,25 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:two-step-authorization' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	userSettings = require( 'lib/user-settings' ),
-	applicationPasswords = require( 'lib/application-passwords-data' ),
-	connectedApplications = require( 'lib/connected-applications-data' ),
-	profileLinks = require( 'lib/user-profile-links' ),
-	analytics = require( 'lib/analytics' );
+import emitter from 'lib/mixins/emitter';
+
+import userSettings from 'lib/user-settings';
+import applicationPasswords from 'lib/application-passwords-data';
+import connectedApplications from 'lib/connected-applications-data';
+import profileLinks from 'lib/user-profile-links';
+import analytics from 'lib/analytics';
+
+/**
+ * Internal Dependencies
+ */
+const wpcom = require( 'lib/wp' ).undocumented();
 
 /*
  * Initialize TwoStepAuthorization with defaults
@@ -152,7 +159,7 @@ TwoStepAuthorization.prototype.backupCodes = function( callback ) {
  * transition until it is ready
  */
 TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
-	var args = {
+	const args = {
 		code: code,
 		action: 'create-backup-receipt'
 	};

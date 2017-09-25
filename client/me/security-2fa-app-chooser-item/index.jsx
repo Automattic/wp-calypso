@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-app-chooser-item' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 
@@ -33,7 +35,7 @@ module.exports = React.createClass( {
 	},
 
 	possiblyRenderDownloadQRCode: function( appURL ) {
-		var imgURL = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' + encodeURIComponent( appURL );
+		const imgURL = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' + encodeURIComponent( appURL );
 
 		if ( ! this.state.downloadCodeDisplayed ) {
 			return null;
@@ -60,7 +62,7 @@ module.exports = React.createClass( {
 								deviceName: this.props.app.deviceName
 							},
 							components: {
-								strong: <strong/>
+								strong: <strong />
 							}
 						}
 					) }

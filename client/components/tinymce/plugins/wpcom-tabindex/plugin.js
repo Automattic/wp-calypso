@@ -9,14 +9,14 @@ function setTabIndexOnEditorIframe( tabindex ) {
 	return function() {
 		// At this point, there's an iframe in the DOM with the id of `${editor.id}_ifr`.
 		// Can't find a way to get at it without hopping out to the DOM :/
-		const editorIframe = document.getElementById( `${this.id}_ifr` );
+		const editorIframe = document.getElementById( `${ this.id }_ifr` );
 
 		if ( ! editorIframe ) {
 			return;
 		}
 
 		editorIframe.setAttribute( 'tabIndex', tabindex );
-	}
+	};
 }
 
 function wpcomTabIndexPlugin( editor ) {
@@ -36,4 +36,4 @@ function wpcomTabIndexPlugin( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/tabindex', wpcomTabIndexPlugin );
-};
+}

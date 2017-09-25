@@ -1,15 +1,16 @@
 /**
  * External Dependencies
  */
-var debug = require( 'debug' )( 'calypso:notices' );
+import debugFactory from 'debug';
 
-var Emitter = require( 'lib/mixins/emitter' );
+const debug = debugFactory( 'calypso:notices' );
+import Emitter from 'lib/mixins/emitter';
 
 debug( 'initializing notices' );
 
-var list = { containerNames: {} };
+const list = { containerNames: {} };
 Emitter( list );
-var delayedNotices = [];
+let delayedNotices = [];
 
 const notices = {
 	/**
@@ -18,9 +19,9 @@ const notices = {
 	 *
 	 * @return {object} notice
 	 */
-	new: function( text, options, status ) {
+	'new': function( text, options, status ) {
 		// Set container
-		var container = options.overlay ? 'overlay-notices' : 'notices';
+		const container = options.overlay ? 'overlay-notices' : 'notices';
 
 		// keep track of container
 		list.containerNames[ container ] = container;
@@ -28,7 +29,7 @@ const notices = {
 		debug( 'creating notice', text, options, status );
 
 		list[ container ] = [];
-		var noticeObject = {
+		const noticeObject = {
 			type: options.type || 'message',
 			status: status,
 			text: text,
@@ -118,7 +119,7 @@ const notices = {
 		if ( ! notice.container ) {
 			return;
 		}
-		var containerList = list[ notice.container ],
+		let containerList = list[ notice.container ],
 			index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
@@ -134,7 +135,7 @@ const notices = {
 	 */
 	clearNoticesOnNavigation: function( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
-		var length, container,
+		let length, container,
 			changed = false,
 			isNoticePersistent = function( notice ) {
 				return notice.persistent;

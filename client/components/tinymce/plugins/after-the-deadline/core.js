@@ -28,7 +28,7 @@ function AtDCore() {
  */
 
 AtDCore.prototype.setIgnoreStrings = function( strings ) {
-	var parent = this;
+	const parent = this;
 
 	if ( 'string' === typeof strings ) {
 		strings = strings.split( /,\s*/g );
@@ -40,7 +40,7 @@ AtDCore.prototype.setIgnoreStrings = function( strings ) {
 };
 
 AtDCore.prototype.showTypes = function( strings ) {
-	var show_types = strings.split( /,\s*/g ),
+	let show_types = strings.split( /,\s*/g ),
 		types = {},
 		ignore_types = [];
 
@@ -78,7 +78,7 @@ AtDCore.prototype.showTypes = function( strings ) {
  */
 
 AtDCore.prototype.makeError = function( error_s, tokens, type, seps ) {
-	var struct = {};
+	const struct = {};
 	struct.type = type;
 	struct.string = error_s;
 	struct.tokens = tokens;
@@ -99,12 +99,12 @@ AtDCore.prototype.makeError = function( error_s, tokens, type, seps ) {
 };
 
 AtDCore.prototype.addToErrorStructure = function( errors, list, type, seps ) {
-	var parent = this;
+	const parent = this;
 
 	this.map( list, function( error ) {
-		var tokens = error.word.split( /\s+/ );
-		var pre = error.pre;
-		var first = tokens[ 0 ];
+		const tokens = error.word.split( /\s+/ );
+		const pre = error.pre;
+		const first = tokens[ 0 ];
 
 		if ( errors[ '__' + first ] === undefined ) {
 			errors[ '__' + first ] = {};
@@ -125,8 +125,8 @@ AtDCore.prototype.addToErrorStructure = function( errors, list, type, seps ) {
 };
 
 AtDCore.prototype.buildErrorStructure = function( spellingList, enrichmentList, grammarList ) {
-	var seps = this._getSeparators();
-	var errors = {};
+	const seps = this._getSeparators();
+	const errors = {};
 
 	this.addToErrorStructure( errors, spellingList, 'hiddenSpellError', seps );
 	this.addToErrorStructure( errors, grammarList, 'hiddenGrammarError', seps );
@@ -135,8 +135,8 @@ AtDCore.prototype.buildErrorStructure = function( spellingList, enrichmentList, 
 };
 
 AtDCore.prototype._getSeparators = function() {
-	var re = '', i;
-	var str = '"s!#$%&()*+,./:;<=>?@[\\]^_{|}';
+	let re = '', i;
+	const str = '"s!#$%&()*+,./:;<=>?@[\\]^_{|}';
 
 	// Build word separator regexp
 	for ( i = 0; i < str.length; i++ ) {
@@ -147,7 +147,7 @@ AtDCore.prototype._getSeparators = function() {
 };
 
 AtDCore.prototype.processXML = function( responseXML ) {
-	var types, errors, grammarErrors, spellingErrors, enrichment, i,
+	let types, errors, grammarErrors, spellingErrors, enrichment, i,
 		errorString, errorType, errorDescription, errorContext, suggestion,
 		suggestions, j, errorUrl, errorStruct, ecount;
 
@@ -257,7 +257,7 @@ AtDCore.prototype.processXML = function( responseXML ) {
 };
 
 AtDCore.prototype.findSuggestion = function( element ) {
-	var text = element.innerHTML,
+	let text = element.innerHTML,
 		context = ( this.getAttrib( element, 'pre' ) + '' ).replace( /[\\,!\\?\\."\s]/g, '' ),
 		len = this.suggestions.length,
 		errorDescription, i;
@@ -283,7 +283,7 @@ function TokenIterator( tokens ) {
 }
 
 TokenIterator.prototype.next = function() {
-	var current = this.tokens[ this.index ];
+	let current = this.tokens[ this.index ];
 	this.count = this.last;
 	this.last += current.length + 1;
 	this.index++;
@@ -324,7 +324,7 @@ TokenIterator.prototype.getCount = function() {
 };
 
 TokenIterator.prototype.peek = function( n ) {
-	var peepers = [],
+	let peepers = [],
 		end = this.index + n,
 		x;
 
@@ -338,7 +338,7 @@ TokenIterator.prototype.peek = function( n ) {
  *  code to manage highlighting of errors
  */
 AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
-	var seps = new RegExp( this._getSeparators() ),
+	let seps = new RegExp( this._getSeparators() ),
 		nl = [],
 		ecount = 0, /* track number of highlighted errors */
 		parent = this,
@@ -359,7 +359,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 	 */
 
 	function splitTextNode( textnode, regexp, replacement ) {
-		var text = textnode.nodeValue,
+		let text = textnode.nodeValue,
 			index = text.search( regexp ),
 			match = text.match( regexp ),
 			captured = [],
@@ -399,7 +399,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 	/* walk through the relevant nodes */
 
 	this.map( nl, function( n ) {
-		var foundStrings = {},
+		let foundStrings = {},
 			v, tokens, previous, doReplaces, token, current, defaults, done, prev, curr, newNode, x, regexp, result, i, contents, y, nnode;
 
 		if ( n.nodeType === 3 ) {
@@ -431,7 +431,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 							error.used = true;
 							done = true;
 						}
-					};
+					}
 
 					if ( current !== undefined ) {
 						previous = previous + ' ';
@@ -459,7 +459,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 					   because eventually the whole thing gets wrapped in an mceItemHidden span and from there it's necessary to
 					   handle each node individually. */
 					function bringTheHurt( node ) {
-						var span, splitNodes;
+						let span, splitNodes;
 
 						if ( node.nodeType === 3 ) {
 							ecount++;
@@ -514,7 +514,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 						}
 
 						return node;
-					}; // jshint ignore:line
+					} // jshint ignore:line
 
 					newNode = bringTheHurt( newNode );
 				}
@@ -528,7 +528,7 @@ AtDCore.prototype.markMyWords = function( container_nodes, errors ) {
 };
 
 AtDCore.prototype._walk = function( elements, f ) {
-	var i;
+	let i;
 	for ( i = 0; i < elements.length; i++ ) {
 		f.call( f, elements[ i ] );
 		this._walk( this.contents( elements[ i ] ), f );
@@ -536,11 +536,11 @@ AtDCore.prototype._walk = function( elements, f ) {
 };
 
 AtDCore.prototype.removeWords = function( node, w ) {
-	var count = 0;
-	var parent = this;
+	let count = 0;
+	const parent = this;
 
 	this.map( this.findSpans( node ).reverse(), function( n ) {
-		var nnode;
+		let nnode;
 		if ( n && ( parent.isMarkedNode( n ) || parent.hasClass( n, 'mceItemHidden' ) || parent.isEmptySpan( n ) ) ) {
 			if ( n.innerHTML === '&nbsp;' ) {
 				nnode = document.createTextNode( ' ' ); /* hax0r */
@@ -577,7 +577,7 @@ AtDCore.prototype.isMarkedNode = function( node ) {
  * Context Menu Helpers
  */
 AtDCore.prototype.applySuggestion = function( element, suggestion ) {
-	var node;
+	let node;
 	if ( suggestion === '(omit)' ) {
 		this.remove( element );
 	} else {

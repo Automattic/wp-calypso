@@ -18,7 +18,7 @@ import { SYNC_RECORD_NAMESPACE } from './constants';
  * @return {String} request key
  */
 export const generateKey = ( params, applyHash = true ) => {
-	var key = `${params.apiVersion || ''}-${params.method}-${params.path}`;
+	let key = `${ params.apiVersion || '' }-${ params.method }-${ params.path }`;
 
 	if ( params.query ) {
 		// sort parameters alphabetically
@@ -33,7 +33,7 @@ export const generateKey = ( params, applyHash = true ) => {
 
 	key = SYNC_RECORD_NAMESPACE + key;
 	return key;
-}
+};
 
 /**
  * Generate pageSeriesKey from request parameters
@@ -45,7 +45,7 @@ export const generatePageSeriesKey = ( reqParams ) => {
 	delete queryParams.page_handle;
 	const paramsWithoutPage = Object.assign( {}, reqParams, { query: qs.stringify( queryParams ) } );
 	return generateKey( paramsWithoutPage );
-}
+};
 
 /**
  * generate normalized reqestParams object
@@ -58,4 +58,4 @@ export const normalizeRequestParams = ( reqParams ) => {
 	delete normalizedParams.supports_args;
 	delete normalizedParams.supports_progress;
 	return normalizedParams;
-}
+};

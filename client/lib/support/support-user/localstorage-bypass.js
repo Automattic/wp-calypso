@@ -9,8 +9,8 @@ export const length = ( memoryStore ) => {
 	return () => {
 		debug( 'Bypassing localStorage', 'length property' );
 		return Object.keys( memoryStore ).length;
-	}
-}
+	};
+};
 
 export const key = ( memoryStore ) => {
 	return ( index ) => {
@@ -20,8 +20,8 @@ export const key = ( memoryStore ) => {
 		}
 
 		return Object.keys( memoryStore )[ index ];
-	}
-}
+	};
+};
 
 export const setItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key, value ) => {
@@ -32,8 +32,8 @@ export const setItem = ( memoryStore, allowedKeys, original ) => {
 
 		debug( 'Bypassing localStorage', 'setItem', _key );
 		memoryStore[ _key ] = value;
-	}
-}
+	};
+};
 
 export const getItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key ) => {
@@ -43,8 +43,8 @@ export const getItem = ( memoryStore, allowedKeys, original ) => {
 
 		debug( 'Bypassing localStorage', 'getItem', _key );
 		return memoryStore[ _key ] || null;
-	}
-}
+	};
+};
 
 export const removeItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key ) => {
@@ -62,7 +62,7 @@ export const clear = ( memoryStore ) => {
 	return () => {
 		debug( 'Bypassing localStorage', 'clear' );
 
-		for ( let _key in memoryStore ) {
+		for ( const _key in memoryStore ) {
 			delete memoryStore[ _key ];
 		}
 	};

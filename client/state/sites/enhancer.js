@@ -11,6 +11,10 @@ import { flow } from 'lodash';
 import { receiveSiteUpdates, receiveSite } from 'state/sites/actions';
 import { getSite } from 'state/sites/selectors';
 
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+import Site from 'lib/site';
+
 /**
  * Redux store enhancer which binds to the application-wide sites-list
  * instance, dispatching updates when sites are synced with REST API or
@@ -22,17 +26,11 @@ import { getSite } from 'state/sites/selectors';
 export default ( createStore ) => ( ...args ) => {
 	const store = createStore( ...args );
 
-	// Ugly hack by which we hook into the sites sync mechanism, since a change
-	// event may or may not occur as a result of fresh data being received.
-	const sites = require( 'lib/sites-list' )();
 	sites.sync = flow(
 		sites.sync.bind( sites ),
 		() => store.dispatch( receiveSiteUpdates( sites.get() ) )
 	);
 
-	// To sync changes made to an individual site in sites-list, override the
-	// prototype of Site's `set` method, used in updating a set of attributes.
-	const Site = require( 'lib/site' );
 	const originalSet = Site.prototype.set;
 	Site.prototype.set = function() {
 		// Preserve original behavior

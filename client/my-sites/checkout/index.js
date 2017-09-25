@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-const page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const controller = require( 'my-sites/controller' ),
-	checkoutController = require( './controller' ),
-	SiftScience = require( 'lib/siftscience' );
+import controller from 'my-sites/controller';
+
+import checkoutController from './controller';
+import SiftScience from 'lib/siftscience';
 
 module.exports = function() {
 	SiftScience.recordUser();

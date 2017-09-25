@@ -2,17 +2,23 @@
  * External dependencies
  */
 import { isEmpty, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:store-transactions' ),
-	Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:store-transactions' );
+import { Readable } from 'stream';
+import inherits from 'inherits';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	paygateLoader = require( 'lib/paygate-loader' ),
-	validateCardDetails = require( 'lib/credit-card-details' ).validateCardDetails,
-	transactionStepTypes = require( './step-types' );
+import paygateLoader from 'lib/paygate-loader';
+
+import { validateCardDetails } from 'lib/credit-card-details';
+import transactionStepTypes from './step-types';
+
+/**
+ * Internal dependencies
+ */
+const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Make a purchase on WordPress.com.
@@ -53,7 +59,7 @@ inherits( TransactionFlow, Readable );
  * while the first one finises.
  */
 TransactionFlow.prototype._read = function() {
-	var paymentMethod,
+	let paymentMethod,
 		paymentHandler;
 
 	if ( this._hasStarted ) {
@@ -71,7 +77,7 @@ TransactionFlow.prototype._read = function() {
 };
 
 TransactionFlow.prototype._pushStep = function( options ) {
-	var defaults = {
+	const defaults = {
 		first: false,
 		last: false,
 		timestamp: Date.now()
@@ -81,7 +87,7 @@ TransactionFlow.prototype._pushStep = function( options ) {
 };
 
 TransactionFlow.prototype._paymentHandlers = {
-	'WPCOM_Billing_MoneyPress_Stored': function() {
+	WPCOM_Billing_MoneyPress_Stored: function() {
 		const {
 			mp_ref: payment_key,
 			stored_details_id,
@@ -98,7 +104,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		} );
 	},
 
-	'WPCOM_Billing_MoneyPress_Paygate': function() {
+	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
 			validation = validateCardDetails( newCardDetails );
 
@@ -128,7 +134,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		}.bind( this ) );
 	},
 
-	'WPCOM_Billing_WPCOM': function() {
+	WPCOM_Billing_WPCOM: function() {
 		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
 	}
@@ -152,7 +158,7 @@ TransactionFlow.prototype._createPaygateToken = function( callback ) {
 };
 
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
-	var onComplete = this.push.bind( this, null ), // End the stream when the transaction has finished
+	let onComplete = this.push.bind( this, null ), // End the stream when the transaction has finished
 		transaction = {
 			cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 			domain_details: this._initialData.domainDetails,
@@ -190,7 +196,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 		}
 
 		paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
-			var parameters;
+			let parameters;
 			if ( error ) {
 				callback( error );
 				return;

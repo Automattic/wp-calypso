@@ -28,7 +28,7 @@ function bustHashForHrefs( { name, oldValue } ) {
 		: oldValue;
 
 	return { name, value };
-};
+}
 
 /**
  * @return {Boolean}
@@ -48,7 +48,7 @@ export default function() {
 	const socket = io.connect( namespace );
 
 	socket.on( 'css-hot-reload', function( data ) {
-		switch( data.status ) {
+		switch ( data.status ) {
 			case 'reload':
 				// Turn HTMLCollection to standard list
 				const elems = [].slice.call( document.head.getElementsByTagName( 'link' ) );

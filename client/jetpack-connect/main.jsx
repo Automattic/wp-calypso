@@ -58,15 +58,15 @@ class JetpackConnectMain extends Component {
 
 	state = this.props.url
 		? {
-				currentUrl: this.cleanUrl( this.props.url ),
-				shownUrl: this.props.url,
-				waitingForSites: false,
-			}
+			currentUrl: this.cleanUrl( this.props.url ),
+			shownUrl: this.props.url,
+			waitingForSites: false,
+		}
 		: {
-				currentUrl: '',
-				shownUrl: '',
-				waitingForSites: false,
-			};
+			currentUrl: '',
+			shownUrl: '',
+			waitingForSites: false,
+		};
 
 	componentWillMount() {
 		if ( this.props.url ) {

@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { assign, constant, mapValues, zipObject } from 'lodash';
-const assert = require( 'assert' );
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
-var formState = require( '../' );
+import formState from '../';
 
 function checkNthState( n, callback ) {
-	var count = 0;
+	let count = 0;
 
 	return function( state ) {
 		if ( count === n ) {
@@ -22,18 +22,18 @@ function checkNthState( n, callback ) {
 }
 
 function testController( options ) {
-	var fieldNames, defaults;
+	let fieldNames, defaults;
 
 	fieldNames = options.fieldNames;
 
 	defaults = {
 		loadFunction: function( onComplete ) {
-			var fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
+			const fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
 			onComplete( null, fieldValues );
 		},
 
 		validatorFunction: function( fieldValues, onComplete ) {
-			var fieldErrors = mapValues( fieldValues, constant( [] ) );
+			const fieldErrors = mapValues( fieldValues, constant( [] ) );
 			onComplete( null, fieldErrors );
 		},
 
@@ -49,7 +49,7 @@ describe( 'index', function() {
 	describe( '#Controller', function() {
 		describe( '#getInitialState', function() {
 			it( 'returns disabled fields', function() {
-				var controller = testController( { fieldNames: [ 'firstName' ] } ),
+				let controller = testController( { fieldNames: [ 'firstName' ] } ),
 					state = controller.getInitialState();
 
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), true );
@@ -57,7 +57,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'enables the fields on the first event', function( done ) {
-			var onNewState;
+			let onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
@@ -72,7 +72,7 @@ describe( 'index', function() {
 
 		describe( '#handleFieldChange', function() {
 			it( 'updates the field value', function( done ) {
-				var onNewState,
+				let onNewState,
 					controller;
 
 				onNewState = checkNthState( 1, function( state ) {
@@ -92,7 +92,7 @@ describe( 'index', function() {
 			} );
 
 			it( 'validates the new value', function( done ) {
-				var validatorFunction,
+				let validatorFunction,
 					onNewState,
 					controller;
 
@@ -119,7 +119,7 @@ describe( 'index', function() {
 
 			context( 'when there are multiple changes at once', function() {
 				it( 'only shows errors for the latest values', function( done ) {
-					var validatorFunction,
+					let validatorFunction,
 						onNewState,
 						controller;
 

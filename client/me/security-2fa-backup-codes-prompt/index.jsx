@@ -1,20 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
+import React from 'react';
+
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' );
+import FormButton from 'components/forms/form-button';
+
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
 
 import Notice from 'components/notice';
 

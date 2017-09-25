@@ -2,16 +2,18 @@
  * External dependencies
  */
 import { find, isEqual, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:site' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:site' );
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	notices = require( 'notices' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	getAttributes = require( './computed-attributes' );
+import wpcom from 'lib/wp';
+
+import notices from 'notices';
+import Emitter from 'lib/mixins/emitter';
+import getAttributes from './computed-attributes';
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {
@@ -22,7 +24,7 @@ function Site( attributes ) {
 }
 
 function settingsErrorHandler( error, site ) {
-	var adminURL = site.options ? site.options.admin_url : '';
+	const adminURL = site.options ? site.options.admin_url : '';
 	switch ( error.statusCode ) {
 		case 0:
 			notices.error( i18n.translate( 'There was an error retrieving your site settings. Please check your internet connection.' ) );
@@ -49,7 +51,7 @@ Emitter( Site.prototype );
 Site.prototype.attributes = function( attributes ) {
 	attributes = attributes || {};
 
-	for ( var prop in attributes ) {
+	for ( const prop in attributes ) {
 		if ( attributes.hasOwnProperty( prop ) ) {
 			this[ prop ] = attributes[ prop ];
 		}
@@ -97,7 +99,7 @@ Site.prototype.updateComputedAttributes = function() {
  * to allow calling on an empty Site object.
  */
 Site.prototype.fetchSettings = function( siteID ) {
-	var requestID = this.ID || siteID;
+	const requestID = this.ID || siteID;
 	this.set( { fetchingSettings: true } );
 	wpcom.undocumented().settings( requestID, function( error, data ) {
 		if ( error ) {
@@ -110,7 +112,6 @@ Site.prototype.fetchSettings = function( siteID ) {
 		data.latestSettings = new Date().getTime();
 		data.fetchingSettings = false;
 		this.set( data );
-
 	}.bind( this ) );
 };
 
@@ -120,15 +121,12 @@ Site.prototype.fetchSettings = function( siteID ) {
  * @param  {Function} callback    function to call when request resolves
  */
 Site.prototype.saveSettings = function( newSettings, callback ) {
-
-	var reflectSavedSettings = function( savedSettings ) {
-
-		var settings = this.settings,
+	const reflectSavedSettings = function( savedSettings ) {
+		let settings = this.settings,
 			updatedAttributes = { settings: settings },
 			key;
 
 		for ( key in savedSettings ) {
-
 			if ( ! savedSettings.hasOwnProperty( key ) ) {
 				continue;
 			}
@@ -141,30 +139,24 @@ Site.prototype.saveSettings = function( newSettings, callback ) {
 			}
 
 			settings[ key ] = savedSettings[ key ];
-
 		}
 
 		updatedAttributes.settings = settings;
 
 		this.set( updatedAttributes );
-
 	}.bind( this );
 
 	if ( 'string' === typeof newSettings.whitelistString ) {
-		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( "\n" );
+		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( '\n' );
 		newSettings = omit( newSettings, 'whitelistString' );
 	}
 
 	wpcom.undocumented().settings( this.ID, 'post', newSettings, function( error, data ) {
-
 		if ( ! error && data.updated ) {
-
 			reflectSavedSettings( data.updated );
-
 		}
 		callback( error, data );
 	} );
-
 };
 
 /**

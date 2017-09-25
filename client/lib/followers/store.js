@@ -3,14 +3,17 @@
  */
 import { endsWith, omit } from 'lodash';
 import deterministicStringify from 'json-stable-stringify';
-const debug = require( 'debug' )( 'calypso:wpcom-followers-store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:wpcom-followers-store' );
+
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
 
-var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
+import emitter from 'lib/mixins/emitter';
+
+let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects
 	_totalFollowersByNamespace = {}, // store total found for params
 	_followersFetchedByNamespace = {}, // store fetch progress
@@ -18,10 +21,10 @@ var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followerIDsByNamespace = {}, // store user order
 	_removingFromSite = {};
 
-var FollowersStore = {
+const FollowersStore = {
 	// This data may help with infinite scrolling
 	getPaginationData: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions );
+		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
 			fetchInitialized: _followersFetchedByNamespace.hasOwnProperty( namespace ),
@@ -38,7 +41,7 @@ var FollowersStore = {
 	},
 
 	getFollowers: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions ),
+		let namespace = getNamespace( fetchOptions ),
 			siteId = fetchOptions.siteId;
 
 		debug( 'getFollowers:', namespace );
@@ -49,7 +52,7 @@ var FollowersStore = {
 		if ( ! _followerIDsByNamespace[ namespace ] ) {
 			return false;
 		}
-		let followers = [];
+		const followers = [];
 		_followerIDsByNamespace[ namespace ].forEach( followerId => {
 			if ( _followersBySite[ siteId ][ followerId ] ) {
 				followers.push( _followersBySite[ siteId ][ followerId ] );
@@ -77,7 +80,7 @@ function updateFollower( siteId, id, follower ) {
 }
 
 function updateFollowers( fetchOptions, followers, total ) {
-	var namespace = getNamespace( fetchOptions ),
+	let namespace = getNamespace( fetchOptions ),
 		page = fetchOptions.page;
 
 	debug( 'updateFollowers:', namespace );
@@ -138,7 +141,7 @@ function removeFollowerFromNamespaces( siteId, followerId ) {
 }
 
 FollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		namespace;
 	debug( 'register event Type', action.type, payload );
 

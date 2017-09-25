@@ -23,7 +23,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="help-results">
-				<SectionHeader label={ this.props.header }/>
+				<SectionHeader label={ this.props.header } />
 				{ this.props.helpLinks.map( helpLink =>
 					<HelpResult
 						key={ helpLink.link } helpLink={ helpLink } iconTypeDescription={ this.props.iconTypeDescription }

@@ -13,7 +13,7 @@ import {
 export function formClear() {
 	return {
 		type: EDITOR_CONTACT_FORM_CLEAR
-	}
+	};
 }
 
 export function formLoad( contactForm ) {
@@ -31,7 +31,7 @@ export function fieldRemove( index ) {
 	return {
 		type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 		index
-	}
+	};
 }
 
 export function fieldUpdate( index, field ) {
@@ -39,12 +39,12 @@ export function fieldUpdate( index, field ) {
 		type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
 		index,
 		field
-	}
+	};
 }
 
 export function settingsUpdate( settings ) {
 	return {
 		type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 		settings
-	}
+	};
 }

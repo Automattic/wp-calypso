@@ -1,4 +1,4 @@
-var trailingSlashRe = /\/$/;
+const trailingSlashRe = /\/$/;
 
 module.exports = function unTrailingSlashIt( path ) {
 	if ( path === '/' ) {

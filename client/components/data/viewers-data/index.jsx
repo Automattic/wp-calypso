@@ -56,8 +56,8 @@ export default React.createClass( {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		let defer = function() {
-			var paginationData = ViewersStore.getPaginationData( siteId );
+		const defer = function() {
+			const paginationData = ViewersStore.getPaginationData( siteId );
 			if ( paginationData.fetchingViewers ) {
 				return;
 			}
@@ -68,7 +68,7 @@ export default React.createClass( {
 	},
 
 	isFetching: function() {
-		let siteId = this.props.siteId;
+		const siteId = this.props.siteId;
 		if ( ! siteId ) {
 			return true;
 		}
@@ -77,7 +77,7 @@ export default React.createClass( {
 			return true;
 		}
 
-		let paginationData = ViewersStore.getPaginationData( siteId );
+		const paginationData = ViewersStore.getPaginationData( siteId );
 
 		if ( paginationData.fetchingViewers ) {
 			return true;

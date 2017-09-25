@@ -1,8 +1,10 @@
 /**
  * External Dependencies
  */
-var async = require( 'async' ),
-	debug = require( 'debug' )( 'calypso:post-normalizer' );
+import async from 'async';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:post-normalizer' );
 /**
  * Internal dependencies
  */

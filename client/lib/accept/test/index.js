@@ -29,7 +29,7 @@ describe( '#accept()', function() {
 	} );
 
 	it( 'should render a dialog to the document body', function() {
-		var message = 'Are you sure?',
+		let message = 'Are you sure?',
 			dialog;
 
 		accept( message, function() {} );

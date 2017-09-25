@@ -2,19 +2,23 @@
  * External dependencies
  */
 // only require keymaster if this is a browser environment
-var keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
+let keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
+import Emitter from 'lib/mixins/emitter';
+
+/**
+ * Internal dependencies
+ */
+const keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
 
 /**
  * Module variables
  */
-var flatKeyBindings = [];
+let flatKeyBindings = [];
 
 // flatten the key-bindings object to create an array of key-bindings
 Object.keys( keyBindings ).forEach( function( category ) {
@@ -62,7 +66,7 @@ function KeyboardShortcuts( keyBindings ) {
 }
 
 KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
-	var self = this;
+	const self = this;
 
 	// bind keys from the key bindings to their named events
 	keyBindings.forEach( function( keyBinding ) {
@@ -79,7 +83,7 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 };
 
 KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
-	var self = this,
+	let self = this,
 		keyCombinations = [],
 		matches;
 
@@ -117,7 +121,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 					return;
 				}
 
-				var keyValue;
+				let keyValue;
 				// Check if the value of the pressed key matches. This is needed
 				// for keys being used with shift modifiers, as the charCode only
 				// matches the modified key: '/' instead of '?'. Many of these
@@ -152,7 +156,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * @private
  */
 KeyboardShortcuts.prototype._getKey = function( event ) {
-	var key;
+	let key;
 	if ( !! event.key ) {
 		return event.key;
 	}

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var ButtonsPreviewAction = require( './preview-action' );
+import ButtonsPreviewAction from './preview-action';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewPlaceholder',

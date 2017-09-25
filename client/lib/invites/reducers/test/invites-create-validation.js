@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-const assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	constants = require( 'lib/invites/constants' );
+import Dispatcher from 'dispatcher';
+
+import constants from 'lib/invites/constants';
 
 describe( 'Invites Create Validation Store', () => {
 	let InvitesCreateValidationStore;

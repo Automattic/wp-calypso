@@ -96,8 +96,8 @@ export default React.createClass( {
 			<FoldableCard compact clickableHeader
 				className="plugin-site-network"
 				header={ this.renderMultisiteHeader() }
-				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false }/> }
-				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true }/> }
+				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false } /> }
+				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true } /> }
 				>
 				<div>
 					{ this.renderPluginActions() }

@@ -21,11 +21,11 @@ describe( 'state/application reducer', () => {
 		} );
 
 		it( 'should be ONLINE when action CONNECTION_RESTORED dispatched', () => {
-			expect( connectionState( undefined, { type: CONNECTION_RESTORED  } ) ).to.equal( 'ONLINE' );
+			expect( connectionState( undefined, { type: CONNECTION_RESTORED } ) ).to.equal( 'ONLINE' );
 		} );
 
 		it( 'should be OFFLINE when action CONNECTION_LOST dispatched', () => {
-			expect( connectionState( undefined, { type: CONNECTION_LOST  } ) ).to.equal( 'OFFLINE' );
+			expect( connectionState( undefined, { type: CONNECTION_LOST } ) ).to.equal( 'OFFLINE' );
 		} );
 
 		it( 'never persists online state', () => {

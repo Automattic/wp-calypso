@@ -16,8 +16,8 @@ const SecurePaymentFormPlaceholder = () => {
 		>
 			<div className="payment-box-section">
 
-				<div className="placeholder-row placeholder"/>
-				<div className="placeholder-row placeholder"/>
+				<div className="placeholder-row placeholder" />
+				<div className="placeholder-row placeholder" />
 				<div className="placeholder-col-narrow placeholder-inline-pad">
 					<div className="placeholder" />
 				</div>
@@ -27,7 +27,7 @@ const SecurePaymentFormPlaceholder = () => {
 				<div className="placeholder-col-wide">
 					<div className="placeholder" />
 				</div>
-				<div className="placeholder-row placeholder"/>
+				<div className="placeholder-row placeholder" />
 			</div>
 			<div className="payment-box-hr" />
 			<div className="placeholder-button-container">

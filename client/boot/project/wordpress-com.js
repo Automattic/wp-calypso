@@ -2,39 +2,47 @@
  * External dependencies
  */
 import { includes, startsWith } from 'lodash';
-const React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
-	store = require( 'store' ),
-	debug = require( 'debug' )( 'calypso' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import store from 'store';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' ),
-	abtestModule = require( 'lib/abtest' ), // used by error logger
-	getSavedVariations = abtestModule.getSavedVariations, // used by logger
-	initializeHappychat = require( 'state/happychat/actions' ).initialize,
-	analytics = require( 'lib/analytics' ),
-	reduxBridge = require( 'lib/redux-bridge' ),
-	route = require( 'lib/route' ),
-	normalize = require( 'lib/route/normalize' ),
-	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
-	superProps = require( 'lib/analytics/super-props' ),
-	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	nuxWelcome = require( 'layout/nux-welcome' ),
-	emailVerification = require( 'components/email-verification' ),
-	viewport = require( 'lib/viewport' ),
-	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	syncHandler = require( 'lib/wp/sync-handler' ),
-	supportUser = require( 'lib/user/support-user-interop' );
+import config from 'config';
+
+import abtestModule from 'lib/abtest'; // used by error logger
+import { initialize as initializeHappychat } from 'state/happychat/actions';
+import analytics from 'lib/analytics';
+import reduxBridge from 'lib/redux-bridge';
+import route from 'lib/route';
+import normalize from 'lib/route/normalize';
+import { isLegacyRoute } from 'lib/route/legacy-routes';
+import superProps from 'lib/analytics/super-props';
+import translatorJumpstart from 'lib/translator-jumpstart';
+import nuxWelcome from 'layout/nux-welcome';
+import emailVerification from 'components/email-verification';
+import viewport from 'lib/viewport';
+import { init as pushNotificationsInit } from 'state/push-notifications/actions';
+import syncHandler from 'lib/wp/sync-handler';
+import supportUser from 'lib/user/support-user-interop';
+
+/**
+ * Internal dependencies
+ */
+const // used by logger
+getSavedVariations = abtestModule.getSavedVariations;
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
+import { ReduxWrappedLayout as Layout } from 'controller';
+import Logger from 'lib/catch-js-errors';
 
+function renderLayout( reduxStore ) {
 	const layoutElement = React.createElement( Layout, {
 		store: reduxStore
 	} );
@@ -89,8 +97,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const Logger = require( 'lib/catch-js-errors' );
-			const errorLogger = new Logger();
+		    const errorLogger = new Logger();
 			//Save errorLogger to a singleton for use in arbitrary logging.
 			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger

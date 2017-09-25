@@ -94,7 +94,7 @@ export default React.createClass( {
 					<span className="screen-reader-text">
 						{ this.translate( 'More Options' ) }
 					</span>
-					<Gridicon icon="chevron-down" size={ 20 }/>
+					<Gridicon icon="chevron-down" size={ 20 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }

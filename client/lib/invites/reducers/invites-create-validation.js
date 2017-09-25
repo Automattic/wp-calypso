@@ -22,6 +22,6 @@ const reducer = ( state = initialState, payload ) => {
 				.setIn( [ 'errors', action.siteId, action.role ], action.data.errors );
 	}
 	return state;
-}
+};
 
 export { initialState, reducer };

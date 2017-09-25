@@ -1,27 +1,31 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
-	Clipboard = require( 'clipboard' ),
-	userFactory = require( 'lib/user' ),
-	Gridicon = require( 'gridicons' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
+import React from 'react';
+
+import ReactDom from 'react-dom';
+import Clipboard from 'clipboard';
+import userFactory from 'lib/user';
+import Gridicon from 'gridicons';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
 
 import { saveAs } from 'browser-filesaver';
+
 /**
  * Internal dependencies
  */
-const FormButton = require( 'components/forms/form-button' ),
-	analytics = require( 'lib/analytics' ),
-	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	config = require( 'config' ),
-	Notice = require( 'components/notice' ),
-	ButtonGroup = require( 'components/button-group' ),
-	Button = require( 'components/button' ),
-	Tooltip = require( 'components/tooltip' );
+import FormButton from 'components/forms/form-button';
+
+import analytics from 'lib/analytics';
+import FormButtonBar from 'components/forms/form-buttons-bar';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import config from 'config';
+import Notice from 'components/notice';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Tooltip from 'components/tooltip';
 
 module.exports = React.createClass( {
 
@@ -108,7 +112,7 @@ module.exports = React.createClass( {
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
-		saveAs( toSave, `${username}-backup-codes.txt` );
+		saveAs( toSave, `${ username }-backup-codes.txt` );
 	},
 
 	getBackupCodePlainText: function( backupCodes ) {
@@ -247,7 +251,7 @@ module.exports = React.createClass( {
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
 					{ backupCodes.map( function( backupCode, index ) {
-						let spacedCode = backupCode.concat( ' ' );
+						const spacedCode = backupCode.concat( ' ' );
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
 						return (

@@ -78,7 +78,7 @@ export const ImporterHeader = React.createClass( {
 		}
 
 		if ( includes( stopStates, importerState ) ) {
-			return this.translate( 'Importing...' );
+			return this.translate( Importing… );
 		}
 
 		if ( includes( doneStates, importerState ) ) {

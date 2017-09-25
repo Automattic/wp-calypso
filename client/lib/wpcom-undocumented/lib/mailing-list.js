@@ -1,7 +1,9 @@
 /**
  * Module dependencies.
  */
-var debug = require( 'debug' )( 'calypso:wpcom-undocumented:mailing-list' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:wpcom-undocumented:mailing-list' );
 
 /**
  * `MailingList` constructor.
@@ -12,7 +14,7 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:mailing-list' );
  */
 
 function MailingList( category, wpcom ) {
-	if ( !( this instanceof MailingList ) ) {
+	if ( ! ( this instanceof MailingList ) ) {
 		return new MailingList( category, wpcom );
 	}
 
@@ -93,7 +95,7 @@ MailingList.prototype.unsubscribe = function( emailAddress, hmac, context, callb
 };
 
 function createSubscriberResourceUrl( category, emailAddress, method ) {
-	var url = '/mailing-lists/' + encodeURIComponent( category ) +
+	let url = '/mailing-lists/' + encodeURIComponent( category ) +
 		'/subscribers/' + encodeURIComponent( emailAddress );
 
 	if ( method ) {

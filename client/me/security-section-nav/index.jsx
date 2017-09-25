@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { find } from 'lodash';
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -51,12 +51,12 @@ module.exports = React.createClass( {
 	},
 
 	getFilteredPath: function() {
-		var paramIndex = this.props.path.indexOf( '?' );
+		const paramIndex = this.props.path.indexOf( '?' );
 		return ( paramIndex < 0 ) ? this.props.path : this.props.path.substring( 0, paramIndex );
 	},
 
 	getSelectedText: function() {
-		var text = '',
+		let text = '',
 			filteredPath = this.getFilteredPath(),
 			found = find( this.getNavtabs(), { path: filteredPath } );
 

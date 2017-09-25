@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { filter, isEqual } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ButtonsPreviewButton = require( 'my-sites/sharing/buttons/preview-button' ),
-	ResizableIframe = require( 'components/resizable-iframe' ),
-	previewWidget = require( './preview-widget' ),
-	touchDetect = require( 'lib/touch-detect' );
+import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
 
-var SharingButtonsPreviewButtons = module.exports = React.createClass( {
+import ResizableIframe from 'components/resizable-iframe';
+import previewWidget from './preview-widget';
+import touchDetect from 'lib/touch-detect';
+
+const SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',
 
 	propTypes: {
@@ -74,7 +75,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	},
 
 	detectWidgetPreviewChanges: function( event ) {
-		var preview, offset;
+		let preview, offset;
 
 		// Ensure this only triggers in the context of an official preview
 		if ( ! this.refs.iframe ) {
@@ -118,7 +119,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	},
 
 	showMorePreview: function( event ) {
-		var moreButton, offset;
+		let moreButton, offset;
 
 		if ( event && ( event.currentTarget.contains( event.relatedTarget ) || touchDetect.hasTouch() ) ) {
 			// Only allow the preview to be shown if cursor has moved from outside
@@ -172,14 +173,14 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
 		// rendered in the text-only style.
-		var buttons = filter( this.props.buttons, { visibility: this.props.visibility } ),
+		let buttons = filter( this.props.buttons, { visibility: this.props.visibility } ),
 			previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return <ResizableIframe ref="iframe" src={ previewUrl } width="100%" frameBorder="0" className="official-preview" />;
 	},
 
 	getCustomPreviewElement: function() {
-		var buttons = this.props.buttons.map( function( button ) {
+		const buttons = this.props.buttons.map( function( button ) {
 			return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ button.visibility === this.props.visibility } style={ this.props.style } onClick={ this.props.onButtonClick.bind( null, button ) } />;
 		}, this );
 
@@ -203,7 +204,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	},
 
 	getMorePreviewElement: function() {
-		var classes, hiddenButtons;
+		let classes, hiddenButtons;
 		if ( ! this.props.showMore ) {
 			return;
 		}

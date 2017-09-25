@@ -3,7 +3,7 @@
  */
 import { identity } from 'lodash';
 
-var fieldMasks = {};
+const fieldMasks = {};
 
 fieldMasks[ 'expiration-date' ] = {
 	mask: function( previousValue, nextValue ) {
@@ -33,7 +33,7 @@ fieldMasks[ 'expiration-date' ] = {
 
 fieldMasks.number = {
 	mask: function( previousValue, nextValue ) {
-		var digits = nextValue.replace( /[^0-9]/g, '' ),
+		let digits = nextValue.replace( /[^0-9]/g, '' ),
 			string = (
 				digits.slice( 0, 4 ) + ' ' +
 				digits.slice( 4, 8 ) + ' ' +
@@ -58,7 +58,7 @@ fieldMasks.cvv = {
 };
 
 function maskField( fieldName, previousValue, nextValue ) {
-	var fieldMask = fieldMasks[ fieldName ];
+	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
 	}
@@ -67,7 +67,7 @@ function maskField( fieldName, previousValue, nextValue ) {
 }
 
 function unmaskField( fieldName, previousValue, nextValue ) {
-	var fieldMask = fieldMasks[ fieldName ];
+	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
 	}

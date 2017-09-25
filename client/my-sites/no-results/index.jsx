@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-var noResults = React.createClass( {
+const noResults = React.createClass( {
 
 	getDefaultProps: function() {
 		return {

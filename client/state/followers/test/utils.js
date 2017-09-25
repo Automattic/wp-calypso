@@ -24,7 +24,7 @@ describe( 'utils', () => {
 	} );
 	describe( '#normalizeFollower()', () => {
 		it( 'should append an `avatar_URL` parameter when given an an `avatar` parameter', () => {
-			var normalized = normalizeFollower( {
+			const normalized = normalizeFollower( {
 				ID: 0,
 				avatar: 'http://some-avatar-url/'
 			} );

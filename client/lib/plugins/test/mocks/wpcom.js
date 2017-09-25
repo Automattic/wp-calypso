@@ -1,4 +1,4 @@
-var pluginsInstallCalls = 0,
+let pluginsInstallCalls = 0,
 	pluginsAutoupdateCalls = 0,
 	pluginsActivateCalls = 0,
 	pluginsDeactivateCalls = 0,
@@ -13,7 +13,7 @@ var pluginsInstallCalls = 0,
 			callback();
 		},
 
-		delete: function( site, plugin, callback ) {
+		'delete': function( site, plugin, callback ) {
 			pluginsRemoveCalls++;
 			callback();
 		},
@@ -41,7 +41,7 @@ var pluginsInstallCalls = 0,
 			callback();
 		},
 
-		delete: function( site, plugin, callback ) {
+		'delete': function( site, plugin, callback ) {
 			pluginsRemoveCalls++;
 			callback();
 		},

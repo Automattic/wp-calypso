@@ -57,7 +57,7 @@ class SupportUserLoginDialog extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.isBusy && prevProps.isBusy ) {
 			setTimeout( () => {
-				this.supportPasswordInput.focus()
+				this.supportPasswordInput.focus();
 			}, 0 );
 		}
 	}
@@ -134,7 +134,7 @@ class SupportUserLoginDialog extends Component {
 					<FormLabel>
 						<span>Support user password</span>
 						<FormPasswordInput
-							autoFocus={ this.autoFocusField() === 'password'  }
+							autoFocus={ this.autoFocusField() === 'password' }
 							name="supportPassword"
 							id="supportPassword"
 							disabled={ isBusy }

@@ -20,4 +20,3 @@ export function areEqualIgnoringWhitespaceAndCase( a, b ) {
 	return a.toLowerCase() === b.toLowerCase();
 }
 
-

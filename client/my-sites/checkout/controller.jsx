@@ -17,6 +17,16 @@ import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
 
+import Checkout from './checkout';
+import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
+import SecondaryCart from './cart/secondary-cart';
+import Checkout from './checkout';
+import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
+import SecondaryCart from './cart/secondary-cart';
+import CheckoutThankYouComponent from './checkout-thank-you';
+
 /**
  * Module variables
  */
@@ -24,13 +34,7 @@ const productsList = productsFactory();
 
 module.exports = {
 	checkout: function( context ) {
-		var Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' ),
-			basePath = route.sectionify( context.path ),
-			product = context.params.product,
-			selectedFeature = context.params.feature;
+		let basePath = route.sectionify( context.path ), product = context.params.product, selectedFeature = context.params.feature;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -72,12 +76,7 @@ module.exports = {
 	},
 
 	sitelessCheckout: function( context ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' );
-
-		analytics.pageView.record( '/checkout/no-site', 'Checkout' );
+	    analytics.pageView.record( '/checkout/no-site', 'Checkout' );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
@@ -107,9 +106,7 @@ module.exports = {
 	},
 
 	checkoutThankYou: function( context ) {
-		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			basePath = route.sectionify( context.path ),
-			receiptId = Number( context.params.receiptId );
+		const basePath = route.sectionify( context.path ), receiptId = Number( context.params.receiptId );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 

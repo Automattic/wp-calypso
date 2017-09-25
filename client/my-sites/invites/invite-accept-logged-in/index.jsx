@@ -20,7 +20,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 
-let InviteAcceptLoggedIn = React.createClass( {
+const InviteAcceptLoggedIn = React.createClass( {
 
 	getInitialState() {
 		return { submitting: false };

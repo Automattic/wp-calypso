@@ -6,9 +6,10 @@ import { isEqual, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	scrollStore = require( 'lib/infinite-list/scroll-store' ),
-	positionsStore = require( 'lib/infinite-list/positions-store' );
+import Dispatcher from 'dispatcher';
+
+import scrollStore from 'lib/infinite-list/scroll-store';
+import positionsStore from 'lib/infinite-list/positions-store';
 
 /**
  * Module variables
@@ -25,7 +26,7 @@ module.exports = {
 	storePositions: throttle( function( url, positions ) {
 		if ( ! _lastCalledPositions ) {
 			setTimeout( () => {
-				let storedPositions = positionsStore.get( _lastCalledPositions.url );
+				const storedPositions = positionsStore.get( _lastCalledPositions.url );
 				if ( ! isEqual( _lastCalledPositions.positions, storedPositions ) ) {
 					Dispatcher.handleViewAction( {
 						type: 'INFINITE_LIST_POSITION_CHANGED',
@@ -41,7 +42,7 @@ module.exports = {
 	storeScroll: throttle( function( url, scrollPosition ) {
 		if ( ! _lastCalledScroll ) {
 			setTimeout( () => {
-				let storedScroll = scrollStore.get( _lastCalledScroll.url );
+				const storedScroll = scrollStore.get( _lastCalledScroll.url );
 				if ( _lastCalledScroll.scrollPosition !== storedScroll ) {
 					Dispatcher.handleViewAction( {
 						type: 'SCROLL_CHANGED',

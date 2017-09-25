@@ -6,7 +6,7 @@ import { isEqual, memoize } from 'lodash';
 /**
  * Module variables
  */
-var Shortcode = {},
+let Shortcode = {},
 	REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g,
 	REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/;
 
@@ -23,7 +23,7 @@ var Shortcode = {},
  * @return {Object}      An object of attributes, split as named and numeric
  */
 Shortcode.parseAttributes = memoize( function( text ) {
-	var named = {},
+	let named = {},
 		numeric = [],
 		match;
 
@@ -61,7 +61,7 @@ Shortcode.parseAttributes = memoize( function( text ) {
  * @return {Object}            An object of attributes, split as named and numeric
  */
 Shortcode.normalizeAttributes = function( attributes ) {
-	var named, numeric;
+	let named, numeric;
 
 	if ( 'string' === typeof attributes ) {
 		return Shortcode.parseAttributes( attributes );
@@ -86,11 +86,11 @@ Shortcode.normalizeAttributes = function( attributes ) {
  * @return {string}           The string value of the shortcode
  */
 Shortcode.stringify = function( shortcode ) {
-	var text = '[' + shortcode.tag,
+	let text = '[' + shortcode.tag,
 		attributes = Shortcode.normalizeAttributes( shortcode.attrs );
 
 	Object.keys( attributes.named ).forEach( function( name ) {
-		var value = attributes.named[ name ];
+		const value = attributes.named[ name ];
 		text += ' ' + name + '="' + value + '"';
 	} );
 
@@ -128,7 +128,7 @@ Shortcode.stringify = function( shortcode ) {
  * @return {Object}           The object value of the shortcode
  */
 Shortcode.parse = function( shortcode ) {
-	var match = shortcode.match( REGEXP_SHORTCODE ),
+	let match = shortcode.match( REGEXP_SHORTCODE ),
 		type, parsed;
 
 	if ( ! match ) {
@@ -198,7 +198,7 @@ Shortcode.regexp = memoize( function( tag ) {
  * @return {Object|void} next match
  */
 Shortcode.next = function( tag, text, index ) {
-	var re = Shortcode.regexp( tag ),
+	let re = Shortcode.regexp( tag ),
 		match, result;
 
 	re.lastIndex = index || 0;

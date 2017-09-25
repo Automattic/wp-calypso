@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { filter, find } from 'lodash';
-var debug = require( 'debug' )( 'calypso:connected-applications-data' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:connected-applications-data' );
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+const wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Initialize ConnectedApplications with defaults
@@ -35,7 +36,6 @@ Emitter( ConnectedApplications.prototype );
  */
 ConnectedApplications.prototype.get = function() {
 	if ( ! this.initialized ) {
-
 		// Call fetch to refresh data
 		this.fetch();
 	}
@@ -62,7 +62,6 @@ ConnectedApplications.prototype.fetch = function() {
 
 		debug( 'Connected applications successfully retrieved' );
 		this.emit( 'change' );
-
 	}.bind( this ) );
 };
 
@@ -86,7 +85,6 @@ ConnectedApplications.prototype.revoke = function( connectionID, callback ) {
 
 		callback( null, data );
 		this.emit( 'change' );
-
 	}.bind( this ) );
 };
 
@@ -96,7 +94,7 @@ ConnectedApplications.prototype.revoke = function( connectionID, callback ) {
  * @param int connectionID The ID of the connection
  */
 ConnectedApplications.prototype.getApplication = function( connectionID ) {
-	var application;
+	let application;
 	if ( ! this.initialized ) {
 		this.fetch();
 		return;

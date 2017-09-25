@@ -6,9 +6,10 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-var MediaStore = require( './store' ),
-	Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import MediaStore from './store';
+
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables
@@ -35,7 +36,7 @@ function addSingle( siteId, item ) {
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var index;
+	let index;
 
 	if ( ! itemId ) {
 		itemId = item.ID;
@@ -61,7 +62,7 @@ function receiveMany( siteId, items ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
+	let index;
 
 	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
@@ -94,7 +95,7 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 

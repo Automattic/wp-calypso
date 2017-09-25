@@ -1,12 +1,12 @@
-import { createReducerStore } from 'lib/store'
-import { actions as ActionTypes } from './constants'
+import { createReducerStore } from 'lib/store';
+import { actions as ActionTypes } from './constants';
 import keyMirror from 'key-mirror';
 
 export const requestState = keyMirror( {
 	READY: null,
 	REQUESTING: null,
 	COMPLETE: null
-} )
+} );
 
 const initialState = {
 	// API request status
@@ -14,13 +14,13 @@ const initialState = {
 	// there was an error fulfillinng the request
 	errorLevel: false,
 	errorMessage: false
-}
+};
 
 // If we receive an error that's not a needs_2fa then update state to reflect the error
 // If the error was a needs_2fa from the API that means we successfully asked for an SMS
 function handleSMSResponse( payload ) {
 	const { data, error } = payload;
-	var errorMessage = null;
+	let errorMessage = null;
 
 	// if it's 2fa error then we actually successfully requested an sms code
 	if ( data && data.body && data.body.error === 'needs_2fa' ) {
@@ -46,7 +46,7 @@ export default createReducerStore( function( state, payload ) {
 
 	switch ( action.type ) {
 		case ActionTypes.AUTH_CODE_REQUEST:
-			return { status: requestState.REQUESTING, errorLevel: false, errorMessage: false }
+			return { status: requestState.REQUESTING, errorLevel: false, errorMessage: false };
 		case ActionTypes.RECEIVE_AUTH_CODE_REQUEST:
 			return handleSMSResponse( action );
 		case ActionTypes.RESET_AUTH_CODE_REQUEST:

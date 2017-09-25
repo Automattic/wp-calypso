@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var sitesController = require( 'my-sites/controller' ),
-	controller = require( './controller' );
+import sitesController from 'my-sites/controller';
+
+import controller from './controller';
 import config from 'config';
 
 module.exports = function() {

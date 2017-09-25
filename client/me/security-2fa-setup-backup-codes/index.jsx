@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-setup-backup-codes' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
 
 /**
  * Internal dependencies
  */
-var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
-	Security2faProgress = require( 'me/security-2fa-progress' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	support = require( 'lib/url/support' );
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
+
+import Security2faProgress from 'me/security-2fa-progress';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import eventRecorder from 'me/event-recorder';
+import support from 'lib/url/support';
 
 import Notice from 'components/notice';
 
@@ -59,7 +62,7 @@ module.exports = React.createClass( {
 	},
 
 	possiblyRenderError: function() {
-		var errorMessage;
+		let errorMessage;
 		if ( ! this.state.lastError ) {
 			return;
 		}

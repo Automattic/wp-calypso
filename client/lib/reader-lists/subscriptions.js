@@ -4,15 +4,16 @@
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-const Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	ListStore = require( './lists' );
+import emitter from 'lib/mixins/emitter';
 
-var lists = null,
+import ListStore from './lists';
+
+let lists = null,
 	errors = [],
 	ReaderListStore,
 	isFetching = false;
@@ -26,7 +27,7 @@ function mapApiToId( list ) {
 
 function sortList() {
 	lists.sort( function( a, b ) {
-		var aTitle = ListStore.get( a.owner, a.slug ).title,
+		let aTitle = ListStore.get( a.owner, a.slug ).title,
 			bTitle = ListStore.get( b.owner, b.slug ).title;
 		return aTitle.localeCompare( bTitle );
 	} );
@@ -72,7 +73,7 @@ ReaderListStore = {
 	},
 
 	unfollowList: function( data ) {
-		var key = mapApiToId( data ),
+		let key = mapApiToId( data ),
 			newList = reject( lists, key );
 
 		if ( newList.length !== lists.length ) {
@@ -100,7 +101,7 @@ ReaderListStore = {
 emitter( ReaderListStore );
 
 ReaderListStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	if ( ! action ) {
 		return;

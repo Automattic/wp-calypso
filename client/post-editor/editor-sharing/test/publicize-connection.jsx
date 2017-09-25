@@ -15,7 +15,7 @@ import useMockery from 'test/helpers/use-mockery';
 /**
  * Module variables
  */
-var CONNECTION = {
+const CONNECTION = {
 	ID: 11247568,
 	external_ID: '257964634',
 	external_display: '@dev_press',
@@ -44,7 +44,7 @@ describe( 'PublicizeConnection', function() {
 
 	describe( '#isConnectionSkipped()', function() {
 		it( 'should return true if connection is already skipped', function() {
-			var post, tree;
+			let post, tree;
 
 			post = {
 				metadata: [
@@ -62,7 +62,7 @@ describe( 'PublicizeConnection', function() {
 		} );
 
 		it( 'should return false if connection is not skipped', function() {
-			var post, tree;
+			let post, tree;
 
 			post = {
 				metadata: [
@@ -83,7 +83,7 @@ describe( 'PublicizeConnection', function() {
 
 	describe( '#isConnectionDone()', function() {
 		it( 'should return true if connection is already publicized to', function() {
-			var post, tree;
+			let post, tree;
 
 			post = {
 				metadata: [
@@ -101,7 +101,7 @@ describe( 'PublicizeConnection', function() {
 		} );
 
 		it( 'should return false if connection is not publicized to yet', function() {
-			var post, tree;
+			let post, tree;
 
 			post = {
 				metadata: [

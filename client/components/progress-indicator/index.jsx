@@ -19,7 +19,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var last = null,
+		let last = null,
 			status = this.props.status,
 			classes;
 

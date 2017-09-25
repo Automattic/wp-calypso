@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
@@ -9,7 +9,7 @@ var assert = require( 'chai' ).assert;
 import actions from './lib/mock-actions';
 
 describe( 'Help search Store', function() {
-	var Dispatcher, HelpSearchStore;
+	let Dispatcher, HelpSearchStore;
 
 	beforeEach( function() {
 		Dispatcher = require( 'dispatcher' );
@@ -18,14 +18,14 @@ describe( 'Help search Store', function() {
 
 	describe( 'Get Help Links', function() {
 		it( 'Should return empty array when there are no help links', function() {
-			var helpLinks = HelpSearchStore.getHelpLinks();
+			const helpLinks = HelpSearchStore.getHelpLinks();
 
 			assert( Array.isArray( helpLinks ), 'help links is not an array' );
 			assert( 0 === helpLinks.length, 'help links is empty' );
 		} );
 
 		it( 'Should return an array of help link when there are help links', function() {
-			var helpLinks;
+			let helpLinks;
 
 			Dispatcher.handleServerAction( actions.fetchedHelpLinks );
 			helpLinks = HelpSearchStore.getHelpLinks();

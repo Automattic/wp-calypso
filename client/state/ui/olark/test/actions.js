@@ -23,6 +23,8 @@ import {
 	operatorsAway
 } from '../actions';
 
+import olarkActions from '../actions';
+
 describe( 'actions', () => {
 	let olarkTimeout, requestOlark, sandbox, spy, clock;
 
@@ -38,8 +40,7 @@ describe( 'actions', () => {
 	} );
 
 	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/olark-api', olarkApiMock );
-		const olarkActions = require( '../actions' );
+	    mockery.registerMock( 'lib/olark-api', olarkApiMock );
 		olarkTimeout = olarkActions.olarkTimeout;
 		requestOlark = olarkActions.requestOlark;
 	} );

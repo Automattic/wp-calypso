@@ -33,7 +33,7 @@ import LocaleSuggestions from 'components/locale-suggestions';
 const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
-let InviteAccept = React.createClass( {
+const InviteAccept = React.createClass( {
 
 	getInitialState() {
 		return {
@@ -41,7 +41,7 @@ let InviteAccept = React.createClass( {
 			error: false,
 			user: userModule.get(),
 			matchEmailError: false
-		}
+		};
 	},
 
 	componentWillMount() {
@@ -100,7 +100,7 @@ let InviteAccept = React.createClass( {
 		let loginUrl = login( { redirectTo: window.location.href } );
 
 		if ( invite && invite.sentTo ) {
-			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
+			const presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
 			loginUrl += presetEmail;
 		}
 
@@ -129,7 +129,7 @@ let InviteAccept = React.createClass( {
 		}
 		debug( 'Rendering invite' );
 
-		let props = {
+		const props = {
 			invite: this.state.invite,
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
@@ -146,7 +146,7 @@ let InviteAccept = React.createClass( {
 		const { error } = this.state;
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
-		let props = {
+		const props = {
 			title: this.translate(
 				'Oops, that invite is not valid',
 				{ context: 'Title that is display to users when attempting to accept an invalid invite.' }

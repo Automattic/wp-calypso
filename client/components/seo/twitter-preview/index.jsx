@@ -15,9 +15,9 @@ export class TwitterPreview extends PureComponent {
 			image
 		} = this.props;
 
-		var previewImageStyle = {
+		const previewImageStyle = {
 			backgroundImage: 'url(' + image + ')'
-		}
+		};
 
 		return (
 			<div className="twitter-card-preview__container">

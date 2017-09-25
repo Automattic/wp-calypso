@@ -1,9 +1,9 @@
-import request from 'superagent'
+import request from 'superagent';
 
-import Dispatcher from 'dispatcher'
-import { actions } from './constants'
+import Dispatcher from 'dispatcher';
+import { actions } from './constants';
 
-var timeout;
+let timeout;
 
 export function resetCode() {
 	timeout = null;

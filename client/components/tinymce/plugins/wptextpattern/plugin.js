@@ -22,14 +22,14 @@
 import tinymce from 'tinymce/tinymce';
 
 function wptextpattern( editor ) {
-	var VK = tinymce.util.VK;
+	const VK = tinymce.util.VK;
 
-	var spacePatterns = [
+	const spacePatterns = [
 		{ regExp: /^[*-]\s/, cmd: 'InsertUnorderedList' },
 		{ regExp: /^1[.)]\s/, cmd: 'InsertOrderedList' }
 	];
 
-	var enterPatterns = [
+	const enterPatterns = [
 		{ start: '##', format: 'h2' },
 		{ start: '###', format: 'h3' },
 		{ start: '####', format: 'h4' },
@@ -39,12 +39,12 @@ function wptextpattern( editor ) {
 		{ regExp: /^(-){3,}$/, element: 'hr' }
 	];
 
-	var inlinePatterns = [
+	const inlinePatterns = [
 		{ start: '`', end: '`', format: 'code' }
 	];
 
-	var canUndo;
-	var chars = [];
+	let canUndo;
+	const chars = [];
 
 	tinymce.each( inlinePatterns, function( pattern ) {
 		tinymce.each( ( pattern.start + pattern.end ).split( '' ), function( c ) {
@@ -78,14 +78,14 @@ function wptextpattern( editor ) {
 	}, true );
 
 	function inline() {
-		var rng = editor.selection.getRng();
-		var node = rng.startContainer;
-		var offset = rng.startOffset;
-		var startOffset;
-		var endOffset;
-		var pattern;
-		var format;
-		var zero;
+		const rng = editor.selection.getRng();
+		let node = rng.startContainer;
+		const offset = rng.startOffset;
+		let startOffset;
+		let endOffset;
+		let pattern;
+		let format;
+		let zero;
 
 		if ( ! node || node.nodeType !== 3 || ! node.data.length || ! offset ) {
 			return;
@@ -96,8 +96,8 @@ function wptextpattern( editor ) {
 		}
 
 		function findStart( node ) {
-			var i = inlinePatterns.length;
-			var offset;
+			let i = inlinePatterns.length;
+			let offset;
 
 			while ( i-- ) {
 				pattern = inlinePatterns[ i ];
@@ -148,7 +148,7 @@ function wptextpattern( editor ) {
 				canUndo = 'space';
 
 				editor.once( 'selectionchange', function() {
-					var offset;
+					let offset;
 
 					if ( zero ) {
 						offset = zero.data.indexOf( '\u200b' );
@@ -163,7 +163,7 @@ function wptextpattern( editor ) {
 	}
 
 	function firstTextNode( node ) {
-		var parent = editor.dom.getParent( node, 'p' ),
+		let parent = editor.dom.getParent( node, 'p' ),
 			child;
 
 		if ( ! parent ) {
@@ -194,7 +194,7 @@ function wptextpattern( editor ) {
 	}
 
 	function space() {
-		var rng = editor.selection.getRng(),
+		let rng = editor.selection.getRng(),
 			node = rng.startContainer,
 			parent,
 			text;
@@ -207,7 +207,7 @@ function wptextpattern( editor ) {
 		text = node.data;
 
 		tinymce.each( spacePatterns, function( pattern ) {
-			var match = text.match( pattern.regExp );
+			const match = text.match( pattern.regExp );
 
 			if ( ! match || rng.startOffset !== match[ 0 ].length ) {
 				return;
@@ -236,7 +236,7 @@ function wptextpattern( editor ) {
 	}
 
 	function enter() {
-		var rng = editor.selection.getRng(),
+		let rng = editor.selection.getRng(),
 			start = rng.startContainer,
 			node = firstTextNode( start ),
 			i = enterPatterns.length,

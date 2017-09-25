@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:stats-data:local-list' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:stats-data:local-list' );
+import store from 'store';
 import { find } from 'lodash';
 
 /**
@@ -29,7 +31,6 @@ function StatsDataLocalList( options ) {
 	return this;
 }
 
-
 /**
  * Get the data from localStorage
  *
@@ -37,7 +38,7 @@ function StatsDataLocalList( options ) {
  * @api public
  */
 StatsDataLocalList.prototype.getData = function() {
-	var localStoreData = store.get( this.localStoreKey ) || [];
+	const localStoreData = store.get( this.localStoreKey ) || [];
 	return localStoreData;
 };
 
@@ -61,7 +62,7 @@ StatsDataLocalList.prototype.clear = function() {
  * @api public
  */
 StatsDataLocalList.prototype.set = function( key, value ) {
-	var record = { key: key, createdAt: new Date().getTime(), data: value },
+	let record = { key: key, createdAt: new Date().getTime(), data: value },
 		localData = this.getData(),
 		newLocalData;
 
@@ -80,7 +81,6 @@ StatsDataLocalList.prototype.set = function( key, value ) {
 	store.set( this.localStoreKey, newLocalData );
 	return record;
 };
-
 
 /**
  * Finds 'value' for the 'key' in localStorage

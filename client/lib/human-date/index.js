@@ -1,4 +1,4 @@
-var i18n = require( 'i18n-calypso' );
+import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
@@ -16,7 +16,7 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 ) {
-		let minutes = Math.ceil( millisAgo / ( MILLIS_IN_MINUTE ) );
+		const minutes = Math.ceil( millisAgo / ( MILLIS_IN_MINUTE ) );
 		return i18n.translate( '%(minutes)dm ago', {
 			args: {
 				minutes: minutes
@@ -26,7 +26,7 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 ) {
-		let hours = now.diff( dateOrMoment, 'hours' );
+		const hours = now.diff( dateOrMoment, 'hours' );
 		return i18n.translate( '%(hours)dh ago', {
 			args: {
 				hours: hours
@@ -36,7 +36,7 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 * 7 ) {
-		let days = now.diff( dateOrMoment, 'days' );
+		const days = now.diff( dateOrMoment, 'days' );
 		return i18n.translate( '%(days)dd ago', {
 			args: {
 				days: days

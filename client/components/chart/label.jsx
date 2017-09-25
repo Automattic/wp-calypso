@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
- import userModule from 'lib/user';
+import userModule from 'lib/user';
 
 /**
  * Module variables

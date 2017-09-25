@@ -12,7 +12,7 @@ function FakeWPCOM() {
 }
 
 FakeWPCOM.prototype.cart = function() {
-	var arrayArguments = toArray( arguments ),
+	let arrayArguments = toArray( arguments ),
 		method = arrayArguments[ 1 ];
 
 	if ( method === 'POST' ) {
@@ -32,7 +32,7 @@ FakeWPCOM.prototype.cart = function() {
 };
 
 FakeWPCOM.prototype.resolveRequest = function( index, responseData ) {
-	var request = this._requests[ index ];
+	const request = this._requests[ index ];
 
 	if ( request.isResolved ) {
 		throw new Error( 'Request was already resolved' );

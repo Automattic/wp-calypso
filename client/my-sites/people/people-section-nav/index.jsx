@@ -9,13 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	UrlSearch = require( 'lib/mixins/url-search' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import Search from 'components/search';
 
-let PeopleSearch = React.createClass( {
+import UrlSearch from 'lib/mixins/url-search';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+
+const PeopleSearch = React.createClass( {
 	displayName: 'PeopleSearch',
 	mixins: [ UrlSearch ],
 
@@ -33,7 +34,7 @@ let PeopleSearch = React.createClass( {
 	}
 } );
 
-let PeopleNavTabs = React.createClass( {
+const PeopleNavTabs = React.createClass( {
 	displayName: 'PeopleNavTabs',
 	render: function() {
 		return (
@@ -111,7 +112,7 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		var allowedFilterIds = [ 'team' ];
+		const allowedFilterIds = [ 'team' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
@@ -136,7 +137,7 @@ class PeopleSectionNav extends Component {
 	}
 
 	render() {
-		var selectedText,
+		let selectedText,
 			hasPinnedItems = false,
 			search = null;
 

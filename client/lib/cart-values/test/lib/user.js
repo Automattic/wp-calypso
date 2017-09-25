@@ -1,7 +1,7 @@
 /**
  * Local variables
  */
-var defaults = {
+const defaults = {
 	localeSlug: 'de'
 };
 

@@ -39,7 +39,7 @@ module.exports = [
 		update: {
 			id: '3564',
 			new_version: '1.6',
-			package: 'https://downloads.wordpress.org/plugin/hello-dolly.1.6.zip',
+			'package': 'https://downloads.wordpress.org/plugin/hello-dolly.1.6.zip',
 			plugin: 'hello-dolly/hello.php',
 			slug: 'hello-dolly',
 			url: 'https://wordpress.org/plugins/hello-dolly/',

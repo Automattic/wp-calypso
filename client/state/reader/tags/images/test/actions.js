@@ -17,7 +17,7 @@ import {
 } from 'state/action-types';
 import { receiveTagImages, requestTagImages } from '../actions';
 
-const sampleSuccessResponse = require( './sample-responses.json' );
+import sampleSuccessResponse from './sample-responses.json';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

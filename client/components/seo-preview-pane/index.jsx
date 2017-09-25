@@ -235,10 +235,10 @@ export class SeoPreviewPane extends PureComponent {
 						</h1>
 						<p className="seo-preview-pane__description">
 							{ translate(
-								`Below you'll find previews that ` +
-								`represent how your post will look ` +
-								`when it's found or shared across a ` +
-								`variety of networks.`
+								'Below you\'ll find previews that ' +
+								'represent how your post will look ' +
+								'when it\'s found or shared across a ' +
+								'variety of networks.'
 							) }
 						</p>
 					</div>

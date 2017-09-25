@@ -67,7 +67,7 @@ describe( 'actions', () => {
 				post_type: 'post'
 			} )
 			.reply( 200, true )
-			.post( '/rest/v1.1/sites/2916284/exports/start', body => !body )
+			.post( '/rest/v1.1/sites/2916284/exports/start', body => ! body )
 			.reply( 200, true )
 			.get( '/rest/v1.1/sites/100658273/exports/0' )
 			.reply( 200, SAMPLE_EXPORT_COMPLETE_RESPONSE )

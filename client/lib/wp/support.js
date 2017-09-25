@@ -15,11 +15,11 @@ export default function wpcomSupport( wpcom ) {
 	 */
 	const addSupportData = function( params ) {
 		// Unwind the query string
-		let query = qs.parse( params.query );
+		const query = qs.parse( params.query );
 
 		// Inject the credentials
 		query.support_user = supportUser;
-		query._support_token = supportToken
+		query._support_token = supportToken;
 
 		return Object.assign( {}, params, {
 			query: qs.stringify( query )
@@ -59,8 +59,8 @@ export default function wpcomSupport( wpcom ) {
 							// Call the original response callback
 							callback( response, ...args );
 						}
-					}
-				}
+					};
+				};
 				return true;
 			}
 			return false;
@@ -73,4 +73,4 @@ export default function wpcomSupport( wpcom ) {
 			return request( params, callback );
 		}
 	} );
-};
+}

@@ -12,7 +12,7 @@ import assert from 'assert';
 import MultiCheckbox from '../';
 
 describe( 'index', function() {
-	var options = [
+	const options = [
 		{ value: 1, label: 'One' },
 		{ value: 2, label: 'Two' }
 	];
@@ -24,12 +24,12 @@ describe( 'index', function() {
 
 	describe( 'rendering', function() {
 		it( 'should render a set of checkboxes', function() {
-			var checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } /> ),
+			let checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } /> ),
 				labels = TestUtils.scryRenderedDOMComponentsWithTag( checkboxes, 'label' );
 
 			assert.equal( options.length, labels.length );
 			labels.forEach( function( label, i ) {
-				var labelNode = label,
+				let labelNode = label,
 					inputNode = labelNode.querySelector( 'input' );
 				assert.equal( 'favorite_colors[]', inputNode.name );
 				assert.equal( options[ i ].value, inputNode.value );
@@ -38,7 +38,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should accept an array of checked values', function() {
-			var checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } checked={ [ options[ 0 ].value ] } /> ),
+			let checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } checked={ [ options[ 0 ].value ] } /> ),
 				labels = TestUtils.scryRenderedDOMComponentsWithTag( checkboxes, 'label' );
 
 			assert.equal( true, labels[ 0 ].querySelector( 'input' ).checked );
@@ -46,7 +46,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should accept an array of defaultChecked', function() {
-			var checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } defaultChecked={ [ options[ 0 ].value ] } /> ),
+			let checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } defaultChecked={ [ options[ 0 ].value ] } /> ),
 				labels = TestUtils.scryRenderedDOMComponentsWithTag( checkboxes, 'label' );
 
 			assert.equal( true, labels[ 0 ].querySelector( 'input' ).checked );
@@ -54,7 +54,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should accept an onChange event handler', function( done ) {
-			var checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } onChange={ finishTest } /> ),
+			let checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } onChange={ finishTest } /> ),
 				labels = TestUtils.scryRenderedDOMComponentsWithTag( checkboxes, 'label' );
 
 			TestUtils.Simulate.change( labels[ 0 ].querySelector( 'input' ), {
@@ -71,7 +71,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should accept a disabled boolean', function() {
-			var checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } disabled={ true } /> ),
+			let checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } disabled={ true } /> ),
 				labels = TestUtils.scryRenderedDOMComponentsWithTag( checkboxes, 'label' );
 
 			assert.ok( labels[ 0 ].querySelector( 'input' ).disabled );
@@ -79,7 +79,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should transfer props to the rendered element', function() {
-			var className = 'transferred-class',
+			let className = 'transferred-class',
 				checkboxes = TestUtils.renderIntoDocument( <MultiCheckbox name="favorite_colors" options={ options } className={ className } /> ),
 				div = TestUtils.findRenderedDOMComponentWithTag( checkboxes, 'div' );
 

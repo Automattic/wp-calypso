@@ -45,7 +45,6 @@ describe( 'selectors', () => {
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.true;
 		} );
 
-
 		it( 'should return false when a isFetching is false', () => {
 			const state = deepFreeze( {
 				sites: {

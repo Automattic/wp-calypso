@@ -48,7 +48,7 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
 		} );
 
 		it( 'The store should return an object', function() {
-			var earnings = EarningsStore.getById( site.ID ),
+			let earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 
@@ -58,7 +58,7 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
 		} );
 
 		it( 'The object should not be null after RECEIVE', function() {
-			var earnings = EarningsStore.getById( site.ID ),
+			let earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 

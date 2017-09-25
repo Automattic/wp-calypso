@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	StoredCard = require( './stored-card' ),
-	NewCardForm = require( './new-card-form' ),
-	storeTransactions = require( 'lib/store-transactions' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
 
-var CreditCardSelector = React.createClass({
+import StoredCard from './stored-card';
+import NewCardForm from './new-card-form';
+import storeTransactions from 'lib/store-transactions';
+import upgradesActions from 'lib/upgrades/actions';
+
+const CreditCardSelector = React.createClass( {
 	getInitialState: function() {
 		if ( this.props.initialCard ) {
 			return { section: this.props.initialCard.stored_details_id };
@@ -34,13 +36,13 @@ var CreditCardSelector = React.createClass({
 
 	storedCards: function() {
 		return this.props.cards.map( function( card ) {
-			var storedCard = <StoredCard card={ card } />;
+			const storedCard = <StoredCard card={ card } />;
 			return this.section( card.stored_details_id, storedCard );
 		}, this );
 	},
 
 	newCardForm: function() {
-		var cardForm = (
+		const cardForm = (
 			<NewCardForm
 				countriesList={ this.props.countriesList }
 				transaction={ this.props.transaction }
@@ -51,8 +53,8 @@ var CreditCardSelector = React.createClass({
 	},
 
 	section: function( name, content ) {
-		var classes = classNames( 'payment-box-section', {
-			'selected': this.state.section === name,
+		const classes = classNames( 'payment-box-section', {
+			selected: this.state.section === name,
 			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0
 		} );
 
@@ -68,7 +70,7 @@ var CreditCardSelector = React.createClass({
 	},
 
 	handleClickedSection: function( section ) {
-		var newPayment;
+		let newPayment;
 
 		if ( section === this.state.section ) {
 			return;

@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-var store = require( 'store' ),
-	debug = require( 'debug' )( 'calypso:user' ),
-	config = require( 'config' ),
-	qs = require( 'qs' );
+import store from 'store';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:user' );
+import config from 'config';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	userUtils = require( './shared-utils' ),
-	localforage = require( 'lib/localforage' );
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+import userUtils from './shared-utils';
+import localforage from 'lib/localforage';
 
 /**
  * User component
@@ -74,7 +75,6 @@ User.prototype.initialize = function() {
 
 		// Make sure that the user stored in localStorage matches the logged-in user
 		this.fetch();
-
 	}
 
 	if ( this.data ) {
@@ -83,13 +83,12 @@ User.prototype.initialize = function() {
 	}
 };
 
-
 /**
  * Clear localStorage when we detect that there is a mismatch between the ID
  * of the user stored in localStorage and the current user ID
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
-	var storedUser = store.get( 'wpcom_user' );
+	const storedUser = store.get( 'wpcom_user' );
 
 	if ( storedUser && storedUser.ID !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
@@ -107,7 +106,6 @@ User.prototype.get = function() {
 	return this.data;
 };
 
-
 /**
  * Fetch the current user from WordPress.com via the REST API
  * and stores it in local cache.
@@ -119,7 +117,7 @@ User.prototype.fetch = function() {
 		return;
 	}
 
-	var me = wpcom.me();
+	const me = wpcom.me();
 
 	// Request current user info
 	this.fetching = true;
@@ -142,7 +140,7 @@ User.prototype.fetch = function() {
 			return;
 		}
 
-		var userData = userUtils.filterUserObject( data );
+		const userData = userUtils.filterUserObject( data );
 
 		// Release lock from subsequent fetches
 		this.fetching = false;
@@ -161,13 +159,11 @@ User.prototype.fetch = function() {
 		this.emit( 'change' );
 
 		debug( 'User successfully retrieved' );
-
 	}.bind( this ) );
 };
 
-
 User.prototype.getLanguage = function() {
-	var languages = config( 'languages' ),
+	let languages = config( 'languages' ),
 		len = languages.length,
 		language,
 		index;
@@ -183,7 +179,6 @@ User.prototype.getLanguage = function() {
 	}
 
 	return language;
-
 };
 
 /**
@@ -193,7 +188,7 @@ User.prototype.getLanguage = function() {
  * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
  */
 User.prototype.getAvatarUrl = function( options ) {
-	var default_options = {
+	let default_options = {
 			s: 80,
 			d: 'mm',
 			r: 'G'
@@ -208,7 +203,7 @@ User.prototype.getAvatarUrl = function( options ) {
 };
 
 User.prototype.isRTL = function() {
-	var isRTL = false,
+	let isRTL = false,
 		language = this.getLanguage();
 
 	if ( language && language.rtl ) {
@@ -245,12 +240,12 @@ User.prototype.sendVerificationEmail = function( fn ) {
 };
 
 User.prototype.set = function( attributes ) {
-	var changed = false,
+	let changed = false,
 		computedAttributes = userUtils.getComputedAttributes( attributes );
 
 	attributes = Object.assign( {}, attributes, computedAttributes );
 
-	for ( var prop in attributes ) {
+	for ( const prop in attributes ) {
 		if ( attributes.hasOwnProperty( prop ) && ! isEqual( attributes[ prop ], this.data[ prop ] ) ) {
 			this.data[ prop ] = attributes[ prop ];
 			changed = true;
@@ -278,7 +273,7 @@ User.prototype.set = function( attributes ) {
 User.prototype.verificationPollerCallback = function( signal ) {
 	// skip server poll if page is hidden or there are no listeners
 	// and this was not triggered by a localStorage signal
-	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && !signal ) {
+	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && ! signal ) {
 		return;
 	}
 
@@ -307,7 +302,7 @@ User.prototype.verificationPollerCallback = function( signal ) {
  */
 
 User.prototype.checkVerification = function() {
-	if ( !this.get() ) {
+	if ( ! this.get() ) {
 		// not loaded, do nothing
 		return;
 	}

@@ -131,7 +131,7 @@ const MediaUtils = {
 	 * @return {string}       The MIME type prefix
 	 */
 	getMimePrefix: function( media ) {
-		var mimeType = MediaUtils.getMimeType( media ),
+		let mimeType = MediaUtils.getMimeType( media ),
 			mimePrefixMatch;
 
 		if ( ! mimeType ) {
@@ -202,10 +202,10 @@ const MediaUtils = {
 	 * @return {Array}       Sorted array of media objects
 	 */
 	sortItemsByDate: function( items ) {
-		var copy = items.slice( 0 );
+		const copy = items.slice( 0 );
 
 		copy.sort( function( a, b ) {
-			var dateCompare;
+			let dateCompare;
 
 			if ( a.date && b.date ) {
 				dateCompare = Date.parse( b.date ) - Date.parse( a.date );
@@ -386,7 +386,7 @@ const MediaUtils = {
 	 * @return {Object}      Width and height dimensions
 	 */
 	getThumbnailSizeDimensions: function( size, site ) {
-		var width, height;
+		let width, height;
 
 		if ( site && site.options ) {
 			width = site.options[ 'image_' + size + '_width' ];
@@ -409,7 +409,7 @@ const MediaUtils = {
 	 * @return {String}          Gallery shortcode
 	 */
 	generateGalleryShortcode: function( settings ) {
-		var attrs;
+		let attrs;
 
 		if ( ! settings.items.length ) {
 			return;

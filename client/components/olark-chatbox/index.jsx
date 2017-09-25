@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:olark:chatbox' );
+import ReactDom from 'react-dom';
+
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:olark:chatbox' );
 
 /**
  * Internal dependencies
  */
-var OlarkEvents = require( 'lib/olark-events' );
+import OlarkEvents from 'lib/olark-events';
 
 module.exports = React.createClass( {
 	/**
@@ -46,7 +48,7 @@ module.exports = React.createClass( {
 	 * Use the Olark API to show the chatbox
 	 */
 	showChatbox: function() {
-		var olarkApi = window.olark;
+		const olarkApi = window.olark;
 
 		olarkApi( 'api.box.show' );
 	},
@@ -55,7 +57,7 @@ module.exports = React.createClass( {
 	 * Use the Olark API to expand the chatbox
 	 */
 	expandChatbox: function() {
-		var olarkApi = window.olark;
+		const olarkApi = window.olark;
 
 		olarkApi( 'api.box.expand' );
 	},
@@ -65,7 +67,7 @@ module.exports = React.createClass( {
 	 * This is also a callback for the api.chat.onReady event
 	 */
 	bindOlarkWidget: function() {
-		var olarkWidget, dom = window.document;
+		let olarkWidget, dom = window.document;
 
 		// Check if our component is still mounted
 		if ( ! this.isMounted() ) {

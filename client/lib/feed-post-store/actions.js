@@ -4,10 +4,11 @@
 import { assign, defer } from 'lodash';
 
 // Internal dependencies
-const Dispatcher = require( 'dispatcher' ),
-	ACTION = require( './constants' ).action,
-	PostFetcher = require( './post-fetcher' ),
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
+
+import { action as ACTION } from './constants';
+import PostFetcher from './post-fetcher';
+import wpcom from 'lib/wp';
 
 let feedPostFetcher, blogPostFetcher, FeedPostActions;
 

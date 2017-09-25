@@ -145,14 +145,14 @@ const MainComponent = React.createClass( {
 
 	render() {
 		const translate = this.props.translate;
-		var headingLabel = this.state.isSubscribed
+		let headingLabel = this.state.isSubscribed
 								? translate( 'You\'re subscribed' )
 								: translate( 'We\'ve unsubscribed your email.' ),
 			messageLabel = this.state.isSubscribed
 								? translate( 'We\'ll send you updates for this mailing list.' )
 								: translate( 'You will no longer receive updates for this mailing list.' );
 
-		return(
+		return (
 			<div className="mailing-lists">
 				<div className="mailing-lists__header">
 					<Gridicon icon="mail" size={ 54 } />

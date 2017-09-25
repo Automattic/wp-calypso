@@ -11,6 +11,9 @@ import { identity } from 'lodash';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
+import ReactClass from 'react/lib/ReactClass';
+import paths from 'my-sites/domains/paths';
+
 describe( 'mapped-domain', () => {
 	let React,
 		MappedDomain,
@@ -38,10 +41,9 @@ describe( 'mapped-domain', () => {
 	} );
 
 	before( () => {
-		React = require( 'react' );
+	    React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		const ReactClass = require( 'react/lib/ReactClass' );
 		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
 		MappedDomain = require( '../mapped-domain.jsx' ).MappedDomain;
 	} );
@@ -55,8 +57,7 @@ describe( 'mapped-domain', () => {
 	} );
 
 	it( 'should use selectedSite.slug for URLs', sinon.test( function() {
-		const paths = require( 'my-sites/domains/paths' );
-		const dnsStub = this.stub( paths, 'domainManagementDns' );
+	    const dnsStub = this.stub( paths, 'domainManagementDns' );
 		const emailStub = this.stub( paths, 'domainManagementEmail' );
 
 		const renderer = TestUtils.createRenderer();

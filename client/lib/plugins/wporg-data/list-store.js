@@ -6,14 +6,19 @@ import { clone } from 'lodash';
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	PluginsDataActions = require( './actions' ),
-	localStore = require( 'store' ),
-	PluginsListsStore,
-	config = require( 'config' );
+import Dispatcher from 'dispatcher';
 
-var _shortLists = {},
+import emitter from 'lib/mixins/emitter';
+import PluginsDataActions from './actions';
+import localStore from 'store';
+import config from 'config';
+
+/**
+ * Internal dependencies
+ */
+let PluginsListsStore;
+
+let _shortLists = {},
 	_fullLists = {},
 	_fetching = {},
 	_currentSearchTerm = null,
@@ -41,7 +46,7 @@ function update( category, page, list ) {
 
 function storePluginsList( category, pluginsList ) {
 	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		let storedLists = localStore.get( _STORAGE_LIST_NAME ) || {};
+		const storedLists = localStore.get( _STORAGE_LIST_NAME ) || {};
 		storedLists[ category ] = {
 			list: pluginsList,
 			fetched: Date.now()
@@ -52,7 +57,7 @@ function storePluginsList( category, pluginsList ) {
 
 function getPluginsListFromStorage( category ) {
 	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		let storedLists = localStore.get( _STORAGE_LIST_NAME );
+		const storedLists = localStore.get( _STORAGE_LIST_NAME );
 		if ( storedLists && storedLists[ category ] ) {
 			return storedLists[ category ];
 		}
@@ -65,7 +70,7 @@ function isCachedListStillValid( storedList ) {
 
 PluginsListsStore = {
 	getShortList: function( category ) {
-		var storedList;
+		let storedList;
 		if ( ! _shortLists[ category ] && ! _fetching[ category ] ) {
 			if ( _CACHEABLE_CATEGORIES.indexOf( category ) >= 0 ) {
 				storedList = getPluginsListFromStorage( category );
@@ -94,7 +99,7 @@ PluginsListsStore = {
 	},
 
 	getSearchList: function( searchTerm ) {
-		var isSearching = _fetching.search !== false;
+		let isSearching = _fetching.search !== false;
 		if ( ! searchTerm ) {
 			return;
 		}
@@ -118,7 +123,7 @@ PluginsListsStore = {
 };
 
 PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'RECEIVE_WPORG_PLUGINS_LIST':
 			if ( action.data ) {

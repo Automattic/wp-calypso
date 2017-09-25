@@ -78,7 +78,7 @@ const PostTypeOptions = React.createClass( {
 				<Label className="export-card__option-fieldset-legend">
 					<FormRadio
 						checked={ isEnabled }
-						onChange={ onSelect }/>
+						onChange={ onSelect } />
 					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
 				</Label>
 

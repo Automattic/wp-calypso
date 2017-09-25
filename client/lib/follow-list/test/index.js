@@ -1,10 +1,10 @@
-var assert = require( 'chai' ).assert,
-	sinon = require( 'sinon' ),
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+import { assert } from 'chai';
+import sinon from 'sinon';
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'index', function() {
-	var FollowList, FollowListSite, followList, site;
+	let FollowList, FollowListSite, followList, site;
 
 	useFilesystemMocks( __dirname );
 	useFakeDom();
@@ -48,7 +48,7 @@ describe( 'index', function() {
 
 		describe( 'follow', function() {
 			it( 'should call the follow endpoint and execute the callback', function() {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.on( 'change', changeCallback );
 				site.follow();
 				assert.isTrue( changeCallback.called, 'callbacks subscribed to change should be called' );
@@ -56,7 +56,7 @@ describe( 'index', function() {
 			} );
 
 			it( 'should not call the follow endpoint or execute the callback if already following', function() {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
 				site.follow();
@@ -67,7 +67,7 @@ describe( 'index', function() {
 
 		describe( 'unfollow', function() {
 			it( 'should call the unfollow endpoint and execute the callback', function() {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
 				site.unfollow();
@@ -76,7 +76,7 @@ describe( 'index', function() {
 			} );
 
 			it( 'should not call the unfollow endpoint or execute the callback if already following', function() {
-				var changeCallback = sinon.spy();
+				const changeCallback = sinon.spy();
 				site.is_following = false;
 				site.on( 'change', changeCallback );
 				site.unfollow();

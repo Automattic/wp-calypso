@@ -2,11 +2,12 @@
 /**
  * External Dependencies
  */
-var expect = require( 'chai' ).expect,
-	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+import { expect } from 'chai';
 
-var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
+import useFileSystemMocks from 'test/helpers/use-filesystem-mocks';
+import useFakeDom from 'test/helpers/use-fake-dom';
+
+let	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
 describe( 'feed-post-store', function() {
 	useFakeDom();

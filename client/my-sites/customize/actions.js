@@ -12,7 +12,7 @@ import { addItem } from 'lib/upgrades/actions/cart';
 import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 
-var CustomizeActions = {
+const CustomizeActions = {
 	purchase: function( id, site ) {
 		addItem( themeItem( id, 'customizer' ) );
 

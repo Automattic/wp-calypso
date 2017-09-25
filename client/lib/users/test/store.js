@@ -12,7 +12,7 @@ import site from './fixtures/site';
 import usersData from './fixtures/users';
 
 describe( 'Users Store', () => {
-	var Dispatcher, UsersStore, siteId, options;
+	let Dispatcher, UsersStore, siteId, options;
 
 	useFakeDom();
 
@@ -131,7 +131,7 @@ describe( 'Users Store', () => {
 		it( 'getUpdatedParams returns correct params', () => {
 			const updatedParams = UsersStore.getUpdatedParams( options );
 			assert.equal( updatedParams.offset, 0 );
-			assert.equal( updatedParams.number, usersData.found )
+			assert.equal( updatedParams.number, usersData.found );
 		} );
 
 		it( 'Polling updates expected users', () => {

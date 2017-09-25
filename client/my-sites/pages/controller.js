@@ -15,16 +15,12 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
+import Pages from 'my-sites/pages/main';
+
 const controller = {
 
 	pages: function( context ) {
-		var Pages = require( 'my-sites/pages/main' ),
-			siteID = route.getSiteFragment( context.path ),
-			status = context.params.status,
-			search = context.query.s,
-			basePath = route.sectionify( context.path ),
-			analyticsPageTitle = 'Pages',
-			baseAnalyticsPath;
+		let siteID = route.getSiteFragment( context.path ), status = context.params.status, search = context.query.s, basePath = route.sectionify( context.path ), analyticsPageTitle = 'Pages', baseAnalyticsPath;
 
 		status = ( ! status || status === siteID ) ? '' : status;
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.

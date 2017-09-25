@@ -264,14 +264,14 @@ export default React.createClass( {
 						}
 					}
 				);
-				break
+				break;
 		}
 
 		return explanation;
 	},
 
 	render() {
-		let roleExplanation = this.getExplanationForInvite();
+		const roleExplanation = this.getExplanationForInvite();
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">
@@ -283,6 +283,6 @@ export default React.createClass( {
 					</p>
 				}
 			</div>
-		)
+		);
 	}
 } );

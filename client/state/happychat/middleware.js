@@ -66,7 +66,8 @@ import {
 } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 
-const debug = require( 'debug' )( 'calypso:happychat:actions' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:happychat:actions' );
 
 const sendTyping = throttle( ( connection, message ) => {
 	connection.typing( message );

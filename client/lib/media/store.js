@@ -7,9 +7,9 @@ import { values } from 'lodash';
  * Internal dependencies
  */
 import { isItemBeingUploaded } from 'lib/media/utils';
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	MediaValidationStore = require( './validation-store' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import MediaValidationStore from './validation-store';
 
 /**
  * Module variables
@@ -90,7 +90,7 @@ MediaStore.getAll = function( siteId ) {
 };
 
 MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 

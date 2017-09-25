@@ -6,7 +6,6 @@ import { throttle } from 'lodash';
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
 module.exports = function( nextPageMethod ) {
-
 	return {
 
 		componentDidMount: function() {
@@ -33,14 +32,13 @@ module.exports = function( nextPageMethod ) {
 		},
 
 		checkScrollPosition: function( options ) {
-			var scrollPosition = window.pageYOffset,
+			let scrollPosition = window.pageYOffset,
 				documentHeight = document.body.scrollHeight,
 				viewportHeight = window.innerHeight,
 				scrollOffset = 2 * viewportHeight,
 				triggeredByScroll = options.triggeredByScroll;
 
 			if ( scrollPosition >= ( documentHeight - viewportHeight - scrollOffset ) ) {
-
 				// Consider all page fetches once user starts scrolling as triggered by scroll
 				// Same condition check is in components/infinite-list/scroll-helper loadNextPage
 				if ( scrollPosition > viewportHeight ) {

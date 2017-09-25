@@ -49,14 +49,14 @@ module.exports = protectForm( React.createClass( {
 
 	getInitialState: function() {
 		let phoneNumber = null;
-		let storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
-		let storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
+		const storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
+		const storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
 		if ( storedCountry && storedNumber ) {
 			phoneNumber = {
 				countryCode: storedCountry,
 				phoneNumber: storedNumber,
 				isValid: true
-			}
+			};
 		}
 
 		return {
@@ -99,7 +99,7 @@ module.exports = protectForm( React.createClass( {
 	 * manage Notices ourselves
 	 */
 	submitSMSSettings: function() {
-		var phoneNumber;
+		let phoneNumber;
 
 		if ( ! this.refs.phoneInput ) {
 			return;
@@ -150,7 +150,7 @@ module.exports = protectForm( React.createClass( {
 	},
 
 	possiblyRenderError: function() {
-		var errorMessage;
+		let errorMessage;
 
 		if ( ! this.state.lastError ) {
 			return null;
@@ -172,7 +172,7 @@ module.exports = protectForm( React.createClass( {
 	},
 
 	render: function() {
-		var savingLabel = this.translate( 'Saving…' );
+		const savingLabel = this.translate( 'Saving…' );
 
 		return (
 			<div className="security-2fa-sms-settings__container">

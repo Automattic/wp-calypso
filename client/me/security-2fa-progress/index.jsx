@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
-	ProgressItem = require( './progress-item' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-progress' );
+import ProgressItem from './progress-item';
 
 module.exports = React.createClass( {
 
@@ -18,7 +20,7 @@ module.exports = React.createClass( {
 	},
 
 	stepClass: function( step ) {
-		var currentStep = parseInt( this.props.step, 10 );
+		const currentStep = parseInt( this.props.step, 10 );
 
 		return ( {
 			isHighlighted: step === currentStep,

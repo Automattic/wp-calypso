@@ -33,7 +33,7 @@ const Greeting = React.createClass( {
 } );
 
 describe( 'RootChild', function() {
-	var container;
+	let container;
 
 	useFakeDom();
 
@@ -48,7 +48,7 @@ describe( 'RootChild', function() {
 
 	describe( 'rendering', function() {
 		it( 'should render any children as descendants of body', function() {
-			var tree = ReactDom.render( React.createElement( Greeting ), container );
+			const tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild
 				.parentNode.className
@@ -61,7 +61,7 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'accepts props to be added to a wrapper element', function() {
-			var tree = ReactDom.render( React.createElement( Greeting, {
+			const tree = ReactDom.render( React.createElement( Greeting, {
 				rootChildProps: { className: 'wrapper' }
 			} ), container );
 
@@ -78,7 +78,7 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'should update the children if parent is re-rendered', function() {
-			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
+			const tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
 			expect( tree.ref( 'rootChild' )

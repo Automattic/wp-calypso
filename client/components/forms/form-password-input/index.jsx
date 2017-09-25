@@ -20,7 +20,7 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		var isMobile = viewport.isMobile();
+		const isMobile = viewport.isMobile();
 
 		if ( isMobile ) {
 			this.state = { hidePassword: false };
@@ -47,7 +47,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var toggleVisibilityClasses = classNames( {
+		const toggleVisibilityClasses = classNames( {
 			'form-password-input__toggle': true,
 			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );

@@ -44,7 +44,7 @@ describe( 'MediaSerialization', function() {
 		} );
 
 		it( 'should parse an image HTMLElement', function() {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			img.className = 'size-full wp-image-1627 alignright';
 			img.src = 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg';
 			img.alt = 'Example';
@@ -76,7 +76,7 @@ describe( 'MediaSerialization', function() {
 		} );
 
 		it( 'should favor natural dimensions over inferred', function() {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			[ 'width', 'height' ].forEach( ( dimension ) => {
 				Object.defineProperty( img, dimension, {
 					get: () => 660
@@ -95,7 +95,7 @@ describe( 'MediaSerialization', function() {
 		} );
 
 		it( 'should favor attribute dimensions over natural', function() {
-			let img = document.createElement( 'img' );
+			const img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
 			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
@@ -135,7 +135,7 @@ describe( 'MediaSerialization', function() {
 			const parsed = deserialize( media );
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
-			expect( parsed.media ).to.eql( Object.assign( { transient: false }, media ) );
+			expect( parsed.media ).to.eql( Object.assign( { 'transient': false }, media ) );
 			expect( parsed.appearance ).to.eql( {} );
 		} );
 

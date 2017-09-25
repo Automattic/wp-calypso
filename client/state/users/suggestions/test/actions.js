@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
 
-const sampleSuccessResponse = require( './sample-response.json' );
+import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 
 describe( 'actions', () => {

@@ -1,7 +1,7 @@
 /**
  * A stub that makes safe-image-url deterministic
  */
-var returnValue;
+let returnValue;
 
 function makeSafe( url ) {
 	return returnValue !== undefined ? returnValue : ( url + '-SAFE' );
@@ -9,10 +9,10 @@ function makeSafe( url ) {
 
 makeSafe.setReturns = function( val ) {
 	returnValue = val;
-}
+};
 
 makeSafe.undoReturns = function() {
 	returnValue = undefined;
-}
+};
 
 module.exports = makeSafe;

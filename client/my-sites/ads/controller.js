@@ -1,9 +1,10 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' );
+import React from 'react';
+
+import i18n from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -20,7 +21,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import Ads from 'my-sites/ads/main';
 
 function _recordPageView( context, analyticsPageTitle ) {
-	var basePath = route.sectionify( context.path );
+	const basePath = route.sectionify( context.path );
 	if ( 'undefined' !== typeof context.params.section ) {
 		analyticsPageTitle += ' > ' + titlecase( context.params.section );
 	}

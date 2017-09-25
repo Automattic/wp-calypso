@@ -9,7 +9,6 @@ import { moment, translate } from 'i18n-calypso';
  */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
-
 /**
  * Returns a string of the moment format for the period. Supports store stats
  * isoWeek and shortened formats.

@@ -347,15 +347,15 @@ describe( 'utils', () => {
 
 		it( 'should handle falsey keys', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).to.eql( { '0': 11 } );
+			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).to.eql( { 0: 11 } );
 		} );
 
 		it( 'should handle coerced-to-string keys', () => {
 			const keyed = keyedReducer( 'name', age );
-			expect( keyed( { '10': 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
-			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
-			expect( keyed( { [ 10 ]: 10 }, grow( 10 ) ) ).to.eql( { '10': 11 } );
-			expect( keyed( { '10': 10 }, grow( 10 ) ) ).to.eql( { '10': 11 } );
+			expect( keyed( { 10: 10 }, grow( '10' ) ) ).to.eql( { 10: 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).to.eql( { 10: 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( 10 ) ) ).to.eql( { 10: 11 } );
+			expect( keyed( { 10: 10 }, grow( 10 ) ) ).to.eql( { 10: 11 } );
 		} );
 
 		it( 'should return without changes if no actual changes occur', () => {

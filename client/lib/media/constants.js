@@ -133,7 +133,7 @@ export const MimeTypes = {
 	js: 'application/javascript',
 	pdf: 'application/pdf',
 	swf: 'application/x-shockwave-flash',
-	class: 'application/java',
+	'class': 'application/java',
 	tar: 'application/x-tar',
 	zip: 'application/zip',
 	gz: 'application/x-gzip',

@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
-	PostContentImagesStore = require( 'lib/posts/post-content-images-store' ),
-	Dispatcher = require( 'dispatcher' ),
-	actions = require( 'lib/posts/actions' ),
-	pollers = require( 'lib/data-poller' );
+import postListStoreFactory from 'lib/posts/post-list-store-factory';
 
-var PostListFetcher;
+import PostContentImagesStore from 'lib/posts/post-content-images-store';
+import Dispatcher from 'dispatcher';
+import actions from 'lib/posts/actions';
+import pollers from 'lib/data-poller';
+
+let PostListFetcher;
 
 function dispatchQueryActions( postListStoreId, query ) {
-	var postListStore = postListStoreFactory( postListStoreId );
+	const postListStore = postListStoreFactory( postListStoreId );
 	actions.queryPosts( query, postListStoreId );
 
 	if ( postListStore.getPage() === 0 ) {
@@ -24,7 +25,7 @@ function dispatchQueryActions( postListStoreId, query ) {
 }
 
 function queryPosts( props ) {
-	var query = {
+	const query = {
 		type: props.type || 'post',
 		siteId: props.siteId,
 		status: props.status,
@@ -56,7 +57,7 @@ function queryPosts( props ) {
 }
 
 function getPostsState( postListStoreId ) {
-	var postListStore = postListStoreFactory( postListStoreId );
+	const postListStore = postListStoreFactory( postListStoreId );
 	return {
 		listId: postListStore.getID(),
 		posts: postListStore.getAll(),
@@ -122,7 +123,7 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		postListStore.on( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.on( 'change', this.onPostsChange );
@@ -131,12 +132,12 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000 } );
 	},
 
 	componentWillUnmount: function() {
-		var postListStore = postListStoreFactory( this.props.postListStoreId );
+		const postListStore = postListStoreFactory( this.props.postListStoreId );
 		pollers.remove( this._poller );
 		postListStore.off( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
@@ -145,7 +146,7 @@ PostListFetcher = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var listenerChange;
+		let listenerChange;
 
 		if ( shouldQueryPosts( this.props, nextProps ) ) {
 			queryPosts( nextProps );

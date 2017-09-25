@@ -64,11 +64,11 @@ module.exports = React.createClass( {
 		}
 		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
 
-		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${type}` ).join();
+		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${ type }` ).join();
 	},
 
 	render: function() {
-		var classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref="form" className={ classes }>

@@ -47,6 +47,6 @@ describe( 'selectors', () => {
 			[
 				{ email: 'test@goofy.com', domain: 'goofy.com', site_id: 999 }
 			]
-		)
+		);
 	} );
 } );

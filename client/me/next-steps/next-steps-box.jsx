@@ -2,12 +2,12 @@
  * External dependencies
  */
 
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	recordEvent: function() {
@@ -19,7 +19,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var boxClassNames = 'next-steps-box',
+		let boxClassNames = 'next-steps-box',
 			bodyClassNames = 'next-steps-box__step-body',
 			buttonClassNames = 'button';
 

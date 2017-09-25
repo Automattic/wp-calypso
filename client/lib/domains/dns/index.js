@@ -128,7 +128,7 @@ function isWpcomRecord( record ) {
 function isRootARecord( domain ) {
 	return matches( {
 		type: 'A',
-		name: `${domain}.`
+		name: `${ domain }.`
 	} );
 }
 
@@ -148,8 +148,8 @@ function addMissingWpcomRecords( domain, records ) {
 	if ( ! some( records, isRootARecord( domain ) ) ) {
 		const defaultRootARecord = {
 			domain,
-			id: `wpcom:A:${domain}.:${domain}`,
-			name: `${domain}.`,
+			id: `wpcom:A:${ domain }.:${ domain }`,
+			name: `${ domain }.`,
 			protected_field: true,
 			type: 'A'
 		};

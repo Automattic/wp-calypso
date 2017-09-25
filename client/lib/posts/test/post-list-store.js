@@ -11,6 +11,8 @@ import mockery from 'mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
+import postListCacheStore from 'lib/posts/post-list-cache-store';
+
 let Dispatcher;
 
 /**
@@ -121,8 +123,7 @@ describe( 'post-list-store', () => {
 	} );
 
 	beforeEach( () => {
-		postListStoreFactory._reset();
-		const postListCacheStore = require( 'lib/posts/post-list-cache-store' ).default;
+	    postListStoreFactory._reset();
 		postListCacheStore._reset();
 		defaultPostListStore = postListStoreFactory( DEFAULT_POST_LIST_ID );
 	} );

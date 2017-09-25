@@ -85,14 +85,14 @@ export default function( id ) {
 	};
 
 	function queryPosts( options ) {
-		let query = assign( {}, _defaultQuery, options );
+		const query = assign( {}, _defaultQuery, options );
 
 		if ( query.status === 'draft,pending' ) {
 			query.orderBy = 'modified';
 		}
 
 		const listKey = getCacheKey( query );
-		let list = PostListCacheStore.get( listKey );
+		const list = PostListCacheStore.get( listKey );
 
 		if ( list ) {
 			_activeList = list;
@@ -137,7 +137,7 @@ export default function( id ) {
 		const key = _activeList.query.orderBy;
 
 		_activeList.postIds.sort( function( a, b ) {
-			var postA = PostsStore.get( a ),
+			let postA = PostsStore.get( a ),
 				postB = PostsStore.get( b ),
 				timeA = postA[ key ],
 				timeB = postB[ key ];
@@ -284,7 +284,7 @@ export default function( id ) {
 
 			// clone objects to prevent mutating store data, set parent to number
 			_activeList.postIds.forEach( function( globalID ) {
-				let post = clone( PostsStore.get( globalID ) );
+				const post = clone( PostsStore.get( globalID ) );
 				post.parent = post.parent ? post.parent.ID : 0;
 				sortedPosts.push( post );
 			} );
@@ -325,7 +325,7 @@ export default function( id ) {
 		}
 
 		getNextPageParams() {
-			let params = {};
+			const params = {};
 			const query = _activeList.query;
 
 			params.status = query.status;
@@ -365,7 +365,7 @@ export default function( id ) {
 		}
 
 		getUpdatesParams() {
-			let params = {};
+			const params = {};
 			const query = _activeList.query;
 
 			params.status = query.status;

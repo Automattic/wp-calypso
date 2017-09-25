@@ -30,7 +30,7 @@ class RecommendedPostsEmptyContent extends React.Component {
 	};
 
 	render() {
-		var action = (
+		let action = (
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }

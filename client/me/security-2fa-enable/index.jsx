@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
-	QRCode = require( 'qrcode.react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-enable' );
+import QRCode from 'qrcode.react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	Security2faProgress = require( 'me/security-2fa-progress' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
+import FormButton from 'components/forms/form-button';
+
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTelInput from 'components/forms/form-tel-input';
+import Security2faProgress from 'me/security-2fa-progress';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
@@ -153,7 +156,7 @@ module.exports = React.createClass( {
 	},
 
 	onBeginCodeValidation: function() {
-		var args = {
+		const args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step'
 		};
@@ -196,7 +199,7 @@ module.exports = React.createClass( {
 	},
 
 	renderQRCode: function() {
-		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+		const qrClasses = classNames( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri
 		} );
 

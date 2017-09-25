@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-var DUMMY_SITE_ID = 1,
+let DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
 		100: { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
 		'media-1': { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },

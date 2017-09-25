@@ -2,23 +2,21 @@
  * External dependencies
  */
 import { assign, clone, isEqual } from 'lodash';
-const config = require( 'config' );
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action,
-	LikeActions = require( './actions' ),
-	key = require( './utils' ).key;
+import Dispatcher from 'dispatcher';
 
+import Emitter from 'lib/mixins/emitter';
+import { action as FeedPostStoreActionType } from 'lib/feed-post-store/constants';
+import LikeActions from './actions';
+import { key } from './utils';
 
-
-var _likesForPost = {},
+let _likesForPost = {},
 	LikeStore,
 	receivedErrors = [];
-
 
 function getLikes( siteId, postId ) {
 	return _likesForPost[ key( siteId, postId ) ];
@@ -27,7 +25,6 @@ function getLikes( siteId, postId ) {
 function setLikes( siteId, postId, likes ) {
 	_likesForPost[ key( siteId, postId ) ] = likes;
 }
-
 
 LikeStore = {
 	/**
@@ -39,7 +36,7 @@ LikeStore = {
 	 * @param {int} Post ID
 	 */
 	getLikersForPost: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+		const likes = getLikes( siteId, postId );
 
 		// Do we have likes for this post already?
 		if ( likes && likes.likes ) {
@@ -60,7 +57,7 @@ LikeStore = {
 	 * @param {int} Post ID
 	 */
 	getLikeCountForPost: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+		const likes = getLikes( siteId, postId );
 
 		// Do we have likes for this post already?
 		if ( likes && likes.count != null ) {
@@ -81,7 +78,7 @@ LikeStore = {
 	 * @param {int} Post ID
 	 */
 	isPostLikedByCurrentUser: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+		const likes = getLikes( siteId, postId );
 
 		// Do we have likes for this post already?
 		if ( likes && likes.i_like != null ) {
@@ -105,10 +102,10 @@ LikeStore = {
 			return;
 		}
 
-		var currentLike = getLikes( action.siteId, action.postId );
+		const currentLike = getLikes( action.siteId, action.postId );
 
 		// adapt response to our format
-		var receivedLike = {
+		const receivedLike = {
 			count: action.data.found,
 			likes: action.data.likes,
 			i_like: action.data.i_like
@@ -136,7 +133,7 @@ LikeStore = {
 			return;
 		}
 
-		var currentLike = getLikes( siteId, postId ) || {};
+		const currentLike = getLikes( siteId, postId ) || {};
 
 		if ( currentLike.count !== post.like_count || currentLike.i_like !== post.i_like ) {
 			setLikes( siteId, postId, {
@@ -149,7 +146,7 @@ LikeStore = {
 	},
 
 	receiveLike: function( action ) {
-		var current = getLikes( action.siteId, action.postId ),
+		let current = getLikes( action.siteId, action.postId ),
 			newLikes = clone( current );
 
 		newLikes.count += 1;
@@ -158,11 +155,10 @@ LikeStore = {
 		setLikes( action.siteId, action.postId, newLikes );
 
 		LikeStore.emit( 'change' );
-
 	},
 
 	receiveUnlike: function( action ) {
-		var current = getLikes( action.siteId, action.postId ),
+		let current = getLikes( action.siteId, action.postId ),
 			newLikes = clone( current );
 
 		newLikes.count -= 1;
@@ -193,7 +189,7 @@ Emitter( LikeStore );
 LikeStore.setMaxListeners( 100 );
 
 LikeStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'LIKE_POST':

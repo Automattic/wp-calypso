@@ -1,6 +1,6 @@
-var site = require( './mock-site' ),
-	earnings = require( './mock-earnings' ),
-	settings = require( './mock-settings' );
+import site from './mock-site';
+import earnings from './mock-earnings';
+import settings from './mock-settings';
 
 module.exports = {
 	fetchedEarnings: {

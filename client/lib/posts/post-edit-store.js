@@ -2,23 +2,25 @@
  * External dependencies
  */
 import { assign, filter, isEqual, pickBy, without } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
-	emitter = require( 'lib/mixins/emitter' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:posts:post-edit-store' );
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	utils = require( './utils' );
+import Dispatcher from 'dispatcher';
+
+import { decodeEntities } from 'lib/formatting';
+import utils from './utils';
 
 /**
  * Module variables
  */
-var REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
+let REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
 	CONTENT_LENGTH_ASSUME_SET = 50;
 
-var _initialRawContent = null,
+let _initialRawContent = null,
 	_isAutosaving = false,
 	_isLoading = false,
 	_saveBlockers = [],
@@ -97,7 +99,7 @@ function updatePost( post ) {
 }
 
 function initializeNewPost( siteId, options ) {
-	var args;
+	let args;
 	options = options || {};
 
 	args = {
@@ -119,7 +121,7 @@ function setLoadingError( error ) {
 }
 
 function set( attributes ) {
-	var updatedPost;
+	let updatedPost;
 
 	if ( ! _post ) {
 		// ignore since post isn't currently being edited
@@ -155,7 +157,7 @@ function normalize( post ) {
 }
 
 function setRawContent( content ) {
-	var isDirty, hasContent;
+	let isDirty, hasContent;
 
 	if ( null === _initialRawContent ) {
 		debug( 'Set initial raw content to: %s', content );
@@ -181,7 +183,7 @@ function isContentEmpty( content ) {
 }
 
 function dispatcherCallback( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		changed;
 
 	switch ( action.type ) {
@@ -310,7 +312,7 @@ PostEditStore = {
 	},
 
 	getChangedAttributes: function() {
-		var changedAttributes,
+		let changedAttributes,
 			metadata;
 
 		if ( this.isNew() ) {

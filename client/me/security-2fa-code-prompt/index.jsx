@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
+import React from 'react';
+
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
+import FormButton from 'components/forms/form-button';
+
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTelInput from 'components/forms/form-tel-input';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
@@ -123,7 +126,7 @@ module.exports = React.createClass( {
 	},
 
 	onBeginCodeValidation: function() {
-		var args = {
+		const args = {
 			code: this.state.verificationCode
 		};
 
@@ -157,7 +160,7 @@ module.exports = React.createClass( {
 	},
 
 	getSubmitButtonLabel: function() {
-		var label;
+		let label;
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
@@ -196,7 +199,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
+		const codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
 			? constants.sevenDigit2faPlaceholder
 			: constants.sixDigit2faPlaceholder;
 

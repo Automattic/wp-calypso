@@ -19,7 +19,7 @@ describe( 'route', function() {
 
 	describe( '#addQueryArgs()', () => {
 		it( 'should error when args is not an object', () => {
-			var types = [
+			const types = [
 				undefined,
 				1,
 				true,
@@ -36,7 +36,7 @@ describe( 'route', function() {
 		} );
 
 		it( 'should error when url is not a string', () => {
-			var types = [
+			const types = [
 				{},
 				undefined,
 				1,

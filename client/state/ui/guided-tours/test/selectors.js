@@ -12,6 +12,8 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
+import selectors from '../selectors';
+
 describe( 'selectors', () => {
 	let clock;
 	let getGuidedTourState;
@@ -25,11 +27,10 @@ describe( 'selectors', () => {
 	} );
 
 	useMockery( mockery => {
-		mockery.registerSubstitute(
+	    mockery.registerSubstitute(
 				'layout/guided-tours/config',
 				'state/ui/guided-tours/test/fixtures/config' );
 
-		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
 		hasTourJustBeenVisible = selectors.hasTourJustBeenVisible;

@@ -2,7 +2,6 @@
  * External dependencies
  */
 
-
 /**
  * Internal dependencies
  */

@@ -80,7 +80,7 @@ export const postListNextPageResponseBody = {
 	posts: [
 		{ ID: 9897 },
 		{ ID: 9898 },
-		{ ID: 9899}
+		{ ID: 9899 }
 	],
 };
 
@@ -94,7 +94,7 @@ export const postListDifferentSiteResponseBody = {
 	posts: [
 		{ ID: 1234 }
 	],
-}
+};
 
 export const postListWithSearchResponseBody = {
 	found: 2,
@@ -121,7 +121,7 @@ export const postListFreshResponseBody = {
 		{ ID: 9900 },
 		{ ID: 9901 },
 	]
-}
+};
 
 export const postListNoHandleResponseBody = Object.assign( {}, postListResponseBody, { meta: {} } );
 
@@ -157,7 +157,7 @@ export const postListDifferentSiteLocalRecord = {
 	},
 	body: postListDifferentSiteResponseBody,
 	params: Object.assign( {}, postListDifferentSiteParams ),
-}
+};
 
 export const postListWithSearchLocalRecord = {
 	__sync: {
@@ -192,4 +192,4 @@ export const localDataFull = {
 	[ postListNextPageKey ]: postListNextPageLocalRecord,
 	[ postListWithSearchKey ]: postListWithSearchLocalRecord,
 	[ RECORDS_LIST_KEY ]: recordsList,
-}
+};

@@ -24,6 +24,8 @@ import { setRoute as setRouteAction } from 'state/ui/actions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
 
+import sections from 'sections';
+
 const debug = debugFactory( 'calypso' );
 
 const switchUserLocale = currentUser => {
@@ -96,7 +98,6 @@ const loggedOutMiddleware = currentUser => {
 		} );
 	}
 
-	const sections = require( 'sections' );
 	const validSections = sections.get().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] );

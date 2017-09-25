@@ -31,7 +31,7 @@ import {
  */
 
 function sortProducts( products ) {
-	var planItems,
+	let planItems,
 		includedItems,
 		domainItems,
 		creditItems,
@@ -41,7 +41,7 @@ function sortProducts( products ) {
 
 	includedItems = products.filter( isIncludedWithPlan );
 
-	domainItems = difference( products, includedItems )
+	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
 	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
 	domainItems = sortBy( domainItems, function( pair ) {

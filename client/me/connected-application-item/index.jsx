@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:connected-application-item' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:connected-application-item' );
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -53,7 +55,7 @@ export default React.createClass( {
 
 	renderAccessScopeBadge: function() {
 		const { connection: { scope, site } } = this.props;
-		var meta = '';
+		let meta = '';
 
 		if ( ! this.props.connection ) {
 			return;
@@ -78,7 +80,7 @@ export default React.createClass( {
 
 	renderScopeMessage: function() {
 		const { connection: { scope, site } } = this.props;
-		var message;
+		let message;
 		if ( ! this.props.connection ) {
 			return;
 		}
@@ -185,7 +187,7 @@ export default React.createClass( {
 	},
 
 	summary: function() {
-		return(
+		return (
 			<div>
 				{ this.props.isPlaceholder
 					? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
@@ -195,7 +197,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		let classes = classNames( {
+		const classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder
 		} );

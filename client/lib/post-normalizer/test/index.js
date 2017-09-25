@@ -423,7 +423,6 @@ describe( 'index', function() {
 				}
 			);
 		} );
-
 	} );
 
 	describe( 'content.makeImagesSafe', function() {

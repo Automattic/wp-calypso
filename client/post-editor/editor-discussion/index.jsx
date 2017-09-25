@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { get, pick } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	PostActions = require( 'lib/posts/actions' ),
-	InfoPopover = require( 'components/info-popover' ),
-	stats = require( 'lib/posts/stats' );
+import EditorFieldset from 'post-editor/editor-fieldset';
+
+import FormCheckbox from 'components/forms/form-checkbox';
+import PostActions from 'lib/posts/actions';
+import InfoPopover from 'components/info-popover';
+import stats from 'lib/posts/stats';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -57,7 +58,7 @@ export default React.createClass( {
 	},
 
 	onChange: function( event ) {
-		var discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
+		let discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
 			newStatus = booleanToStatus( event.target.checked ),
 			discussionType = event.target.name,
 			statName,
@@ -84,7 +85,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var discussion = this.getDiscussionSetting();
+		const discussion = this.getDiscussionSetting();
 
 		return (
 			<EditorFieldset legend={ this.translate( 'Discussion' ) }>

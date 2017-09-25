@@ -53,7 +53,7 @@ const isExternalError = message => message.error && message.error === 'servicefa
 const isMediaError = action => action.error && ( action.id || isExternalError( action.error ) );
 
 MediaValidationStore.validateItem = function( siteId, item ) {
-	var site = sites.getSite( siteId ),
+	let site = sites.getSite( siteId ),
 		itemErrors = [];
 
 	if ( ! site ) {
@@ -152,7 +152,7 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 };
 
 MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		items, errors;
 
 	switch ( action.type ) {
@@ -163,7 +163,7 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
 			errors = items.reduce( function( memo, item ) {
-				var itemErrors;
+				let itemErrors;
 
 				MediaValidationStore.validateItem( action.siteId, item );
 

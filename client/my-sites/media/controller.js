@@ -13,13 +13,12 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
 
+import MediaComponent from 'my-sites/media/main';
+
 module.exports = {
 
 	media: function( context ) {
-		var MediaComponent = require( 'my-sites/media/main' ),
-			filter = context.params.filter,
-			search = context.query.s,
-			baseAnalyticsPath = route.sectionify( context.path );
+		let filter = context.params.filter, search = context.query.s, baseAnalyticsPath = route.sectionify( context.path );
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );

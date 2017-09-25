@@ -1,12 +1,12 @@
 /**
  * External Dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Module Variables
  */
-var _scrollStore = {},
+let _scrollStore = {},
 	InfiniteListScrollStore = {
 		get: function( url ) {
 			return _scrollStore[ url ];
@@ -14,7 +14,7 @@ var _scrollStore = {},
 	};
 
 function storeInfiniteListScrollPosition( url, scrollPosition ) {
-	var oldScrollPosition = InfiniteListScrollStore.get( url );
+	const oldScrollPosition = InfiniteListScrollStore.get( url );
 	if ( oldScrollPosition === scrollPosition ) {
 		return;
 	}
@@ -22,7 +22,7 @@ function storeInfiniteListScrollPosition( url, scrollPosition ) {
 }
 
 InfiniteListScrollStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'SCROLL_CHANGED':

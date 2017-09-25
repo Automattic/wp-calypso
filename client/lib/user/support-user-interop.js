@@ -55,7 +55,7 @@ const getPrefillUsername = () => {
 	// Remove the initial ? character
 	const query = qs.parse( queryString.slice( 1 ) );
 	return query.support_user || null;
-}
+};
 
 // Check if we should prefill the support user login box
 reduxStoreReady.then( reduxStore => {

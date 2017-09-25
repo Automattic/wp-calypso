@@ -6,12 +6,12 @@ import { find } from 'lodash';
 /**
  * Module variables
  */
-var REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
+let REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
 	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/,
 	PostMetadata;
 
 function getValueByKey( metadata, key ) {
-	var meta = find( metadata, { key: key } );
+	const meta = find( metadata, { key: key } );
 
 	if ( meta ) {
 		return meta.value;
@@ -118,7 +118,7 @@ PostMetadata = {
 	 * @return {string}      Array of geographic float coordinates
 	 */
 	geoCoordinates: function( post ) {
-		var latitude, longitude;
+		let latitude, longitude;
 
 		if ( ! post ) {
 			return;

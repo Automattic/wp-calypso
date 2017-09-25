@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal Dependencies
  */
-var safeProtocolUrl = require( '../' );
+import safeProtocolUrl from '../';
 
 describe( 'index', function() {
 	it( 'should ignore a relative url', function() {
@@ -14,7 +14,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should return null for empty url', function() {
-		var returnUndefined = function() {
+		const returnUndefined = function() {
 			return;
 		};
 

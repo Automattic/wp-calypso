@@ -2,17 +2,18 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var ButtonsLabelEditor = require( './label-editor' ),
-	ButtonsPreviewButtons = require( './preview-buttons' ),
-	ButtonsPreviewAction = require( './preview-action' ),
-	ButtonsTray = require( './tray'),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	analytics = require( 'lib/analytics' );
+import ButtonsLabelEditor from './label-editor';
+
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsPreviewAction from './preview-action';
+import ButtonsTray from './tray';
+import { decodeEntities } from 'lib/formatting';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',
@@ -47,7 +48,7 @@ module.exports = React.createClass( {
 	},
 
 	toggleEditLabel: function() {
-		var isEditingLabel = ! this.state.isEditingLabel;
+		const isEditingLabel = ! this.state.isEditingLabel;
 		this.setState( { isEditingLabel: isEditingLabel } );
 
 		if ( isEditingLabel ) {
@@ -93,8 +94,8 @@ module.exports = React.createClass( {
 	},
 
 	getButtonsTrayToggleButtonElement: function( visibility ) {
-		var enabledButtonsExist = some( this.props.buttons, {
-			'visibility': visibility,
+		const enabledButtonsExist = some( this.props.buttons, {
+			visibility: visibility,
 			enabled: true
 		} );
 
@@ -136,7 +137,7 @@ module.exports = React.createClass( {
 	},
 
 	getPreviewButtonsElement: function() {
-		var enabledButtons = filter( this.props.buttons, { enabled: true } );
+		const enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
 			return (

@@ -157,7 +157,7 @@ module.exports = protectForm( React.createClass( {
 									disabled={ this.getDisabledState() }
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
-									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }/>
+									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) } />
 									<span>{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }</span>
 							</FormLabel>
 						</FormFieldset>

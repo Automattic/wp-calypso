@@ -1,13 +1,14 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 
 /**
  * SegmentedControlItem
  */
-var SegmentedControlItem = React.createClass( {
+const SegmentedControlItem = React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node.isRequired,

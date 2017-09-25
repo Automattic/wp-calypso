@@ -16,7 +16,7 @@ const testDispatch = ( test, testCallNumber ) => {
 		if ( ! testCallNumber || testCallNumber === calls ) {
 			test( action );
 		}
-	}
+	};
 };
 
 describe( 'WPorg Data Actions', function() {

@@ -1,11 +1,12 @@
 /**
  * External Dependencies
  */
-const expect = require( 'chai' ).expect,
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
+import { expect } from 'chai';
+
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {
-	var Dispatcher, LikeStore, FeedPostStoreActionType;
+	let Dispatcher, LikeStore, FeedPostStoreActionType;
 
 	useFilesystemMocks( __dirname );
 

@@ -10,7 +10,7 @@ export const wordadsStatusSchema = {
 				URL: { type: 'string' },
 				approved: { type: 'boolean' },
 				active: { type: 'boolean' },
-				unsafe: { enum: wordadsUnsafeValues }
+				unsafe: { 'enum': wordadsUnsafeValues }
 			}
 		}
 	},

@@ -1,8 +1,8 @@
-var plugins = require( './plugins' ),
-	updatePluginsList = require( './plugins-updated' ),
-	site = require( './site' ),
-	multiSite = require( './multi-site' ),
-	updatePluginData = require( './updated-plugin' );
+import plugins from './plugins';
+import updatePluginsList from './plugins-updated';
+import site from './site';
+import multiSite from './multi-site';
+import updatePluginData from './updated-plugin';
 
 module.exports = {
 	// Fetch Data

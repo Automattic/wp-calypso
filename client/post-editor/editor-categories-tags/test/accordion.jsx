@@ -27,7 +27,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 		i18n = require( 'i18n-calypso' );
 
 		// require needs to be here in order for mocking of List to work
-		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
+		EditorCategoriesTagsAccordion = require( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
 	} );
 
 	function render( postTerms = {} ) {

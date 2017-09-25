@@ -49,7 +49,7 @@ export default React.createClass( {
 		}
 
 		let { options } = this.props;
-		options = !!options ? options.split( ',' ) : [];
+		options = !! options ? options.split( ',' ) : [];
 
 		const optionsValidationError = ! options || options.length === 0;
 

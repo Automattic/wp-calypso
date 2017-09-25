@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 module.exports = React.createClass( {
 	displayName: 'StoredCard',
 
 	render: function() {
-		var card = this.props.card,
+		let card = this.props.card,
 			expirationDate = this.moment( card.expiry ).format( 'MM/YY' ),
 			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
 

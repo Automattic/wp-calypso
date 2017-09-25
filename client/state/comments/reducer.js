@@ -67,14 +67,14 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	// in order to optimistically update the state without temporary loss of information.
 	const newComment = isCommentManagementEdit( newProperties )
 		? {
-				...comment,
-				author: {
-					...comment.author,
-					name: newProperties.authorDisplayName,
-					url: newProperties.authorUrl,
-				},
-				content: newProperties.commentContent,
-			}
+			...comment,
+			author: {
+				...comment.author,
+				name: newProperties.authorDisplayName,
+				url: newProperties.authorUrl,
+			},
+			content: newProperties.commentContent,
+		}
 		: { ...comment, ...newProperties };
 
 	return {

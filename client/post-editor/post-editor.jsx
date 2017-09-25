@@ -530,7 +530,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditedPostChange: function() {
-		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
+		let didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
 			loadingError = PostEditStore.getLoadingError(),
 			postEditState, post, site;
 
@@ -615,7 +615,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	autosave: function() {
-		var callback;
+		let callback;
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
@@ -685,7 +685,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	onTrashingPost: function( error ) {
-		var isPage = utils.isPage( this.state.post );
+		const isPage = utils.isPage( this.state.post );
 
 		if ( error ) {
 			this.setState( {
@@ -756,7 +756,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreview: function( action, event ) {
-		var status = 'draft',
+		let status = 'draft',
 			previewPost;
 
 		if ( this.state.previewAction !== action ) {
@@ -1036,7 +1036,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	getEditorMode: function() {
-		var editorMode = 'tinymce';
+		let editorMode = 'tinymce';
 		if ( this.props.editorModePreference ) {
 			editorMode = this.props.editorModePreference;
 

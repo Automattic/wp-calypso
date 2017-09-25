@@ -20,7 +20,7 @@ import { getPreference } from 'state/preferences/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 
-const EditorMediaModalGalleryHelp =  React.createClass( {
+const EditorMediaModalGalleryHelp = React.createClass( {
 	displayName: 'EditorMediaModalGalleryHelp',
 
 	mixins: [ PureRenderMixin ],

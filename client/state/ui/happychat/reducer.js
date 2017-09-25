@@ -15,7 +15,8 @@ const open = ( state = false, action ) => {
 	return state;
 };
 
-const debug = require( 'debug' )( 'calypso:happychat:ui-reducer' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:happychat:ui-reducer' );
 
 /**
  * Tracks the state of the happychat minimizing process
@@ -28,7 +29,7 @@ const debug = require( 'debug' )( 'calypso:happychat:ui-reducer' );
 const isMinimizing = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_MINIMIZING:
-			debug( "set minimizing", action );
+			debug( 'set minimizing', action );
 			return action.isMinimizing ? true : false;
 	}
 	return state;

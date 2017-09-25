@@ -3,26 +3,28 @@
  */
 import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' );
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	PeopleListItem = require( 'my-sites/people/people-list-item' ),
-	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
-	UsersActions = require( 'lib/users/actions' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	NoResults = require( 'my-sites/no-results' ),
-	analytics = require( 'lib/analytics' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
+import Card from 'components/card';
+
+import PeopleListItem from 'my-sites/people/people-list-item';
+import SiteUsersFetcher from 'components/site-users-fetcher';
+import UsersActions from 'lib/users/actions';
+import InfiniteList from 'components/infinite-list';
+import NoResults from 'my-sites/no-results';
+import analytics from 'lib/analytics';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ListEnd from 'components/list-end';
 
 /**
  * Module Variables
  */
-var Team = React.createClass( {
+const Team = React.createClass( {
 	displayName: 'Team',
 
 	getInitialState: function() {
@@ -36,7 +38,7 @@ var Team = React.createClass( {
 	},
 
 	render: function() {
-		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
+		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
 			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			people;
@@ -119,8 +121,8 @@ var Team = React.createClass( {
 	},
 
 	_fetchNextPage: function() {
-		var offset = this.props.users.length;
-		var fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
+		const offset = this.props.users.length;
+		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
 		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
 		debug( 'fetching next batch of users' );
 		UsersActions.fetchUsers( fetchOptions );
@@ -140,7 +142,7 @@ module.exports = React.createClass( {
 	displayName: 'TeamList',
 
 	render: function() {
-		var fetchOptions = {
+		const fetchOptions = {
 			siteId: this.props.site && this.props.site.ID,
 			order: 'ASC',
 			order_by: 'display_name',

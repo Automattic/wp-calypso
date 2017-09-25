@@ -3,4 +3,4 @@
  */
 import React from 'react';
 
-export default () => <div/>;
+export default () => <div />;

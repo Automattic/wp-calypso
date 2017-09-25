@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial,
-	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
-	SubscriptionText = require( './subscription-text' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import cartValues from 'lib/cart-values';
 
-var PayButton = React.createClass( {
+import SubscriptionText from './subscription-text';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+
+/**
+ * Internal dependencies
+ */
+let cartItems = cartValues.cartItems, hasFreeTrial = cartItems.hasFreeTrial, isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits;
+
+const PayButton = React.createClass( {
 	buttonState: function() {
-		var state;
+		let state;
 
 		switch ( this.props.transactionStep.name ) {
 			case transactionStepTypes.BEFORE_SUBMIT:
@@ -55,7 +58,7 @@ var PayButton = React.createClass( {
 	},
 
 	beforeSubmitText: function() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( this.props.beforeSubmitText ) {
 			return this.props.beforeSubmitText;
@@ -114,11 +117,11 @@ var PayButton = React.createClass( {
 	},
 
 	completing: function() {
-		var text;
+		let text;
 		if ( hasFreeTrial( this.props.cart ) ) {
-			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } );
 		} else {
-			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } );
 		}
 		return {
 			disabled: true,
@@ -127,7 +130,7 @@ var PayButton = React.createClass( {
 	},
 
 	render: function() {
-		var buttonState = this.buttonState();
+		const buttonState = this.buttonState();
 
 		return (
 			<span className="pay-button">

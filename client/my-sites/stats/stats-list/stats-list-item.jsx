@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:list-item' ),
-	page = require( 'page' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:stats:list-item' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var Follow = require( './action-follow' ),
-	Page = require( './action-page' ),
-	OpenLink = require( './action-link' ),
-	Spam = require( './action-spam' ),
-	Emojify = require( 'components/emojify' ),
-	titlecase = require( 'to-title-case' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import Follow from './action-follow';
+
+import Page from './action-page';
+import OpenLink from './action-link';
+import Spam from './action-spam';
+import Emojify from 'components/emojify';
+import titlecase from 'to-title-case';
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'StatsListItem',
@@ -69,13 +72,13 @@ module.exports = React.createClass( {
 	},
 
 	onClick: function( event ) {
-		var gaEvent,
+		let gaEvent,
 			moduleName = titlecase( this.props.moduleName );
 
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
-				var moduleState = this.state.active ? 'Collapsed ' : 'Expanded ';
+				const moduleState = this.state.active ? 'Collapsed ' : 'Expanded ';
 				gaEvent = moduleState + moduleName;
 
 				this.setState( {
@@ -110,7 +113,7 @@ module.exports = React.createClass( {
 	},
 
 	buildActions: function() {
-		var data = this.props.data,
+		let data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
 			actionClassSet = classNames(
@@ -121,15 +124,15 @@ module.exports = React.createClass( {
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
-			var actionItems = [];
+			const actionItems = [];
 
 			data.actions.forEach( function( action ) {
-				var actionItem;
+				let actionItem;
 
 				switch ( action.type ) {
 					case 'follow':
 						if ( action.data && this.props.followList ) {
-							var followSite = this.props.followList.add( action.data );
+							const followSite = this.props.followList.add( action.data );
 							actionItem = <Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />;
 						}
 						break;
@@ -158,7 +161,7 @@ module.exports = React.createClass( {
 	},
 
 	buildLabel: function() {
-		var data = this.props.data,
+		let data = this.props.data,
 			labelData = data.label,
 			wrapperClassSet,
 			label;
@@ -170,7 +173,7 @@ module.exports = React.createClass( {
 		wrapperClassSet = classNames( { 'module-content-list-item-label-section': labelData.length > 1 } );
 
 		label = labelData.map( function( labelItem, i ) {
-			var iconClassSetOptions = { avatar: true },
+			let iconClassSetOptions = { avatar: true },
 				icon,
 				gridiconSpan,
 				itemLabel;
@@ -185,7 +188,7 @@ module.exports = React.createClass( {
 				}
 
 				icon = (
-					<span className='icon'>
+					<span className="icon">
 						<img alt="" src={ labelItem.icon } className={ classNames( iconClassSetOptions ) } />
 					</span>
 				);
@@ -209,7 +212,7 @@ module.exports = React.createClass( {
 	},
 
 	buildValue: function() {
-		var data = this.props.data,
+		let data = this.props.data,
 			valueData = data.value,
 			value;
 
@@ -234,7 +237,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var data = this.props.data,
+		let data = this.props.data,
 			rightClassOptions = {
 				'module-content-list-item-right': true
 			},
@@ -286,7 +289,7 @@ module.exports = React.createClass( {
 
 		return (
 			<li key={ this.key } data-group={ this.key } className={ groupClassName }>
-				<span className='module-content-list-item-wrapper' onClick={ this.onClick } tabIndex="0">
+				<span className="module-content-list-item-wrapper" onClick={ this.onClick } tabIndex="0">
 					<span className={ classNames( rightClassOptions ) }>
 						{ mobileActionToggle }
 						{ actions }

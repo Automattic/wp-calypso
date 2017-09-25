@@ -6,10 +6,11 @@ import { assign, isEqual, map, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaStore = require( './store' ),
-	MediaUtils = require( './utils' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+
+import MediaStore from './store';
+import MediaUtils from './utils';
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables
@@ -23,7 +24,7 @@ const MediaListStore = {
 	SAME_QUERY_IGNORE_PARAMS = Object.freeze( [ 'number', 'page_handle' ] );
 
 function sortItemsByDate( siteId ) {
-	var sortedItems;
+	let sortedItems;
 
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
@@ -40,7 +41,7 @@ function ensureMediaForSiteId( siteId ) {
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var existingIndex;
+	let existingIndex;
 
 	ensureMediaForSiteId( siteId );
 
@@ -57,7 +58,7 @@ function receiveSingle( siteId, item, itemId ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
+	let index;
 
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
@@ -121,7 +122,7 @@ function isQuerySame( siteId, query ) {
 }
 
 MediaListStore.isItemMatchingQuery = function( siteId, item ) {
-	var query, matches;
+	let query, matches;
 
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return true;
@@ -179,7 +180,7 @@ MediaListStore.getAllIds = function( siteId ) {
 };
 
 MediaListStore.getAll = function( siteId ) {
-	var allIds = MediaListStore.getAllIds( siteId );
+	const allIds = MediaListStore.getAllIds( siteId );
 
 	if ( allIds ) {
 		return allIds.map( MediaStore.get.bind( null, siteId ) );

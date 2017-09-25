@@ -32,7 +32,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<a {...attributes} >
+			<a { ...attributes } >
 				<span>{ this.props.children }</span>
 				{ this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }

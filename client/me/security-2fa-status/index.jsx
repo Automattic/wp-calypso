@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-status' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
 module.exports = React.createClass( {
 
@@ -25,8 +27,8 @@ module.exports = React.createClass( {
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
 						{
 							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__on"/>
+								status: <span className="security-2fa-status__heading" />,
+								onOff: <span className="security-2fa-status__on" />
 							}
 						}
 					)
@@ -34,8 +36,8 @@ module.exports = React.createClass( {
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
 						{
 							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__off"/>
+								status: <span className="security-2fa-status__heading" />,
+								onOff: <span className="security-2fa-status__off" />
 							}
 						}
 					)

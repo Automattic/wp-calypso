@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'gridicons' );
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 
@@ -60,7 +61,7 @@ module.exports = React.createClass( {
 	},
 
 	getStatusText: function() {
-		var status = this.props.post.status,
+		let status = this.props.post.status,
 			statusClassName = 'post-relative-time-status__status',
 			statusIcon = 'aside',
 			statusText;
@@ -103,7 +104,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var timeText = this.getRelativeTimeText(),
+		let timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
 			relativeTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
 			innerText = ( <span>{ timeText }{ statusText }</span> ),

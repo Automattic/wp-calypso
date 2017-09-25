@@ -73,7 +73,7 @@ export default React.createClass( {
 
 		return (
 			<Card className={ cardClasses }>
-				<ImporterHeader importerStatus={ state } {...{ icon, title, description, isEnabled, site } } />
+				<ImporterHeader importerStatus={ state } { ...{ icon, title, description, isEnabled, site } } />
 				{ state.errorData &&
 					<ErrorPane type={ state.errorData.type } description={ state.errorData.description } />
 				}

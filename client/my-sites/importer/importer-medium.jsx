@@ -40,6 +40,6 @@ export default React.createClass( {
 			}
 		);
 
-		return <FileImporter importerData={ importerData } {...this.props} />;
+		return <FileImporter importerData={ importerData } { ...this.props } />;
 	}
 } );

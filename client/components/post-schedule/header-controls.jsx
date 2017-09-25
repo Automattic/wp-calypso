@@ -7,7 +7,7 @@ import Gridicon from 'gridicons';
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
 export default React.createClass( {
 	propTypes: {

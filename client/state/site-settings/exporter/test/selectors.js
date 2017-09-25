@@ -23,7 +23,7 @@ describe( 'selectors', () => {
 			expect( exporting ).to.eql( false );
 		} );
 
-		it( `should return false if an export hasn't started yet`, () => {
+		it( 'should return false if an export hasn\'t started yet', () => {
 			const exporting = isExporting( {
 				siteSettings: {
 					exporter: {

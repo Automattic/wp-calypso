@@ -15,4 +15,4 @@ export default function() {
 		controller.navigation,
 		postsController.posts
 	);
-};
+}

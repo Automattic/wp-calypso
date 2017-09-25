@@ -15,6 +15,8 @@ import {
 	SOURCE_UNKNOWN,
 } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 
+import contexts from '../contexts';
+
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 describe( 'selectors', () => {
@@ -27,11 +29,10 @@ describe( 'selectors', () => {
 	useFakeDom();
 
 	useMockery( mockery => {
-		mockery.registerSubstitute(
+	    mockery.registerSubstitute(
 				'layout/guided-tours/config',
 				'state/ui/guided-tours/test/fixtures/config' );
 
-		const contexts = require( '../contexts' );
 		isUserNewerThan = contexts.isUserNewerThan;
 		hasUserRegisteredBefore = contexts.hasUserRegisteredBefore;
 		hasUserPastedFromGoogleDocs = contexts.hasUserPastedFromGoogleDocs;

@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-progress' );
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 
@@ -18,7 +20,7 @@ module.exports = React.createClass( {
 	},
 
 	noticon: function() {
-		var icon = 'noticon-' + this.props.icon;
+		const icon = 'noticon-' + this.props.icon;
 		return classNames( 'noticon', icon );
 	},
 

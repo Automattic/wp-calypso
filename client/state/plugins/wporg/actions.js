@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:wporg-data:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:wporg-data:actions' );
 
 /**
  * Internal dependencies
@@ -13,7 +15,7 @@ import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action
 /**
  *  Local variables;
  */
-let _fetching = {};
+const _fetching = {};
 
 export default {
 	fetchPluginData: function( pluginSlug ) {
@@ -41,6 +43,6 @@ export default {
 					error: error
 				} );
 			} );
-		}
+		};
 	}
 };

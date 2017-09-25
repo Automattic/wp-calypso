@@ -2,28 +2,32 @@
  * External dependencies
  */
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
-const React = require( 'react' ),
-	update = require( 'react-addons-update' ),
-	page = require( 'page' );
+import React from 'react';
+import update from 'react-addons-update';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	Card = require( 'components/card/compact' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormFooter = require( 'my-sites/domains/domain-management/components/form-footer' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	paths = require( 'my-sites/domains/paths' ),
-	ValidationErrorList = require( 'notices/validation-error-list' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	{ hasGoogleApps, getGoogleAppsSupportedDomains } = require( 'lib/domains' ),
-	googleAppsLibrary = require( 'lib/domains/google-apps-users' ),
-	validateUsers = googleAppsLibrary.validate,
-	filterUsers = googleAppsLibrary.filter,
-	DomainsSelect = require( './domains-select' );
+import analyticsMixin from 'lib/mixins/analytics';
+
+import Card from 'components/card/compact';
+import FormButton from 'components/forms/form-button';
+import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'components/forms/form-label';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import { cartItems } from 'lib/cart-values';
+import paths from 'my-sites/domains/paths';
+import ValidationErrorList from 'notices/validation-error-list';
+import upgradesActions from 'lib/upgrades/actions';
+import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
+import googleAppsLibrary from 'lib/domains/google-apps-users';
+import DomainsSelect from './domains-select';
+
+/**
+ * Internal dependencies
+ */
+const validateUsers = googleAppsLibrary.validate, filterUsers = googleAppsLibrary.filter;
 
 import Notice from 'components/notice';
 
@@ -163,7 +167,7 @@ const AddEmailAddressesCard = React.createClass( {
 
 	handleFieldChange( fieldName, index, event ) {
 		const newValue = event.target.value;
-		let command = { fieldsets: {} };
+		const command = { fieldsets: {} };
 
 		command.fieldsets[ index ] = {};
 		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };

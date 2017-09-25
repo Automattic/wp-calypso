@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	CartStore = require( 'lib/cart/store' );
+import StoreConnection from 'components/data/store-connection';
 
-var stores = [ CartStore ];
+import CartStore from 'lib/cart/store';
+
+const stores = [ CartStore ];
 
 function getStateFromStores() {
 	return {
@@ -17,7 +18,7 @@ function getStateFromStores() {
 	};
 }
 
-var CartData = React.createClass( {
+const CartData = React.createClass( {
 	render: function() {
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>

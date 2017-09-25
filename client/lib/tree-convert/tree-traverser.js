@@ -47,7 +47,7 @@ function find( node, predicate ) {
  * Depth-first search based replacement
  */
 function replaceItem( node, newNode, predicate ) {
-	var i;
+	let i;
 
 	if ( ! node.items ) {
 		return;
@@ -58,7 +58,7 @@ function replaceItem( node, newNode, predicate ) {
 			node.items[ i ] = newNode;
 			return;
 		}
-		replaceItem( node.items[ i ], newNode, predicate);
+		replaceItem( node.items[ i ], newNode, predicate );
 	}
 }
 
@@ -67,7 +67,7 @@ function replaceItem( node, newNode, predicate ) {
  * over an array.
  */
 function mapFindAny( array, fn ) {
-	var i, result, length = array.length;
+	let i, result, length = array.length;
 	for ( i = 0; i < length; i++ ) {
 		if ( result = fn( array[ i ] ) ) { // eslint-disable-line no-cond-assign
 			return result;
@@ -87,10 +87,10 @@ function childInserter( srcNode, dstId ) {
 
 function siblingInserter( srcNode, dstId, position ) {
 	return function( node ) {
-		var index,
+		let index,
 			offset = position === 'before' ? 0 : 1;
 
-		if ( ~ ( index = findIndex( node.items, { id: dstId } ) ) ) {
+		if ( ~( index = findIndex( node.items, { id: dstId } ) ) ) {
 			node.items.splice( index + offset, 0, srcNode );
 		}
 		return node;
@@ -150,8 +150,8 @@ module.exports = {
 	 */
 	remover: function( id ) {
 		return function( node ) {
-			var index;
-			if ( ~ ( index = findIndex( node.items, { id: id } ) ) ) {
+			let index;
+			if ( ~( index = findIndex( node.items, { id: id } ) ) ) {
 				node.items.splice( index, 1 );
 			}
 			return node;
@@ -168,7 +168,7 @@ module.exports = {
 	 * @return {function} a filter to be fed to 'traverse'
 	 */
 	inserter: function( srcItem, dstId, position ) {
-		var func = 'child' === position ? childInserter : siblingInserter;
+		const func = 'child' === position ? childInserter : siblingInserter;
 		return func( srcItem, dstId, position );
 	}
 

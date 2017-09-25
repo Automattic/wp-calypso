@@ -2,10 +2,10 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-var React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import page from 'page';
 
-var CartEmpty = React.createClass({
+const CartEmpty = React.createClass( {
 	render: function() {
 		return (
 			<div>
@@ -34,6 +34,6 @@ var CartEmpty = React.createClass({
 
 		page( ( this.shouldShowPlanButton() ? '/plans/' : '/domains/add/' ) + this.props.selectedSite.slug );
 	}
-});
+} );
 
 module.exports = CartEmpty;

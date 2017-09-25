@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
+import classnames from 'classnames';
 
 /**
  * Main
  */
-var PostImage = React.createClass( {
+const PostImage = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
@@ -40,7 +41,7 @@ var PostImage = React.createClass( {
 	},
 
 	render: function() {
-		var imageURL = this._getImageURL(),
+		let imageURL = this._getImageURL(),
 			containerClasses, containerStyles;
 
 		if ( ! imageURL ) {
@@ -68,7 +69,7 @@ var PostImage = React.createClass( {
 	},
 
 	_getImageURL: function() {
-		var postImages = this.props.postImages;
+		const postImages = this.props.postImages;
 
 		if ( postImages.featured_image !== '' ) {
 			return postImages.featured_image;

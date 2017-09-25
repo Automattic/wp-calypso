@@ -27,7 +27,7 @@ import FormButton from 'components/forms/form-button';
  */
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
-let InviteAcceptLoggedOut = React.createClass( {
+const InviteAcceptLoggedOut = React.createClass( {
 
 	getInitialState() {
 		return { error: false, bearerToken: false, userData: false, submitting: false };

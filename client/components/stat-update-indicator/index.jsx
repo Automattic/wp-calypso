@@ -2,13 +2,14 @@
  * External dependencies
  */
 
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var StatUpdateIndicator = React.createClass( {
+const StatUpdateIndicator = React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node.isRequired,
@@ -50,15 +51,15 @@ var StatUpdateIndicator = React.createClass( {
 
 			this.setState( {
 				updating: false
-			} );				
+			} );
 		}.bind( this ), 800 );
 	},
 
 	render: function() {
-		var className = classNames( {
-				'stat-update-indicator': true,
-				'is-updating': this.state.updating
-			} );
+		const className = classNames( {
+			'stat-update-indicator': true,
+			'is-updating': this.state.updating
+		} );
 
 		return (
 			<span className={ className }>{ this.props.children }</span>

@@ -14,7 +14,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 			return;
 		}
 
-		let fieldShortcode = {
+		const fieldShortcode = {
 			tag: 'contact-field',
 			type: 'self-closing',
 			attrs: pickBy( { label, type, options } )
@@ -33,7 +33,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 		content,
 		attrs: pickBy( { to, subject } )
 	} );
-};
+}
 
 export function deserialize( shortcode ) {
 	if ( ! shortcode ) {
@@ -44,19 +44,19 @@ export function deserialize( shortcode ) {
 
 	if ( parsed ) {
 		return ( ( { attrs: { named: { to, subject } = {} } = {}, content } ) => {
-			let fields = [];
+			const fields = [];
 			let parsedField;
 
 			while ( content && ( parsedField = Shortcode.next( 'contact-field', content ) ) ) {
 				if ( 'attrs' in parsedField.shortcode ) {
 					const { label, type, options, required } = parsedField.shortcode.attrs.named;
-					let field = pickBy( { label, type, options, required } );
+					const field = pickBy( { label, type, options, required } );
 					if ( 'required' in field ) {
 						field.required = true;
 					}
 					fields.push( field );
 				}
-				content = content.slice( parsedField.index + parsedField.content.length )
+				content = content.slice( parsedField.index + parsedField.content.length );
 			}
 
 			return pickBy( { to, subject, fields } );

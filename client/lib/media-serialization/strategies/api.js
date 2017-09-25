@@ -17,9 +17,9 @@ import { MediaTypes } from '../constants';
  * @return {Object}      Normalized object
  */
 export function deserialize( node ) {
-	let normalized = {
+	const normalized = {
 		media: assign( {
-			transient: false
+			'transient': false
 		}, node ),
 		appearance: {}
 	};

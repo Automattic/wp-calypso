@@ -53,9 +53,8 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 			MediaUtils.isItemBeingUploaded( item ) && (
 				// Transients can't be handled by the editor if they are being
 				// uploaded via an external URL
-				MediaUtils.getMimePrefix( item ) !== 'image' ||
-				! MediaUtils.isTransientPreviewable( item ) ||
-				modalView === ModalViews.GALLERY
+				( MediaUtils.getMimePrefix( item ) !== 'image' ||
+				! MediaUtils.isTransientPreviewable( item ) || modalView === ModalViews.GALLERY )
 			)
 		);
 }

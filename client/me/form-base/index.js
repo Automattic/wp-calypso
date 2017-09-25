@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:me:form-base' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:me:form-base' );
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' );
+import notices from 'notices';
 
 module.exports = {
 	componentDidMount: function() {

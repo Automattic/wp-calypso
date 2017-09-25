@@ -13,6 +13,8 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
+import initialState from 'state/initial-state';
+
 describe( 'initial-state', () => {
 	let clock,
 		localforage,
@@ -32,9 +34,9 @@ describe( 'initial-state', () => {
 	} );
 
 	useMockery( () => {
-		const configMock = function() {
-			return 'development'; //needed to mock out lib/warn
-		};
+	    const configMock = function() {
+		return 'development'; //needed to mock out lib/warn
+	};
 		configMock.isEnabled = isEnabled;
 		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
 		mockery.registerMock( 'config', configMock );
@@ -47,7 +49,6 @@ describe( 'initial-state', () => {
 				}
 			};
 		} );
-		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
 		MAX_AGE = initialState.MAX_AGE;

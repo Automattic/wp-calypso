@@ -16,7 +16,7 @@ import { withoutHttp } from 'lib/url';
 const languages = config( 'languages' );
 
 function getLanguage( slug ) {
-	var len = languages.length,
+	let len = languages.length,
 		language,
 		index;
 
@@ -31,13 +31,13 @@ function getLanguage( slug ) {
 }
 
 function getSiteSlug( url ) {
-	var slug = withoutHttp( url );
+	const slug = withoutHttp( url );
 	return slug.replace( /\//g, '::' );
 }
 
 module.exports = {
 	filterUserObject: function( obj ) {
-		var user = {},
+		let user = {},
 			allowedKeys = [
 				'ID',
 				'display_name',
@@ -76,7 +76,7 @@ module.exports = {
 	},
 
 	getComputedAttributes: function( attributes ) {
-		var language = getLanguage( attributes.language ),
+		let language = getLanguage( attributes.language ),
 			primayBlogUrl = attributes.primary_blog_url || '';
 		return {
 			primarySiteSlug: getSiteSlug( primayBlogUrl ),

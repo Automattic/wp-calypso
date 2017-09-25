@@ -45,7 +45,6 @@ describe( 'selectors', () => {
 		it( 'should return fetching value for a site ID', () => {
 			expect( isRequestingWordadsStatus( state, 2916284 ) ).to.eql( true );
 			expect( isRequestingWordadsStatus( state, 77203074 ) ).to.eql( false );
-
 		} );
 		it( 'should return false when site ID value is absent', () => {
 			expect( isRequestingWordadsStatus( state, 12345 ) ).to.eql( false );

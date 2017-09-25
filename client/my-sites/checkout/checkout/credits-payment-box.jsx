@@ -19,7 +19,7 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-var CreditsPaymentBox = React.createClass( {
+const CreditsPaymentBox = React.createClass( {
 	content: function() {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );

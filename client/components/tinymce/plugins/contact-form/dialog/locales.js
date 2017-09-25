@@ -25,7 +25,7 @@ const labels = {
 	url() {
 		return i18n.translate( 'Web Address' );
 	}
-}
+};
 
 export default function( type ) {
 	return labels.hasOwnProperty( type )

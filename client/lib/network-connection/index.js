@@ -1,20 +1,23 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:network-connection' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	request = require( 'superagent' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:network-connection' );
+import Emitter from 'lib/mixins/emitter';
+import request from 'superagent';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	PollerPool = require( 'lib/data-poller' );
+import config from 'config';
+
+import PollerPool from 'lib/data-poller';
 
 import { connectionLost, connectionRestored } from 'state/application/actions';
 
-var STATUS_CHECK_INTERVAL = 20000,
+let STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
 	NetworkConnectionApp;
 
@@ -31,7 +34,7 @@ NetworkConnectionApp = {
 	 * Bootstraps network connection status change handler.
 	 */
 	init: function( reduxStore ) {
-		var changeCallback;
+		let changeCallback;
 
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
@@ -48,7 +51,7 @@ NetworkConnectionApp = {
 		};
 
 		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !!navigator.onLine : true;
+			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
 
 			window.addEventListener( 'online', this.emitConnected.bind( this ) );
 			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );

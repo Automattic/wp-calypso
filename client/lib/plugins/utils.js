@@ -2,14 +2,19 @@
  * External dependencies
  */
 import { assign, filter, map, pick, sortBy, transform } from 'lodash';
-const sanitizeHtml = require( 'sanitize-html' );
+import sanitizeHtml from 'sanitize-html';
 
 /**
  * Internal dependencies
  */
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	parseHtml = require( 'lib/formatting' ).parseHtml,
-	PluginUtils;
+import { decodeEntities } from 'lib/formatting';
+
+import { parseHtml } from 'lib/formatting';
+
+/**
+ * Internal dependencies
+ */
+let PluginUtils;
 
 /**
  * @param  {Object} site       Site Object
@@ -93,7 +98,7 @@ PluginUtils = {
 	},
 
 	extractAuthorUrl: function( authorElementSource ) {
-		var match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
+		const match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
 		return ( match && match[ 1 ] ? match[ 1 ] : '' );
 	},
 
@@ -123,7 +128,7 @@ PluginUtils = {
 
 	normalizeCompatibilityList: function( compatibilityList ) {
 		function splitInNumbers( version ) {
-			let splittedVersion = version.split( '.' ).map( function( versionComponent ) {
+			const splittedVersion = version.split( '.' ).map( function( versionComponent ) {
 				return Number.parseInt( versionComponent, 10 );
 			} );
 			while ( splittedVersion.length < 3 ) {
@@ -131,7 +136,7 @@ PluginUtils = {
 			}
 			return splittedVersion;
 		}
-		let sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
+		const sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
 		return sortedCompatibility.map( function( version ) {
 			if ( version.length && version[ version.length - 1 ] === 0 ) {
 				version.pop();
@@ -179,8 +184,8 @@ PluginUtils = {
 					returnData.author_url = plugin.author_url || PluginUtils.extractAuthorUrl( item );
 					break;
 				case 'sections':
-					let cleanItem = {};
-					for ( let sectionKey of Object.keys( item ) ) {
+					const cleanItem = {};
+					for ( const sectionKey of Object.keys( item ) ) {
 						cleanItem[ sectionKey ] = PluginUtils.sanitizeSectionContent( item[ sectionKey ] );
 					}
 					returnData.sections = cleanItem;
@@ -191,7 +196,7 @@ PluginUtils = {
 					returnData[ key ] = parseInt( item, 10 );
 					break;
 				case 'ratings':
-					for ( let prop in item ) {
+					for ( const prop in item ) {
 						item[ prop ] = parseInt( item[ prop ], 10 );
 					}
 					returnData[ key ] = item;

@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { throttle } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var viewport = require( 'lib/viewport' );
+import viewport from 'lib/viewport';
 
 module.exports = React.createClass( {
 	displayName: 'StickyPanel',
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 	},
 
 	updateIsSticky: function() {
-		var isSticky = window.pageYOffset > this.threshold;
+		const isSticky = window.pageYOffset > this.threshold;
 
 		if (
 			this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ||
@@ -83,7 +83,7 @@ module.exports = React.createClass( {
 	},
 
 	getBlockStyle: function() {
-		var offset;
+		let offset;
 
 		if ( this.state.isSticky ) {
 			// Offset to account for Master Bar by finding body visual top
@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'sticky-panel', this.props.className, {
+		const classes = classNames( 'sticky-panel', this.props.className, {
 			'is-sticky': this.state.isSticky
 		} );
 

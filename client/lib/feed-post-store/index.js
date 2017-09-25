@@ -8,13 +8,14 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
-	FeedPostActionType = require( './constants' ).action,
-	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	mc = require( 'lib/analytics' ).mc,
-	stats = require( 'reader/stats' );
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
+import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
+import { action as FeedPostActionType } from './constants';
+import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
+import { mc } from 'lib/analytics';
+import stats from 'reader/stats';
 
 /**
  * Module variables

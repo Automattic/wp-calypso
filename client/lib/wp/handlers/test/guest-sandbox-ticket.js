@@ -8,6 +8,8 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 
+import guestSandboxTicket from '../guest-sandbox-ticket';
+
 let deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler;
 
 let storeData = {};
@@ -27,9 +29,7 @@ const store = {
 
 describe( 'guest-sandbox-ticket', () => {
 	useMockery( ( mockery ) => {
-		mockery.registerMock( 'store', store );
-
-		const guestSandboxTicket = require( '../guest-sandbox-ticket' );
+	    mockery.registerMock( 'store', store );
 
 		deleteOldTicket = guestSandboxTicket.deleteOldTicket;
 		GUEST_TICKET_LOCALFORAGE_KEY = guestSandboxTicket.GUEST_TICKET_LOCALFORAGE_KEY;

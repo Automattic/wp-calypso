@@ -47,7 +47,7 @@ Searchable( SitesList.prototype, [ 'name', 'URL' ] );
  * trigger fetch on first request to update stale data
  */
 SitesList.prototype.get = function() {
-	var data;
+	let data;
 	if ( ! this.data ) {
 		debug( 'First time loading SitesList, check store' );
 		data = store.get( 'SitesList' );
@@ -110,13 +110,13 @@ SitesList.prototype.resumeFetching = function() {
 SitesList.prototype.sync = function( data ) {
 	debug( 'SitesList fetched from api:', data.sites );
 
-	let sites = this.parse( data );
+	const sites = this.parse( data );
 	if ( ! this.initialized ) {
 		this.initialize( sites );
 		this.fetched = true;
 		this.emit( 'change' );
 	} else {
-		let changed = this.transaction( this.update, sites );
+		const changed = this.transaction( this.update, sites );
 		if ( changed || ! this.fetched ) {
 			this.fetched = true;
 			debug( 'SitesList changed via update' );
@@ -130,10 +130,10 @@ SitesList.prototype.sync = function( data ) {
  * Initialize data with Site objects
  **/
 SitesList.prototype.initialize = function( sites ) {
-	var allSingleSites = true;
+	let allSingleSites = true;
 	this.markCollisions( sites );
 	this.data = sites.map( function( site ) {
-		var siteObj = this.createSiteObject( site );
+		const siteObj = this.createSiteObject( site );
 		if ( ! site.single_user_site ) {
 			allSingleSites = false;
 		}
@@ -168,7 +168,7 @@ SitesList.prototype.createSiteObject = function( site ) {
  */
 SitesList.prototype.markCollisions = function( sites ) {
 	sites.forEach( function( site, index, collisions ) {
-		var hasCollision;
+		let hasCollision;
 
 		if ( ! site.jetpack ) {
 			hasCollision = some( collisions, function( someSite ) {
@@ -202,7 +202,7 @@ SitesList.prototype.parse = function( data ) {
  * Merge changes to existing sites and remove any sites that are not present
  **/
 SitesList.prototype.update = function( sites ) {
-	var sitesMap = {},
+	let sitesMap = {},
 		changed = false;
 
 	// Create ID -> site map from existing data
@@ -212,7 +212,7 @@ SitesList.prototype.update = function( sites ) {
 
 	this.markCollisions( sites );
 	this.data = sites.map( function( site ) {
-		var siteObj, result;
+		let siteObj, result;
 
 		if ( sitesMap[ site.ID ] ) {
 			// Since updates are applied as a patch, ensure key is present for
@@ -263,7 +263,7 @@ SitesList.prototype.update = function( sites ) {
 	}, this );
 
 	// For any sites that were removed during update, unbind events
-	for ( var id in sitesMap ) {
+	for ( const id in sitesMap ) {
 		sitesMap[ id ].off( 'change', this.propagateChange );
 		changed = true;
 	}
@@ -279,7 +279,7 @@ SitesList.prototype.update = function( sites ) {
 SitesList.prototype.updatePlans = function( purchases ) {
 	if ( this.data ) {
 		this.data = this.data.map( function( site ) {
-			var plan;
+			let plan;
 
 			if ( purchases[ site.ID ] ) {
 				plan = find( purchases[ site.ID ], isPlan );
@@ -303,7 +303,7 @@ SitesList.prototype.updatePlans = function( purchases ) {
  * @param {...*} args - arguments passed to the callback
  **/
 SitesList.prototype.transaction = function() {
-	var args = Array.prototype.slice.call( arguments ),
+	let args = Array.prototype.slice.call( arguments ),
 		callback = args.shift(),
 		result;
 
@@ -438,7 +438,7 @@ SitesList.prototype.getPrimary = function() {
  */
 SitesList.prototype.select = function( siteID ) {
 	// Attempt to grab a site object from the passed ID
-	var site = this.getSite( siteID );
+	const site = this.getSite( siteID );
 
 	/**
 	 * If there's a valid site, hide all sites
@@ -517,7 +517,7 @@ SitesList.prototype.hasSiteWithPlugins = function() {
 };
 
 SitesList.prototype.removeSite = function( site ) {
-	var sites, changed;
+	let sites, changed;
 	if ( this.isSelected( site ) ) {
 		this.selectAll();
 	}
@@ -537,7 +537,7 @@ SitesList.prototype.removeSite = function( site ) {
  * @param  {[type]} site site instance
  */
 SitesList.prototype.updateSite = function( updatedSite ) {
-	var updatedSites = this.get().map( function( site ) {
+	let updatedSites = this.get().map( function( site ) {
 		if ( updatedSite.ID !== site.ID ) {
 			return site;
 		}
@@ -554,7 +554,7 @@ SitesList.prototype.updateSite = function( updatedSite ) {
  * @return bool
  */
 SitesList.prototype.canUpdateFiles = function() {
-	var allowUpdate = false;
+	let allowUpdate = false;
 
 	this.getSelectedOrAll().forEach( function( site ) {
 		if ( site.canUpdateFiles ) {
@@ -586,7 +586,7 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 	site = this.getSite( site.slug );
 
 	if ( site.updates && site.updates.plugins ) {
-		let siteUpdateInfo = assign( {}, site.updates );
+		const siteUpdateInfo = assign( {}, site.updates );
 		siteUpdateInfo.plugins--;
 		siteUpdateInfo.total--;
 		site.set( { updates: siteUpdateInfo } );

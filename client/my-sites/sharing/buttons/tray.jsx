@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { assign, filter, find } from 'lodash';
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var SortableList = require( 'components/forms/sortable-list' ),
-	ButtonsPreviewButtons = require( './preview-buttons' ),
-	ButtonsPreviewButton = require( './preview-button' );
+import SortableList from 'components/forms/sortable-list';
+
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsPreviewButton from './preview-button';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsTray',
@@ -60,7 +61,7 @@ module.exports = React.createClass( {
 	},
 
 	getInstructionText: function() {
-		var labels = {
+		const labels = {
 			touch: this.translate( 'Tap the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
 			notouch: this.translate( 'Click the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
 			'touch-reorder': this.translate( 'Tap the button you would like to move. Then tap the desired arrow.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
@@ -68,7 +69,7 @@ module.exports = React.createClass( {
 		};
 
 		return Object.keys( labels ).map( function( context ) {
-			var label = labels[ context ];
+			let label = labels[ context ];
 
 			if ( 'hidden' === this.props.visibility ) {
 				label += ' ' + this.translate( 'These will be shown in a dropdown under the “More” button.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } );
@@ -83,7 +84,7 @@ module.exports = React.createClass( {
 	},
 
 	onButtonsReordered: function( order ) {
-		var buttons = [];
+		let buttons = [];
 
 		this.getButtonsOfCurrentVisibility().forEach( function( button, i ) {
 			buttons[ order[ i ] ] = button;
@@ -97,7 +98,7 @@ module.exports = React.createClass( {
 	},
 
 	onButtonClick: function( button ) {
-		var buttons = this.props.buttons.slice( 0 ),
+		let buttons = this.props.buttons.slice( 0 ),
 			currentButton = find( buttons, { ID: button.ID } ),
 			isEnabled;
 
@@ -144,8 +145,8 @@ module.exports = React.createClass( {
 
 	getButtonElements: function() {
 		if ( this.state.isReordering ) {
-			var buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
-				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style={ this.props.style }/>;
+			const buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
+				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style={ this.props.style } />;
 			}, this );
 
 			return <SortableList onChange={ this.onButtonsReordered }>{ buttons }</SortableList>;
@@ -155,7 +156,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'sharing-buttons-preview__panel', 'is-bottom', 'sharing-buttons-tray', 'buttons-' + this.props.visibility, {
+		const classes = classNames( 'sharing-buttons-preview__panel', 'is-bottom', 'sharing-buttons-tray', 'buttons-' + this.props.visibility, {
 			'is-active': this.props.active,
 			'is-reordering': this.state.isReordering
 		} );

@@ -12,7 +12,7 @@ const anExampleKey = 'day:2014-08-01';
 
 // helper functions
 function createLocalRecords( statList, qty ) {
-	for ( let i = 0; i < qty; i ++ ) {
+	for ( let i = 0; i < qty; i++ ) {
 		statList.set( anExampleKey + '||' + i, {} );
 	}
 }
@@ -139,7 +139,7 @@ describe( 'LocalList', function() {
 				statList2 = new LocalList( { localStoreKey: 'TestLocalListKey2', limit: limit } );
 			assert.equal( statList2.limit, limit );
 
-			for ( let i = 0; i < limit; i ++ ) {
+			for ( let i = 0; i < limit; i++ ) {
 				const key = anExampleKey + '||' + i;
 				statList2.set( key, {} );
 			}

@@ -89,7 +89,7 @@ export const UploadingPane = React.createClass( {
 	},
 
 	initiateFromForm: function( event ) {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -105,7 +105,7 @@ export const UploadingPane = React.createClass( {
 	},
 
 	openFileSelector: function() {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		fileSelector.click();
 	},

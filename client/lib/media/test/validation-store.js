@@ -104,7 +104,7 @@ describe( 'MediaValidationStore', function() {
 	}
 
 	describe( '#validateItem()', function() {
-		var validateItem;
+		let validateItem;
 
 		before( function() {
 			validateItem = MediaValidationStore.validateItem;
@@ -151,7 +151,7 @@ describe( 'MediaValidationStore', function() {
 	} );
 
 	describe( '#clearValidationErrors()', function() {
-		var clearValidationErrors;
+		let clearValidationErrors;
 
 		before( function() {
 			clearValidationErrors = MediaValidationStore.clearValidationErrors;
@@ -177,7 +177,7 @@ describe( 'MediaValidationStore', function() {
 	} );
 
 	describe( '#clearValidationErrorsByType', function() {
-		var clearValidationErrorsByType;
+		let clearValidationErrorsByType;
 
 		before( function() {
 			clearValidationErrorsByType = MediaValidationStore.clearValidationErrorsByType;
@@ -201,13 +201,13 @@ describe( 'MediaValidationStore', function() {
 
 	describe( '#getAllErrors()', function() {
 		it( 'should return an empty object when no errors exist', function() {
-			var errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
+			const errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
 
 			expect( errors ).to.eql( {} );
 		} );
 
 		it( 'should return an object of errors', function() {
-			var errors;
+			let errors;
 
 			dispatchCreateMediaItem();
 			errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
@@ -220,14 +220,14 @@ describe( 'MediaValidationStore', function() {
 
 	describe( '#getErrors()', function() {
 		it( 'should return an empty array when no errors exist', function() {
-			var errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.be.an.instanceof( Array );
 			expect( errors ).to.be.empty;
 		} );
 
 		it( 'should return an array of errors', function() {
-			var errors;
+			let errors;
 
 			dispatchCreateMediaItem();
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
@@ -254,7 +254,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should detect a 404 error from received item', function() {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -272,7 +272,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should detect a not enough space error from received item', function() {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -290,7 +290,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should detect an exceeds plan storage limit error from received item', function() {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -308,7 +308,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should detect general server error from received item', function() {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: new Error()
@@ -319,7 +319,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should set errors into the action object explicitly', function() {
-			var action = {
+			const action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: DUMMY_MEDIA_OBJECT
@@ -333,7 +333,7 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		it( 'should preserve existing errors when detecting a new one', function() {
-			var action = {
+			const action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: DUMMY_MEDIA_OBJECT

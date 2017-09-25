@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' );
+import config from 'config';
+
+import route from 'lib/route';
+import analytics from 'lib/analytics';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
@@ -37,7 +38,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var welcomeSite = this.props.welcomeSite || false,
+		let welcomeSite = this.props.welcomeSite || false,
 			adminURL = welcomeSite.options ? welcomeSite.options.admin_url : route.getSiteFragment( window.location.href ) + '/wp-admin/',
 			postLink = '#',
 			customizeLink = '#',

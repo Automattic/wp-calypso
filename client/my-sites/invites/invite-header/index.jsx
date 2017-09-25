@@ -98,7 +98,7 @@ export default React.createClass( {
 						}
 					}
 				);
-				break
+				break;
 			default:
 				text = this.translate(
 					'{{inviterName/}} invited you to be %(invitedRole)s on:', {
@@ -110,16 +110,16 @@ export default React.createClass( {
 						}
 					}
 				);
-				break
+				break;
 		}
 
 		return text;
 	},
 
 	render() {
-		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
+		const classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
 
-		return(
+		return (
 			<div className={ classes }>
 				<CompactCard className="invite-header__inviter">
 					<div className="invite-header__inviter-info">

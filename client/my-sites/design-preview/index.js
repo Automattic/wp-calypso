@@ -130,7 +130,7 @@ export default function designPreview( WebPreview ) {
 			const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 			// If this route has nothing but the preview, redirect to somewhere else
 			if ( isEmptyRoute ) {
-				page.redirect( `/stats/${siteFragment}` );
+				page.redirect( `/stats/${ siteFragment }` );
 			}
 		}
 

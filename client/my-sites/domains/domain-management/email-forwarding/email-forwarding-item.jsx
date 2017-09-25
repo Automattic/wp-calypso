@@ -33,7 +33,7 @@ const EmailForwardingItem = React.createClass( {
 				notices.error( error.message || this.translate( 'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 					{
 						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
 						}
 					} )
 				);
@@ -64,7 +64,7 @@ const EmailForwardingItem = React.createClass( {
 				notices.error( this.translate( 'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 					{
 						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
 						}
 					} )
 				);

@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-initial-setup' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	analytics = require( 'lib/analytics' );
+import FormButton from 'components/forms/form-button';
+
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 

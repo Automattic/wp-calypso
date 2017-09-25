@@ -1,13 +1,14 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	SiteIcon = require( 'blocks/site-icon' );
+import CompactCard from 'components/card/compact';
+
+import SiteIcon from 'blocks/site-icon';
 
 module.exports = {
 	Page: React.createClass( {
@@ -18,7 +19,7 @@ module.exports = {
 				<CompactCard className="page is-placeholder">
 					{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
 					<a className="page__title"><span className="placeholder-text">{ this.translate( 'Loading a page of Pages…' ) }</span></a>
-					{ this.props.multisite ? <span className="page__site-url "><span className="placeholder-text">{ this.translate( 'A domain, quite soon…') }</span></span> : null }
+					{ this.props.multisite ? <span className="page__site-url "><span className="placeholder-text">{ this.translate( 'A domain, quite soon…' ) }</span></span> : null }
 				</CompactCard>
 			);
 		}

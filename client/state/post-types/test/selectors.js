@@ -75,7 +75,7 @@ describe( 'selectors', () => {
 
 			expect( postTypes ).to.eql( {
 				post: { name: 'post', label: 'Posts' }
-			} )
+			} );
 		} );
 	} );
 

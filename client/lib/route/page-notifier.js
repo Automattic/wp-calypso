@@ -1,15 +1,16 @@
 /*eslint no-multi-spaces: 0*/
 // node dependency
-var EventEmitter   = require( 'events' ).EventEmitter;
+import { EventEmitter } from 'events';
 
 // internal dependency
-var page           = require( 'page' );
-var Route          = page.Route;
+import page from 'page';
+
+const Route          = page.Route;
 
 // routing state and middleware
-var location       = new EventEmitter();
-var currentContext = null;
-var route          = new Route( '*' );
+const location       = new EventEmitter();
+let currentContext = null;
+const route          = new Route( '*' );
 
 // Inject our route at the front so we are always called
 page.callbacks.unshift( route.middleware( function( context, next ) {

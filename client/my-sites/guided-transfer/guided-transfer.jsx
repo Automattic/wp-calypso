@@ -46,15 +46,15 @@ export default React.createClass( {
 	},
 
 	showExporter() {
-		page( `/settings/export/${this.props.siteSlug}` );
+		page( `/settings/export/${ this.props.siteSlug }` );
 	},
 
 	showHostSelection() {
-		page( `/settings/export/guided/${this.props.siteSlug}` );
+		page( `/settings/export/guided/${ this.props.siteSlug }` );
 	},
 
 	showHost( hostSlug ) {
-		page( `/settings/export/guided/${hostSlug}/${this.props.siteSlug}` );
+		page( `/settings/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	},
 
 	goBack() {

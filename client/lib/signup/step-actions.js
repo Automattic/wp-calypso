@@ -20,8 +20,10 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp' ;
-const sites = require( 'lib/sites-list' )();
-const user = require( 'lib/user' )();
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+import userFactory from 'lib/user';
+const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
@@ -372,7 +374,7 @@ module.exports = {
 	},
 
 	createSite( callback, { themeSlugWithRepo }, { site } ) {
-		var data = {
+		const data = {
 			blog_name: site,
 			blog_title: '',
 			options: { theme: themeSlugWithRepo },

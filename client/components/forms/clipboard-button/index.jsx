@@ -30,7 +30,7 @@ class ClipboardButton extends React.Component {
 	};
 
 	componentDidMount() {
-		var button = ReactDom.findDOMNode( this.refs.button );
+		const button = ReactDom.findDOMNode( this.refs.button );
 		this.clipboard = new Clipboard( button, {
 			text: () => this.props.text,
 		} );
@@ -51,7 +51,7 @@ class ClipboardButton extends React.Component {
 	};
 
 	render() {
-		var classes = classNames( 'clipboard-button', this.props.className );
+		const classes = classNames( 'clipboard-button', this.props.className );
 
 		return (
 			<Button

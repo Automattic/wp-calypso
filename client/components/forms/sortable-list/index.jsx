@@ -54,7 +54,7 @@ class SortableList extends React.Component {
 	};
 
 	compareCursorVerticalToElement = ( element, event ) => {
-		var rect = element.getBoundingClientRect();
+		const rect = element.getBoundingClientRect();
 
 		if ( event.clientY < rect.top ) {
 			return -1;
@@ -66,7 +66,7 @@ class SortableList extends React.Component {
 	};
 
 	isCursorBeyondElementThreshold = ( element, direction, permittedVertical, event ) => {
-		var rect = element.getBoundingClientRect();
+		const rect = element.getBoundingClientRect();
 
 		// We check for Y bounds on right and left and not X bounds for top
 		// and bottom because horizontal lists can have line breaks, so we
@@ -105,7 +105,7 @@ class SortableList extends React.Component {
 	};
 
 	getCursorElementIndex = event => {
-		var cursorCompare = this.compareCursorVerticalToElement( this.refs.list, event ),
+		let cursorCompare = this.compareCursorVerticalToElement( this.refs.list, event ),
 			adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex ),
 			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getBoundingClientRect(),
 			index;
@@ -113,7 +113,7 @@ class SortableList extends React.Component {
 		index = findIndex(
 			this.props.children,
 			( child, i ) => {
-				var isBeyond, adjustedElementIndex, permittedVertical;
+				let isBeyond, adjustedElementIndex, permittedVertical;
 
 				// Avoid self-comparisons for the active item
 				if ( i === this.state.activeIndex ) {
@@ -172,7 +172,7 @@ class SortableList extends React.Component {
 	};
 
 	moveItem = direction => {
-		var increment = 'previous' === direction ? -1 : 1,
+		let increment = 'previous' === direction ? -1 : 1,
 			activeOrder = Object.keys( this.props.children ).map( Number );
 
 		activeOrder[ this.state.activeIndex + increment ] = this.state.activeIndex;
@@ -193,7 +193,7 @@ class SortableList extends React.Component {
 	};
 
 	onMouseMove = event => {
-		var activeOrder, newIndex;
+		let activeOrder, newIndex;
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || touchDetect.hasTouch() ) {
 			return;
 		}
@@ -213,7 +213,7 @@ class SortableList extends React.Component {
 				// the child props array
 				activeOrder = Object.keys( this.props.children ).map( Number );
 
-				for ( var i = 0, il = activeOrder.length; i < il; i++ ) {
+				for ( let i = 0, il = activeOrder.length; i < il; i++ ) {
 					if ( i >= newIndex && i < this.state.activeIndex ) {
 						// Bump up any item below the active index and
 						// above the new index
@@ -261,7 +261,7 @@ class SortableList extends React.Component {
 		return React.Children.map(
 			this.props.children,
 			function( child, index ) {
-				var isActive = this.state.activeIndex === index,
+				let isActive = this.state.activeIndex === index,
 					isDraggable = this.props.allowDrag && ! touchDetect.hasTouch(),
 					events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ],
 					style = { order: this.getAdjustedElementIndex( index ) },
@@ -351,7 +351,7 @@ class SortableList extends React.Component {
 	};
 
 	render() {
-		var classes = classNames( {
+		const classes = classNames( {
 			'sortable-list': true,
 			'is-horizontal': 'horizontal' === this.props.direction,
 			'is-vertical': 'vertical' === this.props.direction,

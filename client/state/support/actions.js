@@ -26,7 +26,7 @@ export function supportUserTokenFetch( supportUser ) {
 export function supportUserActivate() {
 	return {
 		type: SUPPORT_USER_ACTIVATE
-	}
+	};
 }
 
 /**
@@ -62,11 +62,11 @@ export function supportUserError( errorMessage = null ) {
 	return {
 		type: SUPPORT_USER_ERROR,
 		errorMessage
-	}
+	};
 }
 
 export function supportUserToggleDialog() {
 	return {
 		type: SUPPORT_USER_TOGGLE_DIALOG
-	}
+	};
 }

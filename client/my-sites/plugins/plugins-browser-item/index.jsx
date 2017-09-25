@@ -25,7 +25,7 @@ const PluginsBrowserListElement = React.createClass( {
 	},
 
 	getPluginLink: function() {
-		var url = '/plugins/' + this.props.plugin.slug;
+		let url = '/plugins/' + this.props.plugin.slug;
 		if ( this.props.site ) {
 			url += '/' + this.props.site;
 		}
@@ -57,11 +57,11 @@ const PluginsBrowserListElement = React.createClass( {
 	},
 
 	renderInstalledIn: function() {
-		var sites = this.getSites();
+		const sites = this.getSites();
 		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
-						<Gridicon icon='checkmark' size={ 18 } />
+						<Gridicon icon="checkmark" size={ 18 } />
 						{ this.translate( 'Installed' ) }
 				</div>
 			);

@@ -6,25 +6,29 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	emitter = require( 'lib/mixins/emitter' ),
-	cartSynchronizer = require( './cart-synchronizer' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	PollerPool = require( 'lib/data-poller' ),
-	cartAnalytics = require( './cart-analytics' ),
-	productsList = require( 'lib/products-list' )(),
-	Dispatcher = require( 'dispatcher' ),
-	cartValues = require( 'lib/cart-values' ),
-	applyCoupon = cartValues.applyCoupon,
-	cartItems = cartValues.cartItems;
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 
-var _cartKey = null,
+import emitter from 'lib/mixins/emitter';
+import cartSynchronizer from './cart-synchronizer';
+import PollerPool from 'lib/data-poller';
+import cartAnalytics from './cart-analytics';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import Dispatcher from 'dispatcher';
+import cartValues from 'lib/cart-values';
+
+/**
+ * Internal dependencies
+ */
+let wpcom = require( 'lib/wp' ).undocumented(), applyCoupon = cartValues.applyCoupon, cartItems = cartValues.cartItems;
+
+let _cartKey = null,
 	_synchronizer = null,
 	_poller = null;
 
-var CartStore = {
+const CartStore = {
 	get: function() {
-		var value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
+		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
 		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
@@ -69,7 +73,7 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	var wrappedFunction,
+	let wrappedFunction,
 		previousCart,
 		nextCart;
 

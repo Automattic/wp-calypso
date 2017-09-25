@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { map } from 'lodash';
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' ),
-	scrollIntoView = require( 'dom-scroll-into-view' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import scrollIntoView from 'dom-scroll-into-view';
 
-var SuggestionsList = React.createClass( {
+const SuggestionsList = React.createClass( {
 	propTypes: {
 		isExpanded: React.PropTypes.bool,
 		match: React.PropTypes.string,
@@ -30,7 +30,7 @@ var SuggestionsList = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	componentDidUpdate: function( prevProps ) {
-		var node;
+		let node;
 
 		// only have to worry about scrolling selected suggestion into view
 		// when already expanded
@@ -49,7 +49,7 @@ var SuggestionsList = React.createClass( {
 	},
 
 	_computeSuggestionMatch: function( suggestion ) {
-		var match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
+		let match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
 			indexOfMatch;
 
 		if ( match.length === 0 ) {
@@ -67,7 +67,7 @@ var SuggestionsList = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'token-field__suggestions-list', {
+		const classes = classNames( 'token-field__suggestions-list', {
 			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0
 		} );
 
@@ -83,9 +83,8 @@ var SuggestionsList = React.createClass( {
 	},
 
 	_renderSuggestions: function() {
-
 		return map( this.props.suggestions, function( suggestion, index ) {
-			var match = this._computeSuggestionMatch( suggestion ),
+			let match = this._computeSuggestionMatch( suggestion ),
 				classes = classNames( 'token-field__suggestion', {
 					'is-selected': index === this.props.selectedIndex
 				} );

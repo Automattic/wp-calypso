@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	qs = require( 'querystring' );
+import React from 'react';
+
+import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-const PostActions = require( 'lib/posts/actions' ),
-	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	stats = require( 'lib/posts/stats' ),
-	EditorLocationSearch = require( './search' );
+import PostActions from 'lib/posts/actions';
+
+import EditorDrawerWell from 'post-editor/editor-drawer-well';
+import stats from 'lib/posts/stats';
+import EditorLocationSearch from './search';
 
 import Notice from 'components/notice';
 
@@ -25,7 +27,7 @@ export default React.createClass( {
 	propTypes: {
 		label: React.PropTypes.string,
 		coordinates: function( props, propName ) {
-			var prop = props[ propName ];
+			const prop = props[ propName ];
 			if ( prop && ( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length ) ) {
 				return new Error( 'Expected array pair of coordinates for prop `' + propName + '`.' );
 			}
@@ -110,7 +112,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var error, buttonText;
+		let error, buttonText;
 
 		if ( this.state.error ) {
 			error = (

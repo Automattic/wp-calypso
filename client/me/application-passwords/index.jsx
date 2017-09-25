@@ -1,31 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:application-passwords' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect;
+import React from 'react';
+
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:application-passwords' );
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	AppPasswordItem = require( 'me/application-password-item' ),
-	notices = require( 'notices' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'gridicons' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Card = require( 'components/card' ),
-	classNames = require( 'classnames' ),
-	errorNotice = require( 'state/notices/actions' ).errorNotice;
+import observe from 'lib/mixins/data-observe';
+
+import AppPasswordItem from 'me/application-password-item';
+import notices from 'notices';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+import Gridicon from 'gridicons';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import eventRecorder from 'me/event-recorder';
+import Card from 'components/card';
+import classNames from 'classnames';
+import { errorNotice } from 'state/notices/actions';
 
 const ApplicationPasswords = React.createClass( {
 
@@ -83,7 +86,7 @@ const ApplicationPasswords = React.createClass( {
 	renderNewAppPasswordForm: function() {
 		const cardClasses = classNames( 'application-passwords__add-new-card', { 'is-visible': this.state.addingPassword } );
 
-			return (
+		return (
 				<Card className={ cardClasses }>
 					<form
 						id="add-application-password"
@@ -107,7 +110,7 @@ const ApplicationPasswords = React.createClass( {
 								onClick={ this.recordClickEvent( 'Generate New Application Password Button' ) } >
 								{ this.state.submittingForm ? this.translate( 'Generating Password…' ) : this.translate( 'Generate Password' ) }
 							</FormButton>
-							{  this.props.appPasswordsData.get().length ?
+							{ this.props.appPasswordsData.get().length ?
 								<FormButton
 									isPrimary={ false }
 									onClick={ this.recordClickEvent( 'Cancel Generate New Application Password Button', this.toggleNewPassword ) }
@@ -123,7 +126,7 @@ const ApplicationPasswords = React.createClass( {
 	},
 
 	renderNewAppPassword: function() {
-		var newPassword = this.props.appPasswordsData.newApplicationPassword;
+		const newPassword = this.props.appPasswordsData.newApplicationPassword;
 		return (
 			<Card className="application-passwords__new-password">
 				<p className="application-passwords__new-password-display">
@@ -134,13 +137,13 @@ const ApplicationPasswords = React.createClass( {
 					{
 						this.translate(
 							'Use this password to log in to {{strong}}%(appName)s{{/strong}}. Note: spaces are ignored.', {
-							args: {
-								appName: this.state.applicationName
-							},
-							components: {
-								strong: <strong/>
-							}
-						} )
+								args: {
+									appName: this.state.applicationName
+								},
+								components: {
+									strong: <strong />
+								}
+							} )
 					}
 				</p>
 
@@ -175,7 +178,7 @@ const ApplicationPasswords = React.createClass( {
 	},
 
 	render: function() {
-		var hasNewPassword = this.props.appPasswordsData.hasNewPassword();
+		const hasNewPassword = this.props.appPasswordsData.hasNewPassword();
 
 		return (
 			<div>

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const HeaderCake = require( 'components/header-cake' );
-const DocumentHead = require( 'components/data/document-head' );
+import HeaderCake from 'components/header-cake';
+
+import DocumentHead from 'components/data/document-head';
 
 const DomainManagementHeader = React.createClass( {
 	render() {

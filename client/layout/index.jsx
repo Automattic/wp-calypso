@@ -2,34 +2,37 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
-var React = require( 'react' ),
-	connect = require( 'react-redux' ).connect,
-	classnames = require( 'classnames' );
+import React from 'react';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var AsyncLoad = require( 'components/async-load' ),
-	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
-	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	GlobalNotices = require( 'components/global-notices' ),
-	notices = require( 'notices' ),
-	translator = require( 'lib/translator-jumpstart' ),
-	TranslatorInvitation = require( './community-translator/invitation' ),
-	TranslatorLauncher = require( './community-translator/launcher' ),
-	Welcome = require( 'my-sites/welcome/welcome' ),
-	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
-	GuidedTours = require( 'layout/guided-tours' ),
-	analytics = require( 'lib/analytics' ),
-	config = require( 'config' ),
-	PulsingDot = require( 'components/pulsing-dot' ),
-	SitesListNotices = require( 'lib/sites-list/notices' ),
-	OfflineStatus = require( 'layout/offline-status' ),
-	QueryPreferences = require( 'components/data/query-preferences' ),
-	KeyboardShortcutsMenu,
-	Layout,
-	SupportUser;
+import AsyncLoad from 'components/async-load';
+
+import MasterbarLoggedIn from 'layout/masterbar/logged-in';
+import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import observe from 'lib/mixins/data-observe';
+import GlobalNotices from 'components/global-notices';
+import notices from 'notices';
+import translator from 'lib/translator-jumpstart';
+import TranslatorInvitation from './community-translator/invitation';
+import TranslatorLauncher from './community-translator/launcher';
+import Welcome from 'my-sites/welcome/welcome';
+import WelcomeMessage from 'layout/nux-welcome/welcome-message';
+import GuidedTours from 'layout/guided-tours';
+import analytics from 'lib/analytics';
+import config from 'config';
+import PulsingDot from 'components/pulsing-dot';
+import SitesListNotices from 'lib/sites-list/notices';
+import OfflineStatus from 'layout/offline-status';
+import QueryPreferences from 'components/data/query-preferences';
+
+/**
+ * Internal dependencies
+ */
+let KeyboardShortcutsMenu, Layout, SupportUser;
 
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';

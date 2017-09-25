@@ -127,7 +127,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should sort media by date, with newest first', function() {
-			var media = [
+			const media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } )
 			];
@@ -143,7 +143,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should secondary sort media by ID, with larger first', function() {
-			var media = [
+			const media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: DUMMY_MEDIA_OBJECT.date } )
 			];
@@ -186,7 +186,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should preserve the query from the previous request', function() {
-			var query = { mime_type: 'audio/' };
+			const query = { mime_type: 'audio/' };
 			dispatchSetQuery( { query: query } );
 			dispatchFetchMedia();
 			dispatchReceiveMediaItems();
@@ -198,7 +198,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should reset the page handle when the query changes', function() {
-			var query = { mime_type: 'audio/' };
+			const query = { mime_type: 'audio/' };
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: query } );
 
@@ -254,20 +254,20 @@ describe( 'MediaListStore', function() {
 	} );
 
 	describe( '#isItemMatchingQuery', function() {
-		var isItemMatchingQuery;
+		let isItemMatchingQuery;
 
 		before( function() {
 			isItemMatchingQuery = MediaListStore.isItemMatchingQuery;
 		} );
 
 		it( 'should return true if no query exists for site', function() {
-			var matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
 
 		it( 'should return false if a search query is specified, but the item doesn\'t match', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { search: 'Notmyitem' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -276,7 +276,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should return true if a search query is specified, and the item matches', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { search: 'Imag' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -285,7 +285,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should return true if a search query is specified, and the item matches case insensitive', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { search: 'imag' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -294,7 +294,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should return false if a search query and mime_type are specified, and the item matches on title, but not mime_type', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { search: 'Imag', mime_type: 'audio/' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -303,7 +303,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should return false if a mime_type is specified, but the item doesn\'t match', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -312,7 +312,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should return true if a mime_type is specified, and the item matches', function() {
-			var matches;
+			let matches;
 			dispatchSetQuery( { query: { mime_type: 'image/' } } );
 
 			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -377,7 +377,7 @@ describe( 'MediaListStore', function() {
 		} );
 
 		it( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', function() {
-			var newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } ),
+			let newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } ),
 				allItems;
 
 			MediaStore.get.restore();

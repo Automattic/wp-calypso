@@ -13,13 +13,20 @@ import notices from 'notices';
 import userSettings from 'lib/user-settings';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
+import PasswordComponent from 'me/security/main';
+import accountPasswordData from 'lib/account-password-data';
+import TwoStepComponent from 'me/two-step';
+import appPasswordsData from 'lib/application-passwords-data';
+import ConnectedAppsComponent from 'me/connected-applications';
+import connectedAppsData from 'lib/connected-applications-data';
+import AccountRecoveryComponent from 'me/security-account-recovery';
+import SocialLoginComponent from 'me/social-login';
+
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	password( context ) {
-		const PasswordComponent = require( 'me/security/main' );
-		const basePath = context.path;
-		const accountPasswordData = require( 'lib/account-password-data' );
+	    const basePath = context.path;
 
 		if ( context.query && context.query.updated === 'password' ) {
 			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
@@ -45,9 +52,7 @@ export default {
 	},
 
 	twoStep( context ) {
-		const TwoStepComponent = require( 'me/two-step' ),
-			basePath = context.path,
-			appPasswordsData = require( 'lib/application-passwords-data' );
+		const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
@@ -65,9 +70,7 @@ export default {
 	},
 
 	connectedApplications( context ) {
-		const ConnectedAppsComponent = require( 'me/connected-applications' ),
-			basePath = context.path,
-			connectedAppsData = require( 'lib/connected-applications-data' );
+		const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
@@ -85,8 +88,7 @@ export default {
 	},
 
 	accountRecovery( context ) {
-		const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
-			basePath = context.path;
+		const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
@@ -103,8 +105,7 @@ export default {
 	},
 
 	socialLogin( context ) {
-		const SocialLoginComponent = require( 'me/social-login' );
-		const basePath = context.path;
+	    const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Social Login' );
 

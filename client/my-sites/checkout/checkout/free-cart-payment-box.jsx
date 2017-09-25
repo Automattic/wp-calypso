@@ -1,24 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+import PayButton from './pay-button';
+
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 
 import CartToggle from './cart-toggle';
 
-var FreeCartPaymentBox = React.createClass( {
+const FreeCartPaymentBox = React.createClass( {
 	propTypes: {
 		products: React.PropTypes.object.isRequired
 	},
 
 	content: function() {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		return (
 			<form onSubmit={ this.props.onSubmit }>
@@ -51,7 +52,7 @@ var FreeCartPaymentBox = React.createClass( {
 	},
 
 	getProductName: function() {
-		var cart = this.props.cart,
+		let cart = this.props.cart,
 			product;
 
 		if ( cart.has_bundle_credit && this.props.selectedSite.plan ) {

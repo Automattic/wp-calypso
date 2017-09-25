@@ -7,7 +7,7 @@ import { isEqual, last } from 'lodash';
 // Internal dependencies
 import { action as actionTypes } from './constants';
 
-var lists = {},
+let lists = {},
 	errors = [],
 	updatedLists = {},
 	isFetching = false,
@@ -63,7 +63,7 @@ function markUpdatedList( newList ) {
 }
 
 function markPending( owner, slug ) {
-	var key = keyForList( owner, slug ),
+	let key = keyForList( owner, slug ),
 		list = lists[ key ];
 
 	if ( ! list ) {

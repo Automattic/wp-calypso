@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:action-follow' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:stats:action-follow' );
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import observe from 'lib/mixins/data-observe';
+
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'StatsActionFollow',
@@ -18,7 +21,7 @@ module.exports = React.createClass( {
 	mixins: [ observe( 'followSite' ) ],
 
 	clickHandler: function( event ) {
-		var site = this.props.followSite,
+		let site = this.props.followSite,
 			gaEvent;
 
 		event.stopPropagation();
@@ -37,7 +40,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.followSite,
+		let site = this.props.followSite,
 			following = site.is_following,
 			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
 				follow: ! following,
@@ -56,10 +59,10 @@ module.exports = React.createClass( {
 		wrapperClassSet = classNames( wrapperClass );
 
 		return (
-			<li className='module-content-list-item-action'>
-				<a href='#' onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
-					<span className='module-content-list-item-action-label'><Gridicon icon={ gridiconType } size={ 18 } />{ label }</span>
-					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="cross" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
+			<li className="module-content-list-item-action">
+				<a href="#" onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
+					<span className="module-content-list-item-action-label"><Gridicon icon={ gridiconType } size={ 18 } />{ label }</span>
+					<span className="module-content-list-item-action-label unfollow"><Gridicon icon="cross" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
 				</a>
 			</li>
 		);

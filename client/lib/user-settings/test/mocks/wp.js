@@ -18,7 +18,7 @@ const me = function() {
 			};
 		}
 	};
-}
+};
 
 export default {
 	me,

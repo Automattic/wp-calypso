@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' );
+import Dispatcher from 'dispatcher';
+
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies

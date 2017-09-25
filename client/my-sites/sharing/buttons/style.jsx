@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsStyle',

@@ -15,7 +15,7 @@ export default React.createClass( {
 	displayName: 'NotificationSettingsNavigation',
 
 	render() {
-		var navItems = [
+		const navItems = [
 			this.navItem( '/me/notifications' ),
 			this.navItem( '/me/notifications/comments' ),
 			this.navItem( '/me/notifications/updates' ),
@@ -24,7 +24,7 @@ export default React.createClass( {
 
 		return (
 			<SectionNav selectedText={ this.getSelectedText() }>
-				<NavTabs label='Section' selectedText={ this.getSelectedText() }>
+				<NavTabs label="Section" selectedText={ this.getSelectedText() }>
 					{ navItems }
 				</NavTabs>
 			</SectionNav>

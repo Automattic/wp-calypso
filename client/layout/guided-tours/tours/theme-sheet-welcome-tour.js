@@ -57,7 +57,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			next="close-preview"
 		>
 			<p>
-				{ translate( "Nothing beats seeing a theme in action. Try the live demo!" ) }
+				{ translate( 'Nothing beats seeing a theme in action. Try the live demo!' ) }
 			</p>
 			<ButtonRow>
 				<Continue icon="themes" step="close-preview" target="theme-sheet-preview" click />
@@ -78,7 +78,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			<ButtonRow>
 				<Continue when={ not( isPreviewShowing ) } step="theme-docs">
 				{
-					translate( "Tap {{icon/}} to close the live demo.", {
+					translate( 'Tap {{icon/}} to close the live demo.', {
 						components: { icon: <Gridicon icon="cross" /> }
 					} )
 				}

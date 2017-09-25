@@ -53,13 +53,13 @@ describe( 'index', () => {
 
 			afterEach( () => process.env.NODE_ENV = NODE_ENV );
 
-			it( `should throw an error when given key doesn't exist (NODE_ENV == development)`, () => {
+			it( 'should throw an error when given key doesn\'t exist (NODE_ENV == development)', () => {
 				process.env.NODE_ENV = 'development';
 
 				expect( () => config( fakeKey ) ).to.throw( ReferenceError );
 			} );
 
-			it( `should not throw an error when given key doesn't exist (NODE_ENV != development)`, () => {
+			it( 'should not throw an error when given key doesn\'t exist (NODE_ENV != development)', () => {
 				const envs = [
 					'client',
 					'desktop',

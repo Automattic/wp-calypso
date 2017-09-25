@@ -11,4 +11,4 @@ export default {
 		get.reset();
 		set.reset();
 	}
-}
+};

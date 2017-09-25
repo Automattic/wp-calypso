@@ -29,7 +29,7 @@ export default React.createClass( {
 	},
 
 	getIcons() {
-		let sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
+		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
 		return sites.map( function( site ) {
 			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 14 } />;
 		} );
@@ -37,7 +37,7 @@ export default React.createClass( {
 
 	render() {
 		const icons = this.getIcons();
-		const classes = `all-sites-icon has-${this.getMaxSites().length}-icons`;
+		const classes = `all-sites-icon has-${ this.getMaxSites().length }-icons`;
 
 		return (
 			<div className={ classes }>

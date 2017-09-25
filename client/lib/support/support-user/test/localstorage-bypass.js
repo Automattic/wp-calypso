@@ -122,7 +122,7 @@ describe( 'localstorage-bypass', () => {
 		it( 'has no effect when a key doesn\'t already exist', () => {
 			removeItem( db, [], _removeItem )( 'missing' );
 			expect( db ).to.deep.equal( { first: 'abc', second: 'def' } );
-		} )
+		} );
 	} );
 
 	it( 'should add a key, read it, then remove it', () => {

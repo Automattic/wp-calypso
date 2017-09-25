@@ -94,7 +94,7 @@ const EditorMediaModalGallery = React.createClass( {
 			return;
 		}
 
-		let defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
+		const defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
 			defaultSettings.type = 'rectangular';

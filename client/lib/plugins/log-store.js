@@ -2,21 +2,23 @@
  * External dependencies
  */
 import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
-const debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
 
-var _errors = [],
+import emitter from 'lib/mixins/emitter';
+
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	LogStore;
 
 function addLog( status, action, site, plugin, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		site: site,
@@ -61,7 +63,7 @@ function removeLog( log ) {
 }
 
 function removeSingleLog( log ) {
-	var index;
+	let index;
 	debug( 'removing log:', log );
 	switch ( log.status ) {
 		case 'error':
@@ -99,9 +101,9 @@ LogStore = {
 	},
 
 	isInProgressAction: function( siteId, pluginSlug, action ) {
-		var dones = arguments.length;
+		const dones = arguments.length;
 		return _inProgress.some( function( log ) {
-			var done = 0;
+			let done = 0;
 			if ( action && isArray( action ) ) {
 				if ( indexOf( action, log.action ) !== -1 ) {
 					done++;
@@ -128,7 +130,7 @@ LogStore = {
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {

@@ -370,7 +370,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a non-zero integer if site has sent data to be synced', () => {
 			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
-			expect( test ).to.be.eql( 11 )
+			expect( test ).to.be.eql( 11 );
 		} );
 	} );
 } );

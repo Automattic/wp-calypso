@@ -64,7 +64,6 @@ const parseDateStamp = ( datestamp ) => {
 	return date;
 };
 
-
 const languageSlugs = map( config( 'languages' ), 'langSlug' );
 const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
 

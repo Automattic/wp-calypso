@@ -1,9 +1,10 @@
-import { expect } from 'chai'
-import Dispatcher from 'dispatcher'
-import { default as Store, requestState } from '../index'
-import { actions as ActionTypes } from '../constants'
+import { expect } from 'chai';
+import Dispatcher from 'dispatcher';
+import { default as Store, requestState } from '../index';
+import { actions as ActionTypes } from '../constants';
 
-const debug = require( 'debug' )( 'calypso:auth-code-request-store:test' ); //eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:auth-code-request-store:test' ); //eslint-disable-line no-unused-vars
 
 describe( 'index', () => {
 	beforeEach( function() {
@@ -15,7 +16,7 @@ describe( 'index', () => {
 			status: requestState.READY,
 			errorLevel: false,
 			errorMessage: false
-		} )
+		} );
 	} );
 
 	it( 'is in progress when requesting code', () => {

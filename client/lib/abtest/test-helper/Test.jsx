@@ -16,9 +16,9 @@ export default React.createClass( {
 					{ this.props.test.variationNames.map( variation => (
 						<li onClick={ this.changeVariant.bind( this, variation ) } key={ variation } >
 							<a className={ classNames( {
-									'test-helper__variation': true,
-									'test-helper__current-variation': ( variation === currentVariation ),
-								} ) } >
+								'test-helper__variation': true,
+								'test-helper__current-variation': ( variation === currentVariation ),
+							} ) } >
 								{ variation }
 							</a>
 						</li>

@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
 import selectors from '../selectors';
 
 const items = deepFreeze( {
-	test: { slug: 'test'},
+	test: { slug: 'test' },
 	fetchingTest: { slug: 'fetchingTest' },
 	fetchedTest: { slug: 'fetchingTest', fetched: true },
 	fetchedTest2: { slug: 'fetchingTest', fetched: true }
@@ -41,7 +41,7 @@ describe( 'WPorg Selectors', function() {
 		} );
 
 		it( 'Should return a new object with no pointers to the one stored in state', function() {
-			let plugin = selectors.getPlugin( items, 'fetchedTest' );
+			const plugin = selectors.getPlugin( items, 'fetchedTest' );
 			plugin.fetched = false;
 			assert.equal( selectors.getPlugin( items, 'fetchedTest' ).fetched, true );
 		} );

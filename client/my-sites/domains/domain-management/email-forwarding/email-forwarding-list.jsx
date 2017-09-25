@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var EmailForwardingItem = require( './email-forwarding-item' );
+import EmailForwardingItem from './email-forwarding-item';
 
-var EmailForwardingList = React.createClass( {
+const EmailForwardingList = React.createClass( {
 	render: function() {
-		var emailForwardingItems,
+		let emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {

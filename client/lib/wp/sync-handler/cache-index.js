@@ -70,7 +70,7 @@ export const cacheIndex = {
 				timestamp: Date.now()
 			};
 			if ( pageSeriesKey ) {
-				record.pageSeriesKey = pageSeriesKey
+				record.pageSeriesKey = pageSeriesKey;
 			}
 			return localforage.setItem( RECORDS_LIST_KEY, [
 				...records,
@@ -118,10 +118,10 @@ export const cacheIndex = {
 				resolve();
 			}
 			const droppedPromises = removeList.map( item => localforage.removeItem( item.key ) );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainList )
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainList );
 			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
 			.then( () => {
-				debug( '%o records removed', removeList.length )
+				debug( '%o records removed', removeList.length );
 				resolve();
 			} );
 		} );
@@ -136,7 +136,7 @@ export const cacheIndex = {
 			return {
 				removeList,
 				retainList: difference( records, removeList )
-			}
+			};
 		};
 
 		return new Promise( ( resolve, reject ) => {
@@ -158,7 +158,7 @@ export const cacheIndex = {
 			? lifetime
 			: ms( lifetime );
 
-		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
+		debug( 'start to prune records older than %s', ms( lifetime, { 'long': true } ) );
 
 		return this.findStaleRecords( lifetime ).then( this.removeRecordsByList );
 	},
@@ -173,7 +173,7 @@ export const cacheIndex = {
 			};
 			debug( 'pickPageSeries()', combinedResponse );
 			return combinedResponse;
-		}
+		};
 
 		return new Promise( ( resolve, reject ) => {
 			this.getAll()
@@ -201,15 +201,15 @@ export const cacheIndex = {
 				if ( ! record.reqParams ) {
 					return false;
 				}
-				return( paramsFilter( record.reqParams ) );
+				return ( paramsFilter( record.reqParams ) );
 			} );
 			const combinedResponse = {
 				removeList,
 				retainList: difference( records, removeList )
-			}
+			};
 			debug( 'findRecordsByFilter()', combinedResponse );
 			return combinedResponse;
-		}
+		};
 		return new Promise( ( resolve, reject ) => {
 			this.getAll().then( records => {
 				const combinedResponse = findRecordsByFilter( records );
@@ -217,4 +217,4 @@ export const cacheIndex = {
 			} );
 		} );
 	}
-}
+};

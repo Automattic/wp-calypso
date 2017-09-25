@@ -12,7 +12,7 @@ import userFactory from 'lib/user';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 
-const config = require( 'config' );
+import config from 'config';
 const user = userFactory();
 
 const JetpackPlanDetails = ( { selectedSite } ) => {
@@ -70,12 +70,12 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 				} }
 			);
 			props.buttonText = i18n.translate( 'Set up your plan' );
-			props.href = `/plugins/setup/${selectedSite.slug}`;
+			props.href = `/plugins/setup/${ selectedSite.slug }`;
 		}
 	}
 
 	return (
-		<PurchaseDetail { ...props }/>
+		<PurchaseDetail { ...props } />
 	);
 };
 

@@ -32,7 +32,7 @@ export default React.createClass( {
 			showModule: true,
 			showActions: true,
 			onActionClick: () => {}
-		}
+		};
 	},
 
 	toggleInfo: function( event ) {

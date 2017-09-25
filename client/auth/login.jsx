@@ -119,8 +119,8 @@ module.exports = React.createClass( {
 		return this.hasLoginDetails();
 	},
 
-	toggleSelfHostedInstructions: function () {
-		var isShowing = !this.state.showInstructions;
+	toggleSelfHostedInstructions: function() {
+		const isShowing = ! this.state.showInstructions;
 		this.setState( { showInstructions: isShowing } );
 	},
 
@@ -134,7 +134,7 @@ module.exports = React.createClass( {
 					<form className="auth__form" onSubmit={ this.submitForm }>
 						<FormFieldset>
 							<div className="auth__input-wrapper">
-								<Gridicon icon="user"/>
+								<Gridicon icon="user" />
 								<FormTextInput
 									name="login"
 									ref="login"

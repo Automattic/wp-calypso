@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
-import Card from 'components/card'
-import Gridicon from 'gridicons'
-import SectionHeader from 'components/section-header'
+import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import SectionHeader from 'components/section-header';
 
 export default React.createClass( {
 

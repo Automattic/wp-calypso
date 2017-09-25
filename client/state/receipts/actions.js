@@ -41,7 +41,7 @@ export function fetchReceipt( receiptId ) {
 			} );
 		} );
 	};
-};
+}
 
 export function fetchReceiptCompleted( receiptId, data ) {
 	return {
