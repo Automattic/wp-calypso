@@ -2,7 +2,6 @@
  * External dependencies
  */
 import page from 'page';
-
 /**
  * Internal dependencies
  */
@@ -56,6 +55,17 @@ export default function() {
 		settingsController.setScroll,
 		controller.deleteSite
 	);
+
+	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		page(
+			'/settings/disconnect-site/:site_id',
+			mySitesController.siteSelection,
+			mySitesController.navigation,
+			settingsController.setScroll,
+			controller.disconnectSite
+		);
+	}
+
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
