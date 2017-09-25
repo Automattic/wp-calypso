@@ -454,7 +454,7 @@ class SimplePaymentsDialog extends Component {
 							className="empty-content__action button"
 							href="https://support.wordpress.com/simple-payments/"
 						>
-							{ this.props.translate( 'Learn more about Simple Payments' ) }
+							{ translate( 'Learn more about Simple Payments' ) }
 						</a>
 					}
 				/>,
