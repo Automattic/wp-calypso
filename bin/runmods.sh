@@ -27,9 +27,9 @@ MODS=(
 )
 
 for MOD in "${MODS[@]}"; do
+	echo
 	echo "Running $MOD on $TARGET"
 	echo
-	read -p "Press any key to continue."
 
 	"./bin/codemods/$MOD" $TARGET
 
