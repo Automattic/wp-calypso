@@ -18,8 +18,11 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import FormTelInput from 'components/forms/form-tel-input';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import FormTextInput from 'components/forms/form-text-input';
+// @todo Update this to use our store countries list
+import countriesListBuilder from 'lib/countries-list';
+const countriesList = countriesListBuilder.forPayments();
 
 class OrderCustomerCard extends Component {
 	static propTypes = {
@@ -29,6 +32,7 @@ class OrderCustomerCard extends Component {
 
 	state = {
 		showShipping: false,
+		phoneCountry: 'US',
 	};
 
 	getAddressViewFormat = address => {
@@ -40,6 +44,11 @@ class OrderCustomerCard extends Component {
 			country: address.country || '',
 			postcode: address.postcode || '',
 		};
+	};
+
+	onPhoneChange = phone => {
+		this.updateOrder( 'phoneNumber', phone.value );
+		this.setState( { phoneCountry: phone.countryCode } );
 	};
 
 	onAddressChange = ( type = 'billing' ) => {
@@ -201,12 +210,12 @@ class OrderCustomerCard extends Component {
 							/>
 						</div>
 						<div className="order-create__field">
-							<FormLabel htmlFor="phoneNumber">{ translate( 'Phone Number' ) }</FormLabel>
-							<FormTelInput
-								id="phoneNumber"
-								name="phoneNumber"
+							<FormPhoneMediaInput
+								label={ translate( 'Phone Number' ) }
+								onChange={ this.onPhoneChange }
+								countryCode={ this.state.phoneCountry }
+								countriesList={ countriesList }
 								value={ get( order, [ 'billing', 'phone' ], '' ) }
-								onChange={ this.onChange }
 							/>
 						</div>
 					</div>
