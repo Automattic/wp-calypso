@@ -11,6 +11,8 @@ import sinon from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
+import EMPTY_COMPONENT from 'test/helpers/react/empty-component';
+
 let ReactDom, React, TestUtils, SectionNav;
 
 function createComponent( component, props, children ) {
@@ -29,8 +31,6 @@ describe( 'section-nav', function() {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-
-		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
 		mockery.registerMock( 'gridicons', EMPTY_COMPONENT );
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
