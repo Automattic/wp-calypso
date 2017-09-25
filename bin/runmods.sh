@@ -17,6 +17,7 @@ MODS=(
   'i18n-mixin'
   'react-create-class'
   'react-prop-types'
+  'sort-imports'
   # 'combine-reducer-with-persistence'
   # 'combine-state-utils-imports'
   # 'merge-lodash-imports'
