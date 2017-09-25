@@ -20,6 +20,8 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import Interval, { EVERY_SECOND } from 'lib/interval';
+import { requestSite } from 'state/sites/actions';
 
 class PluginAutomatedTransfer extends Component {
 
@@ -130,6 +132,12 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	pollSiteData() {
+		const { siteId } = this.props;
+
+		return this.props.requestSite( siteId );
+	}
+
 	render() {
 		const { CONFLICTS } = transferStates;
 		const { transferState, translate } = this.props;
@@ -156,7 +164,11 @@ class PluginAutomatedTransfer extends Component {
 						</NoticeAction>
 					}
 				</Notice>
-				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
+				{
+					this.state.transferComplete &&
+					<Interval onTick={ this.pollSiteData() } period={ EVERY_SECOND } /> &&
+					<WpAdminAutoLogin site={ this.props.site } />
+				}
 			</div>
 		);
 	}
@@ -166,6 +178,7 @@ class PluginAutomatedTransfer extends Component {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	return {
+		siteId,
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		isFailedTransfer: isAutomatedTransferFailed( state, siteId ),
@@ -173,4 +186,9 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect(
+	mapStateToProps,
+	{
+		requestSite
+	}
+)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
