@@ -87,7 +87,8 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 	} ) );
 
 	if ( config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
-		getLabels( state, orderId, siteId ).forEach( ( label, index ) => {
+		getLabels( state, orderId, siteId ).forEach( ( label, index, allLabels ) => {
+			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
 				switch ( label.refund.status ) {
 					case 'complete':
@@ -95,7 +96,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
-							labelIndex: index,
+							labelIndex,
 							amount: parseFloat( label.refund.amount ),
 							currency: label.currency,
 						} );
@@ -105,7 +106,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REJECTED,
 							timestamp: label.refund.refund_date,
-							labelIndex: index,
+							labelIndex,
 						} );
 						break;
 					default:
@@ -114,7 +115,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
-							labelIndex: index,
+							labelIndex,
 							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
 							currency: label.currency,
 						} );
@@ -124,7 +125,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,
 				timestamp: label.created_date,
-				labelIndex: index,
+				labelIndex,
 				labelId: label.label_id,
 				// TODO: Currently we only store the names of the items & packages, we need to store more data to show dimensions etc
 				productNames: label.product_names,
