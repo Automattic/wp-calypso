@@ -330,6 +330,7 @@ export class CommentDetail extends Component {
 									siteId={ siteId }
 								/>
 								<CommentDetailReply
+									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
 									postTitle={ postTitle }
