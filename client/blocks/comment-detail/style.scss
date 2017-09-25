@@ -45,13 +45,10 @@
 
 		.gridicon {
 			background-color: $gray;
-			border: 2px solid $white;
 			border-radius: 50%;
 			fill: $white;
-			padding: 2px;
-			position: absolute;
-				bottom: -4px;
-				right: -8px;
+			margin: 0;
+			padding: 4px;
 		}
 	}
 }

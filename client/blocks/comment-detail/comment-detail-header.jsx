@@ -5,7 +5,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { includes, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,8 +46,6 @@ export const CommentDetailHeader = ( {
 		avatar_URL: authorAvatarUrl,
 		display_name: authorDisplayName,
 	};
-
-	const commentIsPing = includes( [ 'pingback', 'trackback' ], commentType );
 
 	const classes = classNames( 'comment-detail__header', {
 		'is-preview': ! isExpanded,
@@ -99,10 +97,11 @@ export const CommentDetailHeader = ( {
 							</label>
 						}
 						<div className="comment-detail__author-avatar">
-							<Gravatar user={ author } />
-							{ commentIsPing &&
-								// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-								<Gridicon icon="link" size={ 16 } />
+							{ 'comment' === commentType &&
+								<Gravatar user={ author } />
+							}
+							{ 'comment' !== commentType &&
+								<Gridicon icon="link" size={ 24 } />
 							}
 						</div>
 						<div className="comment-detail__author-info">

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -218,8 +218,6 @@ export class CommentDetailAuthor extends Component {
 		} = this.props;
 		const { isExpanded } = this.state;
 
-		const commentIsPing = includes( [ 'pingback', 'trackback' ], commentType );
-
 		const classes = classNames( 'comment-detail__author', {
 			'is-expanded': isExpanded,
 		} );
@@ -228,14 +226,17 @@ export class CommentDetailAuthor extends Component {
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
 					<div className="comment-detail__author-avatar">
-						<Gravatar user={ {
-							avatar_URL: this.props.authorAvatarUrl,
-							display_name: this.props.authorDisplayName,
-						} } />
-						{ commentIsPing &&
-							// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-							<Gridicon icon="link" size={ 16 } />
-						}
+						<div className="comment-detail__author-avatar">
+							{ 'comment' === commentType &&
+								<Gravatar user={ {
+									avatar_URL: this.props.authorAvatarUrl,
+									display_name: this.props.authorDisplayName,
+								} } />
+							}
+							{ 'comment' !== commentType &&
+								<Gridicon icon="link" size={ 24 } />
+							}
+						</div>
 					</div>
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
@@ -265,7 +266,7 @@ export class CommentDetailAuthor extends Component {
 							</div>
 						}
 
-						{ this.showMoreInfo() && ! commentIsPing &&
+						{ this.showMoreInfo() && 'comment' === commentType &&
 							<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
 								<Gridicon icon="info-outline" />
 							</a>
