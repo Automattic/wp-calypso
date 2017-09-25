@@ -33,14 +33,6 @@ module.exports = {
 		defaultVariation: 'original',
 		localeTargets: 'any',
 	},
-	jetpackConnectHideFreePlan: {
-		datestamp: '20170905',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {

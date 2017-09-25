@@ -43,7 +43,6 @@ import {
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
 import { isSiteAutomatedTransfer } from 'state/selectors';
-import { abtest } from 'lib/abtest';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -303,8 +302,6 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
-		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
-
 		return (
 			<div>
 				<QueryPlans />
@@ -319,9 +316,9 @@ class Plans extends Component {
 					onSelect={
 						this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan
 					}
-					hideFreePlan={ hideFreePlanTest }
+					hideFreePlan={ true }
 				>
-					{ hideFreePlanTest && <PlansSkipButton onClick={ this.handleSkipButtonClick } /> }
+					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 				</PlansGrid>
 			</div>
 		);
