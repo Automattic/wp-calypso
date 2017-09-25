@@ -195,7 +195,7 @@ class StoreSidebar extends Component {
 		return (
 			<SidebarItem
 				className={ classes }
-				icon="star-outline"
+				icon="gift"
 				label={ translate( 'Promotions' ) }
 				link={ link }
 			>
