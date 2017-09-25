@@ -8,7 +8,7 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
-import { fetchCouponsPage, couponsPageUpdated } from '../actions';
+import { fetchCoupons, couponsPageUpdated } from '../actions';
 import {
 	requestCouponsPage,
 	requestCouponsPageSuccess
@@ -23,7 +23,7 @@ describe( 'handlers', () => {
 				dispatch: spy(),
 			};
 
-			const action = fetchCouponsPage( siteId, 1, 30 );
+			const action = fetchCoupons( siteId, { page: 1, per_page: 30 } );
 			requestCouponsPage( store, action );
 
 			expect( store.dispatch ).to.have.been.calledWith( match( {
@@ -53,9 +53,10 @@ describe( 'handlers', () => {
 				},
 			};
 
-			const action = fetchCouponsPage( siteId, 1, 30 );
+			const params = { page: 1, per_page: 30 };
+			const action = fetchCoupons( siteId, params );
 			requestCouponsPageSuccess( store, action, response );
-			const expectedAction = couponsPageUpdated( siteId, 1, response.data.body, 1, 2 );
+			const expectedAction = couponsPageUpdated( siteId, params, response.data.body, 1, 2 );
 
 			expect( store.dispatch ).to.have.been.calledWith( expectedAction );
 		} );
@@ -74,7 +75,7 @@ describe( 'handlers', () => {
 				},
 			};
 
-			const action = fetchCouponsPage( siteId, 1, 30 );
+			const action = fetchCoupons( siteId, { page: 1, per_page: 30 } );
 			const body1 = [ { id: 1 }, { id: 2, code: '2' } ];
 			const body2 = [ { id: 1, code: '1' }, { code: '2' } ];
 			const body3 = [ { id: 1, code: '1' }, { id: 'x', code: '2' } ];
