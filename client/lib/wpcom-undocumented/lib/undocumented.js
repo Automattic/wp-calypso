@@ -2309,6 +2309,34 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
 };
 
 /**
+ * Add a widget to a site.
+ *
+ * @param {int}      siteId        Id of the site where the widget will be added.
+ * @param {object} widgetOptions {
+ * 		@type {string} id_base  The base ID of the widget.
+ * 		@type {string} sidebar  Optional. The ID of the sidebar where this widget will be active.
+ * 								If empty, the widget will be added in the first sidebar available.',
+ * 		@type {string} position Optional. The position of the widget in the sidebar.
+ * 		@type {string} settings Optional. The settings for the new widget.
+ * }
+ * @param {function} fn            The callback function
+ *
+ * @returns {Promise}
+ */
+Undocumented.prototype.addWidget = function( siteId, widgetOptions, fn ) {
+	debug( '/sites/:site_id:/widgets/new' );
+	return this.wpcom.req.post( '/sites/' + siteId + '/widgets/new', {}, Object.assign(
+		{
+			id_base: '',
+			sidebar: '',
+			position: 0,
+			settings: {}
+		},
+		widgetOptions
+	), fn );
+};
+
+/**
  * Requests streamlined approval to WordAds program
  *
  * @param {int}       siteId            The site ID

@@ -99,7 +99,7 @@ export default {
 					debug( 'set initial query object in JPO', context.query );
 					context.store.dispatch( {
 						type: JETPACK_CONNECT_QUERY_SET,
-						queryObject: context.query
+						queryObject: context.query,
 					} );
 				}
 

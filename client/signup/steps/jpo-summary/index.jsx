@@ -1,19 +1,23 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
-import page from 'page';
+import some from 'lodash/some';
+import extend from 'lodash/extend';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
+import { updateSettings } from 'state/jetpack/settings/actions';
+import { installPlugin } from 'state/plugins/installed/actions';
+import { addWidget } from 'state/widgets/actions';
 
 class JPOSummaryStep extends React.Component {
 
@@ -23,45 +27,92 @@ class JPOSummaryStep extends React.Component {
 		positionInFlow: PropTypes.number,
 		setJPOSummary: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
-		stepName: PropTypes.string
+		stepName: PropTypes.string,
+		signupDependencies: PropTypes.shape( {
+			jpoSiteTitle: PropTypes.shape( {
+				siteTitle: PropTypes.string,
+				siteDescription: PropTypes.string
+			} ),
+			jpoSiteType: PropTypes.shape( {
+				genre: PropTypes.string,
+				businessPersonal: PropTypes.string,
+				businessName: PropTypes.string,
+				businessAddress: PropTypes.string,
+				businessCity: PropTypes.string,
+				businessState: PropTypes.string,
+				businessZipCode: PropTypes.string,
+			} ),
+			jpoHomepage: PropTypes.string,
+			jpoContactForm: PropTypes.bool,
+			jpoConnect: PropTypes.object.isRequired
+		} ).isRequired,
+		isSavingSettings: PropTypes.bool
 	};
 
 	constructor( props ) {
 		super( props );
-		this.getFormattedPayload = this.getFormattedPayload.bind( this );
-		this.completeOnboarding = this.completeOnboarding.bind( this );
+		this.state = {
+			pluginsReady: 'no',
+			settingsReady: 'no',
+			widgetsReady: 'no',
+		};
+		this.getOnboardingChoices = this.getOnboardingChoices.bind( this );
 		this.renderStepContent = this.renderStepContent.bind( this );
 	}
 
-	getFormattedPayload() {
-		const payload = this.props.signupProgress;
-		return {
-			siteTitle: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], '' ),
-			siteDescription: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteDescription' ], '' ),
-			businessPersonal: get( payload[ 1 ], [ 'jpoSiteType', 'businessPersonal' ], '' ),
-			genre: get( payload[ 1 ], [ 'jpoSiteType', 'genre' ], '' ),
-			businessName: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
-			businessAddress: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
-			businessCity: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
-			businessState: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
-			businessZipCode: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
-			homepageFormat: get( payload[ 2 ], 'jpoHomepage', '' ),
-			addContactForm: get( payload[ 3 ], 'jpoContactForm', '' )
+	getOnboardingChoices() {
+		const data = this.props.signupDependencies;
+		let sendToJetpack = {
+			onboarding: {
+				siteTitle: get( data, [ 'jpoSiteTitle', 'siteTitle' ], '' ),
+				siteDescription: get( data, [ 'jpoSiteTitle', 'siteDescription' ], '' ),
+
+				genre: get( data, [ 'jpoSiteType', 'genre' ], '' ),
+				businessPersonal: get( data, [ 'jpoSiteType', 'businessPersonal' ], '' ),
+				businessInfo: {
+					businessName: get( data, [ 'jpoSiteType', 'businessName' ], '' ),
+					businessAddress: get( data, [ 'jpoSiteType', 'streetAddress' ], '' ),
+					businessCity: get( data, [ 'jpoSiteType', 'city' ], '' ),
+					businessState: get( data, [ 'jpoSiteType', 'state' ], '' ),
+					businessZipCode: get( data, [ 'jpoSiteType', 'zipCode' ], '' ),
+				},
+
+				homepageFormat: get( data, 'jpoHomepage', '' ),
+
+				addContactForm: get( data, 'jpoContactForm', false )
+			}
 		};
-	}
 
-	completeOnboarding() {
-		// Get the payload and original JPC url
-		const payload = this.getFormattedPayload();
+		switch ( sendToJetpack.onboarding.genre ) {
+			case 'portfolio':
+				sendToJetpack = extend( {}, sendToJetpack, {
+					'custom-content-types': true,
+					jetpack_portfolio: true
+				} );
+				break;
 
-		// Flag the flow as complete for use in JPC
-		localStorage.setItem( 'jpoFlowComplete', '1' );
+			case 'website':
+			case 'store':
+				sendToJetpack = extend( {}, sendToJetpack, {
+					'custom-content-types': true,
+					jetpack_testimonial: true
+				} );
+				break;
+		}
 
-		// Store the payload in localStorage for use after Jetpack is connected
-		localStorage.setItem( 'jpoPayload', JSON.stringify( payload ) );
+		if ( sendToJetpack.onboarding.addContactForm ) {
+			sendToJetpack = extend( {}, sendToJetpack, {
+				'contact-form': true
+			} );
+		}
 
-		// Redirect to the original JPC URL
-		page.redirect( '/jetpack/connect/plans/' + get( this.props.signupDependencies, [ 'jpoConnect', 'siteSlug' ] ) );
+		if ( some( sendToJetpack.onboarding.businessInfo, i => '' !== i ) ) {
+			sendToJetpack = extend( {}, sendToJetpack, {
+				widgets: true,
+			} );
+		}
+
+		return sendToJetpack;
 	}
 
 	renderStepContent() {
@@ -169,14 +220,70 @@ class JPOSummaryStep extends React.Component {
 					</tbody>
 				</table>
 				<div>
-					<Button primary onClick={ this.completeOnboarding }>
+					<a
+						className="jpo-summary__visit-site button is-primary"
+						href={ get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'home_url' ] ) }>
 						{
-							translate( 'Visit your site' )
+							translate( 'Visit site' )
 						}
-					</Button>
+					</a>
 				</div>
 			</div>
 		);
+	}
+
+	componentWillReceiveProps() {
+		const choices = this.getOnboardingChoices();
+		const siteId = get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 );
+
+		if ( 'no' === this.state.pluginsReady ) {
+			this.setState( { pluginsReady: 'progress' } );
+			if ( 'store' === choices.onboarding.genre ) {
+				this.props.installPlugin(
+					siteId,
+					{
+						slug: 'woocommerce',
+						id: 'woocommerce/woocommerce'
+					}
+					).then( () => this.setState( { pluginsReady: 'yes' } ) );
+			} else {
+				this.setState( { pluginsReady: 'yes' } );
+			}
+		}
+
+		if ( 'no' === this.state.settingsReady ) {
+			this.setState( { settingsReady: 'progress' } );
+			this.props.updateSettings(
+				siteId,
+				choices,
+				false // don't sanitize settings
+			).then( () => this.setState( { settingsReady: 'yes' } ) );
+		}
+
+		if ( 'no' === this.state.widgetsReady ) {
+			this.setState( { widgetsReady: 'progress' } );
+			if ( some( choices.onboarding.businessInfo, i => '' !== i ) ) {
+				const {
+					businessName,
+					businessAddress,
+					businessCity,
+					businessState,
+					businessZipCode
+				} = choices.onboarding.businessInfo;
+				this.props.addWidget(
+					siteId,
+					{
+						id_base: 'widget_contact_info',
+						settings: {
+							title: businessName,
+							address: [ businessAddress, businessCity, businessState, businessZipCode ].join( '\n' ),
+						}
+					}
+				).then( () => this.setState( { widgetsReady: 'yes' } ) );
+			} else {
+				this.setState( { widgetsReady: 'yes' } );
+			}
+		}
 	}
 
 	render() {
@@ -186,6 +293,10 @@ class JPOSummaryStep extends React.Component {
 		const subHeaderText = translate(
 			'You have unlocked dozens of website-bolstering features with Jetpack. Continue preparing your site below.'
 		);
+		let stepContent = translate( 'Getting everything ready…' );
+		if ( 'yes' === this.state.pluginsReady && 'yes' === this.state.settingsReady && 'yes' === this.state.widgetsReady ) {
+			stepContent = this.renderStepContent();
+		}
 
 		return (
 			<div>
@@ -198,8 +309,8 @@ class JPOSummaryStep extends React.Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderStepContent() }
-					goToNextStep={ false }
+					stepContent={ stepContent }
+					shouldHideNavButtons={ true }
 				/>
 			</div>
 		);
@@ -208,5 +319,10 @@ class JPOSummaryStep extends React.Component {
 
 export default connect(
 	null,
-	{ setJPOSummary }
+	{
+		setJPOSummary,
+		updateSettings,
+		installPlugin,
+		addWidget,
+	}
 )( JPOSummaryStep );
