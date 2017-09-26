@@ -16,7 +16,9 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import { getShippingLabel, getFormErrors } from './selectors';
+import { getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -601,6 +603,31 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	}
 
 	dispatch( purchaseLabelResponse( orderId, siteId, labels, false ) );
+
+	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
+		dispatch( updateOrder( siteId, {
+			id: orderId,
+			status: 'completed',
+		} ) );
+	}
+
+	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
+		const trackingNumbers = labels.map( ( label ) => label.tracking );
+
+		const note = {
+			note: translate(
+				'Your order consisting of %(packageNum)d package has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
+					'The tracking numbers are %(trackingNumbers)s.',
+				{
+					args: { packageNum: trackingNumbers.length, trackingNumbers: trackingNumbers.join( ', ' ) },
+					count: trackingNumbers.length,
+				}
+			),
+			customer_note: true,
+		};
+		dispatch( createNote( siteId, orderId, note ) );
+	}
 
 	const labelsToPrint = labels.map( ( label, index ) => ( {
 		caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {
