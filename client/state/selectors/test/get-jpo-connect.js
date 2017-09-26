@@ -14,12 +14,16 @@ describe( 'getJpoConnect', () => {
 	} );
 
 	it( 'should return jpoConnect type from the state', () => {
+		const testJpoConnectObject = {
+			queryObject: { client_id: '123' },
+			isAuthorizing: true
+		};
 		expect( getJpoConnect( {
 			signup: {
 				dependencyStore: {
-					jpoConnect: 'connect'
+					jpoConnect: testJpoConnectObject
 				}
 			}
-		} ) ).to.be.eql( 'connect' );
+		} ) ).to.deep.eql( testJpoConnectObject );
 	} );
 } );

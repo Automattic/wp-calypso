@@ -11,15 +11,19 @@ import {
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should set connect to the given string', () => {
+	it( 'should set connect to the given object', () => {
+		const testJpoConnectObject = {
+			queryObject: { client_id: '123' },
+			isAuthorizing: true
+		};
 		expect( reducer( 'previous state', {
 			type: SIGNUP_STEPS_JPO_CONNECT_SET,
-			connect: 'connect'
-		} ) ).to.be.eql( 'connect' );
+			connect: testJpoConnectObject
+		} ) ).to.deep.equal( testJpoConnectObject );
 	} );
 	it( 'should reset to an empty string', () => {
 		expect( reducer( 'previous state', {
 			type: SIGNUP_COMPLETE_RESET,
-		} ) ).to.be.eql( '' );
+		} ) ).to.be.null;
 	} );
 } );

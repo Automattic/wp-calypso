@@ -4,9 +4,9 @@
 import { get } from 'lodash';
 
 /**
- * Get stored home page as was last chosen by user.
+ * Get object with Jetpack connection properties.
  * @param  {Object} state Global state tree
- * @return {String} Site title in state tree.
+ * @return {Object} Jetpack connection object
  */
 export default function getJpoConnect( state ) {
 	return get( state, [ 'signup', 'dependencyStore', 'jpoConnect' ], null );
