@@ -12,17 +12,17 @@ import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_COUPONS_REQUEST,
 } from 'woocommerce/state/action-types';
-import { couponsPageUpdated } from './actions';
+import { couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 
 export default {
 	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
-		dispatchRequest( requestCouponsPage, requestCouponsPageSuccess, apiError )
+		dispatchRequest( requestCoupons, requestCouponsSuccess, apiError )
 	]
 };
 
-export function requestCouponsPage( { dispatch }, action ) {
+export function requestCoupons( { dispatch }, action ) {
 	const { siteId, params } = action;
 	const paramString = Object.keys( params ).map(
 		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
@@ -32,7 +32,7 @@ export function requestCouponsPage( { dispatch }, action ) {
 	dispatch( request( siteId, action ).getWithHeaders( path ) );
 }
 
-export function requestCouponsPageSuccess( { dispatch }, action, { data } ) {
+export function requestCouponsSuccess( { dispatch }, action, { data } ) {
 	const { siteId, params } = action;
 	const { body, headers } = data;
 	const totalPages = Number( headers[ 'X-WP-TotalPages' ] );
@@ -45,7 +45,7 @@ export function requestCouponsPageSuccess( { dispatch }, action, { data } ) {
 		return;
 	}
 
-	dispatch( couponsPageUpdated( siteId, params, body, totalPages, totalCoupons ) );
+	dispatch( couponsUpdated( siteId, params, body, totalPages, totalCoupons ) );
 }
 
 function apiError( { dispatch }, action, error ) {

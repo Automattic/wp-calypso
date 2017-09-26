@@ -13,7 +13,7 @@ export function fetchCoupons( siteId, params ) {
 	return { type: WOOCOMMERCE_COUPONS_REQUEST, siteId, params };
 }
 
-export function couponsPageUpdated( siteId, params, coupons, totalPages, totalCoupons ) {
+export function couponsUpdated( siteId, params, coupons, totalPages, totalCoupons ) {
 	return { type: WOOCOMMERCE_COUPONS_UPDATED, siteId, params, coupons, totalPages, totalCoupons };
 }
 
