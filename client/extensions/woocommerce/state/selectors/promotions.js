@@ -8,3 +8,13 @@ export function getPromotions( rootState, siteId = getSelectedSiteWithFallback( 
 	return promotions.promotions;
 }
 
+export function getPromotionsCurrentPage( rootState ) {
+	const { promotions } = rootState.extensions.woocommerce.ui;
+	return promotions.currentPage;
+}
+
+export function getPromotionsPerPage( rootState ) {
+	const { promotions } = rootState.extensions.woocommerce.ui;
+	return promotions.perPage;
+}
+
