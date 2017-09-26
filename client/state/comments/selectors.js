@@ -5,12 +5,11 @@
 import {
 	filter,
 	find,
-	first,
+	findLast,
 	flatMap,
 	get,
 	groupBy,
 	keyBy,
-	last,
 	map,
 	mapValues,
 	partition,
@@ -79,9 +78,10 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
  * @param {Number} postId site identification
  * @return {Date} most recent comment date
  */
-export const getPostMostRecentCommentDate = createSelector( ( state, siteId, postId ) => {
+export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
-	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
+	const firstContiguousComment = find( items, 'contiguous' );
+	return firstContiguousComment ? new Date( get( firstContiguousComment, 'date' ) ) : undefined;
 }, state => state.comments.items );
 
 /***
@@ -93,19 +93,8 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
  */
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
-	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, state => state.comments.items );
-
-/***
- * Get newest comment date for a given post
- * @param {Object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Date} earliest comment date
- */
-export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
-	const items = getPostCommentItems( state, siteId, postId );
-	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
+	const lastContiguousComment = findLast( items, 'contiguous' );
+	return lastContiguousComment ? new Date( get( lastContiguousComment, 'date' ) ) : undefined;
 }, state => state.comments.items );
 
 /***

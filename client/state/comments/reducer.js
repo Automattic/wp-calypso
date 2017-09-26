@@ -111,7 +111,11 @@ export function items( state = {}, action ) {
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
 			};
 		case COMMENTS_RECEIVE:
-			const { skipSort, comments } = action;
+			const { skipSort } = action;
+			const comments = map( action.comments, cmt => ( {
+				...cmt,
+				contiguous: ! action.commentById,
+			} ) );
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
 				...state,

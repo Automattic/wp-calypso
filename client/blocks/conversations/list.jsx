@@ -95,7 +95,8 @@ export class ConversationCommentList extends React.Component {
 		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } = props.commentsFetchingStatus;
 
 		if ( enableCaterpillar && ( haveEarlierCommentsToFetch || haveLaterCommentsToFetch ) ) {
-			props.requestPostComments( { siteId, postId } );
+			const direction = haveEarlierCommentsToFetch ? 'before' : 'after';
+			props.requestPostComments( { siteId, postId, direction } );
 		}
 	};
 
