@@ -2,19 +2,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
+import Stream from 'reader/stream';
 
 class LikedStream extends React.Component {
 	render() {
-		var title = this.props.translate( 'My Likes' ),
+		let title = this.props.translate( 'My Likes' ),
 			emptyContent = <EmptyContent />;
 
 		return (

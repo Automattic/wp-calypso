@@ -1,19 +1,19 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { defer } from 'lodash';
+import page from 'page';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import FeedError from 'reader/feed-error';
-import { setPageTitle, trackPageLoad } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { setPageTitle, trackPageLoad } from 'reader/controller-helper';
+import FeedError from 'reader/feed-error';
 
 const analyticsPageTitle = 'Reader';
 

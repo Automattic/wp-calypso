@@ -2,15 +2,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class RecommendedPostsEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -30,7 +30,7 @@ class RecommendedPostsEmptyContent extends React.Component {
 	};
 
 	render() {
-		var action = (
+		let action = (
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }

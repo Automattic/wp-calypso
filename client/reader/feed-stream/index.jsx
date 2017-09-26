@@ -2,32 +2,33 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
-import Stream from 'reader/stream';
-import FeedError from 'reader/feed-error';
 import RefreshFeedHeader from 'blocks/reader-feed-header';
-import QueryReaderSite from 'components/data/query-reader-site';
+import DocumentHead from 'components/data/document-head';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
+import FeedError from 'reader/feed-error';
 import { getSiteName } from 'reader/get-helpers';
+import Stream from 'reader/stream';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = feed => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
 class FeedStream extends React.Component {
 	static propTypes = {
-		feedId: React.PropTypes.number.isRequired,
-		className: React.PropTypes.string,
-		showBack: React.PropTypes.bool,
+		feedId: PropTypes.number.isRequired,
+		className: PropTypes.string,
+		showBack: PropTypes.bool,
 	};
 
 	static defaultProps = {

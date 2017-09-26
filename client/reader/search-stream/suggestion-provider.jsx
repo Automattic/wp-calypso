@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import { map, sampleSize } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/selectors';
-import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags

@@ -2,15 +2,16 @@
 /**
  * External dependencies
  */
+import moment from 'moment';
 import React from 'react';
 import { PureComponent } from 'react';
-import moment from 'moment';
+
 /**
  * Internal dependencies
  */
+import humanDate from 'lib/human-date';
 import smartSetState from 'lib/react-smart-set-state';
 import ticker from 'lib/ticker';
-import humanDate from 'lib/human-date';
 
 export default class PostTime extends PureComponent {
 	smartSetState = smartSetState;

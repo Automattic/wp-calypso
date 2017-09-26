@@ -2,17 +2,18 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
-import url from 'url';
-import config from 'config';
 import Debug from 'debug';
+import { find, get } from 'lodash';
 
-const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import config from 'config';
 import userUtils from 'lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
+import url from 'url';
+
+const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );

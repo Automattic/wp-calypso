@@ -2,14 +2,14 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import config from 'config';
 
 class PostUnavailable extends React.PureComponent {
 	componentWillMount() {
@@ -24,7 +24,8 @@ class PostUnavailable extends React.PureComponent {
 	}
 
 	render() {
-		var errorMessage = this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
+		const errorMessage =
+			this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
 
 		if ( this.props.post.statusCode === 404 ) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.

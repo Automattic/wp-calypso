@@ -1,13 +1,9 @@
 /** @format */
 /**
- * External dependencies
- */
-import url from 'url';
-
-/**
  * Internal dependencies
  */
 import { X_POST } from 'lib/feed-post-store/display-types';
+import url from 'url';
 
 const exported = {
 	/**
@@ -16,7 +12,7 @@ const exported = {
 	 * @returns {object} - urls of site and post url
 	 */
 	getXPostMetadata( post ) {
-		let xPostMetadata = {
+		const xPostMetadata = {
 			siteURL: null,
 			postURL: null,
 			commentURL: null,
@@ -31,7 +27,7 @@ const exported = {
 					meta.key === '_xpost_original_permalink' ||
 					meta.key === 'xcomment_original_permalink'
 				) {
-					let parsedURL = url.parse( meta.value, false, false );
+					const parsedURL = url.parse( meta.value, false, false );
 					xPostMetadata.siteURL = `${ parsedURL.protocol }//${ parsedURL.host }`;
 					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ parsedURL.path }`;
 					if ( parsedURL.hash && parsedURL.hash.indexOf( '#comment-' ) === 0 ) {

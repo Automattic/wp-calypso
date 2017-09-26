@@ -7,8 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import route from 'lib/route';
 import {
 	ensureStoreLoading,
 	trackPageLoad,
@@ -16,7 +17,6 @@ import {
 	trackScrollPage,
 } from 'reader/controller-helper';
 import LikedPostsStream from 'reader/liked-stream/main';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
