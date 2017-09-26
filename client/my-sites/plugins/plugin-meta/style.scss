@@ -116,6 +116,15 @@
 		}
 	}
 
+	.form-toggle__label,
+	.plugin-activate-toggle__disabled,
+	.plugin-activate-toggle__link,
+	.plugin-remove-button__remove-link .plugin-action__children {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+	}
+
 	.form-toggle__label-content {
 		@include breakpoint( '<480px' ) {
 			margin-left: 0;
@@ -124,14 +133,10 @@
 
 	.plugin-action__label {
 		@include breakpoint( '<480px' ) {
-			flex-grow: 2;
+			flex-flow: row;
 			font-size: 11px;
 		}
 	}
-}
-
-.plugin-meta__actions .plugin-activate-toggle__icon .gridicons-cog {
-	transform: translate(-3px, -1px);
 }
 
 .plugin-meta__version-notice {

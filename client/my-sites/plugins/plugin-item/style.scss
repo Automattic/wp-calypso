@@ -173,21 +173,15 @@
 
 .plugin-item .plugin-action__label {
 	@include breakpoint( '>1040px' ) {
+		flex-direction: row;
 		margin-right: 0;
 		margin-left: 8px;
 	}
 }
 
-.plugin-item .has-disabled-info .plugin-action__label {
+.plugin-item .plugin-action .form-toggle__label {
 	@include breakpoint( '>1040px' ) {
-		margin-right: 8px;
-		margin-left: 0px;
-	}
-}
-
-.plugin-item .plugin-action .form-toggle__label .form-toggle__switch {
-	@include breakpoint( '>1040px' ) {
-		float: left;
+		flex-direction: row;
 	}
 }
 
@@ -198,32 +192,18 @@
 	}
 }
 
-.plugin-item .plugin-action__disabled-info.info-popover .gridicons-info-outline {
+.plugin-item .plugin-activate-toggle__link,
+.plugin-item .plugin-activate-toggle__disabled {
 	@include breakpoint( '>1040px' ) {
-		transform: translate(-2px, -2px);
-	}
-}
-
-.plugin-item .plugin-action .plugin-activate-toggle__link {
-	@include breakpoint( '>1040px' ) {
+		flex-direction: row;
 		margin-right: 12px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__label {
+	@include breakpoint( '>1040px' ) {
 		margin-left: 8px;
-	}
-}
-
-.plugin-item .plugin-activate-toggle__icon {
-	@include breakpoint( '>1040px' ) {
-		float: left;
-	}
-}
-
-.plugin-item .plugin-activate-toggle__icon .gridicons-cog {
-	@include breakpoint( '>480px' ) {
-		transform: translate(-3px, -1px);
-	}
-
-	@include breakpoint( '>1040px' ) {
-		transform: translate(3px, -1px);
+		margin-right: 0;
 	}
 }
 

@@ -161,8 +161,9 @@ class PluginRemoveButton extends React.Component {
 		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
 			'REMOVE_PLUGIN',
 		] );
-		const getDisabledInfo = this.getDisabledInfo();
-		const label = getDisabledInfo
+		const disabledInfo = this.getDisabledInfo();
+		const disabled = !! disabledInfo;
+		const label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
@@ -177,15 +178,19 @@ class PluginRemoveButton extends React.Component {
 				</span>
 			);
 		}
+
+		const handleClick = disabled ? null : this.removeAction;
+
 		return (
 			<PluginAction
 				label={ label }
 				htmlFor={ 'remove-plugin-' + this.props.site.ID }
 				action={ this.removeAction }
-				disabledInfo={ getDisabledInfo }
+				disabled={ disabled }
+				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ this.removeAction } className="plugin-remove-button__remove-icon">
+				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
 					<Gridicon icon="trash" size={ 18 } />
 				</a>
 			</PluginAction>
