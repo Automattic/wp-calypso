@@ -11,8 +11,10 @@ const _ = require( 'lodash' );
 /**
  * Gather all of the external deps and throw them in a set
  */
+const nodeJsDeps = require( 'repl' )._builtinLibs;
 const packageJson = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
 const packageJsonDeps = []
+	.concat( nodeJsDeps )
 	.concat( Object.keys( packageJson.dependencies ) )
 	.concat( Object.keys( packageJson.devDependencies ) );
 
