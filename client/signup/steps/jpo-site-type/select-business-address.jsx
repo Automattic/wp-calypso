@@ -38,42 +38,40 @@ class SelectBusinessAddress extends React.Component {
 			}
 		} = this.props;
 
-		return ( 
-			<div className="jpo__site-type-wrapper business-address">
-				<Card>
-					<FormLabel>{ translate( 'Business Name' ) }</FormLabel>
-					<FormTextInput
-						name="businessName"
-						value={ businessName }
-						onChange={ handleBusinessInfo }
-						/>
-					<FormLabel>{ translate( 'Street Address' ) }</FormLabel>
-					<FormTextInput
-						name="streetAddress"
-						value={ streetAddress }
-						onChange={ handleBusinessInfo }
-						/>
-					<FormLabel>{ translate( 'City' ) }</FormLabel>
-					<FormTextInput
-						name="city"
-						value={ city }
-						onChange={ handleBusinessInfo }
-						/>
-					<FormLabel>{ translate( 'State' ) }</FormLabel>
-					<FormTextInput
-						name="state"
-						value={ state }
-						onChange={ handleBusinessInfo }
-						/>
-					<FormLabel>{ translate( 'ZIP Code' ) }</FormLabel>
-					<FormTextInput
-						name="zipCode"
-						value={ zipCode }
-						onChange={ handleBusinessInfo }
-						/>
-					<Button primary onClick={ this.props.submitStep }>{ translate( 'Next Step' ) }</Button>
-				</Card>
-			</div>
+		return (
+			<Card className="jpo-business-address">
+				<FormLabel>{ translate( 'Business Name' ) }</FormLabel>
+				<FormTextInput
+					name="businessName"
+					value={ businessName }
+					onChange={ handleBusinessInfo }
+					/>
+				<FormLabel>{ translate( 'Street Address' ) }</FormLabel>
+				<FormTextInput
+					name="streetAddress"
+					value={ streetAddress }
+					onChange={ handleBusinessInfo }
+					/>
+				<FormLabel>{ translate( 'City' ) }</FormLabel>
+				<FormTextInput
+					name="city"
+					value={ city }
+					onChange={ handleBusinessInfo }
+					/>
+				<FormLabel>{ translate( 'State' ) }</FormLabel>
+				<FormTextInput
+					name="state"
+					value={ state }
+					onChange={ handleBusinessInfo }
+					/>
+				<FormLabel>{ translate( 'ZIP Code' ) }</FormLabel>
+				<FormTextInput
+					name="zipCode"
+					value={ zipCode }
+					onChange={ handleBusinessInfo }
+					/>
+				<Button primary onClick={ this.props.submitStep }>{ translate( 'Next Step' ) }</Button>
+			</Card>
 		);
 	}
 

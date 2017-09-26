@@ -27,38 +27,36 @@ class SelectBusinessPersonal extends React.Component {
 			return ( <div /> );
 		}
 
-		return ( 
-			<div className="jpo-site-type__wrapper">
-				<div className="jpo-site-type__row jpo-site-type__row-small">
-					<Card className={ classNames( 'jpo-site-type__choice', {
-						'is-selected': 'personal' === get( this.props.signupDependencies, [ 'jpoSiteType', 'businessPersonal' ], '' )
-					} ) }>
-						<a className="jpo-site-type__choice-link" href="#" onClick={ this.props.onSelectPersonal }>
-							<div className="jpo-site-type__image">
-								<PersonalGraphic />
-							</div>
-							<div className="jpo-site-type__choice-copy">
-								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectPersonal }>
-									{ translate( 'Personal site' ) }
-								</Button>
-							</div>
-						</a>
-					</Card>
-					<Card className={ classNames( 'jpo-site-type__choice', {
-						'is-selected': 'business' === get( this.props.signupDependencies, [ 'jpoSiteType', 'businessPersonal' ], '' )
-					} ) }>
-						<a className="jpo-site-type__choice-link" href="#" onClick={ this.props.onSelectBusiness }>
-							<div className="jpo-site-type__image">
-								<BusinessGraphic />
-							</div>
-							<div className="jpo-site-type__choice-copy">
-								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectBusiness }>
-									{ translate( 'Business site' ) }
-								</Button>
-							</div>
-						</a>
-					</Card>
-				</div>
+		return (
+			<div className="jpo-site-type__choices">
+				<Card className={ classNames( 'jpo-site-type__choice', {
+					'is-selected': 'personal' === get( this.props.signupDependencies, [ 'jpoSiteType', 'businessPersonal' ], '' )
+				} ) }>
+					<a className="jpo-site-type__choice-link" href="#" onClick={ this.props.onSelectPersonal }>
+						<div className="jpo-site-type__image">
+							<PersonalGraphic />
+						</div>
+						<div className="jpo-site-type__choice-copy">
+							<Button className="jpo-site-type__cta" onClick={ this.props.onSelectPersonal }>
+								{ translate( 'Personal site' ) }
+							</Button>
+						</div>
+					</a>
+				</Card>
+				<Card className={ classNames( 'jpo-site-type__choice', {
+					'is-selected': 'business' === get( this.props.signupDependencies, [ 'jpoSiteType', 'businessPersonal' ], '' )
+				} ) }>
+					<a className="jpo-site-type__choice-link" href="#" onClick={ this.props.onSelectBusiness }>
+						<div className="jpo-site-type__image">
+							<BusinessGraphic />
+						</div>
+						<div className="jpo-site-type__choice-copy">
+							<Button className="jpo-site-type__cta" onClick={ this.props.onSelectBusiness }>
+								{ translate( 'Business site' ) }
+							</Button>
+						</div>
+					</a>
+				</Card>
 			</div>
 		);
 	}
