@@ -15,7 +15,7 @@ const originalAction = {
 	siteId,
 };
 
-describe( 'request', () => {
+describe( 'http-request', () => {
 	describe( '#get', () => {
 		it( 'should return a request action', () => {
 			const action = request( siteId, originalAction ).get( 'placeholder_endpoint' );
@@ -49,11 +49,11 @@ describe( 'request', () => {
 				method: 'POST',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 			} );
-			expect( action.body ).to.eql( JSON.stringify( body ) );
-			expect( action.query ).to.exist;
-			expect( action.query ).to.include( {
+			expect( action.body ).to.exist;
+			expect( action.body ).to.include( {
 				path: '/wc/v3/placeholder_endpoint&_method=POST',
 			} );
+			expect( action.body.body ).to.eql( JSON.stringify( body ) );
 		} );
 	} );
 	describe( '#put', () => {
@@ -66,11 +66,11 @@ describe( 'request', () => {
 				method: 'POST', // Note that this stays POST
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 			} );
-			expect( action.body ).to.eql( JSON.stringify( body ) );
-			expect( action.query ).to.exist;
-			expect( action.query ).to.include( {
+			expect( action.body ).to.exist;
+			expect( action.body ).to.include( {
 				path: '/wc/v3/placeholder_endpoint&_method=PUT',
 			} );
+			expect( action.body.body ).to.eql( JSON.stringify( body ) );
 		} );
 	} );
 
@@ -82,9 +82,8 @@ describe( 'request', () => {
 				method: 'POST', // Note that this stays POST
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 			} );
-			expect( action.body ).to.be.null,
-			expect( action.query ).to.exist;
-			expect( action.query ).to.include( {
+			expect( action.body ).to.exist;
+			expect( action.body ).to.eql( {
 				path: '/wc/v3/placeholder_endpoint&_method=DELETE',
 			} );
 		} );

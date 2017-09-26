@@ -120,15 +120,15 @@ export default {
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
 				wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
-			] ).then( ( data, error ) => {
+			] ).then( ( data ) => {
 				_fetching[ url ] = null;
 				data = data ? Object.assign.apply( Object, data ) : null;
-				debug( 'jetpack-connect state checked for url', url, error, data );
+				debug( 'jetpack-connect state checked for url', url, data );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
 					data: data,
-					error: error
+					error: null
 				} );
 
 				let errorCode = null;
@@ -153,12 +153,6 @@ export default {
 						type: instructionsType
 					} ) );
 				}
-
-				if ( error ) {
-					dispatch( recordTracksEvent( 'calypso_jpc_error_other', {
-						url: url
-					} ) );
-				}
 			} )
 			.catch( ( error ) => {
 				_fetching[ url ] = null;
@@ -168,6 +162,9 @@ export default {
 					data: null,
 					error: error
 				} );
+				dispatch( recordTracksEvent( 'calypso_jpc_error_other', {
+					url: url
+				} ) );
 			} );
 		};
 	},

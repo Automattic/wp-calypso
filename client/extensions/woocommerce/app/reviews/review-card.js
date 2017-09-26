@@ -70,10 +70,15 @@ class ReviewCard extends Component {
 	}
 
 	renderActionsBar() {
-		const { review, currentStatus } = this.props;
+		const { review, currentStatus, siteId } = this.props;
 		return (
 			<div className={ classNames( 'reviews__header' ) } >
-				<ReviewActionsBar review={ review } currentStatus={ currentStatus } />
+				<ReviewActionsBar
+					siteId={ siteId }
+					review={ review }
+					currentStatus={ currentStatus }
+					toggleExpanded={ this.toggleExpanded }
+				/>
 				{ this.renderToggle() }
 			</div>
 		);

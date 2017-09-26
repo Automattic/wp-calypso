@@ -29,11 +29,11 @@ const JPOHomepageStep = React.createClass( {
 	},
 
 	onSelectNews() {
-		this.submitStep( 'posts' );
+		this.submitStep( 'news' );
 	},
 
 	onSelectStatic() {
-		this.submitStep( 'page' );
+		this.submitStep( 'static' );
 	},
 
 	submitStep( jpoHomepage ) {
@@ -58,7 +58,7 @@ const JPOHomepageStep = React.createClass( {
 				<div className="jpo__homepage-row">
 					<Card
 						className={ classNames( 'jpo-homepage__choice', {
-							'is-selected': 'posts' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
 						} ) }
 						>
 						<a className="jpo-homepage__select-news jpo-homepage__choice-link" href="#" onClick={ this.onSelectNews }>
@@ -77,7 +77,7 @@ const JPOHomepageStep = React.createClass( {
 					</Card>
 					<Card
 						className={ classNames( 'jpo-homepage__choice', {
-							'is-selected': 'page' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
 						} ) }
 						>
 						<a className="jpo-homepage__select-static jpo-homepage__choice-link" href="#" onClick={ this.onSelectStatic }>

@@ -48,7 +48,6 @@ export class CommentDetail extends Component {
 		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
-		authorIsBlocked: PropTypes.bool,
 		authorName: PropTypes.string,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
@@ -71,6 +70,7 @@ export class CommentDetail extends Component {
 		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
+		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
@@ -84,23 +84,13 @@ export class CommentDetail extends Component {
 	};
 
 	state = {
-		authorIsBlocked: false,
 		isEditMode: false,
 	};
-
-	componentWillMount() {
-		const { authorIsBlocked } = this.props;
-		this.setState( { authorIsBlocked } );
-	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isBulkEdit && ! this.props.isBulkEdit ) {
 			this.setState( { isExpanded: false } );
 		}
-	}
-
-	blockUser = () => {
-		this.setState( { authorIsBlocked: ! this.state.authorIsBlocked } );
 	}
 
 	deleteCommentPermanently = () => {
@@ -113,6 +103,10 @@ export class CommentDetail extends Component {
 			deleteCommentPermanently( commentId, postId );
 		}
 	}
+
+	isAuthorBlacklisted = () => ( !! this.props.authorEmail && !! this.props.siteBlacklist )
+		? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
+		: false;
 
 	toggleApprove = () => {
 		if ( this.state.isEditMode ) {
@@ -212,6 +206,7 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentRawContent,
 			commentStatus,
+			commentType,
 			commentUrl,
 			editComment,
 			isBulkEdit,
@@ -226,15 +221,16 @@ export class CommentDetail extends Component {
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
+			siteBlacklist,
 			siteId,
 			translate,
 		} = this.props;
 
 		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 		const authorDisplayName = authorName || translate( 'Anonymous' );
+		const authorIsBlocked = this.isAuthorBlacklisted();
 
 		const {
-			authorIsBlocked,
 			isEditMode,
 			isExpanded,
 		} = this.state;
@@ -272,6 +268,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
+					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
@@ -320,19 +317,23 @@ export class CommentDetail extends Component {
 									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									authorEmail={ authorEmail }
+									authorId={ authorId }
 									authorIp={ authorIp }
 									authorIsBlocked={ authorIsBlocked }
 									authorUrl={ authorUrl }
 									authorUsername={ authorUsername }
-									blockUser={ this.blockUser }
 									commentContent={ commentContent }
 									commentDate={ commentDate }
+									commentId={ commentId }
 									commentStatus={ commentStatus }
+									commentType={ commentType }
 									commentUrl={ commentUrl }
 									repliedToComment={ repliedToComment }
+									siteBlacklist={ siteBlacklist }
 									siteId={ siteId }
 								/>
 								<CommentDetailReply
+									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
 									postTitle={ postTitle }
@@ -365,13 +366,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
+	const authorName = decodeEntities( get( comment, 'author.name' ) );
+
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
-		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorName: get( comment, 'author.name' ),
+		authorIp: get( comment, 'author.ip_address' ),
+		authorName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		commentContent: get( comment, 'content' ),
@@ -380,6 +382,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
+		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
 		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isLoading,

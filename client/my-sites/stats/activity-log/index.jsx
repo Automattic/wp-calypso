@@ -379,7 +379,7 @@ class ActivityLog extends Component {
 					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
 			);

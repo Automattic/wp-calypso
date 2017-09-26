@@ -2,10 +2,6 @@
  * External dependencies
  */
 import { flow } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import reactTestEnvSetup from 'react-test-env';
 
 const useFakeDom = flow( [ reactTestEnvSetup.useFakeDom, () => {

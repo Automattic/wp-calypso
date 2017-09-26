@@ -11,6 +11,7 @@ import { getSerializedReviewsQuery } from './utils';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEWS_REQUEST,
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -46,6 +47,17 @@ export function items( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
 		const reviews = keyBy( action.reviews, 'id' );
 		return Object.assign( {}, state, reviews );
+	}
+
+	if ( WOOCOMMERCE_REVIEW_STATUS_CHANGE === action.type && action.newStatus ) {
+		const itemToUpdate = {
+			...state[ action.reviewId ],
+			status: action.newStatus,
+		};
+		return {
+			...state,
+			[ action.reviewId ]: itemToUpdate,
+		};
 	}
 
 	return state;

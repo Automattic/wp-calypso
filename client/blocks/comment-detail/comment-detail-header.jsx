@@ -27,6 +27,7 @@ export const CommentDetailHeader = ( {
 	commentIsLiked,
 	commentIsSelected,
 	commentStatus,
+	commentType,
 	deleteCommentPermanently,
 	isBulkEdit,
 	isEditMode,
@@ -95,7 +96,14 @@ export const CommentDetailHeader = ( {
 								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
 							</label>
 						}
-						<Gravatar user={ author } />
+						<div className="comment-detail__author-avatar">
+							{ 'comment' === commentType &&
+								<Gravatar user={ author } />
+							}
+							{ 'comment' !== commentType &&
+								<Gridicon icon="link" size={ 24 } />
+							}
+						</div>
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
 								<strong>

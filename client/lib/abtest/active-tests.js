@@ -33,14 +33,6 @@ module.exports = {
 		defaultVariation: 'original',
 		localeTargets: 'any',
 	},
-	jetpackConnectHideFreePlan: {
-		datestamp: '20170905',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
@@ -112,5 +104,13 @@ module.exports = {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	jetpackBillingButtonTextI1: {
+		datestamp: '20170925',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

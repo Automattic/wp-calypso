@@ -20,6 +20,7 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import { requestSite } from 'state/sites/actions';
 
 class PluginAutomatedTransfer extends Component {
 
@@ -57,7 +58,12 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		clearInterval( this.interval );
+	}
+
 	componentWillReceiveProps( nextProps ) {
+		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
 		const newState = {};
@@ -67,6 +73,8 @@ class PluginAutomatedTransfer extends Component {
 		}
 
 		if ( COMPLETE === nextProps.transferState ) {
+			this.interval = this.interval || setInterval( () => this.props.requestSite( siteId ), 1000 );
+
 			newState.transferComplete = true;
 			if ( ! transferComplete ) {
 				newState.shouldDisplay = true;
@@ -160,12 +168,12 @@ class PluginAutomatedTransfer extends Component {
 			</div>
 		);
 	}
-
 }
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	return {
+		siteId,
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		isFailedTransfer: isAutomatedTransferFailed( state, siteId ),
@@ -173,4 +181,9 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+export default connect(
+	mapStateToProps,
+	{
+		requestSite
+	}
+)( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

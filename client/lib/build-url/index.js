@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { pick } from 'lodash';
-const url = require( 'url' );
+import url from 'url';
 
 /**
  * Given a URL or path and search terms, returns a path including the search
@@ -12,8 +12,8 @@ const url = require( 'url' );
  * @param  {string} search Search terms
  * @return {string}        Path including search terms
  */
-module.exports = function( uri, search ) {
-	var parsedUrl = url.parse( uri, true );
+export default function( uri, search ) {
+	let parsedUrl = url.parse( uri, true );
 
 	if ( search ) {
 		parsedUrl.query.s = search;
@@ -23,4 +23,4 @@ module.exports = function( uri, search ) {
 
 	parsedUrl = pick( parsedUrl, 'pathname', 'hash', 'query' );
 	return url.format( parsedUrl ).replace( /\%20/g, '+' );
-};
+}

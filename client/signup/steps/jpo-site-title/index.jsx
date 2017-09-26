@@ -29,7 +29,6 @@ import formState from 'lib/form-state';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { updateSettings } from 'state/jetpack/settings/actions';
-
 import { setJPOSiteTitle } from 'state/signup/steps/jpo-site-title/actions';
 
 const JPOSiteTitleStep = React.createClass( {

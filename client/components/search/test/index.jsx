@@ -7,7 +7,7 @@ import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Search', function() {
-	var React, TestUtils, EMPTY_COMPONENT;
+	let React, TestUtils, EMPTY_COMPONENT;
 
 	useFakeDom();
 	useMockery( mockery => {

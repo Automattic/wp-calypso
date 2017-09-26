@@ -1,75 +1,71 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { debounce } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
 
 /**
  * Internal Dependencies
  */
-var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' ),
-	viewport = require( 'lib/viewport' );
+import DropdownItem from 'components/select-dropdown/item';
+import SelectDropdown from 'components/select-dropdown';
+import viewport from 'lib/viewport';
 
 /**
  * Internal Variables
  */
-var MOBILE_PANEL_THRESHOLD = 480;
+const MOBILE_PANEL_THRESHOLD = 480;
 
 /**
  * Main
  */
-var NavTabs = React.createClass( {
+class NavTabs extends Component {
+	static propTypes = {
+		selectedText: PropTypes.string,
+		selectedCount: PropTypes.number,
+		label: PropTypes.string,
+		hasSiblingControls: PropTypes.bool
+	};
 
-	propTypes: {
-		selectedText: React.PropTypes.string,
-		selectedCount: React.PropTypes.number,
-		label: React.PropTypes.string,
-		hasSiblingControls: React.PropTypes.bool
-	},
+	static defaultProps = {
+		hasSiblingControls: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasSiblingControls: false
-		};
-	},
+	state = {
+		isDropdown: false
+	};
 
-	getInitialState: function() {
-		return {
-			isDropdown: false
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		this.setDropdown();
 		this.debouncedAfterResize = debounce( this.setDropdown, 300 );
 
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	componentWillReceiveProps: function() {
+	componentWillReceiveProps() {
 		this.setDropdown();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	render: function() {
-		var tabs = React.Children.map( this.props.children, function( child, index ) {
+	render() {
+		const tabs = React.Children.map( this.props.children, function( child, index ) {
 			return child && React.cloneElement( child, { ref: 'tab-' + index } );
 		} );
 
-		var tabsClassName = classNames( {
+		const tabsClassName = classNames( {
 			'section-nav-tabs': true,
 			'is-dropdown': this.state.isDropdown,
 			'is-open': this.state.isDropdownOpen,
 			'has-siblings': this.props.hasSiblingControls
 		} );
 
-		var innerWidth = viewport.getWindowInnerWidth();
+		const innerWidth = viewport.getWindowInnerWidth();
 
 		return (
 			<div className="section-nav-group" ref="navGroup">
@@ -95,30 +91,30 @@ var NavTabs = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	getTabWidths: function() {
-		var totalWidth = 0;
+	getTabWidths = () => {
+		let totalWidth = 0;
 
 		React.Children.forEach( this.props.children, function( child, index ) {
 			if ( ! child ) {
 				return;
 			}
-			let tabWidth = ReactDom.findDOMNode( this.refs[ 'tab-' + index ] ).offsetWidth;
+			const tabWidth = ReactDom.findDOMNode( this.refs[ 'tab-' + index ] ).offsetWidth;
 			totalWidth += tabWidth;
 		}.bind( this ) );
 
 		this.tabsWidth = totalWidth;
-	},
+	};
 
-	getDropdown: function() {
-		var dropdownOptions = React.Children.map(
+	getDropdown = () => {
+		const dropdownOptions = React.Children.map(
 		this.props.children, function( child, index ) {
 			if ( ! child ) {
 				return null;
 			}
 			return (
-				<DropdownItem {...child.props} key={ 'navTabsDropdown-' + index }>
+				<DropdownItem { ...child.props } key={ 'navTabsDropdown-' + index }>
 					{ child.props.children }
 				</DropdownItem>
 			);
@@ -133,10 +129,10 @@ var NavTabs = React.createClass( {
 				{ dropdownOptions }
 			</SelectDropdown>
 		);
-	},
+	};
 
-	setDropdown: function() {
-		var navGroupWidth;
+	setDropdown = () => {
+		let navGroupWidth;
 
 		if ( window.innerWidth > MOBILE_PANEL_THRESHOLD ) {
 			if ( ! this.refs.navGroup ) {
@@ -163,9 +159,9 @@ var NavTabs = React.createClass( {
 				isDropdown: false
 			} );
 		}
-	},
+	};
 
-	keyHandler: function( event ) {
+	keyHandler = event => {
 		switch ( event.keyCode ) {
 			case 32: // space
 			case 13: // enter
@@ -173,7 +169,7 @@ var NavTabs = React.createClass( {
 				document.activeElement.click();
 				break;
 		}
-	}
-} );
+	};
+}
 
-module.exports = NavTabs;
+export default NavTabs;

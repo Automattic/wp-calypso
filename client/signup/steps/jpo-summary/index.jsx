@@ -287,8 +287,8 @@ class JPOSummaryStep extends React.Component {
 	}
 
 	render() {
-		const headerText = translate( 'Congratulations! %s is ready.', {
-			args: get( this.props.signupDependencies, [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
+		const headerText = translate( 'Congratulations! %s is on its way.', {
+			args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
 		} );
 		const subHeaderText = translate(
 			'You have unlocked dozens of website-bolstering features with Jetpack. Continue preparing your site below.'

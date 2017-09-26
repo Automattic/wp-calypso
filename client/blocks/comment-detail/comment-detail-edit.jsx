@@ -16,6 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSiteSlug } from 'state/sites/selectors';
+import InfoPopover from 'components/info-popover';
 
 export class CommentDetailEdit extends Component {
 	static propTypes = {
@@ -75,6 +76,11 @@ export class CommentDetailEdit extends Component {
 					<FormLabel htmlFor="author">
 						{ translate( 'Name' ) }
 					</FormLabel>
+					{ isAuthorRegistered &&
+						<InfoPopover>
+							{ translate( 'This user is registered, the name can\'t be edited.' ) }
+						</InfoPopover>
+					}
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
@@ -86,6 +92,11 @@ export class CommentDetailEdit extends Component {
 					<FormLabel htmlFor="author_url">
 						{ translate( 'URL' ) }
 					</FormLabel>
+					{ isAuthorRegistered &&
+						<InfoPopover>
+							{ translate( 'This user is registered, the URL can\'t be edited.' ) }
+						</InfoPopover>
+					}
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }

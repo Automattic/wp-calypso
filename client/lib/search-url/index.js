@@ -1,10 +1,15 @@
 /**
  * External dependencies
  */
-import buildUrl from 'lib/mixins/url-search/build-url';
 import page from 'page';
 
-const debug = require( 'debug' )( 'calypso:search-url' );
+ /**
+ * Internal dependencies
+ */
+import buildUrl from 'lib/build-url';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:search-url' );
 
 export default function searchUrl( keywords, initialSearch, onSearch ) {
 	if ( onSearch ) {

@@ -27,7 +27,12 @@ import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import {
+	getSiteCommentsTree,
+	getSiteSetting,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -47,6 +52,7 @@ export class CommentList extends Component {
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
+		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -378,6 +384,7 @@ export class CommentList extends Component {
 		const {
 			isJetpack,
 			isLoading,
+			siteBlacklist,
 			siteId,
 			siteFragment,
 			status,
@@ -399,6 +406,8 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
+				<QuerySiteSettings siteId={ siteId } />
+
 				{ isJetpack &&
 					<QuerySiteCommentsList
 						number={ 100 }
@@ -440,6 +449,7 @@ export class CommentList extends Component {
 							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
+							siteBlacklist={ siteBlacklist }
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
@@ -478,6 +488,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 		comments,
 		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
+		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
 	};
 };

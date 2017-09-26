@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
@@ -16,7 +18,7 @@ import {
 	authorize,
 	goBackToWpAdmin,
 	retryAuth,
-	goToXmlrpcErrorFallbackUrl
+	goToXmlrpcErrorFallbackUrl,
 } from 'state/jetpack-connect/actions';
 import {
 	getAuthorizationData,
@@ -27,7 +29,7 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected
+	getUserAlreadyConnected,
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
@@ -101,9 +103,7 @@ class JetpackConnectAuthorizeForm extends Component {
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/illustrations/whoops.svg"
-					title={ this.props.translate(
-						'Oops, this URL should not be accessed directly'
-					) }
+					title={ this.props.translate( 'Oops, this URL should not be accessed directly' ) }
 					action={ this.props.translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>
@@ -115,18 +115,10 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	renderForm() {
-		return (
-			( this.props.user )
-				? <LoggedInForm
-					{ ...this.props }
-					isSSO={ this.isSSO() }
-					isWCS={ this.isWCS() }
-				/>
-				: <LoggedOutForm
-					{ ...this.props }
-					isSSO={ this.isSSO() }
-					isWCS={ this.isWCS() }
-				/>
+		return this.props.user ? (
+			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWCS={ this.isWCS() } />
+		) : (
+			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWCS={ this.isWCS() } />
 		);
 	}
 
@@ -143,9 +135,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 		return (
 			<MainWrapper>
-				<div className="jetpack-connect__authorize-form">
-					{ this.renderForm() }
-				</div>
+				<div className="jetpack-connect__authorize-form">{ this.renderForm() }</div>
 			</MainWrapper>
 		);
 	}
@@ -170,7 +160,7 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state )
+			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
 	},
 	{

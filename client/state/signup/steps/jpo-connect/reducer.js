@@ -15,7 +15,7 @@ export default createReducer( '',
 			return action.connect;
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
-			return '';
+			return null;
 		},
 	},
 	jpoConnectSchema

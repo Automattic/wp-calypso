@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
@@ -51,10 +53,7 @@ class LoggedInForm extends Component {
 		isSSO: PropTypes.bool,
 		isWCS: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
-			authorizeError: PropTypes.oneOfType( [
-				PropTypes.object,
-				PropTypes.bool,
-			] ),
+			authorizeError: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 			authorizeSuccess: PropTypes.bool,
 			isRedirectingToWpAdmin: PropTypes.bool,
 			queryObject: PropTypes.shape( {
@@ -80,14 +79,13 @@ class LoggedInForm extends Component {
 	componentWillMount() {
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
-		if ( ! this.props.isAlreadyOnSitesList &&
+		if (
+			! this.props.isAlreadyOnSitesList &&
 			! queryObject.already_authorized &&
-			(
-				this.props.calypsoStartedConnection ||
+			( this.props.calypsoStartedConnection ||
 				this.props.isSSO ||
 				queryObject.new_user_started_connection ||
-				autoAuthorize
-			)
+				autoAuthorize )
 		) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
@@ -101,7 +99,7 @@ class LoggedInForm extends Component {
 			queryObject,
 			isRedirectingToWpAdmin,
 			authorizeSuccess,
-			authorizeError
+			authorizeError,
 		} = props.jetpackConnectAuthorize;
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
@@ -135,21 +133,19 @@ class LoggedInForm extends Component {
 	renderFormHeader( isConnected ) {
 		const { translate, isAlreadyOnSitesList } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const headerText = ( isConnected )
+		const headerText = isConnected
 			? translate( 'You are connected!' )
 			: translate( 'Completing connection' );
-		const subHeaderText = ( isConnected )
+		const subHeaderText = isConnected
 			? translate( 'Thank you for flying with Jetpack' )
 			: translate( 'Jetpack is finishing up the connection process' );
-		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
-			: null;
+		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' ) ? (
+			<SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
+		) : null;
 
 		return (
 			<div>
-				<FormattedHeader
-					headerText={ headerText }
-					subHeaderText={ subHeaderText } />
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 				{ siteCard }
 			</div>
 		);
@@ -159,7 +155,13 @@ class LoggedInForm extends Component {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( 'jpo' === queryObject.from || this.props.isSSO || this.props.isWCS ) {
-			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
+			debug(
+				'Going back to WP Admin.',
+				'Connection initiated via: ',
+				queryObject.from,
+				'SSO found:',
+				this.props.isSSO
+			);
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		} else if ( queryObject.onboarding && '1' === queryObject.onboarding ) {
 			page.redirect( '/start/jetpack-onboarding/jpo-summary' );
@@ -202,21 +204,17 @@ class LoggedInForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const {
-			queryObject,
-			authorizeError,
-			authorizeSuccess
-		} = this.props.jetpackConnectAuthorize;
+		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
-		if ( ! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites,
-			queryObject.already_authorized ) {
+		if (
+			( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites,
+			queryObject.already_authorized )
+		) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 
-		if ( this.props.isAlreadyOnSitesList &&
-			queryObject.already_authorized ) {
+		if ( this.props.isAlreadyOnSitesList && queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_already_authorized_click' );
 			return this.redirect();
 		}
@@ -240,7 +238,7 @@ class LoggedInForm extends Component {
 
 	isAuthorizing() {
 		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
-		return ( ! this.props.isAlreadyOnSitesList && isAuthorizing );
+		return ! this.props.isAlreadyOnSitesList && isAuthorizing;
 	}
 
 	renderErrorDetails() {
@@ -248,9 +246,7 @@ class LoggedInForm extends Component {
 		return (
 			<div className="jetpack-connect__error-details">
 				<FormLabel>{ this.props.translate( 'Error Details' ) }</FormLabel>
-				<FormSettingExplanation>
-					{ authorizeError.message }
-				</FormSettingExplanation>
+				<FormSettingExplanation>{ authorizeError.message }</FormSettingExplanation>
 			</div>
 		);
 	}
@@ -266,19 +262,24 @@ class LoggedInForm extends Component {
 						text={ translate( 'We had trouble connecting.' ) }
 						showDismiss={ false }
 					>
-						<NoticeAction onClick={ this.handleResolve }>
-							{ translate( 'Try again' ) }
-						</NoticeAction>
+						<NoticeAction onClick={ this.handleResolve }>{ translate( 'Try again' ) }</NoticeAction>
 					</Notice>
 				</div>
 				<p>
 					{ translate(
 						'WordPress.com was unable to reach your site and approve the connection. ' +
-						'Try again by clicking the button above; ' +
-						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
+							'Try again by clicking the button above; ' +
+							"if that doesn't work you may need to {{link}}contact support{{/link}}.",
+						{
 							components: {
-								link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" />
-							}
+								link: (
+									<a
+										href="https://jetpack.com/contact-support"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				</p>
@@ -288,8 +289,18 @@ class LoggedInForm extends Component {
 	}
 
 	renderNotices() {
-		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess, userAlreadyConnected } = this.props.jetpackConnectAuthorize;
-		if ( queryObject.already_authorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+		const {
+			authorizeError,
+			queryObject,
+			isAuthorizing,
+			authorizeSuccess,
+			userAlreadyConnected,
+		} = this.props.jetpackConnectAuthorize;
+		if (
+			queryObject.already_authorized &&
+			! this.props.isFetchingSites &&
+			! this.props.isAlreadyOnSitesList
+		) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
 			// flows will be reserved for brand new connections.
@@ -307,7 +318,12 @@ class LoggedInForm extends Component {
 			return <JetpackConnectNotices noticeType="retryingAuth" />;
 		}
 
-		if ( this.props.authAttempts < MAX_AUTH_ATTEMPTS && this.props.authAttempts > 0 && ! isAuthorizing && ! authorizeSuccess ) {
+		if (
+			this.props.authAttempts < MAX_AUTH_ATTEMPTS &&
+			this.props.authAttempts > 0 &&
+			! isAuthorizing &&
+			! authorizeSuccess
+		) {
 			return <JetpackConnectNotices noticeType="retryAuth" />;
 		}
 
@@ -339,12 +355,14 @@ class LoggedInForm extends Component {
 			isAuthorizing,
 			authorizeSuccess,
 			isRedirectingToWpAdmin,
-			authorizeError
+			authorizeError,
 		} = this.props.jetpackConnectAuthorize;
 
-		if ( ! this.props.isAlreadyOnSitesList &&
+		if (
+			! this.props.isAlreadyOnSitesList &&
 			! this.props.isFetchingSites &&
-			queryObject.already_authorized ) {
+			queryObject.already_authorized
+		) {
 			return translate( 'Go back to your site' );
 		}
 
@@ -362,7 +380,8 @@ class LoggedInForm extends Component {
 
 		if ( authorizeSuccess ) {
 			return translate( 'Finishing up!', {
-				context: 'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page'
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
 			} );
 		}
 
@@ -389,26 +408,23 @@ class LoggedInForm extends Component {
 				rel="noopener noreferrer"
 				onClick={ this.handleClickDisclaimer }
 				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
-				className="jetpack-connect__sso-actions-modal-link" />
+				className="jetpack-connect__sso-actions-modal-link"
+			/>
 		);
 
 		const text = this.props.translate(
 			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
 				components: {
-					detailsLink
+					detailsLink,
 				},
 				args: {
-					siteName: decodeEntities( blogname )
-				}
+					siteName: decodeEntities( blogname ),
+				},
 			}
 		);
 
-		return (
-			<p className="jetpack-connect__tos-link">
-				{ text }
-			</p>
-		);
+		return <p className="jetpack-connect__tos-link">{ text }</p>;
 	}
 
 	getUserText() {
@@ -416,13 +432,13 @@ class LoggedInForm extends Component {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
 			args: { user: this.props.user.display_name },
-			components: { strong: <strong /> }
+			components: { strong: <strong /> },
 		} );
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
 			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
 				args: { user: this.props.user.display_name },
-				components: { strong: <strong /> }
+				components: { strong: <strong /> },
 			} );
 		}
 
@@ -444,7 +460,7 @@ class LoggedInForm extends Component {
 			queryObject,
 			authorizeSuccess,
 			isAuthorizing,
-			isRedirectingToWpAdmin
+			isRedirectingToWpAdmin,
 		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth } = queryObject;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
@@ -452,7 +468,7 @@ class LoggedInForm extends Component {
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
 				<Gridicon size={ 18 } icon="arrow-left" />
 				{ translate( 'Return to %(sitename)s', {
-					args: { sitename: decodeEntities( blogname ) }
+					args: { sitename: decodeEntities( blogname ) },
 				} ) }
 			</LoggedOutFormLinkItem>
 		);
@@ -466,7 +482,7 @@ class LoggedInForm extends Component {
 				<LoggedOutFormLinks>
 					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
 					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
-						{ translate( 'I\'m not interested in upgrades' ) }
+						{ translate( "I'm not interested in upgrades" ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			);
@@ -511,7 +527,6 @@ class LoggedInForm extends Component {
 					{ this.getButtonText() }
 				</Button>
 			</LoggedOutFormFooter>
-
 		);
 	}
 
