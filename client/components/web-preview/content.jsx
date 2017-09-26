@@ -179,10 +179,16 @@ export class WebPreviewContent extends PureComponent {
 				? iframeUrl
 				: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
 			this.iframe.contentWindow.location.replace( newUrl );
-			this.setState( {
-				loaded: false,
-				iframeUrl: iframeUrl,
-			} );
+
+			this.setState( { iframeUrl } );
+
+			const isHashChangeOnly = (
+				iframeUrl.replace( /#.*$/, '' ) ===
+				this.state.iframeUrl.replace( /#.*$/, '' )
+			);
+			if ( ! isHashChangeOnly ) {
+				this.setState( { loaded: false } );
+			}
 		} catch ( e ) {}
 	}
 

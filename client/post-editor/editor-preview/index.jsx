@@ -48,6 +48,13 @@ const EditorPreview = React.createClass( {
 		) ) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
+
+		if (
+			this.state.iframeUrl !== 'about:blank' &&
+			prevProps.showPreview !== this.props.showPreview
+		) {
+			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
+		}
 	},
 
 	componentWillUnmount() {
@@ -84,11 +91,21 @@ const EditorPreview = React.createClass( {
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
 		parsed.query.revision = String( this.props.revision );
+		// Scroll to the main post content.
 		if (
 			this.props.postId &&
 			isEnabled( 'post-editor/preview-scroll-to-content' )
 		) {
-			parsed.hash = 'post-' + this.props.postId;
+			// Vary the URL hash based on whether the preview is shown.  When
+			// the preview is hidden then re-shown, we want to be sure to
+			// scroll to the content section again even if the preview has not
+			// reloaded in the meantime, which is most easily accomplished by
+			// changing the URL hash.  This does not cause a page reload.
+			if ( this.props.showPreview ) {
+				parsed.hash = 'post-' + this.props.postId;
+			} else {
+				parsed.hash = '__preview-hidden';
+			}
 		}
 		delete parsed.search;
 		return url.format( parsed );
