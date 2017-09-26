@@ -69,6 +69,5 @@ module.exports = {
 	pathToRegExp: pathToRegExp,
 	hashFile: hashFile,
 	getUrl: getUrl,
-	getHashedUrl: getHashedUrl,
 	getCssUrls: getCssUrls,
 };

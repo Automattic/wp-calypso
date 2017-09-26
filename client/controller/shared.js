@@ -38,7 +38,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 }
 
 /**
- * Loads a a css stylesheet into the page
+ * Loads a css stylesheet into the page
  * @param {string} cssUrl - a url to a css resource to be inserted into the page
  * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
  */
