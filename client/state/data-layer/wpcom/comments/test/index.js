@@ -52,7 +52,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should dispatch an HTTP request to the post replies endpoint, before the oldest comment in state', () => {
+			it( 'should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -70,6 +70,7 @@ describe( 'wpcom-api', () => {
 					comments: {
 						items: {
 							'2916284-1010': [
+								{ id: 0, date: '2015-05-25T21:41:25.841Z', contiguous: false },
 								{ id: 1, date: '2017-05-25T21:41:25.841Z', contiguous: true },
 								{ id: 2, date: '2017-05-25T20:41:25.841Z', contiguous: true },
 								{ id: 3, date: '2017-05-25T19:41:25.841Z', contiguous: true },
