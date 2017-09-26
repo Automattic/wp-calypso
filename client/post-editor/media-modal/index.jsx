@@ -7,17 +7,18 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import {
 	findIndex,
-	head,
-	noop,
-	map,
 	flow,
-	partial,
-	some,
-	values,
+	get,
+	head,
 	isEmpty,
 	identity,
 	includes,
+	map,
+	noop,
+	partial,
+	some,
 	uniqueId,
+	values,
 } from 'lodash';
 
 /**
@@ -514,38 +515,43 @@ export class EditorMediaModal extends Component {
 				);
 				break;
 
-			case ModalViews.IMAGE_EDITOR:
-			case ModalViews.VIDEO_EDITOR:
+			case ModalViews.IMAGE_EDITOR: {
 				const {
 					site,
 					imageEditorProps,
 					mediaLibrarySelectedItems: items
 				} = this.props;
-
 				const selectedIndex = this.getDetailSelectedIndex();
-				const media = items ? items[ selectedIndex ] : null;
+				const media = get( items, selectedIndex, null );
 
-				if ( ModalViews.IMAGE_EDITOR === this.props.view ) {
-					content = (
-						<ImageEditor
-							siteId={ site && site.ID }
-							media={ media }
-							onDone={ this.onImageEditorDone }
-							onCancel={ this.onImageEditorCancel }
-							{ ...imageEditorProps }
-						/>
-					);
-				} else {
-					content = (
-						<VideoEditor
-							media={ media }
-							onCancel={ this.handleCancel }
-							onUpdatePoster={ this.handleUpdatePoster }
-						/>
-					);
-				}
+				content = (
+					<ImageEditor
+						siteId={ get( site, 'ID' ) }
+						media={ media }
+						onDone={ this.onImageEditorDone }
+						onCancel={ this.onImageEditorCancel }
+						{ ...imageEditorProps }
+					/>
+				);
 
 				break;
+			}
+
+			case ModalViews.VIDEO_EDITOR: {
+				const { mediaLibrarySelectedItems: items } = this.props;
+				const selectedIndex = this.getDetailSelectedIndex();
+				const media = get( items, selectedIndex, null );
+
+				content = (
+					<VideoEditor
+						media={ media }
+						onCancel={ this.handleCancel }
+						onUpdatePoster={ this.handleUpdatePoster }
+					/>
+				);
+
+				break;
+			}
 
 			default:
 				content = (
