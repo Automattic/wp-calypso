@@ -377,6 +377,24 @@ module.exports = function() {
 			}
 		} );
 
+		// redirect tag pages to en.wordpress.com
+		app.get( '/tag/:tag_slug', function( req, res, next ) {
+			if ( ! req.cookies.wordpress_logged_in ) {
+				res.redirect( 'https://en.wordpress.com/tag/' + req.params.tag_slug );
+			} else {
+				next();
+			}
+		} );
+
+		// redirect tag pages to en.wordpress.com
+		app.get( '/read/search', function( req, res, next ) {
+			if ( ! req.cookies.wordpress_logged_in ) {
+				res.redirect( 'https://en.search.wordpress.com/?q=' + req.query.q );
+			} else {
+				next();
+			}
+		} );
+
 		app.get( '/plans', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
 				const queryFor = req.query && req.query.for;
