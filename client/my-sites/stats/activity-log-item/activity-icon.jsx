@@ -10,7 +10,6 @@ import Gridicon from 'gridicons';
 export default class ActivityIcon extends PureComponent {
 	static propTypes = {
 		activityIcon: PropTypes.string.isRequired,
-		activityName: PropTypes.string.isRequired,
 		activityStatus: PropTypes.string,
 	};
 
