@@ -17,8 +17,6 @@ import PurchaseDialog from './label-purchase-modal';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import LabelItem from './label-item';
 import { fetchLabelsStatus, openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import notices from 'notices';
-import GlobalNotices from 'components/global-notices';
 import Notice from 'components/notice';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -130,7 +128,6 @@ class ShippingLabelRootView extends Component {
 		return (
 			<div className="shipping-label">
 				<QueryLabels orderId={ this.props.orderId } />
-				<GlobalNotices id="notices" notices={ notices.list } />
 				{ this.renderPurchaseLabelFlow() }
 				{ this.props.labels.length ? this.renderLabels() : null }
 			</div>
