@@ -44,15 +44,9 @@ const EditorPreview = React.createClass( {
 		if ( this.props.previewUrl && (
 			this.didFinishSaving( prevProps ) ||
 			this.didLoad( prevProps ) ||
-			this.didShowSavedPreviewViaTouch( prevProps )
+			this.didShowSavedPreviewViaTouch( prevProps ) ||
+			this.didShowOrHideFullPreview( prevProps )
 		) ) {
-			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
-		}
-
-		if (
-			this.state.iframeUrl !== 'about:blank' &&
-			prevProps.showPreview !== this.props.showPreview
-		) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
 	},
@@ -84,6 +78,17 @@ const EditorPreview = React.createClass( {
 			this.props.showPreview &&
 			! this.props.isSaving &&
 			! this.props.isLoading;
+	},
+
+	didShowOrHideFullPreview( prevProps ) {
+		// Force a URL update (hash change) when the preview is shown or
+		// hidden, but only if we are currently showing the actual preview URL
+		// and not 'about:blank'.
+		return (
+			isEnabled( 'post-editor/preview-scroll-to-content' ) &&
+			this.state.iframeUrl !== 'about:blank' &&
+			prevProps.showPreview !== this.props.showPreview
+		);
 	},
 
 	getIframePreviewUrl() {
