@@ -119,7 +119,6 @@ const PostTypeFilter = React.createClass( {
 					}
 					selectedCount={ selectedItem.count }>
 					<NavTabs
-						key="tabs"
 						label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
 						selectedText={ selectedItem.children }
 						selectedCount={ selectedItem.count }>
@@ -127,13 +126,11 @@ const PostTypeFilter = React.createClass( {
 					</NavTabs>
 					{ ! authorToggleHidden &&
 						<AuthorSegmented
-							key="author"
 							author={ query.author }
 							siteId={ siteId }
 							statusSlug={ statusSlug } />
 					}
 					<Search
-						key="search"
 						pinned
 						fitsContainer
 						onSearch={ this.doSearch }
