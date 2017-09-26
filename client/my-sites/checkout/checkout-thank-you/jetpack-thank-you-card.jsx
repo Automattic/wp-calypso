@@ -291,7 +291,9 @@ class JetpackThankYouCard extends Component {
 	isErrored() {
 		const { selectedSite, plugins } = this.props;
 		return ( selectedSite && ! selectedSite.canUpdateFiles ) ||
-			some( plugins, ( plugin ) => plugin.hasOwnProperty( 'error' ) && plugin.error );
+			some( plugins, ( plugin ) =>
+				plugin.hasOwnProperty( 'error' ) && plugin.error && plugin.satus !== 'done'
+		);
 	}
 
 	renderFeatures() {
