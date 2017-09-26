@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { trim } from 'lodash';
+import qs from 'querystring';
 
 /**
  * Internal dependencies
@@ -178,11 +178,7 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 	};
 	dispatch( fetchAction );
 
-	const paramString = Object.keys( params ).map(
-		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
-	).join( '&' );
-
-	return request( siteId ).getWithHeaders( `products?${ paramString }` ).then( ( response ) => {
+	return request( siteId ).getWithHeaders( `products?${ qs.stringify( params ) }` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalPages = headers[ 'X-WP-TotalPages' ];
 		const totalProducts = headers[ 'X-WP-Total' ];
@@ -233,11 +229,7 @@ export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, 
 	};
 	dispatch( fetchAction );
 
-	const paramString = Object.keys( params ).map(
-		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
-	).join( '&' );
-
-	return request( siteId ).getWithHeaders( `products?${ paramString }` ).then( ( response ) => {
+	return request( siteId ).getWithHeaders( `products?${ qs.stringify( params ) }` ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalProducts = headers[ 'X-WP-Total' ];
 		dispatch( {
