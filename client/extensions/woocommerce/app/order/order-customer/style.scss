@@ -1,11 +1,4 @@
 .order-customer {
-	.order-customer__billing-details,
-	.order-customer__shipping-details {
-		margin-bottom: 16px;
-		color: $gray-text-min;
-		font-size: 12px;
-		text-transform: uppercase;
-	}
 	
 	.order-customer__shipping-details {
 		margin-top: 32px;
@@ -29,4 +22,15 @@
 			margin-bottom: 0;
 		}
 	}
+}
+
+.order-customer__billing-details,
+.order-create__billing-details, 
+.order-customer__shipping-details,
+.order-create__shipping-details {
+	margin-bottom: 16px;
+	color: $gray-text-min;
+	font-size: 12px;
+	text-transform: uppercase;
+	font-weight: 500;
 }
