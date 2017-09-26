@@ -3,14 +3,14 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { find, includes, reduce } from 'lodash';
+import { compact, find, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getNormalizedPostCounts } from 'state/posts/counts/selectors';
+import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { mapPostStatus } from 'lib/route/path';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
@@ -18,6 +18,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
+import AuthorSegmented from './author-segmented';
 
 const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],
@@ -37,7 +38,7 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	getNavItems() {
-		const { query, siteSlug, jetpack, counts } = this.props;
+		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
 			if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
@@ -75,14 +76,16 @@ const PostTypeFilter = React.createClass( {
 			}
 
 			return memo.concat( {
-				count: jetpack ? null : count,
+				count: ( ! siteId || jetpack ) ? null : count, // Hide count in all sites and Jetpack modes
 				key: `filter-${ status }`,
-				path: [
-					'/types',
-					query.type,
+				path: compact( [
+					query.type === 'post'
+						? '/posts'
+						: '/types/' + query.type,
+					query.type === 'post' && query.author && 'my',
 					pathStatus,
 					siteSlug
-				].filter( Boolean ).join( '/' ),
+				] ).join( '/' ),
 				selected: mapPostStatus( pathStatus ) === query.status,
 				children: label
 			} );
@@ -90,9 +93,14 @@ const PostTypeFilter = React.createClass( {
 	},
 
 	render() {
-		const { siteId, query, jetpack } = this.props;
+		const { jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
+
+		const scopes = {
+			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
+			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } )
+		};
 
 		return (
 			<div>
@@ -102,7 +110,12 @@ const PostTypeFilter = React.createClass( {
 						type={ query.type } />
 				) }
 				<SectionNav
-					selectedText={ selectedItem.children }
+					selectedText={
+						<span>
+							<span>{ selectedItem.children }</span>
+							<small>{ query.author ? scopes.me : scopes.everyone }</small>
+						</span>
+					}
 					selectedCount={ selectedItem.count }>
 					{ query && [
 						<NavTabs
@@ -112,6 +125,11 @@ const PostTypeFilter = React.createClass( {
 							selectedCount={ selectedItem.count }>
 							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
 						</NavTabs>,
+						query.type === 'post' && <AuthorSegmented
+							key="author"
+							author={ query.author }
+							siteId={ siteId }
+							statusSlug={ statusSlug } />,
 						<Search
 							key="search"
 							pinned
@@ -126,7 +144,7 @@ const PostTypeFilter = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state, { query } ) => {
 	const siteId = getSelectedSiteId( state );
 	const props = {
 		siteId,
@@ -134,11 +152,14 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: getSiteSlug( state, siteId )
 	};
 
-	if ( ! ownProps.query ) {
+	if ( ! query ) {
 		return props;
 	}
 
-	return Object.assign( props, {
-		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type )
-	} );
+	return {
+		...props,
+		counts: query.author
+			? getNormalizedMyPostCounts( state, siteId, query.type )
+			: getNormalizedPostCounts( state, siteId, query.type )
+	};
 } )( PostTypeFilter );
