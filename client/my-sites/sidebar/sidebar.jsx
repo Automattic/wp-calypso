@@ -136,7 +136,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		return paths.some( function( path ) {
-			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
+			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' ) || 0 === this.props.path.indexOf( path + '?' );
 		}, this );
 	}
 
