@@ -5,13 +5,13 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { translate } from 'i18n-calypso';
 import { setJPOSiteType } from 'state/signup/steps/jpo-site-type/actions';
 import formState from 'lib/form-state';
 import SelectGenre from './select-genre';
@@ -158,8 +158,8 @@ const JPOSiteTypeStep = React.createClass( {
 
 	renderStepContent() {
 		return (
-			<div>
-				<SelectGenre 
+			<div className="jpo-site-type">
+				<SelectGenre
 					current={ this.state.currentScreen === 'genre' }
 					onSelectBlog={ this.onSelectBlog }
 					onSelectWebsite={ this.onSelectWebsite }
@@ -167,13 +167,13 @@ const JPOSiteTypeStep = React.createClass( {
 					onSelectStore={ this.onSelectStore }
 					signupDependencies={ this.props.signupDependencies }
 				/>
-				<SelectBusinessPersonal 
+				<SelectBusinessPersonal
 					current={ this.state.currentScreen === 'businesspersonal' }
 					onSelectPersonal={ this.onSelectPersonal }
 					onSelectBusiness={ this.onSelectBusiness }
 					signupDependencies={ this.props.signupDependencies }
 				/>
-				<SelectBusinessAddress 
+				<SelectBusinessAddress
 					current={ this.state.currentScreen === 'businessaddress' }
 					submitStep={ this.submitStep }
 					signupDependencies={ this.props.signupDependencies }
@@ -186,7 +186,7 @@ const JPOSiteTypeStep = React.createClass( {
 
 	render() {
 		return (
-			<div>
+			<div className="jpo-site-type">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
