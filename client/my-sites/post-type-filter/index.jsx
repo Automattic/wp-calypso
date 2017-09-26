@@ -27,7 +27,11 @@ const PostTypeFilter = React.createClass( {
 	propTypes: {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
-		query: PropTypes.object.isRequired, // We need at least query.type
+		query: PropTypes.shape( {
+			author: PropTypes.number, // User ID
+			status: PropTypes.string,
+			type: PropTypes.string.isRequired,
+		} ).isRequired,
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object
