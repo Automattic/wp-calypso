@@ -36,7 +36,7 @@ module.exports = {
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
-			basePath = route.sectionify( context.path, checkoutRoutes ),
+			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
 			product = context.params.product,
 			selectedFeature = context.params.feature;
 
@@ -47,7 +47,7 @@ module.exports = {
 			return;
 		}
 
-		analytics.pageView.record( basePath, 'Checkout' );
+		analytics.pageView.record( routePath, 'Checkout', routeParams );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
@@ -116,10 +116,10 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			basePath = route.sectionify( context.path, checkoutRoutes ),
+			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
 			receiptId = Number( context.params.receiptId );
 
-		analytics.pageView.record( basePath, 'Checkout Thank You' );
+		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 

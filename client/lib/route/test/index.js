@@ -32,7 +32,7 @@ describe( 'route', function() {
 
 	describe( '#addQueryArgs()', () => {
 		it( 'should error when args is not an object', () => {
-			var types = [
+			const types = [
 				undefined,
 				1,
 				true,
@@ -49,7 +49,7 @@ describe( 'route', function() {
 		} );
 
 		it( 'should error when url is not a string', () => {
-			var types = [
+			const types = [
 				{},
 				undefined,
 				1,
@@ -508,53 +508,6 @@ describe( 'route', function() {
 					route.sectionify( '/edit/jetpack-portfolio/2916284/new' )
 				).to.equal( '/edit/jetpack-portfolio/new' );
 			} );
-			it( 'should parameterize checkout thank you paths', function() {
-				expect(
-					route.sectionify( '/checkout/thank-you', checkoutRoutes )
-				).to.equal( '/checkout/thank-you' );
-				expect(
-					route.sectionify( '/checkout/thank-you/25222194', checkoutRoutes )
-				).to.equal( '/checkout/thank-you/:receipt' );
-			} );
-			it( 'should parameterize checkout paths', function() {
-				expect(
-					route.sectionify( '/checkout/gapps', checkoutRoutes )
-				).to.equal( '/checkout/:product' );
-				expect(
-					route.sectionify( '/checkout/theme:elemin', checkoutRoutes )
-				).to.equal( '/checkout/:product' );
-				expect(
-					route.sectionify( '/checkout/domain_map:69thclergycouncil.com', checkoutRoutes )
-				).to.equal( '/checkout/:product' );
-			} );
-			it( 'should parameterize checkout renew paths', function() {
-				expect(
-					route.sectionify( '/checkout/gapps/renew/6527469', checkoutRoutes )
-				).to.equal( '/checkout/:product/renew/:receipt' );
-				expect(
-					route.sectionify( '/checkout/jetpack_premium_monthly/renew/7980613', checkoutRoutes )
-				).to.equal( '/checkout/:product/renew/:receipt' );
-				expect(
-					route.sectionify( '/checkout/personal-bundle/renew/6611954', checkoutRoutes )
-				).to.equal( '/checkout/:product/renew/:receipt' );
-				expect(
-					route.sectionify( '/checkout/domain_map:69thclergycouncil.com/renew/5164008', checkoutRoutes )
-				).to.equal( '/checkout/:product/renew/:receipt' );
-			} );
-			it( 'should parameterize comment paths', function() {
-				expect(
-					route.sectionify( '/comments/approved', commentsRoutes )
-				).to.equal( '/comments/approved' );
-				expect(
-					route.sectionify( '/comments/pending', commentsRoutes )
-				).to.equal( '/comments/pending' );
-				expect(
-					route.sectionify( '/comments/approved/elmundodelaliteraturasite.wordpress.com', commentsRoutes )
-				).to.equal( '/comments/approved/:domain' );
-				expect(
-					route.sectionify( '/comments/pending/17evasetyowatimm2.wordpress.com', commentsRoutes )
-				).to.equal( '/comments/pending/:domain' );
-			} );
 		} );
 		describe( 'for listing paths', function() {
 			it( 'should return the same path when there is no site yet', function() {
@@ -627,6 +580,120 @@ describe( 'route', function() {
 				expect(
 					route.sectionify( '/domains/manage/not-a-site', 'not-a-site' )
 				).to.equal( '/domains/manage' );
+			} );
+		} );
+	} );
+	describe( 'sectionifyWithRoutes', function() {
+		describe( 'for checkout paths', function() {
+			it( 'should parameterize checkout thank you paths', function() {
+				expect(
+					route.sectionifyWithRoutes( '/checkout/thank-you', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/thank-you',
+					routeParams: {}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/thank-you/25222194', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/thank-you/:receipt',
+					routeParams: {
+						receipt: '25222194'
+					}
+				} );
+			} );
+			it( 'should parameterize checkout paths', function() {
+				expect(
+					route.sectionifyWithRoutes( '/checkout/gapps', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product',
+					routeParams: {
+						product: 'gapps'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/theme:elemin', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product',
+					routeParams: {
+						product: 'theme:elemin'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/domain_map:69thclergycouncil.com', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product',
+					routeParams: {
+						product: 'domain_map:69thclergycouncil.com'
+					}
+				} );
+			} );
+			it( 'should parameterize checkout renew paths', function() {
+				expect(
+					route.sectionifyWithRoutes( '/checkout/gapps/renew/6527469', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product/renew/:receipt',
+					routeParams: {
+						product: 'gapps',
+						receipt: '6527469'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/jetpack_premium_monthly/renew/7980613', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product/renew/:receipt',
+					routeParams: {
+						product: 'jetpack_premium_monthly',
+						receipt: '7980613'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/personal-bundle/renew/6611954', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product/renew/:receipt',
+					routeParams: {
+						product: 'personal-bundle',
+						receipt: '6611954'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/checkout/domain_map:69thclergycouncil.com/renew/5164008', checkoutRoutes )
+				).to.deep.equal( {
+					routePath: '/checkout/:product/renew/:receipt',
+					routeParams: {
+						product: 'domain_map:69thclergycouncil.com',
+						receipt: '5164008'
+					}
+				} );
+			} );
+			it( 'should parameterize comment paths', function() {
+				expect(
+					route.sectionifyWithRoutes( '/comments/approved', commentsRoutes )
+				).to.deep.equal( {
+					routePath: '/comments/approved',
+					routeParams: {}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/comments/pending', commentsRoutes )
+				).to.deep.equal( {
+					routePath: '/comments/pending',
+					routeParams: {}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/comments/approved/elmundodelaliteraturasite.wordpress.com', commentsRoutes )
+				).to.deep.equal( {
+					routePath: '/comments/approved/:domain',
+					routeParams: {
+						domain: 'elmundodelaliteraturasite.wordpress.com'
+					}
+				} );
+				expect(
+					route.sectionifyWithRoutes( '/comments/pending/17evasetyowatimm2.wordpress.com', commentsRoutes )
+				).to.deep.equal( {
+					routePath: '/comments/pending/:domain',
+					routeParams: {
+						domain: '17evasetyowatimm2.wordpress.com'
+					}
+				} );
 			} );
 		} );
 	} );

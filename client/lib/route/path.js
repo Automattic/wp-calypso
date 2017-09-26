@@ -63,15 +63,27 @@ function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
-function sectionifyUsingRoutes( path, routes ) {
-	const params = {};
-	for ( let i = 0; i < routes.length; i++ ) {
-		const route = routes[ i ];
-		if ( route.match( path, params ) ) {
-			return route.path;
+function sectionifyWithRoutes( path, routes ) {
+	const routeParams = {};
+	if ( ! routes || ! Array.isArray( routes ) ) {
+		return {
+			routePath: sectionify( path, routes ),
+			routeParams
+		};
+	}
+
+	let routePath = path.split( '?' )[ 0 ];
+	for ( const route of routes ) {
+		if ( route.match( routePath, routeParams ) ) {
+			routePath = route.path;
+			break;
 		}
 	}
-	return path;
+
+	return {
+		routePath: untrailingslashit( routePath ),
+		routeParams
+	};
 }
 
 function sectionify( path, siteFragment ) {
@@ -86,12 +98,7 @@ function sectionify( path, siteFragment ) {
 	}
 
 	if ( siteFragment ) {
-		if ( siteFragment.constructor === Array ) {
-			// siteFragment is an array of page routes (from 'page' node.js module)
-			basePath = sectionifyUsingRoutes( basePath, siteFragment );
-		} else {
-			basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
-		}
+		basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
 	}
 	return untrailingslashit( basePath );
 }
@@ -160,6 +167,7 @@ module.exports = {
 	getStatsDefaultSitePage: getStatsDefaultSitePage,
 	getStatsPathForTab: getStatsPathForTab,
 	sectionify: sectionify,
+	sectionifyWithRoutes: sectionifyWithRoutes,
 	mapPostStatus: mapPostStatus,
 	externalRedirect: externalRedirect
 };
