@@ -37,14 +37,11 @@ module.exports = function() {
 					}
 				}
 			}, this );
-
 		},
 
 		update: function() {
-			if ( this.isMounted() ) {
-				debug( 'Re-rendering ' + this.constructor.displayName + ' component.' );
-				this.forceUpdate();
-			}
+			debug( 'Re-rendering ' + this.constructor.displayName + ' component.' );
+			this.forceUpdate();
 		}
 
 	};
