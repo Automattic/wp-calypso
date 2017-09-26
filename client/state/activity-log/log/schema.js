@@ -115,7 +115,9 @@ const activityItemSchema = {
 				'widget__reordered',
 			],
 		},
-		activityStatus: { type: 'string' },
+		activityStatus: {
+			oneOf: [ { type: 'string' }, { type: 'null' } ],
+		},
 		activityTitle: { type: 'string' },
 		activityTs: { type: 'integer' },
 		actorAvatarUrl: { type: 'string' },
