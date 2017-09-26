@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 
 /**
@@ -29,12 +29,13 @@ const renderSummary = ( {
 		selectNormalized,
 		storeOptions,
 		errors,
+		translate,
 	}, showCountry ) => {
 	if ( normalizationInProgress ) {
-		return __( 'Validating address...' );
+		return translate( 'Validating address…' );
 	}
 	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) ) {
-		return __( 'Invalid address' );
+		return translate( 'Invalid address' );
 	}
 	const { countriesData } = storeOptions;
 	const { city, postcode, state, country } = ( normalized && selectNormalized ) ? normalized : values;
@@ -66,12 +67,12 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 
 const AddressStep = ( props ) => {
 	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
-	const { form, storeOptions, error, showCountryInSummary } = props;
+	const { form, storeOptions, error, showCountryInSummary, translate } = props;
 
 	return (
 		<StepContainer
 			title={ props.title }
-			summary={ renderSummary( { ...form, storeOptions, errors: error }, showCountryInSummary ) }
+			summary={ renderSummary( { ...form, storeOptions, errors: error, translate }, showCountryInSummary ) }
 			expanded={ props.expanded }
 			toggleStep={ toggleStepHandler }
 			{ ...props.normalizationStatus } >
@@ -122,4 +123,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddressStep );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddressStep ) );

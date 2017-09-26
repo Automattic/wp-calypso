@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,13 +14,13 @@ import Button from 'components/button';
 import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ItemInfo = ( props ) => {
-	const { orderId, siteId, item, itemIndex } = props;
+	const { orderId, siteId, item, itemIndex, translate } = props;
 	const onMoveClick = () => props.openItemMove( orderId, siteId, itemIndex );
 
 	const renderMoveToPackage = () => {
 		return (
 			<Button className="packages-step__item-move" compact onClick={ onMoveClick }>
-				{ __( 'Move' ) }
+				{ translate( 'Move' ) }
 			</Button>
 		);
 	};
@@ -57,4 +57,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	}, dispatch );
 };
 
-export default connect( null, mapDispatchToProps )( ItemInfo );
+export default connect( null, mapDispatchToProps )( localize( ItemInfo ) );

@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
@@ -21,7 +21,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PackageList = ( props ) => {
-	const { orderId, siteId, selected, all, errors, packageId } = props;
+	const { orderId, siteId, selected, all, errors, packageId, translate } = props;
 
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
@@ -70,7 +70,7 @@ const PackageList = ( props ) => {
 	} );
 
 	if ( packed.length || individual.length ) {
-		packed.unshift( renderPackageListHeader( 'boxed-header', __( 'Packages to be Shipped' ) ) );
+		packed.unshift( renderPackageListHeader( 'boxed-header', translate( 'Packages to be Shipped' ) ) );
 	}
 
 	return (
@@ -107,4 +107,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PackageList );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageList ) );

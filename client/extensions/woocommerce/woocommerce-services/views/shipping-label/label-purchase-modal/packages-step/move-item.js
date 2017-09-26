@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,6 +29,7 @@ const MoveItemDialog = ( props ) => {
 		openedPackageId,
 		selected,
 		all,
+		translate
 	} = props;
 
 	if ( -1 === movedItemIndex || ! showItemMoveDialog ) {
@@ -70,7 +71,7 @@ const MoveItemDialog = ( props ) => {
 	};
 
 	const renderNewPackageOption = () => {
-		return renderRadioButton( 'new', __( 'Add to a New Package' ) );
+		return renderRadioButton( 'new', translate( 'Add to a New Package' ) );
 	};
 
 	const renderIndividualOption = () => {
@@ -78,15 +79,15 @@ const MoveItemDialog = ( props ) => {
 			return null;
 		}
 
-		return renderRadioButton( 'individual', __( 'Ship in original packaging' ) );
+		return renderRadioButton( 'individual', translate( 'Ship in original packaging' ) );
 	};
 
 	if ( '' === openedPackageId ) {
-		desc = __( '{{itemLink/}} is currently saved for a later shipment.', { components: { itemLink } } );
+		desc = translate( '{{itemLink/}} is currently saved for a later shipment.', { components: { itemLink } } );
 	} else if ( 'individual' === openedPackage.box_id ) {
-		desc = __( '{{itemLink/}} is currently shipped in its original packaging.', { components: { itemLink } } );
+		desc = translate( '{{itemLink/}} is currently shipped in its original packaging.', { components: { itemLink } } );
 	} else {
-		desc = __(
+		desc = translate(
 			'{{itemLink/}} is currently in {{pckg/}}.',
 			{
 				components: {
@@ -105,22 +106,22 @@ const MoveItemDialog = ( props ) => {
 				onClickOutside={ onClose }
 				onClose={ onClose }
 				additionalClassNames="wcc-root packages-step__dialog" >
-			<FormSectionHeading>{ __( 'Move item' ) }</FormSectionHeading>
+			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>{ desc }</p>
-				<p>{ __( 'Where would you like to move it?' ) }</p>
+				<p>{ translate( 'Where would you like to move it?' ) }</p>
 				{ renderPackedOptions() }
 				{ renderNewPackageOption() }
 				{ renderIndividualOption() }
 			</div>
 			<ActionButtons buttons={ [
 				{
-					label: __( 'Move' ),
+					label: translate( 'Move' ),
 					isPrimary: true,
 					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
 					onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
 				},
-				{ label: __( 'Cancel' ), onClick: onClose },
+				{ label: translate( 'Cancel' ), onClick: onClose },
 			] } />
 		</Dialog>
 	);
@@ -154,4 +155,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( MoveItemDialog );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( MoveItemDialog ) );

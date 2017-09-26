@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ShippingRates from '../list';
+import { ShippingRates } from '../list';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 

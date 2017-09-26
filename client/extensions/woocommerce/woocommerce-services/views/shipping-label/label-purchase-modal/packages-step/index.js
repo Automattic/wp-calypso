@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ const PackagesStep = ( props ) => {
 		weightUnit,
 		errors,
 		expanded,
+		translate,
 	} = props;
 
 	const packageIds = Object.keys( selected );
@@ -48,35 +49,35 @@ const PackagesStep = ( props ) => {
 		if ( ! isValidPackages ) {
 			return {
 				isError: true,
-				summary: __( 'No packages selected' ),
+				summary: translate( 'No packages selected' ),
 			};
 		}
 
 		if ( ! isValidPackageType ) {
 			return {
 				isError: true,
-				summary: __( 'Please select a package type' ),
+				summary: translate( 'Please select a package type' ),
 			};
 		}
 
 		if ( ! isValidWeight ) {
 			return {
 				isError: true,
-				summary: __( 'Weight not entered' ),
+				summary: translate( 'Weight not entered' ),
 			};
 		}
 
 		let summary = '';
 
 		if ( 1 === packageIds.length && 1 === itemsCount ) {
-			summary = __( '1 item in 1 package: %(weight)f %(unit)s total', {
+			summary = translate( '1 item in 1 package: %(weight)f %(unit)s total', {
 				args: {
 					weight: totalWeight,
 					unit: weightUnit,
 				},
 			} );
 		} else if ( 1 === packageIds.length ) {
-			summary = __( '%(itemsCount)d items in 1 package: %(weight)f %(unit)s total', {
+			summary = translate( '%(itemsCount)d items in 1 package: %(weight)f %(unit)s total', {
 				args: {
 					itemsCount,
 					weight: totalWeight,
@@ -84,7 +85,7 @@ const PackagesStep = ( props ) => {
 				},
 			} );
 		} else {
-			summary = __( '%(itemsCount)d items in %(packageCount)d packages: %(weight)f %(unit)s total', {
+			summary = translate( '%(itemsCount)d items in %(packageCount)d packages: %(weight)f %(unit)s total', {
 				args: {
 					itemsCount,
 					packageCount: packageIds.length,
@@ -109,7 +110,7 @@ const PackagesStep = ( props ) => {
 				className={ className }
 				status="is-warning"
 				showDismiss={ false } >
-				<span>{ __(
+				<span>{ translate(
 					'There are no packages configured. The items have been packed individually. ' +
 					'You can add or enable packages using the {{a}}Packaging Manager{{/a}}.',
 					{ components: { a: <a href="admin.php?page=wc-settings&tab=shipping&section=package-settings" /> } }
@@ -124,7 +125,7 @@ const PackagesStep = ( props ) => {
 	const confirmPackagesHandler = () => props.confirmPackages( orderId, siteId );
 	return (
 		<StepContainer
-			title={ __( 'Packages' ) }
+			title={ translate( 'Packages' ) }
 			{ ...getContainerState() }
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler } >
@@ -139,7 +140,7 @@ const PackagesStep = ( props ) => {
 						siteId={ props.siteId }
 						orderId={ props.orderId } />
 					: ( <div key="no-packages" className="packages-step__package">
-							{ __( 'There are no packages or items associated with this order' ) }
+							{ translate( 'There are no packages or items associated with this order' ) }
 						</div> )
 				}
 			</div>
@@ -147,7 +148,7 @@ const PackagesStep = ( props ) => {
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || ! packageIds.length }
 				onClick={ confirmPackagesHandler } >
-					{ __( 'Use these packages' ) }
+					{ translate( 'Use these packages' ) }
 			</StepConfirmationButton>
 
 			<MoveItemDialog
@@ -187,4 +188,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep, confirmPackages }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PackagesStep );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackagesStep ) );

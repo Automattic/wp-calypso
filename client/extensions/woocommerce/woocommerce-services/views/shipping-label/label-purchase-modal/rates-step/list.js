@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { translate as __ } from 'i18n-calypso';
-import { get, isEmpty, mapValues } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { get, identity, isEmpty, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,18 +14,18 @@ import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 
-const renderRateNotice = () => {
+const renderRateNotice = ( translate ) => {
 	return (
 		<Notice
 			className="rates-step__notice"
 			icon="info-outline"
 			showDismiss={ false }
-			text={ __( 'The service and rate chosen by the customer at checkout is not available. Please choose another.' ) }
+			text={ translate( 'The service and rate chosen by the customer at checkout is not available. Please choose another.' ) }
 		/>
 	);
 };
 
-const ShippingRates = ( {
+export const ShippingRates = ( {
 		id,
 		selectedRates, // Store owner selected rates, not customer
 		availableRates,
@@ -35,6 +35,7 @@ const ShippingRates = ( {
 		currencySymbol,
 		errors,
 		shouldShowRateNotice,
+		translate,
 	} ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
 	const hasSinglePackage = ( 1 === Object.keys( selectedPackages ).length );
@@ -42,15 +43,15 @@ const ShippingRates = ( {
 
 	const getTitle = ( pckg, pckgId ) => {
 		if ( hasSinglePackage ) {
-			return __( 'Choose rate' );
+			return translate( 'Choose rate' );
 		}
-		return __( 'Choose rate: %(pckg)s', { args: { pckg: packageNames[ pckgId ] } } );
+		return translate( 'Choose rate: %(pckg)s', { args: { pckg: packageNames[ pckgId ] } } );
 	};
 
 	const renderSinglePackage = ( pckg, pckgId ) => {
 		const selectedRate = selectedRates[ pckgId ] || '';
 		const packageRates = get( availableRates, [ pckgId, 'rates' ], [] );
-		const valuesMap = { '': __( 'Select one...' ) };
+		const valuesMap = { '': translate( 'Select one…' ) };
 		const serverErrors = errors.server && errors.server[ pckgId ];
 		const formError = errors.form && errors.form[ pckgId ];
 
@@ -87,10 +88,14 @@ const ShippingRates = ( {
 
 	return (
 		<div>
-			{ shouldShowRateNotice && renderRateNotice() }
+			{ shouldShowRateNotice && renderRateNotice( translate ) }
 			{ Object.values( mapValues( selectedPackages, renderSinglePackage ) ) }
 		</div>
 	);
+};
+
+ShippingRates.defaultProps = {
+	translate: identity,
 };
 
 ShippingRates.propTypes = {
@@ -104,4 +109,4 @@ ShippingRates.propTypes = {
 	errors: PropTypes.object.isRequired,
 };
 
-export default ShippingRates;
+export default localize( ShippingRates );

@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEmpty, map, pickBy, reduce, some } from 'lodash';
 
 /**
@@ -49,6 +49,7 @@ const PackageInfo = ( props ) => {
 		dimensionUnit,
 		weightUnit,
 		errors,
+		translate,
 	} = props;
 
 	const pckgErrors = errors[ packageId ] || {};
@@ -84,7 +85,7 @@ const PackageInfo = ( props ) => {
 			return null;
 		}
 
-		return ( <Button className="packages-step__add-item-btn" compact onClick={ onAddItem }>{ __( 'Add items' ) }</Button> );
+		return ( <Button className="packages-step__add-item-btn" compact onClick={ onAddItem }>{ translate( 'Add items' ) }</Button> );
 	};
 
 	const packageOptionChange = ( e ) => {
@@ -98,7 +99,7 @@ const PackageInfo = ( props ) => {
 			return (
 				<div className="packages-step__add-item-row">
 					<div className="packages-step__no-items-message">
-						{ __( 'There are no items in this package.' ) }
+						{ translate( 'There are no items in this package.' ) }
 						{ canAddItems ? renderAddItemButton() : null }
 					</div>
 				</div>
@@ -119,9 +120,9 @@ const PackageInfo = ( props ) => {
 		if ( isIndividualPackage ) {
 			return ( <div>
 				<div className="packages-step__package-items-header">
-					<FormLegend>{ __( 'Individually Shipped Item' ) }</FormLegend>
+					<FormLegend>{ translate( 'Individually Shipped Item' ) }</FormLegend>
 				</div>
-				<span className="packages-step__package-item-description">{ __( 'Item Dimensions' ) } - </span>
+				<span className="packages-step__package-item-description">{ translate( 'Item Dimensions' ) } - </span>
 				<span>{ renderPackageDimensions( pckg, dimensionUnit ) }</span>
 			</div> );
 		}
@@ -135,16 +136,16 @@ const PackageInfo = ( props ) => {
 			result[ groupId ] = { title: groupTitle, definitions };
 			return result;
 		}, {
-			custom: { title: __( 'Custom Packages' ), definitions: pickBy( all, p => ! p.group_id ) },
+			custom: { title: translate( 'Custom Packages' ), definitions: pickBy( all, p => ! p.group_id ) },
 		} );
 
 		return (
 			<div>
 				<div className="packages-step__package-items-header">
-					<FormLegend>{ __( 'Shipping Package' ) }</FormLegend>
+					<FormLegend>{ translate( 'Shipping Package' ) }</FormLegend>
 				</div>
 				<FormSelect onChange={ packageOptionChange } value={ pckg.box_id } isError={ pckgErrors.box_id }>
-					<option value={ 'not_selected' } key={ 'not_selected' }>{ __( 'Please select a package' ) }</option> )
+					<option value={ 'not_selected' } key={ 'not_selected' }>{ translate( 'Please select a package' ) }</option> )
 					{ map( groups, ( group, groupId ) => {
 						if ( isEmpty( group.definitions ) ) {
 							return null;
@@ -167,7 +168,7 @@ const PackageInfo = ( props ) => {
 
 			<div>
 				<div className="packages-step__package-items-header">
-					<FormLegend>{ __( 'Items to Ship' ) }</FormLegend>
+					<FormLegend>{ translate( 'Items to Ship' ) }</FormLegend>
 				</div>
 				{ renderItems() }
 			</div>
@@ -176,7 +177,7 @@ const PackageInfo = ( props ) => {
 				<NumberField
 					id={ `weight_${ packageId }` }
 					className="packages-step__package-weight"
-					title={ __( 'Total Weight' ) }
+					title={ translate( 'Total Weight' ) }
 					value={ pckg.weight }
 					updateValue={ onWeightChange }
 					error={ pckgErrors.weight } />
@@ -225,4 +226,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	}, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PackageInfo );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageInfo ) );

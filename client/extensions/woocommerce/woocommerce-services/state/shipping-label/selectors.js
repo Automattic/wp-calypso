@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, get, isEmpty, map, mapValues, sum } from 'lodash';
-import { translate as __ } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -68,7 +68,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 		// If the address is normalized but the server didn't return a normalized address, then it's
 		// invalid and must register as an error
 		return {
-			address: __( 'This address is not recognized. Please try another.' ),
+			address: translate( 'This address is not recognized. Please try another.' ),
 		};
 	}
 	const { phone, postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
@@ -76,25 +76,25 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	const errors = {};
 	requiredFields.forEach( ( field ) => {
 		if ( ! values[ field ] ) {
-			errors[ field ] = __( 'This field is required' );
+			errors[ field ] = translate( 'This field is required' );
 		}
 	} );
 
 	if ( countriesData[ country ] ) {
 		if ( ! isValidPhone( phone, country ) ) {
-			errors.phone = __( 'Invalid phone number for %(country)s', { args: { country: countriesData[ country ].name } } );
+			errors.phone = translate( 'Invalid phone number for %(country)s', { args: { country: countriesData[ country ].name } } );
 		}
 
 		switch ( country ) {
 			case 'US':
 				if ( ! /^\d{5}(?:-\d{4})?$/.test( postcode ) ) {
-					errors.postcode = __( 'Invalid ZIP code format' );
+					errors.postcode = translate( 'Invalid ZIP code format' );
 				}
 				break;
 		}
 
 		if ( ! isEmpty( countriesData[ country ].states ) && ! state ) {
-			errors.state = __( 'This field is required' );
+			errors.state = translate( 'This field is required' );
 		}
 	}
 
@@ -113,11 +113,11 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 	const errors = {};
 
 	if ( 'not_selected' === pckg.box_id ) {
-		errors.box_id = __( 'Please select a package' );
+		errors.box_id = translate( 'Please select a package' );
 	}
 
 	if ( ! pckg.weight || 'number' !== typeof pckg.weight || 0 > pckg.weight ) {
-		errors.weight = __( 'Invalid weight' );
+		errors.weight = translate( 'Invalid weight' );
 	}
 
 	return errors;
@@ -133,17 +133,17 @@ export const getRatesErrors = ( { values: selectedRates, available: allRates } )
 			return rate.errors.map( ( error ) =>
 				error.userMessage ||
 				error.message ||
-				__( "We couldn't get a rate for this package, please try again." )
+				translate( "We couldn't get a rate for this package, please try again." )
 			);
 		} ),
-		form: mapValues( selectedRates, ( ( rate ) => rate ? null : __( 'Please choose a rate' ) ) ),
+		form: mapValues( selectedRates, ( ( rate ) => rate ? null : translate( 'Please choose a rate' ) ) ),
 	};
 };
 
 const getSidebarErrors = ( paperSize ) => {
 	const errors = {};
 	if ( ! paperSize ) {
-		errors.paperSize = __( 'This field is required' );
+		errors.paperSize = translate( 'This field is required' );
 	}
 	return errors;
 };

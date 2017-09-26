@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
-	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id } = props;
+	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id, translate } = props;
 
 	const onClose = () => props.closeReprintDialog( orderId, siteId );
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
@@ -31,19 +31,19 @@ const ReprintDialog = ( props ) => {
 			onClose={ onClose }
 			additionalClassNames="label-reprint-modal woocommerce">
 			<FormSectionHeading>
-				{ __( 'Reprint shipping label' ) }
+				{ translate( 'Reprint shipping label' ) }
 			</FormSectionHeading>
 			<p>
-				{ __( 'If there was a printing error when you purchased the label, you can print it again.' ) }
+				{ translate( 'If there was a printing error when you purchased the label, you can print it again.' ) }
 			</p>
 			<p className="shipping-label__reprint-modal-notice">
-				{ __( 'NOTE: If you already used the label in a package, printing and using it again ' +
+				{ translate( 'NOTE: If you already used the label in a package, printing and using it again ' +
 					'is a violation of our terms of service and may result in criminal charges.' ) }
 			</p>
 			<Dropdown
 				id={ 'paper_size' }
 				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
-				title={ __( 'Paper size' ) }
+				title={ translate( 'Paper size' ) }
 				value={ paperSize }
 				updateValue={ onPaperSizeChange } />
 			<ActionButtons buttons={ [
@@ -51,11 +51,11 @@ const ReprintDialog = ( props ) => {
 					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: reprintDialog && reprintDialog.isFetching,
-					label: __( 'Print' ),
+					label: translate( 'Print' ),
 				},
 				{
 					onClick: onClose,
-					label: __( 'Cancel' ),
+					label: translate( 'Cancel' ),
 				},
 			] } />
 		</Dialog>
@@ -87,4 +87,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( ReprintDialog );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReprintDialog ) );

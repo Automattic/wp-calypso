@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { filter } from 'lodash';
 
 /**
@@ -37,18 +37,18 @@ class ShippingLabelRootView extends Component {
 	}
 
 	renderPaymentInfo = () => {
-		const { numPaymentMethods, paymentMethod } = this.props;
+		const { numPaymentMethods, paymentMethod, translate } = this.props;
 
 		if ( numPaymentMethods > 0 && paymentMethod ) {
 			return (
 				<Notice isCompact showDismiss={ false } className="shipping-label__payment inline">
 					<p>
-						{ __( 'Labels will be purchased using card ending: {{strong}}%(cardDigits)s.{{/strong}}', {
+						{ translate( 'Labels will be purchased using card ending: {{strong}}%(cardDigits)s.{{/strong}}', {
 							components: { strong: <strong /> },
 							args: { cardDigits: paymentMethod },
 						} ) }
 					</p>
-					<p><a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">{ __( 'Manage cards' ) }</a></p>
+					<p><a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">{ translate( 'Manage cards' ) }</a></p>
 				</Notice>
 			);
 		}
@@ -56,16 +56,20 @@ class ShippingLabelRootView extends Component {
 		if ( numPaymentMethods > 0 ) {
 			return (
 				<Notice isCompact={ true } showDismiss={ false } className="shipping-label__payment inline">
-					<p>{ __( 'To purchase shipping labels, you will first need to select a credit card.' ) }</p>
-					<p><a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">{ __( 'Select a credit card' ) }</a></p>
+					<p>{ translate( 'To purchase shipping labels, you will first need to select a credit card.' ) }</p>
+					<p>
+						<a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">
+							{ translate( 'Select a credit card' ) }
+						</a>
+					</p>
 				</Notice>
 			);
 		}
 
 		return (
 			<Notice isCompact showDismiss={ false } className="shipping-label__payment inline">
-				<p>{ __( 'To purchase shipping labels, you will first need to add a credit card.' ) }</p>
-				<p><a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">{ __( 'Add a credit card' ) }</a></p>
+				<p>{ translate( 'To purchase shipping labels, you will first need to add a credit card.' ) }</p>
+				<p><a href="admin.php?page=wc-settings&tab=shipping&section=label-settings">{ translate( 'Add a credit card' ) }</a></p>
 			</Notice>
 		);
 	};
@@ -74,7 +78,7 @@ class ShippingLabelRootView extends Component {
 		const onNewLabelClick = () => this.props.openPrintingFlow( this.props.orderId, this.props.siteId );
 		return (
 			<Button className="shipping-label__new-label-button" onClick={ onNewLabelClick } >
-				{ __( 'Create new label' ) }
+				{ this.props.translate( 'Create new label' ) }
 			</Button>
 		);
 	};
@@ -156,4 +160,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { fetchLabelsStatus, openPrintingFlow }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( ShippingLabelRootView );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingLabelRootView ) );

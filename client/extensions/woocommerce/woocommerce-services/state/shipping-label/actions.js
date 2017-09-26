@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { translate as __ } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { every, fill, find, flatten, isEmpty, isEqual, map, noop, pick, some } from 'lodash';
 
 /**
@@ -578,7 +578,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	dispatch( purchaseLabelResponse( orderId, siteId, labels, false ) );
 
 	const labelsToPrint = labels.map( ( label, index ) => ( {
-		caption: __( 'PACKAGE %(num)d (OF %(total)d)', {
+		caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {
 			args: {
 				num: index + 1,
 				total: labels.length,
@@ -594,8 +594,8 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	} else {
 		printDocument( printUrl )
 			.then( () => {
-				dispatch( NoticeActions.successNotice( __(
-					'Your shipping label was purchased successfully',
+				dispatch( NoticeActions.successNotice( translate(
+					'Your %(count)d shipping label was purchased successfully',
 					'Your %(count)d shipping labels were purchased successfully',
 					{
 						count: labels.length,
@@ -749,7 +749,10 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 			if ( error ) {
 				dispatch( NoticeActions.errorNotice( error.toString() ) );
 			} else {
-				dispatch( NoticeActions.successNotice( __( 'The refund request has been sent successfully.' ), { duration: 5000 } ) );
+				dispatch( NoticeActions.successNotice(
+					translate( 'The refund request has been sent successfully.' ),
+					{ duration: 5000 }
+				) );
 			}
 		}
 	};
