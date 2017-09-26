@@ -48,6 +48,7 @@ export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
 export getJetpackSites from './get-jetpack-sites';
 export getJetpackUserConnection from './get-jetpack-user-connection';
+export getJpoConnect from './get-jpo-connect';
 export getMagicLoginCurrentView from './get-magic-login-current-view';
 export getMagicLoginRequestAuthError from './get-magic-login-request-auth-error';
 export getMagicLoginRequestedAuthSuccessfully from './get-magic-login-requested-auth-successfully';
