@@ -86,15 +86,6 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	privacyNoPopup: {
-		datestamp: '20170830',
-		variations: {
-			original: 50,
-			nopopup: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
