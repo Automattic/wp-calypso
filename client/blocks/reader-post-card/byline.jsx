@@ -18,7 +18,12 @@ import { getSiteName } from 'reader/get-helpers';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import PostTime from 'reader/post-time';
 import { getStreamUrl } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrackForPost, recordPermalinkClick } from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrackForPost,
+	recordPermalinkClick,
+} from 'reader/stats';
 
 const TAGS_TO_SHOW = 3;
 

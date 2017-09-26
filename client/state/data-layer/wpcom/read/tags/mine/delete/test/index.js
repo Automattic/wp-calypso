@@ -11,7 +11,10 @@ import sinon from 'sinon';
 import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestUnfollowTag as requestUnfollowAction, receiveUnfollowTag as receiveUnfollowAction } from 'state/reader/tags/items/actions';
+import {
+	requestUnfollowTag as requestUnfollowAction,
+	receiveUnfollowTag as receiveUnfollowAction,
+} from 'state/reader/tags/items/actions';
 
 const successfulUnfollowResponse = {
 	subscribed: false,

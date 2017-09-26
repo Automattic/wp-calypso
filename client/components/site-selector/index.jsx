@@ -24,7 +24,12 @@ import searchSites from 'components/search-sites';
 import AllSites from 'my-sites/all-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPreference } from 'state/preferences/selectors';
-import { areAllSitesSingleUser, getSites, getVisibleSites, isRequestingMissingSites } from 'state/selectors';
+import {
+	areAllSitesSingleUser,
+	getSites,
+	getVisibleSites,
+	isRequestingMissingSites,
+} from 'state/selectors';
 import { isPluginActive } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';

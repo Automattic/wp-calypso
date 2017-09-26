@@ -14,7 +14,11 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
 import FeedPostStore from 'lib/feed-post-store';
 import smartSetState from 'lib/react-smart-set-state';
-import { isDiscoverSitePick, getSourceData as getDiscoverSourceData, discoverBlogId } from 'reader/discover/helper';
+import {
+	isDiscoverSitePick,
+	getSourceData as getDiscoverSourceData,
+	discoverBlogId,
+} from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { shallowEquals } from 'reader/utils';
 import { getFeed } from 'state/reader/feeds/selectors';

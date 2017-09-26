@@ -23,7 +23,10 @@ import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import Card from 'components/card';
 import DiscoverFollowButton from 'reader/discover/follow-button';
-import { getDiscoverBlogName, getSourceFollowUrl as getDiscoverFollowUrl } from 'reader/discover/helper';
+import {
+	getDiscoverBlogName,
+	getSourceFollowUrl as getDiscoverFollowUrl,
+} from 'reader/discover/helper';
 import FollowButton from 'reader/follow-button';
 import * as stats from 'reader/stats';
 import DisplayTypes from 'state/reader/posts/display-types';

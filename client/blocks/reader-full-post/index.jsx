@@ -48,14 +48,24 @@ import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import smartSetState from 'lib/react-smart-set-state';
 import scrollTo from 'lib/scroll-to';
 import { getLastStore } from 'reader/controller-helper';
-import { isDiscoverPost, isDiscoverSitePick, getSourceFollowUrl, getSiteUrl } from 'reader/discover/helper';
+import {
+	isDiscoverPost,
+	isDiscoverSitePick,
+	getSourceFollowUrl,
+	getSiteUrl,
+} from 'reader/discover/helper';
 import DiscoverSiteAttribution from 'reader/discover/site-attribution';
 import { getSiteName } from 'reader/get-helpers';
 import LikeButton from 'reader/like-button';
 import { shouldShowLikes } from 'reader/like-helper';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { getStreamUrlFromPost } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrackForPost, recordPermalinkClick } from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrackForPost,
+	recordPermalinkClick,
+} from 'reader/stats';
 import { showSelectedPost } from 'reader/utils';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';

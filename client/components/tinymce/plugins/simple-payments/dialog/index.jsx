@@ -28,9 +28,15 @@ import wpcom from 'lib/wp';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
-import { customPostToProduct, productToCustomPost } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
+import {
+	customPostToProduct,
+	productToCustomPost,
+} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
 import { getSimplePayments } from 'state/selectors';
-import { receiveUpdateProduct, receiveDeleteProduct } from 'state/simple-payments/product-list/actions';
+import {
+	receiveUpdateProduct,
+	receiveDeleteProduct,
+} from 'state/simple-payments/product-list/actions';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';

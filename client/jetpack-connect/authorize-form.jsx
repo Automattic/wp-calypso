@@ -21,8 +21,24 @@ import Main from 'components/main';
 import { urlToSlug } from 'lib/url';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { createAccount, authorize, goBackToWpAdmin, retryAuth, goToXmlrpcErrorFallbackUrl } from 'state/jetpack-connect/actions';
-import { getAuthorizationData, getAuthorizationRemoteSite, isCalypsoStartedConnection, hasXmlrpcError, hasExpiredSecretError, isRemoteSiteOnSitesList, getAuthAttempts, getSiteIdFromQueryObject, getUserAlreadyConnected } from 'state/jetpack-connect/selectors';
+import {
+	createAccount,
+	authorize,
+	goBackToWpAdmin,
+	retryAuth,
+	goToXmlrpcErrorFallbackUrl,
+} from 'state/jetpack-connect/actions';
+import {
+	getAuthorizationData,
+	getAuthorizationRemoteSite,
+	isCalypsoStartedConnection,
+	hasXmlrpcError,
+	hasExpiredSecretError,
+	isRemoteSiteOnSitesList,
+	getAuthAttempts,
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected,
+} from 'state/jetpack-connect/selectors';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 

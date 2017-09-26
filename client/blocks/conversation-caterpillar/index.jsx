@@ -17,7 +17,11 @@ import Card from 'components/card';
 import Gravatar from 'components/gravatar';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { getPostCommentsTree, getDateSortedPostComments, getHiddenCommentsForPost } from 'state/comments/selectors';
+import {
+	getPostCommentsTree,
+	getDateSortedPostComments,
+	getHiddenCommentsForPost,
+} from 'state/comments/selectors';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;

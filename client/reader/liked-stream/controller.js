@@ -10,7 +10,12 @@ import React from 'react';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import {
+	ensureStoreLoading,
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'reader/controller-helper';
 import LikedPostsStream from 'reader/liked-stream/main';
 
 const analyticsPageTitle = 'Reader';

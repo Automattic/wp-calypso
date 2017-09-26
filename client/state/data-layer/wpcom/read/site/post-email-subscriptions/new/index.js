@@ -14,7 +14,10 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { unsubscribeToNewPostEmail, updateNewPostEmailSubscription } from 'state/reader/follows/actions';
+import {
+	unsubscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+} from 'state/reader/follows/actions';
 
 export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(

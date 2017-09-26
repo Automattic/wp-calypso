@@ -2,7 +2,18 @@
 /**
  * External dependencies
  */
-import { concat, get, has, head, map, overEvery, partial, partialRight, reduce, split } from 'lodash';
+import {
+	concat,
+	get,
+	has,
+	head,
+	map,
+	overEvery,
+	partial,
+	partialRight,
+	reduce,
+	split,
+} from 'lodash';
 
 /**
  * Internal dependencies

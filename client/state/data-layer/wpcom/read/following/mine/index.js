@@ -11,7 +11,11 @@ import { forEach } from 'lodash';
 import followingDelete from './delete';
 import followingNew from './new';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
-import { READER_FOLLOW, READER_FOLLOWS_SYNC_START, READER_FOLLOWS_SYNC_PAGE } from 'state/action-types';
+import {
+	READER_FOLLOW,
+	READER_FOLLOWS_SYNC_START,
+	READER_FOLLOWS_SYNC_PAGE,
+} from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';

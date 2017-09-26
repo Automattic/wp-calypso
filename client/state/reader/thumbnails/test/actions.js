@@ -11,7 +11,12 @@ import sinon from 'sinon';
  */
 import { receiveThumbnail, requestThumbnail } from '../actions';
 import sampleVimeoResponse from './sample-vimeo-response.js';
-import { READER_THUMBNAIL_REQUEST, READER_THUMBNAIL_REQUEST_SUCCESS, READER_THUMBNAIL_REQUEST_FAILURE, READER_THUMBNAIL_RECEIVE } from 'state/action-types';
+import {
+	READER_THUMBNAIL_REQUEST,
+	READER_THUMBNAIL_REQUEST_SUCCESS,
+	READER_THUMBNAIL_REQUEST_FAILURE,
+	READER_THUMBNAIL_RECEIVE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

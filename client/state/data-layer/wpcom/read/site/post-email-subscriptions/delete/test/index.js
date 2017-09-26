@@ -8,7 +8,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { requestPostEmailUnsubscription, receivePostEmailUnsubscription, receivePostEmailUnsubscriptionError } from '../';
+import {
+	requestPostEmailUnsubscription,
+	receivePostEmailUnsubscription,
+	receivePostEmailUnsubscriptionError,
+} from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { subscribeToNewPostEmail, unsubscribeToNewPostEmail } from 'state/reader/follows/actions';

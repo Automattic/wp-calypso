@@ -3,7 +3,18 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { filter, findIndex, findLastIndex, forEach, get, map, noop, some, defer, uniqBy } from 'lodash';
+import {
+	filter,
+	findIndex,
+	findLastIndex,
+	forEach,
+	get,
+	map,
+	noop,
+	some,
+	defer,
+	uniqBy,
+} from 'lodash';
 import moment from 'moment';
 
 /**

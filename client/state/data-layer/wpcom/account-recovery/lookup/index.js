@@ -7,7 +7,11 @@ import { isString, tap } from 'lodash';
 /**
  * Internal dependencies
  */
-import { fetchResetOptionsSuccess, fetchResetOptionsError, updatePasswordResetUserData } from 'state/account-recovery/reset/actions';
+import {
+	fetchResetOptionsSuccess,
+	fetchResetOptionsError,
+	updatePasswordResetUserData,
+} from 'state/account-recovery/reset/actions';
 import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';

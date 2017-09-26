@@ -16,7 +16,13 @@ import FormToggle from 'components/forms/form-toggle';
 import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import { subscribeToNewPostEmail, updateNewPostEmailSubscription, unsubscribeToNewPostEmail, subscribeToNewCommentEmail, unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
+import {
+	subscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	unsubscribeToNewPostEmail,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+} from 'state/reader/follows/actions';
 import { getReaderFollows } from 'state/selectors';
 
 class ReaderEmailSettings extends Component {

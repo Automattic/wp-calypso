@@ -9,7 +9,12 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import fromApi, { ACTIVITY_REQUIRED_PROPS, processItem, itemsReducer, validateItem } from '../from-api';
+import fromApi, {
+	ACTIVITY_REQUIRED_PROPS,
+	processItem,
+	itemsReducer,
+	validateItem,
+} from '../from-api';
 
 const SITE_ID = 123456;
 

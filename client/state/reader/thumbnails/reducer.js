@@ -2,7 +2,12 @@
 /**
  * Internal dependencies
  */
-import { READER_THUMBNAIL_REQUEST, READER_THUMBNAIL_REQUEST_SUCCESS, READER_THUMBNAIL_REQUEST_FAILURE, READER_THUMBNAIL_RECEIVE } from 'state/action-types';
+import {
+	READER_THUMBNAIL_REQUEST,
+	READER_THUMBNAIL_REQUEST_SUCCESS,
+	READER_THUMBNAIL_REQUEST_FAILURE,
+	READER_THUMBNAIL_RECEIVE,
+} from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 /**

@@ -7,7 +7,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { blogListing, feedDiscovery, feedListing, following, incompleteUrlRedirects, initAbTests, legacyRedirects, preloadReaderBundle, prettyRedirects, readA8C, sidebar, updateLastRoute } from './controller';
+import {
+	blogListing,
+	feedDiscovery,
+	feedListing,
+	following,
+	incompleteUrlRedirects,
+	initAbTests,
+	legacyRedirects,
+	preloadReaderBundle,
+	prettyRedirects,
+	readA8C,
+	sidebar,
+	updateLastRoute,
+} from './controller';
 import config from 'config';
 
 function forceTeamA8C( context, next ) {

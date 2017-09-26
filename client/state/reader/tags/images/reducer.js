@@ -2,7 +2,12 @@
 /**
  * Internal dependencies
  */
-import { READER_TAG_IMAGES_RECEIVE, READER_TAG_IMAGES_REQUEST, READER_TAG_IMAGES_REQUEST_SUCCESS, READER_TAG_IMAGES_REQUEST_FAILURE } from 'state/action-types';
+import {
+	READER_TAG_IMAGES_RECEIVE,
+	READER_TAG_IMAGES_REQUEST,
+	READER_TAG_IMAGES_REQUEST_SUCCESS,
+	READER_TAG_IMAGES_REQUEST_FAILURE,
+} from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 /**

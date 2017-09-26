@@ -10,12 +10,25 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { isSyncingFollows, requestPage, requestPageAction, receivePage, receiveError, syncReaderFollows, resetSyncingFollows, updateSeenOnFollow } from '../';
+import {
+	isSyncingFollows,
+	requestPage,
+	requestPageAction,
+	receivePage,
+	receiveError,
+	syncReaderFollows,
+	resetSyncingFollows,
+	updateSeenOnFollow,
+} from '../';
 import { subscriptionsFromApi } from '../utils';
 import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveFollows as receiveFollowsAction, follow, syncComplete } from 'state/reader/follows/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	follow,
+	syncComplete,
+} from 'state/reader/follows/actions';
 
 const successfulApiResponse = freeze( {
 	number: 2,

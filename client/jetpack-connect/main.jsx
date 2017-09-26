@@ -27,8 +27,20 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import versionCompare from 'lib/version-compare';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { confirmJetpackInstallStatus, dismissUrl, goToRemoteAuth, goToPluginInstall, goToPlans, goToPluginActivation, checkUrl } from 'state/jetpack-connect/actions';
-import { getGlobalSelectedPlan, getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import {
+	confirmJetpackInstallStatus,
+	dismissUrl,
+	goToRemoteAuth,
+	goToPluginInstall,
+	goToPlans,
+	goToPluginActivation,
+	checkUrl,
+} from 'state/jetpack-connect/actions';
+import {
+	getGlobalSelectedPlan,
+	getConnectingSite,
+	getJetpackSiteByUrl,
+} from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 
 /**
@@ -46,15 +58,15 @@ class JetpackConnectMain extends Component {
 
 	state = this.props.url
 		? {
-			currentUrl: this.cleanUrl( this.props.url ),
-			shownUrl: this.props.url,
-			waitingForSites: false,
-		}
+				currentUrl: this.cleanUrl( this.props.url ),
+				shownUrl: this.props.url,
+				waitingForSites: false,
+			}
 		: {
-			currentUrl: '',
-			shownUrl: '',
-			waitingForSites: false,
-		};
+				currentUrl: '',
+				shownUrl: '',
+				waitingForSites: false,
+			};
 
 	componentWillMount() {
 		if ( this.props.url ) {

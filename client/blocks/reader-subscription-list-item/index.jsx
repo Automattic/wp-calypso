@@ -16,7 +16,13 @@ import EmailSettings from 'blocks/reader-email-settings';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import FollowButton from 'reader/follow-button';
-import { getSiteName, getSiteDescription, getSiteAuthorName, getFeedUrl, getSiteUrl } from 'reader/get-helpers';
+import {
+	getSiteName,
+	getSiteDescription,
+	getSiteAuthorName,
+	getFeedUrl,
+	getSiteUrl,
+} from 'reader/get-helpers';
 import { getStreamUrl } from 'reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 

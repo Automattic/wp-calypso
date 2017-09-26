@@ -22,7 +22,15 @@ import ListEnd from 'components/list-end';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import ReaderMain from 'components/reader-main';
 import PostStore from 'lib/feed-post-store';
-import { fetchNextPage, selectFirstItem, selectItem, selectNextItem, selectPrevItem, showUpdates, shufflePosts } from 'lib/feed-stream-store/actions';
+import {
+	fetchNextPage,
+	selectFirstItem,
+	selectItem,
+	selectNextItem,
+	selectPrevItem,
+	showUpdates,
+	shufflePosts,
+} from 'lib/feed-stream-store/actions';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';

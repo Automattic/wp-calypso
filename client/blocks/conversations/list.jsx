@@ -16,7 +16,12 @@ import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { requestPostComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { commentsFetchingStatus, getPostCommentsTree, getExpansionsForPost, getHiddenCommentsForPost } from 'state/comments/selectors';
+import {
+	commentsFetchingStatus,
+	getPostCommentsTree,
+	getExpansionsForPost,
+	getHiddenCommentsForPost,
+} from 'state/comments/selectors';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream

@@ -9,7 +9,11 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { requestSite } from '../actions';
-import { READER_SITE_REQUEST, READER_SITE_REQUEST_SUCCESS, READER_SITE_REQUEST_FAILURE } from 'state/action-types';
+import {
+	READER_SITE_REQUEST,
+	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_REQUEST_FAILURE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

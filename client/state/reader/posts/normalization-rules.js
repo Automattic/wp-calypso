@@ -11,7 +11,10 @@ import DISPLAY_TYPES from './display-types';
 import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
+import {
+	disableAutoPlayOnMedia,
+	disableAutoPlayOnEmbeds,
+} from 'lib/post-normalizer/rule-content-disable-autoplay';
 import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';

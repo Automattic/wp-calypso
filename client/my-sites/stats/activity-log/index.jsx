@@ -37,7 +37,14 @@ import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
-import { getActivityLogs, getRestoreProgress, getRewindStatusError, getSiteGmtOffset, getSiteTimezoneValue, isRewindActive as isRewindActiveSelector } from 'state/selectors';
+import {
+	getActivityLogs,
+	getRestoreProgress,
+	getRewindStatusError,
+	getSiteGmtOffset,
+	getSiteTimezoneValue,
+	isRewindActive as isRewindActiveSelector,
+} from 'state/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
