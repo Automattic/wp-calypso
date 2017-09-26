@@ -1,9 +1,4 @@
 /**
- * External dependencis
- */
-import { pick, get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,11 +7,16 @@ import {
 import { combineReducers } from 'state/utils';
 
 export function getJITM( state = {}, action ) {
-
+	switch ( action.type ) {
+		case JITM_SET:
+			return Object.assign( {}, state, {
+				data: action.jitms
+			} );
+	}
 
 	return state;
 }
 
 export default combineReducers( {
-	getJITM
+	jitms: getJITM
 } );

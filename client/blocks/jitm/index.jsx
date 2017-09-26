@@ -1,32 +1,47 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryPlans from 'components/data/query-plans';
-import PlanCompareCard from 'my-sites/plan-compare-card';
-import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import formatCurrency from 'lib/format-currency';
-import { preventWidows } from 'lib/formatting';
-import { getFeatureTitle, getPlan } from 'lib/plans';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getSitePlan } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import Banner from 'components/banner';
+
+const unescape = ( str ) => {
+	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
+};
 
 class JITM extends Component {
 	render() {
-		return <p>Hello World</p>;
+		if ( this.props.data.length === 0 || ! this.props.currentSite ) {
+			return null;
+		}
+
+		const jitm = this.props.data[ 0 ];
+
+		return (
+			<Banner
+				callToAction={ unescape( jitm.CTA.message ) }
+				title={ unescape( jitm.content.message ) }
+				description={ unescape( jitm.content.description ) }
+				disableHref
+				dismissPreferenceName={ jitm.id }
+				dismissTemporary={ false }
+				event={ `jitm_nudge_click_${ jitm.id }` }
+				href={ `https://jetpack.com/redirect/?source=jitm-${ jitm.id }&site=${ this.props.currentSite.domain }` }
+			/>
+		);
 	}
 }
 
-export default JITM;
+const mapStateToProps = ( state ) => (
+	{
+		currentSite: getSelectedSite( state ),
+		data: state.jitm.jitms.data ? state.jitm.jitms.data : [],
+	}
+);
+
+export default connect( mapStateToProps )( JITM );
