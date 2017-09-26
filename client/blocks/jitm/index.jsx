@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -14,28 +14,26 @@ const unescape = ( str ) => {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 };
 
-class JITM extends Component {
-	render() {
-		if ( this.props.data.length === 0 || ! this.props.currentSite ) {
-			return null;
-		}
-
-		const jitm = this.props.data[ 0 ];
-
-		return (
-			<Banner
-				callToAction={ unescape( jitm.CTA.message ) }
-				title={ unescape( jitm.content.message ) }
-				description={ unescape( jitm.content.description ) }
-				disableHref
-				dismissPreferenceName={ jitm.id }
-				dismissTemporary={ false }
-				event={ `jitm_nudge_click_${ jitm.id }` }
-				href={ `https://jetpack.com/redirect/?source=jitm-${ jitm.id }&site=${ this.props.currentSite.domain }` }
-			/>
-		);
+const JITM = ( props ) => {
+	if ( props.data.length === 0 || ! props.currentSite ) {
+		return null;
 	}
-}
+
+	const jitm = props.data[ 0 ];
+
+	return (
+		<Banner
+			callToAction={ unescape( jitm.CTA.message ) }
+			title={ unescape( jitm.content.message ) }
+			description={ unescape( jitm.content.description ) }
+			disableHref
+			dismissPreferenceName={ jitm.id }
+			dismissTemporary={ false }
+			event={ `jitm_nudge_click_${ jitm.id }` }
+			href={ `https://jetpack.com/redirect/?source=jitm-${ jitm.id }&site=${ props.currentSite.domain }` }
+		/>
+	);
+};
 
 const mapStateToProps = ( state ) => (
 	{
