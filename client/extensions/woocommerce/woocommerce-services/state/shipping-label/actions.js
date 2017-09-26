@@ -59,6 +59,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types.js';
 
 const FORM_STEPS = [ 'origin', 'destination', 'packages', 'rates' ];
@@ -533,6 +535,24 @@ export const updateRate = ( orderId, siteId, packageId, value ) => {
 export const updatePaperSize = ( orderId, siteId, value ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+		siteId,
+		orderId,
+		value,
+	};
+};
+
+export const setEmailDetailsOption = ( orderId, siteId, value ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
+		siteId,
+		orderId,
+		value,
+	};
+};
+
+export const setFulfillOrderOption = ( orderId, siteId, value ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 		siteId,
 		orderId,
 		value,

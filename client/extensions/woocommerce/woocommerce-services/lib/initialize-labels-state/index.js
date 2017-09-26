@@ -36,6 +36,8 @@ export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, n
 		paymentMethod,
 		numPaymentMethods,
 		storeOptions,
+		fulfillOrder: true,
+		emailDetails: true,
 		form: {
 			orderId: formData.order_id,
 			origin: {
