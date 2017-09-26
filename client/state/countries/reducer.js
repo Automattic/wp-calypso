@@ -1,10 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	createReducer,
-	combineReducers
-} from 'state/utils';
+import { createReducer, combineReducers } from 'state/utils';
 import {
 	COUNTRIES_DOMAINS_UPDATED,
 	COUNTRIES_PAYMENTS_UPDATED,
