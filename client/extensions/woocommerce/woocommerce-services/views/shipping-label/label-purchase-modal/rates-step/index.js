@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { find, get, isEmpty } from 'lodash';
 
 /**
@@ -23,9 +23,9 @@ import {
 	getRatesTotal,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved ) => {
+const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, packagesSaved, translate ) => {
 	if ( ! packagesSaved ) {
-		return __( 'Unsaved changes made to packages' );
+		return translate( 'Unsaved changes made to packages' );
 	}
 
 	const packageIds = Object.keys( selectedRates );
@@ -38,7 +38,7 @@ const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, pac
 		const rateInfo = find( packageRates, [ 'service_id', selectedRate ] );
 
 		if ( rateInfo ) {
-			return __( '%(serviceName)s: %(currencySymbol)s%(rate).2f', {
+			return translate( '%(serviceName)s: %(currencySymbol)s%(rate).2f', {
 				args: {
 					serviceName: rateInfo.title,
 					rate: rateInfo.rate,
@@ -51,7 +51,7 @@ const ratesSummary = ( selectedRates, availableRates, total, currencySymbol, pac
 	}
 
 	// Otherwise, just show the total
-	return __( 'Total rate: %(currencySymbol)s%(total)s', {
+	return translate( 'Total rate: %(currencySymbol)s%(total)s', {
 		args: {
 			total,
 			currencySymbol,
@@ -89,15 +89,16 @@ const RatesStep = ( props ) => {
 		currencySymbol,
 		errors,
 		expanded,
-		ratesTotal
+		ratesTotal,
+		translate,
 	} = props;
-	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved );
+	const summary = ratesSummary( values, available, ratesTotal, currencySymbol, form.packages.saved, translate );
 
 	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'rates' );
 	const updateRateHandler = ( packageId, value ) => props.updateRate( orderId, siteId, packageId, value );
 	return (
 		<StepContainer
-			title={ __( 'Rates' ) }
+			title={ translate( 'Rates' ) }
 			summary={ summary }
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler }
@@ -145,4 +146,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep, updateRate }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( RatesStep );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RatesStep ) );

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ const StateDropdown = ( props ) => {
 	return (
 		<Dropdown
 			{ ...props }
-			valuesMap={ { '': __( 'Select one...' ), ...statesMap } }
+			valuesMap={ { '': props.translate( 'Select one…' ), ...statesMap } }
 			/>
 	);
 };
@@ -46,4 +46,4 @@ StateDropdown.propTypes = {
 	className: PropTypes.string,
 };
 
-export default StateDropdown;
+export default localize( StateDropdown );

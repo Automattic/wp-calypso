@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate as __ } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { mapValues } from 'lodash';
 
 export default ( selected, all, addNames ) => {
@@ -20,12 +20,12 @@ export default ( selected, all, addNames ) => {
 
 		if ( isEnvelope ) {
 			return pckgName
-				? __( 'Envelope %d: %s', { args: [ pckgCount, pckgName ] } )
-				: __( 'Envelope %d', { args: [ pckgCount ] } );
+				? translate( 'Envelope %(packageNum)d: %(packageName)s', { args: { packageNum: pckgCount, packageName: pckgName } } )
+				: translate( 'Envelope %(packageNum)d', { args: { packageNum: pckgCount } } );
 		}
 
 		return pckgName
-			? __( 'Package %d: %s', { args: [ pckgCount, pckgName ] } )
-			: __( 'Package %d', { args: [ pckgCount ] } );
+			? translate( 'Package %(packageNum)d: %(packageName)s', { args: { packageNum: pckgCount, packageName: pckgName } } )
+			: translate( 'Package %(packageNum)d', { args: { packageNum: pckgCount } } );
 	} );
 };

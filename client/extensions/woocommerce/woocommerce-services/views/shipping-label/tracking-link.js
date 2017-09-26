@@ -3,16 +3,16 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 const TRACKING_URL_MAP = {
 	usps: ( tracking ) => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,
 	fedex: ( tracking ) => `https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=${ tracking }`,
 };
 
-const TrackingLink = ( { tracking, carrier_id } ) => {
+const TrackingLink = ( { tracking, carrier_id, translate } ) => {
 	if ( ! tracking ) {
-		return <span>{ __( 'N/A' ) }</span>;
+		return <span>{ translate( 'N/A' ) }</span>;
 	}
 	const url = TRACKING_URL_MAP[ carrier_id ]( tracking );
 	if ( ! url ) {
@@ -26,4 +26,4 @@ TrackingLink.propTypes = {
 	carrier_id: PropTypes.string,
 };
 
-export default TrackingLink;
+export default localize( TrackingLink );

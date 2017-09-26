@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import classNames from 'classnames';
 
@@ -71,6 +71,7 @@ const AddressSuggestion = ( {
 		editAddress,
 		confirmAddressSuggestion,
 		countriesData,
+		translate,
 	} ) => {
 	const onToggleSelectNormalizedAddress = ( value ) => () => selectNormalizedAddress( value );
 	const errorClass = 'error-notice';
@@ -80,25 +81,25 @@ const AddressSuggestion = ( {
 				className={ errorClass }
 				status="is-warning"
 				showDismiss={ false } >
-				{ __( 'We have slightly modified the address entered. ' +
+				{ translate( 'We have slightly modified the address entered. ' +
 					'If correct, please use the suggested address to ensure accurate delivery.' ) }
 			</Notice>
 			<div className="address-step__suggestion-container">
 				<RadioButton
 					checked={ ! selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( false ) } >
-					<span className="address-step__suggestion-title">{ __( 'Address entered' ) }</span>
+					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
 					<AddressSummary
 						values={ values }
 						countriesData={ countriesData } />
 					<a className="address-step__suggestion-edit" onClick={ editAddress } >
-						{ __( 'Edit address' ) }
+						{ translate( 'Edit address' ) }
 					</a>
 				</RadioButton>
 				<RadioButton
 					checked={ selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( true ) } >
-					<span className="address-step__suggestion-title">{ __( 'Suggested address' ) }</span>
+					<span className="address-step__suggestion-title">{ translate( 'Suggested address' ) }</span>
 					<AddressSummary
 						values={ normalized }
 						originalValues={ values }
@@ -106,7 +107,7 @@ const AddressSuggestion = ( {
 				</RadioButton>
 			</div>
 			<StepConfirmationButton onClick={ confirmAddressSuggestion } >
-				{ __( 'Use selected address' ) }
+				{ translate( 'Use selected address' ) }
 			</StepConfirmationButton>
 		</div>
 	);
@@ -122,4 +123,4 @@ AddressSuggestion.propTypes = {
 	countriesData: PropTypes.object.isRequired,
 };
 
-export default AddressSuggestion;
+export default localize( AddressSuggestion );
