@@ -19,7 +19,8 @@ class PostUnavailable extends React.PureComponent {
 					' ' +
 					'Please request membership to display these posts in Reader.'
 			),
-			'default': this.props.translate( 'An error occurred loading this post.' ),
+			// eslint-disable-next-line quote-props
+			default: this.props.translate( 'An error occurred loading this post.' ),
 		};
 	}
 

@@ -8,7 +8,8 @@ const percentageRegex = percentageFactory( { exact: true } );
 const isPercentage = val => percentageRegex.test( val );
 
 const embedsConfig = {
-	'default': {
+	// eslint-disable-next-line quote-props
+	default: {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
 			let { aspectRatio, width, height } = embed;
 
