@@ -4,7 +4,6 @@
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,11 +14,9 @@ import Button from 'components/button';
 export class RemoveButton extends React.Component {
 	static propTypes = {
 		onRemove: PropTypes.func.isRequired,
-		translate: PropTypes.func,
-	};
 
-	static defaultProps = {
-		translate: identity,
+		// Inherited
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
