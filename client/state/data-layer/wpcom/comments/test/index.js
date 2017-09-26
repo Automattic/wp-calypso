@@ -70,9 +70,9 @@ describe( 'wpcom-api', () => {
 					comments: {
 						items: {
 							'2916284-1010': [
-								{ id: 1, date: '2017-05-25T21:41:25.841Z' },
-								{ id: 2, date: '2017-05-25T20:41:25.841Z' },
-								{ id: 3, date: '2017-05-25T19:41:25.841Z' },
+								{ id: 1, date: '2017-05-25T21:41:25.841Z', contiguous: true },
+								{ id: 2, date: '2017-05-25T20:41:25.841Z', contiguous: true },
+								{ id: 3, date: '2017-05-25T19:41:25.841Z', contiguous: true },
 							],
 						},
 					},
