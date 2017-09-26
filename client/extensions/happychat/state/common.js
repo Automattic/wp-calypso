@@ -7,6 +7,6 @@
 /**
  * Internal dependencies
  */
-import buildConnection from 'lib/happychat/connection';
+import buildConnection from 'extensions/happychat/lib/connection';
 
 export const connection = buildConnection();

@@ -166,7 +166,6 @@ export function createReduxStore( initialState = {} ) {
 		require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && require( './data-layer/extensions-middleware.js' ).default,
 		noticesMiddleware,
-		isBrowser && require( 'extensions/happychat/state/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'restore-last-location' ) && require( './routing/middleware.js' ).default,
