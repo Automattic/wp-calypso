@@ -34,15 +34,22 @@ export const receiveResponse = ( { dispatch }, { siteId } ) => {
 	dispatch( getAutomatedTransferStatus( siteId ) );
 };
 
-export const receiveError = ( { dispatch }, { siteId }, error ) => {
+const showErrorNotice = ( dispatch, error ) => {
+	if ( error.error === 'invalid_input' ) {
+		dispatch( errorNotice( translate( 'Not a valid zip file.' ) ) );
+		return;
+	}
 	if ( error.error ) {
 		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
 			args: { error: error.error }
 		} ) ) );
-	} else {
-		dispatch( errorNotice( translate( 'Problem uploading the plugin.' ) ) );
+		return;
 	}
+	dispatch( errorNotice( translate( 'Problem uploading the plugin.' ) ) );
+};
 
+export const receiveError = ( { dispatch }, { siteId }, error ) => {
+	showErrorNotice( dispatch, error );
 	dispatch( pluginUploadError( siteId, error ) );
 };
 
