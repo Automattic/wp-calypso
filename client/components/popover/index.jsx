@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
-import clickOutside from 'click-outside';
+import wrapWithClickOutside from 'react-click-outside';
 import { uniqueId } from 'lodash';
 
 /**
@@ -37,7 +38,7 @@ class Popover extends Component {
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.func } ),
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
@@ -77,7 +78,6 @@ class Popover extends Component {
 		// bound methods
 		this.setDOMBehavior = this.setDOMBehavior.bind( this );
 		this.setPosition = this.setPosition.bind( this );
-		this.onClickout = this.onClickout.bind( this );
 		this.onKeydown = this.onKeydown.bind( this );
 		this.onWindowChange = this.onWindowChange.bind( this );
 
@@ -135,7 +135,6 @@ class Popover extends Component {
 
 	componentWillUnmount() {
 		this.debug( 'unmounting .... ' );
-		this.unbindClickoutHandler();
 		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();
 		unbindWindowListeners();
@@ -180,31 +179,7 @@ class Popover extends Component {
 		this.close( true );
 	}
 
-	// --- cliclout side ---
-	bindClickoutHandler( el = this.domContainer ) {
-		if ( ! el ) {
-			this.debug( 'no element to bind clickout side ' );
-			return null;
-		}
-
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'clickout event already bound' );
-			return null;
-		}
-
-		this.debug( 'binding `clickout` event' );
-		this._clickoutHandlerReference = clickOutside( el, this.onClickout );
-	}
-
-	unbindClickoutHandler() {
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'unbinding `clickout` listener ...' );
-			this._clickoutHandlerReference();
-			this._clickoutHandlerReference = null;
-		}
-	}
-
-	onClickout( event ) {
+	handleClickOutside( event ) {
 		let shouldClose = (
 			this.domContext &&
 			this.domContext.contains &&
@@ -248,13 +223,10 @@ class Popover extends Component {
 
 	setDOMBehavior( domContainer ) {
 		if ( ! domContainer ) {
-			this.unbindClickoutHandler();
 			return null;
 		}
 
 		this.debug( 'setting DOM behavior' );
-
-		this.bindClickoutHandler( domContainer );
 
 		// store DOM element referencies
 		this.domContainer = domContainer;
@@ -398,8 +370,6 @@ class Popover extends Component {
 	}
 
 	hide() {
-		// unbind clickout-side event every time the component is hidden.
-		this.unbindClickoutHandler();
 		this.setState( { show: false } );
 		this.clearShowTimer();
 	}
@@ -461,4 +431,4 @@ class Popover extends Component {
 
 export default connect( ( state ) => ( {
 	isRtl: isRtlSelector( state ),
-} ) )( Popover );
+} ) )( wrapWithClickOutside( Popover ) );

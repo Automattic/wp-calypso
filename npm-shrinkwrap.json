@@ -1027,9 +1027,6 @@
       "version": "1.1.1",
       "dev": true
     },
-    "click-outside": {
-      "version": "2.0.1"
-    },
     "clipboard": {
       "version": "1.5.3"
     },
@@ -4429,9 +4426,6 @@
     },
     "node-abi": {
       "version": "2.1.1"
-    },
-    "node-contains": {
-      "version": "1.0.0"
     },
     "node-dir": {
       "version": "0.1.17"
