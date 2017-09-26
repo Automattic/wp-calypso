@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -15,93 +14,47 @@ import {
 import reducer, { creating, nextStep } from '../reducer';
 
 describe( 'reducer', () => {
-	const primarySiteId = 123456;
-	const secondarySiteId = 456789;
-
-	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'creating',
-			'nextStep',
-		] );
+	it( 'should initialize to an empty object', () => {
+		expect( reducer( undefined, { type: '@@UNKNOWN_ACTION' } ) ).to.eql( {} );
 	} );
 
 	describe( 'creating()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: true,
-		} );
+		it( 'should default to false', () => {
+			const state = creating( undefined, { type: '@@UNKNOWN_ACTION' } );
 
-		it( 'should default to an empty object', () => {
-			const state = creating( undefined, {} );
-
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.eql( false );
 		} );
 
 		it( 'should set state to true if pages are being created', () => {
-			const state = creating( undefined, {
-				type: WP_JOB_MANAGER_CREATE_PAGES,
-				siteId: primarySiteId,
-			} );
+			const state = creating( undefined, { type: WP_JOB_MANAGER_CREATE_PAGES } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-			} );
-		} );
-
-		it( 'should accumulate creating values', () => {
-			const state = creating( previousState, {
-				type: WP_JOB_MANAGER_CREATE_PAGES,
-				siteId: secondarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-				[ secondarySiteId ]: true,
-			} );
+			expect( state ).to.eql( true );
 		} );
 
 		it( 'should set state to false if not all pages were created', () => {
-			const state = creating( previousState, {
-				type: WP_JOB_MANAGER_CREATE_PAGES_ERROR,
-				siteId: primarySiteId,
-			} );
+			const state = creating( undefined, { type: WP_JOB_MANAGER_CREATE_PAGES_ERROR } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
+			expect( state ).to.eql( false );
 		} );
 
 		it( 'should set state to false if moving to the next step of the wizard', () => {
-			const state = creating( previousState, {
-				type: WP_JOB_MANAGER_WIZARD_NEXT_STEP,
-				siteId: primarySiteId,
-			} );
+			const state = creating( undefined, { type: WP_JOB_MANAGER_WIZARD_NEXT_STEP } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
+			expect( state ).to.eql( false );
 		} );
 	} );
 
 	describe( 'nextStep()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: true,
-		} );
+		it( 'should default to false', () => {
+			const state = nextStep( undefined, { type: '@@UNKNOWN_ACTION' } );
 
-		it( 'should default to an empty object', () => {
-			const state = nextStep( undefined, {} );
-
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.eql( false );
 		} );
 
 		it( 'should set state to true if moving to the next step of the wizard', () => {
-			const state = nextStep( previousState, {
-				type: WP_JOB_MANAGER_WIZARD_NEXT_STEP,
-				siteId: primarySiteId,
-			} );
+			const state = nextStep( undefined, { type: WP_JOB_MANAGER_WIZARD_NEXT_STEP } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-			} );
+			expect( state ).to.eql( true );
 		} );
 	} );
 } );
