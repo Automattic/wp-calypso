@@ -30,7 +30,7 @@ export function isLoading( url ) {
 }
 
 export function removeScriptCallback( url, callback ) {
-	debug( `Removing a known callback for a script from ${ url }` );
+	debug( `Removing a known callback for a script from "${ url }"` );
 
 	if ( ! callbacksForURLsInProgress.hasOwnProperty( url ) ) {
 		return;
@@ -51,7 +51,7 @@ export function removeScriptCallback( url, callback ) {
 }
 
 export function removeScriptCallbacks( url ) {
-	debug( `Removing all callbacks for a script from ${ url }` );
+	debug( `Removing all callbacks for a script from "${ url }"` );
 
 	delete callbacksForURLsInProgress[ url ];
 }
@@ -92,15 +92,17 @@ export function loadjQueryDependentScript(
 	__config = config,
 	__loadScript = loadScript,
 ) {
-	debug( `Loading a jQuery dependent script from ${ url }` );
+	debug( `Loading a jQuery dependent script from "${ url }"` );
 
 	// It is not possible to expose jQuery globally in Electron App: https://github.com/atom/electron/issues/254.
 	// It needs to be loaded using require and npm package.
 	if ( __config.isEnabled( 'desktop' ) ) {
+		debug( `Attaching jQuery from node_modules to window for "${ url }"` );
 		window.$ = window.jQuery = require( 'jquery' );
 	}
 
 	if ( window.jQuery ) {
+		debug( `jQuery found on window, skipping jQuery script loading for "${ url }"` );
 		__loadScript( url, callback );
 		return;
 	}
@@ -135,17 +137,19 @@ function _getCallbacks() {
 
 function _addScriptCallback( url, callback ) {
 	if ( isLoading( url ) ) {
-		debug( `Adding a callback for an existing script from ${ url }` );
+		debug( `Adding a callback for an existing script from "${ url }"` );
 		callbacksForURLsInProgress[ url ].push( callback );
 	} else {
-		debug( `Adding a callback for a new script from ${ url }` );
+		debug( `Adding a callback for a new script from "${ url }"` );
 		callbacksForURLsInProgress[ url ] = [ callback ];
 	}
 }
 
 function _executeCallbacks( url, callbackArguments = null ) {
 	if ( callbacksForURLsInProgress.hasOwnProperty( url ) ) {
-		debug( `Executing callbacks for ${ url }` );
+		const debugMessage = `Executing callbacks for "${ url }"`;
+		debug( callbackArguments === null ? debugMessage : debugMessage + ` with args "${ callbackArguments }"` );
+
 		callbacksForURLsInProgress[ url ].filter( cb => typeof cb === 'function' ).forEach( function( cb ) {
 			cb( callbackArguments );
 		} );
@@ -154,7 +158,7 @@ function _executeCallbacks( url, callbackArguments = null ) {
 }
 
 function _createScriptElement( url, onload = _handleRequestSuccess, onerror = _handleRequestError ) {
-	debug( `Creating script element for ${ url }` );
+	debug( `Creating script element for "${ url }"` );
 	const script = document.createElement( 'script' );
 	script.src = url;
 	script.type = 'text/javascript';
@@ -169,20 +173,20 @@ function _createScriptElement( url, onload = _handleRequestSuccess, onerror = _h
 }
 
 function _attachToHead( element ) {
-	debug( `Attaching ${ element } element to head` );
+	debug( 'Attaching element to head' );
 	document.getElementsByTagName( 'head' )[ 0 ].appendChild( element );
 }
 
 // NOTE: __executeCallbacks are used for testing only.
 function _handleRequestSuccess( url, __executeCallbacks = _executeCallbacks ) {
-	debug( `Handling successful request for ${ url }` );
+	debug( `Handling successful request for "${ url }"` );
 	__executeCallbacks( url );
 	this.onload = null;
 }
 
 // NOTE: __executeCallbacks are used for testing only.
 function _handleRequestError( url, __executeCallbacks = _executeCallbacks ) {
-	debug( `Handling failed request for ${ url }` );
+	debug( `Handling failed request for "${ url }"` );
 	__executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
 	this.onerror = null;
 }
