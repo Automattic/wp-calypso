@@ -6,14 +6,18 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCreatingPages, shouldGoToNextStep } from '../selectors';
+import {
+	getSetupState,
+	isCreatingPages,
+	shouldGoToNextStep,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isCreatingPages()', () => {
-		it( 'should return false if no state exists', () => {
+	describe( 'getSettingsState()', () => {
+		it( 'should return an empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -21,18 +25,38 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isCreating = isCreatingPages( state, primarySiteId );
+			const settingsState = getSetupState( state );
 
-			expect( isCreating ).to.be.false;
+			expect( settingsState ).to.deep.equal( {} );
 		} );
 
+		it( 'should return the setup state', () => {
+			const state = {
+				extensions: {
+					wpJobManager: {
+						setup: {
+							[ primarySiteId ]: {
+								creating: false,
+								nextStep: true
+							}
+						}
+					}
+				}
+			};
+			const settings = getSetupState( state );
+
+			expect( settings ).to.deep.equal( { [ primarySiteId ]: { creating: false, nextStep: true } } );
+		} );
+	} );
+
+	describe( 'isCreatingPages()', () => {
 		it( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								creating: true,
 							}
 						}
 					}
@@ -48,8 +72,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								creating: false,
 							}
 						}
 					}
@@ -65,8 +89,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								creating: true,
 							}
 						}
 					}
@@ -79,26 +103,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shouldGoToNextStep()', () => {
-		it( 'should return false if no state exists', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						setup: undefined,
-					}
-				}
-			};
-			const goToNextStep = shouldGoToNextStep( state, primarySiteId );
-
-			expect( goToNextStep ).to.be.false;
-		} );
-
 		it( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								nextStep: true,
 							}
 						}
 					}
@@ -114,8 +125,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								nextStep: false,
 							}
 						}
 					}
@@ -131,8 +142,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								nextStep: true,
 							}
 						}
 					}
