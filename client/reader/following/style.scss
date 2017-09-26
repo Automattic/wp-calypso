@@ -9,7 +9,7 @@
 }
 
 // Following intro
-.following__intro-white {
+.following__intro {
 	background: url( '/calypso/images/reader/reader-intro-background-white.svg' ) $white no-repeat 100% 20px;
 	border: 1px solid lighten( $gray, 30% );
 
@@ -32,7 +32,7 @@
 	}
 }
 
-.following__intro-white {
+.following__intro {
 	background-size: 450px;
 	min-height: 140px;
 
@@ -68,13 +68,13 @@
 	}
 }
 
-.following__intro-white .following__intro-header {
+.following__intro .following__intro-header {
 	align-items: stretch;
 	display: flex;
 	flex-direction: row;
 }
 
-.following__intro-white .following__intro-copy {
+.following__intro .following__intro-copy {
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
@@ -109,7 +109,7 @@
 }
 
 // Dismiss button
-.following__intro-white .following__intro-close {
+.following__intro .following__intro-close {
 	align-items: flex-start;
 	margin-top: 8px;
 	margin-right: 8px;
@@ -149,7 +149,7 @@
 	}
 }
 
-.following__intro-white .following__intro-close {
+.following__intro .following__intro-close {
 
 	.following__intro-close-icon {
 		fill: lighten( $gray, 10% );
