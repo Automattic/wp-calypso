@@ -1,12 +1,13 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -57,8 +58,8 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 };
 
 ReaderSidebarTeamsListItem.propTypes = {
-	team: React.PropTypes.object.isRequired,
-	path: React.PropTypes.string.isRequired,
+	team: PropTypes.object.isRequired,
+	path: PropTypes.string.isRequired,
 };
 
 export default localize( ReaderSidebarTeamsListItem );
