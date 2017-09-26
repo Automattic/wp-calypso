@@ -1,15 +1,21 @@
-.jpo__site-title-card {
+.jpo-site-title__card {
 	max-width: 320px;
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
 }
 
-.jpo__site-title-card input,
-.jpo__site-title-card textarea {
+.jpo-site-title__input {
 	margin-bottom: 2rem;
 }
 
-.jpo__site-title-submit {
+.jpo-site-title__submit {
 	width: 100%;
 }
+
+// JPO TODO: Remove the following form validation in favor of using form
+// validation styles and components already in Calypso
 
 textarea.jpo-textarea {
 	-webkit-appearance: none;

@@ -8,7 +8,7 @@ import get from 'lodash/get';
 
 /**
  * Internal dependencies
- */ 
+ */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
@@ -114,26 +114,26 @@ const JPOSiteTitleStep = React.createClass( {
 	renderStepContent() {
 		const { siteTitle, siteDescription } = this.getPayload();
 		return (
-			<Card className="jpo__site-title-card">
+			<Card className="jpo-site-title__card">
 				<FormFieldset>
 					<FormLabel>{ translate( 'Site Title' ) }</FormLabel>
-					<FormTextInput 
+					<FormTextInput
 						isError={ this.state.siteTitleInvalid }
-						className="jpo__site-title-input"
+						className="jpo-site-title__input"
 						name="siteTitle"
 						onChange={ this.handleChangeEvent }
 						value={ siteTitle }
 					/>
 					<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
 					<JPOTextarea
-						isError={ this.state.siteDescriptionInvalid } 
-						className="jpo__site-description-input" 
+						isError={ this.state.siteDescriptionInvalid }
+						className="jpo-site-title__input"
 						name="siteDescription"
 						onChange={ this.handleChangeEvent }
 						value={ siteDescription }
 					/>
 					<FormLabel className="jpo__validation-error">{ this.errorMessage }</FormLabel>
-					<Button primary onClick={ this.submitStep } className="jpo__site-title-submit">{ translate( 'Next Step' ) }</Button>
+					<Button primary onClick={ this.submitStep } className="jpo-site-title__submit">{ translate( 'Next Step' ) }</Button>
 				</FormFieldset>
 			</Card>
 		);
