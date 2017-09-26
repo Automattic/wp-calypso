@@ -80,6 +80,17 @@
 			margin-right: 8px;
 			white-space: nowrap;
 			margin-left: 12px;
+
+			&.is-placeholder {
+				@include placeholder();
+				pointer-events: none;
+			}
+		}
+
+		.order-fulfillment__button-group {
+			.button {
+				margin: 0;
+			}
 		}
 
 		& > .button:last-child {

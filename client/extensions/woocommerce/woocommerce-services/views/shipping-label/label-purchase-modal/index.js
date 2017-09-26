@@ -29,7 +29,11 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
-	const { translate } = props;
+	const { loaded, translate } = props;
+
+	if ( ! loaded ) {
+		return null;
+	}
 
 	const getPurchaseButtonLabel = () => {
 		if ( props.form.needsPrintConfirmation ) {
@@ -140,6 +144,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
+		loaded,
 		form: loaded && shippingLabel.form,
 		storeOptions,
 		showPurchaseDialog: shippingLabel.showPurchaseDialog,

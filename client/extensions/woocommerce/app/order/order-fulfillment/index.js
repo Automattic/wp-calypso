@@ -14,13 +14,23 @@ import { localize } from 'i18n-calypso';
  */
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
+import config from 'config';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
+import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded as areWcsLabelsLoaded } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+
+const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -37,6 +47,7 @@ class OrderFulfillment extends Component {
 		errorMessage: false,
 		shouldEmail: false,
 		showDialog: false,
+		showPopoverMenu: false,
 		trackingNumber: '',
 	}
 
@@ -49,6 +60,12 @@ class OrderFulfillment extends Component {
 			showDialog: ! this.state.showDialog,
 		} );
 	}
+
+	togglePopoverMenu = () => {
+		this.setState( {
+			showPopoverMenu: ! this.state.showPopoverMenu,
+		} );
+	};
 
 	updateTrackingNumber = ( event ) => {
 		this.setState( {
@@ -106,8 +123,61 @@ class OrderFulfillment extends Component {
 		}
 	}
 
+	renderFulfillmentAction() {
+		const { wcsLabelsLoaded, order, site, translate } = this.props;
+		const isShippable = this.isShippable( order );
+
+		if ( ! wcsEnabled && ! isShippable ) {
+			return null;
+		}
+
+		if ( ! wcsEnabled ) {
+			return (
+				<Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
+			);
+		}
+
+		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
+		const buttonClassName = classNames( {
+			'is-placeholder': ! wcsLabelsLoaded,
+		} );
+
+		if ( ! isShippable ) {
+			return (
+				<Button
+					primary={ wcsLabelsLoaded }
+					onClick={ onLabelPrint }
+					className={ buttonClassName }>
+					{ translate( 'Print label' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<div>
+				<ButtonGroup className="order-fulfillment__button-group">
+					<Button
+						primary={ wcsLabelsLoaded }
+						onClick={ onLabelPrint }
+						className={ buttonClassName }>
+						{ translate( 'Print label' ) }
+					</Button>
+					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
+						<Gridicon icon="ellipsis" />
+					</Button>
+				</ButtonGroup>
+				<PopoverMenu
+					isVisible={ this.state.showPopoverMenu }
+					onClose={ this.togglePopoverMenu }
+					context={ this.refs && this.refs.popoverMenuButton }>
+					<PopoverMenuItem onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</PopoverMenuItem>
+				</PopoverMenu>
+			</div>
+		);
+	}
+
 	render() {
-		const { order, translate } = this.props;
+		const { order, site, translate } = this.props;
 		const { errorMessage, showDialog, trackingNumber } = this.state;
 		const dialogClass = 'woocommerce order-fulfillment'; // eslint/css specificity hack
 		if ( ! order ) {
@@ -131,10 +201,7 @@ class OrderFulfillment extends Component {
 					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order-fulfillment__action">
-					{ ( this.isShippable( order ) )
-						? <Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
-						: null
-					}
+					{ this.renderFulfillmentAction() }
 				</div>
 
 				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass } buttons={ dialogButtons }>
@@ -158,12 +225,16 @@ class OrderFulfillment extends Component {
 						{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 					</form>
 				</Dialog>
+				{ wcsEnabled && <QueryLabels orderId={ order.id } /> }
+				{ wcsEnabled && <LabelPurchaseDialog orderId={ order.id } siteId={ site.ID } /> }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	undefined,
-	dispatch => bindActionCreators( { createNote, updateOrder }, dispatch )
+	( state, { order, site } ) => ( {
+		wcsLabelsLoaded: Boolean( areWcsLabelsLoaded( state, order.id, site.ID ) ),
+	} ),
+	dispatch => bindActionCreators( { createNote, updateOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );
