@@ -95,16 +95,6 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	skipThemesSelectionModal: {
-		datestamp: '20170904',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	jetpackBillingButtonTextI1: {
 		datestamp: '20170925',
 		variations: {
