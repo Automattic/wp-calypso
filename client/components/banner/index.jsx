@@ -109,10 +109,9 @@ class Banner extends Component {
 
 		if ( event ) {
 			this.props.recordTracksEvent(
-				'calypso_banner_cta_dismiss', {
+				'calypso_banner_dismiss', {
 					cta_name: event,
 					cta_feature: feature,
-					cta_size: 'regular',
 				}
 			);
 		}
