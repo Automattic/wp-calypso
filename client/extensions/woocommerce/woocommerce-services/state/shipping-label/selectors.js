@@ -45,6 +45,15 @@ export const shouldEmailDetails = ( state, orderId, siteId = getSelectedSiteId( 
 	return shippingLabel && shippingLabel.emailDetails;
 };
 
+export const getLabelsCount = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	if ( ! shippingLabel || ! shippingLabel.labels ) {
+		return 0;
+	}
+
+	return shippingLabel.labels.length;
+};
+
 export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.form;

@@ -28,7 +28,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded as areWcsLabelsLoaded } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { isLoaded as areLabelsLoaded, getLabelsCount } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
@@ -108,9 +108,13 @@ class OrderFulfillment extends Component {
 	}
 
 	getFulfillmentStatus = () => {
-		const { order, translate } = this.props;
+		const { order, labelsLoaded, labelsCount, translate } = this.props;
 		switch ( order.status ) {
 			case 'completed':
+				if ( labelsLoaded && labelsCount ) {
+					return translate( 'Order has been fulfilled and will be shipped via USPS' );
+				}
+
 				return translate( 'Order has been fulfilled' );
 			case 'cancelled':
 				return translate( 'Order has been cancelled' );
@@ -124,7 +128,7 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { wcsLabelsLoaded, order, site, translate } = this.props;
+		const { labelsLoaded, order, site, translate } = this.props;
 		const isShippable = this.isShippable( order );
 
 		if ( ! wcsEnabled && ! isShippable ) {
@@ -139,16 +143,15 @@ class OrderFulfillment extends Component {
 
 		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
 		const buttonClassName = classNames( {
-			'is-placeholder': ! wcsLabelsLoaded,
+			'is-placeholder': ! labelsLoaded,
 		} );
 
 		if ( ! isShippable ) {
 			return (
 				<Button
-					primary={ wcsLabelsLoaded }
 					onClick={ onLabelPrint }
 					className={ buttonClassName }>
-					{ translate( 'Print label' ) }
+					{ translate( 'Print new label' ) }
 				</Button>
 			);
 		}
@@ -157,7 +160,7 @@ class OrderFulfillment extends Component {
 			<div>
 				<ButtonGroup className="order-fulfillment__button-group">
 					<Button
-						primary={ wcsLabelsLoaded }
+						primary={ labelsLoaded }
 						onClick={ onLabelPrint }
 						className={ buttonClassName }>
 						{ translate( 'Print label' ) }
@@ -234,7 +237,8 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	( state, { order, site } ) => ( {
-		wcsLabelsLoaded: Boolean( areWcsLabelsLoaded( state, order.id, site.ID ) ),
+		labelsLoaded: wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) ),
+		labelsCount: wcsEnabled ? getLabelsCount( state, order.id, site.ID ) : 0,
 	} ),
 	dispatch => bindActionCreators( { createNote, updateOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );
