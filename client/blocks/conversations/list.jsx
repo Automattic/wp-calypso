@@ -160,10 +160,7 @@ export class ConversationCommentList extends React.Component {
 			Array( commentIds.length ),
 			POST_COMMENT_DISPLAY_TYPES.excerpt
 		);
-		const parentExpansions = fill(
-			Array( parentIds.length ),
-			POST_COMMENT_DISPLAY_TYPES.singleLine
-		);
+		const parentExpansions = fill( Array( parentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt );
 
 		const startingExpanded = zipObject(
 			commentIds.concat( parentIds ),
