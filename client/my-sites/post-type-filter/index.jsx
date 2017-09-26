@@ -41,6 +41,10 @@ const PostTypeFilter = React.createClass( {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
+			// * Always add 'publish' and 'draft' tabs
+			// * Add all tabs in all-sites mode
+			// * Add all tabs in JP mode, for CPTs
+			// * In all other cases, add status tabs only if there's at least one post/CPT with that status
 			if ( siteId && ! ( jetpack && query.type !== 'post' ) && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
 				return memo;
 			}
