@@ -43,6 +43,7 @@
 		"comments/management": true,
 		"comments/management/all-list": false,
 		"comments/management/edit": true,
+		"comments/management/sorting": true,
 		"manage/comments/bulk-actions": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
