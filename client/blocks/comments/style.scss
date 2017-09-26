@@ -330,10 +330,6 @@
 	}
 }
 
-.comments__comment-content-wrapper.is-excerpt ~ .comments__comment-actions {
-	margin-top: -6px;
-}
-
 .comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
 	margin-bottom: 0;
 }
@@ -415,6 +411,7 @@ a.comments__comment-username {
 	color: $gray;
 	font-size: 14px;
 	list-style: none;
+	margin-top: -6px;
 
 	button {
 		display: inline-block;
