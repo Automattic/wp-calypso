@@ -20,6 +20,7 @@ function doesNotNeedSandbox( iframe ) {
 		'soundcloud.com',
 		'embed.ted.com',
 		'player.twitch.tv',
+		'fivethirtyeight.com',
 	];
 
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
