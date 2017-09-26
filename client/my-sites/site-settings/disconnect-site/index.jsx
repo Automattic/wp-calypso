@@ -9,9 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CenteredCard from 'my-sites/site-settings/centered-card';
 import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
 import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
@@ -25,16 +24,17 @@ class DisconnectSite extends Component {
 		if ( ! site ) {
 			return <Placeholder />;
 		}
+
+		const header = translate( 'Disconnect Site' );
+		const subheader = translate(
+			'Tell us why you want to disconnect your site from WordPress.com.'
+		);
 		return (
 			<Main className="disconnect-site site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
-				<FormattedHeader
-					headerText={ translate( 'Disconnect Site' ) }
-					subHeaderText={ translate(
-						'Tell us why you want to disconnect your site from WordPress.com.'
-					) }
-				/>
-				<Card className="disconnect-site__card"> </Card>
+				<CenteredCard header={ header } subheader={ subheader }>
+					{' '}
+				</CenteredCard>
 				<SkipSurvey />
 			</Main>
 		);
