@@ -1,0 +1,43 @@
+.product-search {
+	position: relative;
+}
+
+.product-search__results {
+	position: absolute;
+	top: 52px;
+	width: 100%;
+	z-index: 1;
+}
+
+.product-search__item {
+	display: flex;
+}
+
+.product-search__image {
+	flex: 0 0 40px;
+	height: 40px;
+	width: 40px;
+	overflow: hidden;
+	position: relative;
+	margin-right: 16px;
+
+	img {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		height: 100%;
+		width: auto;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+}
+
+.product-search__label {
+	flex: 1;
+
+	.product-search__sku {
+		color: $gray-text-min;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+}

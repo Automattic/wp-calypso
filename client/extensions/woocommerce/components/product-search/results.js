@@ -16,6 +16,7 @@ import {
 	areProductSearchResultsLoading,
 } from 'woocommerce/state/sites/products/selectors';
 import { getProductSearchResults } from 'woocommerce/state/ui/products/selectors';
+import ProductItem from './item';
 
 class ProductSearchResults extends Component {
 	static propTypes = {
@@ -24,17 +25,19 @@ class ProductSearchResults extends Component {
 
 	render() {
 		const { isLoaded, isLoading, products, search, translate } = this.props;
-		let results;
-		if ( ! isLoaded && ! search ) {
-			results = <p>{ translate( 'Please enter a search term.' ) }</p>;
-		} else if ( isLoading ) {
-			results = <p>{ translate( 'Searching…' ) }</p>;
-		} else if ( ! products.length ) {
-			results = <p>{ translate( 'No results for %(search)s', { args: { search } } ) }</p>;
-		} else {
-			results = <ul>{ products.map( p => <li key={ p.id }>{ p.name }</li> ) }</ul>;
+		if ( ( ! isLoaded && ! search ) || isLoading ) {
+			return null;
 		}
-		return <Card>{ results }</Card>;
+
+		return (
+			<div className="product-search__results">
+				{ products.length ? (
+					products.map( p => <ProductItem key={ p.id } product={ p } /> )
+				) : (
+					<Card>{ translate( 'No results for %(search)s', { args: { search } } ) }</Card>
+				) }
+			</div>
+		);
 	}
 }
 export default connect( ( state, props ) => {
