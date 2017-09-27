@@ -259,24 +259,13 @@
 
 .label-purchase-modal__body {
 	display: flex;
-	flex-wrap: wrap;
-	flex-grow: 1;
-	overflow-y: auto;
-	height: 100%;
-
-	@include breakpoint( ">660px" ) {
-		flex-wrap: nowrap;
-	}
 }
 
 .label-purchase-modal__main-section {
 	flex-basis: 100%;
-	padding: 8px 0;
 
 	@include breakpoint( ">660px" ) {
 		flex-basis: 60%;
-		overflow-y: auto;
-		padding: 16px 16px 8px 1px;
 	}
 
 	@include breakpoint( ">960px" ) {
