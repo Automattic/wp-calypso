@@ -8,57 +8,9 @@
 	z-index: z-index( 'root', '.reader-following-search' );
 }
 
-// Following intro blue
-.following__intro-blue {
-	background: url( '/calypso/images/reader/reader-intro-background-blue.svg' ) #04a9dd no-repeat 100% 20px;
-
-	.following__intro-copy {
-		color: $white;
-		text-shadow: 1px 1px 1px rgba( 0, 0, 0, 0.1 );
-		margin-left: 24px;
-
-		a {
-			color: #c9eaf5;
-			border-bottom: 1px solid #c9eaf5;
-
-			&:hover {
-				color: $white;
-				border-bottom: 1px solid $white;
-			}
-		}
-	}
-
-	.following__intro-character {
-		background: url( '/calypso/images/reader/reader-intro-character-light-blue.svg' ) no-repeat 8px bottom;
-	}
-}
-
-// Following intro light blue
-.following__intro-light-blue {
-	background: url( '/calypso/images/reader/reader-intro-background-light-blue.svg' ) #7fd3f1 no-repeat 100% 20px;
-
-	.following__intro-copy {
-		color: $blue-dark;
-
-		a {
-			color: 	$blue-wordpress;
-			border-bottom: 1px solid $blue-wordpress;
-
-			&:hover {
-				color: $blue-dark;
-				border-bottom: 1px solid $blue-dark;
-			}
-		}
-	}
-
-	.following__intro-character {
-		background: url( '/calypso/images/reader/reader-intro-character-dark-blue.svg' ) no-repeat 8px bottom;
-	}
-}
-
-// Following intro white
-.following__intro-white {
-	background: url( '/calypso/images/reader/reader-intro-background-white.svg' ) $white no-repeat 100% 20px;
+// Following intro
+.following__intro {
+	background: url( '/calypso/images/reader/reader-intro-background.svg' ) $white no-repeat 100% 20px;
 	border: 1px solid lighten( $gray, 30% );
 
 	.following__intro-copy {
@@ -76,13 +28,11 @@
 	}
 
 	.following__intro-character {
-		background: url( '/calypso/images/reader/reader-intro-character-light-blue.svg' ) no-repeat 8px bottom;
+		background: url( '/calypso/images/reader/reader-intro-character.svg' ) no-repeat 8px bottom;
 	}
 }
 
-.following__intro-blue,
-.following__intro-light-blue,
-.following__intro-white {
+.following__intro {
 	background-size: 450px;
 	min-height: 140px;
 
@@ -118,17 +68,13 @@
 	}
 }
 
-.following__intro-blue .following__intro-header,
-.following__intro-light-blue .following__intro-header,
-.following__intro-white .following__intro-header {
+.following__intro .following__intro-header {
 	align-items: stretch;
 	display: flex;
 	flex-direction: row;
 }
 
-.following__intro-blue .following__intro-copy,
-.following__intro-light-blue .following__intro-copy,
-.following__intro-white .following__intro-copy {
+.following__intro .following__intro-copy {
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
@@ -163,9 +109,7 @@
 }
 
 // Dismiss button
-.following__intro-blue .following__intro-close,
-.following__intro-light-blue .following__intro-close,
-.following__intro-white .following__intro-close {
+.following__intro .following__intro-close {
 	align-items: flex-start;
 	margin-top: 8px;
 	margin-right: 8px;
@@ -205,7 +149,7 @@
 	}
 }
 
-.following__intro-white .following__intro-close {
+.following__intro .following__intro-close {
 
 	.following__intro-close-icon {
 		fill: lighten( $gray, 10% );
