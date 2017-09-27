@@ -5,12 +5,16 @@ export const itemsSchema = {
 		// Site Id
 		'^\\d+$': {
 			type: 'object',
-			items: {
-				desc: { type: 'string' },
-				enabled: { type: 'boolean' },
-				key: { type: 'string' },
-				title: { type: 'string' },
-				url: { type: 'string' },
+			additionalProperties: false,
+			patternProperties: {
+				// Plugin ID
+				'^\\w+$': {
+					desc: { type: 'string' },
+					enabled: { type: 'boolean' },
+					key: { type: 'string' },
+					title: { type: 'string' },
+					url: { type: 'string' },
+				}
 			}
 		}
 	}
