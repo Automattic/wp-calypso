@@ -22,12 +22,12 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { getJetpackModule, isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
-	isBusiness,
-	isEnterprise,
+	// isBusiness,
+	// isEnterprise,
 	isJetpackBusiness
 } from 'lib/products-values';
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
+const hasBusinessPlan = overSome( isJetpackBusiness ); // isBusiness, isEnterprise, // uncomment for Atomic
 
 class Search extends Component {
 	static defaultProps = {
