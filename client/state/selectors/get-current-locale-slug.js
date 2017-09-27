@@ -1,4 +1,9 @@
 /**
+ * Eternal dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
@@ -8,6 +13,8 @@ import createSelector from 'lib/create-selector';
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
-export const getCurrentLocaleSlug = createSelector(
-	state => state.ui.language.localeSlug
+const getCurrentLocaleSlug = createSelector(
+	state => get( state, 'ui.language.localeSlug', 'en' )
 );
+
+export default getCurrentLocaleSlug;

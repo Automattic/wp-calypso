@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getLanguage } from 'lib/i18n-utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 /**
  * Returns whether the current uses right-to-left directionality.
@@ -15,7 +11,7 @@ import { getLanguage } from 'lib/i18n-utils';
  * @return {?Boolean}            Current user is rtl
  */
 export default function isRtl( state ) {
-	const localeSlug = get( state, 'ui.language.localeSlug', 'en' );
+	const localeSlug = getCurrentLocaleSlug( state );
 
 	return Boolean( getLanguage( localeSlug ).rtl );
 }
