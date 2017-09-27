@@ -23,8 +23,6 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -47,7 +45,6 @@ class OrderFulfillment extends Component {
 		errorMessage: false,
 		shouldEmail: false,
 		showDialog: false,
-		showPopoverMenu: false,
 		trackingNumber: '',
 	}
 
@@ -60,12 +57,6 @@ class OrderFulfillment extends Component {
 			showDialog: ! this.state.showDialog,
 		} );
 	}
-
-	togglePopoverMenu = () => {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
-	};
 
 	updateTrackingNumber = ( event ) => {
 		this.setState( {
@@ -157,25 +148,15 @@ class OrderFulfillment extends Component {
 		}
 
 		return (
-			<div>
-				<ButtonGroup className="order-fulfillment__button-group">
-					<Button
-						primary={ labelsLoaded }
-						onClick={ onLabelPrint }
-						className={ buttonClassName }>
-						{ translate( 'Print label' ) }
-					</Button>
-					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
-						<Gridicon icon="ellipsis" />
-					</Button>
-				</ButtonGroup>
-				<PopoverMenu
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.togglePopoverMenu }
-					context={ this.refs && this.refs.popoverMenuButton }>
-					<PopoverMenuItem onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</PopoverMenuItem>
-				</PopoverMenu>
-			</div>
+			<ButtonGroup className="order-fulfillment__button-group">
+				<Button
+					primary={ labelsLoaded }
+					onClick={ onLabelPrint }
+					className={ buttonClassName }>
+					{ translate( 'Print label' ) }
+				</Button>
+				<Button onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
+			</ButtonGroup>
 		);
 	}
 
