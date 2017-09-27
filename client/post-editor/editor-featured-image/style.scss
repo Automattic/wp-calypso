@@ -30,6 +30,11 @@
 	}
 }
 
+.editor-featured-image__inner-content {
+	position: relative;
+	display: inline-block;
+}
+
 .editor-featured-image__preview.is-transient::after {
 	content: '';
 	position: absolute;
@@ -49,8 +54,7 @@
 	display: block;
 }
 
-.editor-featured-image__preview .spinner,
-.editor-featured-image .editor-drawer-well__remove {
+.editor-featured-image__preview .spinner {
 	z-index: z-index( 'root', '.editor-featured-image .editor-drawer-well__remove' );
 }
 

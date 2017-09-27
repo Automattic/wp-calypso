@@ -9,8 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
-import * as stats from 'lib/posts/stats';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
@@ -37,15 +35,6 @@ class EditorDrawerFeaturedImage extends Component {
 	startSelecting = () => this.setState( { isSelecting: true } );
 	endSelecting = () => this.setState( { isSelecting: false } );
 
-	removeImage() {
-		PostActions.edit( {
-			featured_image: ''
-		} );
-
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	}
-
 	render() {
 		const { translate, site, post, isDrawerHidden } = this.props;
 
@@ -56,7 +45,6 @@ class EditorDrawerFeaturedImage extends Component {
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }
 					customDropZone={ <FeaturedImageDropZone /> }
-					onRemove={ this.removeImage }
 					isHidden={ isDrawerHidden }
 				>
 					<FeaturedImage
