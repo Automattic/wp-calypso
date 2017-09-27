@@ -21,7 +21,7 @@ export default class DevdocsSidebar extends React.PureComponent {
 			return path === itemPath;
 		}
 
-		return path.indexOf( itemPath ) >= 0;
+		return path.indexOf( itemPath ) === 0;
 	}
 
 	render() {
