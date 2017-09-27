@@ -2,7 +2,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,10 +14,10 @@ import Card from 'components/card';
 import Gridicon from 'gridicons';
 import SectionHeader from 'components/section-header';
 
-export default React.createClass( {
-	displayName: 'PluginsBrowserList',
+const DEFAULT_PLACEHOLDER_NUMBER = 6;
 
-	_DEFAULT_PLACEHOLDER_NUMBER: 6,
+class PluginsBrowserList extends Component {
+	static displayName = 'PluginsBrowserList';
 
 	renderPluginsViewList() {
 		let emptyCounter = 0;
@@ -47,16 +49,13 @@ export default React.createClass( {
 		}
 
 		return pluginsViewsList;
-	},
+	}
 
 	renderPlaceholdersViews() {
-		return Array.apply(
-			null,
-			Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER )
-		).map( ( item, i ) => {
-			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
-		} );
-	},
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, i => (
+			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
+		) );
+	}
 
 	renderViews() {
 		if ( this.props.plugins.length ) {
@@ -64,7 +63,7 @@ export default React.createClass( {
 		} else if ( this.props.showPlaceholders ) {
 			return this.renderPlaceholdersViews();
 		}
-	},
+	}
 
 	renderLink() {
 		if ( this.props.expandedListLink ) {
@@ -73,12 +72,12 @@ export default React.createClass( {
 					className="button is-link plugins-browser-list__select-all"
 					href={ this.props.expandedListLink + ( this.props.site || '' ) }
 				>
-					{ this.translate( 'See All' ) }
+					{ this.props.translate( 'See All' ) }
 					<Gridicon icon="chevron-right" size={ 18 } />
 				</a>
 			);
 		}
-	},
+	}
 
 	render() {
 		return (
@@ -87,5 +86,7 @@ export default React.createClass( {
 				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
+
+export default localize( PluginsBrowserList );
