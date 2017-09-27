@@ -1,31 +1,39 @@
 /**
+ * External dependencies
+ */
+import { trim } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import debugFactory from 'debug';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
-	WOOCOMMERCE_COUPONS_REQUEST_PAGE,
+	WOOCOMMERCE_COUPONS_REQUEST,
 } from 'woocommerce/state/action-types';
-import { couponsPageUpdated } from './actions';
+import { couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 
 export default {
-	[ WOOCOMMERCE_COUPONS_REQUEST_PAGE ]: [
-		dispatchRequest( requestCouponsPage, requestCouponsPageSuccess, apiError )
+	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
+		dispatchRequest( requestCoupons, requestCouponsSuccess, apiError )
 	]
 };
 
-export function requestCouponsPage( { dispatch }, action ) {
-	const { siteId, pageIndex, perPage } = action;
-	const path = `coupons?page=${ pageIndex }&per_page=${ perPage }`;
+export function requestCoupons( { dispatch }, action ) {
+	const { siteId, params } = action;
+	const paramString = Object.keys( params ).map(
+		( key ) => encodeURIComponent( trim( key ) ) + '=' + encodeURIComponent( trim( params[ key ] ) )
+	).join( '&' );
+	const path = `coupons?${ paramString }`;
 
 	dispatch( request( siteId, action ).getWithHeaders( path ) );
 }
 
-export function requestCouponsPageSuccess( { dispatch }, action, { data } ) {
-	const { siteId, pageIndex } = action;
+export function requestCouponsSuccess( { dispatch }, action, { data } ) {
+	const { siteId, params } = action;
 	const { body, headers } = data;
 	const totalPages = Number( headers[ 'X-WP-TotalPages' ] );
 	const totalCoupons = Number( headers[ 'X-WP-Total' ] );
@@ -37,7 +45,7 @@ export function requestCouponsPageSuccess( { dispatch }, action, { data } ) {
 		return;
 	}
 
-	dispatch( couponsPageUpdated( siteId, pageIndex, body, totalPages, totalCoupons ) );
+	dispatch( couponsUpdated( siteId, params, body, totalPages, totalCoupons ) );
 }
 
 function apiError( { dispatch }, action, error ) {
