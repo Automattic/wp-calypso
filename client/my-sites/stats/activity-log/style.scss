@@ -20,10 +20,6 @@
 			left: 41px;
 		}
 	}
-
-	@include breakpoint( "<660px" ) {
-		padding: 0 16px;
-	}
 }
 
 .activity-log__rewind-toggle {
