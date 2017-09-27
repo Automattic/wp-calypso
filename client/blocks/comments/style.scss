@@ -312,7 +312,6 @@
 
 // Post comments line-clamping
 .comments__comment-content-wrapper {
-	display: inline-block;
 	position: relative;
 
 	&.is-single-line,
@@ -329,14 +328,6 @@
 	&.is-excerpt .comments__comment-content {
 		overflow: hidden;
 	}
-}
-
-.comments__comment-content-wrapper.is-excerpt ~ .comments__comment-actions {
-	margin-top: -10px;
-}
-
-.comments__comment-content-wrapper.is-full ~ .comments__comment-actions {
-	margin-top: -5px;
 }
 
 .comments__comment-content-wrapper.is-excerpt .comments__comment-content p {
@@ -417,15 +408,17 @@ a.comments__comment-username {
 
 // Actions for Individual Comments
 .comments__comment-actions {
-	list-style: none;
 	color: $gray;
 	font-size: 14px;
+	list-style: none;
+	margin-top: -6px;
 
 	button {
 		display: inline-block;
 		color: $gray;
 		padding: 4px;
 		margin-right: 8px;
+		margin-top: 0;
 		cursor: pointer;
 		font-size: 14px;
 
