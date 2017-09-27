@@ -77,19 +77,21 @@ const PurchaseDialog = ( props ) => {
 
 	const buttons = [
 		{
-			isDisabled: ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ),
+			disabled: ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ),
 			onClick: getPurchaseButtonAction(),
 			isPrimary: true,
 			label: getPurchaseButtonLabel(),
+			action: 'purchase',
 		},
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
-		buttons.push( {
+		buttons.unshift( {
 			onClick: onClose,
 			label: translate( 'Cancel' ),
+			action: 'cancel',
 		} );
 	}
 
