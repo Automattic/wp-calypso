@@ -80,8 +80,12 @@ export function loadSectionCSS( context, next ) {
 		const cssUrl = isRTL( context.store.getState() ) ? section.cssUrls.rtl : section.cssUrls.ltr;
 
 		// TODO: handle adding styles in `state.documentHead.meta` instead (currently only supports setting all meta at once)
+		const currentLink = document.getElementById( 'section-css' );
+		if ( currentLink.getAttribute( 'href' ) === cssUrl ) {
+			return next();
+		}
+
 		loadCSS( cssUrl, ( err, newLink ) => {
-			const currentLink = document.getElementById( 'section-css' );
 			if ( currentLink ) {
 				currentLink.parentElement.removeChild( currentLink );
 			}
