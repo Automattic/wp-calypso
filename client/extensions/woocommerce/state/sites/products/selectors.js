@@ -15,26 +15,28 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
 
 /**
  * @param {Object} state Whole Redux state tree
- * @param {Number} [page] Page of products. If not provided, defaults to first page.
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the products list for a requested page has been successfully loaded from the server
  */
-export const areProductsLoaded = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isLoading', page ] );
+export const areProductsLoaded = ( state, params = { page: 1, per_page: 10 }, siteId = getSelectedSiteId( state ) ) => {
+	const key = JSON.stringify( params );
+	const isLoadingKey = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isLoading', key ] );
 	// Strict check because it could also be undefined.
-	return ( false === isLoading );
+	return ( false === isLoadingKey );
 };
 
 /**
  * @param {Object} state Whole Redux state tree
- * @param {Number} [page] Page of products. If not provided, defaults to first page.
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the products list for a request page is currently being retrieved from the server
  */
-export const areProductsLoading = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isLoading', page ] );
+export const areProductsLoading = ( state, params = { page: 1, per_page: 10 }, siteId = getSelectedSiteId( state ) ) => {
+	const key = JSON.stringify( params );
+	const isLoadingKey = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'isLoading', key ] );
 	// Strict check because it could also be undefined.
-	return ( true === isLoading );
+	return ( true === isLoadingKey );
 };
 
 /**
@@ -57,26 +59,28 @@ export const getTotalProducts = ( state, siteId = getSelectedSiteId( state ) ) =
 
 /**
  * @param {Object} state Whole Redux state tree
- * @param {Number} [page] Page of products. If not provided, defaults to first page.
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products search results for a requested page has been successfully loaded from the server
+ * @return {boolean} Whether the products search results have been successfully loaded from the server
  */
-export const areProductSearchResultsLoaded = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'isLoading', page ] );
+export const areProductSearchResultsLoaded = ( state, params = { page: 1, per_page: 10 }, siteId = getSelectedSiteId( state ) ) => {
+	const key = JSON.stringify( params );
+	const isLoadingKey = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'isLoading', key ] );
 	// Strict check because it could also be undefined.
-	return ( false === isLoading );
+	return ( false === isLoadingKey );
 };
 
 /**
  * @param {Object} state Whole Redux state tree
- * @param {Number} [page] Page of products. If not provided, defaults to first page.
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the product search results for a request page is currently being retrieved from the server
+ * @return {boolean} Whether the product search results are currently being retrieved from the server
  */
-export const areProductSearchResultsLoading = ( state, page = 1, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'isLoading', page ] );
+export const areProductSearchResultsLoading = ( state, params = { page: 1, per_page: 10 }, siteId = getSelectedSiteId( state ) ) => {
+	const key = JSON.stringify( params );
+	const isLoadingKey = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'isLoading', key ] );
 	// Strict check because it could also be undefined.
-	return ( true === isLoading );
+	return ( true === isLoadingKey );
 };
 
 /**

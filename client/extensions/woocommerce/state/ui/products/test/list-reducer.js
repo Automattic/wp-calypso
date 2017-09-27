@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST,
 				siteId: 123,
-				page: 3,
+				params: { page: 3 },
 			};
 			const newState = productsRequest( undefined, action );
 			expect( newState.requestedPage ).to.eql( 3 );
@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 2,
+				params: { page: 2 },
 				totalPages: 3,
 				totalProducts: 30,
 				products,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 2,
+				params: { page: 2 },
 				totalPages: 3,
 				totalProducts: 30,
 				products,

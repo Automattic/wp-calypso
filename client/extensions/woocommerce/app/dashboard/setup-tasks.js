@@ -63,7 +63,7 @@ class SetupTasks extends Component {
 			this.props.fetchSetupChoices( site.ID );
 
 			if ( ! areProductsLoaded ) {
-				this.props.fetchProducts( site.ID, 1 );
+				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
 	}
@@ -77,7 +77,7 @@ class SetupTasks extends Component {
 		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
 			if ( ! areProductsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
+				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
 	}
