@@ -9,6 +9,10 @@ const hotMiddleware = require( 'webpack-hot-middleware' );
 var utils = require( './utils' ),
 	webpackConfig = require( 'webpack.config' );
 
+const config = require( 'config' );
+
+const port = process.env.PORT || config( 'port' );
+
 function middleware( app ) {
 	var compiler = webpack( webpackConfig ),
 		callbacks = [],
@@ -42,7 +46,7 @@ function middleware( app ) {
 			process.nextTick( function() {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
-					console.info( chalk.cyan( '\nReady! You can load http://calypso.localhost:3000/ now. Have fun!' ) );
+					console.info( chalk.cyan( `\nReady! You can load http://calypso.localhost:${ port }/ now. Have fun!` ) );
 				} else {
 					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
 				}
