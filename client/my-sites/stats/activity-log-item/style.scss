@@ -47,6 +47,12 @@
 		}
 	}
 
+	.foldable-card__header {
+		@include breakpoint( "<480px" ) {
+			padding: 12px;
+		}
+	}
+
 	.foldable-card__main {
 		flex: 5 1;
 	}
