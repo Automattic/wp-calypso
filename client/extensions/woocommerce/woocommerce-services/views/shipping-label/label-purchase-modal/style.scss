@@ -41,11 +41,14 @@
 	.is-warning,
 	.is-success {
 		.gridicon {
-			margin-right: 6px;
 			margin-top: -2px;
+		}
 
-			&:last-child {
-				margin-right: 0;
+		span:last-child {
+			margin-left: 6px;
+
+			&:empty {
+				margin-left: 0;
 			}
 		}
 	}

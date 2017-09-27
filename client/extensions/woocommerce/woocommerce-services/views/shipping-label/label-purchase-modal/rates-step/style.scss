@@ -1,5 +1,7 @@
 .rates-step__package-container {
-	margin-bottom: 2em;
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .rates-step__package-container .form-server-error {
