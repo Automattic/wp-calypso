@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,11 +29,7 @@ import {
 	getSelectedOrAllSitesJetpackCanManage,
 	hasJetpackSites,
 } from 'state/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSitePlan,
 	isJetpackSite,
@@ -67,7 +64,7 @@ const PluginsBrowser = React.createClass( {
 
 		if ( this.props.search && this.props.searchTitle ) {
 			this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
-				search_query: this.props.search
+				search_query: this.props.search,
 			} );
 		}
 	},
@@ -121,7 +118,7 @@ const PluginsBrowser = React.createClass( {
 		fullLists.search = PluginsListStore.getSearchList( search );
 		return {
 			shortLists: shortLists,
-			fullLists: fullLists
+			fullLists: fullLists,
 		};
 	},
 
@@ -146,66 +143,86 @@ const PluginsBrowser = React.createClass( {
 	translateCategory( category ) {
 		switch ( category ) {
 			case 'new':
-				return this.props.translate( 'New', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'New', {
+					context: 'Category description for the plugin browser.',
+				} );
 			case 'popular':
-				return this.props.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Popular', {
+					context: 'Category description for the plugin browser.',
+				} );
 			case 'featured':
-				return this.props.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Featured', {
+					context: 'Category description for the plugin browser.',
+				} );
 		}
 	},
 
 	getFullListView( category ) {
-		const isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
+		const isFetching = this.state.fullLists[ category ]
+			? !! this.state.fullLists[ category ].fetching
+			: true;
 		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
-			return <PluginsBrowserList
-				plugins={ this.getPluginsFullList( category ) }
-				listName={ category }
-				title={ this.translateCategory( category ) }
-				site={ this.props.selectedSite }
-				showPlaceholders={ isFetching }
-				currentSites={ this.props.sites } />;
+			return (
+				<PluginsBrowserList
+					plugins={ this.getPluginsFullList( category ) }
+					listName={ category }
+					title={ this.translateCategory( category ) }
+					site={ this.props.selectedSite }
+					showPlaceholders={ isFetching }
+					currentSites={ this.props.sites }
+				/>
+			);
 		}
 	},
 
 	getSearchListView( searchTerm ) {
 		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			const searchTitle = this.props.searchTitle || this.props.translate( 'Results for: %(searchTerm)s', {
-				textOnly: true,
-				args: {
-					searchTerm
-				}
-			} );
-			return <PluginsBrowserList
-				plugins={ this.getPluginsFullList( 'search' ) }
-				listName={ searchTerm }
-				title={ searchTitle }
-				site={ this.props.siteSlug }
-				showPlaceholders={ isFetching }
-				currentSites={ this.props.sites } />;
+			const searchTitle =
+				this.props.searchTitle ||
+				this.props.translate( 'Results for: %(searchTerm)s', {
+					textOnly: true,
+					args: {
+						searchTerm,
+					},
+				} );
+			return (
+				<PluginsBrowserList
+					plugins={ this.getPluginsFullList( 'search' ) }
+					listName={ searchTerm }
+					title={ searchTitle }
+					site={ this.props.siteSlug }
+					showPlaceholders={ isFetching }
+					currentSites={ this.props.sites }
+				/>
+			);
 		}
 		return (
 			<NoResults
-				text={
-					this.props.translate( 'No plugins match your search for {{searchTerm/}}.', {
-						textOnly: true,
-						components: { searchTerm: <em>{ searchTerm }</em> }
-					} )
-				} />
+				text={ this.props.translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ searchTerm }</em> },
+				} ) }
+			/>
 		);
 	},
 
 	getPluginSingleListView( category ) {
 		const listLink = '/plugins/browse/' + category + '/';
-		return <PluginsBrowserList
-			plugins={ this.getPluginsShortList( category ) }
-			listName={ category }
-			title={ this.translateCategory( category ) }
-			site={ this.props.siteSlug }
-			expandedListLink={ this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false }
-			size={ this._SHORT_LIST_LENGTH }
-			showPlaceholders={ this.state.fullLists[ category ].fetching !== false }
-			currentSites={ this.props.sites } />;
+		return (
+			<PluginsBrowserList
+				plugins={ this.getPluginsShortList( category ) }
+				listName={ category }
+				title={ this.translateCategory( category ) }
+				site={ this.props.siteSlug }
+				expandedListLink={
+					this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false
+				}
+				size={ this._SHORT_LIST_LENGTH }
+				showPlaceholders={ this.state.fullLists[ category ].fetching !== false }
+				currentSites={ this.props.sites }
+			/>
+		);
 	},
 
 	getShortListsView() {
@@ -229,41 +246,45 @@ const PluginsBrowser = React.createClass( {
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
-				analyticsGroup="PluginsBrowser" />
-			);
+				analyticsGroup="PluginsBrowser"
+			/>
+		);
 	},
 
 	getNavigationBar() {
 		const site = this.props.siteSlug ? '/' + this.props.siteSlug : '';
-		return <SectionNav selectedText={ this.props.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
-			<NavTabs label="Category">
-				<NavItem
-					path={ '/plugins/browse' + site }
-					selected={ false }
-				>
-					{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/featured' + site }
-					selected={ this.props.path === ( '/plugins/browse/featured' + site ) }
-				>
-					{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/popular' + site }
-					selected={ this.props.path === ( '/plugins/browse/popular' + site ) }
-				>
-					{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/new' + site }
-					selected={ this.props.path === ( '/plugins/browse/new' + site ) }
-				>
-					{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
-				</NavItem>
-			</NavTabs>
-			{ this.getSearchBox() }
-		</SectionNav>;
+		return (
+			<SectionNav
+				selectedText={ this.props.translate( 'Category', {
+					context: 'Category of plugins to be filtered by',
+				} ) }
+			>
+				<NavTabs label="Category">
+					<NavItem path={ '/plugins/browse' + site } selected={ false }>
+						{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/featured' + site }
+						selected={ this.props.path === '/plugins/browse/featured' + site }
+					>
+						{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/popular' + site }
+						selected={ this.props.path === '/plugins/browse/popular' + site }
+					>
+						{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/new' + site }
+						selected={ this.props.path === '/plugins/browse/new' + site }
+					>
+						{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
+					</NavItem>
+				</NavTabs>
+				{ this.getSearchBox() }
+			</SectionNav>
+		);
 	},
 
 	handleSuggestedSearch( term ) {
@@ -288,11 +309,11 @@ const PluginsBrowser = React.createClass( {
 				} ) }
 			>
 				<NavTabs label="Suggested Searches">
-					{ suggestedSearches.map( term =>
+					{ suggestedSearches.map( term => (
 						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
 							{ term }
 						</NavItem>
-					) }
+					) ) }
 				</NavTabs>
 				{ this.getSearchBox() }
 			</SectionNav>
@@ -303,7 +324,7 @@ const PluginsBrowser = React.createClass( {
 		if ( this.props.isJetpackSite ) {
 			return true;
 		}
-		return ( ! this.props.selectedSiteId && this.props.hasJetpackSites );
+		return ! this.props.selectedSiteId && this.props.hasJetpackSites;
 	},
 
 	renderManageButton() {
@@ -365,11 +386,14 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getMockPluginItems() {
-		return <PluginsBrowserList
-			plugins={ this.getPluginsShortList( 'popular' ) }
-			listName={ 'Plugins' }
-			title={ this.props.translate( 'Popular Plugins' ) }
-			size={ 12 } />;
+		return (
+			<PluginsBrowserList
+				plugins={ this.getPluginsShortList( 'popular' ) }
+				listName={ 'Plugins' }
+				title={ this.props.translate( 'Popular Plugins' ) }
+				size={ 12 }
+			/>
+		);
 	},
 
 	renderDocumentHead() {
@@ -385,11 +409,12 @@ const PluginsBrowser = React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
+					title={ this.props.translate( "Looking to manage this site's plugins?" ) }
 					siteId={ selectedSiteId }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
-					featureExample={ this.getMockPluginItems() } />
+					featureExample={ this.getMockPluginItems() }
+				/>
 			</MainComponent>
 		);
 	},
@@ -416,7 +441,11 @@ const PluginsBrowser = React.createClass( {
 
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
-			return <NoPermissionsError title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
+			return (
+				<NoPermissionsError
+					title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) }
+				/>
+			);
 		}
 
 		if ( this.props.jetpackManageError ) {
@@ -433,7 +462,7 @@ const PluginsBrowser = React.createClass( {
 				{ this.getPluginBrowserContent() }
 			</MainComponent>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -443,9 +472,12 @@ export default connect(
 			sitePlan: getSitePlan( state, selectedSiteId ),
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 			hasJetpackSites: hasJetpackSites( state ),
-			jetpackManageError: !! isJetpackSite( state, selectedSiteId ) && ! canJetpackSiteManage( state, selectedSiteId ),
+			jetpackManageError:
+				!! isJetpackSite( state, selectedSiteId ) &&
+				! canJetpackSiteManage( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
-			noPermissionsError: !! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
+			noPermissionsError:
+				!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
