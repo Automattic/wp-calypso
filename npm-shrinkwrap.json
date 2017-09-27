@@ -2119,6 +2119,9 @@
     "find-cache-dir": {
       "version": "1.0.0"
     },
+    "find-package-json": {
+      "version": "1.0.0"
+    },
     "find-parent-dir": {
       "version": "0.3.0",
       "dev": true

@@ -3,6 +3,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
+const packageJsonFinder = require( 'find-package-json' );
 
 /**
  * Given a module name, returns the package version
@@ -11,7 +12,8 @@ const path = require( 'path' );
  * @return {String}    Module version
  */
 function getModuleVersion( id ) {
-	return require( path.dirname( require.resolve( id ) ).replace( /[\/\\]lib/, '' ) + '/package' ).version;
+	const packageJsonSearch = packageJsonFinder( path.dirname( require.resolve( id ) ) );
+	return packageJsonSearch.next().value.version;
 }
 
 /**
