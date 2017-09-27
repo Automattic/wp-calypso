@@ -1,18 +1,18 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
-import Card from 'components/card'
-import Gridicon from 'gridicons'
-import SectionHeader from 'components/section-header'
+import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import SectionHeader from 'components/section-header';
 
 export default React.createClass( {
-
 	displayName: 'PluginsBrowserList',
 
 	_DEFAULT_PLACEHOLDER_NUMBER: 6,
@@ -21,7 +21,14 @@ export default React.createClass( {
 		let emptyCounter = 0;
 
 		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
-			return <PluginBrowserItem site={ this.props.site } key={ plugin.slug + n } plugin={ plugin } currentSites={ this.props.currentSites } />;
+			return (
+				<PluginBrowserItem
+					site={ this.props.site }
+					key={ plugin.slug + n }
+					plugin={ plugin }
+					currentSites={ this.props.currentSites }
+				/>
+			);
 		} );
 
 		if ( this.props.showPlaceholders ) {
@@ -30,7 +37,9 @@ export default React.createClass( {
 
 		// We need to complete the list with empty elements to keep the grid drawn.
 		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
-			pluginsViewsList.push( <div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ }></div> );
+			pluginsViewsList.push(
+				<div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ } />
+			);
 		}
 
 		if ( this.props.size ) {
@@ -41,7 +50,10 @@ export default React.createClass( {
 	},
 
 	renderPlaceholdersViews() {
-		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( ( item, i ) => {
+		return Array.apply(
+			null,
+			Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER )
+		).map( ( item, i ) => {
 			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
 		} );
 	},
@@ -56,23 +68,24 @@ export default React.createClass( {
 
 	renderLink() {
 		if ( this.props.expandedListLink ) {
-			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
-				{ this.translate( 'See All' ) }
-				<Gridicon icon="chevron-right" size={ 18 } />
-			</a>;
+			return (
+				<a
+					className="button is-link plugins-browser-list__select-all"
+					href={ this.props.expandedListLink + ( this.props.site || '' ) }
+				>
+					{ this.translate( 'See All' ) }
+					<Gridicon icon="chevron-right" size={ 18 } />
+				</a>
+			);
 		}
 	},
 
 	render() {
 		return (
 			<div className="plugins-browser-list">
-				<SectionHeader label={ this.props.title }>
-					{ this.renderLink() }
-				</SectionHeader>
-				<Card className="plugins-browser-list__elements">
-					{ this.renderViews() }
-				</Card>
+				<SectionHeader label={ this.props.title }>{ this.renderLink() }</SectionHeader>
+				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
 			</div>
 		);
-	}
+	},
 } );
