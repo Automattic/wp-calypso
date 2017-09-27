@@ -23,6 +23,7 @@ import preview from './preview/reducer';
 import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
 import themeSetup from './theme-setup/reducers';
+import language from './language/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
 
@@ -107,6 +108,7 @@ const reducer = combineReducers( {
 	preview,
 	actionLog,
 	happychat,
+	language,
 	mediaModal,
 	themeSetup,
 	npsSurveyNotice,

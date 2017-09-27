@@ -17,14 +17,13 @@ import {
  * @param   {Object} localeSlug the locale slug to change the locale to
  * @returns {Function} Action thunk
  */
-export const setLocale = localeSlug => dispatch => (
-	switchLocale( localeSlug ).then( () => {
-		dispatch( {
-			type: LOCALE_SET,
-			localeSlug,
-		} );
-	} )
-);
+export const setLocale = localeSlug => {
+	switchLocale( localeSlug );
+	return {
+		type: LOCALE_SET,
+		localeSlug,
+	};
+};
 
 /**
  * Set the ui locale using a raw (jed) translation object

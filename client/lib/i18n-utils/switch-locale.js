@@ -27,9 +27,12 @@ export default function switchLocale( localeSlug ) {
 		return Promise.resolve();
 	}
 
-	return request.get( languageFileUrl( localeSlug ) )
-		.then(
-			response => i18n.setLocale( response.body ),
-			() => debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' )
-		);
+	// Note: i18n is a singleton that will be shared between all server requests!
+	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
+		if ( error ) {
+			debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' );
+			return;
+		}
+		i18n.setLocale( response.body );
+	} );
 }
