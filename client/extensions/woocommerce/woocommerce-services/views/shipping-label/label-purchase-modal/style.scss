@@ -11,7 +11,7 @@
 
 	@include breakpoint( ">660px" ) {
 		flex-basis: 40%;
-		padding: 8px 0px 8px 16px;
+		padding: 8px 0px 8px 24px;
 	}
 
 	@include breakpoint( ">960px" ) {
