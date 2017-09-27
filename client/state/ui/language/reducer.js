@@ -14,7 +14,7 @@ import {
  * @return {Object}        Updated state
  *
  */
-const localeSlug = ( state = 'en', action ) => {
+export const localeSlug = ( state = 'en', action ) => {
 	switch ( action.type ) {
 		case LOCALE_SET:
 			return action.localeSlug;
