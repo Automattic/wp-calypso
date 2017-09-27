@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
@@ -17,11 +22,11 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated fetching state
  */
-export const fetching = createReducer( {}, {
-	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_JOB_MANAGER_FETCH_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-} );
+export const fetching = ( state = false, { type } ) => get( {
+	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: true,
+	[ WP_JOB_MANAGER_FETCH_ERROR ]: false,
+	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: false,
+}, type, state );
 
 /**
  * Tracks the settings for a particular site.
@@ -30,11 +35,14 @@ export const fetching = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-export const items = createReducer( {}, {
-	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
-}, itemsSchema );
+export const items = ( state = {}, { data, type } ) =>
+	WP_JOB_MANAGER_UPDATE_SETTINGS === type
+		? data
+		: state;
 
-export default combineReducers( {
+items.schema = itemsSchema;
+
+export default keyedReducer( 'siteId', combineReducers( {
 	fetching,
 	items,
-} );
+} ) );

@@ -3,8 +3,8 @@
  */
 import { get } from 'lodash';
 
-function getSettingsState( state ) {
-	return state.extensions.wpJobManager.settings;
+export function getSettingsState( state ) {
+	return get( state, 'extensions.wpJobManager.settings', {} );
 }
 
 /**
@@ -15,7 +15,7 @@ function getSettingsState( state ) {
  * @return {Boolean} Whether settings are being fetched
  */
 export function isFetchingSettings( state, siteId ) {
-	return get( getSettingsState( state ), [ 'fetching', siteId ], false );
+	return get( getSettingsState( state ), [ siteId, 'fetching' ], false );
 }
 
 /**
@@ -26,5 +26,5 @@ export function isFetchingSettings( state, siteId ) {
  * @return {Object} Settings
  */
 export function getSettings( state, siteId ) {
-	return get( getSettingsState( state ), [ 'items', siteId ], {} );
+	return get( getSettingsState( state ), [ siteId, 'items' ], {} );
 }
