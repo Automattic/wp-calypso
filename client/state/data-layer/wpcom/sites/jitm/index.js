@@ -24,6 +24,10 @@ const process = {
 	lastSite: null,
 };
 
+const unescape = ( str ) => {
+	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
+};
+
 /**
  * Processes the current state and determines if it should fire a jitm request
  * @param {object} state The current state
@@ -117,7 +121,15 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
 export const receiveJITM = ( { dispatch }, { siteId, site_id }, data ) => {
 	dispatch( {
 		type: JITM_SET,
-		jitms: data,
+		jitms: data.map( ( jitm ) => {
+			return Object.assign( {}, jitm, {
+				CTA: unescape( jitm.CTA.message ),
+				content: {
+					message: unescape( jitm.content.message ),
+					description: unescape( jitm.content.description ),
+				}
+			} );
+		} ),
 	} );
 };
 
@@ -132,18 +144,19 @@ export const failedJITM = ( { dispatch } ) => {
 	} );
 };
 
-/**
- * Some sugar for dispatching a request
- * @param {function} a The function to call
- * @return {function} The composed function
- */
-const requestIt = ( a ) => dispatchRequest(
-	a,
-	receiveJITM,
-	failedJITM
-);
-
 export default {
-	[ SECTION_SET ]: [ requestIt( handleRouteChange ) ],
-	[ SELECTED_SITE_SET ]: [ requestIt( handleSiteSelection ) ],
+	[ SECTION_SET ]: [
+		dispatchRequest(
+			handleRouteChange,
+			receiveJITM,
+			failedJITM
+		)
+	],
+	[ SELECTED_SITE_SET ]: [
+		dispatchRequest(
+			handleSiteSelection,
+			receiveJITM,
+			failedJITM
+		)
+	],
 };
