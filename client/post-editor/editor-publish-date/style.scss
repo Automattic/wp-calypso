@@ -65,6 +65,13 @@
 	.editor-publish-date.is-open &::after {
 		transform: rotate( 180deg );
 	}
+
+	&.is-scheduled {
+		.editor-publish-date__header-icon,
+		.editor-publish-date__header-description {
+			color: $orange-jazzy;
+		}
+	}
 }
 
 .editor-publish-date__header-wrapper {
@@ -123,4 +130,10 @@
 	position: static;
 	border-top: 1px solid lighten( $gray, 20% );
 	padding: 0 10px;
+
+	&.is-scheduled {
+		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
+			background-color: $orange-jazzy;
+		}
+	}
 }
