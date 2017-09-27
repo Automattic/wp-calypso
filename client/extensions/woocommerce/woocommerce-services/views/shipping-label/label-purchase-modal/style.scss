@@ -43,6 +43,10 @@
 		.gridicon {
 			margin-right: 6px;
 			margin-top: -2px;
+
+			&:last-child {
+				margin-right: 0;
+			}
 		}
 	}
 
@@ -244,6 +248,7 @@
 		> span:first-child {
 			display: flex;
 			align-items: center;
+			justify-content: flex-end;
 		}
 	}
 
@@ -272,6 +277,7 @@
 			> span:first-child {
 				display: flex;
 				align-items: center;
+				justify-content: flex-end;
 			}
 		}
 	}
