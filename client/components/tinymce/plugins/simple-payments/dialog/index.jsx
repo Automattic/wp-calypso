@@ -440,7 +440,7 @@ class SimplePaymentsDialog extends Component {
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"
-							title={ translate( 'Upgrade your plan!' ) }
+							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							message={ translate(
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
