@@ -69,8 +69,11 @@ describe( 'receiveActivityLog', () => {
 		expect( dispatch ).to.have.been.called.once;
 		expect( dispatch.args[ 0 ][ 0 ] )
 			.to.be.an( 'object' )
-			.that.has.keys( [ 'type', 'siteId', 'data' ] )
-			.that.has.property( 'type', ACTIVITY_LOG_UPDATE );
+			.that.has.keys( [ 'data', 'found', 'query', 'siteId', 'type' ] )
+			.that.includes( {
+				found: 1,
+				type: ACTIVITY_LOG_UPDATE,
+			} );
 	} );
 } );
 
