@@ -49,7 +49,7 @@
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( ">480px" ) {
 		margin: 0 -24px;
 		padding: 24px;
 	}
