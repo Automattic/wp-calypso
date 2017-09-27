@@ -11,11 +11,14 @@ import { isEmpty, map, pickBy, reduce, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import ItemInfo from './item-info';
-import NumberField from 'woocommerce/woocommerce-services/components/number-field';
+import Button from 'components/button';
+import FieldError from 'woocommerce/woocommerce-services/components/field-error';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
-import Button from 'components/button';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import ItemInfo from './item-info';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import {
 	updatePackageWeight,
@@ -160,7 +163,7 @@ const PackageInfo = ( props ) => {
 		);
 	};
 
-	const onWeightChange = ( value ) => props.updatePackageWeight( orderId, siteId, packageId, value );
+	const onWeightChange = ( event ) => props.updatePackageWeight( orderId, siteId, packageId, event.target.value );
 
 	return (
 		<div className="packages-step__package">
@@ -174,14 +177,19 @@ const PackageInfo = ( props ) => {
 			</div>
 
 			<div>
-				<NumberField
-					id={ `weight_${ packageId }` }
-					className="packages-step__package-weight"
-					title={ translate( 'Total Weight' ) }
-					value={ pckg.weight }
-					updateValue={ onWeightChange }
-					error={ pckgErrors.weight } />
-				<span className="packages-step__package-weight-unit">{ weightUnit }</span>
+				<FormFieldset className="packages-step__package-weight">
+				<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
+					<FormTextInputWithAffixes
+						id={ `weight_${ packageId }` }
+						placeholder={ translate( 'Package weight' ) }
+						value={ pckg.weight || '' }
+						onChange={ onWeightChange }
+						isError={ Boolean( pckgErrors.weight ) }
+						type="number"
+						noWrap
+						suffix={ weightUnit } />
+					{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
+				</FormFieldset>
 			</div>
 		</div>
 	);
