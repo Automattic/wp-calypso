@@ -173,18 +173,20 @@ describe( 'MediaActions', function() {
 
 	describe( '#add()', function() {
 		it( 'should accept a single upload', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
+				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
 			} );
 		} );
 
 		it( 'should accept an array of uploads', function() {
-			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
 			} );
 		} );
 
@@ -197,10 +199,11 @@ describe( 'MediaActions', function() {
 		it( 'should accept a FileList of uploads', function() {
 			const uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			MediaActions.add( DUMMY_SITE_ID, uploads );
-			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+			return MediaActions.add( DUMMY_SITE_ID, uploads ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM'
+				} );
 			} );
 		} );
 
@@ -229,15 +232,15 @@ describe( 'MediaActions', function() {
 		} );
 
 		it( 'should immediately receive a transient object', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-
-			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM',
-				data: {
-					ID: 'media-1',
-					file: DUMMY_UPLOAD.name,
-					'transient': true
-				}
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+					type: 'CREATE_MEDIA_ITEM',
+					data: {
+						ID: 'media-1',
+						file: DUMMY_UPLOAD.name,
+						'transient': true
+					}
+				} );
 			} );
 		} );
 

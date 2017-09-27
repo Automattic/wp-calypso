@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 
 /**
  * External dependencies

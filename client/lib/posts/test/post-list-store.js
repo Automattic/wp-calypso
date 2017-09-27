@@ -154,7 +154,7 @@ describe( 'post-list-store', () => {
 		} );
 
 		// fairly certain this doesn't actually work. Thes store ID is not part of the cache key...
-		it.skip( 'should globally increment ids across all stores', () => {
+		it( 'should globally increment ids across all stores', () => {
 			const anotherPostListStore = postListStoreFactory( 'post-lists-nom' );
 			dispatchQueryPosts( defaultPostListStore.id, {
 				type: 'page',
