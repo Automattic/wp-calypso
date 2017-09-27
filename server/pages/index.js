@@ -2,8 +2,6 @@
  * External dependencies
  */
 import express from 'express';
-import fs from 'fs';
-import crypto from 'crypto';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
@@ -27,8 +25,6 @@ import { logSectionResponseTime } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
-const HASH_LENGTH = 10;
-const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
@@ -62,27 +58,6 @@ function getInitialServerState( serializedServerState ) {
 }
 
 /**
- * Generates a hash of a files contents to be used as a version parameter on asset requests.
- * @param {String} path Path to file we want to hash
- * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
- **/
-function hashFile( path ) {
-	const md5 = crypto.createHash( 'md5' );
-	let data, hash;
-
-	try {
-		data = fs.readFileSync( path );
-		md5.update( data );
-		hash = md5.digest( 'hex' );
-		hash = hash.slice( 0, HASH_LENGTH );
-	} catch ( e ) {
-		hash = new Date().getTime().toString();
-	}
-
-	return hash;
-}
-
-/**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
  * @param {Object} request A request to check for assets
@@ -91,17 +66,11 @@ function hashFile( path ) {
 function generateStaticUrls( request ) {
 	const urls = {};
 
-	function getUrl( filename, hash ) {
-		return URL_BASE_PATH + '/' + filename + '?' + qs.stringify( {
-			v: hash
-		} );
-	}
-
 	staticFiles.forEach( function( file ) {
 		if ( ! file.hash ) {
-			file.hash = hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
+			file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
 		}
-		urls[ file.path ] = getUrl( file.path, file.hash );
+		urls[ file.path ] = utils.getUrl( file.path, file.hash );
 	} );
 
 	const assets = request.app.get( 'assets' );
@@ -162,6 +131,8 @@ function getDefaultContext( request ) {
 	const bodyClasses = [];
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
+	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
+	let sectionCss, sectionCssRtl;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -178,8 +149,10 @@ function getDefaultContext( request ) {
 		bodyClasses.push( 'pride' );
 	}
 
-	if ( config( 'rtl' ) ) {
-		bodyClasses.push( 'rtl' );
+	if ( request.context.sectionCss ) {
+		const urls = utils.getCssUrls( request.context.sectionCss );
+		sectionCss = urls.ltr;
+		sectionCssRtl = urls.rtl;
 	}
 
 	const context = Object.assign( {}, request.context, {
@@ -189,7 +162,7 @@ function getDefaultContext( request ) {
 		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
-		isDebug: request.query.debug !== undefined ? true : false,
+		isDebug,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
@@ -199,6 +172,8 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
+		sectionCss,
+		sectionCssRtl,
 	} );
 
 	context.app = {
@@ -306,6 +281,10 @@ function setUpLoggedInRoute( req, res, next ) {
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
 			context.isRTL = data.isRTL ? true : false;
+
+			if ( context.isRTL ) {
+				context.bodyClasses.push( 'rtl' );
+			}
 
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
@@ -439,6 +418,10 @@ module.exports = function() {
 
 					if ( section.group && req.context ) {
 						req.context.sectionGroup = section.group;
+					}
+
+					if ( section.css && req.context ) {
+						req.context.sectionCss = section.css;
 					}
 
 					next();

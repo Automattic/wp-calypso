@@ -176,6 +176,8 @@ if ( calypsoEnv === 'desktop' ) {
 		'moment',
 		'page',
 		'react',
+		'create-react-class',
+		'prop-types',
 		'react-dom',
 		'react-redux',
 		'redux',

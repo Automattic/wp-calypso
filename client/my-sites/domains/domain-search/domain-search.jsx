@@ -25,7 +25,6 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { abtest } from 'lib/abtest';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -83,8 +82,7 @@ class DomainSearch extends Component {
 			cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } )
 		];
 
-		if ( suggestion.supports_privacy &&
-			( cartItems.isNextDomainFree( this.props.cart ) || abtest( 'privacyNoPopup' ) === 'nopopup' ) ) {
+		if ( suggestion.supports_privacy ) {
 			items.push( cartItems.domainPrivacyProtection( {
 				domain: suggestion.domain_name
 			} ) );

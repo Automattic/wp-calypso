@@ -41,7 +41,7 @@ class StoreSidebar extends Component {
 			this.props.fetchOrders( site.ID );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( site.ID, 1 );
+				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
 	}
@@ -57,7 +57,7 @@ class StoreSidebar extends Component {
 			this.props.fetchOrders( newSiteId );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
+				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
 	}
@@ -195,7 +195,7 @@ class StoreSidebar extends Component {
 		return (
 			<SidebarItem
 				className={ classes }
-				icon="star-outline"
+				icon="gift"
 				label={ translate( 'Promotions' ) }
 				link={ link }
 			>

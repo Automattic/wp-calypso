@@ -20,7 +20,8 @@ export default createReducer( null, {
 
 export function productsRequestSuccess( state, action ) {
 	const prevState = state || {};
-	const { page, products } = action;
+	const { params, products } = action;
+	const page = params.page || null;
 	const productIds = products.map( ( p ) => {
 		return p.id;
 	} );
@@ -33,7 +34,8 @@ export function productsRequestSuccess( state, action ) {
 
 export function productsRequest( state, action ) {
 	const prevState = state || {};
-	const { page } = action;
+	const { params } = action;
+	const page = params.page || null;
 	return { ...prevState,
 		requestedPage: page,
 	};

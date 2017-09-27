@@ -24,6 +24,7 @@ import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
+import Search from 'my-sites/site-settings/search';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -94,6 +95,11 @@ const SiteSettingsTraffic = ( {
 			<SeoSettingsMain />
 			<AnalyticsSettings />
 			<Sitemaps
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+			<Search
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }

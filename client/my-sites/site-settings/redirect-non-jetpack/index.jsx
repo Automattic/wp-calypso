@@ -5,8 +5,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
-import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -59,7 +57,8 @@ const redirectNonJetpack = redirectRoute => WrappedComponent => {
 			);
 		}
 	}
-	const connectComponent = connect(
+
+	return connect(
 		( state ) => {
 			const siteId = getSelectedSiteId( state );
 
@@ -69,11 +68,6 @@ const redirectNonJetpack = redirectRoute => WrappedComponent => {
 				siteSlug: getSelectedSiteSlug( state ),
 			};
 		}
-	);
-
-	return flowRight(
-		connectComponent,
-		localize
 	)( RedirectNonJetpack );
 };
 

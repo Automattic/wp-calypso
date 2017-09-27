@@ -1,26 +1,27 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
-		tag: React.PropTypes.object.isRequired,
-		onUnfollow: React.PropTypes.func.isRequired,
-		path: React.PropTypes.string.isRequired,
-		currentTag: React.PropTypes.string,
-		translate: React.PropTypes.func,
+		tag: PropTypes.object.isRequired,
+		onUnfollow: PropTypes.func.isRequired,
+		path: PropTypes.string.isRequired,
+		currentTag: PropTypes.string,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {

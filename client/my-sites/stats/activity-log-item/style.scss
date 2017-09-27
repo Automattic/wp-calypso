@@ -7,6 +7,10 @@
 	align-items: center;
 	position: relative;
 
+	@include breakpoint( "<480px" ) {
+		margin-left: 8px;
+	}
+
 	// TODO: Remove when foldable cards become "expandable"
 	.foldable-card__header.is-clickable {
 		cursor: default;
@@ -43,6 +47,12 @@
 		}
 	}
 
+	.foldable-card__header {
+		@include breakpoint( "<480px" ) {
+			padding: 12px;
+		}
+	}
+
 	.foldable-card__main {
 		flex: 5 1;
 	}
@@ -56,7 +66,7 @@
 	padding: 4px 0 6px;
 
 	@include breakpoint( "<480px" ) {
-		margin: -2px 14px 0 4px;
+		margin: -2px 8px 0 0px;
 	}
 }
 
@@ -65,6 +75,10 @@
 	color: $gray;
 	text-transform: uppercase;
 	white-space: nowrap;
+
+	@include breakpoint( "<480px" ) {
+		letter-spacing: -1px;
+	}
 }
 
 .activity-log-item__activity-icon {
@@ -114,17 +128,31 @@
 	margin-right: 32px;
 
 	@include breakpoint( "<960px" ) {
-		margin-bottom: 16px;
+		order: 2;
 	}
 
 	.gravatar,
 	.jetpack-logo {
 		float: left;
 		margin-right: 16px;
+
+		@include breakpoint( "<960px" ) {
+			width: 24px;
+			height: 24px;
+			margin-right: 8px;
+		}
 	}
 
 	.jetpack-logo path {
 		fill: $green-jetpack;
+	}
+}
+
+.activity-log-item__actor-name {
+	font-size: 14px;
+
+	@include breakpoint( "<960px" ) {
+		font-size: 13px;
 	}
 }
 
@@ -139,7 +167,7 @@
 	font-size: 14px;
 
 	@include breakpoint( "<960px" ) {
-		margin-left: 54px;
+		margin-bottom: 16px;
 	}
 }
 

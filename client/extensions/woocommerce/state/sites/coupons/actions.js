@@ -2,15 +2,18 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_COUPONS_REQUEST_PAGE,
-	WOOCOMMERCE_COUPONS_PAGE_UPDATED,
+	WOOCOMMERCE_COUPONS_REQUEST,
+	WOOCOMMERCE_COUPONS_UPDATED,
 } from 'woocommerce/state/action-types';
 
-export function fetchCouponsPage( siteId, pageIndex = 1, perPage = 10 ) {
-	return { type: WOOCOMMERCE_COUPONS_REQUEST_PAGE, siteId, pageIndex, perPage };
+export function fetchCoupons( siteId, params ) {
+	// Default per_page to 10.
+	params.per_page = params.per_page || 10;
+
+	return { type: WOOCOMMERCE_COUPONS_REQUEST, siteId, params };
 }
 
-export function couponsPageUpdated( siteId, pageIndex, coupons, totalPages, totalCoupons ) {
-	return { type: WOOCOMMERCE_COUPONS_PAGE_UPDATED, siteId, pageIndex, coupons, totalPages, totalCoupons };
+export function couponsUpdated( siteId, params, coupons, totalPages, totalCoupons ) {
+	return { type: WOOCOMMERCE_COUPONS_UPDATED, siteId, params, coupons, totalPages, totalCoupons };
 }
 

@@ -11,9 +11,9 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import config from 'config';
-import loadScript from 'lib/load-script';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
+import { loadScript } from 'lib/load-script';
 import { shouldSkipAds } from 'lib/analytics/utils';
 
 /**
@@ -198,34 +198,34 @@ function loadTrackingScripts( callback ) {
 
 	async.parallel( [
 		function( onComplete ) {
-			loadScript.loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
+			loadScript( quantcastAsynchronousTagURL(), onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
+			loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
+			loadScript( LINKED_IN_SCRIPT_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
+			loadScript( MEDIA_WALLAH_URL, onComplete );
 		},
 		function( onComplete ) {
-			loadScript.loadScript( QUORA_URL, onComplete );
+			loadScript( QUORA_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -616,7 +616,7 @@ function recordOrderInAtlas( cart, orderId ) {
 	const urlWithParams = ATLAS_TRACKING_SCRIPT_URL + ';m=' + TRACKING_IDS.atlasUniveralTagId +
 		';cache=' + Math.random() + '?' + urlParams;
 
-	loadScript.loadScript( urlWithParams );
+	loadScript( urlWithParams );
 }
 
 /**

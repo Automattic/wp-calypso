@@ -86,13 +86,17 @@ ProductsListSearchResults.propTypes = {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const query = site && getProductSearchQuery( state, site.ID );
 	const currentPage = site && getProductSearchCurrentPage( state, site.ID );
-	const currentPageLoaded = site && currentPage && areProductSearchResultsLoaded( state, currentPage, site.ID );
+	const currentPageLoaded = site && currentPage && areProductSearchResultsLoaded(
+		state, { page: currentPage, per_page: 10, search: query }, site.ID
+	);
 	const requestedPage = site && getProductSearchRequestedPage( state, site.ID );
-	const requestedPageLoaded = site && requestedPage && areProductSearchResultsLoaded( state, requestedPage, site.ID );
+	const requestedPageLoaded = site && requestedPage && areProductSearchResultsLoaded(
+		state, { page: requestedPage, per_page: 10, search: query }, site.ID
+	);
 	const totalProducts = site && getTotalProductSearchResults( state, site.ID );
 	const products = site && getProductSearchResults( state, site.ID );
-	const query = site && getProductSearchQuery( state, site.ID );
 
 	return {
 		site,

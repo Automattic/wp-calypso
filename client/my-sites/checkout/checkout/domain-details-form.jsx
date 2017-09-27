@@ -45,7 +45,6 @@ import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx'
 import wp from 'lib/wp';
 import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
@@ -78,7 +77,6 @@ export class DomainDetailsForm extends PureComponent {
 
 		this.state = {
 			form: null,
-			isDialogVisible: false,
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			steps,
@@ -281,13 +279,8 @@ export class DomainDetailsForm extends PureComponent {
 				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
-				isChecked={ this.allDomainRegistrationsHavePrivacy() }
 				onCheckboxChange={ this.handleCheckboxChange }
 				onRadioSelect={ this.handleRadioChange }
-				onDialogClose={ this.closeDialog }
-				onDialogOpen={ this.openDialog }
-				onDialogSelect={ this.handlePrivacyDialogSelect }
-				isDialogVisible={ this.state.isDialogVisible }
 				productsList={ this.props.productsList }
 			/>
 		);
@@ -417,20 +410,8 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	handleCheckboxChange = () => {
-		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
-	};
-
 	handleRadioChange = ( enable ) => {
 		this.setPrivacyProtectionSubscriptions( enable );
-	};
-
-	closeDialog = () => {
-		this.setState( { isDialogVisible: false } );
-	};
-
-	openDialog = () => {
-		this.setState( { isDialogVisible: true } );
 	};
 
 	focusFirstError() {
@@ -454,13 +435,6 @@ export class DomainDetailsForm extends PureComponent {
 				return this.switchToNextStep();
 			}
 
-			if ( this.allDomainRegistrationsSupportPrivacy() &&
-				! this.allDomainRegistrationsHavePrivacy() &&
-				abtest( 'privacyNoPopup' ) !== 'nopopup' ) {
-				this.openDialog();
-				return;
-			}
-
 			this.finish();
 		} );
 	};
@@ -482,21 +456,6 @@ export class DomainDetailsForm extends PureComponent {
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	}
-
-	handlePrivacyDialogSelect = ( options ) => {
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			this.recordSubmit();
-
-			this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
-
-			if ( hasErrors || options.skipFinish ) {
-				this.closeDialog();
-				return;
-			}
-
-			this.finish();
-		} );
-	};
 
 	finish() {
 		const allFieldValues = this.props.contactDetails;

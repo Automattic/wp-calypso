@@ -45,7 +45,7 @@ class Products extends Component {
 	componentDidMount() {
 		const { site } = this.props;
 		if ( site && site.ID ) {
-			this.props.fetchProducts( site.ID, 1 );
+			this.props.fetchProducts( site.ID, { page: 1 } );
 		}
 	}
 
@@ -55,7 +55,7 @@ class Products extends Component {
 		const oldSiteId = site && site.ID || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.setState( { query: '' } );
-			this.props.fetchProducts( newSiteId, 1 );
+			this.props.fetchProducts( newSiteId, { page: 1 } );
 		}
 	}
 
@@ -64,7 +64,7 @@ class Products extends Component {
 		if ( trim( this.state.query ) !== '' ) {
 			this.props.fetchProductSearchResults( site.ID, page );
 		} else {
-			this.props.fetchProducts( site.ID, page );
+			this.props.fetchProducts( site.ID, { page } );
 		}
 	}
 
@@ -121,9 +121,9 @@ class Products extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const productsLoaded = site && areProductsLoaded( state, 1, site.ID );
+	const productsLoaded = site && areProductsLoaded( state, { page: 1, per_page: 10 }, site.ID );
 	const totalProducts = site && getTotalProducts( state, site.ID );
-	const productsLoading = site && areProductsLoading( state, 1, site.ID );
+	const productsLoading = site && areProductsLoading( state, { page: 1, per_page: 10 }, site.ID );
 	return {
 		site,
 		productsLoaded,

@@ -23,6 +23,7 @@ import { statsdTimingUrl } from 'lib/analytics/statsd';
  */
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
+const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps,
@@ -219,12 +220,12 @@ const analytics = {
 
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
-		record: function( urlPath, pageTitle ) {
+		record: function( urlPath, pageTitle, params ) {
 			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
 			setTimeout( () => {
 				mostRecentUrlPath = urlPath;
-				analytics.tracks.recordPageView( urlPath );
+				analytics.tracks.recordPageView( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );
 			}, 0 );
@@ -282,11 +283,16 @@ const analytics = {
 			analytics.emit( 'record-event', eventName, eventProperties );
 		},
 
-		recordPageView: function( urlPath ) {
+		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
 				path: urlPath,
 				do_not_track: doNotTrack() ? 1 : 0
 			};
+
+			// add optional path params
+			if ( params ) {
+				eventProperties = assign( eventProperties, params );
+			}
 
 			// Record all `utm` marketing parameters as event properties on the page view event
 			// so we can analyze their performance with our analytics tools
@@ -443,7 +449,13 @@ const analytics = {
 	// HotJar tracking
 	hotjar: {
 		addHotJarScript: function() {
+			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+				hotjarDebug( 'Not loading HotJar script' );
+				return;
+			}
+
 			( function( h, o, t, j, a, r ) {
+				hotjarDebug( 'Loading HotJar script' );
 				h.hj = h.hj || function() {
 					( h.hj.q = h.hj.q || [] ).push( arguments );
 				};

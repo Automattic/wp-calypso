@@ -9,6 +9,7 @@ import { get } from 'lodash';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import { getActionLog } from 'state/ui/action-log/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -99,4 +100,16 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
+}
+
+/**
+ * Returns whether the Editor is the only route that exists in the history.
+ *
+ * @param  {Object}  state     Global state tree
+ * @return {Boolean}           Whether or not Editor is the only route in the history
+ */
+export function isEditorOnlyRouteInHistory( state ) {
+	const routeSets = getActionLog( state ).filter( entry => 'ROUTE_SET' === entry.type );
+
+	return 1 === routeSets.length && !! ( get( routeSets[ 0 ], 'path', '' ).match( /^\/(post|page|edit)\// ) );
 }

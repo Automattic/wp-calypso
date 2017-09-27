@@ -3,6 +3,7 @@
 
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-create/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
 	@import 'app/order/order-details/style';
@@ -185,9 +186,16 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 4px;
+				margin-top: 0;
 				background: transparent;
 				border: none;
+				padding-top: 11px;
+				padding-bottom: 11px;
+			}
+
+			.gridicons-chevron-left {
+				margin-left: 11px;
+				margin-right: 11px;
 			}
 		}
 	}

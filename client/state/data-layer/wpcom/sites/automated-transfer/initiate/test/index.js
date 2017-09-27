@@ -63,7 +63,7 @@ describe( 'receiveError', () => {
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: 'Upload problem: invalid_input.' }
+			notice: { text: 'Not a valid zip file.' }
 		} );
 	} );
 } );

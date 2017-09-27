@@ -1,0 +1,44 @@
+/** @format */
+.order-create__container {
+	padding-bottom: 0;
+
+	@include breakpoint( '>660px' ) {
+		margin-top: 58px;
+	}
+
+	.section-header__label {
+		font-size: 16px;
+	}
+}
+
+.order-create__card-customer {
+	.order-create__fieldset {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.order-create__field {
+		flex: 0 1 calc(50% - 10px);
+		max-width: calc(50% - 10px);
+		margin-bottom: 20px;
+	}
+	
+	.address-view__country {
+		margin-bottom: 0;
+	}
+	
+	.order-create__billing-details {
+		padding-top: 16px;
+	}
+	
+	.order-create__shipping-details {
+		padding-top: 8px
+	}
+	
+	.address-view__editable-city-state-postcode .form-select {
+		max-width: none;
+		width: 100%;
+	}
+}

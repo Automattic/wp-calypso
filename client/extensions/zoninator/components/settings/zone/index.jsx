@@ -15,12 +15,13 @@ import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
 import QueryFeed from '../../data/query-feed';
-import ZoneDetailsForm from '../../forms/zone-details-form';
 import ZoneContentForm from '../../forms/zone-content-form';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import ZoneNotFound from './zone-not-found';
 import { saveFeed } from '../../../state/feeds/actions';
 import { deleteZone, saveZone } from '../../../state/zones/actions';
 import { getFeed } from '../../../state/feeds/selectors';
-import { getZone } from '../../../state/zones/selectors';
+import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
@@ -28,6 +29,7 @@ class Zone extends Component {
 	static propTypes = {
 		deleteZone: PropTypes.func.isRequired,
 		feed: PropTypes.array,
+		isRequesting: PropTypes.bool,
 		saveFeed: PropTypes.func.isRequired,
 		saveZone: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
@@ -51,27 +53,23 @@ class Zone extends Component {
 
 	saveZoneFeed = ( form, data ) => this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
 
-	render() {
-		const { feed, siteId, siteSlug, translate, zone, zoneId } = this.props;
+	renderContent() {
+		const { feed, siteSlug, translate, zone } = this.props;
 		const { showDeleteDialog } = this.state;
+
+		if ( ! zone ) {
+			return <ZoneNotFound siteSlug={ siteSlug } />;
+		}
 
 		return (
 			<div>
-				{ siteId && zoneId && <QueryFeed siteId={ siteId } zoneId={ zoneId } /> }
-
-				<HeaderCake
-					backHref={ `${ settingsPath }/${ siteSlug }` }
-					actionButton={ <Button compact primary scary onClick={ this.showDeleteDialog }>{ translate( 'Delete' ) }</Button> } >
-					{ translate( 'Edit zone' ) }
-				</HeaderCake>
-
 				{
 					showDeleteDialog &&
 					<DeleteZoneDialog
 						zoneName={ zone.name }
 						onConfirm={ this.deleteZone }
 						onCancel={ this.hideDeleteDialog } />
-					}
+				}
 
 				<ZoneDetailsForm
 					label={ translate( 'Zone label' ) }
@@ -85,6 +83,30 @@ class Zone extends Component {
 			</div>
 		);
 	}
+
+	render() {
+		const { isRequesting, siteId, siteSlug, translate, zone, zoneId } = this.props;
+
+		const deleteButton = (
+			<Button compact primary scary onClick={ this.showDeleteDialog }>
+				{ translate( 'Delete' ) }
+			</Button>
+		);
+
+		return (
+			<div>
+				{ siteId && zoneId && <QueryFeed siteId={ siteId } zoneId={ zoneId } /> }
+
+				<HeaderCake
+					backHref={ `${ settingsPath }/${ siteSlug }` }
+					actionButton={ zone && deleteButton } >
+					{ translate( 'Edit zone' ) }
+				</HeaderCake>
+
+				{ ! isRequesting && this.renderContent() }
+			</div>
+		);
+	}
 }
 
 const connectComponent = connect(
@@ -92,6 +114,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			isRequesting: isRequestingZones( state, siteId ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			zone: getZone( state, siteId, zoneId ),

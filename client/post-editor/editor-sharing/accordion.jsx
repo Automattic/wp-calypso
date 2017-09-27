@@ -120,7 +120,8 @@ const EditorSharingAccordion = React.createClass( {
 				title={ this.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
-				className={ classes }>
+				className={ classes }
+				e2eTitle="sharing">
 				{ this.props.site && (
 					<QueryPublicizeConnections siteId={ this.props.site.ID } />
 				) }

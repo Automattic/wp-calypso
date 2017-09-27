@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,6 +39,7 @@ class ActivityLogItem extends Component {
 			activityIcon: PropTypes.string.isRequired,
 			activityId: PropTypes.string.isRequired,
 			activityName: PropTypes.string.isRequired,
+			activityStatus: PropTypes.string,
 			activityTitle: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
 
@@ -63,23 +65,13 @@ class ActivityLogItem extends Component {
 	};
 
 	handleClickRestore = () => {
-		const {
-			log,
-			requestRestore,
-		} = this.props;
+		const { log, requestRestore } = this.props;
 		requestRestore( log.activityTs, 'item' );
 	};
 
 	handleOpen = () => {
-		const {
-			log,
-			recordTracksEvent,
-		} = this.props;
-		const {
-			activityGroup,
-			activityName,
-			activityTs,
-		} = log;
+		const { log, recordTracksEvent } = this.props;
+		const { activityGroup, activityName, activityTs } = log;
 
 		debug( 'opened log', log );
 
@@ -95,16 +87,8 @@ class ActivityLogItem extends Component {
 	// Rich descriptions will be added after designs have been prepared for all types of activity.
 	//
 	renderDescription() {
-		const {
-			log,
-			moment,
-			translate,
-			applySiteOffset,
-		} = this.props;
-		const {
-			activityName,
-			activityTs,
-		} = log;
+		const { log, moment, translate, applySiteOffset } = this.props;
+		const { activityName, activityTs } = log;
 
 		return (
 			<div>
@@ -113,7 +97,7 @@ class ActivityLogItem extends Component {
 						args: {
 							date: applySiteOffset( moment.utc( activityTs ) ).format( 'LLL' ),
 							eventName: activityName,
-						}
+						},
 					} ) }
 				</div>
 				<div className="activity-log-item__id">ID { activityTs }</div>
@@ -127,26 +111,15 @@ class ActivityLogItem extends Component {
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor
-					{ ...pick( log, [
-						'actorAvatarUrl',
-						'actorName',
-						'actorRole',
-						'actorType',
-					] ) }
+					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
-				<div className="activity-log-item__title">
-					{ log.activityTitle }
-				</div>
+				<div className="activity-log-item__title">{ log.activityTitle }</div>
 			</div>
 		);
 	}
 
 	renderSummary() {
-		const {
-			disableRestore,
-			hideRestore,
-			translate,
-		} = this.props;
+		const { disableRestore, hideRestore, translate } = this.props;
 
 		if ( hideRestore ) {
 			return null;
@@ -154,10 +127,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu
-					onClick={ stopPropagation }
-					position="bottom right"
-				>
+				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
 					<PopoverMenuItem
 						disabled={ disableRestore }
 						icon="history"
@@ -171,11 +141,7 @@ class ActivityLogItem extends Component {
 	}
 
 	renderTime() {
-		const {
-			moment,
-			log,
-			applySiteOffset,
-		} = this.props;
+		const { moment, log, applySiteOffset } = this.props;
 
 		return (
 			<div className="activity-log-item__time">
@@ -185,18 +151,16 @@ class ActivityLogItem extends Component {
 	}
 
 	render() {
-		const {
-			className,
-			log,
-		} = this.props;
+		const { className, log } = this.props;
+		const { activityIcon, activityStatus } = log;
 
 		const classes = classNames( 'activity-log-item', className );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
-					<ActivityIcon { ...pick( log, [ 'activityName', 'activityIcon' ] ) } />
+					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"

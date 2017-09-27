@@ -14,9 +14,6 @@ import {
 	trackCustomFacebookConversionEvent,
 } from 'lib/analytics/ad-tracking';
 import {
-	doNotTrack,
-} from 'lib/analytics/utils';
-import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
@@ -24,7 +21,6 @@ import {
 	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
 import isTracking from 'state/selectors/is-tracking';
-import config from 'config';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
@@ -39,10 +35,7 @@ const pageViewServices = {
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
-	const trackUser = ! doNotTrack();
-	const hotJarEnabled = config( 'hotjar_enabled' );
-
-	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) && hotJarEnabled && trackUser ) {
+	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) ) {
 		analytics.hotjar.addHotJarScript();
 	}
 };

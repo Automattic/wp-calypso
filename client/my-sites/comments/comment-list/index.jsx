@@ -5,7 +5,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, noop, size, slice, uniq } from 'lodash';
+import {
+	each,
+	find,
+	get,
+	map,
+	noop,
+	orderBy,
+	size,
+	slice,
+	uniq
+} from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -40,8 +50,10 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
-
-const COMMENTS_PER_PAGE = 20;
+import {
+	COMMENTS_PER_PAGE,
+	NEWEST_FIRST,
+} from '../constants';
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -67,6 +79,7 @@ export class CommentList extends Component {
 		page: 1,
 		persistedComments: [],
 		selectedComments: [],
+		sortOrder: NEWEST_FIRST,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -96,16 +109,20 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		this.props.deleteComment( commentId, postId );
-	}
+	};
 
 	editComment = ( commentId, postId, commentData, undoCommentData, showNotice = true ) => {
 		this.props.editComment( commentId, postId, commentData );
 		if ( showNotice ) {
 			this.showEditNotice( commentId, postId, undoCommentData );
 		}
-	}
+	};
 
-	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
+	getComments = () => {
+		const comments = uniq( [ ...this.state.persistedComments, ...this.props.comments ] );
+
+		return orderBy( comments, null, this.state.sortOrder );
+	};
 
 	getCommentsPage = ( comments, page ) => {
 		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
@@ -124,7 +141,7 @@ export class CommentList extends Component {
 			trash: [ translate( 'No deleted comments.' ), defaultLine ],
 			all: [ translate( 'No comments yet.' ), defaultLine ],
 		}, status, [ '', '' ] );
-	}
+	};
 
 	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
@@ -171,7 +188,7 @@ export class CommentList extends Component {
 
 		this.props.successNotice( noticeMessage, noticeOptions );
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
-	}
+	};
 
 	setBulkStatus = status => () => {
 		const { status: listStatus } = this.props;
@@ -237,7 +254,14 @@ export class CommentList extends Component {
 		if ( alsoUnlikeComment ) {
 			this.props.unlikeComment( commentId, postId );
 		}
-	}
+	};
+
+	setSortOrder = order => () => {
+		this.setState( {
+			sortOrder: order,
+			page: 1
+		} );
+	};
 
 	showEditNotice = ( commentId, postId, undoCommentData ) => {
 		const { translate } = this.props;
@@ -326,11 +350,11 @@ export class CommentList extends Component {
 		};
 
 		this.props.successNotice( message, noticeOptions );
-	}
+	};
 
 	toggleBulkEdit = () => {
 		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
-	}
+	};
 
 	toggleCommentLike = comment => {
 		const { commentId, isLiked, postId, status } = comment;
@@ -349,7 +373,7 @@ export class CommentList extends Component {
 			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: true } );
 			this.updatePersistedComments( commentId );
 		}
-	}
+	};
 
 	toggleCommentSelected = comment => {
 		if ( this.isCommentSelected( comment.commentId ) ) {
@@ -364,7 +388,7 @@ export class CommentList extends Component {
 				selectedComments: selectedComments.concat( comment ),
 			} )
 		);
-	}
+	};
 
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
@@ -378,7 +402,7 @@ export class CommentList extends Component {
 				} )
 			);
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -426,6 +450,8 @@ export class CommentList extends Component {
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
+					setSortOrder={ this.setSortOrder }
+					sortOrder={ this.state.sortOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }

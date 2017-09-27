@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchCouponsPage } from 'woocommerce/state/sites/coupons/actions';
+import { fetchCoupons } from 'woocommerce/state/sites/coupons/actions';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -29,7 +29,7 @@ class Promotions extends Component {
 	componentDidMount() {
 		const { site } = this.props;
 		if ( site && site.ID ) {
-			this.props.fetchCouponsPage( site.ID, 1 );
+			this.props.fetchCoupons( site.ID, { page: 1 } );
 		}
 	}
 
@@ -39,7 +39,7 @@ class Promotions extends Component {
 		const oldSiteId = site && site.ID || null;
 		if ( oldSiteId !== newSiteId ) {
 			// TODO: Fill in with current page number.
-			this.props.fetchCouponsPage( newSiteId, 1 );
+			this.props.fetchCoupons( newSiteId, { page: 1 } );
 		}
 	}
 
@@ -71,7 +71,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchCouponsPage,
+			fetchCoupons,
 		},
 		dispatch
 	);
