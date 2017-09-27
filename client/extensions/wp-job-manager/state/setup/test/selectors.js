@@ -9,6 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getSetupState,
 	isCreatingPages,
 	isFetchingSetupStatus,
 	shouldGoToNextStep,
@@ -19,8 +20,8 @@ describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isCreatingPages()', () => {
-		test( 'should return false if no state exists', () => {
+	describe( 'getSettingsState()', () => {
+		test( 'should return an empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -28,18 +29,40 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isCreating = isCreatingPages( state, primarySiteId );
+			const settingsState = getSetupState( state );
 
-			expect( isCreating ).to.be.false;
+			expect( settingsState ).to.deep.equal( {} );
 		} );
 
+		test( 'should return the setup state', () => {
+			const state = {
+				extensions: {
+					wpJobManager: {
+						setup: {
+							[ primarySiteId ]: {
+								creating: false,
+								nextStep: true,
+							},
+						},
+					},
+				},
+			};
+			const settings = getSetupState( state );
+
+			expect( settings ).to.deep.equal( {
+				[ primarySiteId ]: { creating: false, nextStep: true },
+			} );
+		} );
+	} );
+
+	describe( 'isCreatingPages()', () => {
 		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								creating: true,
 							},
 						},
 					},
@@ -55,8 +78,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								creating: false,
 							},
 						},
 					},
@@ -72,8 +95,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							creating: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								creating: true,
 							},
 						},
 					},
@@ -104,8 +127,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							fetching: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								fetching: true,
 							},
 						},
 					},
@@ -121,8 +144,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							fetching: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								fetching: false,
 							},
 						},
 					},
@@ -138,8 +161,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							fetching: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								fetching: true,
 							},
 						},
 					},
@@ -152,26 +175,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shouldGoToNextStep()', () => {
-		test( 'should return false if no state exists', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						setup: undefined,
-					},
-				},
-			};
-			const goToNextStep = shouldGoToNextStep( state, primarySiteId );
-
-			expect( goToNextStep ).to.be.false;
-		} );
-
 		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								nextStep: true,
 							},
 						},
 					},
@@ -187,8 +197,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								nextStep: false,
 							},
 						},
 					},
@@ -204,8 +214,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							nextStep: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								nextStep: true,
 							},
 						},
 					},
@@ -236,8 +246,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							status: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								status: true,
 							},
 						},
 					},
@@ -253,8 +263,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							status: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								status: false,
 							},
 						},
 					},
@@ -270,8 +280,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: {
-							status: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								status: true,
 							},
 						},
 					},

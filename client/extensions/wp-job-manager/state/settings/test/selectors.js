@@ -8,14 +8,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSettings, isFetchingSettings } from '../selectors';
+import { getSettings, getSettingsState, isFetchingSettings } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
+	const primarySettings = { job_manager_hide_expired: true };
 
-	describe( 'isFetchingSettings()', () => {
-		test( 'should return false if no state exists', () => {
+	describe( 'getSettingsState()', () => {
+		test( 'should return an empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -23,18 +24,37 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isFetching = isFetchingSettings( state, primarySiteId );
+			const settingsState = getSettingsState( state );
 
-			expect( isFetching ).to.be.false;
+			expect( settingsState ).to.deep.equal( {} );
 		} );
 
+		test( 'should return the settings state', () => {
+			const state = {
+				extensions: {
+					wpJobManager: {
+						settings: {
+							[ primarySiteId ]: {
+								items: primarySettings,
+							},
+						},
+					},
+				},
+			};
+			const settings = getSettingsState( state );
+
+			expect( settings ).to.deep.equal( { [ primarySiteId ]: { items: primarySettings } } );
+		} );
+	} );
+
+	describe( 'isFetchingSettings()', () => {
 		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								fetching: true,
 							},
 						},
 					},
@@ -50,8 +70,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
-								[ primarySiteId ]: false,
+							[ primarySiteId ]: {
+								fetching: false,
 							},
 						},
 					},
@@ -67,8 +87,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
-								[ primarySiteId ]: true,
+							[ primarySiteId ]: {
+								fetching: true,
 							},
 						},
 					},
@@ -81,28 +101,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSettings()', () => {
-		const primarySettings = { job_manager_hide_expired: true };
-
-		test( 'should return an empty object if no state exists', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						settings: undefined,
-					},
-				},
-			};
-			const settings = getSettings( state, primarySiteId );
-
-			expect( settings ).to.deep.equal( {} );
-		} );
-
 		test( 'should return an empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							items: {
-								[ primarySiteId ]: primarySettings,
+							[ primarySiteId ]: {
+								items: primarySettings,
 							},
 						},
 					},
@@ -118,8 +123,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							items: {
-								[ primarySiteId ]: primarySettings,
+							[ primarySiteId ]: {
+								items: primarySettings,
 							},
 						},
 					},

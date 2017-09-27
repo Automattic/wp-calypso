@@ -6,7 +6,7 @@
 
 import { get } from 'lodash';
 
-function getSettingsState( state ) {
+export function getSettingsState( state ) {
 	return get( state, 'extensions.wpJobManager.settings', {} );
 }
 
