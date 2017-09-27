@@ -82,6 +82,11 @@ export default {
 		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 
+	'design-type-with-atomic-store': {
+		stepName: 'design-type-with-atomic-store',
+		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
+	},
+
 	site: {
 		stepName: 'site',
 		apiRequestFunction: stepActions.createSite,
