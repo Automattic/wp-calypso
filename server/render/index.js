@@ -18,6 +18,8 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
+import isRTL from 'state/selectors/is-rtl';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
@@ -118,6 +120,8 @@ export function serverRender( req, res ) {
 		}
 	}
 
+	context.isRTL = isRTL( context.store.getState() );
+	context.lang = getCurrentLocaleSlug( context.store.getState() );
 	context.head = { title, metas, links };
 	context.config = config.ssrConfig;
 

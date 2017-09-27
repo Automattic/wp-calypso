@@ -12,6 +12,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
 import { setLocale } from 'state/ui/language/actions';
+import isRTL from 'state/selectors/is-rtl';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -76,7 +77,7 @@ export function loadSectionCSS( context, next ) {
 	const section = getSection( context.store.getState() );
 
 	if ( section.cssUrls && typeof document !== 'undefined' ) {
-		const cssUrl = context.isRTL ? section.cssUrls.rtl : section.cssUrls.ltr;
+		const cssUrl = isRTL( context.store.getState() ) ? section.cssUrls.rtl : section.cssUrls.ltr;
 
 		// TODO: handle adding styles in `state.documentHead.meta` instead (currently only supports setting all meta at once)
 		loadCSS( cssUrl, ( err, newLink ) => {
