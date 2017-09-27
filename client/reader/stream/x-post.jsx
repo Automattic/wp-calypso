@@ -20,6 +20,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import Emojify from 'components/emojify';
 
 class CrossPost extends PureComponent {
 	static propTypes = {
@@ -188,11 +189,11 @@ class CrossPost extends PureComponent {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ xpostTitle }
+								<Emojify>{ xpostTitle }</Emojify>
 							</a>
 						</h1>
 					) }
-					{ this.getDescription( post.author.first_name ) }
+					<Emojify>{ this.getDescription( post.author.first_name ) }</Emojify>
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
