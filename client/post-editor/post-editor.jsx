@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
 import { v4 as uuid } from 'uuid';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -36,7 +37,12 @@ import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import {
+	getEditorPostId,
+	getEditorPath,
+	isConfirmationSidebarEnabled,
+	isEditorOnlyRouteInHistory,
+} from 'state/ui/editor/selectors';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -59,7 +65,7 @@ import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 import { removep } from 'lib/formatting';
@@ -1019,6 +1025,18 @@ export const PostEditor = React.createClass( {
 				message,
 			};
 
+			const referrer = get( window, 'document.referrer', '' );
+			const referrerDomain = parseUrl( referrer ).hostname;
+			const shouldReturnToSite = (
+				this.props.isEditorOnlyRouteInHistory &&
+				referrerDomain === this.props.selectedSiteDomain
+			);
+
+			if ( shouldReturnToSite ) {
+				window.location.href = this.getExternalUrl();
+				return;
+			}
+
 			window.scrollTo( 0, 0 );
 
 			if (
@@ -1331,6 +1349,7 @@ export default connect(
 			siteId,
 			postId,
 			selectedSite: getSelectedSite( state ),
+			selectedSiteDomain: getSiteDomain( state, siteId ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
@@ -1340,6 +1359,7 @@ export default connect(
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSitePreviewable: isSitePreviewable( state, siteId ),
+			isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 			isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
