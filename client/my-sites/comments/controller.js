@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,28 +11,24 @@ import { each, includes, startsWith } from 'lodash';
  * Internal dependencies
  */
 import CommentsManagement from './main';
-import config from 'config';
 import route from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
-const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
-if ( config.isEnabled( 'comments/management/all-list' ) ) {
-	VALID_STATUSES.push( 'all' );
-}
+const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 
 export const getRedirectUrl = ( status, siteFragment ) => {
 	const statusValidity = isValidStatus( status );
 	if ( status === siteFragment ) {
-		return `/comments/pending/${ siteFragment }`;
+		return `/comments/all/${ siteFragment }`;
 	}
 	if ( ! statusValidity && ! siteFragment ) {
-		return '/comments/pending';
+		return '/comments/all';
 	}
 	if ( ! statusValidity && siteFragment ) {
-		return `/comments/pending/${ siteFragment }`;
+		return `/comments/all/${ siteFragment }`;
 	}
 	if ( statusValidity && ! siteFragment ) {
 		return `/comments/${ status }`;

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +18,7 @@ export class QuerySiteCommentsTree extends Component {
 	};
 
 	static defaultProps = {
-		status: 'unapproved',
+		status: 'all',
 	};
 
 	componentDidMount() {
@@ -32,7 +34,11 @@ export class QuerySiteCommentsTree extends Component {
 	request() {
 		const { siteId, status } = this.props;
 		if ( siteId ) {
-			this.props.requestCommentsTreeForSite( { siteId, status } );
+			if ( 'all' !== status ) {
+				return this.props.requestCommentsTreeForSite( { siteId, status } );
+			}
+			this.props.requestCommentsTreeForSite( { siteId, status: 'approved' } );
+			this.props.requestCommentsTreeForSite( { siteId, status: 'unapproved' } );
 		}
 	}
 

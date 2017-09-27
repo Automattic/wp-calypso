@@ -17,7 +17,6 @@
 		"catch-js-errors": false,
 		"code-splitting": false,
 		"comments/management": true,
-		"comments/management/all-list": false,
 		"comments/management/sorting": false,
 		"manage/comments/bulk-actions": false,
 		"desktop": true,
