@@ -7,11 +7,12 @@
 .label-purchase-modal__sidebar {
 	flex-basis: 100%;
 	padding: 32px;
-	margin-bottom: 61px;
 
 	@include breakpoint( ">660px" ) {
 		flex-basis: 40%;
-		padding: 8px 0px 8px 24px;
+		padding: 24px;
+		margin-left: 24px;
+		background: $gray-light;
 	}
 
 	@include breakpoint( ">960px" ) {
