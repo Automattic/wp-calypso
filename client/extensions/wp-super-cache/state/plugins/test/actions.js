@@ -20,7 +20,7 @@ import {
 import {
 	receivePlugins,
 	requestPlugins,
-	saveSettings,
+	togglePlugin,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -30,7 +30,7 @@ describe( 'actions', () => {
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
-	const settings = {
+	const plugins = {
 		data: {
 			is_cache_enabled: true,
 			is_super_cache_enabled: true,
@@ -39,11 +39,11 @@ describe( 'actions', () => {
 
 	describe( '#receivePlugins()', () => {
 		it( 'should return an action object', () => {
-			const action = receivePlugins( siteId, settings.data );
+			const action = receivePlugins( siteId, plugins.data );
 
 			expect( action ).to.eql( {
 				type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
-				settings: settings.data,
+				plugins: plugins.data,
 				siteId,
 			} );
 		} );
@@ -54,10 +54,10 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/settings' } )
-				.reply( 200, settings )
+				.query( { path: '/wp-super-cache/v1/plugins' } )
+				.reply( 200, plugins )
 				.get( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/settings' } )
+				.query( { path: '/wp-super-cache/v1/plugins' } )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
@@ -76,7 +76,7 @@ describe( 'actions', () => {
 		it( 'should dispatch receive action when request completes', () => {
 			return requestPlugins( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
-					receivePlugins( siteId, settings.data )
+					receivePlugins( siteId, plugins.data )
 				);
 			} );
 		} );
@@ -101,11 +101,8 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'saveSettings()', () => {
-		const updatedSettings = {
-			is_cache_enabled: false,
-			is_super_cache_enabled: false,
-		};
+	describe( 'togglePlugin()', () => {
+		const plugin = 'no_adverts_for_friends';
 		const apiResponse = {
 			data: {
 				updated: true,
@@ -116,27 +113,28 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/settings' } )
+				.query( { path: '/wp-super-cache/v1/plugins' } )
 				.reply( 200, apiResponse )
 				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/settings' } )
+				.query( { path: '/wp-super-cache/v1/plugins' } )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
 				} );
 		} );
 
-		it( 'should dispatch save action when thunk triggered', () => {
-			saveSettings( siteId, updatedSettings )( spy );
+		it( 'should dispatch toggle action when thunk triggered', () => {
+			togglePlugin( siteId, plugin )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: WP_SUPER_CACHE_TOGGLE_PLUGIN,
 				siteId,
+				plugin,
 			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return togglePlugin( siteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePlugins( siteId, apiResponse.data )
 				);
@@ -144,19 +142,21 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch save success action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return togglePlugin( siteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
+					plugin,
 					siteId,
 				} );
 			} );
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return saveSettings( failedSiteId, updatedSettings )( spy ).then( () => {
+			return togglePlugin( failedSiteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 					siteId: failedSiteId,
+					plugin,
 					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
