@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { cloneElement, Children, Component, PropTypes } from 'react';
+import React, { cloneElement, Children, Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -13,6 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import Navigation from '../navigation';
 import QuerySettings from '../data/query-settings';
+import SetupRedirect from '../setup/setup-redirect';
 import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
@@ -42,6 +44,7 @@ class Settings extends Component {
 
 		return (
 			<Main className={ mainClassName }>
+				<SetupRedirect siteId={ siteId } />
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
 				<Navigation activeTab={ tab } />
