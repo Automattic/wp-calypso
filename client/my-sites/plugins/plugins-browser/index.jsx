@@ -5,6 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,16 +93,16 @@ const PluginsBrowser = React.createClass( {
 			return;
 		}
 
-		const fullList = this.state.fullLists[ category ];
+		const fullList = get( this.state.fullLists, category );
 
 		// If a request for this category is in progress, don't issue a new one
-		if ( fullList && fullList.fetching ) {
+		if ( get( fullList, 'fetching' ) ) {
 			return;
 		}
 
 		// If the first search request returned just a few results that fill less than one full page,
 		// don't try to fetch the next page. We already have all the results.
-		if ( category === 'search' && fullList && fullList.list && fullList.list.length < 24 ) {
+		if ( category === 'search' && get( fullList, 'list.length', Infinity ) < 24 ) {
 			return;
 		}
 
@@ -123,11 +124,11 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getPluginsShortList( listName ) {
-		return this.state.shortLists[ listName ] ? this.state.shortLists[ listName ].list : [];
+		return get( this.state.shortLists, [ listName, 'list' ], [] );
 	},
 
 	getPluginsFullList( listName ) {
-		return this.state.fullLists[ listName ] ? this.state.fullLists[ listName ].list : [];
+		return get( this.state.fullLists, [ listName, 'list' ], [] );
 	},
 
 	getPluginBrowserContent() {
@@ -158,13 +159,12 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getFullListView( category ) {
-		const isFetching = this.state.fullLists[ category ]
-			? !! this.state.fullLists[ category ].fetching
-			: true;
-		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
+		const isFetching = get( this.state.fullLists, [ category, 'fetching' ], true );
+		const list = this.getPluginsFullList( category );
+		if ( list.length > 0 || isFetching ) {
 			return (
 				<PluginsBrowserList
-					plugins={ this.getPluginsFullList( category ) }
+					plugins={ list }
 					listName={ category }
 					title={ this.translateCategory( category ) }
 					site={ this.props.selectedSite }
@@ -176,8 +176,9 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getSearchListView( searchTerm ) {
-		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
-		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
+		const isFetching = get( this.state.fullLists, 'search.fetching', true );
+		const list = this.getPluginsFullList( 'search' );
+		if ( list.length > 0 || isFetching ) {
 			const searchTitle =
 				this.props.searchTitle ||
 				this.props.translate( 'Results for: %(searchTerm)s', {
@@ -188,7 +189,7 @@ const PluginsBrowser = React.createClass( {
 				} );
 			return (
 				<PluginsBrowserList
-					plugins={ this.getPluginsFullList( 'search' ) }
+					plugins={ list }
 					listName={ searchTerm }
 					title={ searchTitle }
 					site={ this.props.siteSlug }
@@ -219,7 +220,7 @@ const PluginsBrowser = React.createClass( {
 					this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false
 				}
 				size={ this._SHORT_LIST_LENGTH }
-				showPlaceholders={ this.state.fullLists[ category ].fetching !== false }
+				showPlaceholders={ get( this.state.fullLists, [ category, 'fetching' ] ) !== false }
 				currentSites={ this.props.sites }
 			/>
 		);
