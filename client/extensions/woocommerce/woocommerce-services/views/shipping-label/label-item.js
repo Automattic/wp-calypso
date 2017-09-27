@@ -6,20 +6,22 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
-import { translate as __, moment } from 'i18n-calypso';
+import { translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import TrackingLink from './tracking-link';
 //import InfoTooltip from 'components/info-tooltip';
 import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
-const formatDate = ( date ) => {
-	return moment( date ).format( 'MMMM Do YYYY, h:mm a' );
-};
+// const formatDate = ( date ) => {
+// 	return moment( date ).format( 'MMMM Do YYYY, h:mm a' );
+// };
 
 class LabelItem extends Component {
 	renderRefundLink = ( label ) => {
@@ -27,64 +29,62 @@ class LabelItem extends Component {
 
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
-		if ( ( label.used_date && label.used_date < today.getTime() ) || ( label.created_date && label.created_date < thirtyDaysAgo ) ) {
+		if ( ( label.usedDate && label.usedDate < today.getTime() ) || ( label.createdDate && label.createdDate < thirtyDaysAgo ) ) {
 			return null;
 		}
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openRefundDialog( orderId, siteId, label.label_id );
+			this.props.openRefundDialog( orderId, siteId, label.labelId );
 		};
 
 		return (
-			<span>
+			<Button compact onClick={ openDialog } >
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >
-					<Gridicon icon="refund" size={ 12 } />{ __( 'Request refund' ) }
-				</a>
-			</span>
+				<Gridicon icon="refund" size={ 12 } />{ __( 'Request refund' ) }
+			</Button>
 		);
 	};
 
 	renderRefund = ( label ) => {
-		if ( ! label.refund ) {
+		if ( label.showDetails ) {
 			return this.renderRefundLink( label );
 		}
 
-		let text = '';
-		let className = '';
-		switch ( label.refund.status ) {
-			case 'pending':
-				if ( label.statusUpdated ) {
-					className = 'is-refund-pending';
-					text = __( 'Refund pending' );
-				} else {
-					className = 'is-refund-checking';
-					text = __( 'Checking refund status' );
-				}
-				break;
-			case 'complete':
-				className = 'is-refund-complete';
-				text = __( 'Refunded on %(date)s', { args: { date: formatDate( label.refund.refund_date ) } } );
-				break;
-			case 'rejected':
-				className = 'is-refund-rejected';
-				text = __( 'Refund rejected' );
-				break;
-			default:
-				return this.renderRefundLink( label );
-		}
+		// let text = '';
+		// let className = '';
+		// switch ( label.refund.status ) {
+		// 	case 'pending':
+		// 		if ( label.statusUpdated ) {
+		// 			className = 'is-refund-pending';
+		// 			text = __( 'Refund pending' );
+		// 		} else {
+		// 			className = 'is-refund-checking';
+		// 			text = __( 'Checking refund status' );
+		// 		}
+		// 		break;
+		// 	case 'complete':
+		// 		className = 'is-refund-complete';
+		// 		text = __( 'Refunded on %(date)s', { args: { date: formatDate( label.refund.refund_date ) } } );
+		// 		break;
+		// 	case 'rejected':
+		// 		className = 'is-refund-rejected';
+		// 		text = __( 'Refund rejected' );
+		// 		break;
+		// 	default:
+		// 		return this.renderRefundLink( label );
+		// }
 
-		return (
-			<span className={ className } ><Gridicon icon="time" size={ 12 } />{ text }</span>
-		);
+		// return (
+		// 	<span className={ className } ><Gridicon icon="time" size={ 12 } />{ text }</span>
+		// );
 	};
 
 	renderReprint = ( label ) => {
 		const todayTime = new Date().getTime();
-		if ( label.refund ||
-			( label.used_date && label.used_date < todayTime ) ||
-			( label.expiry_date && label.expiry_date < todayTime ) ) {
+		if ( ! label.showDetails ||
+			( label.usedDate && label.usedDate < todayTime ) ||
+			( label.expiryDate && label.expiryDate < todayTime ) ) {
 			return null;
 		}
 
@@ -92,35 +92,33 @@ class LabelItem extends Component {
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
-			this.props.openReprintDialog( orderId, siteId, label.label_id );
+			this.props.openReprintDialog( orderId, siteId, label.labelId );
 		};
 
 		return (
-			<span>
+			<Button compact onClick={ openDialog }>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >
-					<Gridicon icon="print" size={ 12 } />{ __( 'Reprint' ) }
-				</a>
-			</span>
+				<Gridicon icon="print" size={ 12 } />{ __( 'Reprint' ) }
+			</Button>
 		);
 	};
 
 	renderLabelDetails = ( label ) => {
-		if ( ! label.package_name || ! label.product_names ) {
+		if ( ! label.packageName || ! label.productNames ) {
 			return null;
 		}
 
 		return (
 			<span className="shipping-label__item-detail">
-				{ __( 'Label #%(labelNum)s', { args: { labelNum: this.props.labelNum } } ) }
+				{ __( 'Label #%(labelIndex)s', { args: { labelIndex: label.labelIndex + 1 } } ) }
 			</span>
 		);
 		// return (
 		// 	<InfoTooltip anchor={ tooltipAnchor }>
-		// 		<h3>{ label.package_name }</h3>
-		// 		<p>{ label.service_name }</p>
+		// 		<h3>{ label.packageName }</h3>
+		// 		<p>{ label.serviceName }</p>
 		// 		<ul>
-		// 			{ label.product_names.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
+		// 			{ label.productNames.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
 		// 		</ul>
 		// 	</InfoTooltip>
 		// );
@@ -128,25 +126,23 @@ class LabelItem extends Component {
 
 	render() {
 		const { label } = this.props;
-		const purchased = moment( label.created ).fromNow();
 
 		return (
-			<div key={ label.label_id } className="shipping-label__item" >
+			<div key={ label.labelId } className="shipping-label__item" >
 				<p className="shipping-label__item-created">
-					{ __( '{{labelDetails/}} purchased {{purchasedAt/}}', {
+					{ __( '{{labelDetails/}} purchased', {
 						components: {
 							labelDetails: this.renderLabelDetails( label ),
-							purchasedAt: <span title={ formatDate( label.created ) }>{ purchased }</span>
 						}
 					} ) }
 				</p>
 				<p className="shipping-label__item-tracking">
 					{ __( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
 				</p>
-				<p className="shipping-label__item-actions" >
+				<ButtonGroup>
 					{ this.renderRefund( label ) }
 					{ this.renderReprint( label ) }
-				</p>
+				</ButtonGroup>
 			</div>
 		);
 	}

@@ -7,7 +7,6 @@ import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { sortBy, keys } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,8 +16,7 @@ import {
 	getActivityLogEvents,
 	EVENT_TYPES,
 } from 'woocommerce/state/sites/orders/activity-log/selectors';
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
+import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
 import Card from 'components/card';
 import Event from './event';
 import EventsByDay from './day';
@@ -85,44 +83,29 @@ class ActivityLog extends Component {
 		},
 
 		[ EVENT_TYPES.LABEL_PURCHASED ]: ( event ) => {
-			// TODO const { translate } = this.props;
 			return {
 				icon: 'print',
 				timestamp: event.timestamp,
-				children:
-					<div>
-						<div>
-							Label { event.labelIndex + 1 }
-							<span> (for <span title={ event.productNames.join( '\n' ) }>{ event.packageName }</span>) </span>
-							purchased
-						</div>
-						<div>Tracking #: { event.tracking }</div>
-						{ ! event.showDetails
-							? null
-							: (
-								<div>
-									<ButtonGroup>
-										<Button compact><Gridicon icon="print" /> Reprint</Button>
-										<Button compact>
-											<Gridicon icon="refund" /> Refund ({ event.currency } { event.refundableAmount })
-										</Button>
-									</ButtonGroup>
-								</div>
-							)
-						}
-					</div>,
+				children: (
+					<LabelItem
+						label={ event }
+						orderId={ this.props.orderId }
+						siteId={ this.props.siteId }
+					/>
+				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REQUESTED ]: ( event ) => {
 			return {
-				icon: 'refund',
+				icon: 'time',
 				timestamp: event.timestamp,
-				children:
+				children: (
 					<div>
 						<span>Label { event.labelIndex + 1 } refund requested</span>
 						{ event.amount != null ? <span> ({ event.currency } { event.amount })</span> : null }
-					</div>,
+					</div>
+				),
 			};
 		},
 
@@ -130,21 +113,23 @@ class ActivityLog extends Component {
 			return {
 				icon: 'refund',
 				timestamp: event.timestamp,
-				children:
-				<div>
-					Label { event.labelIndex + 1 } refunded ({ event.currency } { event.amount })
-				</div>,
+				children: (
+					<div>
+						Label { event.labelIndex + 1 } refunded ({ event.currency } { event.amount })
+					</div>
+				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REJECTED ]: ( event ) => {
 			return {
-				icon: 'refund',
+				icon: 'cross-small',
 				timestamp: event.timestamp,
-				children:
-				<div>
-					Label { event.labelIndex + 1 } refund rejected
-				</div>,
+				children: (
+					<div>
+						Label { event.labelIndex + 1 } refund rejected
+					</div>
+				),
 			};
 		},
 	}

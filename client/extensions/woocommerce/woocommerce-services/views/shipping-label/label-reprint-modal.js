@@ -19,7 +19,7 @@ import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
-	const { orderId, siteId, reprintDialog, paperSize, storeOptions, label_id, translate } = props;
+	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;
 
 	const onClose = () => props.closeReprintDialog( orderId, siteId );
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
@@ -27,7 +27,7 @@ const ReprintDialog = ( props ) => {
 
 	return (
 		<Dialog
-			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === label_id ) }
+			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === labelId ) }
 			onClose={ onClose }
 			additionalClassNames="label-reprint-modal woocommerce">
 			<FormSectionHeading>
@@ -68,6 +68,7 @@ ReprintDialog.propTypes = {
 	reprintDialog: PropTypes.object,
 	paperSize: PropTypes.string.isRequired,
 	storeOptions: PropTypes.object.isRequired,
+	labelId: PropTypes.number,
 	closeReprintDialog: PropTypes.func.isRequired,
 	confirmReprint: PropTypes.func.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,

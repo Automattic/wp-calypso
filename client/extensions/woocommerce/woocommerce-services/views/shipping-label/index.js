@@ -15,7 +15,6 @@ import Button from 'components/button';
 import Spinner from 'components/spinner';
 import PurchaseDialog from './label-purchase-modal';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
-import LabelItem from './label-item';
 import { fetchLabelsStatus, openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import Notice from 'components/notice';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -91,24 +90,6 @@ class ShippingLabelRootView extends Component {
 		);
 	};
 
-	renderLabels = () => {
-		//filter by blacklist (rather than just checking for PURCHASED) to handle legacy labels without the status field
-		const labelsToRender = filter( this.props.labels,
-			( label ) => 'PURCHASE_IN_PROGRESS' !== label.status && 'PURCHASE_ERROR' !== label.status );
-
-		return labelsToRender.map( ( label, index ) => {
-			return (
-				<LabelItem
-					key={ label.label_id }
-					siteId={ this.props.siteId }
-					orderId={ this.props.orderId }
-					label={ label }
-					labelNum={ labelsToRender.length - index }
-				/>
-			);
-		} );
-	};
-
 	renderLoading() {
 		return (
 			<div>
@@ -129,7 +110,6 @@ class ShippingLabelRootView extends Component {
 			<div className="shipping-label">
 				<QueryLabels orderId={ this.props.orderId } />
 				{ this.renderPurchaseLabelFlow() }
-				{ this.props.labels.length ? this.renderLabels() : null }
 			</div>
 		);
 	}
@@ -149,7 +129,6 @@ const mapStateToProps = ( state, { orderId } ) => {
 		needToFetchLabelStatus: loaded && ! shippingLabel.refreshedLabelStatus,
 		numPaymentMethods: loaded && shippingLabel.numPaymentMethods,
 		paymentMethod: loaded && shippingLabel.paymentMethod,
-		labels: loaded && shippingLabel.labels,
 	};
 };
 

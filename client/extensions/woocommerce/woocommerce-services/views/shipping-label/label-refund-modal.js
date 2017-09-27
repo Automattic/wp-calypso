@@ -17,10 +17,10 @@ import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-servic
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const RefundDialog = ( props ) => {
-	const { orderId, siteId, refundDialog, storeOptions, created, refundable_amount, label_id } = props;
+	const { orderId, siteId, refundDialog, storeOptions, created, refundableAmount, labelId } = props;
 
 	const getRefundableAmount = () => {
-		return storeOptions.currency_symbol + Number( refundable_amount ).toFixed( 2 );
+		return storeOptions.currency_symbol + Number( refundableAmount ).toFixed( 2 );
 	};
 
 	const onClose = () => props.closeRefundDialog( orderId, siteId );
@@ -28,7 +28,7 @@ const RefundDialog = ( props ) => {
 	return (
 		<Dialog
 			additionalClassNames="label-refund-modal woocommerce"
-			isVisible={ Boolean( refundDialog && refundDialog.labelId === label_id ) }
+			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
 			onClose={ onClose }>
 			<FormSectionHeading>
 				{ __( 'Request a refund' ) }
@@ -67,8 +67,8 @@ RefundDialog.propTypes = {
 	refundDialog: PropTypes.object,
 	storeOptions: PropTypes.object.isRequired,
 	created: PropTypes.number,
-	refundable_amount: PropTypes.number,
-	label_id: PropTypes.number,
+	refundableAmount: PropTypes.number,
+	labelId: PropTypes.number,
 	closeRefundDialog: PropTypes.func.isRequired,
 	confirmRefund: PropTypes.func.isRequired,
 };
