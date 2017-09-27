@@ -52,7 +52,7 @@ describe( 'receiveError', () => {
 	it( 'should dispatch a plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.been.calledThrice;
 		expect( dispatch ).to.have.been.calledWith(
 			pluginUploadError( siteId, ERROR_RESPONSE )
 		);
@@ -61,7 +61,7 @@ describe( 'receiveError', () => {
 	it( 'should dispatch an error notice', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.been.calledThrice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			notice: { text: 'Not a valid zip file.' }
 		} );
