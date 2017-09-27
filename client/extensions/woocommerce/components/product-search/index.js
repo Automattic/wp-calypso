@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -19,6 +20,10 @@ import ProductSearchResults from './results';
 import SearchCard from 'components/search-card';
 
 class ProductSearch extends Component {
+	static propTypes = {
+		onSelect: PropTypes.func.isRequired,
+	};
+
 	state = {
 		query: '',
 	};
@@ -36,18 +41,33 @@ class ProductSearch extends Component {
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
 
+	onSelect = product => {
+		const { siteId } = this.props;
+		// Clear the search field
+		this.setState( { query: '' } );
+		this.props.clearProductSearch( siteId );
+		this.refs.searchCard.clear();
+
+		// Pass products back to parent component
+		this.props.onSelect( {
+			product_id: product.id,
+			quantity: 1,
+		} );
+	};
+
 	render() {
 		const { translate } = this.props;
 
 		return (
 			<div className="product-search">
 				<SearchCard
+					ref="searchCard"
 					onSearch={ this.onSearch }
 					delaySearch
 					delayTimeout={ 400 }
 					placeholder={ translate( 'Search products…' ) }
 				/>
-				<ProductSearchResults search={ this.state.query } />
+				<ProductSearchResults search={ this.state.query } onSelect={ this.onSelect } />
 			</div>
 		);
 	}

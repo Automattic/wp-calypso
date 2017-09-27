@@ -24,7 +24,7 @@ class ProductSearchResults extends Component {
 	};
 
 	render() {
-		const { isLoaded, isLoading, products, search, translate } = this.props;
+		const { isLoaded, isLoading, onSelect, products, search, translate } = this.props;
 		if ( ( ! isLoaded && ! search ) || isLoading ) {
 			return null;
 		}
@@ -32,7 +32,7 @@ class ProductSearchResults extends Component {
 		return (
 			<div className="product-search__results">
 				{ products.length ? (
-					products.map( p => <ProductItem key={ p.id } product={ p } /> )
+					products.map( p => <ProductItem key={ p.id } product={ p } onClick={ onSelect } /> )
 				) : (
 					<Card>{ translate( 'No results for %(search)s', { args: { search } } ) }</Card>
 				) }

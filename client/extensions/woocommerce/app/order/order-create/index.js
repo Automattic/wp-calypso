@@ -22,6 +22,8 @@ import ProductSearch from 'woocommerce/components/product-search';
 import { ProtectFormGuard } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
 
+const noop = () => {};
+
 class OrderCreate extends Component {
 	editOrder = order => {
 		const { site } = this.props;
@@ -49,7 +51,7 @@ class OrderCreate extends Component {
 
 					<SectionHeader label={ translate( 'Add products to the order' ) } />
 					<Card className="order-create__card">
-						<ProductSearch />
+						<ProductSearch onSelect={ noop } />
 					</Card>
 
 					<SectionHeader label={ translate( 'How will these products be shipped?' ) } />
