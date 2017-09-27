@@ -239,42 +239,12 @@ class Plans extends Component {
 			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 
-		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal_monthly' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium_monthly' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business_monthly' );
-		}
+		this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
+			user: this.props.userId,
+			productSlug: cartItem.product_slug,
+		} );
+		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+
 		addItem( cartItem );
 		this.redirecting = true;
 		this.props.completeFlow();
