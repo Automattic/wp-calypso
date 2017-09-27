@@ -60,7 +60,7 @@
 	padding: 4px 0 6px;
 
 	@include breakpoint( "<480px" ) {
-		margin: -2px 14px 0 4px;
+		margin: -2px 8px 0 0px;
 	}
 }
 
@@ -69,6 +69,10 @@
 	color: $gray;
 	text-transform: uppercase;
 	white-space: nowrap;
+
+	@include breakpoint( "<480px" ) {
+		letter-spacing: -1px;
+	}
 }
 
 .activity-log-item__activity-icon {
