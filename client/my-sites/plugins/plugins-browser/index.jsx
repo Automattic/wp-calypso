@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { concat, find, get, flatMap, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ import {
 } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
+import jetpackPlugins from 'my-sites/plugins-wpcom/jetpack-plugins';
 import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -177,7 +178,10 @@ const PluginsBrowser = React.createClass( {
 
 	getSearchListView( searchTerm ) {
 		const isFetching = get( this.state.fullLists, 'search.fetching', true );
-		const list = this.getPluginsFullList( 'search' );
+		const list = concat(
+			this.getWpcomFeaturesAsJetpackPluginsList( searchTerm ),
+			this.getPluginsFullList( 'search' )
+		);
 		if ( list.length > 0 || isFetching ) {
 			const searchTitle =
 				this.props.searchTitle ||
@@ -224,6 +228,51 @@ const PluginsBrowser = React.createClass( {
 				currentSites={ this.props.sites }
 			/>
 		);
+	},
+
+	getWpcomFeaturesAsJetpackPluginsList( searchTerm ) {
+		// show only for Simple sites
+		if ( ! this.props.selectedSiteId || this.props.isJetpackSite ) {
+			return [];
+		}
+
+		// show only if search is active
+		if ( ! searchTerm ) {
+			return [];
+		}
+
+		searchTerm = searchTerm.toLocaleLowerCase();
+
+		let matchingPlugins;
+		const plugins = jetpackPlugins( this.props.translate );
+
+		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
+		// Then return the whole group as search results.
+		// Otherwise, search plugin names and descriptions for the search term.
+		const matchingGroup = find( plugins, group => group.category === searchTerm );
+		if ( matchingGroup ) {
+			matchingPlugins = matchingGroup.plugins;
+		} else {
+			// Flatten plugins from all groups into one long list and the filter it
+			const allPlugins = flatMap( plugins, group => group.plugins );
+			const includesSearchTerm = s => includes( s.toLocaleLowerCase(), searchTerm );
+			matchingPlugins = allPlugins.filter(
+				plugin => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
+			);
+		}
+
+		// Convert the list members into shapes expected by PluginsBrowserItem
+		return matchingPlugins.map( plugin => ( {
+			name: this.props.translate( '%(feature)s by Jetpack', {
+				args: { feature: plugin.name },
+				context: 'Presenting WordPress.com feature as a Jetpack pseudo-plugin',
+			} ),
+			author_name: 'Automattic',
+			icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
+			rating: 82, // Jetpack rating on WP.org on 2017-09-27
+			isPreinstalled: true,
+			slug: 'jetpack',
+		} ) );
 	},
 
 	getShortListsView() {
