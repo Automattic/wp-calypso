@@ -36,6 +36,15 @@
 		color: $alert-red;
 	}
 
+	.is-error,
+	.is-warning,
+	.is-success {
+		.gridicon {
+			margin-right: 6px;
+			margin-top: -2px;
+		}
+	}
+
 	select {
 		width: 100%;
 	}
@@ -230,6 +239,11 @@
 	.foldable-card__summary {
 		opacity: 1;
 		display: inline-block;
+
+		> span:first-child {
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	.foldable-card.is-expanded {
@@ -253,6 +267,11 @@
 	.foldable-card.is-expanded {
 		.foldable-card__summary-expanded {
 			display: inline-block;
+
+			> span:first-child {
+				display: flex;
+				align-items: center;
+			}
 		}
 	}
 }
@@ -299,10 +318,10 @@
 }
 
 .label-purchase-modal__step-title {
-	margin: 4px 0 0 8px;
+	margin: 0 0 0 8px;
 }
 
 .label-purchase-modal__button-spinner {
 	display: inline-block;
-    margin-bottom: -8px;
+	margin-bottom: -8px;
 }

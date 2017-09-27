@@ -16,7 +16,7 @@ import FoldableCard from 'components/foldable-card';
 const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summary, children, expanded, toggleStep, translate } ) => {
 	const getIcon = () => {
 		if ( isSuccess ) {
-			return 'checkmark';
+			return 'checkmark-circle';
 		}
 		if ( isWarning ) {
 			return 'notice-outline';
@@ -32,15 +32,15 @@ const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summ
 		'is-error': isError,
 	} );
 
-	summary = <span className={ className }>{ summary }</span>;
+	summary = <span className={ className }><Gridicon icon={ getIcon() } className={ className } size={ 18 } /> { summary }</span>;
 	const header = (
 		<div>
 			<div className="label-purchase-modal__step-status">
-				{ isProgress
-					? <div className="label-purchase-modal__loading-spinner">
+				{ isProgress &&
+					<div className="label-purchase-modal__loading-spinner">
 						<Spinner />
 					</div>
-					: <Gridicon icon={ getIcon() } className={ className } size={ 24 } /> }
+				}
 			</div>
 			<div className="label-purchase-modal__step-title">{ title }</div>
 		</div>
