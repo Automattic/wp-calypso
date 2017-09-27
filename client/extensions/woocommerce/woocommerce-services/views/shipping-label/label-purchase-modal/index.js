@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import Spinner from 'components/spinner';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
@@ -98,7 +97,8 @@ const PurchaseDialog = ( props ) => {
 		<Dialog
 			additionalClassNames="woocommerce"
 			isVisible={ props.showPurchaseDialog }
-			onClose={ onClose } >
+			onClose={ onClose }
+			buttons={ buttons } >
 			<div className="label-purchase-modal__content">
 				<FormSectionHeading>
 					{ 1 === props.form.packages.selected.length
@@ -128,7 +128,6 @@ const PurchaseDialog = ( props ) => {
 						siteId={ props.siteId }
 						orderId={ props.orderId } />
 				</div>
-				<ActionButtons buttons={ buttons } />
 			</div>
 		</Dialog>
 	);
