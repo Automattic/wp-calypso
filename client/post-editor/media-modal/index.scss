@@ -6,19 +6,11 @@
 		left: 0;
 	max-width: none;
 
-	@include breakpoint( ">660px" ) {
-		top: 5%;
-		bottom: 5%;
-		left: 5%;
-		right: 5%;
-		width: 90%;
-	}
-
-	@include breakpoint( ">960px" ) {
-		left: 12.5%;
-		right: 12.5%;
-		width: 75%;
-	}
+	top: 5%;
+	bottom: 5%;
+	left: 5%;
+	right: 5%;
+	width: 90%;
 }
 
 .editor-media-modal .dialog__content {
@@ -50,6 +42,24 @@
 
 .editor-media-modal .media-library__content {
 	position: static;
+	display: flex;
+
+	&.media-library__external-source-content {
+		display: block;
+	}
+}
+
+.editor-media-modal .media-library__footer {
+	position: absolute;
+	bottom: 0;
+}
+
+.editor-media-modal .media-library__upload-controls-container {
+	flex-direction: column;
+
+	.media-library__upload-controls-drop-zone-container {
+		max-height: 300px;
+	}
 }
 
 .editor-media-modal .media-library__list {
@@ -112,25 +122,11 @@
 }
 
 .editor-media-modal .media-library__list {
-	@extend .editor-media-modal__content;
+	flex-grow: 1;
 	display: block;
-	top: 105px;
-	right: 0;
-	left: 0;
 	padding: 4px 16px;
-	transform: translateZ( 0 );
 	pointer-events: all;
-
-	@include breakpoint( ">480px" ) {
-		top: 131px;
-	}
-
-	@include breakpoint( ">660px" ) {
-		padding-left: 24px;
-		padding-right: 24px;
-		overflow-y: auto;
-		top: 122px;
-	}
+	overflow-y: auto;
 }
 
 .editor-media-modal .notice {
@@ -305,6 +301,7 @@
 		bottom: 0;
 		left: 0;
 	margin: 0;
+	background-color: $white;
 }
 
 .editor-media-modal .dialog__action-buttons .button:first-of-type {

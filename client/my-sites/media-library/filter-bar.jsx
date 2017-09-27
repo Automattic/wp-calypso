@@ -20,7 +20,6 @@ import Search from 'components/search';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
-import DataSource from './data-source';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -170,8 +169,6 @@ export class MediaLibraryFilterBar extends Component {
 		// Dropdown is disabled when viewing any external data source
 		return (
 			<div className="media-library__filter-bar">
-				<DataSource source={ this.props.source } onSourceChange={ this.props.onSourceChange } />
-
 				<SectionNav
 					selectedText={ this.getFilterLabel( this.props.filter ) }
 					hasSearch={ true }

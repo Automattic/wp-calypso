@@ -8,6 +8,7 @@ import { groupBy, head, mapValues, noop, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,9 +27,10 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
-import MediaLibraryHeader from './header';
+import MediaLibraryFooter from './footer';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
+import MediaLibraryUploadControls from './upload-controls';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
@@ -273,16 +275,10 @@ class MediaLibraryContent extends React.Component {
 
 		if ( ! this.props.filterRequiresUpgrade ) {
 			return (
-				<MediaLibraryHeader
+				<MediaLibraryUploadControls
 					site={ this.props.site }
-					filter={ this.props.filter }
-					onMediaScaleChange={ this.props.onMediaScaleChange }
 					onAddMedia={ this.props.onAddMedia }
-					onAddAndEditImage={ this.props.onAddAndEditImage }
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDeleteItem={ this.props.onDeleteItem }
-					sticky={ ! this.props.scrollable }
+					onSourceChange={ this.props.onSourceChange }
 				/>
 			);
 		}
@@ -290,12 +286,32 @@ class MediaLibraryContent extends React.Component {
 		return null;
 	}
 
-	render() {
+	renderFooter() {
+		if ( this.props.source ) {
+			return null;
+		}
+
 		return (
-			<div className="media-library__content">
+			<MediaLibraryFooter
+				site={ this.props.site }
+				parent={ this }
+				selectedItems={ this.props.selectedItems }
+				onViewDetails={ this.props.onViewDetails }
+				onDeleteItem={ this.props.onDeleteItem } />
+		);
+	}
+
+	render() {
+		const className = classNames( 'media-library__content', {
+			'media-library__external-source-content': Boolean( this.props.source ),
+		} );
+
+		return (
+			<div className={ className }>
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
+				{ this.renderFooter() }
 			</div>
 		);
 	}
