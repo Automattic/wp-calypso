@@ -5,8 +5,10 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { SECTION_SET, SELECTED_SITE_SET, JITM_SET } from 'state/action-types';
+import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
 import config from 'config';
+import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import schema from './schema.json';
 
 /**
  * Poor man's process manager
@@ -24,9 +26,19 @@ const process = {
 	lastSite: null,
 };
 
-const unescape = ( str ) => {
+const unescapeDecimalEntities = ( str ) => {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 };
+
+const transformApiRequest = ( jitms ) => jitms.map( ( jitm ) =>
+	( {
+		message: unescapeDecimalEntities( jitm.content.message ),
+		description: unescapeDecimalEntities( jitm.content.description ),
+		featureClass: jitm.feature_class,
+		callToAction: unescapeDecimalEntities( jitm.CTA.message ),
+		id: jitm.id,
+	} )
+);
 
 /**
  * Processes the current state and determines if it should fire a jitm request
@@ -115,21 +127,13 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * Called when the http layer receives a valid jitm
  * @param {function} dispatch The dispatch function
  * @param {number} siteId The site id
- * @param {object} data The jitms
+ * @param {object} jitms The jitms
  * @param {number} site_id The site id
  */
-export const receiveJITM = ( { dispatch }, { siteId, site_id }, data ) => {
+export const receiveJITM = ( { dispatch }, { siteId, site_id }, jitms ) => {
 	dispatch( {
 		type: JITM_SET,
-		jitms: data.map( ( jitm ) => {
-			return Object.assign( {}, jitm, {
-				CTA: unescape( jitm.CTA.message ),
-				content: {
-					message: unescape( jitm.content.message ),
-					description: unescape( jitm.content.description ),
-				}
-			} );
-		} ),
+		jitms: jitms
 	} );
 };
 
@@ -149,14 +153,16 @@ export default {
 		dispatchRequest(
 			handleRouteChange,
 			receiveJITM,
-			failedJITM
+			failedJITM,
+			{ fromApi: makeParser( schema, {}, transformApiRequest ) }
 		)
 	],
 	[ SELECTED_SITE_SET ]: [
 		dispatchRequest(
 			handleSiteSelection,
 			receiveJITM,
-			failedJITM
+			failedJITM,
+			{ fromApi: makeParser( schema, {}, transformApiRequest ) }
 		)
 	],
 };
