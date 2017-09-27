@@ -19,19 +19,17 @@ function languageFileUrl( localeSlug ) {
 
 export default function switchLocale( localeSlug ) {
 	if ( localeSlug === i18n.getLocaleSlug() ) {
-		return;
+		return Promise.resolve();
 	}
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		return;
+		return Promise.resolve();
 	}
 
-	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
-		if ( error ) {
-			debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' );
-			return;
-		}
-		i18n.setLocale( response.body );
-	} );
+	return request.get( languageFileUrl( localeSlug ) )
+		.then(
+			response => i18n.setLocale( response.body ),
+			() => debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' )
+		);
 }

@@ -9,10 +9,9 @@ import { noop } from 'lodash';
  */
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getLanguage } from 'lib/i18n-utils';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
-import isUserRtl from 'state/selectors/is-rtl';
+import { setLocale } from 'state/ui/language/actions';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -102,14 +101,13 @@ export function setUpLocale( context, next ) {
 
 	if ( context.params.lang ) {
 		context.lang = context.params.lang;
-		context.isRTL = Boolean( getLanguage( context.lang ).rtl );
 	} else if ( currentUser ) {
 		context.lang = currentUser.localeSlug;
-		context.isRTL = isUserRtl( context.store.getState() );
 	} else {
 		context.lang = context.lang || config( 'i18n_default_locale_slug' );
-		context.isRTL = context.isRTL || Boolean( config( 'rtl' ) );
 	}
+
+	context.store.dispatch( setLocale( context.lang ) );
 
 	loadSectionCSS( context, next );
 }
