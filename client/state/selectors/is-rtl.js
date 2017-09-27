@@ -13,5 +13,9 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 export default function isRtl( state ) {
 	const localeSlug = getCurrentLocaleSlug( state );
 
+	if ( ! localeSlug ) {
+		return null;
+	}
+
 	return Boolean( getLanguage( localeSlug ).rtl );
 }

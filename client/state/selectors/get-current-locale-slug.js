@@ -14,7 +14,7 @@ import createSelector from 'lib/create-selector';
  * @return {String} current state value
  */
 const getCurrentLocaleSlug = createSelector(
-	state => get( state, 'ui.language.localeSlug', 'en' )
+	state => get( state, 'ui.language.localeSlug', null )
 );
 
 export default getCurrentLocaleSlug;
