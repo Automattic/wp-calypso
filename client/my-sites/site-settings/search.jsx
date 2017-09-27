@@ -141,6 +141,11 @@ class Search extends Component {
 			return null;
 		}
 
+		// don't show for WPCOM, for now
+		if ( ! siteIsJetpack ) {
+			return null;
+		}
+
 		return (
 			<div>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
