@@ -18,12 +18,18 @@ import Gridicon from 'gridicons';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
+const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
+
 class PluginsBrowserListElement extends Component {
 	static defaultProps = {
 		iconSize: 40,
 	};
 
 	getPluginLink() {
+		if ( this.props.plugin.link ) {
+			return this.props.plugin.link;
+		}
+
 		let url = '/plugins/' + this.props.plugin.slug;
 		if ( this.props.site ) {
 			url += '/' + this.props.site;
@@ -46,13 +52,15 @@ class PluginsBrowserListElement extends Component {
 	};
 
 	isWpcomPreinstalled() {
-		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
+		if ( this.props.plugin.isPreinstalled ) {
+			return true;
+		}
 
 		if ( ! this.props.site ) {
 			return false;
 		}
 
-		return ! this.props.isJetpackSite && includes( installedPlugins, this.props.plugin.name );
+		return ! this.props.isJetpackSite && includes( PREINSTALLED_PLUGINS, this.props.plugin.name );
 	}
 
 	renderInstalledIn() {
