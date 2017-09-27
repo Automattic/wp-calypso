@@ -22,7 +22,7 @@ export default class DevdocsSidebar extends React.PureComponent {
 		}
 
 		return path.indexOf( itemPath ) >= 0;
-	},
+	}
 
 	render() {
 		return (
