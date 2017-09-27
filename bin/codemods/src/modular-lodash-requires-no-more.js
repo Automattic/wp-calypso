@@ -2,6 +2,8 @@
  * @format
  */
 
+const config = require( './config' );
+
 let j;
 
 const getImports = source => {
@@ -137,5 +139,5 @@ export default function transformer( file, api ) {
 	// remove the old ones
 	j( decs ).remove();
 
-	return source.toSource( { quote: 'single' } );
+	return source.toSource( config.recastOptions );
 }

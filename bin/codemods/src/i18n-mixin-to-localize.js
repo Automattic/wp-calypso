@@ -1,4 +1,7 @@
 /** @format */
+
+const config = require( './config' );
+
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 	const ReactUtils = require( 'react-codemod/transforms/utils/ReactUtils' )( j );
@@ -164,7 +167,5 @@ export default function transformer( file, api ) {
 		}
 	}
 
-	return root.toSource( {
-		useTabs: true,
-	} );
+	return root.toSource( config.recastOptions );
 }
