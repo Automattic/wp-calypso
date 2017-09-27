@@ -6,11 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-} from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
@@ -39,12 +35,12 @@ export const fetching = ( state = false, { type } ) => get( {
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-export const itemsReducer = ( state = {}, { data, type } ) =>
+export const items = ( state = {}, { data, type } ) =>
 	WP_JOB_MANAGER_UPDATE_SETTINGS === type
 		? data
 		: state;
 
-export const items = withSchemaValidation( itemsSchema, itemsReducer );
+items.schema = itemsSchema;
 
 export default keyedReducer( 'siteId', combineReducers( {
 	fetching,
