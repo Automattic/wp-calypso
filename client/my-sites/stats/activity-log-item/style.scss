@@ -7,6 +7,10 @@
 	align-items: center;
 	position: relative;
 
+	@include breakpoint( "<480px" ) {
+		margin-left: 8px;
+	}
+
 	// TODO: Remove when foldable cards become "expandable"
 	.foldable-card__header.is-clickable {
 		cursor: default;
