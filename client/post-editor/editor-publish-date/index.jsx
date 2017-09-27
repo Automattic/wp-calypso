@@ -156,7 +156,6 @@ export class EditorPublishDate extends React.Component {
 			'is-scheduled': isScheduled,
 		} );
 
-
 		return (
 			<div className={ className }>
 				{ this.renderCalendarHeader() }
