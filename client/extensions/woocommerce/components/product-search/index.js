@@ -49,10 +49,7 @@ class ProductSearch extends Component {
 		this.refs.searchCard.clear();
 
 		// Pass products back to parent component
-		this.props.onSelect( {
-			product_id: product.id,
-			quantity: 1,
-		} );
+		this.props.onSelect( product );
 	};
 
 	render() {
