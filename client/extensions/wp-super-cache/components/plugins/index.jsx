@@ -10,6 +10,7 @@ import { flowRight, map, pick } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import ExtensionRedirect from 'blocks/extension-redirect';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -44,6 +45,9 @@ class PluginsTab extends Component {
 
 		return (
 			<div className="wp-super-cache__plugins-tab">
+				<ExtensionRedirect pluginId="wp-super-cache" // The /plugins endpoint is only present in v1.5.6 and later!
+					minimumVersion="1.5.5"
+					siteId={ siteId } />
 				<SectionHeader label={ translate( 'Plugins' ) } />
 				<QueryPlugins siteId={ siteId } />
 				<Card>
