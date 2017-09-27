@@ -112,3 +112,6 @@ export const recordPageView = ( url, title, service ) => ( {
 
 export const recordGooglePageView = ( url, title ) =>
 	recordPageView( url, title, 'ga' );
+
+export const recordAffiliatePageView = ( url ) =>
+	recordPageView( url, null, 'affiliates' );

@@ -17,6 +17,7 @@ import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/http/actions';
 
 /**
@@ -25,6 +26,7 @@ import { http } from 'state/http/actions';
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
+const tDebug = debug( 'calypso:analytics:travis' );
 
 let _superProps,
 	_user,
@@ -460,25 +462,46 @@ const analytics = {
 
 	// Track affiliate page views when the URL contains the 'aff' URL parameter
 	affiliates: {
-		recordPageView: function() {
+		recordPageView: function( urlPath ) {
+			tDebug( 'in affiliates.recordPageView' );
 			const affiliateId = getUrlParameter( 'aff' );
 			if ( ! affiliateId || isNaN( affiliateId ) ) {
 				return;
 			}
 
-			_dispatch( http( {
-				method: 'POST',
-				url: 'https://refer.wordpress.com/clicks/67402',
-				headers: [
-					[ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ],
-				],
-				body: {
-					affiliate_id: affiliateId,
-					referrer: window.location.href
-				},
-				// Needed to check and set the 'wp-affiliate-tracker' cookie
-				withCredentials: true,
-			} ) );
+			const trackAffiliatePageLoad = ( { dispatch }, action ) => {
+				tDebug( 'in trackAffiliatePageLoad' );
+				dispatch( http( {
+					method: 'POST',
+					url: 'https://refer.wordpress.com/clicks/67402',
+					headers: [
+						[ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ],
+					],
+					body: {
+						affiliate_id: affiliateId,
+						// referrer: window.location.href
+						referrer: urlPath
+					},
+					// Needed to check and set the 'wp-affiliate-tracker' cookie
+					withCredentials: true,
+				}, action ) );
+			};
+
+			const trackAffiliatePageLoadSuccess = ( { dispatch }, action, rData ) => {
+				tDebug( 'success', rData );
+			};
+
+			const trackAffiliatePageLoadError = ( { dispatch }, action, error ) => {
+				tDebug( 'error', error );
+			};
+
+			// It doesn't look like I can call dispatchRequest directly here
+			tDebug( 'calling dispatchRequest' );
+			dispatchRequest(
+				trackAffiliatePageLoad,
+				trackAffiliatePageLoadSuccess,
+				trackAffiliatePageLoadError
+			);
 		}
 	},
 

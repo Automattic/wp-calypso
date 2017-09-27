@@ -37,7 +37,7 @@ import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
-import { loadTrackingTool } from 'state/analytics/actions';
+import { loadTrackingTool, recordAffiliatePageView } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -257,7 +257,8 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
-		analytics.affiliates.recordPageView();
+		// analytics.affiliates.recordPageView();
+		this.props.recordAffiliatePageView( window.location.href );
 	}
 
 	componentWillUnmount() {
@@ -488,6 +489,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey, loadTrackingTool },
+	{ setSurvey, loadTrackingTool, recordAffiliatePageView },
 	undefined,
 	{ pure: false } )( Signup );
