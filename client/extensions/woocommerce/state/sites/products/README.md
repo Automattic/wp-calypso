@@ -11,9 +11,11 @@ Create a product on the remote site via API. May also call action creator callba
 
 ## Actions
 
-### `fetchProducts( siteId: number, page )`
+### `fetchProducts( siteId: number, params )`
 
 Pull products from the remote site. Does not run if a specific server page is already loading.
+Params passed here go through to the API endpoint for things like `page` or `offset`
+Default `per_page` is 10 if none is specified.
 
 
 ## Reducer

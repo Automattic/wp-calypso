@@ -3,20 +3,20 @@
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_COUPONS_PAGE_UPDATED,
+	WOOCOMMERCE_COUPONS_UPDATED,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( {}, {
-	[ WOOCOMMERCE_COUPONS_PAGE_UPDATED ]: pageUpdated,
+	[ WOOCOMMERCE_COUPONS_UPDATED ]: pageUpdated,
 } );
 
 function pageUpdated( state, action ) {
-	const { pageIndex, coupons, totalPages, totalCoupons } = action;
+	const { params, coupons, totalPages, totalCoupons } = action;
 
 	if ( coupons ) {
 		return {
+			params,
 			coupons,
-			pageIndex,
 			totalPages,
 			totalCoupons,
 		};
