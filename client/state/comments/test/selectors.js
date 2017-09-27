@@ -11,6 +11,7 @@ import {
 	getPostOldestCommentDate,
 	getPostMostRecentCommentDate,
 	getCommentLike,
+	getPostCommentsTree,
 } from '../selectors';
 
 const state = {
@@ -85,6 +86,59 @@ describe( 'selectors', () => {
 
 			expect( res.i_like ).to.eql( false );
 			expect( res.like_count ).to.eql( 456 );
+		} );
+	} );
+
+	describe( '#getPostCommentsTree', () => {
+		it( 'should return the tree structure', () => {
+			const tree = getPostCommentsTree( state, 1, 1, 'all' );
+			expect( tree ).to.eql( {
+				1: {
+					children: [ 3 ],
+					data: {
+						ID: 1,
+						date: '2016-01-31T10:07:18-08:00',
+						i_like: true,
+						like_count: 5,
+						parent: false,
+					},
+				},
+				2: {
+					children: [ 4 ],
+					data: {
+						ID: 2,
+						date: '2016-01-29T10:07:18-08:00',
+						i_like: false,
+						like_count: 456,
+						parent: false,
+					},
+				},
+				3: {
+					children: [],
+					data: {
+						ID: 3,
+						date: '2017-01-31T10:07:18-08:00',
+						i_like: false,
+						like_count: 0,
+						parent: {
+							ID: 1,
+						},
+					},
+				},
+				4: {
+					children: [],
+					data: {
+						ID: 4,
+						date: '2015-01-29T10:07:18-08:00',
+						i_like: false,
+						like_count: 0,
+						parent: {
+							ID: 2,
+						},
+					},
+				},
+				children: [ 2, 1 ],
+			} );
 		} );
 	} );
 } );

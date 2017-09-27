@@ -2,7 +2,22 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
+import {
+	filter,
+	find,
+	first,
+	flatMap,
+	get,
+	groupBy,
+	keyBy,
+	last,
+	map,
+	mapValues,
+	partition,
+	pickBy,
+	size,
+	sortBy,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,15 +123,27 @@ export const getPostCommentsTree = createSelector(
 				? filter( allItems, item => item.isPlaceholder || item.status === status )
 				: allItems;
 
+		const [ roots, children ] = partition( items, item => item.parent === false );
+		const parentToChildMap = mapValues( groupBy( children, 'parent.ID' ), mapping =>
+			map( mapping, 'ID' )
+		);
+
+		const transformItemToNode = item => ( {
+			data: item,
+			children: ( parentToChildMap[ item.ID ] || [] ).reverse(),
+		} );
+
+		const rootNodes = map( roots, transformItemToNode );
+		const childNodes = map( children, transformItemToNode );
+
+		const nodes = {
+			...keyBy( rootNodes, 'data.ID' ),
+			...keyBy( childNodes, 'data.ID' ),
+		};
+
 		return {
-			...keyBy(
-				map( items, item => ( {
-					children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ).reverse(),
-					data: item,
-				} ) ),
-				'data.ID'
-			),
-			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
+			...nodes,
+			children: map( roots, root => root.ID ).reverse(),
 		};
 	},
 	state => state.comments.items
