@@ -823,6 +823,11 @@ export const PostEditor = React.createClass( {
 
 	onPreviewEdit: function() {
 		if ( this.props.editorSidebarPreference === 'open' ) {
+			// When returning to the editor from the preview, set the "next
+			// layout focus" to the sidebar if the editor sidebar should be
+			// visible.  Otherwise, according to its default behavior, the
+			// LAYOUT_NEXT_FOCUS_ACTIVATE action will cause the 'content'
+			// layout area to be activated, which hides the editor sidebar.
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
 
