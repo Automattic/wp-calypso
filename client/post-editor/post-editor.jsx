@@ -50,7 +50,7 @@ import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus, setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
@@ -71,6 +71,7 @@ export const PostEditor = React.createClass( {
 		setEditorModePreference: PropTypes.func,
 		setEditorSidebar: PropTypes.func,
 		setLayoutFocus: PropTypes.func.isRequired,
+		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
 		user: PropTypes.object,
@@ -821,6 +822,10 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreviewEdit: function() {
+		if ( this.props.editorSidebarPreference === 'open' ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
@@ -1353,6 +1358,7 @@ export default connect(
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
+			setNextLayoutFocus,
 			saveConfirmationSidebarPreference,
 		}, dispatch );
 	},
