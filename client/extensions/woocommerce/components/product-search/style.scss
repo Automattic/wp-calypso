@@ -5,8 +5,12 @@
 .product-search__results {
 	position: absolute;
 	top: 52px;
-	width: 100%;
 	z-index: 1;
+	margin: 0 -5px;
+	padding: 0 5px 5px;
+	width: 100%;
+	max-height: 250px;
+	overflow: scroll;
 }
 
 .product-search__item {
