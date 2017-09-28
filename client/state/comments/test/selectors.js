@@ -2,11 +2,6 @@
 /**
  * External dependencies
  */
-import { expect as chaiExpect } from 'chai';
-
-/***
- * Internal dependencies
- */
 import {
 	getPostOldestCommentDate,
 	getPostMostRecentCommentDate,
@@ -88,7 +83,7 @@ describe( 'selectors', () => {
 		it( 'should get most recent date', () => {
 			const res = getPostMostRecentCommentDate( state, 1, 1 );
 
-			chaiExpect( res ).to.be.eql( new Date( '2017-01-31T10:07:18-08:00' ) );
+			expect( res ).toEqual( new Date( '2017-01-31T10:07:18-08:00' ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {
@@ -100,7 +95,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			chaiExpect( res ).to.be.eql( undefined );
+			expect( res ).toEqual( undefined );
 		} );
 	} ); // end of getPostMostRecentCommentDate
 
@@ -108,7 +103,7 @@ describe( 'selectors', () => {
 		it( 'should get earliest date', () => {
 			const res = getPostOldestCommentDate( state, 1, 1 );
 
-			chaiExpect( res ).to.be.eql( new Date( '2015-01-29T10:07:18-08:00' ) );
+			expect( res ).toEqual( new Date( '2015-01-29T10:07:18-08:00' ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {
@@ -120,7 +115,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			chaiExpect( res ).to.be.eql( undefined );
+			expect( res ).toEqual( undefined );
 		} );
 	} ); // end of getPostOldestCommentDate
 
@@ -128,8 +123,8 @@ describe( 'selectors', () => {
 		it( 'should provide only like statistics', () => {
 			const res = getCommentLike( state, 1, 1, 2 );
 
-			chaiExpect( res.i_like ).to.eql( false );
-			chaiExpect( res.like_count ).to.eql( 456 );
+			expect( res.i_like ).toEqual( false );
+			expect( res.like_count ).toEqual( 456 );
 		} );
 	} );
 
