@@ -5,19 +5,17 @@ import { includes, startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import store from 'store';
-import debugFactory from 'debug';
-const debug = debugFactory('calypso');
 import page from 'page';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-
-import abtestModule from 'lib/abtest'; // used by error logger
+import { getSavedVariations } from 'lib/abtest'; // used by error logger
 import { initialize as initializeHappychat } from 'state/happychat/actions';
 import analytics from 'lib/analytics';
-import reduxBridge from 'lib/redux-bridge';
+import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import route from 'lib/route';
 import normalize from 'lib/route/normalize';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
@@ -27,17 +25,12 @@ import nuxWelcome from 'layout/nux-welcome';
 import emailVerification from 'components/email-verification';
 import viewport from 'lib/viewport';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import syncHandler from 'lib/wp/sync-handler';
-import supportUser from 'lib/user/support-user-interop';
-
-/**
- * Internal dependencies
- */
-const // used by logger
-getSavedVariations = abtestModule.getSavedVariations;
-
+import { pruneStaleRecords } from 'lib/wp/sync-handler';
+import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+
+const debug = debugFactory( 'calypso' );
 
 function renderLayout( reduxStore ) {
 	const Layout = require( 'controller' ).ReduxWrappedLayout;
@@ -58,7 +51,7 @@ export function utils() {
 	debug( 'Executing WordPress.com utils.' );
 
 	// prune sync-handler records more than two days old
-	syncHandler.pruneStaleRecords( '2 days' );
+	pruneStaleRecords( '2 days' );
 
 	translatorJumpstart.init();
 }
@@ -66,8 +59,8 @@ export function utils() {
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
-	supportUser.setReduxStore( reduxStore );
-	reduxBridge.setReduxStore( reduxStore );
+	setSupportUserReduxStore( reduxStore );
+	setReduxBridgeReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {

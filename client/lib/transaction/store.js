@@ -13,7 +13,7 @@ import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
-import transactionStepTypes from 'lib/store-transactions/step-types';
+import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import { hasDomainDetails } from 'lib/store-transactions';
 
 var _transaction = createInitialTransaction();
@@ -35,7 +35,7 @@ function createInitialTransaction() {
 	return {
 		errors: {},
 		newCardFormFields: {},
-		step: { name: transactionStepTypes.BEFORE_SUBMIT },
+		step: { name: BEFORE_SUBMIT },
 		domainDetails: null
 	};
 }
