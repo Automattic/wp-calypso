@@ -17,6 +17,7 @@ import {
 	uniq
 } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -50,6 +51,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
+import { addQueryArgs } from 'lib/route';
 import {
 	COMMENTS_PER_PAGE,
 	NEWEST_FIRST,
@@ -76,7 +78,6 @@ export class CommentList extends Component {
 		isBulkEdit: false,
 		// TODO: replace with [] when adding back Bulk Actions
 		lastUndo: null,
-		page: 1,
 		persistedComments: [],
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
@@ -88,21 +89,31 @@ export class CommentList extends Component {
 			this.setState( {
 				isBulkEdit: false,
 				lastUndo: null,
-				page: 1,
 				persistedComments: [],
 				selectedComments: [],
 			} );
 		}
 	}
 
-	changePage = page => {
-		const total = Math.ceil( ( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE );
-		this.props.recordChangePage( page, total );
+	changePage = pageNumber => {
+		const {
+			comments,
+			recordChangePage,
+			siteFragment,
+			status,
+		} = this.props;
+		const { persistedComments } = this.state;
 
-		this.setState( {
-			page,
-			selectedComments: [],
-		} );
+		const total = Math.ceil( ( comments.length + persistedComments.length ) / COMMENTS_PER_PAGE );
+		recordChangePage( page, total );
+
+		this.setState( { selectedComments: [] } );
+
+		if ( window ) {
+			window.scrollTo( 0, 0 );
+		}
+
+		page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
 	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
@@ -124,8 +135,8 @@ export class CommentList extends Component {
 		return orderBy( comments, null, this.state.sortOrder );
 	};
 
-	getCommentsPage = ( comments, page ) => {
-		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
+	getCommentsPage = ( comments, pageNumber ) => {
+		const startingIndex = ( pageNumber - 1 ) * COMMENTS_PER_PAGE;
 		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	};
 
@@ -150,8 +161,9 @@ export class CommentList extends Component {
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isSelectedAll = () => {
-		const { page, selectedComments } = this.state;
-		const visibleComments = this.getCommentsPage( this.getComments(), page );
+		const { page: pageNumber } = this.props;
+		const { selectedComments } = this.state;
+		const visibleComments = this.getCommentsPage( this.getComments(), pageNumber );
 		return selectedComments.length && ( selectedComments.length === visibleComments.length );
 	};
 
@@ -408,6 +420,7 @@ export class CommentList extends Component {
 		const {
 			isJetpack,
 			isLoading,
+			page: pageNumber,
 			siteBlacklist,
 			siteId,
 			siteFragment,
@@ -415,13 +428,12 @@ export class CommentList extends Component {
 		} = this.props;
 		const {
 			isBulkEdit,
-			page,
 			selectedComments,
 		} = this.state;
 
 		const comments = this.getComments();
 		const commentsCount = comments.length;
-		const commentsPage = this.getCommentsPage( comments, page );
+		const commentsPage = this.getCommentsPage( comments, pageNumber );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
@@ -435,7 +447,7 @@ export class CommentList extends Component {
 				{ isJetpack &&
 					<QuerySiteCommentsList
 						number={ 100 }
-						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
+						offset={ ( pageNumber - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }
 						status={ status }
 					/>
@@ -496,7 +508,7 @@ export class CommentList extends Component {
 				{ ! showPlaceholder && ! showEmptyContent &&
 					<Pagination
 						key="comment-list-pagination"
-						page={ page }
+						page={ pageNumber }
 						pageClick={ this.changePage }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
@@ -561,8 +573,8 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		likeComment( siteId, postId, commentId )
 	) ),
 
-	recordChangePage: ( page, total ) => dispatch( composeAnalytics(
-		recordTracksEvent( 'calypso_comment_management_change_page', { page, total } ),
+	recordChangePage: ( pageNumber, total ) => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_change_page', { pageNumber, total } ),
 		bumpStat( 'calypso_comment_management', 'change_page' )
 	) ),
 

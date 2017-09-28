@@ -19,7 +19,10 @@ const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 
-export const setValidPage = pageNumber => ( parseInt( pageNumber, 10 ) > 0 ? pageNumber : 1 );
+export const setValidPage = pageNumber => {
+	const parsedPageNumber = parseInt( pageNumber, 10 );
+	return parsedPageNumber > 0 ? parsedPageNumber : 1;
+};
 
 export const getRedirectUrl = ( status, siteFragment ) => {
 	const statusValidity = isValidStatus( status );
