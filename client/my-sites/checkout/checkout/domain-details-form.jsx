@@ -10,6 +10,7 @@ import {
 	camelCase,
 	deburr,
 	first,
+    get,
 	head,
 	includes,
 	indexOf,
@@ -38,6 +39,7 @@ import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
@@ -259,6 +261,14 @@ export class DomainDetailsForm extends PureComponent {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	}
 
+	canDisplayAddressFieldset() {
+		const countryCodeFieldState = get( this.state, 'form.countryCode' );
+			// To avoid a lag effect when displaying the AddressFieldset
+			// we show it when there are no errors AND the value is not empty
+		return countryCodeFieldState && countryCodeFieldState.errors
+				? !! countryCodeFieldState.value && countryCodeFieldState.errors.length === 0 : true;
+	}
+
 	renderSubmitButton() {
 		const continueText = this.hasAnotherStep()
 			? this.props.translate( 'Continue' )
@@ -381,6 +391,17 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
+	renderAddressFieldset( needsOnlyGoogleAppsDetails ) {
+		return (
+			<FormFieldset className="checkout__domain-details-fieldset">
+                { ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
+                { ! needsOnlyGoogleAppsDetails && this.renderCityField() }
+                { ! needsOnlyGoogleAppsDetails && this.renderStateField() }
+                { this.renderPostalCodeField() }
+			</FormFieldset>
+		);
+	}
+
 	renderDetailsForm() {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
 
@@ -392,11 +413,7 @@ export class DomainDetailsForm extends PureComponent {
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
-
+				{ this.canDisplayAddressFieldset() && this.renderAddressFieldset( needsOnlyGoogleAppsDetails ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
