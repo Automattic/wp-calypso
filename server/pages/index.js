@@ -293,10 +293,6 @@ function setUpLoggedInRoute( req, res, next ) {
 			context.user = data;
 			context.isRTL = data.isRTL ? true : false;
 
-			if ( context.isRTL ) {
-				context.bodyClasses.push( 'rtl' );
-			}
-
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
 				context.store.dispatch( setLocale( data.localeSlug ) );
