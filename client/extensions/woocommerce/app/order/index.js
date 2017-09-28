@@ -97,8 +97,8 @@ class Order extends Component {
 				<ActionHeader breadcrumbs={ breadcrumbs }>{ button }</ActionHeader>
 
 				<div className="order__container">
-					<OrderDetails order={ order } site={ site } />
-					<OrderNotes orderId={ order.id } siteId={ site.ID } />
+					<OrderDetails orderId={ orderId } />
+					<OrderNotes orderId={ orderId } siteId={ site.ID } />
 					<OrderCustomer order={ order } />
 				</div>
 			</Main>

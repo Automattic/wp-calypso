@@ -4,13 +4,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+// import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
+import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import OrderCreated from '../order-created';
 import OrderDetailsTable from './table';
 import OrderFulfillment from '../order-fulfillment';
@@ -21,12 +25,7 @@ import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
-		onUpdate: PropTypes.func,
-		order: PropTypes.object.isRequired,
-		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired,
-			slug: PropTypes.string.isRequired,
-		} ),
+		orderId: PropTypes.number.isRequired,
 	};
 
 	constructor( props ) {
@@ -37,15 +36,16 @@ class OrderDetails extends Component {
 	}
 
 	updateStatus = event => {
-		this.setState( { status: event.target.value } );
-		// Send the order back to the parent component
-		this.props.onUpdate( { status: event.target.value } );
+		const { siteId } = this.props;
+		if ( siteId ) {
+			this.props.editOrder( siteId, { status: event.target.value } );
+		}
 	};
 
 	renderStatus = () => {
-		const { order } = this.props;
+		const { isEditing, order } = this.props;
 
-		return isOrderWaitingPayment( order.status ) ? (
+		return isEditing ? (
 			<OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
 		) : (
 			<OrderStatus status={ order.status } showShipping={ false } />
@@ -53,7 +53,7 @@ class OrderDetails extends Component {
 	};
 
 	render() {
-		const { order, site, translate } = this.props;
+		const { isEditing, order, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -68,14 +68,26 @@ class OrderDetails extends Component {
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
 				<Card className="order-details__card">
-					<OrderCreated order={ order } site={ site } />
+					{ ! isEditing && <OrderCreated order={ order } site={ site } /> }
 					<OrderDetailsTable order={ order } site={ site } />
-					<OrderPaymentCard order={ order } site={ site } />
-					<OrderFulfillment order={ order } site={ site } />
+					{ ! isEditing && <OrderPaymentCard order={ order } site={ site } /> }
+					{ ! isEditing && <OrderFulfillment order={ order } site={ site } /> }
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default localize( OrderDetails );
+export default connect( ( state, props ) => {
+	const site = getSelectedSiteWithFallback( state );
+	const siteId = site ? site.ID : false;
+	const isEditing = isCurrentlyEditingOrder( state );
+	const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
+
+	return {
+		isEditing,
+		order,
+		site,
+		siteId,
+	};
+} )( localize( OrderDetails ) );
