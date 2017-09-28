@@ -4,11 +4,12 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isDefaultLocale } from './utils';
+import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -27,12 +28,69 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
+	const language = getLanguage( localeSlug );
+	if ( ! language ) {
+		return;
+	}
+
 	// Note: i18n is a singleton that will be shared between all server requests!
 	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
 		if ( error ) {
 			debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' );
 			return;
 		}
+
 		i18n.setLocale( response.body );
+
+		if ( typeof document !== 'undefined' ) {
+			document.documentElement.lang = localeSlug;
+			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
+			loadMainCSS( !! language.rtl );
+		}
 	} );
+}
+
+function loadMainCSS( isRtl ) {
+	const cssUrl = isRtl ? window.app.urls[ 'style-rtl.css' ] : window.app.urls[ 'style.css' ];
+
+	const currentLink = document.getElementById( 'main-css' );
+	if ( currentLink.getAttribute( 'href' ) === cssUrl ) {
+		return;
+	}
+
+	loadCSS( cssUrl, ( err, newLink ) => {
+		if ( currentLink && currentLink.parentElement ) {
+			currentLink.parentElement.removeChild( currentLink );
+		}
+
+		newLink.id = 'main-css';
+	} );
+}
+
+/**
+ * Loads a css stylesheet into the page
+ * @param {string} cssUrl - a url to a css resource to be inserted into the page
+ * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
+ */
+export function loadCSS( cssUrl, callback = noop ) {
+	const link = Object.assign( document.createElement( 'link' ), {
+		rel: 'stylesheet',
+		type: 'text/css',
+		href: cssUrl,
+	} );
+
+	const onload = () => {
+		if ( 'onload' in link ) {
+			link.onload = null;
+		}
+		callback( null, link );
+	};
+
+	if ( 'onload' in link ) {
+		link.onload = onload;
+	} else {
+		setTimeout( onload, 500 );
+	}
+
+	document.head.appendChild( link );
 }

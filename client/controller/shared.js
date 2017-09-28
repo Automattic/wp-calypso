@@ -8,6 +8,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import { loadCSS } from 'lib/i18n-utils/switch-locale';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
@@ -35,34 +36,6 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 		}
 		next();
 	};
-}
-
-/**
- * Loads a css stylesheet into the page
- * @param {string} cssUrl - a url to a css resource to be inserted into the page
- * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
- */
-function loadCSS( cssUrl, callback = noop ) {
-	const link = Object.assign( document.createElement( 'link' ), {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: cssUrl,
-	} );
-
-	const onload = () => {
-		if ( 'onload' in link ) {
-			link.onload = null;
-		}
-		callback( null, link );
-	};
-
-	if ( 'onload' in link ) {
-		link.onload = onload;
-	} else {
-		setTimeout( onload, 500 );
-	}
-
-	document.head.appendChild( link );
 }
 
 export function setSection( section ) {

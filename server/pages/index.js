@@ -186,8 +186,7 @@ function getDefaultContext( request ) {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
-		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
-		tinymceEditorCss: context.urls[ 'editor.css' ],
+		urls: context.urls,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {
