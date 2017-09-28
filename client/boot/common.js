@@ -29,10 +29,9 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 const debug = debugFactory( 'calypso' );
 
 const switchUserLocale = ( currentUser, reduxStore ) => {
-	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
 	const localeSlug = currentUser.get().localeSlug;
 
-	if ( isDefaultLocale( currentLocaleSlug ) && localeSlug ) {
+	if ( localeSlug ) {
 		reduxStore.dispatch( setLocale( localeSlug ) );
 	}
 };
@@ -155,12 +154,11 @@ export const locales = ( currentUser, reduxStore ) => {
 	}
 
 	// When the user is not bootstrapped, we also bootstrap the
-	// locale strings
-	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+	// user locale strings, unless the locale was already set in the initial store during SSR
+	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && isDefaultLocale( currentLocaleSlug ) ) {
 		switchUserLocale( currentUser, reduxStore );
 	}
-
-	currentUser.on( 'change', () => switchUserLocale( currentUser, reduxStore ) );
 };
 
 export const utils = () => {
