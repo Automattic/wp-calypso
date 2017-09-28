@@ -34,6 +34,7 @@
 	"happychat_support_blog": "en.support.wordpress.com",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
+	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"languages": [
 		{ "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af" },

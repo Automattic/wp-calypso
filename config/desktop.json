@@ -9,6 +9,7 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
+	"rebrand_cities_prefix": "rebrandcitiessite",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
