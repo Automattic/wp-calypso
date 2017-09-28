@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import PostList from './post-list';
-import PostListFetcher from 'components/post-list-fetcher';
 import PostTypeList from 'my-sites/post-type-list';
 import config from 'config';
 import { mapPostStatus } from 'lib/route/path';
@@ -38,24 +37,11 @@ class PostListWrapper extends React.Component {
 		}
 
 		return (
-			<div>
-				<PostListFetcher
-					siteId={ this.props.siteId }
-					status={ mapPostStatus( this.props.statusSlug ) }
-					author={ this.props.author }
-					withImages={ true }
-					withCounts={ true }
-					search={ this.props.search }
-					category={ this.props.category }
-					tag={ this.props.tag }
-				>
-					<PostTypeList
-						query={ query }
-						largeTitles={ true }
-						wrapTitles={ true }
-					/>
-				</PostListFetcher>
-			</div>
+			<PostTypeList
+				query={ query }
+				largeTitles={ true }
+				wrapTitles={ true }
+			/>
 		);
 	}
 
