@@ -123,26 +123,28 @@ export const getPostCommentsTree = createSelector(
 				? filter( allItems, item => item.isPlaceholder || item.status === status )
 				: allItems;
 
+		// separate out root comments from comments that have parents
 		const [ roots, children ] = partition( items, item => item.parent === false );
-		const parentToChildMap = mapValues( groupBy( children, 'parent.ID' ), mapping =>
-			map( mapping, 'ID' )
+
+		// group children by their parent ID
+		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
+
+		// Generate a new map of parent ID to an array of chilren IDs
+		// Reverse the order to keep it in chrono order
+		const parentToChildIdMap = mapValues( childrenGroupedByParent, _children =>
+			map( _children, 'ID' ).reverse()
 		);
 
+		// convert all of the comments to comment nodes for our tree structure
 		const transformItemToNode = item => ( {
 			data: item,
-			children: ( parentToChildMap[ item.ID ] || [] ).reverse(),
+			children: parentToChildIdMap[ item.ID ] || [],
 		} );
 
-		const rootNodes = map( roots, transformItemToNode );
-		const childNodes = map( children, transformItemToNode );
-
-		const nodes = {
-			...keyBy( rootNodes, 'data.ID' ),
-			...keyBy( childNodes, 'data.ID' ),
-		};
+		const commentsByIdMap = keyBy( map( items, transformItemToNode ), 'data.ID' );
 
 		return {
-			...nodes,
+			...commentsByIdMap,
 			children: map( roots, root => root.ID ).reverse(),
 		};
 	},

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect as chaiExpect } from 'chai';
 
 /***
  * Internal dependencies
@@ -39,12 +39,56 @@ const state = {
 	},
 };
 
+const stateWithDeeperChildren = {
+	comments: {
+		items: {
+			'1-1': [
+				{
+					ID: 4,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:04Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 3,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:03Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 2,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:02Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 1,
+					parent: false,
+					date: '2017-01-31T00:00:01Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 50,
+					parent: false,
+					date: '2017-01-30T00:00:00Z',
+					i_like: false,
+					like_count: 0,
+				},
+			],
+		},
+	},
+};
+
 describe( 'selectors', () => {
 	describe( '#getPostMostRecentCommentDate()', () => {
 		it( 'should get most recent date', () => {
 			const res = getPostMostRecentCommentDate( state, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( '2017-01-31T10:07:18-08:00' ) );
+			chaiExpect( res ).to.be.eql( new Date( '2017-01-31T10:07:18-08:00' ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {
@@ -56,7 +100,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( res ).to.be.eql( undefined );
+			chaiExpect( res ).to.be.eql( undefined );
 		} );
 	} ); // end of getPostMostRecentCommentDate
 
@@ -64,7 +108,7 @@ describe( 'selectors', () => {
 		it( 'should get earliest date', () => {
 			const res = getPostOldestCommentDate( state, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( '2015-01-29T10:07:18-08:00' ) );
+			chaiExpect( res ).to.be.eql( new Date( '2015-01-29T10:07:18-08:00' ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {
@@ -76,7 +120,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( res ).to.be.eql( undefined );
+			chaiExpect( res ).to.be.eql( undefined );
 		} );
 	} ); // end of getPostOldestCommentDate
 
@@ -84,61 +128,19 @@ describe( 'selectors', () => {
 		it( 'should provide only like statistics', () => {
 			const res = getCommentLike( state, 1, 1, 2 );
 
-			expect( res.i_like ).to.eql( false );
-			expect( res.like_count ).to.eql( 456 );
+			chaiExpect( res.i_like ).to.eql( false );
+			chaiExpect( res.like_count ).to.eql( 456 );
 		} );
 	} );
 
 	describe( '#getPostCommentsTree', () => {
 		it( 'should return the tree structure', () => {
 			const tree = getPostCommentsTree( state, 1, 1, 'all' );
-			expect( tree ).to.eql( {
-				1: {
-					children: [ 3 ],
-					data: {
-						ID: 1,
-						date: '2016-01-31T10:07:18-08:00',
-						i_like: true,
-						like_count: 5,
-						parent: false,
-					},
-				},
-				2: {
-					children: [ 4 ],
-					data: {
-						ID: 2,
-						date: '2016-01-29T10:07:18-08:00',
-						i_like: false,
-						like_count: 456,
-						parent: false,
-					},
-				},
-				3: {
-					children: [],
-					data: {
-						ID: 3,
-						date: '2017-01-31T10:07:18-08:00',
-						i_like: false,
-						like_count: 0,
-						parent: {
-							ID: 1,
-						},
-					},
-				},
-				4: {
-					children: [],
-					data: {
-						ID: 4,
-						date: '2015-01-29T10:07:18-08:00',
-						i_like: false,
-						like_count: 0,
-						parent: {
-							ID: 2,
-						},
-					},
-				},
-				children: [ 2, 1 ],
-			} );
+			expect( tree ).toMatchSnapshot();
+		} );
+
+		it( 'should reverse children', () => {
+			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
 		} );
 	} );
 } );
