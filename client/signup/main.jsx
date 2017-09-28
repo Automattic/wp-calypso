@@ -262,7 +262,9 @@ class Signup extends React.Component {
 		const urlPath = location.href;
 		const query = url.parse( urlPath, true ).query;
 		const affiliateId = query.aff;
-		this.props.affiliateReferral( { urlPath, affiliateId } );
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.affiliateReferral( { urlPath, affiliateId } );
+		}
 	}
 
 	componentWillUnmount() {

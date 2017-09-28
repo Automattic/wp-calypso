@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debug from 'debug';
+import noop from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,11 +41,7 @@ const trackAffiliatePageLoad = ( { dispatch }, action ) => {
 };
 
 const trackAffiliatePageLoadSuccess = ( { dispatch }, action, rData ) => {
-	aDebug( 'success', rData );
-};
-
-const trackAffiliatePageLoadError = ( { dispatch }, action, error ) => {
-	aDebug( 'error', error );
+	aDebug( 'affiliate referrer request successful', rData );
 };
 
 export default {
@@ -52,7 +49,7 @@ export default {
 		dispatchRequest(
 			trackAffiliatePageLoad,
 			trackAffiliatePageLoadSuccess,
-			trackAffiliatePageLoadError
+			noop
 		)
 	],
 };

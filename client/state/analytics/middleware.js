@@ -35,7 +35,6 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	affiliates: ( { url } ) => analytics.affiliates.recordPageView( url ),
 	'default': ( { url, title } ) => analytics.pageView.record( url, title ),
 };
 
