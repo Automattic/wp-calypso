@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { flowRight, map, pick } from 'lodash';
+import { flowRight, map, mapValues, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import WrapSettingsForm from '../wrap-settings-form';
 import QueryPlugins from '../data/query-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { togglePlugin } from '../../state/plugins/actions';
-import { isRequestingPlugins, getPlugins } from '../../state/plugins/selectors';
+import { isRequestingPlugins, isTogglingPlugin, getPlugins } from '../../state/plugins/selectors';
 
 class PluginsTab extends Component {
 	static propTypes = {
@@ -47,13 +47,13 @@ class PluginsTab extends Component {
 				<SectionHeader label={ translate( 'Plugins' ) } />
 				<QueryPlugins siteId={ siteId } />
 				<Card>
-					{ map( plugins, ( { desc, enabled, key, title, url } ) => {
+					{ map( plugins, ( { desc, enabled, key, title, toggling, url } ) => {
 						return (
 							<div key={ key }>
 								<FormToggle
 									checked={ !! enabled }
 									data-plugin={ key }
-									disabled={ isRequesting }
+									disabled={ isRequesting || toggling }
 									onChange={ this.togglePlugin( key, ! enabled ) }>
 									<span>{ title }</span>
 								</FormToggle>
@@ -80,7 +80,10 @@ const connectComponent = connect(
 
 		return {
 			isRequesting,
-			plugins
+			plugins: mapValues( plugins, ( plugin ) => ( {
+				...plugin,
+				toggling: isTogglingPlugin( state, siteId, plugin.key )
+			} ) )
 		};
 	},
 	{ togglePlugin },
