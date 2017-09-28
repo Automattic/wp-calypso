@@ -23,12 +23,16 @@ import {
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import touchDetect from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+import { isDefaultLocale } from 'lib/i18n-utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const debug = debugFactory( 'calypso' );
 
 const switchUserLocale = ( currentUser, reduxStore ) => {
+	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
 	const localeSlug = currentUser.get().localeSlug;
-	if ( localeSlug ) {
+
+	if ( isDefaultLocale( currentLocaleSlug ) && localeSlug ) {
 		reduxStore.dispatch( setLocale( localeSlug ) );
 	}
 };
