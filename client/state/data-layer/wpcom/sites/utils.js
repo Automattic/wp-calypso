@@ -7,7 +7,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { COMMENTS_DELETE, COMMENTS_RECEIVE, COMMENTS_COUNT_INCREMENT } from 'state/action-types';
+import {
+	COMMENTS_DELETE,
+	COMMENTS_RECEIVE,
+	COMMENTS_COUNT_INCREMENT,
+	COMMENTS_WRITE_FAILURE,
+} from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
@@ -37,7 +42,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
 
 /**
  * Creates a placeholder comment for a given text and postId
- * We need placehodler id to be unique in the context of siteId, postId for that specific user,
+ * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
  * @param {Function} dispatch redux dispatcher
@@ -69,7 +74,7 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
 				...action,
 				placeholderId: placeholder.ID,
 			},
-			onFailure: action,
+			onFailure: { ...action, placeholderId: placeholder.ID },
 		} )
 	);
 };
@@ -110,7 +115,14 @@ export const updatePlaceholderComment = (
  * @param {Number}   siteId   site identifier
  * @param {Number}   postId   post identifier
  */
-export const handleWriteCommentFailure = ( { dispatch, getState }, { siteId, postId } ) => {
+export const handleWriteCommentFailure = (
+	{ dispatch, getState },
+	{ siteId, postId, placeholderId }
+) => {
+	// Dispatch a write failure so we can record the failed comment placeholder in state
+	dispatch( { type: COMMENTS_WRITE_FAILURE, siteId, postId, placeholderId } );
+
+	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
 	const postTitle =
 		post &&
