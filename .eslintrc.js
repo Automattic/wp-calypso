@@ -4,6 +4,7 @@ module.exports = {
 	parser: 'babel-eslint',
 	env: {
 		browser: true,
+		jest: true,
 		mocha: true,
 		node: true
 	},

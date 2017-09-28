@@ -1,3 +1,8 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+
 /**
  * External dependencies
  */
@@ -7,7 +12,6 @@ import { ary, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { createStore } from 'redux';
 import { reducer } from 'state';
 
@@ -17,9 +21,6 @@ describe( 'flow-controller', function() {
 		SignupFlowController,
 		SignupActions,
 		signupFlowController;
-
-	useFakeDom();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
 		SignupProgressStore = require( '../progress-store' );

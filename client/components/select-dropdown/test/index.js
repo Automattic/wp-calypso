@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -9,12 +11,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import SelectDropdown from '../index';
 
 describe( 'index', function() {
-	useFakeDom();
-
 	describe( 'component rendering', function() {
 		it( 'should render a list with the provided options', function() {
 			const dropdown = mountDropdown();

@@ -1,52 +1,38 @@
+/** @jest-environment jsdom */
+jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
+jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/media/library-selected-store', () => () => null );
+jest.mock( 'lib/media/actions', () => () => null );
+jest.mock( 'my-sites/media-library/content', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library/drop-zone', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library/filter-bar', () => require( 'components/empty-component' ) );
+jest.mock( 'state/sharing/keyring/actions', () => ( {
+	requestKeyringConnections: require( 'sinon' ).stub()
+} ) );
+jest.mock( 'state/sharing/keyring/selectors', () => ( {
+	getKeyringConnections: () => null,
+	isKeyringConnectionsFetching: () => null,
+} ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import React from 'react';
 import { mount } from 'enzyme';
-import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
-
-const emptyComponent = () => null;
+import MediaLibrary from '..';
+import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
 
 describe( 'MediaLibrary', () => {
-	let MediaLibrary, requestStub;
-
-	useFakeDom();
-	useMockery();
-
 	const store = {
 		getState: () => ( {} ),
 		dispatch: () => false,
 		subscribe: () => false,
 	};
-
-	useMockery( mockery => {
-		requestStub = stub();
-		mockery.registerMock( 'components/data/query-preferences', emptyComponent );
-		mockery.registerMock( './filter-bar', emptyComponent );
-		mockery.registerMock( './content', emptyComponent );
-		mockery.registerMock( './drop-zone', emptyComponent );
-		mockery.registerMock( 'components/data/media-validation-data', emptyComponent );
-		mockery.registerMock( 'lib/media/library-selected-store', emptyComponent );
-		mockery.registerMock( 'lib/media/actions', emptyComponent );
-		mockery.registerMock( 'state/sharing/keyring/selectors', {
-			getKeyringConnections: emptyComponent,
-			isKeyringConnectionsFetching: emptyComponent,
-		} );
-		mockery.registerMock( 'state/sharing/keyring/actions', {
-			requestKeyringConnections: requestStub
-		} );
-	} );
-
-	before( () => {
-		MediaLibrary = require( '..' );
-	} );
 
 	beforeEach( () => {
 		requestStub.reset();

@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -22,8 +24,6 @@ describe( 'index', function() {
 } );
 
 describe( 'FormToggle', function() {
-	require( 'test/helpers/use-fake-dom' )();
-
 	describe( 'rendering', function() {
 		it( 'should have form-toggle class', function() {
 			const toggle = shallow( <FormToggle /> );
@@ -96,7 +96,8 @@ describe( 'FormToggle', function() {
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
 			const ids = toggleInputs.map( ( input ) => input.props().id );
-			return ids.length === uniq( ids ).length;
+
+			assert( ids.length === uniq( ids ).length );
 		} );
 	} );
 } );

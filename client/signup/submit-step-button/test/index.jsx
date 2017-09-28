@@ -1,3 +1,7 @@
+jest.mock( 'lib/signup/actions', () => ( {
+	submitSignupStep: require( 'sinon' ).stub()
+} ) );
+
 /**
  * External dependencies
  */
@@ -9,20 +13,10 @@ import { stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import SubmitStepButton from '..';
+import { submitSignupStep } from 'lib/signup/actions';
 
 describe( 'SubmitStepButton', () => {
-	let SubmitStepButton;
-	const submitSignupStep = stub();
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/signup/actions', { submitSignupStep } );
-	} );
-
-	before( () => {
-		SubmitStepButton = require( '..' );
-	} );
-
 	it( 'should render buttonText prop within a child button', () => {
 		const wrapper = shallow( <SubmitStepButton buttonText="SubmitStepButton: buttonText" /> );
 

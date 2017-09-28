@@ -2,34 +2,23 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import searchUrl from '..';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const SEARCH_KEYWORD = 'giraffe';
 
 describe( 'SearchUrl', () => {
-	let onSearch, searchUrl, onReplace, onPage;
-
-	useMockery();
+	let onSearch, onReplace, onPage;
 
 	useSandbox( sandbox => {
 		onSearch = sandbox.stub();
-		onReplace = sandbox.stub();
-		onPage = sandbox.stub();
-	} );
-
-	before( () => {
-		mockery.registerMock( 'page', {
-			replace: onReplace,
-			show: onPage,
-		} );
-
-		searchUrl = require( '..' );
+		onReplace = sandbox.stub( page, 'replace' );
+		onPage = sandbox.stub( page, 'show' );
 	} );
 
 	it( 'should call onSearch if provided', () => {

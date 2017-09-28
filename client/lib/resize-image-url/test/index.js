@@ -131,13 +131,15 @@ describe( 'resizeImageUrl()', () => {
 	context( 'high pixel density', () => {
 		before( () => {
 			global.window = { devicePixelRatio: 2 };
-			delete require.cache[ require.resolve( '..' ) ];
+			// We need to reset module under test to recompute image scale factor
+			jest.resetModules();
 			resizeImageUrl = require( '..' );
 		} );
 
 		after( () => {
-			delete global.window;
-			delete require.cache[ require.resolve( '..' ) ];
+			global.window = undefined;
+			// We need to reset module under test to recompute image scale factor
+			jest.resetModules();
 			resizeImageUrl = require( '..' );
 		} );
 

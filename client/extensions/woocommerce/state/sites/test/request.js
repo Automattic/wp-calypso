@@ -8,14 +8,12 @@ import { expect } from 'chai';
  */
 import request from '../request';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'request', () => {
 	describe( '#get', () => {
 		const siteId = '123';
 		const getResponse = { name: 'placeholder get response', placeholder: true };
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -41,7 +39,6 @@ describe( 'request', () => {
 		const body = { name: 'placeholder post request', placeholder: true };
 		const postResponse = { name: 'placeholder post response', placeholder: true };
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -67,7 +64,6 @@ describe( 'request', () => {
 		const body = { name: 'placeholder put request', placeholder: true };
 		const putResponse = { name: 'placeholder put response', placeholder: true };
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -92,7 +88,6 @@ describe( 'request', () => {
 		const siteId = '123';
 		const deleteResponse = { name: 'placeholder delete response', placeholder: true };
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )

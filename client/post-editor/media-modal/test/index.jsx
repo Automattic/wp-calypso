@@ -1,17 +1,49 @@
+/** @jest-environment jsdom */
+jest.mock( 'component-closest', () => {} );
+jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
+jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
+jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
+jest.mock( 'post-editor/media-modal/detail', () => ( {
+	'default': require( 'components/empty-component' )
+} ) );
+jest.mock( 'post-editor/media-modal/gallery', () => require( 'components/empty-component' ) );
+jest.mock( 'post-editor/media-modal/markup', () => ( {
+	get: x => x
+} ) );
+jest.mock( 'post-editor/media-modal/secondary-actions', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
+jest.mock( 'lib/analytics', () => ( {
+	mc: {
+		bumpStat: () => {}
+	}
+} ) );
+jest.mock( 'lib/media/actions', () => ( {
+	'delete': () => {},
+	setLibrarySelectedItems: () => {}
+} ) );
+jest.mock( 'lib/posts/actions', () => ( {
+	blockSave: () => {}
+} ) );
+jest.mock( 'lib/posts/stats', () => ( {
+	recordEvent: () => {},
+	recordState: () => {}
+} ) );
+jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
+
 /**
  * External dependencies
  */
-import { identity, noop } from 'lodash';
 import React from 'react';
 import { shallow } from 'enzyme';
-import mockery from 'mockery';
 import { expect } from 'chai';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import accept from 'lib/accept';
+import { EditorMediaModal } from '../';
+import mediaActions from 'lib/media/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { ModalViews } from 'state/ui/media-modal/constants';
 
@@ -24,49 +56,19 @@ const DUMMY_MEDIA = [
 	{ ID: 200, date: '2015-06-19T09:36:09-04:00', mime_type: 'image/jpeg' }
 ];
 const DUMMY_VIDEO_MEDIA = [ { ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'video/mp4' } ];
-const EMPTY_COMPONENT = React.createClass( {
-	render: function() {
-		return <div />;
-	}
-} );
 
 describe( 'EditorMediaModal', function() {
-	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems, onClose;
+	let spy, deleteMedia, onClose;
 
-	translate = require( 'i18n-calypso' ).translate;
-
-	useMockery( () => {
-		mockery.registerSubstitute( 'event', 'component-event' );
-	} );
-	useFakeDom();
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
-		setLibrarySelectedItems = sandbox.stub();
-		deleteMedia = sandbox.stub();
+		sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
+		deleteMedia = sandbox.stub( mediaActions, 'delete' );
 		onClose = sandbox.stub();
-		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
 
-	before( function() {
-		// Mockery
-		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
-		mockery.registerMock( './detail', { 'default': EMPTY_COMPONENT } );
-		mockery.registerMock( './gallery', EMPTY_COMPONENT );
-		mockery.registerMock( './markup', { get: identity } );
-		mockery.registerMock( './secondary-actions', EMPTY_COMPONENT );
-		mockery.registerMock( 'components/dialog', EMPTY_COMPONENT );
-		mockery.registerMock( 'components/popover', EMPTY_COMPONENT );
-		mockery.registerMock( 'lib/accept', accept );
-		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop } } );
-		mockery.registerMock( 'component-closest', {} );
-		mockery.registerMock( 'lib/media/actions', { 'delete': deleteMedia, setLibrarySelectedItems: setLibrarySelectedItems } );
-		mockery.registerMock( 'lib/posts/actions', { blockSave: noop } );
-		mockery.registerMock( 'lib/posts/stats', {
-			recordEvent: noop,
-			recordState: noop
-		} );
-
-		EditorMediaModal = require( '../' ).EditorMediaModal;
+	afterEach( () => {
+		accept.reset();
 	} );
 
 	it( 'should prompt to delete a single item from the list view', function( done ) {

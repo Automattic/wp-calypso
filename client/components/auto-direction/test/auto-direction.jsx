@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -8,18 +10,11 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
+import AutoDirection from '..';
 import Emojify from 'components/emojify';
 
 describe( 'AutoDirection', function() {
-	useFakeDom();
-	let AutoDirection;
-
-	context( 'component rendering', () => {
-		before( () => {
-			AutoDirection = require( '..' );
-		} );
-
+	describe( 'component rendering', () => {
 		it( 'adds a direction to RTL text', () => {
 			const wrapper = shallow(
 				<AutoDirection><div>השנה היא 2017.</div></AutoDirection>

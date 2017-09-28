@@ -58,16 +58,16 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
-			fetchConnections( 2916284 )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PUBLICIZE_CONNECTIONS_REQUEST,
-				siteId: 2916284
+			return fetchConnections( 2916284 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PUBLICIZE_CONNECTIONS_REQUEST,
+					siteId: 2916284
+				} );
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', ( done ) => {
-			fetchConnections( 2916284 )( spy ).then( () => {
+		it( 'should dispatch receive action when request completes', () => {
+			return fetchConnections( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				const action1 = spy.getCall( 1 ).args[ 0 ];
@@ -78,22 +78,18 @@ describe( 'actions', () => {
 				const action2 = spy.getCall( 2 ).args[ 0 ];
 				expect( action2.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS );
 				expect( action2.siteId ).to.equal( 2916284 );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', ( done ) => {
-			fetchConnections( 77203074 )( spy ).then( () => {
+		it( 'should dispatch fail action when request fails', () => {
+			return fetchConnections( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 
 				const action = spy.getCall( 1 ).args[ 0 ];
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
 				expect( action.siteId ).to.equal( 77203074 );
 				expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 	} );
 
@@ -111,17 +107,17 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
-			fetchConnection( 2916284, 2 )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PUBLICIZE_CONNECTION_REQUEST,
-				connectionId: 2,
-				siteId: 2916284,
+			return fetchConnection( 2916284, 2 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PUBLICIZE_CONNECTION_REQUEST,
+					connectionId: 2,
+					siteId: 2916284,
+				} );
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', ( done ) => {
-			fetchConnection( 2916284, 2 )( spy ).then( () => {
+		it( 'should dispatch receive action when request completes', () => {
+			return fetchConnection( 2916284, 2 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				const action1 = spy.getCall( 1 ).args[ 0 ];
@@ -133,12 +129,11 @@ describe( 'actions', () => {
 				expect( action2.type ).to.equal( PUBLICIZE_CONNECTION_REQUEST_SUCCESS );
 				expect( action2.connectionId ).to.equal( 2 );
 				expect( action2.siteId ).to.equal( 2916284 );
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', ( done ) => {
-			fetchConnection( 77203074, 2 )( spy ).then( () => {
+		it( 'should dispatch fail action when request fails', () => {
+			return fetchConnection( 77203074, 2 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 
 				const action = spy.getCall( 1 ).args[ 0 ];
@@ -146,9 +141,7 @@ describe( 'actions', () => {
 				expect( action.connectionId ).to.equal( 2 );
 				expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
 				expect( action.siteId ).to.equal( 77203074 );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 	} );
 
@@ -176,7 +169,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch create action when request completes', () => {
-			createSiteConnection( 2916284, 2, 1 )( spy ).then( () => {
+			return createSiteConnection( 2916284, 2, 1 )( spy ).then( () => {
 				const action = spy.getCall( 0 ).args[ 0 ];
 
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_CREATE );
@@ -185,7 +178,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			createSiteConnection( 77203074, 2, 1 )( spy ).then( () => {
+			return createSiteConnection( 77203074, 2, 1 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
 					error: sinon.match( { message: 'An active access token must be used to access publicize connections.' } )

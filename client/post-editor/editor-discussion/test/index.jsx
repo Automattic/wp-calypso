@@ -1,3 +1,13 @@
+/** @jest-environment jsdom */
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/posts/actions', () =>( {
+	edit: require( 'sinon' ).spy()
+} ) );
+jest.mock( 'lib/posts/stats', () => ( {
+	recordEvent: () => {},
+	recordStat: () => {}
+} ) );
+
 /**
  * External dependencies
  */
@@ -5,16 +15,13 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import sinon from 'sinon';
-import mockery from 'mockery';
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import EditorDiscussion from '../';
+import { edit as editPost } from 'lib/posts/actions';
 
 /**
  * Module variables
@@ -27,22 +34,7 @@ const DUMMY_SITE = {
 };
 
 describe( 'EditorDiscussion', function() {
-	var editPost, EditorDiscussion;
-
-	useMockery();
-	useFakeDom();
-
 	before( function() {
-		editPost = sinon.spy();
-		mockery.registerMock( 'components/info-popover', EmptyComponent );
-		mockery.registerMock( 'lib/posts/actions', {
-			edit: editPost
-		} );
-		mockery.registerMock( 'lib/posts/stats', {
-			recordEvent: noop,
-			recordStat: noop
-		} );
-		EditorDiscussion = require( '../' );
 		EditorDiscussion.prototype.translate = sinon.stub().returnsArg( 0 );
 	} );
 

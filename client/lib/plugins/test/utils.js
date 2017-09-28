@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -6,12 +8,9 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import PluginUtils from '../utils';
 
 describe( 'Plugins Utils', () => {
-	useFakeDom();
-
 	describe( 'normalizePluginData', () => {
 		it( 'should have a method normalizePluginData', () => {
 			assert.isFunction( PluginUtils.normalizePluginData );

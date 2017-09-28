@@ -1,3 +1,21 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/analytics', () => {} );
+jest.mock( 'i18n-calypso', () => ( {
+	localize: x => x
+} ) );
+jest.mock( 'lib/wp', () => {
+	const wpcomMock = {
+		undocumented: () => wpcomMock,
+		me: () => wpcomMock,
+		get: () => wpcomMock,
+		getProducts: () => wpcomMock,
+		getDomainContactInformation: () => wpcomMock,
+		bind: () => wpcomMock,
+	};
+
+	return wpcomMock;
+} );
+
 /**
  * External Dependencies
  */
@@ -5,36 +23,20 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, merge } from 'lodash';
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
-
-const wpcomMock = {
-	undocumented: () => wpcomMock,
-	me: () => wpcomMock,
-	get: () => wpcomMock,
-	getProducts: () => wpcomMock,
-	getDomainContactInformation: () => wpcomMock,
-	bind: () => wpcomMock,
-};
+import {
+	domainRegistration,
+	domainPrivacyProtection
+} from 'lib/cart-values/cart-items';
+import {
+	DomainDetailsForm,
+	DomainDetailsFormContainer
+} from '../domain-details-form';
 
 describe( 'Domain Details Form', () => {
-	let DomainDetailsForm, DomainDetailsFormContainer;
-	// needed, because some dependency of dependency uses `window`
-	useFakeDom();
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/analytics', {} );
-		mockery.registerMock( 'i18n-calypso', { localize: identity } );
-		mockery.registerMock( 'lib/wp', wpcomMock );
-		DomainDetailsForm = require( '../domain-details-form' ).DomainDetailsForm;
-		DomainDetailsFormContainer = require( '../domain-details-form' ).DomainDetailsFormContainer;
-	} );
-
 	const defaultProps = {
 		productsList: {},
 		cart: {
