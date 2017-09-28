@@ -77,7 +77,11 @@ class EventsTooltip extends Component {
 								icon={ event.icon }
 								socialIcon={ event.socialIcon }
 								socialIconColor={ event.socialIconColor }
-								title={ event.title } />
+								title={
+									event.date.getHours() +
+									':' + event.date.getMinutes() +
+									' ' + event.title
+								} />
 						</li>
 					) }
 
