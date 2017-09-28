@@ -7,15 +7,14 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
-import constants from 'lib/invites/constants';
+import { action as ActionTypes } from 'lib/invites/constants';
 
 describe( 'List Invites Store', function() {
-	var ListInvitesStore;
+	let ListInvitesStore;
 	const siteId = 123;
 	const actions = {
 		receiveInvites: {
-			type: constants.action.RECEIVE_INVITES,
+			type: ActionTypes.RECEIVE_INVITES,
 			siteId: siteId,
 			offset: 0,
 			data: {
@@ -33,7 +32,7 @@ describe( 'List Invites Store', function() {
 			}
 		},
 		receiveMoreInvites: {
-			type: constants.action.RECEIVE_INVITES,
+			type: ActionTypes.RECEIVE_INVITES,
 			siteId: siteId,
 			offset: 0,
 			data: {

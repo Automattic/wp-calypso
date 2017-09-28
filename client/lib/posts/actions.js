@@ -1,28 +1,27 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-
-const debug = debugFactory('calypso:posts');
 import store from 'store';
 import { assign, clone, defer, fromPairs } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
 import postListStoreFactory from './post-list-store-factory';
 import PreferencesStore from 'lib/preferences/store';
 import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
 import utils from './utils';
 import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
-import stats from './stats';
+import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
+
+const sites = sitesFactory();
+const debug = debugFactory( 'calypso:posts' );
 
 var PostActions;
 
@@ -339,7 +338,7 @@ PostActions = {
 		};
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			stats.recordSaveEvent( context ); // do this before changing status from 'future'
+			recordSaveEvent( context ); // do this before changing status from 'future'
 		}
 
 		if ( ( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||

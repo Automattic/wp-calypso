@@ -7,8 +7,7 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
-import constants from 'lib/invites/constants';
+import { action as ActionTypes } from 'lib/invites/constants';
 
 describe( 'Invites Create Validation Store', () => {
 	let InvitesCreateValidationStore;
@@ -28,7 +27,7 @@ describe( 'Invites Create Validation Store', () => {
 
 	const actions = {
 		receiveValidaton: {
-			type: constants.action.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
+			type: ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
 			siteId: siteId,
 			data: validationData
 		},
