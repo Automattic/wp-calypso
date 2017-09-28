@@ -23,9 +23,7 @@ class QuerySetupStatus extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId } = this.props;
-
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}
 
