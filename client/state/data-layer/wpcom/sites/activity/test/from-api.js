@@ -71,17 +71,9 @@ describe( 'fromApi', () => {
 		} );
 
 		it( 'should process an empty response', () => {
-			expect(
-				fromApi( {
-					...API_RESPONSE_BODY,
-					totalItems: 0,
-					current: {
-						...API_RESPONSE_BODY.current,
-						totalItems: 0,
-						orderedItems: [],
-					},
-				} )
-			).to.be.an( 'array' ).that.is.empty;
+			const noCurrent = { ...API_RESPONSE_BODY };
+			delete noCurrent.current;
+			expect( fromApi( noCurrent ) ).to.be.an( 'array' ).that.is.empty;
 		} );
 
 		it( 'should throw with invalid data', () => {

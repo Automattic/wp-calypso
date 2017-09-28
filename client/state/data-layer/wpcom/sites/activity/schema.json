@@ -1,7 +1,7 @@
 {
 	"additionalProperties": false,
 	"type": "object",
-	"required": [ "current", "itemsPerPage", "page", "totalItems", "totalPages" ],
+	"required": [ "itemsPerPage", "page", "totalItems", "totalPages" ],
 	"properties": {
 		"@context": { "type": "string" },
 		"first": { "type": "string" },
