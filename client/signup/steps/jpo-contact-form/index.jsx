@@ -48,9 +48,9 @@ const JPOContactFormStep = React.createClass( {
 
 	renderStepContent() {
 		return (
-			<div className="jpo__contact-form-wrapper">
+			<div className="jpo-contact-form__choices">
 				<Card className="jpo-contact-form__choice">
-					<a className="jpo-contact-form__select-news jpo-contact-form__choice-link" href="#" onClick={ this.onSelect }>
+					<a className="jpo-contact-form__choice-link" href="#" onClick={ this.onSelect }>
 						<div className="jpo-contact-form__image">
 							<ContactUsGraphic />
 						</div>
@@ -75,7 +75,7 @@ const JPOContactFormStep = React.createClass( {
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 
 		return (
-			<div>
+			<div className="jpo-contact-form">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
