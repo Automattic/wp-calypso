@@ -45,7 +45,6 @@
 	.reviews__header {
 		display: flex;
 		align-items: center;
-		padding: 12px 8px;
 
 		&.is-preview {
 			cursor: pointer;
@@ -70,6 +69,8 @@
 				margin-top: -6px;
 				text-align: center;
 				width: 36px;
+				padding-right: 16px;
+				margin-left: 8px;
 
 				.gridicon {
 					transform: rotate( 0deg );
@@ -105,17 +106,18 @@
 		height: 18px;
 	}
 
-	.reviews__author-gravatar {
-		display: flex;
-		align-items: center;
-	}
-
 	.reviews__author-gravatar,
 	.reviews__info,
 	.reviews__content,
 	.reviews__rating,
 	.reviews__product {
-		margin: 0 8px;
+		margin: 12px 8px;
+	}
+
+	.reviews__author-gravatar {
+		display: flex;
+		align-items: center;
+		margin-left: 16px;
 	}
 
 	.reviews__author-gravatar {
