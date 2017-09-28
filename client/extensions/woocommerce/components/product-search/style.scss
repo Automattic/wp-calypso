@@ -10,7 +10,48 @@
 	padding: 0 5px 5px;
 	width: 100%;
 	max-height: 250px;
-	overflow: scroll;
+	overflow-y: scroll;
+
+	&.is-placeholder {
+		overflow-y: visible;
+
+		span {
+			display: inline-block;
+			width: 100%;
+			@include placeholder();
+		}
+
+		.product-search__image span {
+			height: 40px;
+			width: 40px;
+		}
+
+		.product-search__name span {
+			height: 20px;
+			width: 35%;
+		}
+
+		.product-search__sku span {
+			margin-top: 2px;
+			height: 12px;
+			width: 30%;
+		}
+	}
+
+	&.is-not-found {
+		overflow-y: visible;
+
+		.product-search__image {
+			padding: 8px;
+			flex: 0 0 24px;
+			height: 24px;
+			width: 24px;
+		}
+
+		.product-search__sku {
+			text-transform: none;
+		}
+	}
 }
 
 .product-search__item {

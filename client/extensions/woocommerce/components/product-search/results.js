@@ -4,13 +4,15 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import {
 	areProductSearchResultsLoaded,
 	areProductSearchResultsLoading,
@@ -24,18 +26,62 @@ class ProductSearchResults extends Component {
 		search: PropTypes.string.isRequired,
 	};
 
+	renderLoading = () => {
+		return (
+			<div className="product-search__results is-placeholder">
+				<CompactCard className="product-search__item">
+					<div className="product-search__image">
+						<span />
+					</div>
+					<div className="product-search__label">
+						<div className="product-search__name">
+							<span />
+						</div>
+						<div className="product-search__sku">
+							<span />
+						</div>
+					</div>
+				</CompactCard>
+			</div>
+		);
+	};
+
+	renderNotFound = () => {
+		const { translate } = this.props;
+		return (
+			<CompactCard className="product-search__item">
+				<div className="product-search__image">
+					<Gridicon icon="info-outline" />
+				</div>
+				<div className="product-search__label">
+					<div className="product-search__name">{ translate( 'No products found' ) }</div>
+					<div className="product-search__sku">{ translate( 'Please try another search' ) }</div>
+				</div>
+			</CompactCard>
+		);
+	};
+
 	render() {
-		const { isLoaded, isLoading, onSelect, products, search, translate } = this.props;
-		if ( ( ! isLoaded && ! search ) || isLoading ) {
+		const { isLoaded, isLoading, onSelect, products, search } = this.props;
+		if ( ! isLoaded && ! search ) {
 			return null;
 		}
 
+		if ( isLoading ) {
+			return this.renderLoading();
+		}
+
+		const classes = classNames( {
+			'product-search__results': true,
+			'is-not-found': ! products.length,
+		} );
+
 		return (
-			<div className="product-search__results">
+			<div className={ classes }>
 				{ products.length ? (
 					products.map( p => <ProductItem key={ p.id } product={ p } onClick={ onSelect } /> )
 				) : (
-					<Card>{ translate( 'No results for %(search)s', { args: { search } } ) }</Card>
+					this.renderNotFound()
 				) }
 			</div>
 		);
