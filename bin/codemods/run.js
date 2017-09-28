@@ -15,9 +15,8 @@ const config = require( './src/config' );
 
 function getLocalCodemodFileNames() {
 	// Returns all JS files in bin/codemods/src folder, except for config and helpers.
-	return glob.sync( 'bin/codemods/src/*.js' )
+	return glob.sync( 'bin/codemods/src/!(config).js' )
 		.map( name => path.basename( name, '.js' ) ) // strip path and extension from filename
-		.filter( name => name !== 'config' ); // exclude utility files
 }
 
 function getValidCodemodNames() {
