@@ -72,7 +72,7 @@
 				margin-top: -6px;
 				text-align: center;
 				width: 36px;
-				padding-right: 16px;
+				margin-right: 12px;
 				margin-left: 8px;
 
 				.gridicon {
@@ -82,11 +82,12 @@
 		}
 
 		&:not( .is-preview ) .button.is-borderless {
-			padding: 12px 8px;
+			padding: 10px 8px 14px;
 
 			&.reviews__action-collapse {
 				flex-grow: 1;
 				padding-right: 12px;
+				margin-right: 4px;
 				text-align: right;
 			}
 		}
