@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit } from 'lodash';
+import { keyBy, omit, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,6 +108,24 @@ export function total( state = 0, action ) {
 		const query = getSerializedReviewsQuery( omit( action.query, 'page' ) );
 		return Object.assign( {}, state, { [ query ]: action.total } );
 	}
+
+	// Updates total numbers of reviews for statuses without requiring another API query/fetch
+	// Only updates totals which we have previously fetched.
+	if ( WOOCOMMERCE_REVIEW_STATUS_CHANGE === action.type ) {
+		const updatedState = {};
+		const newStatusQuery = getSerializedReviewsQuery( { status: action.newStatus } );
+		if ( isNumber( state[ newStatusQuery ] ) ) {
+			updatedState[ newStatusQuery ] = state[ newStatusQuery ] + 1;
+		}
+
+		const currentStatusQuery = getSerializedReviewsQuery( { status: action.currentStatus } );
+		if ( isNumber( state[ currentStatusQuery ] ) ) {
+			updatedState[ currentStatusQuery ] = state[ currentStatusQuery ] - 1;
+		}
+
+		return Object.assign( {}, state, updatedState );
+	}
+
 	return state;
 }
 
