@@ -18,7 +18,7 @@ import { addSiteFragment } from 'lib/route/path';
 import versionCompare from 'lib/version-compare';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';
-import { Tabs } from '../../app/constants';
+import { Tabs, WPSC_PLUGINS_MIN_VERSION } from '../../app/constants';
 
 const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 	<div>
@@ -29,8 +29,8 @@ const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 		<SectionNav selectedText="Settings">
 			<SectionNavTabs>
 				{ map( Tabs, ( { label, slug: tabSlug } ) => {
-					if ( tabSlug === 'plugins' && ! versionCompare( '1.5.5', pluginVersion, '<=' ) ) {
-						return null; // The /plugins endpoint is only present in v1.5.6 and later!
+					if ( tabSlug === 'plugins' && ! versionCompare( WPSC_PLUGINS_MIN_VERSION, pluginVersion, '<=' ) ) {
+						return null; // The /plugins endpoint is only present in WPSC_PLUGINS_MIN_VERSION and later!
 					}
 
 					return (

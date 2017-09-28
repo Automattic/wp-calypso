@@ -3,6 +3,8 @@
  */
 import { translate } from 'i18n-calypso';
 
+export const WPSC_PLUGINS_MIN_VERSION = '1.5.6';
+
 export const Tabs = {
 	EASY: {
 		label: translate( 'Easy' ),
