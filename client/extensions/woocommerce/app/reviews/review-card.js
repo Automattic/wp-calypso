@@ -91,28 +91,30 @@ class ReviewCard extends Component {
 				className={ classNames( 'reviews__header', 'is-preview' ) }
 				onClick={ this.toggleExpanded }
 			>
-				<div className="reviews__author-gravatar">
-					<Gravatar
-						object={ review }
-						forType="review"
-					/>
-				</div>
-				<div className="reviews__info">
-					<div className="reviews__author-name">
-						{ review.name }
-						{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
+				<div className="reviews__header-content">
+					<div className="reviews__author-gravatar">
+						<Gravatar
+							object={ review }
+							forType="review"
+						/>
 					</div>
-					<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
-				</div>
-				<AutoDirection>
-					<div className="reviews__content">
-						{ decodeEntities( stripHTML( review.review ) ) }
+					<div className="reviews__info">
+						<div className="reviews__author-name">
+							{ review.name }
+							{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
+						</div>
+						<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
 					</div>
-				</AutoDirection>
-				<div className="reviews__rating">
-					<Rating rating={ review.rating * 20 } />
+					<AutoDirection>
+						<div className="reviews__content">
+							{ decodeEntities( stripHTML( review.review ) ) }
+						</div>
+					</AutoDirection>
+					<div className="reviews__rating">
+						<Rating rating={ review.rating * 20 } size={ 18 } />
+					</div>
+					{ this.renderProductImage() }
 				</div>
-				{ this.renderProductImage() }
 				{ this.renderToggle() }
 			</div>
 		);
