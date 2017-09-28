@@ -16,7 +16,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
-import { serverRender } from 'render';
+import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
@@ -270,7 +270,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.log( 'API Error: ' + errorMessage );
 
-					res.status( 500 ).render( '500.jade', context );
+					next( error );
 				}
 
 				return;
@@ -452,7 +452,10 @@ module.exports = function() {
 	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
-	app.get( '*', render404 );
+	app.use( render404 );
+
+	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
+	app.use( serverRenderError );
 
 	return app;
 };
