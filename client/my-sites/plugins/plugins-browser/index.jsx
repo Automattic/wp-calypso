@@ -41,7 +41,7 @@ import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jet
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import jetpackPlugins from 'my-sites/plugins-wpcom/jetpack-plugins';
 import HeaderButton from 'components/header-button';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
@@ -230,6 +230,14 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
+	isWpcomPluginActive( plugin ) {
+		return (
+			'standard' === plugin.plan ||
+			( 'premium' === plugin.plan && this.props.hasPremiumPlan ) ||
+			( 'business' === plugin.plan && this.props.hasBusinessPlan )
+		);
+	},
+
 	getWpcomFeaturesAsJetpackPluginsList( searchTerm ) {
 		// show only for Simple sites
 		if ( ! this.props.selectedSiteId || this.props.isJetpackSite ) {
@@ -241,10 +249,10 @@ const PluginsBrowser = React.createClass( {
 			return [];
 		}
 
+		const { siteSlug, translate } = this.props;
 		searchTerm = searchTerm.toLocaleLowerCase();
-
 		let matchingPlugins;
-		const plugins = jetpackPlugins( this.props.translate );
+		const plugins = jetpackPlugins( translate );
 
 		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
 		// Then return the whole group as search results.
@@ -263,15 +271,16 @@ const PluginsBrowser = React.createClass( {
 
 		// Convert the list members into shapes expected by PluginsBrowserItem
 		return matchingPlugins.map( plugin => ( {
-			name: this.props.translate( '%(feature)s by Jetpack', {
+			name: translate( '%(feature)s by Jetpack', {
 				args: { feature: plugin.name },
 				context: 'Presenting WordPress.com feature as a Jetpack pseudo-plugin',
 			} ),
 			author_name: 'Automattic',
 			icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
 			rating: 82, // Jetpack rating on WP.org on 2017-09-27
-			isPreinstalled: true,
 			slug: 'jetpack',
+			isPreinstalled: this.isWpcomPluginActive( plugin ),
+			upgradeLink: '/plans/' + siteSlug + ( plugin.feature ? `?feature=${ plugin.feature }` : '' ),
 		} ) );
 	},
 
@@ -469,13 +478,8 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	hasBusinessPlan() {
-		const { sitePlan } = this.props;
-		return sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
-	},
-
 	renderUpgradeNudge() {
-		if ( ! this.props.selectedSiteId || this.props.isJetpackSite || this.hasBusinessPlan() ) {
+		if ( ! this.props.selectedSiteId || this.props.isJetpackSite || this.props.hasBusinessPlan ) {
 			return null;
 		}
 
@@ -518,8 +522,16 @@ const PluginsBrowser = React.createClass( {
 export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const sitePlan = getSitePlan( state, selectedSiteId );
+
+		const hasBusinessPlan = sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
+		const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
+
 		return {
-			sitePlan: getSitePlan( state, selectedSiteId ),
+			selectedSiteId,
+			sitePlan,
+			hasPremiumPlan,
+			hasBusinessPlan,
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 			hasJetpackSites: hasJetpackSites( state ),
 			jetpackManageError:
@@ -528,7 +540,6 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			noPermissionsError:
 				!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
-			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 			sites: getSelectedOrAllSitesJetpackCanManage( state ),

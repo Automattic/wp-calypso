@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 import { flowRight as compose, includes } from 'lodash';
 
 /**
@@ -12,9 +13,9 @@ import { flowRight as compose, includes } from 'lodash';
  */
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsStore from 'lib/plugins/store';
-import Rating from 'components/rating/';
+import Button from 'components/button';
+import Rating from 'components/rating';
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -76,6 +77,19 @@ class PluginsBrowserListElement extends Component {
 		return null;
 	}
 
+	renderUpgradeButton() {
+		const { isPreinstalled, upgradeLink } = this.props.plugin;
+		if ( isPreinstalled || ! upgradeLink ) {
+			return null;
+		}
+
+		return (
+			<Button className="plugins-browser-item__upgrade-button" compact primary href={ upgradeLink }>
+				{ this.props.translate( 'Upgrade' ) }
+			</Button>
+		);
+	}
+
 	renderPlaceholder() {
 		return (
 			<li className="plugins-browser-item is-placeholder">
@@ -114,6 +128,7 @@ class PluginsBrowserListElement extends Component {
 					</div>
 					<Rating rating={ this.props.plugin.rating } size="12" />
 				</a>
+				{ this.renderUpgradeButton() }
 			</li>
 		);
 	}
