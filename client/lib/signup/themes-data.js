@@ -126,6 +126,15 @@ export const themes = [
 		verticals: []
 	},
 	{
+		name: 'Radcliffe',
+		slug: 'radcliffe-2',
+		repo: 'pub',
+		fallback: false,
+		design: 'page',
+		demo_uri: 'https://radcliffe2demo.wordpress.com',
+		verticals: []
+	},
+	{
 		name: 'Twenty Seventeen',
 		slug: 'twentyseventeen',
 		repo: 'pub',
