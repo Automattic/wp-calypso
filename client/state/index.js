@@ -149,7 +149,6 @@ export const reducer = combineReducers( reducers );
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
-	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
 		thunkMiddleware,
@@ -169,7 +168,6 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'restore-last-location' ) && require( './routing/middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
 	].filter( Boolean );
 

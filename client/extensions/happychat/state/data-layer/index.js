@@ -29,6 +29,7 @@ import {
 	// end of sendEvent actions
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_INITIALIZE,
+	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SET_MESSAGE,
@@ -36,6 +37,7 @@ import {
 } from 'extensions/happychat/state/action-types';
 import connectChat from './connect-chat';
 import connectIfRecentlyActive from './connect-if-recently-active';
+import receiveEvent from './receive-event';
 import sendEvent from './send-event';
 import getEventMessage from './send-event/message-events';
 import sendInfo from './send-info';
@@ -54,6 +56,7 @@ export default function installActionHandlers( connection = null ) {
 	const handlers = {
 		[ HAPPYCHAT_CONNECT ]: [ connectChat( connection ) ],
 		[ HAPPYCHAT_INITIALIZE ]: [ connectIfRecentlyActive( connection ) ],
+		[ HAPPYCHAT_RECEIVE_EVENT ]: [ receiveEvent ],
 		[ HAPPYCHAT_SEND_MESSAGE ]: [ sendMessage( connection ) ],
 		[ HAPPYCHAT_SEND_USER_INFO ]: [ sendInfo( connection ) ],
 		[ HAPPYCHAT_SET_MESSAGE ]: [ sendTyping( connection ) ],

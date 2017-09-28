@@ -7,20 +7,17 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import middleware from '../middleware';
+import receiveEvent from '../index';
 import {
 	HAPPYCHAT_RECEIVE_EVENT
 } from 'extensions/happychat/state/action-types';
 
 describe( 'Audio Middleware', () => {
-	let next;
 	let store;
 	let play;
 	let _window; // Keep a copy of the original window if any
 
 	beforeEach( () => {
-		next = spy();
-
 		store = {
 			dispatch: spy(),
 		};
@@ -39,15 +36,6 @@ describe( 'Audio Middleware', () => {
 		global.window = _window;
 	} );
 
-	it( 'should pass along actions without corresponding handlers', () => {
-		const action = { type: 'UNSUPPORTED_ACTION' };
-
-		middleware( store )( next )( action );
-
-		expect( store.dispatch ).to.not.have.beenCalled;
-		expect( next ).to.have.been.calledWith( action );
-	} );
-
 	it( 'should not play any sound when no audio support', () => {
 		const action = {
 			type: HAPPYCHAT_RECEIVE_EVENT,
@@ -58,10 +46,7 @@ describe( 'Audio Middleware', () => {
 
 		global.window = {};
 
-		middleware( store )( next )( action );
-
-		expect( store.dispatch ).to.not.have.beenCalled;
-		expect( next ).to.have.been.calledWith( action );
+		receiveEvent( store, action );
 		expect( play ).to.not.have.beenCalled;
 	} );
 
@@ -73,11 +58,9 @@ describe( 'Audio Middleware', () => {
 			},
 		};
 
-		middleware( store )( next )( action );
+		receiveEvent( store, action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
-		expect( next ).to.have.been.calledWith( action );
 		expect( window.Audio ).to.have.been.calledWith( '/calypso/audio/chat-pling.wav' );
-		expect( play ).to.have.been.calledWith();
+		expect( play ).to.have.beenCalled;
 	} );
 } );
