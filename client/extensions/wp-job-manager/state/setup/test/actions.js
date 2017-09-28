@@ -89,7 +89,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
-				data: false,
+				setupStatus: false,
 				siteId,
 			} );
 		} );

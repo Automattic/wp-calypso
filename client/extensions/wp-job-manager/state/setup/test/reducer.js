@@ -182,7 +182,7 @@ describe( 'reducer', () => {
 			const state = status( undefined, {
 				type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
 				siteId: primarySiteId,
-				data: true,
+				setupStatus: true,
 			} );
 
 			expect( state ).to.deep.equal( {
@@ -194,7 +194,7 @@ describe( 'reducer', () => {
 			const state = status( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
 				siteId: secondarySiteId,
-				data: false,
+				setupStatus: false,
 			} );
 
 			expect( state ).to.deep.equal( {
@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 			const state = status( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
 				siteId: primarySiteId,
-				data: false,
+				setupStatus: false,
 			} );
 
 			expect( state ).to.deep.equal( {

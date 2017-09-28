@@ -58,7 +58,7 @@ export const nextStep = createReducer( {}, {
  * @return {Object} Updated setup status
  */
 export const status = createReducer( {}, {
-	[ WP_JOB_MANAGER_UPDATE_SETUP_STATUS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
+	[ WP_JOB_MANAGER_UPDATE_SETUP_STATUS ]: ( state, { siteId, setupStatus } ) => ( { ...state, [ siteId ]: setupStatus } ),
 } );
 
 export default combineReducers( {

@@ -55,7 +55,7 @@ export const fetchSetupStatusError = siteId => ( { type: WP_JOB_MANAGER_FETCH_SE
  * Returns an action object to indicate that the setup status should be updated.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} data Setup status
+ * @param  {Object} setupStatus Setup status
  * @return {Object} Action object
  */
-export const updateSetupStatus = ( siteId, data ) => ( { type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS, siteId, data } );
+export const updateSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS, siteId, setupStatus } );
