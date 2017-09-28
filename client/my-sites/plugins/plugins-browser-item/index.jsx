@@ -99,7 +99,7 @@ class PluginsBrowserListElement extends Component {
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
 					</div>
-					<Rating rating={ 0 } size="12" />
+					<Rating rating={ 0 } size={ 12 } />
 				</span>
 			</li>
 		);
@@ -126,7 +126,7 @@ class PluginsBrowserListElement extends Component {
 						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
 						{ this.renderInstalledIn() }
 					</div>
-					<Rating rating={ this.props.plugin.rating } size="12" />
+					<Rating rating={ this.props.plugin.rating } size={ 12 } />
 				</a>
 				{ this.renderUpgradeButton() }
 			</li>
