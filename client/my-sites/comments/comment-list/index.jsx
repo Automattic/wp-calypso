@@ -97,15 +97,12 @@ export class CommentList extends Component {
 
 	changePage = pageNumber => {
 		const {
-			comments,
 			recordChangePage,
 			siteFragment,
 			status,
 		} = this.props;
-		const { persistedComments } = this.state;
 
-		const total = Math.ceil( ( comments.length + persistedComments.length ) / COMMENTS_PER_PAGE );
-		recordChangePage( page, total );
+		recordChangePage( page, this.getTotalPages() );
 
 		this.setState( { selectedComments: [] } );
 
@@ -154,11 +151,17 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	};
 
+	getTotalPages = () => Math.ceil(
+		( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE
+	);
+
 	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+
+	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
 	isSelectedAll = () => {
 		const { page: pageNumber } = this.props;
@@ -431,9 +434,11 @@ export class CommentList extends Component {
 			selectedComments,
 		} = this.state;
 
+		const validPage = this.isRequestedPageValid() ? pageNumber : 1;
+
 		const comments = this.getComments();
 		const commentsCount = comments.length;
-		const commentsPage = this.getCommentsPage( comments, pageNumber );
+		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
@@ -447,7 +452,7 @@ export class CommentList extends Component {
 				{ isJetpack &&
 					<QuerySiteCommentsList
 						number={ 100 }
-						offset={ ( pageNumber - 1 ) * COMMENTS_PER_PAGE }
+						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }
 						status={ status }
 					/>
@@ -508,7 +513,7 @@ export class CommentList extends Component {
 				{ ! showPlaceholder && ! showEmptyContent &&
 					<Pagination
 						key="comment-list-pagination"
-						page={ pageNumber }
+						page={ validPage }
 						pageClick={ this.changePage }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
