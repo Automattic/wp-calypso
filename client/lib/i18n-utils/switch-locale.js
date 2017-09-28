@@ -19,12 +19,12 @@ function languageFileUrl( localeSlug ) {
 
 export default function switchLocale( localeSlug ) {
 	if ( localeSlug === i18n.getLocaleSlug() ) {
-		return Promise.resolve();
+		return;
 	}
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		return Promise.resolve();
+		return;
 	}
 
 	// Note: i18n is a singleton that will be shared between all server requests!
