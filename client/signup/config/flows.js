@@ -441,9 +441,6 @@ const Flows = {
 			if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
 				return Flows.insertStepIntoFlow( 'survey', flow );
 			}
-			if ( abtest( 'skipThemesSelectionModal' ) === 'skip' ) {
-				return Flows.removeStepFromFlow( 'themes', flow );
-			}
 		}
 
 		return flow;
