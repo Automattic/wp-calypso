@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,9 +12,10 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 class RebrandCitiesWelcomeStep extends Component {
-	handleSubmit = ( event ) => {
+	handleSubmit = siteTitle => {
 		event.preventDefault();
 
 		const {
@@ -22,6 +24,8 @@ class RebrandCitiesWelcomeStep extends Component {
 			stepSectionName,
 			translate,
 		} = this.props;
+
+		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep(
 			{
@@ -78,4 +82,7 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default localize( RebrandCitiesWelcomeStep );
+export default connect(
+	null,
+	{ setSiteTitle }
+)( localize( RebrandCitiesWelcomeStep ) );
