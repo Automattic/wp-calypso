@@ -86,14 +86,15 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	privacyNoPopup: {
-		datestamp: '20170830',
+	skipThemesSelectionModal: {
+		datestamp: '20170904',
 		variations: {
-			original: 50,
-			nopopup: 50,
+			skip: 50,
+			show: 50,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'show',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	jetpackBillingButtonTextI1: {
 		datestamp: '20170925',
