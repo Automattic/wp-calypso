@@ -10,7 +10,6 @@ import {
 	find,
 	get,
 	map,
-	noop,
 	orderBy,
 	size,
 	slice,
@@ -68,7 +67,6 @@ export class CommentList extends Component {
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
-		undoBulkStatus: PropTypes.func,
 		unlikeComment: PropTypes.func,
 	};
 
@@ -190,7 +188,7 @@ export class CommentList extends Component {
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	};
 
-	setBulkStatus = status => () => {
+	setBulkStatus = ( status, selectedComments = this.state.selectedComments ) => () => {
 		const { status: listStatus } = this.props;
 		this.props.removeNotice( 'comment-notice-bulk' );
 
@@ -198,7 +196,7 @@ export class CommentList extends Component {
 		const doPersist = ( 'approved' === listStatus && 'unapproved' === status ) ||
 			( 'unapproved' === listStatus && 'approved' === status );
 
-		each( this.state.selectedComments, comment => {
+		each( selectedComments, comment => {
 			if ( 'delete' === status ) {
 				this.props.deleteComment( comment.commentId, comment.postId, { showSuccessNotice: false } );
 				return;
@@ -211,7 +209,7 @@ export class CommentList extends Component {
 			} );
 		} );
 
-		this.showBulkNotice( status );
+		this.showBulkNotice( status, listStatus, selectedComments );
 
 		this.setState( { isBulkEdit: false, selectedComments: [] } );
 	};
@@ -282,7 +280,7 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	showBulkNotice = newStatus => {
+	showBulkNotice = ( newStatus, currentStatus, selectedComments ) => {
 		const { translate } = this.props;
 
 		const message = get( {
@@ -298,9 +296,11 @@ export class CommentList extends Component {
 		}
 
 		const noticeOptions = {
+			button: translate( 'Undo' ),
 			duration: 5000,
 			id: 'comment-notice-bulk',
 			isPersistent: true,
+			onClick: this.setBulkStatus( currentStatus, selectedComments ),
 		};
 
 		this.props.successNotice( message, noticeOptions );
@@ -577,9 +577,6 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 		replyComment( commentText, siteId, postId, parentCommentId )
 	) ),
-
-	setBulkStatus: noop,
-	undoBulkStatus: noop,
 
 	unlikeComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
