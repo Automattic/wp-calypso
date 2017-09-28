@@ -11,6 +11,7 @@ import {
 	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
 	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
 	WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
 	WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
 	WP_JOB_MANAGER_WIZARD_NEXT_STEP,
 } from '../../action-types';
@@ -20,6 +21,7 @@ import {
 	fetchSetupStatus,
 	fetchSetupStatusError,
 	nextStep,
+	saveSetupStatus,
 	updateSetupStatus,
 } from '../actions';
 
@@ -89,6 +91,18 @@ describe( 'actions', () => {
 
 			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
+				setupStatus: false,
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#saveSetupStatus()', () => {
+		it( 'should return an action object', () => {
+			const action = saveSetupStatus( siteId, false );
+
+			expect( action ).to.deep.equal( {
+				type: WP_JOB_MANAGER_SAVE_SETUP_STATUS,
 				setupStatus: false,
 				siteId,
 			} );
