@@ -7,12 +7,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	createReviewReply,
 	deleteReviewReply,
 	fetchReviewReplies,
 	updateReviewReply,
 } from '../actions';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
+	WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST
 } from 'woocommerce/state/action-types';
@@ -24,6 +26,22 @@ describe( 'actions', () => {
 			const reviewId = 5;
 			const action = fetchReviewReplies( siteId, reviewId );
 			expect( action ).to.eql( { type: WOOCOMMERCE_REVIEW_REPLIES_REQUEST, siteId, reviewId } );
+		} );
+	} );
+	describe( '#createReviewReply()', () => {
+		const siteId = '123';
+		it( 'should return an action', () => {
+			const reviewId = 5;
+			const productId = 4;
+			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
+				siteId,
+				productId,
+				reviewId,
+				replyText: 'Hello world',
+				shouldApprove: false,
+			} );
 		} );
 	} );
 	describe( '#deleteReviewReply()', () => {

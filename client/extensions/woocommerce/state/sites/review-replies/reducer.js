@@ -9,6 +9,7 @@ import { reject, isEqual } from 'lodash';
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
+	WOOCOMMERCE_REVIEW_REPLY_CREATED,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 } from 'woocommerce/state/action-types';
@@ -17,6 +18,7 @@ export default createReducer( {}, {
 	[ WOOCOMMERCE_REVIEW_REPLIES_UPDATED ]: repliesUpdated,
 	[ WOOCOMMERCE_REVIEW_REPLY_DELETED ]: replyDeleted,
 	[ WOOCOMMERCE_REVIEW_REPLY_UPDATED ]: replyUpdated,
+	[ WOOCOMMERCE_REVIEW_REPLY_CREATED ]: replyCreated,
 } );
 
 export function repliesUpdated( state, action ) {
@@ -70,5 +72,22 @@ export function replyUpdated( state, action ) {
 	return {
 		...existingReplies,
 		[ reviewId ]: updatedReplies,
+	};
+}
+
+export function replyCreated( state, action ) {
+	const { reviewId, reply } = action;
+	const existingReplies = state || {};
+
+	if ( ! reviewId || ! reply ) {
+		return existingReplies;
+	}
+
+	const repliesForReview = existingReplies[ reviewId ];
+	repliesForReview.push( reply );
+
+	return {
+		...existingReplies,
+		[ reviewId ]: repliesForReview,
 	};
 }

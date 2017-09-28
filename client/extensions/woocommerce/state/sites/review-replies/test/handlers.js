@@ -2,14 +2,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { keyBy } from 'lodash';
 import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import {
-	fetchReviewReplies,
+	createReviewReply,
 	deleteReviewReply,
+	fetchReviewReplies,
 	updateReviewReply,
 } from 'woocommerce/state/sites/review-replies/actions';
 import {
@@ -22,12 +24,18 @@ import {
 	handleReviewReplyUpdate,
 	handleReviewReplyUpdateSuccess,
 	announceReviewReplyUpdateFailure,
+	handleReviewReplyCreate,
+	handleReviewReplyCreateSuccess,
+	announceCreateFailure,
 } from '../handlers.js';
 import reviewReplies from './fixtures/review-replies';
+import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
+	WOOCOMMERCE_REVIEW_REPLY_CREATED,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 import { NOTICE_CREATE } from 'state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
@@ -45,7 +53,7 @@ describe( 'handlers', () => {
 				method: 'GET',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: `/wp/v2/comments&parent=${ reviewId }&per_page=15&_method=GET`,
+					path: `/wp/v2/comments&parent=${ reviewId }&order=asc&per_page=15&_method=GET`,
 					json: true,
 					apiVersion: '1.1',
 				}
@@ -182,6 +190,87 @@ describe( 'handlers', () => {
 		it( 'should dispatch an error', () => {
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
 			announceReviewReplyUpdateFailure( { dispatch }, action );
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: NOTICE_CREATE,
+			} ) );
+		} );
+	} );
+	describe( '#handleReviewReplyCreate', () => {
+		const siteId = '123';
+		const productId = '201';
+		const reviewId = '105';
+		it( 'should dispatch a request', () => {
+			const dispatch = spy();
+			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
+			handleReviewReplyCreate( { dispatch }, action );
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WPCOM_HTTP_REQUEST,
+				method: 'POST',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					json: true,
+					apiVersion: '1.1',
+				},
+				body: {
+					path: '/wp/v2/comments&_method=POST',
+					body: JSON.stringify( { content: 'Hello world', parent: reviewId, post: productId } ),
+				}
+			} ) );
+		} );
+	} );
+	describe( '#handleReviewReplyCreateSuccess', () => {
+		const siteId = '123';
+		const productId = '201';
+		const reviewId = '105';
+		const create = { content: 'test', parent: 105, post: 201 };
+		const getState = () => {
+			return {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								reviews: {
+									items: keyBy( reviews, 'id' ),
+								}
+							},
+						},
+					},
+				},
+			};
+		};
+
+		it( 'should dispatch an action', () => {
+			const store = {
+				dispatch: spy(),
+				getState,
+			};
+			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
+			handleReviewReplyCreateSuccess( store, action, create );
+			expect( store.dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
+			} ) );
+			expect( store.dispatch ).to.not.have.been.calledWith( match( {
+				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+			} ) );
+		} );
+		it( 'should approve a review when requested', () => {
+			const store = {
+				dispatch: spy(),
+				getState,
+			};
+			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', true );
+			handleReviewReplyCreateSuccess( store, action, create );
+			expect( store.dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+			} ) );
+		} );
+	} );
+	describe( '#announceCreateFailure', () => {
+		const siteId = '123';
+		const dispatch = spy();
+		it( 'should dispatch an error', () => {
+			const action = createReviewReply( siteId, 544, 105, 'Hello world', false );
+			announceCreateFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith( match( {
 				type: NOTICE_CREATE,
 			} ) );

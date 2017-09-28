@@ -8,12 +8,14 @@ import { expect } from 'chai';
  */
 import {
 	repliesUpdated,
+	replyCreated,
 	replyDeleted,
 	replyUpdated,
 } from '../reducer';
 import reducer from 'woocommerce/state/sites/reducer';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
+	WOOCOMMERCE_REVIEW_REPLY_CREATED,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 } from 'woocommerce/state/action-types';
@@ -104,6 +106,28 @@ describe( 'reducer', () => {
 			const newState = replyUpdated( { 555: reviewReplies }, action );
 			expect( newState[ 555 ][ 0 ].content ).to.eql( 'Updated' );
 			expect( newState[ 555 ][ 1 ] ).to.eql( reviewReplies[ 1 ] );
+		} );
+	} );
+	describe( 'replyCreated', () => {
+		it( 'should have no change by default', () => {
+			const newState = replyCreated( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		it( 'should add the reply to the list', () => {
+			const create = { content: 'New comment...' };
+			const action = {
+				type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
+				siteId: 123,
+				reviewId: 555,
+				replyId: 556,
+				reply: create,
+			};
+
+			expect( reviewReplies.length ).to.eql( 2 );
+			const newState = replyCreated( { 555: reviewReplies }, action );
+			expect( newState[ 555 ][ 2 ].content ).to.eql( 'New comment...' );
+			expect( newState[ 555 ].length ).to.eql( 3 );
 		} );
 	} );
 } );
