@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,8 +91,11 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
-	isWCS() {
-		return 'woocommerce-services' === this.props.jetpackConnectAuthorize.queryObject.from;
+	isWoo() {
+		const wooSlugs = [ 'woocommerce-setup-wizard', 'woocommerce-services' ];
+		const jetpackConnectSource = get( this.props, 'jetpackConnectAuthorize.queryObject.from' );
+
+		return includes( wooSlugs, jetpackConnectSource );
 	}
 
 	handleClickHelp = () => {
@@ -116,9 +120,9 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	renderForm() {
 		return this.props.user ? (
-			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWCS={ this.isWCS() } />
+			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
-			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWCS={ this.isWCS() } />
+			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		);
 	}
 

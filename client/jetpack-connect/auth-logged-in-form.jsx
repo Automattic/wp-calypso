@@ -51,7 +51,7 @@ class LoggedInForm extends Component {
 		isFetchingSites: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isSSO: PropTypes.bool,
-		isWCS: PropTypes.bool,
+		isWoo: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			authorizeError: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 			authorizeSuccess: PropTypes.bool,
@@ -104,7 +104,7 @@ class LoggedInForm extends Component {
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( props.isSSO || props.isWCS || ( queryObject && 'jpo' === queryObject.from ) ) {
+		if ( props.isSSO || props.isWoo || ( queryObject && 'jpo' === queryObject.from ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
@@ -154,7 +154,7 @@ class LoggedInForm extends Component {
 	redirect() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( 'jpo' === queryObject.from || this.props.isSSO || this.props.isWCS ) {
+		if ( 'jpo' === queryObject.from || this.props.isSSO || this.props.isWoo ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
