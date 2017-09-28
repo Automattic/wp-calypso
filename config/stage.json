@@ -20,7 +20,6 @@
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"comments/management": true,
-		"comments/management/all-list": false,
 		"comments/management/sorting": false,
 		"manage/comments/bulk-actions": false,
 		"desktop-promo": true,
