@@ -80,13 +80,13 @@ const stateWithDeeperChildren = {
 
 describe( 'selectors', () => {
 	describe( '#getPostMostRecentCommentDate()', () => {
-		it( 'should get most recent date', () => {
+		test( 'should get most recent date', () => {
 			const res = getPostMostRecentCommentDate( state, 1, 1 );
 
 			expect( res ).toEqual( new Date( '2017-01-31T10:07:18-08:00' ) );
 		} );
 
-		it( 'should return undefined if no comment items', () => {
+		test( 'should return undefined if no comment items', () => {
 			const res = getPostMostRecentCommentDate(
 				{
 					comments: { items: { '1-1': [] } },
@@ -100,13 +100,13 @@ describe( 'selectors', () => {
 	} ); // end of getPostMostRecentCommentDate
 
 	describe( '#getPostOldestCommentDate()', () => {
-		it( 'should get earliest date', () => {
+		test( 'should get earliest date', () => {
 			const res = getPostOldestCommentDate( state, 1, 1 );
 
 			expect( res ).toEqual( new Date( '2015-01-29T10:07:18-08:00' ) );
 		} );
 
-		it( 'should return undefined if no comment items', () => {
+		test( 'should return undefined if no comment items', () => {
 			const res = getPostOldestCommentDate(
 				{
 					comments: { items: { '1-1': [] } },
@@ -120,7 +120,7 @@ describe( 'selectors', () => {
 	} ); // end of getPostOldestCommentDate
 
 	describe( '#getCommentLike()', () => {
-		it( 'should provide only like statistics', () => {
+		test( 'should provide only like statistics', () => {
 			const res = getCommentLike( state, 1, 1, 2 );
 
 			expect( res.i_like ).toEqual( false );
@@ -129,12 +129,12 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostCommentsTree', () => {
-		it( 'should return the tree structure', () => {
+		test( 'should return the tree structure', () => {
 			const tree = getPostCommentsTree( state, 1, 1, 'all' );
 			expect( tree ).toMatchSnapshot();
 		} );
 
-		it( 'should reverse children', () => {
+		test( 'should reverse children', () => {
 			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
 		} );
 	} );
