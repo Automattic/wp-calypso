@@ -405,7 +405,7 @@ module.exports = function() {
 			}
 		} );
 
-		// redirect tag pages to en.wordpress.com
+		// redirect logged-out tag pages to en.wordpress.com
 		app.get( '/tag/:tag_slug', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
 				res.redirect( 'https://en.wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
@@ -414,7 +414,7 @@ module.exports = function() {
 			}
 		} );
 
-		// redirect tag pages to en.wordpress.com
+		// redirect logged-out searches to en.search.wordpress.com
 		app.get( '/read/search', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
