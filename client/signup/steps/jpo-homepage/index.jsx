@@ -54,48 +54,46 @@ const JPOHomepageStep = React.createClass( {
 
 	renderStepContent() {
 		return (
-			<div className="jpo__homepage-wrapper">
-				<div className="jpo__homepage-row">
-					<Card
-						className={ classNames( 'jpo-homepage__choice', {
-							'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
-						} ) }
-						>
-						<a className="jpo-homepage__select-news jpo-homepage__choice-link" href="#" onClick={ this.onSelectNews }>
-							<div className="jpo-homepage__image">
-								<NewsGraphic />
+			<div className="jpo-homepage__choices">
+				<Card
+					className={ classNames( 'jpo-homepage__choice', {
+						'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+					} ) }
+					>
+					<a className="jpo-homepage__choice-link" href="#" onClick={ this.onSelectNews }>
+						<div className="jpo-homepage__image">
+							<NewsGraphic />
+						</div>
+						<div className="jpo-homepage__choice-copy">
+							<Button className="jpo-homepage__cta" onClick={ this.onSelectNews }>
+								{ translate( 'Recent news or updates' ) }
+							</Button>
+							<div className="jpo-homepage__description">
+								{ translate( 'We can pull the latest information into your homepage for you.' ) }
 							</div>
-							<div className="jpo-homepage__choice-copy">
-								<Button className="jpo-homepage__cta" onClick={ this.onSelectNews }>
-									{ translate( 'Recent news or updates' ) }
-								</Button>
-								<div className="jpo-homepage__description">
-									{ translate( 'We can pull the latest information into your homepage for you.' ) }
-								</div>
-							</div>
-						</a>
-					</Card>
-					<Card
-						className={ classNames( 'jpo-homepage__choice', {
-							'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
-						} ) }
-						>
-						<a className="jpo-homepage__select-static jpo-homepage__choice-link" href="#" onClick={ this.onSelectStatic }>
+						</div>
+					</a>
+				</Card>
+				<Card
+					className={ classNames( 'jpo-homepage__choice', {
+						'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+					} ) }
+					>
+					<a className="jpo-homepage__choice-link" href="#" onClick={ this.onSelectStatic }>
 
-							<div className="jpo-homepage__image">
-								<StaticGraphic />
+						<div className="jpo-homepage__image">
+							<StaticGraphic />
+						</div>
+						<div className="jpo-homepage__choice-copy">
+							<Button className="jpo-homepage__cta" onClick={ this.onSelectStatic }>
+								{ translate( 'A static welcome page' ) }
+							</Button>
+							<div className="jpo-homepage__description">
+								{ translate( 'Have your homepage stay the same as time goes on.' ) }
 							</div>
-							<div className="jpo-homepage__choice-copy">
-								<Button className="jpo-homepage__cta" onClick={ this.onSelectStatic }>
-									{ translate( 'A static welcome page' ) }
-								</Button>
-								<div className="jpo-homepage__description">
-									{ translate( 'Have your homepage stay the same as time goes on.' ) }
-								</div>
-							</div>
-						</a>
-					</Card>
-				</div>
+						</div>
+					</a>
+				</Card>
 			</div>
 		);
 	},
@@ -107,7 +105,7 @@ const JPOHomepageStep = React.createClass( {
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
 
 		return (
-			<div>
+			<div className="jpo-homepage">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
