@@ -1,77 +1,97 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+export default class Rating extends React.PureComponent {
+	static defaultProps = {
+		rating: 0,
+		size: 24,
+	};
 
-	displayName: 'Rating',
+	static propTypes = {
+		rating: PropTypes.number,
+		size: PropTypes.number,
+	};
 
-	getDefaultProps: function() {
-		return { rating: 0 };
-	},
+	overlayStars() {
+		const { size } = this.props;
 
-	propTypes: {
-		rating: React.PropTypes.number,
-		size: React.PropTypes.number
-	},
+		const starStyles = {
+			width: size + 'px',
+			height: size + 'px',
+		};
 
-	getStars: function() {
-		var i,
-			stars = [],
-			ratingOverTen = Math.ceil( this.props.rating / 10 ),
-			numberOfStars = Math.floor( ratingOverTen / 2 ),
-			hasHalfStar = ( ( ratingOverTen / 2 ) % 1 >= 0.5 ),
-			starStyles = {
-				fontSize: this.props.size
-					? this.props.size + 'px'
-					: 'inherit'
-			};
-
-		for ( i = 0; i < numberOfStars; i++ ) {
+		const stars = [];
+		for ( let i = 0; i < 5; i++ ) {
 			stars.push(
-				<span
-					key={ 'star_' + i }
-					className="noticon noticon-rating-full"
+				<Gridicon
+					key={ 'star-' + i }
+					icon="star"
 					style={ starStyles }
 				/>
 			);
 		}
+		return stars;
+	}
 
-		if ( hasHalfStar ) {
-			stars.push(
-				<span
-					key="halfstar"
-					className="noticon noticon-rating-half"
-					style={ starStyles }
-				/>
-			);
-		}
+	outlineStars() {
+		const { rating, size } = this.props;
 
-		while ( stars.length < 5 ) {
+		const inverseRating = 100 - Math.round( rating / 10 ) * 10;
+		const noFillOutlineCount = Math.floor( inverseRating / 20 );
+
+		const starStyles = {
+			width: size + 'px',
+			height: size + 'px',
+			fill: '#00aadc',
+		};
+
+		const stars = [];
+		for ( let i = 0; i < 5; i++ ) {
+			let allStyles = starStyles;
+			if ( i >= ( 5 - noFillOutlineCount ) ) {
+				allStyles = Object.assign( {}, starStyles, { fill: '#c8d7e1' } );
+			}
+
 			stars.push(
-				<span
-					key={ 'empty_' + stars.length }
-					className="noticon noticon-rating-empty"
-					style={ starStyles }
+				<Gridicon
+					key={ 'star-outline-' + i }
+					icon="star-outline"
+					style={ allStyles }
 				/>
 			);
 		}
 
 		return stars;
-	},
+	}
 
-	render: function() {
-		var ratingStyles = {
-			width: this.props.size
-				? ( this.props.size * 5 ) + 'px'
-				: '100%'
+	render() {
+		const { rating, size } = this.props;
+
+		const totalWidth = size * 5;
+		const roundRating = Math.round( rating / 10 ) * 10;
+		const maskPosition = ( ( roundRating / 100 ) * totalWidth );
+		const clipPathMaskPosition = ( totalWidth - maskPosition ) + 'px';
+		const overlayHeightPx = size + 'px';
+		const overlayStyles = {
+			WebkitClipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
+			clipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
+			clip: 'rect(0, ' + ( maskPosition + 'px' ) + ', ' + overlayHeightPx + ', 0)',
+			width: totalWidth + 'px'
 		};
 
 		return (
-			<div className="rating" style={ ratingStyles }>
-				{ this.getStars() }
+			<div className="rating" style={ { width: totalWidth + 'px' } }>
+				<div className="rating__overlay" style={ overlayStyles }>
+					{ this.overlayStars() }
+				</div>
+				<div className="rating__star-outline">
+					{ this.outlineStars() }
+				</div>
 			</div>
 		);
 	}
-} );
+}

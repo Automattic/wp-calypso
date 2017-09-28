@@ -13,7 +13,7 @@ render: function() {
 	return (
 		<Rating
 			rating={ 65 }
-			size={ 50 }
+			size={ 48 }
 		/>
 	);
 }
@@ -23,5 +23,5 @@ render: function() {
 
 * `rating`: Number - A number with the 0-100 rating to render
 
-* `size`: **optional** Number - `font-size` value in pixels. If it isn't
-  defined font-size will be set to `inherit`
+* `size`: **optional** Number - icon height in pixels. If it isn't
+  defined size will be set to 24px.
