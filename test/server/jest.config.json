@@ -1,5 +1,8 @@
 {
-	"collectCoverageFrom": [ "**/server/**/*.js?(x)" ],
+	"collectCoverageFrom": [ "server/**/*.js?(x)" ],
+	"coveragePathIgnorePatterns": [
+		"<rootDir>/server/devdocs/search-index.js"
+	],
 	"modulePaths": [
 		"<rootDir>/test/",
 		"<rootDir>/server/",
@@ -8,7 +11,7 @@
 	],
 	"rootDir": "./../../",
 	"testEnvironment": "node",
-	"testMatch": [ "**/server/**/test/*.js?(x)" ],
+	"testMatch": [ "<rootDir>/server/**/test/*.js?(x)" ],
 	"timers": "fake",
 	"setupTestFrameworkScriptFile": "<rootDir>/test/server/setup-test-framework.js",
 	"verbose": true

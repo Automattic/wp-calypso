@@ -8,10 +8,10 @@
 	"rootDir": "./../../",
 	"testEnvironment": "node",
 	"testMatch": [
-		"**/bin/**/integration/*.js",
-		"**/client/**/integration/*.js",
-		"**/server/**/integration/*.js"
+		"<rootDir>/bin/**/integration/*.js",
+		"<rootDir>/client/**/integration/*.js",
+		"<rootDir>/server/**/integration/*.js",
+		"<rootDir>/test/test/helpers/**/integration/*.js"
 	],
-	"setupTestFrameworkScriptFile": "<rootDir>/test/integration/setup-test-framework.js",
 	"verbose": true
 }

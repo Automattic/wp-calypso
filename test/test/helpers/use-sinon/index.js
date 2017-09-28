@@ -1,6 +1,8 @@
+/**
+ * External dependencies
+ */
 import sinon from 'sinon';
-import noop from 'lodash/noop';
-import isFunction from 'lodash/isFunction';
+import { isFunction, noop } from 'lodash';
 
 /**
  * Use sinon's fake time controls
@@ -23,12 +25,12 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
 		now = 0;
 	}
 
-	before( function turnOnSinonFakeTimers() {
+	beforeAll( function turnOnSinonFakeTimers() {
 		clock = sinon.useFakeTimers( now );
 		clockCallback( clock );
 	} );
 
-	after( function turnOffSinonFakeTimers() {
+	afterAll( function turnOffSinonFakeTimers() {
 		if ( clock ) {
 			clock.restore();
 			clock = null;
@@ -53,7 +55,7 @@ export function useSandbox( config, sandboxCallback = noop ) {
 		config = undefined;
 	}
 
-	before( function() {
+	beforeAll( function() {
 		sandbox = sinon.sandbox.create( config );
 		sandboxCallback( sandbox );
 	} );
@@ -64,7 +66,7 @@ export function useSandbox( config, sandboxCallback = noop ) {
 		}
 	} );
 
-	after( function() {
+	afterAll( function() {
 		if ( sandbox ) {
 			sandbox.restore();
 			sandbox = null;
