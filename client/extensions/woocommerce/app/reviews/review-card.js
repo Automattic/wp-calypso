@@ -145,7 +145,7 @@ class ReviewCard extends Component {
 					) }
 
 					<div className="reviews__rating">
-						<Rating rating={ review.rating * 20 } />
+						<Rating rating={ review.rating * 20 } size={ 18 } />
 					</div>
 					{ this.renderProductImage() }
 				</div>
