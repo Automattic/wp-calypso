@@ -146,15 +146,17 @@
 
 		-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
 
-	}
-
-	a.plan-name {
-		padding: 3px 8px 4px 8px;
-		margin-right: 8px;
-		align-self: center;
-		color: darken( $gray, 20% );
-		font-weight: 600;
-		font-size: 12px;
+		.sidebar__menu-link-secondary-text {
+			padding: 3px 8px 4px 8px;
+			margin-right: 8px;
+			align-self: center;
+			font-weight: 600;
+			font-size: 12px;
+			position: absolute;
+			right: 0;
+			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
+			color: darken( $gray, 20% );
+		}
 	}
 
 	.gridicon,
@@ -192,8 +194,7 @@ a.sidebar__button, form.sidebar__button {
 	position: relative;
 	align-self: center;
 	box-sizing: border-box;
-	white-space: nowrap;
-	overflow: hidden;
+	overflow: visible;
 	padding: 2px 8px 3px 8px;
 	height: 24px;
 	margin-right: 8px;
@@ -211,8 +212,16 @@ a.sidebar__button, form.sidebar__button {
 		line-height: 23px;
 	}
 }
-form.sidebar__button {
-	cursor: pointer;
+
+// Expanding clickable area of mini buttons
+a.sidebar__button:after,
+form.sidebar__button input {
+	content: '';
+	position: absolute;
+	top: -10px;
+	bottom: -10px;
+	right: -10px;
+	left: -10px;
 }
 
 // Selected Menu
@@ -234,6 +243,10 @@ form.sidebar__button {
 		.sidebar__button {
 			color: $gray-dark;
 			border: 1px solid darken( $sidebar-selected-color, 10% );
+
+			&:hover {
+				color: $blue-medium;
+			}
 		}
 
 		.gridicon,
@@ -260,8 +273,6 @@ form.sidebar__button {
 
 		a,
 		form {
-			color: $blue-medium;
-
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
@@ -273,11 +284,6 @@ form.sidebar__button {
 				background-color: lighten( $sidebar-bg-color, 10% );
 				color: $sidebar-text-color;
 			}
-		}
-
-		.gridicon,
-		.jetpack-logo {
-			fill: $blue-medium;
 		}
 	}
 
@@ -317,6 +323,19 @@ form.sidebar__button {
 
 	form.sidebar__button:hover {
 		border-color: darken( $sidebar-bg-color, 10% );
+	}
+
+	a:hover, form:hover {
+		color: $blue-medium;
+
+		.sidebar__menu-link-secondary-text {
+			color: inherit;
+		}
+
+		.gridicon,
+		.jetpack-logo {
+			fill: $blue-medium;
+		}
 	}
 }
 
