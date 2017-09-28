@@ -124,40 +124,42 @@ class ReviewCard extends Component {
 		const { review, translate } = this.props;
 		return (
 			<div className="reviews__expanded-card">
-				<div className="reviews__expanded-card-details">
-					<div className="reviews__author-gravatar">
-						<Gravatar
-							object={ review }
-							forType="review"
-						/>
-					</div>
-
-					<div className="reviews__info">
-						<div className="reviews__author-name">{ review.name }</div>
-						<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
-					</div>
-
-					{ review.verified && (
-						<div className="reviews__verified-label">
-							<Gridicon icon="checkmark-circle" size={ 18 } />
-							<span>{ translate( 'Verified buyer' ) }</span>
+				<div className="reviews__expanded-card-details-wrap">
+					<div className="reviews__expanded-card-details">
+						<div className="reviews__author-gravatar">
+							<Gravatar
+								object={ review }
+								forType="review"
+							/>
 						</div>
-					) }
 
-					<div className="reviews__rating">
-						<Rating rating={ review.rating * 20 } size={ 18 } />
+						<div className="reviews__info">
+							<div className="reviews__author-name">{ review.name }</div>
+							<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
+						</div>
+
+						{ review.verified && (
+							<div className="reviews__verified-label">
+								<Gridicon icon="checkmark-circle" size={ 18 } />
+								<span>{ translate( 'Verified buyer' ) }</span>
+							</div>
+						) }
+
+						<div className="reviews__rating">
+							<Rating rating={ review.rating * 20 } size={ 18 } />
+						</div>
+						{ this.renderProductImage() }
 					</div>
-					{ this.renderProductImage() }
-				</div>
 
-				<AutoDirection>
-					<Emojify>
-						<div className="reviews__content"
-							dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
-							// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
-						/>
-					</Emojify>
-				</AutoDirection>
+					<AutoDirection>
+						<Emojify>
+							<div className="reviews__content"
+								dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
+								// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
+							/>
+						</Emojify>
+					</AutoDirection>
+				</div>
 
 				<ReviewReplies
 					review={ review }
