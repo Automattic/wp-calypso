@@ -16,10 +16,13 @@ import Intro from './intro';
 import Main from 'components/main';
 import PageSetup from './page-setup';
 import Wizard from 'components/wizard';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { saveSetupStatus } from '../../state/setup/actions';
 
 class SetupWizard extends Component {
 	static propTypes = {
+		saveSetupStatus: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
 		slug: PropTypes.string,
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -28,6 +31,24 @@ class SetupWizard extends Component {
 	static defaultProps = {
 		stepName: Steps.INTRO,
 	};
+
+	componentDidMount() {
+		const { siteId } = this.props;
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		this.props.saveSetupStatus( siteId, false );
+	}
+
+	componentWillReceiveProps( { siteId } ) {
+		if ( ! siteId || this.props.siteId === siteId ) {
+			return;
+		}
+
+		this.props.saveSetupStatus( siteId, false );
+	}
 
 	render() {
 		const { slug, stepName, translate } = this.props;
@@ -54,6 +75,11 @@ class SetupWizard extends Component {
 	}
 }
 
-const mapStateToProps = state => ( { slug: getSelectedSiteSlug( state ) } );
+const mapStateToProps = state => ( {
+	siteId: getSelectedSiteId( state ),
+	slug: getSelectedSiteSlug( state ),
+} );
 
-export default connect( mapStateToProps )( localize( SetupWizard ) );
+const mapDispatchToProps = { saveSetupStatus };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupWizard ) );
