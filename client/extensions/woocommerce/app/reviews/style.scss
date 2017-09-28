@@ -266,6 +266,25 @@
 		transition: opacity 0.2s ease-in-out;
 	}
 }
+
+.reviews__reply-edit {
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 8px;
+
+	.reviews__reply-edit-buttons {
+		text-align: right;
+		padding: 8px;
+
+		.button {
+			margin-left: 8px;
+		}
+	}
+
+	textarea {
+		resize: vertical;
+	}
+}
+
 .reviews__reply-bar {
 	display: flex;
 	flex-flow: row nowrap;

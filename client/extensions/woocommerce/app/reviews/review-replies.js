@@ -42,8 +42,9 @@ class ReviewReplies extends Component {
 	}
 
 	renderReply = ( replyId, i ) => {
-		const { review } = this.props;
+		const { siteId, review } = this.props;
 		return <ReviewReply
+			siteId={ siteId }
 			key={ i }
 			reviewId={ review.id }
 			replyId={ replyId }
