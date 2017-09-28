@@ -4,13 +4,11 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import fromApi, { itemsReducer, processItem, validateItem } from '../from-api';
-import { useSandbox } from 'test/helpers/use-sinon';
+import fromApi, { itemsReducer, processItem } from '../from-api';
 
 const SITE_ID = 123456;
 
@@ -67,22 +65,43 @@ const API_RESPONSE_BODY = deepFreeze( {
 } );
 
 describe( 'fromApi', () => {
-	it( 'should process a valid API response', () => {
-		expect( fromApi( API_RESPONSE_BODY ) ).to.be.an( 'array' ).that.is.not.empty;
-	} );
+	context( '#schema', () => {
+		it( 'should process a valid API response', () => {
+			expect( fromApi( API_RESPONSE_BODY ) ).to.be.an( 'array' ).that.is.not.empty;
+		} );
 
-	it( 'should process an empty response', () => {
-		expect(
-			fromApi( {
-				...API_RESPONSE_BODY,
-				totalItems: 0,
-				current: {
-					...API_RESPONSE_BODY.current,
+		it( 'should process an empty response', () => {
+			expect(
+				fromApi( {
+					...API_RESPONSE_BODY,
 					totalItems: 0,
-					orderedItems: [],
-				},
-			} )
-		).to.be.an( 'array' ).that.is.empty;
+					current: {
+						...API_RESPONSE_BODY.current,
+						totalItems: 0,
+						orderedItems: [],
+					},
+				} )
+			).to.be.an( 'array' ).that.is.empty;
+		} );
+
+		it( 'should throw with invalid data', () => {
+			expect( () =>
+				fromApi( {
+					...API_RESPONSE_BODY,
+					totalItems: 1,
+					current: {
+						...API_RESPONSE_BODY.current,
+						totalItems: 1,
+						orderedItems: [
+							{
+								...VALID_API_ITEM,
+								activity_id: null,
+							},
+						],
+					},
+				} )
+			).to.throw();
+		} );
 	} );
 
 	context( 'itemsReducer', () => {
@@ -124,36 +143,6 @@ describe( 'fromApi', () => {
 					'actorType',
 					'actorWpcomId',
 				] );
-		} );
-	} );
-
-	context( 'validateItem', () => {
-		useSandbox( sandbox => {
-			sandbox.stub( console, 'warn' );
-		} );
-
-		it( 'should return true if item is valid', () => {
-			expect( validateItem( VALID_API_ITEM ) ).to.be.true;
-		} );
-
-		it( 'should return false if activity has no activity_id', () => {
-			expect( validateItem( omit( VALID_API_ITEM, 'activity_id' ) ) ).to.be.false;
-		} );
-
-		it( 'should return false if activity has no name', () => {
-			expect( validateItem( omit( VALID_API_ITEM, 'name' ) ) ).to.be.false;
-		} );
-
-		it( 'should return false if activity has no published', () => {
-			expect( validateItem( omit( VALID_API_ITEM, 'published' ) ) ).to.be.false;
-		} );
-
-		it( 'should return false if activity has no summary', () => {
-			expect( validateItem( omit( VALID_API_ITEM, 'summary' ) ) ).to.be.false;
-		} );
-
-		it( 'should return false if item is malformed', () => {
-			expect( validateItem( { bad: 'item' } ) ).to.be.false;
 		} );
 	} );
 } );

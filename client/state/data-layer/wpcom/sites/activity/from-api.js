@@ -2,15 +2,13 @@
 /**
  * External dependencies
  */
-import validator from 'is-my-json-valid';
 import { concat, get, head, reduce, split } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import warn from 'lib/warn';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
-import { itemSchema, responseSchema } from './schema';
+import apiResponseSchema from './schema';
 
 /**
  * Module constants
@@ -31,34 +29,15 @@ export function transformer( apiResponse ) {
 }
 
 /**
- * Takes an Activity item in the API format returns true if it appears valid, otherwise false
- *
- * @param  {object}  item Activity item
- * @return {boolean}      True if the item appears to be valid, otherwise false.
- */
-export function validateItem( item ) {
-	const validate = validator( itemSchema );
-	const valid = validate( item );
-	if ( ! valid ) {
-		warn( 'Invalid item found and ignored:', item, 'with reason:', validate.errors );
-	}
-	return valid;
-}
-
-/**
  * Reducer which recieves an array of processed items and an item to process and returns a new array
  * with the processed item appended if it is valid.
  *
- * @param  {array}  validProcessedItems Array of processed items
- * @param  {object} item                API format item to process
- * @return {array}                      Array of items with current item appended if valid
+ * @param  {array}  processedItems Array of processed items
+ * @param  {object} item           API format item to process
+ * @return {array}                 Array of items with current item appended if valid
  */
-export function itemsReducer( validProcessedItems, item ) {
-	if ( ! validateItem( item ) ) {
-		return validProcessedItems;
-	}
-
-	return concat( validProcessedItems, processItem( item ) );
+export function itemsReducer( processedItems, item ) {
+	return concat( processedItems, processItem( item ) );
 }
 
 /**
@@ -100,4 +79,4 @@ export function processItemBase( item ) {
 }
 
 // fromApi default export
-export default makeParser( responseSchema, {}, transformer );
+export default makeParser( apiResponseSchema, {}, transformer );
