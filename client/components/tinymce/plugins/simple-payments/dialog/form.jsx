@@ -82,7 +82,7 @@ const validate = ( values, props ) => {
 	const errors = {};
 
 	if ( ! values.title ) {
-		errors.title = translate( 'Product name can not be empty.' );
+		errors.title = translate( 'This can not be empty.' );
 	}
 
 	if ( ! values.price ) {
@@ -183,7 +183,6 @@ class ProductForm extends Component {
 					<ReduxFormFieldset
 						name="title"
 						label={ translate( 'What are you selling?' ) }
-						placeholder={ translate( 'Product name' ) }
 						component={ FormTextInput }
 					/>
 					<ReduxFormFieldset
