@@ -7,6 +7,7 @@
  */
 const fs = require( 'fs' );
 const _ = require( 'lodash' );
+const config = require( './config' );
 
 /**
  * Gather all of the external deps and throw them in a set
@@ -105,6 +106,6 @@ module.exports = function ( file, api ) {
 				.find(j.Statement)
 				.at(0)
 				.insertBefore(newDeclarations)
-				.toSource( { quote: 'single' } ) )
+				.toSource(config.recastOptions) )
 		);
 };
