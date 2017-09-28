@@ -16,8 +16,6 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {
-		event.preventDefault();
-
 		const {
 			goToNextStep,
 			stepName,
