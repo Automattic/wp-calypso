@@ -44,14 +44,14 @@ function generateBinArgs( name ) {
 	);
 }
 
-function runCodemod( codemodName, targets) {
+function runCodemod( codemodName, transformTargets) {
 	const binArgs = [
 		...config.jscodeshiftArgs,
 		...generateBinArgs( codemodName ),
-		...targets, // Transform target
+		...transformTargets,
 	];
 
-	process.stdout.write( `\nRunning ${ codemodName } on ${ targets.join( ' ' ) }\n` );
+	process.stdout.write( `\nRunning ${ codemodName } on ${ transformTargets.join( ' ' ) }\n` );
 
 
 	const binPath = path.join( '.', 'node_modules', '.bin', 'jscodeshift' );
