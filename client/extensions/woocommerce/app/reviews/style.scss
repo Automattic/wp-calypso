@@ -55,6 +55,11 @@
 		width: calc( 100% - 36px );
 		display: flex;
 		align-items: center;
+		flex-flow: row wrap;
+
+		@include breakpoint( ">660px" ) {
+			flex-flow: initial;
+		}
 	}
 
 	.reviews__header {
@@ -137,23 +142,53 @@
 		margin-right: 0;
 		width: 32px;
 		flex-shrink: 0;
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			display: block;
+		}
 	}
 
 	.reviews__info {
-		width: 150px;
 		line-height: 1.4;
+		margin-left: 16px;
+		width: calc( 100% - 157px );
+
+		@include breakpoint( ">660px" ) {
+			width: 150px;
+			margin-left: 8px;
+		}
 	}
 
 	.reviews__content {
-		width: calc( 100% - 304px );
+		width: 100%;
+		order: 6;
+		margin-left: 16px;
+		margin-right: 16px;
+		margin-top: 0;
+
+		@include breakpoint( ">660px" ) {
+			order: 0;
+			width: calc( 100% - 304px );
+			margin-left: 8px;
+			margin-right: 8px;
+			margin-top: 12px;
+		}
 	}
 
 	.reviews__product {
-		height: 32px;
-		width: 32px;
+		height: 18px;
+		width: 18px;
 		overflow: hidden;
 		position: relative;
 		flex-shrink: 0;
+		margin-right: 0;
+
+		@include breakpoint( ">660px" ) {
+			height: 32px;
+			width: 32px;
+			margin-right: 8px;
+		}
 
 		&.is-placeholder {
 			background: $gray-light;
