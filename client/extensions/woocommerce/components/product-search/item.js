@@ -74,7 +74,8 @@ class ProductItem extends Component {
 			productList = variations.map( v => {
 				const name = product.name + ' – ' + formattedVariationName( v );
 				const key = product.id + '-' + v.id;
-				return { ...product, name, key, sku: v.sku, variation: v.id };
+				const images = v.image ? [ v.image ] : product.images;
+				return { ...product, name, key, images, sku: v.sku, variation: v.id };
 			} );
 		}
 
