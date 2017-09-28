@@ -22,6 +22,7 @@ import Event from './event';
 import EventsByDay from './day';
 import SectionHeader from 'components/section-header';
 import { decodeEntities, stripHTML } from 'lib/formatting';
+import formatCurrency from 'lib/format-currency';
 
 function getSortedEvents( events ) {
 	const eventsByDay = {};
@@ -103,7 +104,7 @@ class ActivityLog extends Component {
 				children: (
 					<div>
 						<span>Label { event.labelIndex + 1 } refund requested</span>
-						{ event.amount != null ? <span> ({ event.currency } { event.amount })</span> : null }
+						{ event.amount != null ? <span> ({ formatCurrency( event.amount, event.currency ) })</span> : null }
 					</div>
 				),
 			};
@@ -115,7 +116,7 @@ class ActivityLog extends Component {
 				timestamp: event.timestamp,
 				children: (
 					<div>
-						Label { event.labelIndex + 1 } refunded ({ event.currency } { event.amount })
+						Label { event.labelIndex + 1 } refunded ({ formatCurrency( event.amount, event.currency ) })
 					</div>
 				),
 			};
