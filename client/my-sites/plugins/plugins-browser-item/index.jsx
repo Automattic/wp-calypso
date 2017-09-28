@@ -78,7 +78,7 @@ const PluginsBrowserListElement = React.createClass( {
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
 					</div>
-					<Rating rating={ 0 } />
+					<Rating rating={ 0 } size="12" />
 				</span>
 			</li>
 		);
@@ -97,7 +97,7 @@ const PluginsBrowserListElement = React.createClass( {
 						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
 						{ this.renderInstalledIn() }
 					</div>
-					<Rating rating={ this.props.plugin.rating } />
+					<Rating rating={ this.props.plugin.rating } size="12" />
 				</a>
 			</li>
 		);
