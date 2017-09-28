@@ -72,7 +72,7 @@ export default class Typography extends React.PureComponent {
 
 				<div className="docs__design-group">
 					<h2>
-						<a href="/devdocs/design/typography">Typography</a>
+						<a href="/devdocs/typography">Typography</a>
 					</h2>
 					<h3>Interface Typography</h3>
 					<Card>

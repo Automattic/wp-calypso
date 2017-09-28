@@ -14,6 +14,16 @@ import SidebarItem from 'layout/sidebar/item';
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';
 
+	isItemSelected( itemPath, isStrict = true ) {
+		const { path } = this.props;
+
+		if ( isStrict ) {
+			return path === itemPath;
+		}
+
+		return path.indexOf( itemPath ) === 0;
+	}
+
 	render() {
 		return (
 			<Sidebar>
@@ -27,21 +37,21 @@ export default class DevdocsSidebar extends React.PureComponent {
 							icon="search"
 							label="Search"
 							link="/devdocs"
-							selected={ '/devdocs' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs' ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="location"
 							label="The Calypso Guide"
 							link="/devdocs/docs/guide/index.md"
-							selected={ '/devdocs/docs/guide/index.md' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs/docs/guide', false ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="pencil"
 							label="Contributing"
 							link="/devdocs/.github/CONTRIBUTING.md"
-							selected={ '/devdocs/.github/CONTRIBUTING.md' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs/.github/CONTRIBUTING.md' ) }
 						/>
 					</ul>
 				</SidebarMenu>
@@ -53,35 +63,35 @@ export default class DevdocsSidebar extends React.PureComponent {
 							icon="layout-blocks"
 							label="UI Components"
 							link="/devdocs/design"
-							selected={ '/devdocs/design' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs/design', false ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="custom-post-type"
 							label="Blocks"
 							link="/devdocs/blocks"
-							selected={ '/devdocs/blocks' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs/blocks', false ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="plugins"
 							label="State Selectors"
 							link="/devdocs/selectors"
-							selected={ 0 === this.props.path.indexOf( '/devdocs/selectors' ) }
+							selected={ this.isItemSelected( '/devdocs/selectors', false ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="heading"
 							label="Typography"
-							link="/devdocs/design/typography"
-							selected={ '/devdocs/design/typography' === this.props.path }
+							link="/devdocs/typography"
+							selected={ this.isItemSelected( '/devdocs/typography' ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="types"
 							label="Icons"
 							link="/devdocs/docs/icons.md"
-							selected={ '/devdocs/docs/icons.md' === this.props.path }
+							selected={ this.isItemSelected( '/devdocs/docs/icons.md' ) }
 						/>
 					</ul>
 				</SidebarMenu>
