@@ -14,6 +14,7 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
@@ -109,6 +110,8 @@ class DesignAssets extends React.Component {
 
 		return (
 			<Main className="design">
+				<DocumentHead title="UI Components" />
+
 				{ component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Components">
 						{ slugToCamelCase( component ) }
