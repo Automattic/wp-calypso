@@ -21,7 +21,6 @@
 		"code-splitting": true,
 		"comments/management": true,
 		"comments/management/sorting": false,
-		"manage/comments/bulk-actions": false,
 		"desktop-promo": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,

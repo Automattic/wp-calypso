@@ -231,11 +231,9 @@ export class CommentNavigation extends Component {
 						</SegmentedControl>
 					}
 
-					{ isEnabled( 'manage/comments/bulk-actions' ) &&
-						<Button compact onClick={ toggleBulkEdit }>
-							{ translate( 'Bulk Edit' ) }
-						</Button>
-					}
+					<Button compact onClick={ toggleBulkEdit }>
+						{ translate( 'Bulk Edit' ) }
+					</Button>
 				</CommentNavigationTab>
 
 				{ hasSearch &&
