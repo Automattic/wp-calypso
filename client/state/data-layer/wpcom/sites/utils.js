@@ -11,7 +11,7 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_WRITE_FAILURE,
+	COMMENTS_ERROR,
 } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -119,8 +119,13 @@ export const handleWriteCommentFailure = (
 	{ dispatch, getState },
 	{ siteId, postId, placeholderId }
 ) => {
-	// Dispatch a write failure so we can record the failed comment placeholder in state
-	dispatch( { type: COMMENTS_WRITE_FAILURE, siteId, postId, placeholderId } );
+	// Dispatch an error so we can record the failed comment placeholder in state
+	dispatch( {
+		type: COMMENTS_ERROR,
+		siteId,
+		postId,
+		commentId: placeholderId,
+	} );
 
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
