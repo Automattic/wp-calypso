@@ -20,8 +20,7 @@ import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
-import { DESERIALIZE } from 'state/action-types';
-import { setLocale } from 'state/ui/language/actions';
+import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 
@@ -291,11 +290,12 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
-			context.isRTL = data.isRTL ? true : false;
 
 			if ( data.localeSlug ) {
-				context.lang = data.localeSlug;
-				context.store.dispatch( setLocale( data.localeSlug ) );
+				context.store.dispatch( {
+					type: LOCALE_SET,
+					localeSlug: data.localeSlug,
+				} );
 			}
 
 			if ( req.path === '/' && req.query ) {

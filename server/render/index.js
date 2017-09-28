@@ -118,10 +118,11 @@ export function serverRender( req, res ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
 			stateCache.set( cacheKey, serverState );
 		}
+
+		context.isRTL = isRTL( context.store.getState() );
+		context.lang = getCurrentLocaleSlug( context.store.getState() );
 	}
 
-	context.isRTL = isRTL( context.store.getState() );
-	context.lang = getCurrentLocaleSlug( context.store.getState() );
 	context.head = { title, metas, links };
 	context.config = config.ssrConfig;
 
