@@ -16,6 +16,7 @@ describe( 'jitms', () => {
 		const emptyJITM = {
 			type: 'JITM_SET',
 			jitms: [],
+			keyedPath: 'test100',
 		};
 
 		it( 'should not dispatch', () => {
@@ -24,7 +25,7 @@ describe( 'jitms', () => {
 			const action = noop;
 
 			fetchJITM( state, dispatch, action );
-			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch', () => {
@@ -39,7 +40,12 @@ describe( 'jitms', () => {
 					},
 					currentUser: {
 						id: 1000
-					}
+					},
+					ui: {
+						section: {
+							name: 'test'
+						}
+					},
 				},
 				action_site_selected = {
 					siteId: 100,
@@ -58,13 +64,13 @@ describe( 'jitms', () => {
 			// walk through the happy case of the process
 
 			handleSiteSelection( { getState, dispatch }, action_site_selected );
-			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
+			expect( dispatch ).to.not.have.been.called;
 
 			handleRouteChange( { getState, dispatch }, action_loading );
-			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
+			expect( dispatch ).to.not.have.been.called;
 
 			handleRouteChange( { getState, dispatch }, action_loaded );
-			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
+			expect( dispatch ).to.not.have.been.called;
 
 			handleRouteChange( { getState, dispatch }, action_transition );
 			expect( dispatch ).to.have.been.calledWithMatch( http( {

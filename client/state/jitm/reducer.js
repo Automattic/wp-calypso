@@ -4,19 +4,15 @@
 import {
 	JITM_SET,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 
-export function getJITM( state = {}, action ) {
-	switch ( action.type ) {
-		case JITM_SET:
-			return Object.assign( {}, state, {
-				data: action.jitms
-			} );
-	}
+export const storeJITM = ( state = {}, { type, jitms } ) =>
+	type === JITM_SET
+		? jitms
+		: state;
 
-	return state;
-}
+const sitePathJITM = keyedReducer( 'keyedPath', storeJITM );
 
 export default combineReducers( {
-	jitms: getJITM
+	sitePathJITM
 } );

@@ -40,6 +40,15 @@ const transformApiRequest = ( jitms ) => jitms.map( ( jitm ) =>
 	} )
 );
 
+const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
+	dispatch( {
+		type: JITM_SET,
+		keyedPath: messagePath + siteId,
+		jitms: jitms.map( jitm => (
+			{ ...jitm, lastUpdated: Date.now() }
+		) )
+	} );
+
 /**
  * Processes the current state and determines if it should fire a jitm request
  * @param {object} state The current state
@@ -52,21 +61,13 @@ export const fetchJITM = ( state, dispatch, action ) => {
 	}
 
 	if ( ! process.hasInitializedSites || ! process.hasInitializedSection ) {
-		dispatch( {
-			type: JITM_SET,
-			jitms: [],
-		} );
 		return;
 	}
 
 	const currentSite = process.lastSite;
 
 	if ( ! isJetpackSite( state, currentSite ) ) {
-		dispatch( {
-			type: JITM_SET,
-			jitms: [],
-		} );
-		return;
+		return insertJITM( dispatch, currentSite, process.lastSection, [] );
 	}
 
 	dispatch( http( {
@@ -76,7 +77,7 @@ export const fetchJITM = ( state, dispatch, action ) => {
 		query: {
 			external_user_id: getCurrentUserId( state ),
 		}
-	}, action ) );
+	}, { ...action, messagePath: process.lastSection } ) );
 };
 
 /**
@@ -129,29 +130,20 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * @param {number} siteId The site id
  * @param {object} jitms The jitms
  * @param {number} site_id The site id
+ * @return {undefined} Nothing
  */
-export const receiveJITM = ( { dispatch }, { siteId, site_id }, jitms ) => {
-	dispatch( {
-		type: JITM_SET,
-		siteId: site_id || siteId,
-		jitms: jitms
-	} );
-};
+export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) =>
+	insertJITM( dispatch, siteId || site_id, messagePath, jitms );
 
 /**
  * Called when a jitm fails for any network related reason
  * @param {function} dispatch The dispatch function
  * @param {number} siteId The site id
  * @param {number} site_id The site id
+ * @return {undefined} Nothing
  */
-export const failedJITM = ( { dispatch }, { siteId, site_id } ) => {
-	debugger;
-	dispatch( {
-		type: JITM_SET,
-		siteId: site_id || siteId,
-		jitms: [],
-	} );
-};
+export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
+	insertJITM( dispatch, siteId || site_id, messagePath, [] );
 
 export default {
 	[ SECTION_SET ]: [
