@@ -2,7 +2,11 @@
 	display: flex;
 	flex-flow: row wrap;
 	margin: 0 auto;
-	max-width: 320px;
+	max-width: 640px;
+
+	@include breakpoint( ">480px" ) {
+		max-width: 320px;
+	}
 }
 
 .jpo-contact-form__choice {
