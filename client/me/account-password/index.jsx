@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:me:account-password');
+const debug = debugFactory( 'calypso:me:account-password' );
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 

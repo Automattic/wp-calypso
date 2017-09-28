@@ -3,7 +3,7 @@
  */
 import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:my-sites:plugins:log-store');
+const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
 /**
  * Internal dependencies

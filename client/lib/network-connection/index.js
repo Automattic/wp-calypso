@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:network-connection');
+const debug = debugFactory( 'calypso:network-connection' );
 import Emitter from 'lib/mixins/emitter';
 import request from 'superagent';
 import i18n from 'i18n-calypso';

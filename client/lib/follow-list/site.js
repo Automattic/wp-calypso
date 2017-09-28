@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:follow-list:site');
+const debug = debugFactory( 'calypso:follow-list:site' );
 
 /**
  * Internal dependencies

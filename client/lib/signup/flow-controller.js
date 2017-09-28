@@ -18,7 +18,7 @@ import {
 	reject
 } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:signup:flow-controller'); // eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:signup:flow-controller' ); // eslint-disable-line no-unused-vars
 import store from 'store';
 import page from 'page';
 

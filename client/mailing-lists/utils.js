@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:mailing-lists');
+const debug = debugFactory( 'calypso:mailing-lists' );
 
 /**
  * Internal dependencies

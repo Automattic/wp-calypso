@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:poller');
+const debug = debugFactory( 'calypso:poller' );
 import Poller from './poller';
 
 var _pollers = {};

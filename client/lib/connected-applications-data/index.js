@@ -3,7 +3,7 @@
  */
 import { filter, find } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:connected-applications-data');
+const debug = debugFactory( 'calypso:connected-applications-data' );
 import Emitter from 'lib/mixins/emitter';
 
 /**

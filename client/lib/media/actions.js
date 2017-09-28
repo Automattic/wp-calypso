@@ -3,7 +3,7 @@
  */
 import { assign } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:media');
+const debug = debugFactory( 'calypso:media' );
 
 /**
  * Internal dependencies

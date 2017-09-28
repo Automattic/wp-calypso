@@ -3,7 +3,7 @@
  */
 import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:user:settings');
+const debug = debugFactory( 'calypso:user:settings' );
 import { decodeEntities } from 'lib/formatting';
 
 /**

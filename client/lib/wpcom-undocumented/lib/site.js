@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:wpcom-undocumented:site');
+const debug = debugFactory( 'calypso:wpcom-undocumented:site' );
 
 /**
  * Resources array

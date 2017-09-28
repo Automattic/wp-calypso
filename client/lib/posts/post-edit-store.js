@@ -3,7 +3,7 @@
  */
 import { assign, filter, isEqual, pickBy, without } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:posts:post-edit-store');
+const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
 
 /**

@@ -1,6 +1,6 @@
 import { Dispatcher } from 'flux';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:dispatcher');
+const debug = debugFactory( 'calypso:dispatcher' );
 
 var AppDispatcher = Object.assign( new Dispatcher(), {
 	handleViewAction: function( action ) {

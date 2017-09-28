@@ -4,7 +4,7 @@
 import { endsWith, omit } from 'lodash';
 import deterministicStringify from 'json-stable-stringify';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:wpcom-followers-store');
+const debug = debugFactory( 'calypso:wpcom-followers-store' );
 
 /**
  * Internal dependencies

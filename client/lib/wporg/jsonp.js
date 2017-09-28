@@ -7,7 +7,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('jsonp');
+const debug = debugFactory( 'jsonp' );
 import qs from 'qs';
 
 /**

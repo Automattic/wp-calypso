@@ -30,7 +30,7 @@ import {
 } from 'lib/url';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:happychat:timeline');
+const debug = debugFactory( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 

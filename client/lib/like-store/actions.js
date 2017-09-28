@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:like-store:actions'); //eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:like-store:actions' ); //eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies

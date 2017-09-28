@@ -4,7 +4,7 @@
 import React from 'react';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:application-password-item');
+const debug = debugFactory( 'calypso:application-password-item' );
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';

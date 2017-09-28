@@ -5,7 +5,7 @@ import React from 'react';
 
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:application-passwords');
+const debug = debugFactory( 'calypso:application-passwords' );
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 

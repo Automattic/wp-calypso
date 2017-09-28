@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:poller');
+const debug = debugFactory( 'calypso:poller' );
 
 var DEFAULT_INTERVAL = 30000,
 	_id = 0;

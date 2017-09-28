@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:searchable');
+const debug = debugFactory( 'calypso:searchable' );
 
 /**
  * Add search capability to collection

@@ -9,7 +9,7 @@ import Clipboard from 'clipboard';
 import userFactory from 'lib/user';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:me:security:2fa-backup-codes-list');
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
 
 import { saveAs } from 'browser-filesaver';
 

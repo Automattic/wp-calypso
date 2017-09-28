@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:wpcom-undocumented:mailing-list');
+const debug = debugFactory( 'calypso:wpcom-undocumented:mailing-list' );
 
 /**
  * `MailingList` constructor.

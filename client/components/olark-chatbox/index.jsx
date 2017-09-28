@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 
 import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:olark:chatbox');
+const debug = debugFactory( 'calypso:olark:chatbox' );
 
 /**
  * Internal dependencies

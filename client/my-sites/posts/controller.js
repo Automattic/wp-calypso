@@ -5,7 +5,7 @@ import page from 'page';
 
 import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:my-sites:posts');
+const debug = debugFactory( 'calypso:my-sites:posts' );
 import i18n from 'i18n-calypso';
 
 /**

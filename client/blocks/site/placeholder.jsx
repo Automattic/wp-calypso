@@ -4,7 +4,7 @@
 import React from 'react';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:my-sites:site');
+const debug = debugFactory( 'calypso:my-sites:site' );
 
 module.exports = React.createClass( {
 	displayName: 'SitePlaceholder',

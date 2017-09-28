@@ -5,7 +5,7 @@ import React from 'react';
 
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:me:reauth-required');
+const debug = debugFactory( 'calypso:me:reauth-required' );
 
 /**
  * Internal Dependencies

@@ -3,7 +3,7 @@
  */
 import { reject, some } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:user:profile-links');
+const debug = debugFactory( 'calypso:user:profile-links' );
 
 /**
  * Internal dependencies

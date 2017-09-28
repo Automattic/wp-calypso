@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:desktop');
+const debug = debugFactory( 'calypso:desktop' );
 import page from 'page';
 
 /**

@@ -12,7 +12,7 @@ import { default as Store, requestState } from '../index';
 import Dispatcher from 'dispatcher';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:auth-code-request-store:test'); //eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:auth-code-request-store:test' ); //eslint-disable-line no-unused-vars
 
 describe( 'index', () => {
 	beforeEach( function() {

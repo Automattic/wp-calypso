@@ -6,7 +6,7 @@ import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:token-field');
+const debug = debugFactory( 'calypso:token-field' );
 import PropTypes from 'prop-types';
 
 /**

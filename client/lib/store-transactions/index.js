@@ -3,7 +3,7 @@
  */
 import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:store-transactions');
+const debug = debugFactory( 'calypso:store-transactions' );
 import { Readable } from 'stream';
 import inherits from 'inherits';
 

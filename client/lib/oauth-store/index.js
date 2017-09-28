@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:auth:store');
+const debug = debugFactory( 'calypso:auth:store' );
 
 /**
  * Internal dependencies

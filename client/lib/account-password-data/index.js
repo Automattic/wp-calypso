@@ -3,7 +3,7 @@
  */
 import { map, merge, pick, random, sample } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:password-generator');
+const debug = debugFactory( 'calypso:password-generator' );
 
 /**
  * Internal dependencies

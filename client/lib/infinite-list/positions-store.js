@@ -3,7 +3,7 @@
  */
 import { isEqual } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:infinite-list:positions-store');
+const debug = debugFactory( 'calypso:infinite-list:positions-store' );
 import Dispatcher from 'dispatcher';
 
 /**

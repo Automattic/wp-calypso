@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:me:security:2fa-initial-setup');
+const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 
 /**
  * Internal dependencies

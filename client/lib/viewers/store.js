@@ -3,7 +3,7 @@
  */
 import { assign, values } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:viewers:store');
+const debug = debugFactory( 'calypso:viewers:store' );
 
 /**
  * Internal dependencies

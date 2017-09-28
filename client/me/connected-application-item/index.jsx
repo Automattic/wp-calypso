@@ -4,7 +4,7 @@
 import React from 'react';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:connected-application-item');
+const debug = debugFactory( 'calypso:connected-application-item' );
 import classNames from 'classnames';
 
 /**

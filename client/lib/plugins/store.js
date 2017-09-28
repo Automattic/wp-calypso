@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:sites-plugins:sites-plugins-store');
+const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
 
 /**

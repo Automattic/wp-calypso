@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:wporg-data:actions');
+const debug = debugFactory( 'calypso:wporg-data:actions' );
 
 /**
  * Internal dependencies

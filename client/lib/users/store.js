@@ -4,7 +4,7 @@
 import deterministicStringify from 'json-stable-stringify';
 import { endsWith, find, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:users:store');
+const debug = debugFactory( 'calypso:users:store' );
 
 /**
  * Internal dependencies

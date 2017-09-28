@@ -3,7 +3,7 @@
  */
 import { compact, toArray } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:highlight');
+const debug = debugFactory( 'calypso:highlight' );
 
 /**
  * @private

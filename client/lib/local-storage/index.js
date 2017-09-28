@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:local-storage');
+const debug = debugFactory( 'calypso:local-storage' );
 
 var _data = {},
 	storage = {

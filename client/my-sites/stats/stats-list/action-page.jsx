@@ -5,7 +5,7 @@ import React from 'react';
 
 import page from 'page';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:stats:action-page');
+const debug = debugFactory( 'calypso:stats:action-page' );
 
 /**
  * Internal dependencies

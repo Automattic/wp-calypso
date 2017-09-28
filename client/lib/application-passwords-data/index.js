@@ -3,7 +3,7 @@
  */
 import { filter } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:application-passwords-data');
+const debug = debugFactory( 'calypso:application-passwords-data' );
 import makeEmitter from 'lib/mixins/emitter';
 import store from 'store';
 

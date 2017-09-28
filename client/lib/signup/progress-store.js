@@ -3,7 +3,7 @@
  */
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:signup-progress-store');
+const debug = debugFactory( 'calypso:signup-progress-store' );
 import store from 'store';
 
 /**

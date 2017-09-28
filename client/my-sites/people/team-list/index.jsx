@@ -5,7 +5,7 @@ import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:my-sites:people:team-list');
+const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 /**
  * Internal dependencies

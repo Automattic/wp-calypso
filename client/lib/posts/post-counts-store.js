@@ -4,7 +4,7 @@
 
 import { isEqual } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:posts:post-counts-store');
+const debug = debugFactory( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
 	return Object.keys( obj )

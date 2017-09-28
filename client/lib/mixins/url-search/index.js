@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:url-search');
+const debug = debugFactory( 'calypso:url-search' );
 import page from 'page';
 
 /**

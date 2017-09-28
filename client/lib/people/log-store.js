@@ -3,7 +3,7 @@
  */
 import { clone, find, reject } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:my-sites:people:log-store');
+const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 
 /**
  * Internal dependencies

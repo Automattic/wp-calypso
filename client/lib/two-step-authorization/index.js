@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:two-step-authorization');
+const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies

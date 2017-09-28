@@ -4,7 +4,7 @@
 import { omit } from 'lodash';
 import deterministicStringify from 'json-stable-stringify';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:email-followers-store');
+const debug = debugFactory( 'calypso:email-followers-store' );
 
 /**
  * Internal dependencies

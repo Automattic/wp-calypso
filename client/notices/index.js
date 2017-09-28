@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:notices');
+const debug = debugFactory( 'calypso:notices' );
 import Emitter from 'lib/mixins/emitter';
 
 debug( 'initializing notices' );

@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:paygate');
+const debug = debugFactory( 'calypso:paygate' );
 
 /**
  * Internal dependencies

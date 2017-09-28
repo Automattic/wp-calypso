@@ -4,7 +4,7 @@
 import { wrap } from 'lodash';
 import Emitter from 'lib/mixins/emitter';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:ticker');
+const debug = debugFactory( 'calypso:ticker' );
 
 var ticker = {};
 

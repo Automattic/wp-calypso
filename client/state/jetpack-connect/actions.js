@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:jetpack-connect:actions');
+const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 import { omit, pick } from 'lodash';
 import page from 'page';
 

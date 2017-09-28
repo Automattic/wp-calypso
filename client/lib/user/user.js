@@ -4,7 +4,7 @@
 import { isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:user');
+const debug = debugFactory( 'calypso:user' );
 import config from 'config';
 import qs from 'qs';
 

@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:help-search:actions');
+const debug = debugFactory( 'calypso:help-search:actions' );
 
 /**
  * Internal dependencies

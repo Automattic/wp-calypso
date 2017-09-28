@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:trophies-data');
+const debug = debugFactory( 'calypso:trophies-data' );
 import Emitter from 'lib/mixins/emitter';
 import store from 'store';
 

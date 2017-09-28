@@ -5,7 +5,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:stats:action-follow');
+const debug = debugFactory( 'calypso:stats:action-follow' );
 
 /**
  * Internal dependencies

@@ -4,7 +4,7 @@
 import React from 'react';
 
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:me:security:2fa-status');
+const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
 module.exports = React.createClass( {
 

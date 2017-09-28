@@ -16,7 +16,7 @@ import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:happychat:connection');
+const debug = debugFactory( 'calypso:happychat:connection' );
 
 class Connection extends EventEmitter {
 

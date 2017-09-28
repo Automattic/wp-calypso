@@ -3,7 +3,7 @@
  */
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:wpcom-undocumented:undocumented');
+const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 import url from 'url';
 
 /**

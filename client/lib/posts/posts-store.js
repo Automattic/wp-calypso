@@ -3,7 +3,7 @@
  */
 import { isEqual } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory('calypso:posts');
+const debug = debugFactory( 'calypso:posts' );
 
 /**
  * Internal dependencies

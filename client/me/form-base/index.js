@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory('calypso:me:form-base');
+const debug = debugFactory( 'calypso:me:form-base' );
 
 /**
  * Internal dependencies
