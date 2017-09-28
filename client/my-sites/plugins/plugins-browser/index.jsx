@@ -89,21 +89,26 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	fetchNextPagePlugins() {
-		let doSearch = true;
+		const category = this.props.search ? 'search' : this.props.category;
 
-		if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
-			doSearch = false;
+		if ( ! category ) {
+			return;
 		}
 
-		if ( this.state.fullLists.search && this.state.fullLists.search.list && this.state.fullLists.search.list.length < 10 ) {
-			doSearch = false;
+		const fullList = this.state.fullLists[ category ];
+
+		// If a request for this category is in progress, don't issue a new one
+		if ( fullList && fullList.fetching ) {
+			return;
 		}
 
-		if ( this.props.search && doSearch ) {
-			PluginsActions.fetchNextCategoryPage( 'search', this.props.search );
-		} else if ( this.props.category ) {
-			PluginsActions.fetchNextCategoryPage( this.props.category );
+		// If the first search request returned just a few results that fill less than one full page,
+		// don't try to fetch the next page. We already have all the results.
+		if ( category === 'search' && fullList && fullList.list && fullList.list.length < 24 ) {
+			return;
 		}
+
+		PluginsActions.fetchNextCategoryPage( category, this.props.search );
 	},
 
 	getPluginsLists( search ) {
