@@ -106,14 +106,3 @@
 	color: $gray-text-min;
 	margin: 0;
 }
-
-.jpo-homepage__note {
-	flex-basis: 100%;
-	text-align: center;
-	color: $gray-text;
-	font-size: 14px;
-
-	@include breakpoint( "<480px" ) {
-		padding: 20px 20px 0;
-	}
-}
