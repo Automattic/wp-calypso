@@ -37,6 +37,14 @@ const staticFiles = [
 	{ path: 'style-rtl.css' },
 ];
 
+const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
+	if ( ! file.hash ) {
+		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
+	}
+	result[ file.path ] = utils.getUrl( file.path, file.hash );
+	return result;
+}, {} );
+
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
 const prideLanguages = [ 'en-au' ];
@@ -61,14 +69,7 @@ function getInitialServerState( serializedServerState ) {
  * @returns {Object} Map of asset names to urls
  **/
 function generateStaticUrls( request ) {
-	const urls = {};
-
-	staticFiles.forEach( function( file ) {
-		if ( ! file.hash ) {
-			file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-		}
-		urls[ file.path ] = utils.getUrl( file.path, file.hash );
-	} );
+	const urls = { ...staticFilesUrls };
 
 	const assets = request.app.get( 'assets' );
 
@@ -186,7 +187,7 @@ function getDefaultContext( request ) {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
-		urls: context.urls,
+		staticUrls: staticFilesUrls,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {
