@@ -18,7 +18,7 @@ import { addSiteFragment } from 'lib/route/path';
 import versionCompare from 'lib/version-compare';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';
-import { Tabs, WPSC_PLUGINS_MIN_VERSION } from '../../app/constants';
+import { Tabs } from '../../app/constants';
 
 const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 	<div>
@@ -28,9 +28,9 @@ const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 		</HeaderCake>
 		<SectionNav selectedText="Settings">
 			<SectionNavTabs>
-				{ map( Tabs, ( { label, slug: tabSlug } ) => {
-					if ( tabSlug === 'plugins' && ! versionCompare( WPSC_PLUGINS_MIN_VERSION, pluginVersion, '<=' ) ) {
-						return null; // The /plugins endpoint is only present in WPSC_PLUGINS_MIN_VERSION and later!
+				{ map( Tabs, ( { label, slug: tabSlug, minVersion } ) => {
+					if ( ! versionCompare( minVersion, pluginVersion, '<=' ) ) {
+						return null;
 					}
 
 					return (

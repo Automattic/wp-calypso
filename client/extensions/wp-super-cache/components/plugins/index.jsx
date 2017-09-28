@@ -10,7 +10,6 @@ import { flowRight, map, pick } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import ExtensionRedirect from 'blocks/extension-redirect';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -20,7 +19,6 @@ import QueryPlugins from '../data/query-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { togglePlugin } from '../../state/plugins/actions';
 import { isRequestingPlugins, getPlugins } from '../../state/plugins/selectors';
-import { WPSC_PLUGINS_MIN_VERSION } from '../../app/constants';
 
 class PluginsTab extends Component {
 	static propTypes = {
@@ -46,9 +44,6 @@ class PluginsTab extends Component {
 
 		return (
 			<div className="wp-super-cache__plugins-tab">
-				<ExtensionRedirect pluginId="wp-super-cache" // The /plugins endpoint is only present in WPSC_PLUGINS_MIN_VERSION and later!
-					minimumVersion={ WPSC_PLUGINS_MIN_VERSION }
-					siteId={ siteId } />
 				<SectionHeader label={ translate( 'Plugins' ) } />
 				<QueryPlugins siteId={ siteId } />
 				<Card>

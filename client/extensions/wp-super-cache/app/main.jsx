@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import Notice from 'components/notice';
 import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
-import { Tabs } from './constants';
+import { Tabs, WPSC_MIN_VERSION } from './constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
 
@@ -66,10 +67,14 @@ class WPSuperCache extends Component {
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
 
+		const currentTab = find( Tabs, t => ( t.slug === tab ) );
+		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
+		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
+
 		return (
 			<Main className={ mainClassName }>
 				<ExtensionRedirect pluginId="wp-super-cache"
-					minimumVersion="1.5.4"
+					minimumVersion={ minVersion }
 					siteId={ siteId } />
 				<QueryStatus siteId={ siteId } />
 
