@@ -4,17 +4,11 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import fromApi, {
-	ACTIVITY_REQUIRED_PROPS,
-	processItem,
-	itemsReducer,
-	validateItem,
-} from '../from-api';
+import fromApi, { itemsReducer, processItem } from '../from-api';
 
 const SITE_ID = 123456;
 
@@ -71,22 +65,35 @@ const API_RESPONSE_BODY = deepFreeze( {
 } );
 
 describe( 'fromApi', () => {
-	it( 'should process a valid API response', () => {
-		expect( fromApi( API_RESPONSE_BODY ) ).to.be.an( 'array' ).that.is.not.empty;
-	} );
+	context( '#schema', () => {
+		it( 'should process a valid API response', () => {
+			expect( fromApi( API_RESPONSE_BODY ) ).to.be.an( 'array' ).that.is.not.empty;
+		} );
 
-	it( 'should process an empty response', () => {
-		expect(
-			fromApi( {
-				...API_RESPONSE_BODY,
-				totalItems: 0,
-				current: {
-					...API_RESPONSE_BODY.current,
-					totalItems: 0,
-					orderedItems: [],
-				},
-			} )
-		).to.be.an( 'array' ).that.is.empty;
+		it( 'should process an empty response', () => {
+			const noCurrent = { ...API_RESPONSE_BODY };
+			delete noCurrent.current;
+			expect( fromApi( noCurrent ) ).to.be.an( 'array' ).that.is.empty;
+		} );
+
+		it( 'should throw with invalid data', () => {
+			expect( () =>
+				fromApi( {
+					...API_RESPONSE_BODY,
+					totalItems: 1,
+					current: {
+						...API_RESPONSE_BODY.current,
+						totalItems: 1,
+						orderedItems: [
+							{
+								...VALID_API_ITEM,
+								activity_id: null,
+							},
+						],
+					},
+				} )
+			).to.throw();
+		} );
 	} );
 
 	context( 'itemsReducer', () => {
@@ -128,18 +135,6 @@ describe( 'fromApi', () => {
 					'actorType',
 					'actorWpcomId',
 				] );
-		} );
-	} );
-
-	context( 'validateItem', () => {
-		ACTIVITY_REQUIRED_PROPS.forEach( property => {
-			it( `should return false if required property is missing (${ property })`, () => {
-				expect( validateItem( omit( VALID_API_ITEM, property ) ) ).to.be.false;
-			} );
-		} );
-
-		it( 'should return true if all conditions are met', () => {
-			expect( validateItem( VALID_API_ITEM ) ).to.be.true;
 		} );
 	} );
 } );

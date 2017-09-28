@@ -9,10 +9,10 @@ import { get, includes, pick, reduce } from 'lodash';
  * Internal dependencies
  */
 import fromApi from './from-api';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
 import { activityLogError, activityLogUpdate } from 'state/activity-log/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 /**
  * Module constants
@@ -63,7 +63,7 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 };
 
 export const receiveActivityLog = ( { dispatch }, action, data ) => {
-	dispatch( activityLogUpdate( action.siteId, fromApi( data ), data.totalItems, action.params ) );
+	dispatch( activityLogUpdate( action.siteId, data, data.totalItems, action.params ) );
 };
 
 export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
@@ -72,6 +72,8 @@ export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
 
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [
-		dispatchRequest( handleActivityLogRequest, receiveActivityLog, receiveActivityLogError ),
+		dispatchRequest( handleActivityLogRequest, receiveActivityLog, receiveActivityLogError, {
+			fromApi,
+		} ),
 	],
 };
