@@ -86,7 +86,7 @@ export function loadSectionCSS( context, next ) {
 		}
 
 		loadCSS( cssUrl, ( err, newLink ) => {
-			if ( currentLink ) {
+			if ( currentLink && currentLink.parentElement ) {
 				currentLink.parentElement.removeChild( currentLink );
 			}
 
@@ -109,7 +109,7 @@ export function setUpLocale( context, next ) {
 	} else if ( currentUser ) {
 		context.lang = currentUser.localeSlug;
 	} else {
-		context.lang = context.lang || config( 'i18n_default_locale_slug' );
+		context.lang = config( 'i18n_default_locale_slug' );
 	}
 
 	context.store.dispatch( setLocale( context.lang ) );
