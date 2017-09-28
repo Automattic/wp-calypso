@@ -17,7 +17,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import wpcom from 'lib/wp';
-import { get } from 'lodash';
 import 'config';
 import { connect } from 'react-redux';
 
@@ -148,7 +147,7 @@ export class Notifications extends Component {
 	};
 
 	render() {
-		const localeSlug = get( this.props.currentLocaleSlug, 'localeSlug', config( 'i18n_default_locale_slug' ) );
+		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
