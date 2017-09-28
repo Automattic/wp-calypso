@@ -19,6 +19,17 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreviewContent from './content';
 
 export class WebPreview extends PureComponent {
+	keyDown = ( event ) => {
+		if ( event.keyCode === 27 ) {
+			this.props.onClose();
+			event.preventDefault();
+		}
+	}
+
+	setDeviceViewport = ( device = 'computer' ) => {
+		this.setState( { device } );
+	}
+
 	constructor( props ) {
 		super( props );
 
@@ -28,9 +39,6 @@ export class WebPreview extends PureComponent {
 		this.state = {
 			device: props.defaultViewportDevice || 'computer',
 		};
-
-		this.keyDown = this.keyDown.bind( this );
-		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
 	componentWillMount() {
@@ -67,17 +75,6 @@ export class WebPreview extends PureComponent {
 		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
-	}
-
-	keyDown( event ) {
-		if ( event.keyCode === 27 ) {
-			this.props.onClose();
-			event.preventDefault();
-		}
-	}
-
-	setDeviceViewport( device = 'computer' ) {
-		this.setState( { device } );
 	}
 
 	render() {

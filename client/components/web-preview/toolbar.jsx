@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { partial } from 'lodash';
+import { clone, map, omit, partial } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -14,12 +14,7 @@ import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-
-const possibleDevices = [
-	'computer',
-	'tablet',
-	'phone'
-];
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class PreviewToolbar extends Component {
 	static propTypes = {
@@ -53,16 +48,24 @@ class PreviewToolbar extends Component {
 		showSEO: true
 	};
 
+	state = {
+		showingSEO: false,
+	};
+
 	constructor( props ) {
 		super();
 
 		this.devices = {
+			responsive: { title: props.translate( 'Responsive' ), icon: 'computer' },
 			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
 			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
 			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
-			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' }
 		};
 	}
+
+	toggleSEO = () => this.setState( {
+		showingSEO: ! this.state.showingSEO,
+	} );
 
 	render() {
 		const {
@@ -80,11 +83,18 @@ class PreviewToolbar extends Component {
 			showEdit,
 			showExternal,
 			showSEO,
+			switcherLimitedToResponsive,
 			translate
 		} = this.props;
+console.log(this.state.showingSEO);
+		const selectedDevice = clone( this.devices[ currentDevice ] );
+		if ( switcherLimitedToResponsive && currentDevice === 'computer' ) {
+			selectedDevice.title = translate( 'Responsive' );
+		}
 
-		const selectedDevice = this.devices[ currentDevice ];
-		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
+		const shownDevices = showDeviceSwitcher && switcherLimitedToResponsive
+			? [ this.devices.responsive ]
+			: omit( this.devices, 'responsive' );
 
 		return (
 			<div className="web-preview__toolbar">
@@ -107,18 +117,29 @@ class PreviewToolbar extends Component {
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
 						ref={ this.setDropdown }
 					>
-						{ devicesToShow.map( device => (
+						{ map( shownDevices, ( device, deviceName ) => (
 							<DropdownItem
-								key={ device }
-								selected={ device === currentDevice }
-								onClick={ partial( setDeviceViewport, device ) }
-								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
+								key={ deviceName }
+								selected={ deviceName === currentDevice }
+								onClick={ partial( setDeviceViewport, deviceName ) }
+								icon={ <Gridicon size={ 18 } icon={ device.icon } /> }
 							>
-								{ this.devices[ device ].title }
+								{ device.title }
 							</DropdownItem>
 						) ) }
 					</SelectDropdown>
 				}
+				{ showSEO &&
+					( [
+						<Gridicon icon="globe" size={ 24 } />,
+						<div className="web-preview__seo-label"> {
+							translate( 'Search & Social' )
+						} </div>,
+						<FormInputCheckbox
+							title={ translate( 'Search & Social' ) }
+							className="web-preview__seo-checkbox"
+							onChange={ this.toggleSEO } />
+					] ) }
 				{ showUrl &&
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
