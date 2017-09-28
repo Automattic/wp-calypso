@@ -19,6 +19,8 @@ const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 
+export const setValidPage = pageNumber => ( parseInt( pageNumber, 10 ) > 0 ? pageNumber : 1 );
+
 export const getRedirectUrl = ( status, siteFragment ) => {
 	const statusValidity = isValidStatus( status );
 	if ( status === siteFragment ) {
@@ -49,8 +51,12 @@ export const redirect = function( context, next ) {
 export const comments = function( context ) {
 	const { status } = context.params;
 	const siteFragment = route.getSiteFragment( context.path );
+	const validPage = setValidPage( context.query.page );
+
 	renderWithReduxStore(
 		<CommentsManagement
+			basePath={ context.path }
+			page={ validPage }
 			siteFragment={ siteFragment }
 			status={ 'pending' === status ? 'unapproved' : status }
 		/>,
