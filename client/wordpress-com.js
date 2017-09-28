@@ -227,7 +227,8 @@ sections.push( {
 	paths: [ '/post', '/page', '/edit' ],
 	module: 'post-editor',
 	group: 'editor',
-	secondary: true
+	secondary: true,
+	css: 'post-editor'
 } );
 
 sections.push( {
