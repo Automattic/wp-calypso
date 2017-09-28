@@ -26,7 +26,7 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	HAPPYCHAT_SET_GEO_LOCATION,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 
 export const setHappychatChatStatus = status => ( {
 	type: HAPPYCHAT_SET_CHAT_STATUS, status

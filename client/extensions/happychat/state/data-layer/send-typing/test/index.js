@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  */
 import {
 	HAPPYCHAT_SET_MESSAGE,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 import sendTyping from '../index';
 
 describe( 'HAPPYCHAT_SET_MESSAGE action', () => {

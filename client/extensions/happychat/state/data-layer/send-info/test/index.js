@@ -10,7 +10,7 @@ import { spy } from 'sinon';
  */
 import {
 	HAPPYCHAT_SEND_USER_INFO,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 import sendInfo from '../index';
 
 describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {

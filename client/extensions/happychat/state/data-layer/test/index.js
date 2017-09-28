@@ -11,8 +11,10 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
 	ANALYTICS_EVENT_RECORD,
-	HAPPYCHAT_BLUR,
 } from 'state/action-types';
+import {
+	HAPPYCHAT_BLUR
+} from 'extensions/happychat/state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,

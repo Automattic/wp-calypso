@@ -8,21 +8,23 @@ import { expect } from 'chai';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
+import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
-	SERIALIZE,
-	DESERIALIZE,
 	HAPPYCHAT_SET_GEO_LOCATION,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 import {
 	lastActivityTimestamp,
 	lostFocusAt,
 	message,
 	geoLocation,
-} from '../reducers';
+} from 'extensions/happychat/state/reducers';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

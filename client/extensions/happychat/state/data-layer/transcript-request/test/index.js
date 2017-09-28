@@ -9,10 +9,10 @@ import { stub } from 'sinon';
  */
 import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 import transcriptRequest from '../index';
 
-describe( 'HAPPYCHAT_TRANSCRIPT_REQUEST action', () => {
+describe( 'HAPPYCHAT_TRANSCRIPT_RECEIVE action', () => {
 	it( 'should fetch transcript from connection and dispatch receive action', () => {
 		const response = {
 			messages: [

@@ -18,7 +18,7 @@ import {
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 import connectChat from '../index';
 
 describe( 'HAPPYCHAT_CONNECT action', () => {

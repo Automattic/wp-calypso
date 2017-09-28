@@ -8,7 +8,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import middleware from '../middleware';
-import { HAPPYCHAT_RECEIVE_EVENT } from 'state/action-types';
+import {
+	HAPPYCHAT_RECEIVE_EVENT
+} from 'extensions/happychat/state/action-types';
 
 describe( 'Audio Middleware', () => {
 	let next;

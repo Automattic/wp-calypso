@@ -10,8 +10,6 @@ import {
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_FOCUS,
 	POST_SAVE_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
@@ -19,6 +17,10 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	// end of sendEvent actions
 } from 'state/action-types';
+import {
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+} from 'extensions/happychat/state/action-types';
 
 const getEventMessage = {
 	// [ REDUX_ACTION_TO_LISTEN ]: ( store, action ) => 'this function returns a text to be send to HUD',

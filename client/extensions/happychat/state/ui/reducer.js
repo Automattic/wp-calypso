@@ -5,7 +5,7 @@ import { combineReducers } from 'state/utils';
 import {
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING
-} from 'state/action-types';
+} from 'extensions/happychat/state/action-types';
 
 const open = ( state = false, action ) => {
 	switch ( action.type ) {

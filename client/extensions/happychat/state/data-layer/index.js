@@ -9,20 +9,12 @@ const debug = debugFactory( 'calypso:extensions:happychat' );
  */
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import {
-	HAPPYCHAT_CONNECT,
-	HAPPYCHAT_INITIALIZE,
-	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SEND_USER_INFO,
-	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	// sendEvent actions
 	COMMENTS_CHANGE_STATUS,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_FOCUS,
 	POST_SAVE_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
@@ -30,6 +22,18 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	// end of sendEvent actions
 } from 'state/action-types';
+import {
+	// sendEvent actions
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+	// end of sendEvent actions
+	HAPPYCHAT_CONNECT,
+	HAPPYCHAT_INITIALIZE,
+	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_SEND_USER_INFO,
+	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_TRANSCRIPT_REQUEST,
+} from 'extensions/happychat/state/action-types';
 import connectChat from './connect-chat';
 import connectIfRecentlyActive from './connect-if-recently-active';
 import sendEvent from './send-event';
