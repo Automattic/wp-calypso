@@ -9,12 +9,12 @@ Code modification scripts, also known as codemods, are transformation scripts th
 It's easy! Our codemod script uses the following CLI:
 
 ```bash
-./bin/codemods/run.js [transformation name] [target(s)]
+./bin/codemods/run.js transformation-name[,second-name,third-name] target [additional targets]
 ```
 
 ```bash
 # Same as above, but using npm scripts
-npm run codemod [transformation name] [target(s)]
+npm run codemod transformation-name[,second-name,third-name] target [additional targets]
 ```
 
 For example, if I wanted to run the `commonjs-exports` transformation on `client/devdocs/`, I can do the following:
@@ -27,6 +27,12 @@ Do you want to target files individually? We can do that, too!
 
 ```bash
 ./bin/codemods/run.js commonjs-exports client/devdocs/a.js client/devdocs/b.js client/devdocs/c.js
+```
+
+How about chaining codemods on multiple directories?
+
+```bash
+./bin/codemods/run.js commonjs-imports,commonjs-exports,named-export-from-default client/blocks/ client/components/
 ```
 
 ## How to run codemods manually
