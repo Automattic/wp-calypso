@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,17 +11,19 @@ import { localize } from 'i18n-calypso';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 class RebrandCitiesWelcomeStep extends Component {
-	handleSubmit = ( event ) => {
-		event.preventDefault();
-
+	handleSubmit = siteTitle => {
 		const {
 			goToNextStep,
 			stepName,
 			stepSectionName,
 			translate,
 		} = this.props;
+
+		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep(
 			{
@@ -37,11 +40,14 @@ class RebrandCitiesWelcomeStep extends Component {
 
 	renderContent() {
 		const { translate } = this.props;
-		const buttonClass = 'button is-primary';
 		return (
-			<button className={ buttonClass } onClick={ this.handleSubmit }>
-				{ translate( 'Create your account' ) }
-			</button>
+			<div className="rebrand-cities-welcome__site-title-field">
+				<FormTextInputWithAction
+					action={ translate( 'Create account' ) }
+					placeholder={ translate( 'Enter your business name' ) }
+					onAction={ this.handleSubmit }
+				/>
+			</div>
 		);
 	}
 
@@ -74,4 +80,7 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default localize( RebrandCitiesWelcomeStep );
+export default connect(
+	null,
+	{ setSiteTitle }
+)( localize( RebrandCitiesWelcomeStep ) );

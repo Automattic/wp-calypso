@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { v4 as uuid } from 'uuid';
+import config from 'config';
 
 const allHyphens = new RegExp( '-', 'g' );
 
@@ -13,7 +14,7 @@ function generateUniqueSiteUrl( prefix ) {
 	return `${ prefix }${ uuidWithoutHyphens() }`;
 }
 
-const rebrandCitiesPrefix = 'rebrandcitiessite';
+const rebrandCitiesPrefix = config( 'rebrand_cities_prefix' );
 
 function generateUniqueRebrandCitiesSiteUrl() {
 	return generateUniqueSiteUrl( rebrandCitiesPrefix );
