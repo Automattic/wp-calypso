@@ -46,7 +46,7 @@ const transformApiRequest = ( jitms ) => jitms.map( ( jitm ) =>
  * @param {function} dispatch The redux dispatch function
  * @param {string} action The action being processed
  */
-export const handleProcessJITM = ( state, dispatch, action ) => {
+export const fetchJITM = ( state, dispatch, action ) => {
 	if ( ! config.isEnabled( 'jitms' ) ) {
 		return;
 	}
@@ -103,7 +103,7 @@ export const handleRouteChange = ( { getState, dispatch }, action ) => {
 
 	process.lastSection = action.section.name;
 
-	handleProcessJITM( getState(), dispatch, action );
+	fetchJITM( getState(), dispatch, action );
 };
 
 /**
@@ -120,7 +120,7 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
 	process.hasInitializedSites = ! ! action.siteId;
 	process.lastSite = action.siteId;
 
-	handleProcessJITM( getState(), dispatch, action );
+	fetchJITM( getState(), dispatch, action );
 };
 
 /**
@@ -133,6 +133,7 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
 export const receiveJITM = ( { dispatch }, { siteId, site_id }, jitms ) => {
 	dispatch( {
 		type: JITM_SET,
+		siteId: site_id || siteId,
 		jitms: jitms
 	} );
 };
@@ -140,10 +141,14 @@ export const receiveJITM = ( { dispatch }, { siteId, site_id }, jitms ) => {
 /**
  * Called when a jitm fails for any network related reason
  * @param {function} dispatch The dispatch function
+ * @param {number} siteId The site id
+ * @param {number} site_id The site id
  */
-export const failedJITM = ( { dispatch } ) => {
+export const failedJITM = ( { dispatch }, { siteId, site_id } ) => {
+	debugger;
 	dispatch( {
 		type: JITM_SET,
+		siteId: site_id || siteId,
 		jitms: [],
 	} );
 };

@@ -8,11 +8,11 @@ import noop from 'lodash';
 /**
  * Internal dependencies
  */
-import { handleProcessJITM, handleSiteSelection, handleRouteChange } from '..';
+import { fetchJITM, handleSiteSelection, handleRouteChange } from '..';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
-	describe( 'handleProcessJITM', () => {
+	describe( 'fetchJITM', () => {
 		const emptyJITM = {
 			type: 'JITM_SET',
 			jitms: [],
@@ -23,7 +23,7 @@ describe( 'jitms', () => {
 			const state = {};
 			const action = noop;
 
-			handleProcessJITM( state, dispatch, action );
+			fetchJITM( state, dispatch, action );
 			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
 		} );
 

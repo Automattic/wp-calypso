@@ -38,6 +38,9 @@
       },
       "id": {
         "type": "string"
+      },
+      "ttl": {
+        "type": "number"
       }
     },
     "required": [
