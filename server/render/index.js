@@ -104,18 +104,23 @@ export function serverRender( req, res ) {
 		metas = getDocumentHeadMeta( context.store.getState() );
 		links = getDocumentHeadLink( context.store.getState() );
 
-		let reduxSubtrees = [ 'documentHead' ];
+		const cacheableReduxSubtrees = [ 'documentHead' ];
+		let reduxSubtrees;
 
 		// Send redux state only in logged-out scenario
-		if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
-			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
+		if ( isSectionIsomorphic( context.store.getState() ) ) {
+			reduxSubtrees = cacheableReduxSubtrees.concat( [ 'ui', 'themes' ] );
+		} else {
+			reduxSubtrees = cacheableReduxSubtrees;
 		}
 
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
-		// And cache on the server, too
+
+		// And cache on the server, too.
 		if ( cacheKey ) {
-			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
+			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
+			const serverState = reducer( cacheableInitialState, { type: SERIALIZE } );
 			stateCache.set( cacheKey, serverState );
 		}
 
