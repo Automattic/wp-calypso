@@ -291,6 +291,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			context.user = data;
 
 			if ( data.localeSlug ) {
+				context.lang = data.localeSlug;
 				context.store.dispatch( {
 					type: LOCALE_SET,
 					localeSlug: data.localeSlug,
