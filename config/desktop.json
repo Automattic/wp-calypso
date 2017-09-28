@@ -18,7 +18,6 @@
 		"code-splitting": false,
 		"comments/management": true,
 		"comments/management/sorting": false,
-		"manage/comments/bulk-actions": false,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,
