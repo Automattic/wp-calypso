@@ -6,22 +6,24 @@ import {
 	chatStatus,
 	connectionError,
 	connectionStatus,
+	geoLocation,
 	isAvailable,
 	lastActivityTimestamp,
 	lostFocusAt,
 	message,
 	timeline,
-	geoLocation,
 } from './reducers';
+import ui from './ui/reducer';
 
 export default combineReducers( {
 	chatStatus,
 	connectionError,
 	connectionStatus,
+	geoLocation,
 	isAvailable,
 	lastActivityTimestamp,
 	lostFocusAt,
 	message,
 	timeline,
-	geoLocation,
+	ui,
 } );

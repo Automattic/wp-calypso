@@ -12,8 +12,8 @@ import { getSectionName } from 'state/ui/selectors';
  * @returns {Boolean}
  */
 export const isHappychatOpen = createSelector(
-	state => state.ui.happychat.open && getSectionName( state ) !== 'happychat',
-	state => [ state.ui.happychat.open, getSectionName( state ) ]
+	state => state.extensions.happychat.ui.open && getSectionName( state ) !== 'happychat',
+	state => [ state.extensions.happychat.ui.open, getSectionName( state ) ]
 );
 
 /**
@@ -22,5 +22,5 @@ export const isHappychatOpen = createSelector(
  * @return {String} current state value
  */
 export const isHappychatMinimizing = createSelector(
-	state => state.ui.happychat.isMinimizing
+	state => state.extensions.happychat.ui.isMinimizing
 );

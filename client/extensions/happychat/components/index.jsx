@@ -18,7 +18,7 @@ import {
 	closeChat,
 	minimizeChat,
 	minimizedChat
-} from 'state/ui/happychat/actions';
+} from 'extensions/happychat/state/ui/actions';
 import {
 	blur,
 	focus,
@@ -26,7 +26,7 @@ import {
 import {
 	isHappychatMinimizing,
 	isHappychatOpen,
-} from 'state/ui/happychat/selectors';
+} from 'extensions/happychat/state/ui/selectors';
 import HappychatConnection from './connection';
 import Composer from './composer';
 import Notices from './notices';
