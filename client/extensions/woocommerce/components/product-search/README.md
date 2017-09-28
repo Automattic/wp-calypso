@@ -5,7 +5,7 @@ This component is used to search through the products on a given site.
 
 #### How to use:
 
-```js
+```jsx
 import Card from 'components/card';
 import ProductSearch from 'woocommerce/components/product-search';
 

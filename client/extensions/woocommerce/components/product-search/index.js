@@ -28,7 +28,7 @@ class ProductSearch extends Component {
 		query: '',
 	};
 
-	onSearch = query => {
+	handleSearch = query => {
 		const { siteId } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -41,7 +41,7 @@ class ProductSearch extends Component {
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
 
-	onSelect = product => {
+	handleSelect = product => {
 		const { siteId } = this.props;
 		// Clear the search field
 		this.setState( { query: '' } );
@@ -59,12 +59,12 @@ class ProductSearch extends Component {
 			<div className="product-search">
 				<SearchCard
 					ref="searchCard"
-					onSearch={ this.onSearch }
+					onSearch={ this.handleSearch }
 					delaySearch
 					delayTimeout={ 400 }
 					placeholder={ translate( 'Search products…' ) }
 				/>
-				<ProductSearchResults search={ this.state.query } onSelect={ this.onSelect } />
+				<ProductSearchResults search={ this.state.query } onSelect={ this.handleSelect } />
 			</div>
 		);
 	}

@@ -20,6 +20,7 @@ import ProductItem from './item';
 
 class ProductSearchResults extends Component {
 	static propTypes = {
+		onSelect: PropTypes.func.isRequired,
 		search: PropTypes.string.isRequired,
 	};
 
@@ -40,6 +41,7 @@ class ProductSearchResults extends Component {
 		);
 	}
 }
+
 export default connect( ( state, props ) => {
 	const query = {
 		page: 1,

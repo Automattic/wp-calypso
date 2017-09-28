@@ -3,8 +3,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +19,11 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 
 class ProductItem extends Component {
+	static propTypes = {
+		onClick: PropTypes.func.isRequired,
+		product: PropTypes.object.isRequired,
+	};
+
 	componentDidMount() {
 		const { siteId, productId } = this.props;
 
@@ -32,21 +39,21 @@ class ProductItem extends Component {
 		}
 	}
 
-	onClick = () => {
+	handleClick = () => {
 		const { product } = this.props;
 		this.props.onClick( product );
 	};
 
 	renderItem = product => {
-		const featuredImage = product.images && product.images[ 0 ];
+		const featuredImage = get( product, 'images[0]', false );
 		return (
 			<CompactCard
 				key={ product.key }
 				className="product-search__item"
 				role="button"
 				tabIndex="0"
-				onClick={ this.onClick }
-				onKeyDown={ getKeyboardHandler( this.onClick ) }
+				onClick={ this.handleClick }
+				onKeyDown={ getKeyboardHandler( this.handleClick ) }
 			>
 				<div className="product-search__image">
 					{ featuredImage && <img src={ featuredImage.src } /> }
@@ -63,7 +70,7 @@ class ProductItem extends Component {
 		const { product, variations } = this.props;
 		let productList = [ { ...product, key: product.id } ];
 
-		if ( variations.length ) {
+		if ( variations ) {
 			productList = variations.map( v => {
 				const name = product.name + ' – ' + formattedVariationName( v );
 				const key = product.id + '-' + v.id;
@@ -82,8 +89,8 @@ export default connect(
 
 		return {
 			productId,
-			siteId: site && site.ID,
-			variations: getVariationsForProduct( state, productId ) || [],
+			siteId: get( site, 'ID' ),
+			variations: getVariationsForProduct( state, productId ),
 		};
 	},
 	dispatch => bindActionCreators( { fetchProductVariations }, dispatch )
