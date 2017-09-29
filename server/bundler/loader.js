@@ -60,7 +60,7 @@ function getSectionsModule( sections ) {
 			'	return callback;',
 			'}',
 			'\n',
-			'function requireCallback( context, section, module, moduleId ) {',
+			'function requireCallback( context, next, section, module, moduleId ) {',
 			'	function callback( require ) {',
 			'		context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 			'		controller.setSection( section )( context );',
@@ -131,7 +131,7 @@ function splitTemplate( path, section ) {
 		'	}',
 		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
 		'   const moduleId = require.resolve( ' + moduleString + ');',
-		'   const callback = requireCallback( context, ' + sectionString + ', ' + moduleString + ', moduleId );',
+		'   const callback = requireCallback( context, next, ' + sectionString + ', ' + moduleString + ', moduleId );',
 		'   const onError = onErrorCallback( context, ' + sectionNameString + ' );',
 		'   require.ensure([], callback, onError, ' + sectionNameString + ' );',
 		'} );\n'
