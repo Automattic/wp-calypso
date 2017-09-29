@@ -116,9 +116,10 @@ export const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
 
 export const handleZoneCreated = ( { dispatch, getState }, action, response ) => {
 	const { siteId } = action;
+	const zone = fromApi( response.data );
 
-	page( `/extensions/zoninator/${ getSiteSlug( getState(), siteId ) }` );
-	announceZoneSaved( dispatch, action, fromApi( response.data ) );
+	page( `/extensions/zoninator/zone/${ getSiteSlug( getState(), siteId ) }/${ zone.id }` );
+	announceZoneSaved( dispatch, action, zone );
 };
 
 export const handleZoneSaved = ( { dispatch, getState }, action ) => {
