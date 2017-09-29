@@ -19,8 +19,10 @@ describe( 'promotions', () => {
 			woocommerce: {
 				ui: {
 					promotions: {
-						currentPage: 12,
-						perPage: 30,
+						list: {
+							currentPage: 12,
+							perPage: 30,
+						}
 					}
 				},
 				sites: {

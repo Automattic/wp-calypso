@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from '../reducer';
+import reducer from '../list-reducer';
 import {
 	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 } from 'woocommerce/state/action-types';
