@@ -1,11 +1,9 @@
-.disconnect-site {
-	&.site-settings {
+.disconnect-site__site-settings {
 	position: fixed;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
 	}
-}
 
 .disconnect-site__card {
 		position: relative;
@@ -31,4 +29,10 @@
 			margin: 16px 0 24px 0;
 			text-align: center;
 		}
+}
+
+.disconnect-site__back-button {
+	position: fixed;
+	top: 10%;
+  left: 2%;
 }

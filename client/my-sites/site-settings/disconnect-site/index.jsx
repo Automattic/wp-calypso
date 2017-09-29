@@ -16,9 +16,21 @@ import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
+import ReturnPreviousPage from 'my-sites/site-settings/return-previous-page';
 import SkipSurvey from './skip-survey';
 
 class DisconnectSite extends Component {
+	// the flow starts at /settings/manage-connection
+	// so let this be the default redirect if no previous page is provided
+
+	getRoute() {
+		const { siteSlug } = this.props;
+
+		if ( siteSlug ) {
+			return '/settings/manage-connection/' + siteSlug;
+		}
+	}
+
 	render() {
 		const { site, translate } = this.props;
 
@@ -26,17 +38,22 @@ class DisconnectSite extends Component {
 			return <Placeholder />;
 		}
 		return (
-			<Main className="disconnect-site site-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
-				<FormattedHeader
-					headerText={ translate( 'Disconnect Site' ) }
-					subHeaderText={ translate(
-						'Tell us why you want to disconnect your site from WordPress.com.'
-					) }
-				/>
-				<Card className="disconnect-site__card"> </Card>
-				<SkipSurvey />
-			</Main>
+			<div>
+				<span className="disconnect-site__back-button">
+					<ReturnPreviousPage redirectRoute={ this.getRoute() } { ...this.props } />
+				</span>
+				<Main className="disconnect-site__site-settings">
+					<DocumentHead title={ translate( 'Site Settings' ) } />
+					<FormattedHeader
+						headerText={ translate( 'Disconnect Site' ) }
+						subHeaderText={ translate(
+							'Tell us why you want to disconnect your site from WordPress.com.'
+						) }
+					/>
+					<Card className="disconnect-site__card"> </Card>
+					<SkipSurvey />
+				</Main>
+			</div>
 		);
 	}
 }
