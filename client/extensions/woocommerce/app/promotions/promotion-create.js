@@ -104,9 +104,9 @@ class PromotionCreate extends React.Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currencySettings = getPaymentCurrencySettings( state );
-	const currency = currencySettings ? currencySettings.value : null;
+	const currency = ( currencySettings ? currencySettings.value : null );
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
-	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
+	const promotion = ( promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null );
 
 	return {
 		site,
