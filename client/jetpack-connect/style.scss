@@ -11,6 +11,9 @@
 			}
 		}
 
+		.jetpack-connect__happychat-button {
+			text-align: center;
+		}
 	}
 
 	.formatted-header{
@@ -491,6 +494,23 @@
 	.button.is-compact {
 		font-size: 14px;
 		font-weight: 500;
+	}
+}
+
+.jetpack-connect__happychat-button {
+	background: none;
+	border: none;
+	color: darken( $gray, 20% );
+	padding: 16px 24px;
+	text-align: left;
+	width: 100%;
+
+	&:visited {
+		color: $gray;
+	}
+
+	&:hover {
+		color: $blue-medium;
 	}
 }
 
