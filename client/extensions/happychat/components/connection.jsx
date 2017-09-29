@@ -10,10 +10,12 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { connectChat } from 'extensions/happychat/state/actions';
 import { isHappychatConnectionUninitialized } from 'extensions/happychat/state/selectors';
+import installActionHandlers from 'extensions/happychat/state/data-layer';
 
 class HappychatConnection extends Component {
 	componentDidMount() {
 		if ( config.isEnabled( 'happychat' ) && this.props.isUninitialized ) {
+			installActionHandlers();
 			this.props.connectChat();
 		}
 	}

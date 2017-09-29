@@ -12,12 +12,15 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import viewport from 'lib/viewport';
 import {
 	hasUnreadMessages,
 	isHappychatAvailable,
 	hasActiveHappychatSession,
+	isHappychatConnectionUninitialized,
 } from 'extensions/happychat/state/selectors';
+import installActionHandlers from 'extensions/happychat/state/data-layer';
 import { connectChat } from 'extensions/happychat/state/actions';
 import { openChat } from 'extensions/happychat/state/ui/actions';
 import Button from 'components/button';
@@ -58,7 +61,10 @@ class HappychatButton extends Component {
 	}
 
 	componentDidMount() {
-		this.props.connectChat();
+		if ( config.isEnabled( 'happychat' ) && this.props.isUninitialized ) {
+			installActionHandlers();
+			this.props.connectChat();
+		}
 	}
 
 	render() {
@@ -90,6 +96,7 @@ export default connect(
 		hasUnread: hasUnreadMessages( state ),
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		isUninitialized: isHappychatConnectionUninitialized( state ),
 	} ),
 	{
 		openChat,
