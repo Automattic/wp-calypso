@@ -17,6 +17,7 @@ import {
 	fetchSetupStatusError,
 	handleSuccess,
 	handleFailure,
+	saveSetupStatus,
 	updateSetupStatus,
 } from '../';
 import {
@@ -25,7 +26,11 @@ import {
 	nextStep,
 	updateSetupStatus as updateStatus,
 } from '../../../setup/actions';
-import { WP_JOB_MANAGER_CREATE_PAGES, WP_JOB_MANAGER_FETCH_SETUP_STATUS } from '../../../action-types';
+import {
+	WP_JOB_MANAGER_CREATE_PAGES,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+} from '../../../action-types';
 
 const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;
@@ -132,38 +137,62 @@ describe( 'data layer', () => {
 	} );
 
 	describe( 'status', () => {
-		const action = {
-			type: WP_JOB_MANAGER_FETCH_SETUP_STATUS,
-			siteId,
-		};
+		describe( 'fetching', () => {
+			const action = {
+				type: WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+				siteId,
+			};
 
-		describe( '#fetchSetupStatus()', () => {
-			it( 'should dispatch an HTTP request to the settings endpoint', () => {
-				fetchSetupStatus( { dispatch }, action );
+			describe( '#fetchSetupStatus()', () => {
+				it( 'should dispatch an HTTP request to the status endpoint', () => {
+					fetchSetupStatus( { dispatch }, action );
+
+					expect( dispatch ).to.have.been.calledWith( http( {
+						method: 'GET',
+						path: `/jetpack-blogs/${ siteId }/rest-api/`,
+						query: {
+							path: '/wpjm/v1/status/run_page_setup',
+						}
+					}, action ) );
+				} );
+			} );
+
+			describe( '#updateSetupStatus', () => {
+				it( 'should dispatch `updateStatus`', () => {
+					updateSetupStatus( { dispatch }, action, { data: false } );
+
+					expect( dispatch ).to.have.been.calledWith( updateStatus( siteId, false ) );
+				} );
+			} );
+
+			describe( '#fetchSetupStatusError', () => {
+				it( 'should dispatch `fetchError`', () => {
+					fetchSetupStatusError( { dispatch }, action );
+
+					expect( dispatch ).to.have.been.calledWith( fetchStatusError( siteId ) );
+				} );
+			} );
+		} );
+
+		describe( '#saveSetupStatus()', () => {
+			it( 'should dispatch an HTTP POST request to the status endpoint', () => {
+				const saveAction = {
+					type: WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+					setupStatus: false,
+					siteId,
+				};
+
+				saveSetupStatus( { dispatch }, saveAction );
 
 				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'GET',
+					method: 'POST',
 					path: `/jetpack-blogs/${ siteId }/rest-api/`,
 					query: {
+						body: JSON.stringify( false ),
+						json: true,
 						path: '/wpjm/v1/status/run_page_setup',
 					}
-				}, action ) );
-			} );
-		} );
-
-		describe( '#updateSetupStatus', () => {
-			it( 'should dispatch `updateStatus`', () => {
-				updateSetupStatus( { dispatch }, action, { data: false } );
-
-				expect( dispatch ).to.have.been.calledWith( updateStatus( siteId, false ) );
-			} );
-		} );
-
-		describe( '#fetchSetupStatusError', () => {
-			it( 'should dispatch `fetchError`', () => {
-				fetchSetupStatusError( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledWith( fetchStatusError( siteId ) );
+				}, saveAction ) );
 			} );
 		} );
 	} );

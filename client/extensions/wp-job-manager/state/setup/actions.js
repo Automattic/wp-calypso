@@ -6,6 +6,7 @@ import {
 	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
 	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
 	WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
 	WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
 	WP_JOB_MANAGER_WIZARD_NEXT_STEP,
 } from '../action-types';
@@ -59,3 +60,12 @@ export const fetchSetupStatusError = siteId => ( { type: WP_JOB_MANAGER_FETCH_SE
  * @return {Object} Action object
  */
 export const updateSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS, siteId, setupStatus } );
+
+/**
+ * Returns an action object to indicate that the setup status should be saved.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Boolean} setupStatus Setup status
+ * @return {Object} Action object
+ */
+export const saveSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MANAGER_SAVE_SETUP_STATUS, siteId, setupStatus } );

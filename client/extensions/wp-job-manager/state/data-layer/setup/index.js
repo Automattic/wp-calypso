@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,11 @@ import {
 	nextStep,
 	updateSetupStatus as updateStatus,
 } from '../../setup/actions';
-import { WP_JOB_MANAGER_CREATE_PAGES, WP_JOB_MANAGER_FETCH_SETUP_STATUS } from '../../action-types';
+import {
+	WP_JOB_MANAGER_CREATE_PAGES,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+} from '../../action-types';
 
 let errorCount;
 let successCount;
@@ -96,10 +101,26 @@ export const updateSetupStatus = ( { dispatch }, { siteId }, { data } ) => dispa
 
 export const fetchSetupStatusError = ( { dispatch }, { siteId } ) => dispatch( fetchStatusError( siteId ) );
 
+export const saveSetupStatus = ( { dispatch }, action ) => {
+	const { setupStatus, siteId } = action;
+
+	dispatch( http( {
+		method: 'POST',
+		path: `/jetpack-blogs/${ siteId }/rest-api/`,
+		query: {
+			body: JSON.stringify( setupStatus ),
+			json: true,
+			path: '/wpjm/v1/status/run_page_setup',
+		},
+	}, action ) );
+};
+
 const dispatchCreatePagesRequest = dispatchRequest( createPages, handleSuccess, handleFailure );
 const dispatchFetchSetupStatusRequest = dispatchRequest( fetchSetupStatus, updateSetupStatus, fetchSetupStatusError );
+const dispatchSaveSetupStatusRequest = dispatchRequest( saveSetupStatus, noop, noop );
 
 export default {
 	[ WP_JOB_MANAGER_CREATE_PAGES ]: [ dispatchCreatePagesRequest ],
 	[ WP_JOB_MANAGER_FETCH_SETUP_STATUS ]: [ dispatchFetchSetupStatusRequest ],
+	[ WP_JOB_MANAGER_SAVE_SETUP_STATUS ]: [ dispatchSaveSetupStatusRequest ],
 };
