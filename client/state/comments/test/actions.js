@@ -16,6 +16,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 	COMMENTS_REPLY_WRITE,
+	COMMENTS_SET_ACTIVE_COMMENT_REPLY,
 } from '../../action-types';
 import {
 	requestPostComments,
@@ -24,6 +25,7 @@ import {
 	deleteComment,
 	likeComment,
 	unlikeComment,
+	setActiveCommentReply,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 
@@ -127,6 +129,19 @@ describe( 'actions', () => {
 
 			expect( action ).to.be.eql( {
 				type: COMMENTS_UNLIKE,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				commentId: 1,
+			} );
+		} );
+	} );
+
+	describe( '#setActiveCommentReply()', () => {
+		it( 'should return an action to set the active comment reply', () => {
+			const action = setActiveCommentReply( SITE_ID, POST_ID, 1 );
+
+			expect( action ).to.be.eql( {
+				type: COMMENTS_SET_ACTIVE_COMMENT_REPLY,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1,
