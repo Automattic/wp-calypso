@@ -21,6 +21,7 @@ import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { isEnabled } from 'config';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {
@@ -80,7 +81,7 @@ class ThemeSelectionStep extends Component {
 	}
 
 	componentWillMount() {
-		if ( this.props.designType === 'store' ) {
+		if ( isEnabled( 'signup/atomic-store-flow' ) && this.props.designType === 'store' ) {
 			SignupActions.submitSignupStep(
 				{
 					stepName: this.props.stepName,
@@ -98,7 +99,7 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render = () => {
-		if ( this.props.designType === 'store' ) {
+		if ( isEnabled( 'signup/atomic-store-flow' ) && this.props.designType === 'store' ) {
 			return null;
 		}
 
