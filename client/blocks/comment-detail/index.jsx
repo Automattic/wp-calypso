@@ -214,29 +214,18 @@ export class CommentDetail extends Component {
 
 	render() {
 		const {
-			authorAvatarUrl,
 			authorIsBlocked,
-			authorName,
-			authorUrl,
-			commentContent,
 			commentId,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
-			commentType,
 			editComment,
 			isBulkEdit,
 			isLoading,
-			postId,
-			postTitle,
-			postUrl,
 			refreshCommentData,
 			replyComment,
 			siteId,
-			translate,
 		} = this.props;
-
-		const authorDisplayName = authorName || translate( 'Anonymous' );
 
 		const { isEditMode, isExpanded } = this.state;
 
@@ -264,20 +253,13 @@ export class CommentDetail extends Component {
 				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
 
 				<CommentDetailHeader
-					authorAvatarUrl={ authorAvatarUrl }
-					authorDisplayName={ authorDisplayName }
-					authorUrl={ authorUrl }
-					commentContent={ commentContent }
-					commentIsLiked={ commentIsLiked }
+					commentId={ commentId }
 					commentIsSelected={ commentIsSelected }
-					commentStatus={ commentStatus }
-					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
 					isExpanded={ isExpanded }
-					postId={ postId }
-					postTitle={ postTitle }
+					siteId={ siteId }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }

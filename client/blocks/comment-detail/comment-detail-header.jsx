@@ -5,10 +5,11 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,21 +22,23 @@ import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
+import { getSiteComment } from 'state/selectors';
+import { getAuthorDisplayName, getPostTitle } from './utils';
 
 export const CommentDetailHeader = ( {
 	authorAvatarUrl,
 	authorDisplayName,
 	authorUrl,
 	commentContent,
-	commentIsLiked,
+	commentId,
 	commentIsSelected,
-	commentStatus,
 	commentType,
 	deleteCommentPermanently,
 	isBulkEdit,
 	isEditMode,
 	isExpanded,
 	postTitle,
+	siteId,
 	toggleApprove,
 	toggleEditMode,
 	toggleExpanded,
@@ -62,9 +65,9 @@ export const CommentDetailHeader = ( {
 			{ isExpanded &&
 			! isEditMode && (
 				<CommentDetailActions
-					commentIsLiked={ commentIsLiked }
-					commentStatus={ commentStatus }
+					commentId={ commentId }
 					deleteCommentPermanently={ deleteCommentPermanently }
+					siteId={ siteId }
 					toggleApprove={ toggleApprove }
 					toggleEditMode={ toggleEditMode }
 					toggleLike={ toggleLike }
@@ -141,4 +144,18 @@ export const CommentDetailHeader = ( {
 	);
 };
 
-export default localize( CommentDetailHeader );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	return {
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		authorDisplayName: getAuthorDisplayName( comment ),
+		authorUrl: get( comment, 'author.URL', '' ),
+		commentContent: get( comment, 'content' ),
+		commentType: get( comment, 'type', 'comment' ),
+		postId: get( comment, 'post.ID' ),
+		postTitle: getPostTitle( comment ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( CommentDetailHeader ) );
