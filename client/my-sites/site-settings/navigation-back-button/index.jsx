@@ -13,21 +13,21 @@ import PropTypes from 'prop-types';
  */
 import Button from 'components/button';
 
-const ReturnPreviousPage = ( { redirectRoute, translate } ) => {
+const NavigationBackButton = ( { redirectRoute, translate } ) => {
 	const handleClick = () => {
 		page( redirectRoute );
 	};
 
 	return (
-		<Button className="return-previous-page" borderless compact onClick={ handleClick }>
+		<Button className="navigation-back-button" borderless compact onClick={ handleClick }>
 			<Gridicon icon="arrow-left" />
-			<span className="return-previous-page__label">{ translate( 'Back' ) }</span>
+			<span className="navigation-back-button__label">{ translate( 'Back' ) }</span>
 		</Button>
 	);
 };
 
-ReturnPreviousPage.propTypes = {
+NavigationBackButton.propTypes = {
 	redirectRoute: PropTypes.string.isRequired,
 };
 
-export default localize( ReturnPreviousPage );
+export default localize( NavigationBackButton );

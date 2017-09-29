@@ -16,13 +16,10 @@ import { getSelectedSite } from 'state/ui/selectors';
 import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import ReturnPreviousPage from 'my-sites/site-settings/return-previous-page';
+import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
 import SkipSurvey from './skip-survey';
 
 class DisconnectSite extends Component {
-	// the flow starts at /settings/manage-connection
-	// so let this be the default redirect if no previous page is provided
-
 	getRoute() {
 		const { siteSlug } = this.props;
 
@@ -40,7 +37,7 @@ class DisconnectSite extends Component {
 		return (
 			<div>
 				<span className="disconnect-site__back-button">
-					<ReturnPreviousPage redirectRoute={ this.getRoute() } { ...this.props } />
+					<NavigationBackButton redirectRoute={ this.getRoute() } { ...this.props } />
 				</span>
 				<Main className="disconnect-site__site-settings">
 					<DocumentHead title={ translate( 'Site Settings' ) } />

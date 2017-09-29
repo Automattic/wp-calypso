@@ -1,4 +1,4 @@
-Return Previous Page
+Navigation Back Button
 
 This component is used to display a `Back` button for redirection to the previously
 visited site.
@@ -6,7 +6,7 @@ visited site.
 #Usage:
 
 ```js
-import ReturnPreviousPage from 'my-sites/site-settings/return-previous-page';
+import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
 ...
 
 getRoute() {
@@ -14,7 +14,7 @@ getRoute() {
 }
 
 <span className="....">
-		<ReturnPreviousPage redirectRoute={ this.getRoute() } { ...this.props } />
+		<NavigationBackButton redirectRoute={ this.getRoute() } { ...this.props } />
 </span>
 
 ```
