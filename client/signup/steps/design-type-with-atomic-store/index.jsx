@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-atomic-store/type-images';
 import { abtest } from 'lib/abtest';
+import SignupActions from 'lib/signup/actions';
 
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
@@ -57,11 +58,29 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		];
 	}
 
+	handleChoiceClick = type => event => {
+		event.preventDefault();
+		event.stopPropagation();
+		this.handleNextStep( type );
+	};
+
+	handleNextStep = ( designType ) => {
+		this.props.setDesignType( designType );
+
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
+
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+
+		this.props.goToNextStep();
+	};
+
 	renderChoice = ( choice ) => {
 		return (
 			<Card className="design-type-with-atomic-store__choice" key={ choice.type }>
 				<a className="design-type-with-atomic-store__choice-link"
-					href="#">
+					href="#"
+					onClick={ this.handleChoiceClick( choice.type ) }
+				>
 					<div className="design-type-with-atomic-store__image">
 						{ choice.image }
 					</div>
