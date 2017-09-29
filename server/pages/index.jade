@@ -48,14 +48,14 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		link(rel='stylesheet', href='//s1.wp.com/i/noticons/noticons.css?v=20150727')
 		link(rel='stylesheet', href='//s1.wp.com/wp-includes/css/dashicons.css?v=20150727')
 		if isRTL
-			link(rel='stylesheet', href=urls['style-rtl.css'])
+			link(rel='stylesheet', id='main-css', href=urls['style-rtl.css'])
 			if sectionCssRtl
 				link(rel='stylesheet', id='section-css', href=sectionCssRtl)
 		else
 			if 'development' === env || isDebug
-				link(rel='stylesheet', href=urls['style-debug.css'])
+				link(rel='stylesheet', id='main-css', href=urls['style-debug.css'])
 			else
-				link(rel='stylesheet', href=urls['style.css'])
+				link(rel='stylesheet', id='main-css', href=urls['style.css'])
 
 			if sectionCss
 				link(rel='stylesheet', id='section-css', href=sectionCss)

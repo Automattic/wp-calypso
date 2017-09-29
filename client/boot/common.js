@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import page from 'page';
 import qs from 'querystring';
 import ReactClass from 'react/lib/ReactClass';
-import i18n, { setLocale } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import url from 'url';
 
@@ -21,15 +21,18 @@ import {
 	setCurrentUserFlags
 } from 'state/current-user/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
-import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
+import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+import { isDefaultLocale } from 'lib/i18n-utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const debug = debugFactory( 'calypso' );
 
-const switchUserLocale = currentUser => {
+const switchUserLocale = ( currentUser, reduxStore ) => {
 	const localeSlug = currentUser.get().localeSlug;
+
 	if ( localeSlug ) {
-		switchLocale( localeSlug );
+		reduxStore.dispatch( setLocale( localeSlug ) );
 	}
 };
 
@@ -139,7 +142,7 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
 };
 
-export const locales = currentUser => {
+export const locales = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
 
 	// Initialize i18n mixin
@@ -147,16 +150,15 @@ export const locales = currentUser => {
 
 	if ( window.i18nLocaleStrings ) {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		setLocale( i18nLocaleStringsObject );
+		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 	}
 
 	// When the user is not bootstrapped, we also bootstrap the
-	// locale strings
-	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		switchUserLocale( currentUser );
+	// user locale strings, unless the locale was already set in the initial store during SSR
+	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && isDefaultLocale( currentLocaleSlug ) ) {
+		switchUserLocale( currentUser, reduxStore );
 	}
-
-	currentUser.on( 'change', () => switchUserLocale( currentUser ) );
 };
 
 export const utils = () => {

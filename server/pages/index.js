@@ -20,7 +20,7 @@ import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
-import { DESERIALIZE } from 'state/action-types';
+import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 
@@ -36,6 +36,14 @@ const staticFiles = [
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
 ];
+
+const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
+	if ( ! file.hash ) {
+		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
+	}
+	result[ file.path ] = utils.getUrl( file.path, file.hash );
+	return result;
+}, {} );
 
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
@@ -61,14 +69,7 @@ function getInitialServerState( serializedServerState ) {
  * @returns {Object} Map of asset names to urls
  **/
 function generateStaticUrls( request ) {
-	const urls = {};
-
-	staticFiles.forEach( function( file ) {
-		if ( ! file.hash ) {
-			file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-		}
-		urls[ file.path ] = utils.getUrl( file.path, file.hash );
-	} );
+	const urls = { ...staticFilesUrls };
 
 	const assets = request.app.get( 'assets' );
 
@@ -186,8 +187,7 @@ function getDefaultContext( request ) {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
-		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
-		tinymceEditorCss: context.urls[ 'editor.css' ],
+		staticUrls: staticFilesUrls,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {
@@ -290,14 +290,13 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
-			context.isRTL = data.isRTL ? true : false;
-
-			if ( context.isRTL ) {
-				context.bodyClasses.push( 'rtl' );
-			}
 
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
+				context.store.dispatch( {
+					type: LOCALE_SET,
+					localeSlug: data.localeSlug,
+				} );
 			}
 
 			if ( req.path === '/' && req.query ) {
@@ -326,6 +325,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			}
 
 			req.context = context;
+
 			next();
 		} );
 	} else {
