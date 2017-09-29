@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
 import { nock, useNock } from '../index.js';
 
 describe( 'useNock', () => {
@@ -19,7 +25,7 @@ describe( 'useNock', () => {
 			expect( nock.isDone() ).to.be.false;
 		} );
 
-		after( () => nock.cleanAll() );
+		afterAll( () => nock.cleanAll() );
 	} );
 
 	describe( 'Clean with useNock', () => {
