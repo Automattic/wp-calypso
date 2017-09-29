@@ -1,102 +1,93 @@
 @import './label-purchase-modal/style';
-.shipping-label {
-	margin-bottom: 0;
-	text-align: center;
+.shipping-label__payment .gridicon.notice__icon {
+	align-self: flex-start;
+	margin-top: 8px;
+}
 
-	.shipping-label__payment .gridicon.notice__icon {
-		align-self: flex-start;
-		margin-top: 8px;
+.shipping-label__item {
+	// padding: 16px;
+	// border-bottom: 1px solid #eee;
+
+	// .shipping-label__item-created {
+	// 	color: $gray;
+	// 	font-size: 12px;
+	// }
+
+	// &:last-child {
+	// 	border: none;
+	// }
+
+	p {
+		margin-bottom: 3px;
+		text-align: left;
+
+		&.shipping-label__item-tracking {
+			// margin-bottom: 16px;
+			font-size: 12px;
+
+			a:focus {
+				outline: none;
+				box-shadow: none;
+			}
+		}
+
+		// & .shipping-label__item-detail {
+		// 	font-weight: bold;
+		// 	font-size: 14px;
+		// 	color: $gray-dark;
+		// 	cursor: help;
+		// 	text-decoration: underline;
+		// 	text-decoration-color: $gray-dark;
+		// 	text-decoration-style: dotted;
+		// }
 	}
 
-	.shipping-label__item {
-		padding: 16px;
-		border-bottom: 1px solid #eee;
+	.shipping-label__new-label-button {
+		width: 100%;
+		margin-top: 16px;
+	}
 
-		.shipping-label__item-created {
-			color: $gray;
-			font-size: 12px;
-		}
+	.shipping-label__item-actions {
+		display: flex;
+		justify-content: space-between;
+		font-size: 12px;
+		margin-bottom: 0;
 
-		&:last-child {
-			border: none;
-		}
-
-		p {
-			margin-bottom: 3px;
-			text-align: left;
-
-			&.shipping-label__item-tracking {
-				margin-bottom: 16px;
-				font-size: 12px;
-
-				a:focus {
-					outline: none;
-					box-shadow: none;
-				}
-			}
-
-			& .shipping-label__item-detail {
-				font-weight: bold;
-				font-size: 14px;
-				color: $gray-dark;
-				cursor: help;
-				text-decoration: underline;
-				text-decoration-color: $gray-dark;
-				text-decoration-style: dotted;
-			}
-		}
-
-		.shipping-label__new-label-button {
-			width: 100%;
+		.button {
 			margin-top: 16px;
 		}
 
-		.shipping-label__item-actions {
-			display: flex;
-			justify-content: space-between;
-			font-size: 12px;
-			margin-bottom: 0;
-
-			a {
-				text-decoration: none;
-			}
-
-			.gridicon {
-				margin-right: 4px;
-			}
-
-			span svg,
-			a svg {
-				position: relative;
-				top: 2px;
-				margin-right: 2px;
-			}
-
-			.is-refund-pending {
-				color: $alert-yellow;
-			}
-
-			.is-refund-checking {
-				color: $alert-yellow;
-				animation: loading-fade 1.6s ease-in-out infinite;
-			}
-
-			.is-refund-complete {
-				color: $alert-green;
-			}
-
-			.is-refund-rejected {
-				color: $alert-red;
-			}
+		span svg,
+		a svg {
+			position: relative;
+			top: 2px;
+			margin-right: 2px;
 		}
 
-		.shipping-label__purchase-error {
+		.is-refund-pending {
+			color: $alert-yellow;
+		}
+
+		.is-refund-checking {
+			color: $alert-yellow;
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.is-refund-complete {
+			color: $alert-green;
+		}
+
+		.is-refund-rejected {
 			color: $alert-red;
-			cursor: help;
-			text-decoration: underline;
-			text-decoration-color: $alert-red;
-			text-decoration-style: dotted;
 		}
+	}
+
+	.shipping-label__purchase-error {
+		color: $alert-red;
+		cursor: help;
+		text-decoration: underline;
+		text-decoration-color: $alert-red;
+		text-decoration-style: dotted;
 	}
 }
 

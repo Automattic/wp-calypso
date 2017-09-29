@@ -24,7 +24,7 @@ import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-ser
 // };
 
 class LabelItem extends Component {
-	renderRefundLink = ( label ) => {
+	renderRefund = ( label ) => {
 		const { orderId, siteId } = this.props;
 
 		const today = new Date();
@@ -46,44 +46,9 @@ class LabelItem extends Component {
 		);
 	};
 
-	renderRefund = ( label ) => {
-		if ( label.showDetails ) {
-			return this.renderRefundLink( label );
-		}
-
-		// let text = '';
-		// let className = '';
-		// switch ( label.refund.status ) {
-		// 	case 'pending':
-		// 		if ( label.statusUpdated ) {
-		// 			className = 'is-refund-pending';
-		// 			text = __( 'Refund pending' );
-		// 		} else {
-		// 			className = 'is-refund-checking';
-		// 			text = __( 'Checking refund status' );
-		// 		}
-		// 		break;
-		// 	case 'complete':
-		// 		className = 'is-refund-complete';
-		// 		text = __( 'Refunded on %(date)s', { args: { date: formatDate( label.refund.refund_date ) } } );
-		// 		break;
-		// 	case 'rejected':
-		// 		className = 'is-refund-rejected';
-		// 		text = __( 'Refund rejected' );
-		// 		break;
-		// 	default:
-		// 		return this.renderRefundLink( label );
-		// }
-
-		// return (
-		// 	<span className={ className } ><Gridicon icon="time" size={ 12 } />{ text }</span>
-		// );
-	};
-
 	renderReprint = ( label ) => {
 		const todayTime = new Date().getTime();
-		if ( ! label.showDetails ||
-			( label.usedDate && label.usedDate < todayTime ) ||
+		if ( ( label.usedDate && label.usedDate < todayTime ) ||
 			( label.expiryDate && label.expiryDate < todayTime ) ) {
 			return null;
 		}
@@ -139,10 +104,14 @@ class LabelItem extends Component {
 				<p className="shipping-label__item-tracking">
 					{ __( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
 				</p>
-				<ButtonGroup>
-					{ this.renderRefund( label ) }
-					{ this.renderReprint( label ) }
-				</ButtonGroup>
+				{ label.showDetails &&
+					<p className="shipping-label__item-actions">
+						<ButtonGroup>
+							{ this.renderRefund( label ) }
+							{ this.renderReprint( label ) }
+						</ButtonGroup>
+					</p>
+				}
 			</div>
 		);
 	}

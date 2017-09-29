@@ -103,7 +103,7 @@ class ActivityLog extends Component {
 				timestamp: event.timestamp,
 				children: (
 					<div>
-						<span>Label { event.labelIndex + 1 } refund requested</span>
+						<span>Label #{ event.labelIndex + 1 } refund requested</span>
 						{ event.amount != null ? <span> ({ formatCurrency( event.amount, event.currency ) })</span> : null }
 					</div>
 				),
@@ -116,7 +116,7 @@ class ActivityLog extends Component {
 				timestamp: event.timestamp,
 				children: (
 					<div>
-						Label { event.labelIndex + 1 } refunded ({ formatCurrency( event.amount, event.currency ) })
+						Label #{ event.labelIndex + 1 } refunded ({ formatCurrency( event.amount, event.currency ) })
 					</div>
 				),
 			};
@@ -128,7 +128,7 @@ class ActivityLog extends Component {
 				timestamp: event.timestamp,
 				children: (
 					<div>
-						Label { event.labelIndex + 1 } refund rejected
+						Label #{ event.labelIndex + 1 } refund rejected
 					</div>
 				),
 			};
