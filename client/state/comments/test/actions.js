@@ -138,13 +138,15 @@ describe( 'actions', () => {
 
 	describe( '#setActiveCommentReply()', () => {
 		it( 'should return an action to set the active comment reply', () => {
-			const action = setActiveCommentReply( SITE_ID, POST_ID, 1 );
+			const action = setActiveCommentReply( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
 			expect( action ).to.be.eql( {
 				type: COMMENTS_SET_ACTIVE_COMMENT_REPLY,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				commentId: 1,
+				payload: {
+					siteId: SITE_ID,
+					postId: POST_ID,
+					commentId: 1,
+				},
 			} );
 		} );
 	} );

@@ -32,6 +32,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	READER_EXPAND_COMMENTS,
+	COMMENTS_SET_ACTIVE_COMMENT_REPLY,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
@@ -319,6 +320,23 @@ export const treesInitialized = keyedReducer(
 	keyedReducer( 'status', treesInitializedReducer )
 );
 
+/***
+ * Stores the active reply comment for a given siteId and postId
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export const activeReplyComments = createReducer(
+	{},
+	{
+		[ COMMENTS_SET_ACTIVE_COMMENT_REPLY ]: ( state, action ) => {
+			const { siteId, postId, commentId } = action.payload;
+			const stateKey = getStateKey( siteId, postId );
+			return { ...state, [ stateKey ]: commentId };
+		},
+	}
+);
+
 export default combineReducers( {
 	items,
 	fetchStatus,
@@ -327,4 +345,5 @@ export default combineReducers( {
 	totalCommentsCount,
 	trees,
 	treesInitialized,
+	activeReplyComments,
 } );

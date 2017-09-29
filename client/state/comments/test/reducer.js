@@ -16,6 +16,7 @@ import {
 	fetchStatus,
 	fetchStatusInitialState,
 	treesInitialized,
+	activeReplyComments,
 } from '../reducer';
 import {
 	COMMENTS_LIKE,
@@ -29,7 +30,7 @@ import {
 	COMMENTS_EDIT,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
-import { expandComments } from '../actions';
+import { expandComments, setActiveCommentReply } from '../actions';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, content: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -364,6 +365,7 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
+
 		it( 'expandComments should only expand them, never unexpand', () => {
 			const prevState = {
 				[ '1-2' ]: {
@@ -385,6 +387,25 @@ describe( 'reducer', () => {
 					3: 'is-full',
 					4: 'is-excerpt',
 				},
+			} );
+		} );
+	} );
+
+	describe( '#activeReplyComments', () => {
+		it( 'should set the active reply comment for a given site and post', () => {
+			const prevState = {
+				[ '1-2' ]: 123,
+			};
+
+			const action = setActiveCommentReply( {
+				siteId: 1,
+				postId: 2,
+				commentId: 124,
+			} );
+
+			const nextState = activeReplyComments( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '1-2' ]: 124,
 			} );
 		} );
 	} );

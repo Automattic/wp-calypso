@@ -239,9 +239,11 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
  * @param {Number} commentId comment identifier
  * @returns {Function} think that unlikes a comment
  */
-export const setActiveCommentReply = ( siteId, postId, commentId ) => ( {
+export const setActiveCommentReply = ( { siteId, postId, commentId } ) => ( {
 	type: COMMENTS_SET_ACTIVE_COMMENT_REPLY,
-	siteId,
-	postId,
-	commentId,
+	payload: {
+		siteId,
+		postId,
+		commentId,
+	},
 } );
