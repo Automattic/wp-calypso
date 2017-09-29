@@ -107,7 +107,6 @@ export function serverRender( req, res ) {
 		const cacheableReduxSubtrees = [ 'documentHead' ];
 		let reduxSubtrees;
 
-		// Send redux state only in logged-out scenario
 		if ( isSectionIsomorphic( context.store.getState() ) ) {
 			reduxSubtrees = cacheableReduxSubtrees.concat( [ 'ui', 'themes' ] );
 		} else {
