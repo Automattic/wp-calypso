@@ -15,11 +15,11 @@ import {
 } from '../index';
 
 describe( 'isOrderEditable', () => {
-	it( 'should be false for a pending order', () => {
+	it( 'should be true for a pending order', () => {
 		expect( isOrderEditable( 'pending' ) ).to.be.true;
 	} );
 
-	it( 'should be false for an on-hold order', () => {
+	it( 'should be true for an on-hold order', () => {
 		expect( isOrderEditable( 'on-hold' ) ).to.be.true;
 	} );
 
@@ -27,11 +27,11 @@ describe( 'isOrderEditable', () => {
 		expect( isOrderEditable( 'processing' ) ).to.be.false;
 	} );
 
-	it( 'should be true for a completed order', () => {
+	it( 'should be false for a completed order', () => {
 		expect( isOrderEditable( 'completed' ) ).to.be.false;
 	} );
 
-	it( 'should be true for a failed order', () => {
+	it( 'should be false for a failed order', () => {
 		expect( isOrderEditable( 'failed' ) ).to.be.false;
 	} );
 
