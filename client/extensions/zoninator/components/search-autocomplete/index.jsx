@@ -46,7 +46,13 @@ class SearchAutocomplete extends Component {
 
 	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
 
-	handleKeyDown = event => this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
+	handleKeyDown = event => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+		}
+
+		this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
+	}
 
 	handleSelect = ( item ) => {
 		this.searchRef.clear();
