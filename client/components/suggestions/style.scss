@@ -12,6 +12,7 @@
   border: 1px solid darken( $gray-light, 10% );
   border-top: 0px;
   font-size: 15px;
+  white-space: pre-wrap;
   cursor: pointer;
 
   &.has-highlight {
