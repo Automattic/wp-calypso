@@ -68,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	jetpackConnectPlansCopyChanges: {
-		datestamp: '20170728',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'modified',
-	},
 	readerIntroIllustration: {
 		datestamp: '20170718',
 		variations: {

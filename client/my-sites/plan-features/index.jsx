@@ -570,8 +570,8 @@ export default connect(
 					}
 				}
 
-				if ( abtest( 'jetpackConnectPlansCopyChanges' ) === 'modified' && displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getNewSignupFeatures( abtest ) );
+				if ( displayJetpackPlans ) {
+					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
 
 				return {
