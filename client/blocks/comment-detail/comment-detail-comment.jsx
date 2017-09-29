@@ -23,6 +23,7 @@ export class CommentDetailComment extends Component {
 	static propTypes = {
 		commentContent: PropTypes.string,
 		commentId: PropTypes.number,
+		repliedToComment: PropTypes.bool,
 		siteId: PropTypes.number,
 	};
 

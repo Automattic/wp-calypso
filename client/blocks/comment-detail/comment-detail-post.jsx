@@ -30,6 +30,7 @@ export const CommentDetailPost = ( {
 	postTitle,
 	postUrl,
 	onClick = noop,
+	recordReaderArticleOpened,
 	siteId,
 	translate,
 } ) => {
@@ -74,8 +75,8 @@ export const CommentDetailPost = ( {
 						</Emojify>
 					</span>
 				) }
-				<a href={ postUrl } onClick={ onClick }>
-					<Emojify>{ postTitle || translate( 'Untitled' ) }</Emojify>
+				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
+					<Emojify>{ postTitle }</Emojify>
 				</a>
 			</div>
 		</div>

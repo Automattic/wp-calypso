@@ -34,7 +34,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { getSiteComment, getSiteSetting } from 'state/selectors';
-import { getAuthorDisplayName, isEmailBlacklisted } from './utils';
+import { getAuthorDisplayName, getGravatarUser, isEmailBlacklisted } from './utils';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -212,6 +212,7 @@ export class CommentDetailAuthor extends Component {
 
 	render() {
 		const {
+			authorAvatarUrl,
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
@@ -225,19 +226,17 @@ export class CommentDetailAuthor extends Component {
 			'is-expanded': isExpanded,
 		} );
 
+		const gravatarUser = getGravatarUser( {
+			avatarUrl: authorAvatarUrl,
+			displayName: authorDisplayName,
+		} );
+
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
 					<div className="comment-detail__author-avatar">
 						<div className="comment-detail__author-avatar">
-							{ 'comment' === commentType && (
-								<Gravatar
-									user={ {
-										avatar_URL: this.props.authorAvatarUrl,
-										display_name: this.props.authorDisplayName,
-									} }
-								/>
-							) }
+							{ 'comment' === commentType && <Gravatar user={ gravatarUser } /> }
 							{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
 						</div>
 					</div>
