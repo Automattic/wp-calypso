@@ -19,7 +19,7 @@ import { errorNotice } from 'state/notices/actions';
  * @param 	{String} action The action to dispatch next
  * @returns {Object} dispatched http action
  */
-export const fetchCountries = ( { dispatch }, action ) =>
+export const fetchCountriesDomains = ( { dispatch }, action ) =>
 	dispatch(
 		http(
 			{
@@ -39,7 +39,7 @@ export const fetchCountries = ( { dispatch }, action ) =>
  * @param   {Array}    countries  array of raw device data returned from the endpoint
  * @returns {Object}            disparched user devices add action
  */
-export const handleSuccess = ( { dispatch }, action, countries ) =>
+export const updateCountriesDomains = ( { dispatch }, action, countries ) =>
 	dispatch( {
 		type: COUNTRIES_DOMAINS_UPDATED,
 		countries,
@@ -51,9 +51,15 @@ export const handleSuccess = ( { dispatch }, action, countries ) =>
  * @param   {Function} dispatch Redux dispatcher
  * @returns {Object}            dispatched error notice action
  */
-export const handleError = ( { dispatch } ) =>
+export const showCountriesDomainsLoadingError = ( { dispatch } ) =>
 	dispatch( errorNotice( translate( "We couldn't load the countries list." ) ) );
 
 export default {
-	[ COUNTRIES_DOMAINS_FETCH ]: [ dispatchRequest( fetchCountries, handleSuccess, handleError ) ],
+	[ COUNTRIES_DOMAINS_FETCH ]: [
+		dispatchRequest(
+			fetchCountriesDomains,
+			updateCountriesDomains,
+			showCountriesDomainsLoadingError
+		),
+	],
 };

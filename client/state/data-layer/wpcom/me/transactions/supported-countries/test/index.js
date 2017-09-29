@@ -10,16 +10,20 @@ import { spy } from 'sinon';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'state/action-types';
-import { fetchCountries, handleSuccess, handleError } from '../';
+import {
+	fetchCountriesTransactions,
+	updateCountriesTransactions,
+	showCountriesTransactionsLoadingError,
+} from '../';
 
 describe( 'wpcom-api', () => {
 	describe( 'me transactions supported-countries', () => {
-		describe( '#fetchCountries', () => {
+		describe( '#fetchCountriesTransactions', () => {
 			it( 'should dispatch HTTP request to plans endpoint', () => {
 				const action = { type: 'DUMMY' };
 				const dispatch = spy();
 
-				fetchCountries( { dispatch }, action );
+				fetchCountriesTransactions( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
@@ -35,13 +39,13 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		describe( '#handleSuccess', () => {
+		describe( '#updateCountriesTransactions', () => {
 			it( 'should dispatch updated action', () => {
 				const action = { type: 'DUMMY' };
 				const dispatch = spy();
 				const data = [ 'BG', 'US', 'UK' ];
 
-				handleSuccess( { dispatch }, action, data );
+				updateCountriesTransactions( { dispatch }, action, data );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {
@@ -51,11 +55,11 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		describe( '#handleError', () => {
+		describe( '#showCountriesTransactionsLoadingError', () => {
 			it( 'should dispatch error notice', () => {
 				const dispatch = spy();
 
-				handleError( { dispatch } );
+				showCountriesTransactionsLoadingError( { dispatch } );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWithMatch( {
