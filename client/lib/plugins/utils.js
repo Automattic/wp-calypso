@@ -218,9 +218,7 @@ PluginUtils = {
 		if ( ! pluginsList ) {
 			return [];
 		}
-		return pluginsList.map( function( pluginData ) {
-			return PluginUtils.normalizePluginData( pluginData );
-		} );
+		return map( pluginsList, pluginData => PluginUtils.normalizePluginData( pluginData ) );
 	},
 
 	/**
