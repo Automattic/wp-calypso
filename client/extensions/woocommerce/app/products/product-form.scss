@@ -937,3 +937,25 @@
 		}
 	}
 }
+
+.products__reviews-widget {
+	margin-top: 16px;
+
+	.products__reviews-widget-label {
+		color: $gray-dark;
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
+	.rating {
+		display: inline;
+		margin-right: 96px;
+	}
+
+	a {
+		font-size: 13px;
+		vertical-align: top;
+	}
+}
