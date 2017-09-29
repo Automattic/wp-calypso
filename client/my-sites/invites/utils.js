@@ -111,6 +111,13 @@ export default {
 					} ),
 					{ displayOnNextPage }
 				];
+			default:
+				return [
+					i18n.translate( 'You\'re now a new member of: {{site/}}', {
+						components: { site }
+					} ),
+					{ displayOnNextPage }
+				];
 		}
 	},
 
