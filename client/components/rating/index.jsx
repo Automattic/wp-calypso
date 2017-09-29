@@ -84,7 +84,7 @@ export default class Rating extends React.PureComponent {
 		};
 
 		return (
-			<div className="rating" style={ { width: totalWidth + 'px' } }>
+			<div className="rating" style={ { width: totalWidth + 'px', height: size + 'px' } }>
 				<div className="rating__overlay" style={ overlayStyles }>
 					{ this.overlayStars() }
 				</div>
