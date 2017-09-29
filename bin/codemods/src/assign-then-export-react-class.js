@@ -1,3 +1,19 @@
+/*
+ This codemod updates
+
+ export default React.createClass( {
+    displayName: 'SomeDisplayName',
+ } );
+
+ to
+
+ const SomeDisplayName = React.createClass({
+   displayName: 'SomeDisplayName',
+ });
+
+ export default SomeDisplayName;
+ */
+
 /**
  * External dependencies
  */
