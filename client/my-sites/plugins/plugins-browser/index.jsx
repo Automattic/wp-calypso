@@ -168,7 +168,7 @@ const PluginsBrowser = React.createClass( {
 					plugins={ list }
 					listName={ category }
 					title={ this.translateCategory( category ) }
-					site={ this.props.selectedSite }
+					site={ this.props.siteSlug }
 					showPlaceholders={ isFetching }
 					currentSites={ this.props.sites }
 				/>
