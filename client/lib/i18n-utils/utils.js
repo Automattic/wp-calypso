@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { find } from 'lodash';
 import { parse } from 'url';
 
 /**
@@ -10,11 +11,6 @@ import config from 'config';
 
 const localeRegex = /^[A-Z]{2,3}$/i;
 const localeWithRegionRegex = /^[A-Z]{2,3}-[A-Z]{2,3}$/i;
-
-const languagesMap = config( 'languages' ).reduce( ( result, language ) => {
-	result[ language.langSlug ] = language;
-	return result;
-}, {} );
 
 function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -37,7 +33,9 @@ const i18nUtils = {
 		let language;
 
 		if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
-			language = languagesMap[ langSlug ] || languagesMap[ langSlug.split( '-' )[ 0 ] ];
+			language =
+				find( config( 'languages' ), { langSlug } ) ||
+				find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
 		}
 
 		return language;
