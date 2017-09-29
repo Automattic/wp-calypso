@@ -327,7 +327,7 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+			expect( state[ 2916284 ].getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql(
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'draft', type: 'post' }
 			);
 		} );
@@ -355,7 +355,7 @@ describe( 'reducer', () => {
 				postId: 841
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__RESTORE_PENDING' );
+			expect( state[ 2916284 ].getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( '__RESTORE_PENDING' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
@@ -388,7 +388,7 @@ describe( 'reducer', () => {
 				postId: 841
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
+			expect( state[ 2916284 ].getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
@@ -412,7 +412,7 @@ describe( 'reducer', () => {
 				}
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql(
+			expect( state[ 2916284 ].getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql(
 				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World', status: 'trash', type: 'post' }
 			);
 		} );
@@ -440,7 +440,7 @@ describe( 'reducer', () => {
 				postId: 841
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
+			expect( state[ 2916284 ].getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( '__DELETE_PENDING' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
@@ -474,7 +474,7 @@ describe( 'reducer', () => {
 				postId: 841
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
+			expect( state[ 2916284 ].getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
@@ -515,7 +515,7 @@ describe( 'reducer', () => {
 				2916284: {
 					data: {
 						items: {
-							841: {
+							'3d097cb7c5473c169bba0eb8e3c6cb64': {
 								ID: 841,
 								site_ID: 2916284,
 								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -541,7 +541,7 @@ describe( 'reducer', () => {
 				2916284: {
 					data: {
 						items: {
-							841: {
+							'3d097cb7c5473c169bba0eb8e3c6cb64': {
 								ID: 841,
 								site_ID: 2916284,
 								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -566,7 +566,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: new PostQueryManager( {
 					items: {
-						841: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
 							ID: 841,
 							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 							site_ID: 2916284,
