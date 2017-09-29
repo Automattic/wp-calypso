@@ -7,7 +7,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { loadCSS } from 'lib/i18n-utils/switch-locale';
+import { switchCSS } from 'lib/i18n-utils/switch-locale';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
@@ -50,23 +50,7 @@ export function loadSectionCSS( context, next ) {
 
 	if ( section.cssUrls && typeof document !== 'undefined' ) {
 		const cssUrl = isRTL( context.store.getState() ) ? section.cssUrls.rtl : section.cssUrls.ltr;
-
-		// TODO: handle adding styles in `state.documentHead.meta` instead (currently only supports setting all meta at once)
-		const currentLink = document.getElementById( 'section-css' );
-		if ( currentLink.getAttribute( 'href' ) === cssUrl ) {
-			return next();
-		}
-
-		loadCSS( cssUrl, ( err, newLink ) => {
-			if ( currentLink && currentLink.parentElement ) {
-				currentLink.parentElement.removeChild( currentLink );
-			}
-
-			newLink.id = 'section-css';
-
-			next();
-		} );
-
+		switchCSS( 'section-css', cssUrl, next );
 		return;
 	}
 

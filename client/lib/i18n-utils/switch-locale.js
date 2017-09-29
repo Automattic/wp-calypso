@@ -45,17 +45,16 @@ export default function switchLocale( localeSlug ) {
 		if ( typeof document !== 'undefined' ) {
 			document.documentElement.lang = localeSlug;
 			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-			loadMainCSS( !! language.rtl );
+			const cssUrl = language.rtl ? window.app.urls[ 'style-rtl.css' ] : window.app.urls[ 'style.css' ];
+			switchCSS( 'main-css', cssUrl );
 		}
 	} );
 }
 
-function loadMainCSS( isRtl ) {
-	const cssUrl = isRtl ? window.app.urls[ 'style-rtl.css' ] : window.app.urls[ 'style.css' ];
-
-	const currentLink = document.getElementById( 'main-css' );
+export function switchCSS( elementId, cssUrl, callback = noop ) {
+	const currentLink = document.getElementById( elementId );
 	if ( currentLink.getAttribute( 'href' ) === cssUrl ) {
-		return;
+		return callback();
 	}
 
 	loadCSS( cssUrl, ( err, newLink ) => {
@@ -63,7 +62,9 @@ function loadMainCSS( isRtl ) {
 			currentLink.parentElement.removeChild( currentLink );
 		}
 
-		newLink.id = 'main-css';
+		newLink.id = elementId;
+
+		callback();
 	} );
 }
 
@@ -72,7 +73,7 @@ function loadMainCSS( isRtl ) {
  * @param {string} cssUrl - a url to a css resource to be inserted into the page
  * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
  */
-export function loadCSS( cssUrl, callback = noop ) {
+function loadCSS( cssUrl, callback = noop ) {
 	const link = Object.assign( document.createElement( 'link' ), {
 		rel: 'stylesheet',
 		type: 'text/css',
