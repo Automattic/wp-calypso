@@ -5,8 +5,10 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import accountRecovery from './account-recovery';
 import activityLog from './activity-log';
 import comments from './comments';
+import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import me from './me';
+import meta from './meta';
 import plans from './plans';
 import posts from './posts';
 import read from './read';
@@ -21,8 +23,10 @@ export const handlers = mergeHandlers(
 	accountRecovery,
 	activityLog,
 	comments,
+	domains,
 	gravatarUpload,
 	me,
+	meta,
 	plans,
 	posts,
 	read,
