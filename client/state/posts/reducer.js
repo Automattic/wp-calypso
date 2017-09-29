@@ -141,17 +141,9 @@ export const queries = ( () => {
 				return state;
 			}
 
-			const queryManagerOptions = {};
-			if ( ! siteId ) {
-				// This is a multiple-site posts query, so the site-specific
-				// post ID is not an appropriate key.  ( Queries like this one
-				// are stored under queries[ null ] === queries[ 'null' ] )
-				queryManagerOptions.itemKey = 'global_ID';
-			}
-
 			return {
 				...state,
-				[ siteId ]: ( new PostQueryManager( {}, queryManagerOptions ) )[ method ]( ...args )
+				[ siteId ]: ( new PostQueryManager() )[ method ]( ...args )
 			};
 		}
 
