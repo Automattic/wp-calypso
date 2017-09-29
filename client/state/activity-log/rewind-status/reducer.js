@@ -12,10 +12,8 @@ import {
 	keyedReducer,
 } from 'state/utils';
 
-const stubNull = () => null;
-
-export const rewindStatus = keyedReducer( 'siteId', createReducer( {}, {
-	[ REWIND_STATUS_ERROR ]: stubNull,
+export const rewindStatus = keyedReducer( 'siteId', createReducer( undefined, {
+	[ REWIND_STATUS_ERROR ]: () => undefined,
 	[ REWIND_STATUS_UPDATE ]: ( state, { status } ) => status,
 	[ REWIND_ACTIVATE_SUCCESS ]: ( state ) => ( {
 		...state,
@@ -24,7 +22,7 @@ export const rewindStatus = keyedReducer( 'siteId', createReducer( {}, {
 } ) );
 rewindStatus.schema = rewindStatusSchema;
 
-export const rewindStatusError = keyedReducer( 'siteId', createReducer( {}, {
+export const rewindStatusError = keyedReducer( 'siteId', createReducer( undefined, {
 	[ REWIND_STATUS_ERROR ]: ( state, { error } ) => error,
-	[ REWIND_STATUS_UPDATE ]: stubNull,
+	[ REWIND_STATUS_UPDATE ]: () => undefined,
 } ) );
