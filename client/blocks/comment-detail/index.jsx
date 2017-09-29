@@ -23,6 +23,11 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
 /**
  * Creates a stripped down comment object containing only the information needed by
@@ -63,9 +68,13 @@ export class CommentDetail extends Component {
 		editComment: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 		isRawContentSupported: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
+		postUrl: PropTypes.string,
+		recordReaderArticleOpened: PropTypes.func,
+		recordReaderCommentOpened: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
@@ -190,6 +199,17 @@ export class CommentDetail extends Component {
 		}
 	}
 
+	trackDeepReaderLinkClick = () => {
+		const { isJetpack, parentCommentContent } = this.props;
+		if ( isJetpack ) {
+			return;
+		}
+		if ( parentCommentContent ) {
+			return this.props.recordReaderCommentOpened();
+		}
+		this.props.recordReaderArticleOpened();
+	}
+
 	render() {
 		const {
 			authorAvatarUrl,
@@ -218,6 +238,7 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
+			postUrl,
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
@@ -226,7 +247,6 @@ export class CommentDetail extends Component {
 			translate,
 		} = this.props;
 
-		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 		const authorDisplayName = authorName || translate( 'Anonymous' );
 		const authorIsBlocked = this.isAuthorBlacklisted();
 
@@ -294,6 +314,7 @@ export class CommentDetail extends Component {
 							postTitle={ postTitle }
 							postUrl={ postUrl }
 							siteId={ siteId }
+							onClick={ this.trackDeepReaderLinkClick }
 						/>
 
 						{ isEditMode &&
@@ -368,6 +389,8 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const authorName = decodeEntities( get( comment, 'author.name' ) );
 
+	const isJetpack = isJetpackSite( state, siteId );
+
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
@@ -384,17 +407,30 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentStatus: get( comment, 'status' ),
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
-		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		isEditCommentSupported: ! isJetpack || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		isJetpack,
 		isLoading,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
+		postUrl: isJetpack ? get( comment, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
 	} );
 };
 
-export default connect( mapStateToProps )( localize( CommentDetail ) );
+const mapDispatchToProps = dispatch => ( {
+	recordReaderArticleOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_article_opened' ),
+		bumpStat( 'calypso_comment_management', 'article_opened' )
+	) ),
+	recordReaderCommentOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_comment_opened' ),
+		bumpStat( 'calypso_comment_management', 'comment_opened' )
+	) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetail ) );
