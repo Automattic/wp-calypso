@@ -38,6 +38,7 @@ import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 
 /*
@@ -457,7 +458,9 @@ class JetpackSsoForm extends Component {
 						>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
-						<HelpButton />
+						<JetpackConnectHappychatButton>
+							<HelpButton />
+						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</div>
 
