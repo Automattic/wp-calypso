@@ -54,6 +54,7 @@ const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
  * @param {object} state The current state
  * @param {function} dispatch The redux dispatch function
  * @param {string} action The action being processed
+ * @return {undefined} Nothing
  */
 export const fetchJITM = ( state, dispatch, action ) => {
 	if ( ! config.isEnabled( 'jitms' ) ) {
