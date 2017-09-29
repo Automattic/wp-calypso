@@ -32,8 +32,8 @@ const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summ
 		'is-error': isError,
 	} );
 
-	summary = <span className={ className }><Gridicon icon={ getIcon() } className={ className } size={ 18 } />
-	<span>{ summary }</span></span>;
+	summary = <span className={ className }><span>{ summary }</span>
+	<Gridicon icon={ getIcon() } className={ className } size={ 18 } /></span>;
 	const header = (
 		<div>
 			<div className="label-purchase-modal__step-status">

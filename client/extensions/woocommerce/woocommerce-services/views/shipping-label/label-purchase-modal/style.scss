@@ -44,12 +44,8 @@
 			margin-top: -2px;
 		}
 
-		span:last-child {
-			margin-left: 6px;
-
-			&:empty {
-				margin-left: 0;
-			}
+		span:first-child {
+			margin-right: 6px;
 		}
 	}
 
@@ -86,7 +82,7 @@
 			cursor: pointer;
 		}
 
-		&.has-border{
+		&.has-border {
 			.foldable-card__summary,
 			.foldable-card__summary-expanded {
 				margin-right: 48px;
@@ -256,6 +252,10 @@
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
+		}
+
+		svg:empty {
+			display: none;
 		}
 	}
 
