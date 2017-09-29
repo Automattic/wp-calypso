@@ -40,16 +40,22 @@ class QueryPosts extends Component {
 	}
 
 	request( props ) {
-		const single = !! props.postId;
+		const singleSite = !! props.siteId;
+		const singlePost = !! props.postId;
 
-		if ( ! single && ! props.requestingPosts ) {
-			log( 'Request post list for site %d using query %o', props.siteId, props.query );
-			props.requestSitePosts( props.siteId, props.query );
-		}
+		if ( singleSite ) {
+			if ( ! singlePost && ! props.requestingPosts ) {
+				log( 'Request post list for site %d using query %o', props.siteId, props.query );
+				props.requestSitePosts( props.siteId, props.query );
+			}
 
-		if ( single && ! props.requestingPost ) {
-			log( 'Request single post for site %d post %d', props.siteId, props.postId );
-			props.requestSitePost( props.siteId, props.postId );
+			if ( singlePost && ! props.requestingPost ) {
+				log( 'Request single post for site %d post %d', props.siteId, props.postId );
+				props.requestSitePost( props.siteId, props.postId );
+			}
+		} else if ( ! props.requestingPosts ) {
+			log( 'Request post list for all sites using query %o', props.query );
+			props.requestSitePosts( null, props.query );
 		}
 	}
 
