@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { some } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +33,8 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
+import { getSiteComment, getSiteSetting } from 'state/selectors';
+import { getAuthorDisplayName, isEmailBlacklisted } from './utils';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -279,11 +281,32 @@ export class CommentDetailAuthor extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	canUserBlacklist: canCurrentUser( state, siteId, 'manage_options' ),
-	currentUserEmail: getCurrentUserEmail( state ),
-	site: getSite( state, siteId ),
-} );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	const authorEmail = get( comment, 'author.email' );
+	const siteBlacklist = getSiteSetting( state, siteId, 'blacklist_keys' );
+	const authorIsBlocked = isEmailBlacklisted( siteBlacklist, authorEmail );
+
+	return {
+		authorDisplayName: getAuthorDisplayName( comment ),
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		authorEmail,
+		authorId: get( comment, 'author.ID' ),
+		authorIp: get( comment, 'author.ip_address' ),
+		authorIsBlocked,
+		authorUrl: get( comment, 'author.URL', '' ),
+		authorUsername: get( comment, 'author.nice_name' ),
+		canUserBlacklist: canCurrentUser( state, siteId, 'manage_options' ),
+		commentDate: get( comment, 'date' ),
+		commentStatus: get( comment, 'status' ),
+		commentType: get( comment, 'type', 'comment' ),
+		commentUrl: get( comment, 'URL' ),
+		currentUserEmail: getCurrentUserEmail( state ),
+		site: getSite( state, siteId ),
+		siteBlacklist,
+	};
+};
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),

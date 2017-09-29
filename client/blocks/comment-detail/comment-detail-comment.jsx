@@ -6,8 +6,10 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,46 +17,20 @@ import { localize } from 'i18n-calypso';
 import CommentDetailAuthor from './comment-detail-author';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
+import { getSiteComment } from 'state/selectors';
 
 export class CommentDetailComment extends Component {
 	static propTypes = {
-		authorAvatarUrl: PropTypes.string,
-		authorDisplayName: PropTypes.string,
-		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
-		authorId: PropTypes.number,
-		authorIp: PropTypes.string,
-		authorIsBlocked: PropTypes.bool,
-		authorUrl: PropTypes.string,
-		authorUsername: PropTypes.string,
-		blockUser: PropTypes.func,
 		commentContent: PropTypes.string,
-		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
-		commentStatus: PropTypes.string,
-		commentType: PropTypes.string,
-		commentUrl: PropTypes.string,
-		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 	};
 
 	render() {
 		const {
-			authorAvatarUrl,
-			authorDisplayName,
-			authorEmail,
-			authorId,
-			authorIp,
-			authorIsBlocked,
-			authorUrl,
-			authorUsername,
 			commentContent,
-			commentDate,
 			commentId,
-			commentStatus,
-			commentType,
-			commentUrl,
 			repliedToComment,
-			siteBlacklist,
 			siteId,
 			translate,
 		} = this.props;
@@ -62,23 +38,7 @@ export class CommentDetailComment extends Component {
 		return (
 			<div className="comment-detail__comment">
 				<div className="comment-detail__comment-content">
-					<CommentDetailAuthor
-						authorAvatarUrl={ authorAvatarUrl }
-						authorDisplayName={ authorDisplayName }
-						authorEmail={ authorEmail }
-						authorId={ authorId }
-						authorIp={ authorIp }
-						authorIsBlocked={ authorIsBlocked }
-						authorUrl={ authorUrl }
-						authorUsername={ authorUsername }
-						commentDate={ commentDate }
-						commentId={ commentId }
-						commentStatus={ commentStatus }
-						commentType={ commentType }
-						commentUrl={ commentUrl }
-						siteBlacklist={ siteBlacklist }
-						siteId={ siteId }
-					/>
+					<CommentDetailAuthor commentId={ commentId } siteId={ siteId } />
 					<AutoDirection>
 						<Emojify>
 							<div
@@ -102,4 +62,9 @@ export class CommentDetailComment extends Component {
 	}
 }
 
-export default localize( CommentDetailComment );
+const mapStateToProps = ( state, { commentId, siteId } ) => ( {
+	commentContent: get( getSiteComment( state, siteId, commentId ), 'content' ),
+	repliedToComment: false, // TODO: not available in the current data structure
+} );
+
+export default connect( mapStateToProps )( localize( CommentDetailComment ) );
