@@ -67,7 +67,7 @@ function queryDocs( query ) {
 /**
  * Return an array of results based on the provided filenames
  * @param {array} filePaths An array of file paths
- * @returns {array} The results from the the docs
+ * @returns {array} The results from the docs
  */
 function listDocs( filePaths ) {
 	return filePaths.map( ( path ) => {

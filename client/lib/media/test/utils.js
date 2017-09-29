@@ -265,7 +265,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are not set', function() {
+		it( 'should return the item with the greater ID if the dates are not set', function() {
 			items = items.map( function( item ) {
 				item.date = null;
 				return item;
@@ -274,7 +274,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are equal', function() {
+		it( 'should return the item with the greater ID if the dates are equal', function() {
 			items = items.map( function( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;

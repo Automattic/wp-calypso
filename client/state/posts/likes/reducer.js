@@ -43,7 +43,7 @@ export const requesting = createReducer( {}, {
 
 /**
  * Returns the updated items state after an action has been dispatched. The
- * state maps site ID, post ID keys to the the post's likes.
+ * state maps site ID, post ID keys to the post's likes.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
