@@ -111,6 +111,25 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	}
 
 	/**
+	 * Returns a single post by key, and shows a warning if an attempt is made
+	 * to retrieve a post by numeric ID for an all-sites query.
+	 *
+	 * @param  {String|Number} postId Post ID (global or site-local)
+	 * @return {Object}               Post
+	 */
+	getItem( postId ) {
+		if ( this.options.isAllSitesQuery && typeof postId === 'number' ) {
+			console.warn( 'Post requested by numeric ID for all-sites query', {
+				postId,
+				data: this.data,
+			} );
+			return null;
+		}
+
+		return this.data.items[ postId ];
+	}
+
+	/**
 	 * A sort comparison function that defines the sort order of posts under
 	 * consideration of the specified query.
 	 *

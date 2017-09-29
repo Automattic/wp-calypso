@@ -136,25 +136,37 @@ export function queryRequests( state = {}, action ) {
  */
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
+		const siteIdKey = siteId ? siteId : 'null';
+
+		if ( ! state[ siteIdKey ] ) {
 			if ( ! createDefault ) {
 				return state;
 			}
 
+			const queryManagerOptions = {};
+			if ( ! siteId ) {
+				// This is a multiple-site posts query, so the site-specific
+				// post ID is not an appropriate key.
+				queryManagerOptions.itemKey = 'global_ID';
+				queryManagerOptions.isAllSitesQuery = true;
+			}
+
+			const queryManager = new PostQueryManager( {}, queryManagerOptions );
+
 			return {
 				...state,
-				[ siteId ]: ( new PostQueryManager() )[ method ]( ...args )
+				[ siteIdKey ]: queryManager[ method ]( ...args ),
 			};
 		}
 
-		const nextManager = state[ siteId ][ method ]( ...args );
-		if ( nextManager === state[ siteId ] ) {
+		const nextManager = state[ siteIdKey ][ method ]( ...args );
+		if ( nextManager === state[ siteIdKey ] ) {
 			return state;
 		}
 
 		return {
 			...state,
-			[ siteId ]: nextManager
+			[ siteIdKey ]: nextManager
 		};
 	}
 
