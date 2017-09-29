@@ -506,13 +506,15 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 		data = {};
 	}
 
-	return this.wpcom.req[ method ](
-		{
-			path: '/sites/' + siteId + '/settings',
-			body: data,
-		},
-		fn
-	);
+	const { apiVersion } = data,
+		updatedData = omit( data, [ 'apiVersion' ] );
+
+	return this._sendRequest( {
+		apiVersion,
+		body: updatedData,
+		method,
+		path: '/sites/' + siteId + '/settings'
+	}, fn );
 };
 
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {

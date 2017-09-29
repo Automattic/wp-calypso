@@ -7,6 +7,9 @@ import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, flowRight, partialRight, pick, overSome } from 'lodash';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:google-analytics' );
 
 /**
  * Internal dependencies
@@ -28,7 +31,13 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
 import { activateModule } from 'state/jetpack/modules/actions';
-import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	siteSupportsGoogleAnalyticsIPAnonymization,
+	siteSupportsGoogleAnalyticsBasicEcommerceTracking
+} from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_BUSINESS } from 'lib/plans/constants';
@@ -93,6 +102,8 @@ class GoogleAnalyticsForm extends Component {
 			siteId,
 			siteIsJetpack,
 			siteSlug,
+			siteSupportsBasicEcommerceTracking,
+			siteSupportsIPAnonymization,
 			translate,
 			uniqueEventTracker,
 		} = this.props;
@@ -102,10 +113,24 @@ class GoogleAnalyticsForm extends Component {
 		const analyticsSupportUrl = siteIsJetpack
 			? 'https://jetpack.com/support/google-analytics/'
 			: 'https://support.wordpress.com/google-analytics/';
-		const showAnalyticsForStores = config.isEnabled( 'jetpack/google-analytics-for-stores' );
-		const showAnonymizeIP = config.isEnabled( 'jetpack/google-analytics-anonymize-ip' );
+
 		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
+		const showAnalyticsForStores =
+			config.isEnabled( 'jetpack/google-analytics-for-stores' ) &&
+			siteIsJetpack &&
+			wooCommerceActive &&
+			siteSupportsBasicEcommerceTracking;
+		const showAnonymizeIP =
+			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) &&
+			siteIsJetpack &&
+			siteSupportsIPAnonymization;
+
+		debug( 'siteIsJetpack', siteIsJetpack );
+		debug( 'siteSupportsGoogleAnalyticsBasicEcommerceTracking', siteSupportsBasicEcommerceTracking );
+		debug( 'siteSupportsGoogleAnalyticsIPAnonymization', siteSupportsIPAnonymization );
+		debug( 'showAnalyticsForStores', showAnalyticsForStores );
+		debug( 'showAnonymizeIP', showAnonymizeIP );
 
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
@@ -278,6 +303,8 @@ const mapStateToProps = state => {
 	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );
+	const siteSupportsIPAnonymization = siteSupportsGoogleAnalyticsIPAnonymization( state, siteId );
+	const siteSupportsBasicEcommerceTracking = siteSupportsGoogleAnalyticsBasicEcommerceTracking( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled =
 		site &&
@@ -295,6 +322,8 @@ const mapStateToProps = state => {
 		jetpackModuleActive,
 		jetpackVersionSupportsModule,
 		sitePlugins,
+		siteSupportsBasicEcommerceTracking,
+		siteSupportsIPAnonymization,
 	};
 };
 

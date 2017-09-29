@@ -9,6 +9,9 @@ import { bindActionCreators } from 'redux';
 import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:wrap-settings-form' );
 
 /**
  * Internal dependencies
@@ -33,7 +36,7 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -138,10 +141,24 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const { fields, settingsFields, siteId, jetpackSettingsUISupported } = this.props;
+			const {
+				fields,
+				jetpackSiteRequiresLegacySettingsAPI,
+				settingsFields,
+				siteId,
+				siteIsJetpack,
+				jetpackSettingsUISupported
+			} = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
-			this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) );
+			// Support site settings for older Jetpacks as needed
+			const siteFields = pick( fields, settingsFields.site );
+			const apiVersion = siteIsJetpack && jetpackSiteRequiresLegacySettingsAPI ? '1.1' : '1.3';
+
+			debug( 'submitForm siteFields=', siteFields );
+			debug( 'submitForm apiVersion=', apiVersion );
+
+			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 			if ( jetpackSettingsUISupported ) {
 				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
 			}
@@ -256,6 +273,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isJetpack = isJetpackSite( state, siteId );
 			const jetpackSettingsUISupported =
 				isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
+			const jetpackSiteRequiresLegacySettingsAPI = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.4' );
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
@@ -272,6 +290,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isRequestingSettings,
 				isSavingSettings,
 				isSaveRequestSuccessful,
+				jetpackSiteRequiresLegacySettingsAPI,
+				siteIsJetpack: isJetpack,
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
