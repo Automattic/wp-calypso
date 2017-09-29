@@ -5,7 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, some, startsWith } from 'lodash';
+import { uniq, some, startsWith, omit } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -59,7 +59,7 @@ import {
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
-import { errorNotice } from 'state/notices/actions';
+import { warningNotice } from 'state/notices/actions';
 import { getPrimaryDomainBySiteId } from 'state/selectors';
 
 /*
@@ -328,10 +328,12 @@ module.exports = {
 				} );
 			} else {
 				// If the primary site does not exist, skip redirect and display a useful error notification
-				dispatch( errorNotice( i18n.translate( 'Please set your Primary Site to valid site' ), {
-					button: 'Settings',
-					href: '/me/account',
+				dispatch( warningNotice( i18n.translate( 'Please check your Primary Site\'s Jetpack connection' ), {
+					button: 'wp-admin',
+					href: `${ currentUser.primary_blog_url }/wp-admin`,
 				} ) );
+
+				analytics.tracks.recordEvent( 'calypso_my-sites_single_site_jetpack_connection_error', omit( currentUser, 'meta' ) );
 			}
 		}
 
