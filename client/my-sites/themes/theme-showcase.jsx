@@ -86,7 +86,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filterRegex = /(\w+)\:([\w-]*)/g;
+		const filterRegex = /([\w-]*)\:([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
