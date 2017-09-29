@@ -227,10 +227,6 @@ export class CommentDetail extends Component {
 			editComment,
 			isBulkEdit,
 			isLoading,
-			parentCommentAuthorAvatarUrl,
-			parentCommentAuthorDisplayName,
-			parentCommentContent,
-			postAuthorDisplayName,
 			postId,
 			postTitle,
 			postUrl,
@@ -294,12 +290,6 @@ export class CommentDetail extends Component {
 					<div className="comment-detail__content">
 						<CommentDetailPost
 							commentId={ commentId }
-							parentCommentAuthorAvatarUrl={ parentCommentAuthorAvatarUrl }
-							parentCommentAuthorDisplayName={ parentCommentAuthorDisplayName }
-							parentCommentContent={ parentCommentContent }
-							postAuthorDisplayName={ postAuthorDisplayName }
-							postTitle={ postTitle }
-							postUrl={ postUrl }
 							siteId={ siteId }
 							onClick={ this.trackDeepReaderLinkClick }
 						/>
