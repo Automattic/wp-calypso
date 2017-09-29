@@ -1,3 +1,5 @@
+const { get } = require( 'lodash' );
+
 const classIdentifier = {
   type: 'CallExpression',
   callee: {
@@ -17,6 +19,8 @@ const displayNamePropertyIdentifier = {
   },
 };
 
+const DEFAULT_EXPORT_NAME = '__CHANGE_ME__';
+
 export default function transformer( file, api ) {
   const j = api.jscodeshift;
 
@@ -25,21 +29,22 @@ export default function transformer( file, api ) {
 	   declaration: classIdentifier,
     } );
 
-  const displayNamePath = exportDefaultDeclaration.find( j.Property, displayNamePropertyIdentifier ).at( 0 );
-  const displayNameValue = displayNamePath.get( 'value' ).value.value;
+  const displayNamePaths = exportDefaultDeclaration.find( j.Property, displayNamePropertyIdentifier );
+  const displayNameValue = displayNamePaths.length && displayNamePaths.at( 0 ).get( 'value' );
+  const displayName = get( displayNameValue, 'value.value', DEFAULT_EXPORT_NAME );
 
   exportDefaultDeclaration.replaceWith( node => {
     const declaration = node.get( 'declaration' );
 
     return j.variableDeclaration( 'const', [
       j.variableDeclarator(
-        j.identifier( displayNameValue ),
+        j.identifier( displayName ),
         declaration.value
       )
     ] );
   } );
 
-  exportDefaultDeclaration.insertAfter( 'export default ' + displayNameValue + ';' );
+  exportDefaultDeclaration.insertAfter( 'export default ' + displayName + ';' );
 
   return exportDefaultDeclaration.toSource( {
     useTabs: true,
