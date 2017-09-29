@@ -134,16 +134,17 @@ class ReviewCard extends Component {
 						</div>
 
 						<div className="reviews__info">
-							<div className="reviews__author-name">{ review.name }</div>
+							<div className="reviews__author-name">
+								{ review.name }
+								{ review.verified && (
+									<span className="reviews__verified-label">
+										<Gridicon icon="checkmark-circle" size={ 18 } />
+										<span>{ translate( 'Verified buyer' ) }</span>
+									</span>
+								) }
+							</div>
 							<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
 						</div>
-
-						{ review.verified && (
-							<div className="reviews__verified-label">
-								<Gridicon icon="checkmark-circle" size={ 18 } />
-								<span>{ translate( 'Verified buyer' ) }</span>
-							</div>
-						) }
 
 						<div className="reviews__rating">
 							<Rating rating={ review.rating * 20 } size={ 18 } />
