@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
-import { themes } from 'lib/signup/themes-data';
+import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -36,22 +37,26 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	pickTheme = ( themeId ) => {
-		const theme = find( themes, { slug: themeId } );
+	pickTheme = themeId => {
+		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
-			headstart: true
+			headstart: true,
 		} );
 
-		SignupActions.submitSignupStep( {
-			stepName: this.props.stepName,
-			processingMessage: this.props.translate( 'Adding your theme' ),
-			repoSlug
-		}, null, {
-			themeSlugWithRepo: repoSlug
-		} );
+		SignupActions.submitSignupStep(
+			{
+				stepName: this.props.stepName,
+				processingMessage: this.props.translate( 'Adding your theme' ),
+				repoSlug,
+			},
+			null,
+			{
+				themeSlugWithRepo: repoSlug,
+			}
+		);
 
 		this.props.goToNextStep();
 	};
@@ -85,7 +90,9 @@ class ThemeSelectionStep extends Component {
 			return null;
 		}
 
-		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
+		const defaultDependencies = this.props.useHeadstart
+			? { themeSlugWithRepo: 'pub/twentysixteen' }
+			: undefined;
 		const { translate } = this.props;
 		const headerText = translate( 'Choose a theme.' );
 		const subHeaderText = translate(
@@ -104,13 +111,11 @@ class ThemeSelectionStep extends Component {
 				{ ...this.props }
 			/>
 		);
-	}
+	};
 }
 
-export default connect(
-	( state ) => ( {
-		chosenSurveyVertical: getSurveyVertical( state ),
-		currentUser: getCurrentUser( state ),
-		designType: getDesignType( state ),
-	} )
-)( localize( ThemeSelectionStep ) );
+export default connect( state => ( {
+	chosenSurveyVertical: getSurveyVertical( state ),
+	currentUser: getCurrentUser( state ),
+	designType: getDesignType( state ),
+} ) )( localize( ThemeSelectionStep ) );
