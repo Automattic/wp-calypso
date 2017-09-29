@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
-var React = require( 'react' ),
+let React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
  */
-var AsyncLoad = require( 'components/async-load' ),
+let AsyncLoad = require( 'components/async-load' ),
 	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
@@ -35,7 +35,7 @@ import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import { isHappychatOpen } from 'extensions/happychat/state/ui/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -170,7 +170,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="extensions/happychat/components" /> }
 				{ 'development' === process.env.NODE_ENV && <AsyncLoad require="components/webpack-build-monitor" /> }
 				<AppBanner />
 			</div>

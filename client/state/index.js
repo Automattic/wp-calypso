@@ -33,7 +33,6 @@ import jetpackConnect from './jetpack-connect/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
-import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
@@ -98,7 +97,6 @@ const reducers = {
 	geo,
 	googleAppsUsers,
 	happinessEngineers,
-	happychat,
 	help,
 	jetpackConnect,
 	jetpack,
@@ -153,7 +151,6 @@ export const reducer = combineReducers( reducers );
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
-	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
 		thunkMiddleware,
@@ -170,11 +167,9 @@ export function createReduxStore( initialState = {} ) {
 		require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && require( './data-layer/extensions-middleware.js' ).default,
 		noticesMiddleware,
-		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'restore-last-location' ) && require( './routing/middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
 	].filter( Boolean );
 

@@ -1,0 +1,15 @@
+{
+	"name": "happychat",
+	"author": "Automattic",
+	"description": "Happychat",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "happychat",
+		"paths": [ "/me/chat" ],
+		"module": "happychat",
+		"group": "me",
+		"secondary": true,
+		"enableLoggedOut": false
+	}
+}

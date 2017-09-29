@@ -18,7 +18,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
+import HappychatButton from 'extensions/happychat/components/button';
 import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';

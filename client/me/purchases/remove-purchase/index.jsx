@@ -33,7 +33,7 @@ import notices from 'notices';
 import purchasePaths from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
 import { removePurchase } from 'state/purchases/actions';
-import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat/selectors';
+import { isHappychatAvailable, hasActiveHappychatSession } from 'extensions/happychat/state/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
@@ -41,7 +41,7 @@ import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-li
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import HappychatButton from 'components/happychat/button';
+import HappychatButton from 'extensions/happychat/components/button';
 
 const user = userFactory();
 

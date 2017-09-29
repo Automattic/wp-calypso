@@ -26,7 +26,7 @@ import Card from 'components/card';
 import utils from 'lib/site/utils';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
-import HappyChatButton from 'components/happychat/button';
+import HappyChatButton from 'extensions/happychat/components/button';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -601,7 +601,6 @@ class JetpackThankYouCard extends Component {
 	}
 
 	getProgress() {
-
 		const features = this.getFeaturesWithStatus() || [ '' ];
 		const completed = this.shouldRenderPlaceholders()
 			? 0
