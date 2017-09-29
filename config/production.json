@@ -46,7 +46,6 @@
 		"manage/plan-features": true,
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
-		"manage/plugins/cache": false,
 		"manage/plugins/setup": true,
 		"manage/posts": true,
 		"manage/security": true,
