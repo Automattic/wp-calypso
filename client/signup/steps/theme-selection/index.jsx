@@ -81,6 +81,18 @@ class ThemeSelectionStep extends Component {
 
 	componentWillMount() {
 		if ( this.props.designType === 'store' ) {
+			SignupActions.submitSignupStep(
+				{
+					stepName: this.props.stepName,
+					processingMessage: this.props.translate( 'Adding your theme' ),
+					repoSlug: 'pub/storefront',
+				},
+				null,
+				{
+					themeSlugWithRepo: 'pub/storefront',
+				}
+			);
+
 			this.props.goToNextStep();
 		}
 	}

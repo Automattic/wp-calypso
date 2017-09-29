@@ -87,7 +87,9 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+			designType,
+		} );
 
 		this.props.goToNextStep();
 	};
