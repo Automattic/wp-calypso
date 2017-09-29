@@ -22,6 +22,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {
@@ -80,8 +81,29 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
+	shouldGoToFirstStep() {
+		const { dependencyStore } = this.props;
+
+		return (
+			isEnabled( 'signup/atomic-store-flow' ) &&
+			this.props.designType === 'store' &&
+			dependencyStore.themeSlugWithRepo
+		);
+	}
+
+	shouldSkipStep() {
+		const { signupDependencies = {} } = this.props;
+
+		return (
+			isEnabled( 'signup/atomic-store-flow' ) &&
+			( this.props.designType === 'store' || signupDependencies.designType === 'store' )
+		);
+	}
+
 	componentWillMount() {
-		if ( isEnabled( 'signup/atomic-store-flow' ) && this.props.designType === 'store' ) {
+		if ( this.shouldGoToFirstStep() ) {
+			this.props.goToStep( 'design-type-with-atomic-store' );
+		} else if ( this.shouldSkipStep() ) {
 			SignupActions.submitSignupStep(
 				{
 					stepName: this.props.stepName,
@@ -99,7 +121,7 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render = () => {
-		if ( isEnabled( 'signup/atomic-store-flow' ) && this.props.designType === 'store' ) {
+		if ( this.shouldGoToFirstStep() || this.shouldSkipStep() ) {
 			return null;
 		}
 
@@ -131,4 +153,5 @@ export default connect( state => ( {
 	chosenSurveyVertical: getSurveyVertical( state ),
 	currentUser: getCurrentUser( state ),
 	designType: getDesignType( state ),
+	dependencyStore: getSignupDependencyStore( state ),
 } ) )( localize( ThemeSelectionStep ) );
