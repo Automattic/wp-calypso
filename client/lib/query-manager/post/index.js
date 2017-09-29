@@ -16,36 +16,6 @@ import { DEFAULT_POST_QUERY } from './constants';
  * PostQueryManager manages posts which can be queried and change over time
  */
 export default class PostQueryManager extends PaginatedQueryManager {
-	constructor( data, options ) {
-		super( data, {
-			itemKey: 'global_ID',
-			...options,
-		} );
-
-		const posts = Object.values( data && data.items || {} );
-
-		this.mapLocalToGlobalIds = posts.reduce( ( memo, post ) => {
-			memo[ post.ID ] = post.global_ID;
-			return memo;
-		}, {} );
-	}
-
-	/**
-	 * Returns a post by its site-local ID (this query manager is keyed by
-	 * global ID because it also supports multi-site queries).
-	 *
-	 * @param  {Number} postId Post ID
-	 * @return {Object}        Post object, or null if not found
-	 */
-	getPostBySiteLocalId( postId ) {
-		const globalId = this.mapLocalToGlobalIds[ postId ];
-		if ( ! globalId ) {
-			return null;
-		}
-
-		return this.data.items[ globalId ] || null;
-	}
-
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *

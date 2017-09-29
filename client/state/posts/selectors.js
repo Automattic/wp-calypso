@@ -41,7 +41,7 @@ export function getPost( state, globalId ) {
 		return null;
 	}
 
-	return manager.getPostBySiteLocalId( postId );
+	return manager.getItem( postId );
 }
 
 /**
@@ -92,7 +92,7 @@ export const getSitePost = createSelector(
 			return null;
 		}
 
-		return manager.getPostBySiteLocalId( postId );
+		return manager.getItem( postId );
 	},
 	( state ) => state.posts.queries
 );
