@@ -1,17 +1,27 @@
 #!/usr/bin/env node
 
 /*
-* This codemod makes these conversions:
-*
-* * `this.translate` to `this.props.translate`
-* * `this.moment` to `this.props.moment`
-* * `this.numberFormat` to `this.props.numberFormat`
-*
-* If found, it will wrap the React.createClass instance with a `localize()` higher-order component.
-*
-* How to use:
-* ./bin/codemods/assign-then-export-react-class path-to-transform/
-*/
+ This codemod updates
+ ---
+ export default React.createClass( {
+    displayName: 'SomeDisplayName',
+ } );
+ ---
+
+ to
+
+ ---
+ const SomeDisplayName = React.createClass({
+   displayName: 'SomeDisplayName',
+ });
+
+ export default SomeDisplayName;
+ ---
+
+ To use:
+ ./bin/codemods/assign-then-export-react-class path-to-transform/
+
+ */
 
 /**
  * External dependencies
