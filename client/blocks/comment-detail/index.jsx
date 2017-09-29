@@ -354,12 +354,11 @@ export class CommentDetail extends Component {
 									siteBlacklist={ siteBlacklist }
 									siteId={ siteId }
 								/>
+
 								<CommentDetailReply
-									authorAvatarUrl={ authorAvatarUrl }
-									authorDisplayName={ authorDisplayName }
-									comment={ getCommentStatusAction( this.props ) }
-									postTitle={ postTitle }
+									commentId={ commentId }
 									replyComment={ replyComment }
+									siteId={ siteId }
 								/>
 							</div>
 						) }

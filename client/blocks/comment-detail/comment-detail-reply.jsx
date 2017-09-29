@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,8 @@ import classNames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSiteComment } from 'state/selectors';
+import { getAuthorDisplayName, getMinimalComment } from './utils';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
 const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines
@@ -160,8 +163,15 @@ export class CommentDetailReply extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	currentUser: getCurrentUser( state ),
-} );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	return {
+		authorDisplayName: getAuthorDisplayName( comment ),
+		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
+		comment: getMinimalComment( comment ),
+		currentUser: getCurrentUser( state ),
+	};
+};
 
 export default connect( mapStateToProps )( localize( CommentDetailReply ) );
