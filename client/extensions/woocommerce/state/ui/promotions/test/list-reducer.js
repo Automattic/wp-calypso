@@ -24,12 +24,12 @@ describe( 'reducer', () => {
 		const action = {
 			type: WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 			currentPage: 6,
-			perPage: 30,
+			perPage: 10,
 		};
 		const state = reducer( undefined, action );
 
 		expect( state.currentPage ).to.equal( 6 );
-		expect( state.perPage ).to.equal( 30 );
+		expect( state.perPage ).to.equal( 10 );
 	} );
 
 	test( 'should ignore an invalid page number', () => {
