@@ -126,6 +126,12 @@ describe( 'reducer', () => {
 		const state4 = reducer( state3, productsAction2 );
 
 		expect( state4.promotions ).to.exist;
+		expect( state4.promotions[ 0 ].type ).to.equal( 'product_sale' );
+		expect( state4.promotions[ 0 ].id ).to.equal( 'product:' + products1[ 0 ].id );
+		expect( state4.promotions[ 0 ].name ).to.equal( products1[ 0 ].name );
+		expect( state4.promotions[ 1 ].type ).to.equal( 'coupon' );
+		expect( state4.promotions[ 1 ].id ).to.equal( 'coupon:' + coupons1[ 4 ].id );
+		expect( state4.promotions[ 1 ].name ).to.equal( coupons1[ 4 ].code );
 	} );
 
 	it( 'should sort promotions by end date, then start date', () => {
