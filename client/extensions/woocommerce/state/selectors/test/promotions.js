@@ -242,16 +242,16 @@ describe( 'promotions', () => {
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
 					updates: [
-						{ id: 'id3', type: 'empty33' },
+						{ id: 'coupon:3', type: 'empty33' },
 					],
-					currentlyEditingId: 'id3',
+					currentlyEditingId: 'coupon:3',
 				}
 			};
 
-			const edits = getPromotionEdits( editedState, 'id3', 123 );
+			const edits = getPromotionEdits( editedState, 'coupon:3', 123 );
 
 			expect( edits ).to.exist;
-			expect( edits.id ).to.equal( 'id3' );
+			expect( edits.id ).to.equal( 'coupon:3' );
 			expect( edits.type ).to.equal( 'empty33' );
 		} );
 	} );
@@ -264,10 +264,10 @@ describe( 'promotions', () => {
 		} );
 
 		it( 'should return an unedited promotion as-is', () => {
-			const editedPromotion = getPromotionWithLocalEdits( rootState, 'id3', 123 );
+			const editedPromotion = getPromotionWithLocalEdits( rootState, 'coupon:3', 123 );
 
 			expect( editedPromotion ).to.exist;
-			expect( editedPromotion.id ).to.equal( 'id3' );
+			expect( editedPromotion.id ).to.equal( 'coupon:3' );
 			expect( editedPromotion.type ).to.equal( 'empty3' );
 		} );
 
@@ -276,16 +276,16 @@ describe( 'promotions', () => {
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
 					updates: [
-						{ id: 'id3', type: 'empty33' },
+						{ id: 'coupon:3', type: 'empty33' },
 					],
-					currentlyEditingId: 'id3',
+					currentlyEditingId: 'coupon:3',
 				}
 			};
 
-			const editedPromotion = getPromotionWithLocalEdits( editedState, 'id3', 123 );
+			const editedPromotion = getPromotionWithLocalEdits( editedState, 'coupon:3', 123 );
 
 			expect( editedPromotion ).to.exist;
-			expect( editedPromotion.id ).to.equal( 'id3' );
+			expect( editedPromotion.id ).to.equal( 'coupon:3' );
 			expect( editedPromotion.type ).to.equal( 'empty33' );
 		} );
 	} );
