@@ -8,28 +8,23 @@ import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	localStore = require( 'store' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	sitesList = require( 'lib/sites-list' )(),
 	PluginsActions = require( 'lib/plugins/actions' ),
 	versionCompare = require( 'lib/version-compare' ),
 	PluginUtils = require( 'lib/plugins/utils' ),
 	JetpackSite = require( 'lib/site/jetpack' ),
-	Site = require( 'lib/site' ),
-	config = require( 'config' );
+	Site = require( 'lib/site' );
 
 /*
  * Constants
  */
-var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
-	// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
-	_UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000,
-	_STORAGE_LIST_NAME = 'CachedPluginsBySite';
+// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
+const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
 var _fetching = {},
 	_pluginsBySite = {},
-	PluginsStore,
 	_filters = {
 		none: function() {
 			return false;
@@ -79,7 +74,6 @@ function remove( site, slug ) {
 	delete _pluginsBySite[ site.ID ][ slug ];
 
 	debug( 'removed plugin ' + slug );
-	storePluginsBySite( site.ID, _pluginsBySite[ site.ID ] );
 }
 
 function update( site, slug, plugin ) {
@@ -97,7 +91,6 @@ function update( site, slug, plugin ) {
 	_pluginsBySite[ site.ID ][ slug ] = assign( {}, _pluginsBySite[ site.ID ][ slug ], plugin );
 
 	debug( 'update to ', _pluginsBySite[ site.ID ][ slug ] );
-	storePluginsBySite( site.ID, _pluginsBySite[ site.ID ] );
 }
 
 function updatePlugins( site, plugins ) {
@@ -111,32 +104,7 @@ function updatePlugins( site, plugins ) {
 	} );
 }
 
-function getPluginsBySiteFromStorage( siteId ) {
-	var storedLists;
-	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		storedLists = localStore.get( _STORAGE_LIST_NAME );
-		return storedLists && storedLists[ siteId ];
-	}
-}
-
-function storePluginsBySite( siteId, pluginsList ) {
-	var storedLists;
-
-	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		storedLists = localStore.get( _STORAGE_LIST_NAME ) || {};
-		storedLists[ siteId ] = {
-			list: pluginsList,
-			fetched: Date.now()
-		};
-		localStore.set( _STORAGE_LIST_NAME, storedLists );
-	}
-}
-
-function isCachedListStillValid( storedList ) {
-	return ( storedList && ( Date.now() - storedList.fetched < _CACHE_TIME_TO_LIVE ) );
-}
-
-PluginsStore = {
+const PluginsStore = {
 
 	getPlugin: function( sites, pluginSlug ) {
 		var pluginData = {},
@@ -209,19 +177,12 @@ PluginsStore = {
 
 	// Get Plugins for a single site
 	getSitePlugins: function( site ) {
-		var storedList;
 		if ( ! site ) {
 			return [];
 		}
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
-			storedList = getPluginsBySiteFromStorage( site.ID );
-
-			_pluginsBySite[ site.ID ] = storedList && storedList.list;
-
-			if ( ! isCachedListStillValid( storedList ) ) {
-				PluginsActions.fetchSitePlugins( site );
-				_fetching[ site.ID ] = true;
-			}
+			PluginsActions.fetchSitePlugins( site );
+			_fetching[ site.ID ] = true;
 		}
 		if ( ! _pluginsBySite[ site.ID ] ) {
 			return _pluginsBySite[ site.ID ];

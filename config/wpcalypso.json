@@ -55,7 +55,6 @@
 		"manage/people/readers": true,
 		"manage/plan-features": true,
 		"manage/plugins": true,
-		"manage/plugins/cache": false,
 		"manage/plugins/setup": true,
 		"manage/plugins/upload": true,
 		"manage/posts": true,
