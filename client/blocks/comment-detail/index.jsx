@@ -215,7 +215,6 @@ export class CommentDetail extends Component {
 	render() {
 		const {
 			authorAvatarUrl,
-			authorId,
 			authorIsBlocked,
 			authorName,
 			authorUrl,
@@ -223,12 +222,10 @@ export class CommentDetail extends Component {
 			commentId,
 			commentIsLiked,
 			commentIsSelected,
-			commentRawContent,
 			commentStatus,
 			commentType,
 			editComment,
 			isBulkEdit,
-			isEditCommentSupported,
 			isLoading,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
@@ -309,15 +306,9 @@ export class CommentDetail extends Component {
 
 						{ isEditMode && (
 							<CommentDetailEdit
-								authorDisplayName={ authorDisplayName }
-								authorUrl={ authorUrl }
 								closeEditMode={ this.toggleEditMode }
-								commentContent={ isEditCommentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
 								editComment={ editComment }
-								isAuthorRegistered={ authorId !== 0 }
-								isEditCommentSupported={ isEditCommentSupported }
-								postId={ postId }
 								siteId={ siteId }
 							/>
 						) }

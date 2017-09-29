@@ -21,7 +21,7 @@ export const getAuthorDisplayName = comment =>
 
 /**
  * Create a stripped down comment object containing only the information needed by
- * CommentList's change status and edit functions, and their respective undos.
+ * CommentList's change status and reply functions, and their respective undos.
  *
  * @param {Object} comment A comment object.
  * @returns {Object} A stripped down comment object.
