@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -11,19 +13,11 @@ import PostCommentForm from './form';
 
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {
-		const post = this.props.post;
-		const commentText = this.props.commentsTree.getIn( [
-			this.props.commentId,
-			'data',
-			'content',
-		] );
-		const commentParentId = this.props.commentsTree.getIn( [ this.props.commentId, 'parentId' ] );
-		const placeholderError = this.props.commentsTree.getIn( [
-			this.props.commentId,
-			'data',
-			'placeholderError',
-		] );
-		const onUpdateCommentText = this.props.onUpdateCommentText;
+		const { post, commentsTree, commentId, onUpdateCommentText } = this.props;
+
+		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
+		const commentParentId = get( commentsTree, [ commentId, 'parentId' ] );
+		const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
 
 		return (
 			<PostCommentForm
@@ -32,7 +26,7 @@ export default class PostCommentWithError extends React.Component {
 				parentCommentId={ commentParentId }
 				commentText={ commentText }
 				onUpdateCommentText={ onUpdateCommentText }
-				placeholderId={ this.props.commentId }
+				placeholderId={ commentId }
 				error={ placeholderError }
 			/>
 		);
@@ -51,8 +45,7 @@ export default class PostCommentWithError extends React.Component {
 PostCommentWithError.propTypes = {
 	post: PropTypes.object.isRequired,
 	repliesList: PropTypes.object.isRequired,
-	commentsTree: PropTypes.object.isRequired,
+	commentsTree: PropTypes.object,
 	onUpdateCommentText: PropTypes.func.isRequired,
-	commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] )
-		.isRequired,
+	commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 };
