@@ -24,6 +24,10 @@ import SignupActions from 'lib/signup/actions';
 
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
+import SignupDependencyStore from 'lib/signup/dependency-store';
+import SignupProgressStore from 'lib/signup/progress-store';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+
 class DesignTypeWithAtomicStoreStep extends Component {
 	constructor( props ) {
 		super( props );
@@ -151,6 +155,16 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
+	componentWillMount() {
+		if ( this.props.signupDependencyStore.themeSlugWithRepo ) {
+			SignupDependencyStore.reset();
+		}
+
+		if ( this.props.signupProgress ) {
+			SignupProgressStore.reset();
+		}
+	}
+
 	render() {
 		const headerText = this.getHeaderText();
 		const subHeaderText = this.getSubHeaderText();
@@ -172,7 +186,14 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	setDesignType,
-} )( localize( DesignTypeWithAtomicStoreStep ) );
+export default connect(
+	state => {
+		return {
+			signupDependencyStore: getSignupDependencyStore( state ),
+		};
+	},
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeWithAtomicStoreStep ) );

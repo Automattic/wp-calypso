@@ -74,10 +74,14 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	render = () => {
+	componentWillMount() {
 		if ( this.props.designType === 'store' ) {
 			this.props.goToNextStep();
+		}
+	}
 
+	render = () => {
+		if ( this.props.designType === 'store' ) {
 			return null;
 		}
 
