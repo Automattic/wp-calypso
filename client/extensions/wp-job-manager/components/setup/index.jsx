@@ -39,6 +39,7 @@ class SetupWizard extends Component {
 			return;
 		}
 
+		// When the user visits the setup wizard, let's make sure they never see it again.
 		this.props.saveSetupStatus( siteId, false );
 	}
 
@@ -47,6 +48,7 @@ class SetupWizard extends Component {
 			return;
 		}
 
+		// When the user visits the setup wizard, let's make sure they never see it again.
 		this.props.saveSetupStatus( siteId, false );
 	}
 
