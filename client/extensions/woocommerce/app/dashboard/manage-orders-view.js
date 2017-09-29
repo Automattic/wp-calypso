@@ -113,7 +113,8 @@ class ManageOrdersView extends Component {
 				</div>
 				<div>
 					<Button href={ getLink( '/store/reviews/:site', site ) }>
-						{ translate( 'Moderate' ) }
+						{ translate( 'Moderate',
+						{ context: 'Product reviews widget moderation button' } ) }
 					</Button>
 				</div>
 			</div>
