@@ -51,7 +51,6 @@ export const comments = function( context ) {
 	const siteFragment = route.getSiteFragment( context.path );
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ context.path }
 			siteFragment={ siteFragment }
 			status={ 'pending' === status ? 'unapproved' : status }
 		/>,
