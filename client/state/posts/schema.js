@@ -16,8 +16,8 @@ export const itemsSchema = {
 export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
-		// Site ID
-		'^\\d+$': {
+		// Site ID ('null' means all-sites query)
+		'^(\\d+|null)$': {
 			type: 'object',
 			properties: {
 				data: {
