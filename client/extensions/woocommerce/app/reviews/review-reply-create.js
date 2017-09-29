@@ -100,7 +100,7 @@ class ReviewReplyCreate extends Component {
 		const hasCommentText = commentText.trim().length > 0;
 
 		// Only show the scrollbar if the textarea content exceeds the max height
-		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
+		const hasScrollbar = textareaHeight >= TEXTAREA_MAX_HEIGHT;
 
 		const buttonClasses = classNames( 'reviews__reply-submit', {
 			'has-scrollbar': hasScrollbar,

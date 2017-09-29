@@ -102,7 +102,7 @@ export function handleReviewReplyCreateSuccess( { dispatch, getState }, action, 
 export function announceCreateFailure( { dispatch } ) {
 	dispatch(
 		errorNotice(
-			translate( "Your reply couldn't be posted." ),
+			translate( 'Your reply couldn\'t be posted.' ),
 			{ duration: 5000 }
 		)
 	);
