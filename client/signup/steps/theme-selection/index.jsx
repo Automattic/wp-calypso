@@ -19,6 +19,7 @@ import Button from 'components/button';
 import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {
@@ -74,6 +75,12 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render = () => {
+		if ( this.props.designType === 'store' ) {
+			this.props.goToNextStep();
+
+			return null;
+		}
+
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 		const { translate } = this.props;
 		const headerText = translate( 'Choose a theme.' );
@@ -99,6 +106,7 @@ class ThemeSelectionStep extends Component {
 export default connect(
 	( state ) => ( {
 		chosenSurveyVertical: getSurveyVertical( state ),
-		currentUser: getCurrentUser( state )
+		currentUser: getCurrentUser( state ),
+		designType: getDesignType( state ),
 	} )
 )( localize( ThemeSelectionStep ) );
