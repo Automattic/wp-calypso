@@ -117,9 +117,11 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					creates: [ { id: 'coupon:4', type: 'empty4' } ],
+					creates: [
+						{ id: 'coupon:4', type: 'empty4' },
+					],
 					currentlyEditingId: 'coupon:4',
-				},
+				}
 			};
 
 			const id = getCurrentlyEditingPromotionId( editedState, 123 );
@@ -134,36 +136,21 @@ describe( 'promotions', () => {
 			expect( edits ).to.be.null;
 		} );
 
-		it( 'should return edits for a given string id', () => {
+		it( 'should return edits for a given id', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [ { id: 'coupon:3', type: 'empty33' } ],
+					updates: [
+						{ id: 'coupon:3', type: 'empty33' },
+					],
 					currentlyEditingId: 'coupon:3',
-				},
+				}
 			};
 
 			const edits = getPromotionEdits( editedState, 'coupon:3', 123 );
 
 			expect( edits ).to.exist;
 			expect( edits.id ).to.equal( 'coupon:3' );
-			expect( edits.type ).to.equal( 'empty33' );
-		} );
-
-		it( 'should return edits for a given object placeholder id', () => {
-			const editedState = cloneDeep( rootState );
-			const placeholderId = { placeholder: 'promotion_5' };
-			editedState.extensions.woocommerce.ui.promotions.edits = {
-				[ 123 ]: {
-					creates: [ { id: placeholderId, type: 'empty33' } ],
-					currentlyEditingId: placeholderId,
-				},
-			};
-
-			const edits = getPromotionEdits( editedState, placeholderId, 123 );
-
-			expect( edits ).to.exist;
-			expect( edits.id ).to.equal( placeholderId );
 			expect( edits.type ).to.equal( 'empty33' );
 		} );
 	} );
@@ -187,9 +174,11 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [ { id: 'coupon:3', type: 'empty33' } ],
+					updates: [
+						{ id: 'coupon:3', type: 'empty33' },
+					],
 					currentlyEditingId: 'coupon:3',
-				},
+				}
 			};
 
 			const editedPromotion = getPromotionWithLocalEdits( editedState, 'coupon:3', 123 );
