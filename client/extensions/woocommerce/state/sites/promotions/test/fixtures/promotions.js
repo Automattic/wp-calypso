@@ -3,6 +3,7 @@
 export const couponParams1 = { offset: 0, per_page: 5 };
 export const coupons1 = [
 	{
+		id: 2,
 		code: 'two',
 		amount: '2',
 		discount_type: 'fixed_cart',
@@ -10,6 +11,7 @@ export const coupons1 = [
 		date_expires_gmt: '2017-10-20T12:50:50',
 	},
 	{
+		id: 1,
 		code: 'one',
 		amount: '1',
 		discount_type: 'fixed_cart',
@@ -17,6 +19,7 @@ export const coupons1 = [
 		date_expires_gmt: '2017-10-15T13:54:50',
 	},
 	{
+		id: 4,
 		code: 'four',
 		amount: '4',
 		discount_type: 'percent',
@@ -24,6 +27,7 @@ export const coupons1 = [
 		date_expires_gmt: '2017-10-28T09:50:50',
 	},
 	{
+		id: 3,
 		code: 'three',
 		amount: '3',
 		discount_type: 'percent',
@@ -31,6 +35,7 @@ export const coupons1 = [
 		date_expires_gmt: '2017-10-25T10:50:50',
 	},
 	{
+		id: 5,
 		code: 'five',
 		amount: '5',
 		discount_type: 'percent',
@@ -42,6 +47,7 @@ export const coupons1 = [
 export const couponParams2 = { offset: 5, per_page: 5 };
 export const coupons2 = [
 	{
+		id: 6,
 		code: 'six',
 		amount: '6',
 		discount_type: 'fixed_cart',
@@ -49,6 +55,7 @@ export const coupons2 = [
 		date_expires_gmt: undefined,
 	},
 	{
+		id: 7,
 		code: 'seven',
 		amount: '7',
 		discount_type: 'percent',
