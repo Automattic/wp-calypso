@@ -119,6 +119,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 */
 	getItem( postId ) {
 		if ( this.options.isAllSitesQuery && typeof postId === 'number' ) {
+			// eslint-disable-next-line no-console
 			console.warn( 'Post requested by numeric ID for all-sites query', {
 				postId,
 				data: this.data,
