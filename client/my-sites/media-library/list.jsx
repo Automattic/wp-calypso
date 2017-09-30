@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
@@ -15,9 +15,9 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
+import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 
@@ -152,6 +152,21 @@ export const MediaLibraryList = React.createClass( {
 		return 'item-' + item.ID;
 	},
 
+	getGroupLabel: function( date ) {
+		const itemDate = new Date( date );
+		const currentDate = new Date();
+
+		if ( itemDate.getYear() === currentDate.getYear() ) {
+			return moment( date ).format( 'MMM DD' );
+		}
+
+		return moment( date ).format( 'MMM DD, YYYY' );
+	},
+
+	getItemGroup: function( item ) {
+		return item.date.slice( 0, 10 );
+	},
+
 	renderItem: function( item ) {
 		var index = findIndex( this.props.media, { ID: item.ID } ),
 			selectedItems = this.props.mediaLibrarySelectedItems,
@@ -233,8 +248,10 @@ export const MediaLibraryList = React.createClass( {
 		}.bind( this );
 
 		return (
-			<InfiniteList
+			<SortedGrid
 				ref={ this.setListContext }
+				getItemGroup={ this.getItemGroup }
+				getGroupLabel={ this.getGroupLabel }
 				context={ this.props.scrollable ? this.state.listContext : false }
 				items={ this.props.media || [] }
 				itemsPerRow={ this.getItemsPerRow() }

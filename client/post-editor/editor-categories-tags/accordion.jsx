@@ -178,6 +178,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 				title={ this.getTitle() }
 				subtitle={ this.getSubtitle() }
 				className={ classes }
+				e2eTitle="categories-tags"
 			>
 				{ this.renderCategories() }
 				{ this.renderTags() }

@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import { omitUrlParams } from 'lib/url';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
+import { isEnabled } from 'config';
 
 const EditorPreview = React.createClass( {
 
@@ -43,7 +44,8 @@ const EditorPreview = React.createClass( {
 		if ( this.props.previewUrl && (
 			this.didFinishSaving( prevProps ) ||
 			this.didLoad( prevProps ) ||
-			this.didShowSavedPreviewViaTouch( prevProps )
+			this.didShowSavedPreviewViaTouch( prevProps ) ||
+			this.didShowOrHideFullPreview( prevProps )
 		) ) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
@@ -78,11 +80,38 @@ const EditorPreview = React.createClass( {
 			! this.props.isLoading;
 	},
 
+	didShowOrHideFullPreview( prevProps ) {
+		// Force a URL update (hash change) when the preview is shown or
+		// hidden, but only if we are currently showing the actual preview URL
+		// and not 'about:blank'.
+		return (
+			isEnabled( 'post-editor/preview-scroll-to-content' ) &&
+			this.state.iframeUrl !== 'about:blank' &&
+			prevProps.showPreview !== this.props.showPreview
+		);
+	},
+
 	getIframePreviewUrl() {
 		const parsed = url.parse( this.props.previewUrl, true );
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
 		parsed.query.revision = String( this.props.revision );
+		// Scroll to the main post content.
+		if (
+			this.props.postId &&
+			isEnabled( 'post-editor/preview-scroll-to-content' )
+		) {
+			// Vary the URL hash based on whether the preview is shown.  When
+			// the preview is hidden then re-shown, we want to be sure to
+			// scroll to the content section again even if the preview has not
+			// reloaded in the meantime, which is most easily accomplished by
+			// changing the URL hash.  This does not cause a page reload.
+			if ( this.props.showPreview ) {
+				parsed.hash = 'post-' + this.props.postId;
+			} else {
+				parsed.hash = '__preview-hidden';
+			}
+		}
 		delete parsed.search;
 		return url.format( parsed );
 	},

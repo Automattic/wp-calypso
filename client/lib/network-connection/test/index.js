@@ -11,12 +11,14 @@ import config from 'config';
 import NetworkConnectionApp from 'lib/network-connection';
 
 describe( 'index', function() {
+	let configStub;
+
 	beforeEach( function() {
-		this.configStub = sinon.stub( config, 'isEnabled' ).returns( true );
+		configStub = sinon.stub( config, 'isEnabled' ).returns( true );
 	} );
 
 	afterEach( function() {
-		this.configStub.restore();
+		configStub.restore();
 	} );
 
 	it( 'has to be enabled when config flag is enabled', function() {
@@ -28,27 +30,29 @@ describe( 'index', function() {
 	} );
 
 	describe( 'Events', function() {
+		let changeSpy;
+
 		beforeEach( function() {
-			this.changeSpy = sinon.spy();
-			NetworkConnectionApp.on( 'change', this.changeSpy );
+			changeSpy = sinon.spy();
+			NetworkConnectionApp.on( 'change', changeSpy );
 		} );
 
 		afterEach( function() {
-			NetworkConnectionApp.off( 'change', this.changeSpy );
+			NetworkConnectionApp.off( 'change', changeSpy );
 		} );
 
 		it( 'has to persist connected state when connected event sent', function() {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.neverCalled;
+			expect( changeSpy ).to.have.been.neverCalled;
 		} );
 
 		it( 'has to change state to disconnected when disconnected event sent', function() {
 			NetworkConnectionApp.emitDisconnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.false;
-			expect( this.changeSpy ).to.have.been.calledOnce;
+			expect( changeSpy ).to.have.been.calledOnce;
 		} );
 
 		it( 'has to change state to connected only once when connected event sent twice', function() {
@@ -56,7 +60,7 @@ describe( 'index', function() {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.calledOnce;
+			expect( changeSpy ).to.have.been.calledOnce;
 		} );
 
 		it( 'has to change state to disconnected and then back to connected when disconnected and then connected events sent', function() {
@@ -64,7 +68,7 @@ describe( 'index', function() {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.calledTwice;
+			expect( changeSpy ).to.have.been.calledTwice;
 		} );
 	} );
 } );

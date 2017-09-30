@@ -2,7 +2,8 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { noop, truncate, get, isEmpty } from 'lodash';
 import classnames from 'classnames';
@@ -146,12 +147,12 @@ class ReaderPostCard extends React.Component {
 
 		if ( isDiscover && ! compact ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton =
-				discoverBlogName &&
+			discoverFollowButton = discoverBlogName && (
 				<DiscoverFollowButton
 					siteName={ discoverBlogName }
 					followUrl={ getDiscoverFollowUrl( post ) }
-				/>;
+				/>
+			);
 		}
 
 		const readerPostActions = (
@@ -241,8 +242,7 @@ class ReaderPostCard extends React.Component {
 					postKey={ postKey }
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
-						site &&
-						<DailyPostButton post={ post } site={ site } /> }
+					site && <DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -255,12 +255,13 @@ class ReaderPostCard extends React.Component {
 			<Card className={ classes } onClick={ ! isPhotoPost && ! compact && this.handleCardClick }>
 				{ ! compact && postByline }
 				{ showPrimaryFollowButton &&
-					followUrl &&
+				followUrl && (
 					<FollowButton
 						siteUrl={ followUrl }
 						followSource={ followSource }
 						railcar={ post.railcar }
-					/> }
+					/>
+				) }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

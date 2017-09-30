@@ -31,12 +31,11 @@ const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
 	const project = require( `./project/${ PROJECT_NAME }` );
-
-	locales( currentUser );
-	invoke( project, 'locales', currentUser );
 	utils();
 	invoke( project, 'utils' );
 	createReduxStoreFromPersistedInitialState( reduxStore => {
+		locales( currentUser, reduxStore );
+		invoke( project, 'locales', currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		invoke( project, 'configureReduxStore', currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );

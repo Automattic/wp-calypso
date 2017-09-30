@@ -291,7 +291,9 @@ class JetpackThankYouCard extends Component {
 	isErrored() {
 		const { selectedSite, plugins } = this.props;
 		return ( selectedSite && ! selectedSite.canUpdateFiles ) ||
-			some( plugins, ( plugin ) => plugin.hasOwnProperty( 'error' ) && plugin.error );
+			some( plugins, ( plugin ) =>
+				plugin.hasOwnProperty( 'error' ) && plugin.error && plugin.status !== 'done'
+		);
 	}
 
 	renderFeatures() {
@@ -353,7 +355,7 @@ class JetpackThankYouCard extends Component {
 		if ( reasons && reasons.length > 0 ) {
 			reason = translate( 'We can\'t modify files on your site.' );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
-		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
+		} else if ( selectedSite.hasMinimumJetpackVersion === false ) {
 			reason = translate(
 				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
 				'Please upgrade Jetpack.'
@@ -642,7 +644,7 @@ class JetpackThankYouCard extends Component {
 					<a
 						className={ classNames( 'button', 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
 						href={ buttonUrl }>
-						{ translate( 'Visit Your Site' ) }
+						{ translate( 'Visit your site' ) }
 					</a>
 					{ this.renderLiveChatButton() }
 				</div>

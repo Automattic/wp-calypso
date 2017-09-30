@@ -11,6 +11,7 @@ import { slugToCamelCase } from 'devdocs/docs-example/util';
  * Internal dependencies
  */
 import Collection from 'devdocs/design/search-collection';
+import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
@@ -96,16 +97,19 @@ export default class AppComponents extends React.Component {
 	render() {
 		return (
 			<Main className="design design__blocks">
-				{ this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-							{ slugToCamelCase( this.props.component ) }
-						</HeaderCake>
-					: <SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ this.state.filter }
-							placeholder="Search blocks…"
-							analyticsGroup="Docs"
-						/> }
+				<DocumentHead title="Blocks" />
+				{ this.props.component ? (
+					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
+						{ slugToCamelCase( this.props.component ) }
+					</HeaderCake>
+				) : (
+					<SearchCard
+						onSearch={ this.onSearch }
+						initialValue={ this.state.filter }
+						placeholder="Search blocks…"
+						analyticsGroup="Docs"
+					/>
+				) }
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }

@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { noop, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -76,7 +77,13 @@ class EventsTooltip extends Component {
 								icon={ event.icon }
 								socialIcon={ event.socialIcon }
 								socialIconColor={ event.socialIconColor }
-								title={ event.title } />
+								title={ event.title === ''
+									? this.props.translate( '{{em}}(No title){{/em}}',
+										{ components: { em: <em /> } }
+									)
+									: event.title
+								}
+							/>
 						</li>
 					) }
 

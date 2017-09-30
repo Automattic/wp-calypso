@@ -362,11 +362,7 @@ class SiteSelector extends Component {
 			return null;
 		}
 
-		return (
-			<div className="site-selector__recent">
-				{ recentSites }
-			</div>
-		);
+		return <div className="site-selector__recent">{ recentSites }</div>;
 	}
 
 	render() {
@@ -400,7 +396,7 @@ class SiteSelector extends Component {
 					{ this.renderRecentSites() }
 					{ this.renderSites() }
 					{ hiddenSitesCount > 0 &&
-						! this.props.sitesFound &&
+					! this.props.sitesFound && (
 						<span className="site-selector__hidden-sites-message">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
@@ -423,7 +419,8 @@ class SiteSelector extends Component {
 									},
 								}
 							) }
-						</span> }
+						</span>
+					) }
 				</div>
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>

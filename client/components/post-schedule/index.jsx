@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { moment } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -55,11 +56,16 @@ class PostSchedule extends Component {
 
 	componentWillMount() {
 		if ( ! this.props.selectedDay ) {
-			return this.setState( { localizedDate: null } );
+			return this.setState( {
+				localizedDate: null,
+				isFutureDate: false,
+			} );
 		}
 
+		const localizedDate = this.getDateToUserLocation( this.props.selectedDay );
 		this.setState( {
-			localizedDate: this.getDateToUserLocation( this.props.selectedDay )
+			localizedDate,
+			isFutureDate: localizedDate.isAfter(),
 		} );
 	}
 
@@ -126,13 +132,18 @@ class PostSchedule extends Component {
 	}
 
 	updateDate = ( date ) => {
-		this.setState( { calendarViewDate: date } );
-
-		this.props.onDateChange( utils.convertDateToGivenOffset(
+		const convertedDate = utils.convertDateToGivenOffset(
 			date,
 			this.props.timezone,
 			this.props.gmtOffset
-		) );
+		);
+
+		this.setState( {
+			calendarViewDate: date,
+			isFutureDate: convertedDate.isAfter(),
+		} );
+
+		this.props.onDateChange( convertedDate );
 	};
 
 	handleOnDayMouseEnter = ( date, modifiers, event, eventsByDay ) => {
@@ -216,8 +227,12 @@ class PostSchedule extends Component {
 	render() {
 		const handleEventsTooltip = ! this.props.events || ! this.props.events.length;
 
+		const className = classNames( 'post-schedule', {
+			'is-future-date': this.state.isFutureDate,
+		} );
+
 		return (
-			<div className="post-schedule">
+			<div className={ className }>
 				{
 					// Used by Clock for now, likely others in the future.
 					this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } />

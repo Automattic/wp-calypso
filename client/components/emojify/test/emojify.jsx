@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -8,12 +10,9 @@ import { shallow, mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Emojify from '..';
 
 describe( 'Emojify', function() {
-	useFakeDom();
-
 	context( 'component rendering', () => {
 		it( 'wraps a string in a div', () => {
 			const wrapper = shallow(
@@ -30,13 +29,9 @@ describe( 'Emojify', function() {
 		} );
 
 		it( 'replaces emoji in a string', () => {
-			global.Image = window.Image;
-
 			const wrapper = mount(
 				<Emojify>🙂</Emojify>
 			);
-
-			delete global.Image;
 
 			expect( wrapper.html() ).to.equal(
 				'<div class="emojify"><img draggable="false" class="emojify__emoji" alt="🙂" ' +
@@ -45,13 +40,9 @@ describe( 'Emojify', function() {
 		} );
 
 		it( 'replaces emoji in a block', () => {
-			global.Image = window.Image;
-
 			const wrapper = mount(
 				<Emojify><p>🧔🏻</p></Emojify>
 			);
-
-			delete global.Image;
 
 			expect( wrapper.html() ).to.equal(
 				'<div class="emojify"><p><img draggable="false" class="emojify__emoji" alt="🧔🏻" ' +

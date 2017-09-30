@@ -11,7 +11,8 @@ import {
 	getEditorPostId,
 	isEditorNewPost,
 	getEditorNewPostPath,
-	getEditorPath
+	getEditorPath,
+	isEditorOnlyRouteInHistory,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -263,6 +264,42 @@ describe( 'selectors', () => {
 			}, 2916284, null, 'jetpack-portfolio' );
 
 			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+		} );
+	} );
+
+	describe( 'isEditorOnlyRouteInHistory()', () => {
+		it( 'should return true when Editor is the only route in history', () => {
+			const isOnlyRoute = isEditorOnlyRouteInHistory( {
+				ui: {
+					actionLog: [
+						{
+							type: 'ROUTE_SET',
+							path: '/post/example.com/123',
+						}
+					]
+				}
+			} );
+
+			expect( isOnlyRoute ).to.be.true;
+		} );
+
+		it( 'should return false when Editor is not the only route in history', () => {
+			const isOnlyRoute = isEditorOnlyRouteInHistory( {
+				ui: {
+					actionLog: [
+						{
+							type: 'ROUTE_SET',
+							path: '/',
+						},
+						{
+							type: 'ROUTE_SET',
+							path: '/post/example.com/123',
+						}
+					]
+				}
+			} );
+
+			expect( isOnlyRoute ).to.be.false;
 		} );
 	} );
 } );

@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { throttle, constant, noop } from 'lodash';
@@ -19,16 +20,16 @@ import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {
-		thumbnailUrl: React.PropTypes.string,
-		autoplayIframe: React.PropTypes.string,
-		iframe: React.PropTypes.string,
-		videoEmbed: React.PropTypes.object,
-		allowPlaying: React.PropTypes.bool,
-		onThumbnailClick: React.PropTypes.func,
-		className: React.PropTypes.string,
-		href: React.PropTypes.string,
-		isExpanded: React.PropTypes.bool,
-		expandCard: React.PropTypes.func,
+		thumbnailUrl: PropTypes.string,
+		autoplayIframe: PropTypes.string,
+		iframe: PropTypes.string,
+		videoEmbed: PropTypes.object,
+		allowPlaying: PropTypes.bool,
+		onThumbnailClick: PropTypes.func,
+		className: PropTypes.string,
+		href: PropTypes.string,
+		isExpanded: PropTypes.bool,
+		expandCard: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -107,12 +108,13 @@ class ReaderFeaturedVideo extends React.Component {
 					className={ className }
 					href={ href }
 				>
-					{ allowPlaying &&
+					{ allowPlaying && (
 						<img
 							className="reader-featured-video__play-icon"
 							src="/calypso/images/reader/play-icon.png"
 							title={ translate( 'Play Video' ) }
-						/> }
+						/>
+					) }
 				</ReaderFeaturedImage>
 			);
 		}
@@ -126,12 +128,13 @@ class ReaderFeaturedVideo extends React.Component {
 		return (
 			<div className={ classNames }>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-				{ showEmbed &&
+				{ showEmbed && (
 					<div
 						ref={ this.setVideoEmbedRef }
 						className="reader-featured-video__video"
 						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
-					/> }
+					/>
+				) }
 			</div>
 		);
 		/* eslint-enable-line react/no-danger */

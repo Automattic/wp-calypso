@@ -11,7 +11,6 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { isEnabled } from 'config';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
@@ -69,7 +68,7 @@ export const CommentDetailActions = ( {
 				</Button>
 			}
 
-			{ hasAction( commentStatus, 'edit' ) && isEnabled( 'comments/management/edit' ) &&
+			{ hasAction( commentStatus, 'edit' ) &&
 				<Button
 					borderless
 					className="comment-detail__action-edit"

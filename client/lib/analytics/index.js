@@ -23,6 +23,7 @@ import { statsdTimingUrl } from 'lib/analytics/statsd';
  */
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
+const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 let _superProps,
@@ -46,17 +47,15 @@ function getUrlParameter( name ) {
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
 }
 
-function newAnonId() {
-	const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-	let randomBytes = [];
+function createRandomId( randomBytesLength = 9 ) { // 9 * 4/3 = 12
+	// this is to avoid getting padding of a random byte string when it is base64 encoded
+	let randomBytes;
 
 	if ( window.crypto && window.crypto.getRandomValues ) {
 		randomBytes = new Uint8Array( randomBytesLength );
 		window.crypto.getRandomValues( randomBytes );
 	} else {
-		for ( let i = 0; i < randomBytesLength; ++i ) {
-			randomBytes[ i ] = Math.floor( Math.random() * 256 );
-		}
+		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
 	}
 
 	return btoa( String.fromCharCode.apply( String, randomBytes ) );
@@ -82,7 +81,8 @@ function checkForBlockedTracks() {
 			if ( cookies.tk_ai ) {
 				_ui = cookies.tk_ai;
 			} else {
-				_ui = newAnonId();
+				const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+				_ui = createRandomId( randomIdLength );
 				document.cookie = cookie.serialize( 'tk_ai', _ui );
 			}
 		}
@@ -220,12 +220,12 @@ const analytics = {
 
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
-		record: function( urlPath, pageTitle ) {
+		record: function( urlPath, pageTitle, params ) {
 			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
 			setTimeout( () => {
 				mostRecentUrlPath = urlPath;
-				analytics.tracks.recordPageView( urlPath );
+				analytics.tracks.recordPageView( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );
 			}, 0 );
@@ -283,11 +283,16 @@ const analytics = {
 			analytics.emit( 'record-event', eventName, eventProperties );
 		},
 
-		recordPageView: function( urlPath ) {
+		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
 				path: urlPath,
 				do_not_track: doNotTrack() ? 1 : 0
 			};
+
+			// add optional path params
+			if ( params ) {
+				eventProperties = assign( eventProperties, params );
+			}
 
 			// Record all `utm` marketing parameters as event properties on the page view event
 			// so we can analyze their performance with our analytics tools
@@ -310,20 +315,7 @@ const analytics = {
 			recordPageViewInFloodlight( urlPath );
 		},
 
-		createRandomId: function() {
-			// this is to avoid getting padding of a random byte string when it is base64 encoded
-			const randomBytesLength = 9; // 9 * 4/3 = 12
-			let randomBytes;
-
-			if ( window.crypto && window.crypto.getRandomValues ) {
-				randomBytes = new Uint8Array( randomBytesLength );
-				window.crypto.getRandomValues( randomBytes );
-			} else {
-				randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
-			}
-
-			return btoa( String.fromCharCode.apply( String, randomBytes ) );
-		},
+		createRandomId,
 
 		/**
 		 * Returns the anoymous id stored in the `tk_ai` cookie
@@ -457,7 +449,13 @@ const analytics = {
 	// HotJar tracking
 	hotjar: {
 		addHotJarScript: function() {
+			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+				hotjarDebug( 'Not loading HotJar script' );
+				return;
+			}
+
 			( function( h, o, t, j, a, r ) {
+				hotjarDebug( 'Loading HotJar script' );
 				h.hj = h.hj || function() {
 					( h.hj.q = h.hj.q || [] ).push( arguments );
 				};

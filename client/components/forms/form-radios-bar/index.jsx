@@ -18,19 +18,19 @@ const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
 		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
 			{ items.map(
 				( item, i ) =>
-					isThumbnail
-						? <FormRadioWithThumbnail
-								key={ item.value + i }
-								checked={ checked === item.value }
-								onChange={ onChange }
-								{ ...item }
-							/>
-						: <FormLabel key={ item.value + i }>
-								<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
-								<span>
-									{ item.label }
-								</span>
-							</FormLabel>
+					isThumbnail ? (
+						<FormRadioWithThumbnail
+							key={ item.value + i }
+							checked={ checked === item.value }
+							onChange={ onChange }
+							{ ...item }
+						/>
+					) : (
+						<FormLabel key={ item.value + i }>
+							<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
+							<span>{ item.label }</span>
+						</FormLabel>
+					)
 			) }
 		</div>
 	);

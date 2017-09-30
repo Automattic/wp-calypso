@@ -6,18 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import i18n from 'i18n-calypso';
+import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 describe( 'KeyBindings', function() {
-	let i18n, KeyBindings;
-
-	useFilesystemMocks( __dirname );
-
-	before( () => {
-		i18n = require( 'i18n-calypso' );
-		KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
-	} );
-
 	it( 'should have get function', function() {
 		expect( KeyBindings.get ).to.be.a( 'function' );
 	} );

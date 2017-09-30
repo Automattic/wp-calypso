@@ -9,7 +9,6 @@ import { spy } from 'sinon';
  */
 import { sendRefund } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
@@ -25,7 +24,6 @@ describe( 'actions', () => {
 			reason: 'Testing reason.',
 		};
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

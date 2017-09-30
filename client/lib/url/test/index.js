@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import {
 	isExternal,
 	withoutHttp,
@@ -99,8 +100,6 @@ describe( 'isExternal', () => {
 
 	describe( 'with global.window (test against window.location.hostname)', () => {
 		// window.location.hostname === 'example.com'
-		useFakeDom();
-
 		it( 'should return false for for internal protocol-relative url', () => {
 			const source = '//example.com';
 

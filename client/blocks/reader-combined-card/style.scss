@@ -24,6 +24,7 @@
 	margin-bottom: 0;
 	top: 0;
 	overflow: hidden;
+	font-weight: 500;
 
 	&:hover {
 		color: $blue-light;
@@ -120,7 +121,7 @@
 				width: 2px;
 			background: $blue-wordpress;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				left: -16px;
 			}
 		}
@@ -185,11 +186,11 @@
 }
 
 .reader-combined-card .reader-visit-link {
-	margin-left: -9px; // override gridicon margin
+	margin-left: 0;
 	margin-right: 26px;
 
 	.reader-visit-link__label {
-		margin-left: 4px;
+		margin-left: -4px;
 	}
 }
 
@@ -247,13 +248,13 @@
 	padding: 18px 0 0;
 	position: relative;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0;
 	}
 }
 
 // Follow button for stream cards - copied and pasted from reader-post-card.
-// TODO: consolidate somewhere. preferabley reader/follow-button
+// TODO: consolidate somewhere. preferably reader/follow-button
 .reader-combined-card__header .follow-button {
 	border: 0;
 	border-radius: 0;
@@ -272,7 +273,6 @@
 	}
 
 	&.is-following {
-
 		.gridicon {
 			fill: $alert-green;
 		}
@@ -290,7 +290,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}

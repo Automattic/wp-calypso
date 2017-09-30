@@ -362,14 +362,8 @@ export const PLANS_LIST = {
 			FEATURE_FREE_WORDPRESS_THEMES,
 			FEATURE_SITE_STATS,
 			FEATURE_STANDARD_SECURITY_TOOLS,
-			FEATURE_TRAFFIC_TOOLS
-		],
-		getNewSignupFeatures: () => [
-			FEATURE_FREE_WORDPRESS_THEMES,
-			FEATURE_SITE_STATS,
-			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_TRAFFIC_TOOLS,
-			FEATURE_BLANK,
+			FEATURE_BLANK
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
@@ -411,17 +405,11 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITED,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_ALL_PERSONAL_FEATURES,
-		] ),
-		getNewSignupFeatures: () => [
-			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_MARKETING_AUTOMATION,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_CDN_LIMITED,
-			FEATURE_ALL_PERSONAL_FEATURES,
-		],
+			FEATURE_ALL_PERSONAL_FEATURES
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
@@ -456,17 +444,11 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITED,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_ALL_PERSONAL_FEATURES,
-		] ),
-		getNewSignupFeatures: () => [
-			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_MARKETING_AUTOMATION,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_CDN_LIMITED,
-			FEATURE_ALL_PERSONAL_FEATURES,
-		],
+			FEATURE_ALL_PERSONAL_FEATURES
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
@@ -496,16 +478,10 @@ export const PLANS_LIST = {
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_ALL_FREE_FEATURES,
-		],
-		getNewSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES,
+			FEATURE_ALL_FREE_FEATURES
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -536,16 +512,10 @@ export const PLANS_LIST = {
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_ALL_FREE_FEATURES,
-		],
-		getNewSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES,
+			FEATURE_ALL_FREE_FEATURES
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
@@ -593,15 +563,9 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_SEO_PREVIEW_TOOLS,
+			FEATURE_CONCIERGE_SETUP,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
-		getNewSignupFeatures: () => [
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_SEO_PREVIEW_TOOLS,
-			FEATURE_CONCIERGE_SETUP,
-			FEATURE_ALL_PREMIUM_FEATURES,
-		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
@@ -645,18 +609,12 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 		] ),
 		getSignupFeatures: () => compact( [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITED,
-			FEATURE_SEO_PREVIEW_TOOLS,
-			FEATURE_ALL_PREMIUM_FEATURES
-		] ),
-		getNewSignupFeatures: () => [
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_CONCIERGE_SETUP,
-			FEATURE_ALL_PREMIUM_FEATURES,
-		],
+			FEATURE_ALL_PREMIUM_FEATURES
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	}

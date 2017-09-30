@@ -33,14 +33,6 @@ module.exports = {
 		defaultVariation: 'original',
 		localeTargets: 'any',
 	},
-	jetpackConnectHideFreePlan: {
-		datestamp: '20170905',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-	},
 	newSiteWithJetpack: {
 		datestamp: '20170419',
 		variations: {
@@ -76,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	jetpackConnectPlansCopyChanges: {
-		datestamp: '20170728',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'modified',
-	},
 	readerIntroIllustration: {
 		datestamp: '20170718',
 		variations: {
@@ -94,24 +78,6 @@ module.exports = {
 		defaultVariation: 'white',
 		assignmentMethod: 'userId',
 	},
-	postSignupUpgradeScreen: {
-		datestamp: '20170810',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-	privacyNoPopup: {
-		datestamp: '20170830',
-		variations: {
-			original: 50,
-			nopopup: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -121,5 +87,13 @@ module.exports = {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	jetpackBillingButtonTextI1: {
+		datestamp: '20170925',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

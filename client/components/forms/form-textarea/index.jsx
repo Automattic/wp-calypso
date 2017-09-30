@@ -5,7 +5,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-const FormTextarea = ( { className, isError, isValid, children, ...otherProps } ) =>
+const FormTextarea = ( { className, isError, isValid, children, ...otherProps } ) => (
 	<textarea
 		{ ...otherProps }
 		className={ classnames( className, 'form-textarea', {
@@ -14,6 +14,7 @@ const FormTextarea = ( { className, isError, isValid, children, ...otherProps } 
 		} ) }
 	>
 		{ children }
-	</textarea>;
+	</textarea>
+);
 
 export default FormTextarea;

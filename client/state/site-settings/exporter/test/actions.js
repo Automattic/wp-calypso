@@ -199,35 +199,32 @@ describe( 'actions', () => {
 
 	describe( '#exportStatusFetch()', () => {
 		it( 'should dispatch fetch export status action when thunk triggered', () => {
-			exportStatusFetch( 100658273 )( spy );
-			expect( spy ).to.have.been.calledWithMatch( {
-				type: EXPORT_STATUS_FETCH,
-				siteId: 100658273
+			return exportStatusFetch( 100658273 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: EXPORT_STATUS_FETCH,
+					siteId: 100658273
+				} );
 			} );
 		} );
 
-		it( 'should dispatch export complete action when an export has completed', ( done ) => {
-			exportStatusFetch( 100658273 )( spy ).then( () => {
+		it( 'should dispatch export complete action when an export has completed', () => {
+			return exportStatusFetch( 100658273 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_COMPLETE,
 					siteId: 100658273
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 
-		it( 'should dispatch export failure action when an export has failed', ( done ) => {
-			exportStatusFetch( 2916284 )( spy ).then( () => {
+		it( 'should dispatch export failure action when an export has failed', () => {
+			return exportStatusFetch( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_FAILURE,
 					siteId: 2916284
 				} );
-
-				done();
-			} ).catch( done );
+			} );
 		} );
 	} );
 } );

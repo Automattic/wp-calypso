@@ -11,7 +11,7 @@ import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 
-module.exports = function() {
+export default function() {
 	page(
 		'/settings',
 		mySitesController.siteSelection,
@@ -56,6 +56,16 @@ module.exports = function() {
 		settingsController.setScroll,
 		controller.deleteSite
 	);
+
+	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		page(
+			'/settings/disconnect-site/:site_id',
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSite
+		);
+	}
+
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
@@ -85,4 +95,4 @@ module.exports = function() {
 		mySitesController.siteSelection,
 		mySitesController.sites
 	);
-};
+}

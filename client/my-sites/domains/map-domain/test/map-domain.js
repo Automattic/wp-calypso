@@ -1,39 +1,38 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'page', () => {
+	const { spy } = require( 'sinon' );
+	const pageSpy = spy();
+
+	pageSpy.redirect = spy();
+
+	return pageSpy;
+} );
+
 /**
  * External Dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
+import pageSpy from 'page';
+import React from 'react';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import HeaderCake from 'components/header-cake';
+import { MapDomain } from '..';
+import MapDomainStep from 'components/domains/map-domain-step';
 import paths from 'my-sites/domains/paths';
 
 describe( 'MapDomain component', () => {
-	const pageSpy = spy();
-	pageSpy.redirect = spy();
-	let MapDomain, MapDomainStep, HeaderCake;
-
-	// needed, because some dependency of dependency uses `window`
-	useFakeDom();
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'page', pageSpy );
-		MapDomain = require( '..' ).MapDomain;
-		MapDomainStep = require( 'components/domains/map-domain-step' );
-		HeaderCake = require( 'components/header-cake' );
-	} );
-
 	beforeEach( () => {
 		pageSpy.reset();
 		pageSpy.redirect.reset();
 	} );
 
 	const defaultProps = {
+		cart: {},
 		productsList: {},
 		domainsWithPlansOnly: false,
 		translate: string => string,

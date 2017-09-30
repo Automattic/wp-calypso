@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,6 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { ResetPasswordFormComponent } from '..';
 import ResetOptionSet from '../reset-option-set';
 
@@ -47,8 +48,6 @@ describe( 'ResetPasswordForm', () => {
 	} );
 
 	context( 'fields', () => {
-		useFakeDom();
-
 		it( 'should be disabled while isRequesting is true.', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
@@ -66,8 +65,6 @@ describe( 'ResetPasswordForm', () => {
 	} );
 
 	context( 'submit button', () => {
-		useFakeDom();
-
 		it( 'should be disabled if no reset option is selected', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent

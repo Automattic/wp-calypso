@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' );
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -14,49 +14,42 @@ import { preload } from 'sections-preload';
 /**
  * Main
  */
-var NavItem = React.createClass( {
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		itemType: React.PropTypes.string,
-		path: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		tabIndex: React.PropTypes.number,
-		onClick: React.PropTypes.func,
-		isExternalLink: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		count: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.bool,
+class NavItem extends PureComponent {
+	static propTypes = {
+		itemType: PropTypes.string,
+		path: PropTypes.string,
+		selected: PropTypes.bool,
+		tabIndex: PropTypes.number,
+		onClick: PropTypes.func,
+		isExternalLink: PropTypes.bool,
+		disabled: PropTypes.bool,
+		count: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.bool,
 		] ),
-		className: React.PropTypes.string,
-		preloadSectionName: React.PropTypes.string
-	},
+		className: PropTypes.string,
+		preloadSectionName: PropTypes.string
+	};
 
-	_preloaded: false,
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
-	},
+	};
 
-	render: function() {
-		var itemClassPrefix = this.props.itemType
-			? this.props.itemType
-			: 'tab',
-
-			itemClassName, target, onClick,
-
-			itemClasses = {
-				'is-selected': this.props.selected,
-				'is-external': this.props.isExternalLink
-			};
-
+	render() {
+		const itemClassPrefix = this.props.itemType ? this.props.itemType : 'tab';
+		const itemClasses = {
+			'is-selected': this.props.selected,
+			'is-external': this.props.isExternalLink
+		};
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
-		itemClassName = classNames( this.props.className, itemClasses );
+		const itemClassName = classNames( this.props.className, itemClasses );
+
+		let target, onClick;
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';
@@ -90,6 +83,6 @@ var NavItem = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
 
-module.exports = NavItem;
+export default NavItem;

@@ -1,30 +1,25 @@
+jest.mock( 'localforage', () => require( './mocks/localforage' ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import localforageMock from 'localforage';
 import ms from 'ms';
 
 /**
  * Internal dependencies
  */
+import { cacheIndex } from '../cache-index';
 import { RECORDS_LIST_KEY } from '../constants';
 import { normalizeRequestParams } from '../utils';
 import * as testData from './data';
-import localforageMock from './mock/localforage';
-import useMockery from 'test/helpers/use-mockery';
-
-let cacheIndex;
 
 const localData = () => localforageMock.getLocalData();
 const setLocalData = data => localforageMock.setLocalData( data );
 const clearLocal = () => setLocalData( {} );
 
 describe( 'cache-index', () => {
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'localforage', localforageMock );
-		( { cacheIndex } = require( '../cache-index' ) );
-	} );
-
 	beforeEach( clearLocal ); // also do inside nested blocks with >1 test
 
 	describe( '#getAll', () => {

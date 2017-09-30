@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,6 @@ import { shallow, mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { TransactionIdFormComponent } from '..';
 
 describe( 'TransactionIdForm', () => {
@@ -22,8 +23,6 @@ describe( 'TransactionIdForm', () => {
 	} );
 
 	context( 'events', () => {
-		useFakeDom();
-
 		it( 'continue button should be disabled if transaction id is blank', function() {
 			const wrapper = mount( <TransactionIdFormComponent className="test__test" /> );
 

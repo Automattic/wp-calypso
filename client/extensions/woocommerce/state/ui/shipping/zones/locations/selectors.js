@@ -543,7 +543,7 @@ export const getShippingZoneLocationsList = createSelector(
 		const locations = getShippingZoneLocations( state, zoneId, siteId );
 		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
 	},
-	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+	( state, zoneId, maxCountries, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocations( state, zoneId, siteId ),
 		];
@@ -567,7 +567,7 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 		const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
 		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
 	},
-	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+	( state, maxCountries, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId, false ),
 		];

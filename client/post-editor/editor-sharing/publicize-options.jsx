@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, map } from 'lodash';
+import { includes, map } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -127,8 +127,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	},
 
 	renderMessage: function() {
-		var preview = get( this.props.post, 'title' ),
-			skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
+		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
 			targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
 				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
 			} ) : [],
@@ -141,8 +140,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 		return (
 			<PublicizeMessage
-				message={ PostMetadata.publicizeMessage( this.props.post ) }
-				preview={ preview }
+				message={ PostMetadata.publicizeMessage( this.props.post ) || '' }
 				requireCount={ requireCount }
 				acceptableLength={ acceptableLength } />
 		);

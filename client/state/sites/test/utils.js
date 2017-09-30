@@ -67,6 +67,12 @@ describe( 'utils', () => {
 							URL: 'https://example.wordpress.com',
 							jetpack: false,
 							options
+						},
+						2916289: {
+							ID: 2916289,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: true,
 						}
 					}
 				}
@@ -77,7 +83,7 @@ describe( 'utils', () => {
 				title: 'WordPress.com Example Blog',
 				is_previewable: false,
 				is_customizable: false,
-				hasConflict: false,
+				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',
 				slug: 'unmapped-url.wordpress.com',
 				options,

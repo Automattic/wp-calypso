@@ -69,14 +69,17 @@
 		min-height: 0;
 	}
 
+	.empty-content.has-title-only .empty-content__title {
+		margin-bottom: 16px;
+	}
+
 	.upgrade-nudge.card.editor-simple-payments-modal__nudge-nudge {
 		flex-shrink: 0;
-		margin: 0;
 		text-align: left;
+	}
 
-		@include breakpoint( ">480px" ) {
-			width: 70%;
-		}
+	.empty-content__action {
+		margin-top: 16px;
 	}
 
 	.upgrade-jetpack {

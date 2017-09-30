@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop, pick } from 'lodash';
 
@@ -26,7 +27,7 @@ class CalendarPopover extends Component {
 		// popover props
 		autoPosition: PropTypes.bool,
 		closeOnEsc: PropTypes.bool,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
 		rootClassName: PropTypes.string,

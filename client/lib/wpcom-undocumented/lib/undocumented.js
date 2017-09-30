@@ -929,9 +929,7 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
 	const body = { skipped_connections: [] };
 
-	if ( message ) {
-		body.message = message;
-	}
+	body.message = message;
 
 	if ( skippedConnections && skippedConnections.length > 0 ) {
 		body.skipped_connections = skippedConnections;
@@ -2434,20 +2432,6 @@ Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
  */
 Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 	return this.wpcom.req.get( `/oauth2/client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
-};
-
-/**
- * Get OAuth2 client signup url from redirectTo parameter
- * @param {string}     redirectTo     The redirect to paramter
- * @param {Function}   fn             The callback function
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.oauth2SignupUrl = function( redirectTo, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/signup-url/${ encodeURIComponent( redirectTo ) }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
 };
 
 /**

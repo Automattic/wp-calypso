@@ -7,10 +7,12 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
@@ -18,6 +20,16 @@ import { urlToDomainAndPath } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { successNotice } from 'state/notices/actions';
+import { canCurrentUser } from 'state/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -26,18 +38,19 @@ export class CommentDetailAuthor extends Component {
 		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
+		authorIsBlocked: PropTypes.bool,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
-		blockUser: PropTypes.func,
+		canUserBlacklist: PropTypes.bool,
 		commentDate: PropTypes.string,
+		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
+		commentType: PropTypes.string,
 		commentUrl: PropTypes.string,
-		showAuthorInfo: PropTypes.bool,
+		currentUserEmail: PropTypes.string,
+		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
-	};
-
-	static defaultProps = {
-		showAuthorInfo: false,
+		updateBlacklist: PropTypes.func,
 	};
 
 	state = {
@@ -48,19 +61,63 @@ export class CommentDetailAuthor extends Component {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
 	};
 
-	getAuthorObject = () => ( {
-		avatar_URL: this.props.authorAvatarUrl,
-		display_name: this.props.authorDisplayName,
-	} );
-
 	getFormattedDate = () => convertDateToUserLocation(
 		( this.props.commentDate || new Date() ),
 		timezone( this.props.site ),
 		gmtOffset( this.props.site )
 	).format( 'll LT' );
 
+	showMoreInfo = () =>
+		( 'comment' === this.props.commentType ) &&
+		some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
+
+	toggleBlockUser = () => {
+		const {
+			authorEmail,
+			authorId,
+			authorIsBlocked,
+			siteBlacklist,
+			commentId,
+			translate,
+			updateBlacklist,
+		} = this.props;
+
+		const noticeOptions = {
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+		};
+
+		const analytics = {
+			action: authorIsBlocked ? 'unblock_user' : 'block_user',
+			user_type: authorId ? 'wpcom' : 'email_only',
+		};
+
+		if ( authorIsBlocked ) {
+			this.props.successNotice(
+				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
+				noticeOptions,
+			);
+
+			const newBlacklist = siteBlacklist.split( '\n' ).filter( item => item !== authorEmail ).join( '\n' );
+
+			return updateBlacklist( newBlacklist, analytics );
+		}
+
+		this.props.successNotice(
+			translate( 'User %(email)s blocked.', { args: { email: authorEmail } } ),
+			noticeOptions,
+		);
+
+		const newBlacklist = !! siteBlacklist
+			? siteBlacklist + '\n' + authorEmail
+			: authorEmail;
+
+		return updateBlacklist( newBlacklist, analytics );
+	}
+
 	authorMoreInfo() {
-		if ( ! this.props.showAuthorInfo ) {
+		if ( ! this.showMoreInfo() ) {
 			return null;
 		}
 
@@ -71,14 +128,20 @@ export class CommentDetailAuthor extends Component {
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
-			blockUser,
+			canUserBlacklist,
+			currentUserEmail,
+			site,
+			trackAnonymousModeration,
 			translate,
 		} = this.props;
+
+		const showBlockUser = canUserBlacklist && !! authorEmail && ( authorEmail !== currentUserEmail );
+
 		return (
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
 					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<Gravatar user={ this.getAuthorObject() } />
+						<Gridicon icon="user-circle" />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
@@ -95,38 +158,52 @@ export class CommentDetailAuthor extends Component {
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="mail" />
 						<span>
-							{ authorEmail }
+							{ authorEmail || <em>{ translate( 'No email address' ) }</em> }
 						</span>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-						<ExternalLink href={ authorUrl }>
-							<Emojify>
-								{ urlToDomainAndPath( authorUrl ) }
-							</Emojify>
-						</ExternalLink>
+						{ !! authorUrl &&
+							<ExternalLink href={ authorUrl }>
+								<Emojify>
+									{ urlToDomainAndPath( authorUrl ) }
+								</Emojify>
+							</ExternalLink>
+						}
+						{ ! authorUrl &&
+							<em>{ translate( 'No website' ) }</em>
+						}
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
 						<span>
-							{ authorIp }
+							{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
 						</span>
 					</div>
-				</div>
-				<div className="comment-detail__author-more-actions">
-					<a
-						className={ classNames(
-							'comment-detail__author-more-element comment-detail__author-more-element-block-user',
-							{ 'is-blocked': authorIsBlocked }
-						) }
-						onClick={ blockUser }
-					>
-						<Gridicon icon="block" />
-						<span>{ authorIsBlocked
-							? translate( 'Unblock user' )
-							: translate( 'Block user' )
-						}</span>
-					</a>
+					{ showBlockUser &&
+						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-user">
+							<Button onClick={ this.toggleBlockUser }>
+								<Gridicon icon="block" />
+								<span>{ authorIsBlocked
+									? translate( 'Unblock user' )
+									: translate( 'Block user' )
+								}</span>
+							</Button>
+						</div>
+					}
+					{ ! authorEmail &&
+						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-anonymous-user">
+							<span>
+								{ translate(
+									// eslint-disable-next-line max-len
+									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
+									{ components: {
+										a: <a href={ `/settings/discussion/${ site.slug }` } onClick={ trackAnonymousModeration } />,
+									} }
+								) }
+							</span>
+						</div>
+					}
 				</div>
 			</div>
 		);
@@ -137,8 +214,8 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
+			commentType,
 			commentUrl,
-			showAuthorInfo,
 			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
@@ -150,7 +227,19 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<Gravatar user={ this.getAuthorObject() } />
+					<div className="comment-detail__author-avatar">
+						<div className="comment-detail__author-avatar">
+							{ 'comment' === commentType &&
+								<Gravatar user={ {
+									avatar_URL: this.props.authorAvatarUrl,
+									display_name: this.props.authorDisplayName,
+								} } />
+							}
+							{ 'comment' !== commentType &&
+								<Gridicon icon="link" size={ 24 } />
+							}
+						</div>
+					</div>
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>
@@ -171,17 +260,20 @@ export class CommentDetailAuthor extends Component {
 							{ this.getFormattedDate() }
 						</ExternalLink>
 					</div>
-					{ 'unapproved' === commentStatus &&
-						<div className="comment-detail__status-label is-unapproved">
-							{ translate( 'Pending' ) }
-						</div>
-					}
-					{
-						showAuthorInfo &&
-						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
-							<Gridicon icon="info-outline" />
-						</a>
-					}
+
+					<div className="comment-detail__author-preview-actions">
+						{ 'unapproved' === commentStatus &&
+							<div className="comment-detail__status-label is-unapproved">
+								{ translate( 'Pending' ) }
+							</div>
+						}
+
+						{ this.showMoreInfo() &&
+							<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
+								<Gridicon icon="info-outline" />
+							</a>
+						}
+					</div>
 				</div>
 				{ this.authorMoreInfo() }
 			</div>
@@ -190,7 +282,30 @@ export class CommentDetailAuthor extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
+	canUserBlacklist: canCurrentUser( state, siteId, 'manage_options' ),
+	currentUserEmail: getCurrentUserEmail( state ),
 	site: getSite( state, siteId ),
 } );
 
-export default connect( mapStateToProps )( localize( CommentDetailAuthor ) );
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+	updateBlacklist: ( blacklist_keys, analytics ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_moderate_user', analytics ),
+			bumpStat(
+				'calypso_comment_management',
+				'block_user' === analytics.action ? 'comment_author_blocked' : 'comment_author_unblocked'
+			)
+		),
+		saveSiteSettings( siteId, { blacklist_keys } )
+	) ),
+	trackAnonymousModeration: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_moderate_user', {
+			action: 'open_discussion_settings',
+			user_type: 'anonymous',
+		} ),
+		bumpStat( 'calypso_comment_management', 'open_discussion_settings' )
+) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );

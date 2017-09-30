@@ -203,7 +203,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 
 	require( 'my-sites' )();
 
-	if ( config.isEnabled( 'olark' ) ) {
+	if ( currentUser.get() && config.isEnabled( 'olark' ) ) {
 		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
 

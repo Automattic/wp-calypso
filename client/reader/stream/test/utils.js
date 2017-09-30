@@ -1,29 +1,17 @@
 /** @format */
+jest.mock( 'lib/user/utils', () => ( {} ) );
+
 /**
  * External dependencies
  */
 import { expect, assert } from 'chai';
 import moment from 'moment';
-import mockery from 'mockery';
-let utils, sameDay, sameSite, combine, combineCards, injectRecommendations;
 
-/**
- * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	sameDay, sameSite, combine, combineCards, injectRecommendations
+} from '../utils';
 
 describe( 'reader stream', () => {
-	useMockery();
-	before( () => {
-		mockery.registerMock( 'lib/user/utils', {} );
-		utils = require( '../utils' );
-		sameDay = utils.sameDay;
-		sameSite = utils.sameSite;
-		combine = utils.combine;
-		combineCards = utils.combineCards;
-		injectRecommendations = utils.injectRecommendations;
-	} );
-
 	const today = moment().toDate();
 	const postKey1 = { feedId: 'feed1', postId: 'postId1', date: today };
 	const postKey2 = { feedId: 'feed1', postId: 'postId2', date: today };
@@ -46,9 +34,21 @@ describe( 'reader stream', () => {
 		const datePostKey = date => ( { date } );
 		const todayPostKey = datePostKey( today );
 		const todayPostKey2 = datePostKey( new Date() );
-		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );
-		const oneYearInTheFuturePostKey = datePostKey( moment( today ).add( 1, 'year' ).toDate() );
-		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
+		const oneYearAgoPostKey = datePostKey(
+			moment( today )
+				.subtract( 1, 'year' )
+				.toDate()
+		);
+		const oneYearInTheFuturePostKey = datePostKey(
+			moment( today )
+				.add( 1, 'year' )
+				.toDate()
+		);
+		const oneMonthAgoPostKey = datePostKey(
+			moment( today )
+				.subtract( 1, 'month' )
+				.toDate()
+		);
 
 		it( 'should return true when two days are the same day', () => {
 			assert( sameDay( todayPostKey, todayPostKey2 ) );
@@ -186,7 +186,9 @@ describe( 'reader stream', () => {
 		} );
 
 		it( 'should not combine cards that are greater than a day apart', () => {
-			const theDistantPast = moment().year( -1 ).toDate();
+			const theDistantPast = moment()
+				.year( -1 )
+				.toDate();
 			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );

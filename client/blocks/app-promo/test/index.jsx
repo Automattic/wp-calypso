@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -5,14 +7,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'AppPromo', ( ) => {
-	useFakeDom();
-
 	const appPromoDetails = {
 		promoCode: 'a0001',
 		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.'
@@ -65,20 +60,20 @@ describe( 'AppPromo', ( ) => {
 			promoCode: 'a0006',
 			message: 'WordPress.com in the palm of your hands — download app for mobile.',
 			type: 'mobile',
-		}
+		};
 
 		const desktopPromo = {
 			promoCode: 'a0005',
 			message: 'WordPress.com at your fingertips — download app for desktop.',
 			type: 'desktop'
-		}
+		};
 
-		it('should render a mobile link when the mobile promo code is passed in', ( ) => {
+		it( 'should render a mobile link when the mobile promo code is passed in', ( ) => {
 			expect( getPromoLink( 'reader', mobilePromo ) ).to.include( 'mobile' );
-		});
+		} );
 
-		it('should render a desktop link when the desktop promo code is passed in', ( ) => {
+		it( 'should render a desktop link when the desktop promo code is passed in', ( ) => {
 			expect( getPromoLink( 'reader', desktopPromo ) ).to.include( 'desktop' );
-		});
-	});
+		} );
+	} );
 } );

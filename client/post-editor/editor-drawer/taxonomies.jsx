@@ -70,6 +70,7 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, tax
 						key={ name }
 						title={ label }
 						subtitle={ subtitle }
+						e2eTitle="taxonomies"
 					>
 					{ hierarchical
 						? <TermSelector compact taxonomyName={ name } />

@@ -18,7 +18,7 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import buildUrl from 'lib/mixins/url-search/build-url';
+import buildUrl from 'lib/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
@@ -86,7 +86,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filterRegex = /(\w+)\:([\w-]*)/g;
+		const filterRegex = /([\w-]*)\:([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];

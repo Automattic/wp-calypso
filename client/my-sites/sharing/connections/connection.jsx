@@ -55,7 +55,7 @@ class SharingConnection extends Component {
 
 	refresh = () => {
 		if ( ! this.props.isRefreshing ) {
-			this.props.onRefresh( this.props.connection );
+			this.props.onRefresh( [ this.props.connection ] );
 		}
 	};
 

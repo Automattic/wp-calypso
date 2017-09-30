@@ -237,6 +237,16 @@ const flows = {
 	},
 };
 
+if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+	flows[ 'atomic-store' ] = {
+		// TODO: add new plan step with just Business plan
+		steps: [ 'design-type-with-atomic-store', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2017-09-27'
+	};
+}
+
 if ( config.isEnabled( 'signup/wpcc' ) ) {
 	flows.wpcc = {
 		steps: [ 'oauth2-user' ],
@@ -430,9 +440,6 @@ const Flows = {
 		if ( 'main' === flowName ) {
 			if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
 				return Flows.insertStepIntoFlow( 'survey', flow );
-			}
-			if ( abtest( 'skipThemesSelectionModal' ) === 'skip' ) {
-				return Flows.removeStepFromFlow( 'themes', flow );
 			}
 		}
 

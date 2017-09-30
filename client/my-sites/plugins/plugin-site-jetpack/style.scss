@@ -50,6 +50,10 @@
 	}
 }
 
+.plugin-site-jetpack .plugin-action__disabled-info.info-popover .gridicons-info-outline {
+	    transform: translate(2px, -2px);
+}
+
 .plugin-site-jetpack__embed-action {
 	height: 32px;
 	position: absolute;

@@ -4,13 +4,14 @@
 import React from 'react';
 import { assign } from 'lodash';
 import classnames from 'classnames';
+import createClass from 'create-react-class';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-export default React.createClass( {
+export default createClass( {
 	displayName: 'CompactCard',
 
 	render: function() {

@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,6 @@ import { shallow, mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { ForgotUsernameFormComponent } from '..';
 
 describe( 'ForgotUsername', () => {
@@ -30,8 +31,6 @@ describe( 'ForgotUsername', () => {
 	} );
 
 	context( 'fields', () => {
-		useFakeDom();
-
 		it( 'should be disabled when isRequesting is on', function() {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent
@@ -47,8 +46,6 @@ describe( 'ForgotUsername', () => {
 	} );
 
 	context( 'submit button', () => {
-		useFakeDom();
-
 		it( 'should be disabled if firstName is blank', function() {
 			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
 			wrapper.setState( {

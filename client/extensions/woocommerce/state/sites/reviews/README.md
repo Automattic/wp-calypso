@@ -9,6 +9,14 @@ This module is used to manage reviews for a site.
 
 Pull a set of reviews from the remote site, based on a query. See https://github.com/woocommerce/wc-api-dev/pull/48.
 
+### `deleteReview( siteId: number, productId: number, reviewId: number )`
+
+Deletes a review from the remote site.
+
+### `changeReviewStatus( siteId: number, productId: number, reviewId: number, currentStatus: string, newStatus: string )`
+
+Updates the status of a review on the remote site.
+
 ## Reducer
 
 This is saved on a per-site basis. All reviews are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. `total` tracks the number of reviews, mapped by queries (not including page). `isQueryError` tracks whether a specific query returned an error while being fetched. The review items example below is not a complete list. See the [API documentation for reviews](https://woocommerce.github.io/woocommerce-rest-api-docs/#product-review-properties).

@@ -8,13 +8,9 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { USER_SETTING_KEY } from '../constants';
-import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PreferencesStore', function() {
 	let Dispatcher, PreferencesStore, handler;
-
-	// makes sure we always load fresh instance of Dispatcher
-	useMockery();
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );

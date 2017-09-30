@@ -31,6 +31,7 @@ describe( 'reducer', () => {
 			'isNotificationsOpen',
 			'isPreviewShowing',
 			'layoutFocus',
+			'language',
 			'mediaModal',
 			'npsSurveyNotice',
 			'oauth2Clients',

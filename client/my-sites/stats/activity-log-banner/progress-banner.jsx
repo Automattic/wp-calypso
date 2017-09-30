@@ -47,9 +47,7 @@ function ProgressBanner( {
 			</p>
 
 			<div>
-				<em>
-					{ restoreStatusDescription }
-				</em>
+				<em>{ restoreStatusDescription }</em>
 				<ProgressBar
 					className={ status === 'queued' ? 'activity-log-banner__progress-bar--queued' : null }
 					isPulsing

@@ -605,7 +605,8 @@ These important statements are part of the abstraction. As for the side effects:
 - If you find that your render logic becomes complex, it might be a sign that you should split the component into separate individual components.
 
 ```jsx
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class Link extends Component {
 	static propTypes = {

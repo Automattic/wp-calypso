@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
-import StatsNavigation from './stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
@@ -111,7 +111,8 @@ class StatsSite extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					section={ period }
+					selectedItem={ 'traffic' }
+					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>

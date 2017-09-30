@@ -1,14 +1,16 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import fixtures from './fixtures';
 import photon from 'photon';
 import ListItemVideo from 'my-sites/media-library/list-item-video';
 
@@ -17,15 +19,7 @@ const WIDTH = 450;
 const styleUrl = url => `url(${ url })`;
 
 describe( 'MediaLibraryListItem video', function() {
-	let shallow, wrapper, fixtures;
-
-	useFakeDom();
-	useMockery();
-
-	before( function() {
-		shallow = require( 'enzyme' ).shallow;
-		fixtures = require( './fixtures' );
-	} );
+	let wrapper;
 
 	beforeEach( function() {
 		if ( wrapper ) {

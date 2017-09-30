@@ -4,16 +4,9 @@
 import assert from 'assert';
 import { flow } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-
 describe( 'index', function() {
 	const TEST_BLOG_ID = 1;
 	let cartItems, cartValues, DOMAIN_REGISTRATION_PRODUCT, FR_DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
-
-	useFilesystemMocks( __dirname );
 
 	before( () => {
 		cartValues = require( 'lib/cart-values' );

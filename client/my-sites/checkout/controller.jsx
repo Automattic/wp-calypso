@@ -5,6 +5,7 @@ import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
 import { isEmpty } from 'lodash';
+import { Route } from 'page';
 
 /**
  * Internal Dependencies
@@ -22,13 +23,20 @@ import { getSelectedSite } from 'state/ui/selectors';
  */
 const productsList = productsFactory();
 
+const checkoutRoutes = [
+	new Route( '/checkout/thank-you' ),
+	new Route( '/checkout/thank-you/:receipt' ),
+	new Route( '/checkout/:product' ),
+	new Route( '/checkout/:product/renew/:receipt' ),
+];
+
 module.exports = {
 	checkout: function( context ) {
-		var Checkout = require( './checkout' ),
+		const Checkout = require( './checkout' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
-			basePath = route.sectionify( context.path ),
+			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
 			product = context.params.product,
 			selectedFeature = context.params.feature;
 
@@ -39,7 +47,7 @@ module.exports = {
 			return;
 		}
 
-		analytics.pageView.record( basePath, 'Checkout' );
+		analytics.pageView.record( routePath, 'Checkout', routeParams );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
@@ -108,14 +116,15 @@ module.exports = {
 
 	checkoutThankYou: function( context ) {
 		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			basePath = route.sectionify( context.path ),
+			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
 			receiptId = Number( context.params.receiptId );
 
-		analytics.pageView.record( basePath, 'Checkout Thank You' );
+		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );

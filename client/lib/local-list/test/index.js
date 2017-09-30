@@ -1,12 +1,27 @@
+/** @jest-environment jsdom */
+jest.mock( 'store', () => {
+	const data = {};
+
+	return {
+		get( key ) {
+			return data[ key ];
+		},
+
+		set( key, value ) {
+			data[ key ] = value;
+		}
+	};
+} );
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
 
 /**
- * Internal dependencies
+ * Internal dependecies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
+import LocalList from '../';
 
 const anExampleKey = 'day:2014-08-01';
 
@@ -18,12 +33,9 @@ function createLocalRecords( statList, qty ) {
 }
 
 describe( 'LocalList', function() {
-	let LocalList, statList;
-
-	useFakeDom();
+	let statList;
 
 	before( () => {
-		LocalList = require( '..' );
 		statList = new LocalList( { localStoreKey: 'TestLocalListKey' } );
 	} );
 

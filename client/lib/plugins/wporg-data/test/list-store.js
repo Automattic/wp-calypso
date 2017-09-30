@@ -1,3 +1,9 @@
+jest.mock( 'config', () => ( {
+	isEnabled: () => true
+} ) );
+jest.mock( 'store', () => require( './mocks/local-store' ) );
+jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
+
 /**
  * External dependencies
  */
@@ -7,18 +13,14 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
+import Dispatcher from 'dispatcher';
 import localStorageSpies from './mocks/local-store';
+import PluginsListsStore from 'lib/plugins/wporg-data/list-store';
 
 describe( 'WPORG Plugins Lists Store', () => {
-	let Dispatcher, PluginsListsStore, pluginsList;
-	useMockery( mockery => {
-		mockery.registerMock( 'config', { isEnabled: () => true } );
-		mockery.registerMock( 'store', localStorageSpies );
-		mockery.registerMock( './actions', actionsSpies );
-	} );
+	let pluginsList;
 
 	function resetListsStore() {
 		Dispatcher.handleServerAction( { type: 'RESET_WPORG_PLUGINS_LIST' } );
@@ -27,8 +29,6 @@ describe( 'WPORG Plugins Lists Store', () => {
 	beforeEach( () => {
 		localStorageSpies.reset();
 		actionsSpies.fetchPluginsList.reset();
-		Dispatcher = require( 'dispatcher' );
-		PluginsListsStore = require( 'lib/plugins/wporg-data/list-store' );
 		resetListsStore();
 	} );
 

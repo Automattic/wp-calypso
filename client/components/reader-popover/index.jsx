@@ -17,10 +17,7 @@ const ReaderPopover = props => {
 	return (
 		<Popover className={ classes } { ...popoverProps }>
 			<div className="reader-popover__wrapper">
-				{ props.popoverTitle &&
-					<h3 className="reader-popover__header">
-						{ props.popoverTitle }
-					</h3> }
+				{ props.popoverTitle && <h3 className="reader-popover__header">{ props.popoverTitle }</h3> }
 				{ props.children }
 			</div>
 		</Popover>

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -18,6 +19,7 @@ import PostUtils from 'lib/posts/utils';
 import * as stats from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import Button from 'components/button';
+import RemoveButton from 'components/remove-button';
 import { getMediaItem } from 'state/selectors';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import QueryMedia from 'components/data/query-media';
@@ -26,12 +28,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class EditorFeaturedImage extends Component {
 	static propTypes = {
-		maxWidth: React.PropTypes.number,
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		selecting: React.PropTypes.bool,
-		onImageSelected: React.PropTypes.func,
-		featuredImage: React.PropTypes.object,
+		featuredImage: PropTypes.object,
+		maxWidth: PropTypes.number,
+		site: PropTypes.object,
+		post: PropTypes.object,
+		recordTracksEvent: PropTypes.func,
+		selecting: PropTypes.bool,
+		translate: PropTypes.func,
+		onImageSelected: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -81,6 +85,15 @@ class EditorFeaturedImage extends Component {
 			type: 'click'
 		} );
 	};
+
+	static removeImage() {
+		PostActions.edit( {
+			featured_image: ''
+		} );
+
+		stats.recordStat( 'featured_image_removed' );
+		stats.recordEvent( 'Featured image removed' );
+	}
 
 	renderMediaModal = () => {
 		if ( ! this.props.site ) {
@@ -133,16 +146,19 @@ class EditorFeaturedImage extends Component {
 						: null
 				}
 				{ this.renderMediaModal() }
-				<Button
+				<div className="editor-featured-image__inner-content">
+					<Button
 						className="editor-featured-image__current-image"
 						onClick={ this.showMediaModal }
 						borderless
 						compact>
-					{ this.renderCurrentImage() }
-					<Gridicon
-						icon="pencil"
-						className="editor-featured-image__edit-icon" />
-				</Button>
+						{ this.renderCurrentImage() }
+						<Gridicon
+							icon="pencil"
+							className="editor-featured-image__edit-icon" />
+					</Button>
+					{ featuredImageId ? <RemoveButton onRemove={ EditorFeaturedImage.removeImage } /> : '' }
+				</div>
 			</div>
 		);
 	}

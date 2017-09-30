@@ -1,38 +1,40 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => {},
+	getABTestVariation: () => null
+} ) );
+jest.mock( 'lib/user', () => require( './mocks/lib/user' ) );
+
 /**
  * External dependencies
  */
 import assert from 'assert';
 import sinon from 'sinon';
-import { noop } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import abtest from 'lib/abtest';
+import flows from 'signup/config/flows';
 import mockedFlows from './fixtures/flows';
+
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
-		let flows, user;
-
-		useFakeDom();
-		useFilesystemMocks( __dirname );
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'lib/abtest', {
-				abtest: noop,
-			} );
-		} );
+		let user;
 
 		before( () => {
 			user = require( 'lib/user' )();
 
-			flows = require( 'signup/config/flows' );
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 			sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
 				return flow;
 			} );
+		} );
+
+		after( () => {
+			flows.getFlows.restore();
+			flows.getABTestFilteredFlow.restore();
 		} );
 
 		it( 'should return the full flow when the user is not logged in', () => {
@@ -47,31 +49,14 @@ describe( 'Signup Flows Configuration', () => {
 	} );
 
 	describe( 'getABTestFilteredFlow', () => {
-		let flows;
-
-		useFakeDom();
-		useFilesystemMocks( __dirname );
-
-		const ABTestMock = {
-			abtest: noop,
-			getABTestVariation: () => {
-				return null;
-			},
-		};
-
-		const getABTestVariationSpy = sinon.stub( ABTestMock, 'getABTestVariation' );
+		const getABTestVariationSpy = sinon.stub( abtest, 'getABTestVariation' );
 
 		getABTestVariationSpy.onCall( 0 ).returns( 'notSiteTitle' );
 		getABTestVariationSpy.onCall( 1 ).returns( 'notSiteTitle' );
 		getABTestVariationSpy.onCall( 2 ).returns( 'showSiteTitleStep' );
 		getABTestVariationSpy.onCall( 3 ).returns( 'showSiteTitleStep' );
 
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'lib/abtest', ABTestMock );
-		} );
-
 		before( () => {
-			flows = require( 'signup/config/flows' );
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 			sinon.stub( flows, 'insertStepIntoFlow', ( stepName, flow ) => {
 				return flow;
@@ -79,6 +64,12 @@ describe( 'Signup Flows Configuration', () => {
 			sinon.stub( flows, 'removeStepFromFlow', ( stepName, flow ) => {
 				return flow;
 			} );
+		} );
+
+		after( () => {
+			flows.getFlows.restore();
+			flows.insertStepIntoFlow.restore();
+			flows.removeStepFromFlow.restore();
 		} );
 
 		it( 'should return flow unmodified if not in main flow', () => {
@@ -106,21 +97,12 @@ describe( 'Signup Flows Configuration', () => {
 	} );
 
 	describe( 'insertStepIntoFlow', () => {
-		let flows;
-
-		useFakeDom();
-		useFilesystemMocks( __dirname );
-
 		const myFlow = {
 			name: 'test flow name',
 			steps: [ 'step1', 'step2', 'step3', 'step4' ]
 		};
 
 		Object.freeze( myFlow );
-
-		before( () => {
-			flows = require( 'signup/config/flows' );
-		} );
 
 		it( 'should return flow unmodified if afterStep is not found', () => {
 			const result = flows.insertStepIntoFlow( 'mystep', myFlow, 'test-step' );

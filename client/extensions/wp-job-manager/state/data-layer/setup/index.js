@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,14 +10,24 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import { createPagesError, nextStep } from '../../setup/actions';
-import { WP_JOB_MANAGER_CREATE_PAGES } from '../../action-types';
+import {
+	createPagesError,
+	fetchSetupStatusError as fetchStatusError,
+	nextStep,
+	updateSetupStatus as updateStatus,
+} from '../../setup/actions';
+import {
+	WP_JOB_MANAGER_CREATE_PAGES,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+} from '../../action-types';
 
 let errorCount;
 let successCount;
 let totalPages;
 const createPagesNotice = 'wpjm-create-pages';
 
+/* Page Creation */
 export const createPages = ( { dispatch }, action ) => {
 	const { siteId, titles } = action;
 
@@ -73,8 +84,43 @@ export const handleFailure = ( { dispatch }, { siteId } ) => {
 	announceFailure( dispatch, siteId );
 };
 
+/* Setup Status */
+export const fetchSetupStatus = ( { dispatch }, action ) => {
+	const { siteId } = action;
+
+	dispatch( http( {
+		method: 'GET',
+		path: `/jetpack-blogs/${ siteId }/rest-api/`,
+		query: {
+			path: '/wpjm/v1/status/run_page_setup',
+		},
+	}, action ) );
+};
+
+export const updateSetupStatus = ( { dispatch }, { siteId }, { data } ) => dispatch( updateStatus( siteId, data ) );
+
+export const fetchSetupStatusError = ( { dispatch }, { siteId } ) => dispatch( fetchStatusError( siteId ) );
+
+export const saveSetupStatus = ( { dispatch }, action ) => {
+	const { setupStatus, siteId } = action;
+
+	dispatch( http( {
+		method: 'POST',
+		path: `/jetpack-blogs/${ siteId }/rest-api/`,
+		query: {
+			body: JSON.stringify( setupStatus ),
+			json: true,
+			path: '/wpjm/v1/status/run_page_setup',
+		},
+	}, action ) );
+};
+
 const dispatchCreatePagesRequest = dispatchRequest( createPages, handleSuccess, handleFailure );
+const dispatchFetchSetupStatusRequest = dispatchRequest( fetchSetupStatus, updateSetupStatus, fetchSetupStatusError );
+const dispatchSaveSetupStatusRequest = dispatchRequest( saveSetupStatus, noop, noop );
 
 export default {
 	[ WP_JOB_MANAGER_CREATE_PAGES ]: [ dispatchCreatePagesRequest ],
+	[ WP_JOB_MANAGER_FETCH_SETUP_STATUS ]: [ dispatchFetchSetupStatusRequest ],
+	[ WP_JOB_MANAGER_SAVE_SETUP_STATUS ]: [ dispatchSaveSetupStatusRequest ],
 };

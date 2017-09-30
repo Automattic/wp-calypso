@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit } from 'lodash';
+import { keyBy, omit, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import { getSerializedReviewsQuery } from './utils';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEWS_REQUEST,
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -46,6 +47,17 @@ export function items( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
 		const reviews = keyBy( action.reviews, 'id' );
 		return Object.assign( {}, state, reviews );
+	}
+
+	if ( WOOCOMMERCE_REVIEW_STATUS_CHANGE === action.type && action.newStatus ) {
+		const itemToUpdate = {
+			...state[ action.reviewId ],
+			status: action.newStatus,
+		};
+		return {
+			...state,
+			[ action.reviewId ]: itemToUpdate,
+		};
 	}
 
 	return state;
@@ -96,6 +108,24 @@ export function total( state = 0, action ) {
 		const query = getSerializedReviewsQuery( omit( action.query, 'page' ) );
 		return Object.assign( {}, state, { [ query ]: action.total } );
 	}
+
+	// Updates total numbers of reviews for statuses without requiring another API query/fetch
+	// Only updates totals which we have previously fetched.
+	if ( WOOCOMMERCE_REVIEW_STATUS_CHANGE === action.type ) {
+		const updatedState = {};
+		const newStatusQuery = getSerializedReviewsQuery( { status: action.newStatus } );
+		if ( isNumber( state[ newStatusQuery ] ) ) {
+			updatedState[ newStatusQuery ] = state[ newStatusQuery ] + 1;
+		}
+
+		const currentStatusQuery = getSerializedReviewsQuery( { status: action.currentStatus } );
+		if ( isNumber( state[ currentStatusQuery ] ) ) {
+			updatedState[ currentStatusQuery ] = state[ currentStatusQuery ] - 1;
+		}
+
+		return Object.assign( {}, state, updatedState );
+	}
+
 	return state;
 }
 

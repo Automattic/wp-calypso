@@ -3,6 +3,7 @@
 
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-create/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
 	@import 'app/order/order-details/style';
@@ -14,11 +15,11 @@
 	@import 'app/settings/payments/stripe/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
+	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
-	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -81,6 +82,13 @@
 		border: 1px solid lighten( $gray, 20% );
 	}
 
+	@include breakpoint( ">660px" ) {
+		&.store-stats {
+			.stats-navigation .section-nav {
+				margin-top: 0;
+			}
+		}
+	}
 }
 
 .is-section-woocommerce {
@@ -184,36 +192,17 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 4px;
+				margin-top: 0;
 				background: transparent;
 				border: none;
+				padding-top: 11px;
+				padding-bottom: 11px;
+			}
+
+			.gridicons-chevron-left {
+				margin-left: 11px;
+				margin-right: 11px;
 			}
 		}
 	}
-
-	li {
-
-		&.has-selected-child a {
-			font-weight: bold;
-		}
-
-		&.has-selected-child svg {
-			fill: $gray-text-min;
-		}
-
-		&.is-child-item {
-			a {
-				font-size: 12px;
-				padding: 8px 16px 8px 55px;
-			}
-
-			svg {
-				display: none;
-			}
-		}
-	}
-}
-
-.settings-tax.is-child-item {
-	border-bottom: 1px solid lighten( $gray, 20% );
 }

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
 /**
@@ -10,30 +11,28 @@ import { noop } from 'lodash';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 
-const VerticalNavItem = React.createClass( {
-	propTypes: {
-		external: React.PropTypes.bool,
-		isPlaceholder: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		path: React.PropTypes.string
-	},
+class VerticalNavItem extends Component {
+	static propTypes = {
+		external: PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		onClick: PropTypes.func,
+		path: PropTypes.string
+	};
 
-	getDefaultProps() {
-		return {
-			external: false,
-			isPlaceholder: false,
-			onClick: noop
-		};
-	},
+	static defaultProps = {
+		external: false,
+		isPlaceholder: false,
+		onClick: noop
+	};
 
-	placeholder() {
+	placeholder = () => {
 		return (
 			<CompactCard className="vertical-nav-item is-placeholder">
 				<span></span>
 				<span></span>
 			</CompactCard>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.isPlaceholder ) {
@@ -51,15 +50,15 @@ const VerticalNavItem = React.createClass( {
 				</CompactCard>
 			</a>
 		);
-	},
+	}
 
-	getIcon() {
+	getIcon = () => {
 		if ( this.props.external ) {
 			return <Gridicon icon="external" />;
 		}
 
 		return <Gridicon icon="chevron-right" />;
-	}
-} );
+	};
+}
 
 export default VerticalNavItem;

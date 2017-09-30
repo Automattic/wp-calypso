@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, omit } from 'lodash';
+import { get, omit, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +17,8 @@ import { getSerializedReviewsQuery } from './utils';
  */
 export const areReviewsLoaded = ( state, query, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedReviewsQuery( query );
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'isQueryLoading', serializedQuery ] );
-	// Strict check because it could also be undefined.
-	return ( false === isLoading );
+	const reviews = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ], false );
+	return ( isArray( reviews ) );
 };
 
 /**

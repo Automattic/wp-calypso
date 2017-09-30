@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,6 @@ import { expect } from 'chai';
 import FormRange from '../';
 
 describe( 'index', function() {
-	require( 'test/helpers/use-fake-dom' )();
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );

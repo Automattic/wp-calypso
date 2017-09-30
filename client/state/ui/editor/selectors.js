@@ -9,12 +9,13 @@ import { get } from 'lodash';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import { getActionLog } from 'state/ui/action-log/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
  *
- * @param  {Object}  state Global state tree
- * @return {?Number}       Current editor post ID
+ * @param  {Object} state Global state tree
+ * @return {?Number}      Current editor post ID
  */
 export function getEditorPostId( state ) {
 	return state.ui.editor.postId;
@@ -33,10 +34,11 @@ export function isEditorNewPost( state ) {
 /**
  * Returns the editor URL for duplicating a given site ID, post ID pair.
  *
- * @param  {Object}  state Global state tree
+ * @param  {Object} state       Global state tree
  * @param  {Number} siteId      Site ID
  * @param  {Number} postId      Post ID
  * @param  {String} type        Post type
+ * @return {String}             Editor URL path
  */
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
 	const editorNewPostPath = getEditorNewPostPath( state, siteId, type );
@@ -92,10 +94,22 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 /**
  * Returns whether the confirmation sidebar is enabled for the given siteId
  *
- * @param  {Object}  state Global state tree
- * @param  {Number}  siteId      Site ID
- * @return {Boolean}             Whether or not the sidebar is enabled
+ * @param  {Object}  state     Global state tree
+ * @param  {Number}  siteId    Site ID
+ * @return {Boolean}           Whether or not the sidebar is enabled
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
+}
+
+/**
+ * Returns whether the Editor is the only route that exists in the history.
+ *
+ * @param  {Object}  state     Global state tree
+ * @return {Boolean}           Whether or not Editor is the only route in the history
+ */
+export function isEditorOnlyRouteInHistory( state ) {
+	const routeSets = getActionLog( state ).filter( entry => 'ROUTE_SET' === entry.type );
+
+	return 1 === routeSets.length && !! ( get( routeSets[ 0 ], 'path', '' ).match( /^\/(post|page|edit)\// ) );
 }

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, memoize, transform } from 'lodash';
@@ -18,8 +20,6 @@ import { BlogImage, PageImage, GridImage } from '../design-type-with-store/type-
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
-
-import { getThemeForDesignType } from 'signup/utils';
 
 export class DesignTypeStep extends Component {
 	static propTypes = {
@@ -120,13 +120,11 @@ export class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
-		const themeSlugWithRepo = getThemeForDesignType( designType );
-
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType, themeSlugWithRepo } );
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
 	}
 }

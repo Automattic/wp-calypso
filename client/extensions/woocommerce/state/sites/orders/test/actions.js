@@ -10,7 +10,6 @@ import { omit } from 'lodash';
  */
 import { fetchOrder, fetchOrders, updateOrder } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -29,7 +28,6 @@ describe( 'actions', () => {
 	describe( '#fetchOrders()', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -118,7 +116,6 @@ describe( 'actions', () => {
 	describe( '#fetchOrder()', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -206,7 +203,6 @@ describe( 'actions', () => {
 			status: 'completed',
 		};
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

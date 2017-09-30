@@ -19,6 +19,7 @@ import reducer from 'woocommerce/state/sites/reducer';
 import {
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEWS_RECEIVE,
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 import reviews from './fixtures/reviews';
 import review from './fixtures/review';
@@ -168,6 +169,7 @@ describe( 'reducer', () => {
 			const newState = items( originalState, action );
 			expect( newState ).to.eql( { ...originalState, 222: review } );
 		} );
+
 		it( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_REVIEWS_RECEIVE,
@@ -180,6 +182,21 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( keyBy( reviews, 'id' ) );
 			const newState = items( originalState, action );
 			expect( newState ).to.eql( originalState );
+		} );
+
+		it( 'should update the status of an item when a change status action occurs', () => {
+			const action = {
+				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+				siteId: 123,
+				productId: 544,
+				reviewId: 105,
+				currentStatus: 'pending',
+				newStatus: 'approved',
+			};
+			const originalState = deepFreeze( keyBy( reviews, 'id' ) );
+			const newState = items( originalState, action );
+			expect( originalState[ 105 ].status ).to.eql( 'pending' );
+			expect( newState[ 105 ].status ).to.eql( 'approved' );
 		} );
 	} );
 
@@ -265,6 +282,34 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( { '{}': 3 } );
 			const newState = total( originalState, action );
 			expect( newState ).to.eql( { '{}': 3 } );
+		} );
+
+		it( 'should update the number of reviews for a status query when a status changes', () => {
+			const action = {
+				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+				siteId: 123,
+				productId: 5,
+				reviewId: 6,
+				currentStatus: 'pending',
+				newStatus: 'approved',
+			};
+			const originalState = deepFreeze( { '{}': 3, '{"status":"approved"}': 1 } );
+			const newState = total( originalState, action );
+			expect( newState ).to.eql( { '{}': 2, '{"status":"approved"}': 2 } );
+		} );
+
+		it( 'should not update the number of reviews for a status query when a previous total is absent', () => {
+			const action = {
+				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+				siteId: 123,
+				productId: 5,
+				reviewId: 6,
+				currentStatus: 'approved',
+				newStatus: 'trash',
+			};
+			const originalState = deepFreeze( { '{"status":"approved"}': 1 } );
+			const newState = total( originalState, action );
+			expect( newState ).to.eql( { '{"status":"approved"}': 0 } );
 		} );
 
 		it( 'should do nothing on a failure', () => {

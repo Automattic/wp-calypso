@@ -1,65 +1,76 @@
+/** @format */
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { compact } from 'lodash';
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var allSites = require( 'lib/sites-list' )(),
-	PluginSite = require( 'my-sites/plugins/plugin-site/plugin-site' ),
-	SectionHeader = require( 'components/section-header' ),
-	PluginsStore = require( 'lib/plugins/store' );
+import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'state/selectors';
+import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
+import PluginsStore from 'lib/plugins/store';
+import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+export class PluginSiteList extends Component {
+	static propTypes = {
+		notices: PropTypes.object,
+		plugin: PropTypes.object,
+		sites: PropTypes.array,
+		sitesWithSecondarySites: PropTypes.array,
+		title: PropTypes.string,
+	};
 
-	displayName: 'PluginSiteList',
-
-	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		title: React.PropTypes.string
-	},
-
-	getSecondaryPluginSites: function( site ) {
-		let secondarySites = allSites.getNetworkSites( site );
-		let secondaryPluginSites = site.plugin
+	getSecondaryPluginSites( site, secondarySites ) {
+		const secondaryPluginSites = site.plugin
 			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
 			: secondarySites;
 		return compact( secondaryPluginSites );
-	},
+	}
 
-	renderPluginSite: function( site ) {
-		return <PluginSite
+	renderPluginSite( { site, secondarySites } ) {
+		return (
+			<PluginSite
 				key={ 'pluginSite' + site.ID }
 				site={ site }
-				secondarySites={ this.getSecondaryPluginSites( site ) }
+				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices } />;
-	},
+				notices={ this.props.notices }
+			/>
+		);
+	}
 
-	render: function() {
+	render() {
 		if ( ! this.props.sites || this.props.sites.length === 0 ) {
 			return null;
 		}
 		const classes = classNames( 'plugin-site-list', this.props.className ),
-			pluginSites = this.props.sites.map( function( site ) {
-				if ( allSites.isConnectedSecondaryNetworkSite( site ) ) {
-					return;
-				}
-
-				return this.renderPluginSite( site );
-			}, this );
+			pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<SectionHeader label={ this.props.title } />
 				{ pluginSites }
 			</div>
 		);
 	}
-} );
+}
+
+// TODO: make this memoized after sites-list is removed and `sites` comes from Redux
+function getSitesWithSecondarySites( state, sites ) {
+	return sites
+		.filter( site => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
+		.map( site => ( {
+			site,
+			secondarySites: getNetworkSites( state, site.ID ),
+		} ) );
+}
+
+export default connect( ( state, props ) => ( {
+	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
+} ) )( PluginSiteList );

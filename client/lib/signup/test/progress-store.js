@@ -1,3 +1,7 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+
 /**
  * External dependencies
  */
@@ -9,25 +13,12 @@ import { defer, find, last, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import Dispatcher from 'dispatcher';
 
 describe( 'progress-store', function() {
-	let SignupProgressStore, SignupActions, Dispatcher;
-
-	useFakeDom();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+	let SignupProgressStore, SignupActions;
 
 	before( () => {
-		Dispatcher = require( 'dispatcher' );
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'dispatcher', Dispatcher );
-			mockery.registerMock( './dependency-store', {
-				dispatchToken: Dispatcher.register( ()=> {} )
-			} );
-		} );
-
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
 	} );
@@ -47,12 +38,14 @@ describe( 'progress-store', function() {
 	} );
 
 	describe( 'timestamps', function() {
+		let clock;
+
 		beforeEach( () => {
-			this.clock = sinon.useFakeTimers( 12345 );
+			clock = sinon.useFakeTimers( 12345 );
 		} );
 
 		afterEach( () => {
-			this.clock.restore();
+			clock.restore();
 		} );
 
 		it( 'should be updated at each step', function() {

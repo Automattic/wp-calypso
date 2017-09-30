@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
@@ -104,7 +105,7 @@ class PostShare extends Component {
 	};
 
 	state = {
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
+		message: PostMetadata.publicizeMessage( this.props.post ) || '',
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
 		showAccountTooltip: false,
@@ -226,7 +227,6 @@ class PostShare extends Component {
 			<PublicizeMessage
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
-				preview={ this.props.post.title }
 				requireCount={ requireCount }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength } />

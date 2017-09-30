@@ -7,10 +7,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { switchCSS } from 'lib/i18n-utils/switch-locale';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getLanguage } from 'lib/i18n-utils';
 import { setSection as setSectionAction } from 'state/ui/actions';
+import { getSection } from 'state/ui/selectors';
+import { setLocale } from 'state/ui/language/actions';
+import isRTL from 'state/selectors/is-rtl';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -39,21 +41,34 @@ export function setSection( section ) {
 	return ( context, next = noop ) => {
 		context.store.dispatch( setSectionAction( section ) );
 
-		next();
+		loadSectionCSS( context, next );
 	};
 }
 
-export function setUpLocale( context, next ) {
-	const { lang } = context.params;
-	const language = getLanguage( lang );
+export function loadSectionCSS( context, next ) {
+	const section = getSection( context.store.getState() );
 
-	if ( language ) {
-		context.lang = lang;
-		context.isRTL = Boolean( language.rtl );
-	} else {
-		context.lang = config( 'i18n_default_locale_slug' );
-		context.isRTL = Boolean( config( 'rtl' ) );
+	if ( section.cssUrls && typeof document !== 'undefined' ) {
+		const cssUrl = isRTL( context.store.getState() ) ? section.cssUrls.rtl : section.cssUrls.ltr;
+		switchCSS( 'section-css', cssUrl, next );
+		return;
 	}
 
 	next();
+}
+
+export function setUpLocale( context, next ) {
+	const currentUser = getCurrentUser( context.store.getState() );
+
+	if ( context.params.lang ) {
+		context.lang = context.params.lang;
+	} else if ( currentUser ) {
+		context.lang = currentUser.localeSlug;
+	}
+
+	if ( context.lang ) {
+		context.store.dispatch( setLocale( context.lang ) );
+	}
+
+	loadSectionCSS( context, next );
 }

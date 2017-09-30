@@ -94,14 +94,11 @@ const PluginSiteJetpack = React.createClass( {
 						plugin={ this.props.site.plugin }
 						site={ this.props.site }
 						notices={ this.props.notices } /> }
-
-					{ showAutoManagedMessage &&
+					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
-						{ this.props.translate( '%(pluginName)s is automatically managed on this site',
-							{ args: { pluginName: this.props.plugin.name } } )
-						}
+							{ this.props.translate( 'Auto-managed on this site' ) }
 						</div>
-					}
+					) }
 
 				</div>
 			</FoldableCard>
@@ -123,7 +120,11 @@ const PluginSiteJetpack = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.site.canManage() ) {
+		if (
+			! ( typeof this.props.site.canManage === 'function'
+				? this.props.site.canManage()
+				: this.props.site.canManage )
+		) {
 			return this.renderManageWarning();
 		}
 

@@ -81,16 +81,20 @@ function getRequires( sections ) {
 
 function splitTemplate( path, section ) {
 	var pathRegex = getPathRegex( path ),
+		sectionString = JSON.stringify( section ),
+		sectionNameString = JSON.stringify( section.name ),
+		moduleString = JSON.stringify( section.module ),
+		envIdString = JSON.stringify( section.envId ),
 		result;
 
 	result = [
 		'page( ' + pathRegex + ', function( context, next ) {',
-		'	var envId = ' + JSON.stringify( section.envId ) + ';',
+		'	var envId = ' + envIdString + ';',
 		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
 		'		return next();',
 		'	}',
-		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
-		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
+		'	if ( _loadedSections[ ' + moduleString + ' ] ) {',
+		'		controller.setSection( ' + sectionString + ' )( context );',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		return next();',
 		'	}',
@@ -100,24 +104,24 @@ function splitTemplate( path, section ) {
 		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
 		'	require.ensure([], function( require ) {',
 		'		context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
-		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
-		'		if ( ! _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
-		'			require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-		'			_loadedSections[ ' + JSON.stringify( section.module ) + ' ] = true;',
+		'		controller.setSection( ' + sectionString + ' )( context );',
+		'		if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
+		'			require( ' + moduleString + ' )( controller.clientRouter );',
+		'			_loadedSections[ ' + moduleString + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		next();',
 		'	}, function onError( error ) {',
 		'		if ( ! LoadingError.isRetry() ) {',
-		'			LoadingError.retry( ' + JSON.stringify( section.name ) + ' );',
+		'			LoadingError.retry( ' + sectionNameString + ' );',
 		'		} else {',
 		'			console.error(error);',
 		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
-		'			LoadingError.show( ' + JSON.stringify( section.name ) + ' );',
+		'			LoadingError.show( ' + sectionNameString + ' );',
 		'		}',
 		'		return;',
 		'	},',
-		JSON.stringify( section.name ) + ' );',
+		sectionNameString + ' );',
 		'} );\n'
 	];
 
@@ -165,10 +169,14 @@ function singleEnsure( chunkName ) {
 	return result.join( '\n' );
 }
 
-module.exports = function( content ) {
-	var sections;
+function sectionsWithCSSUrls( sections ) {
+	return sections.map( section => Object.assign( {}, section, section.css && {
+		cssUrls: utils.getCssUrls( section.css )
+	} ) );
+}
 
-	sections = require( this.resourcePath );
+module.exports = function( content ) {
+	const sections = require( this.resourcePath );
 
 	if ( ! Array.isArray( sections ) ) {
 		this.emitError( 'Chunks module is not an array' );
@@ -177,5 +185,5 @@ module.exports = function( content ) {
 
 	this.addDependency( 'page' );
 
-	return getSectionsModule( sections );
+	return getSectionsModule( sectionsWithCSSUrls( sections ) );
 };

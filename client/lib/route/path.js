@@ -63,6 +63,29 @@ function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
+function sectionifyWithRoutes( path, routes ) {
+	const routeParams = {};
+	if ( ! routes || ! Array.isArray( routes ) ) {
+		return {
+			routePath: sectionify( path, routes ),
+			routeParams
+		};
+	}
+
+	let routePath = path.split( '?' )[ 0 ];
+	for ( const route of routes ) {
+		if ( route.match( routePath, routeParams ) ) {
+			routePath = route.path;
+			break;
+		}
+	}
+
+	return {
+		routePath: untrailingslashit( routePath ),
+		routeParams
+	};
+}
+
 function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
 
@@ -144,6 +167,7 @@ module.exports = {
 	getStatsDefaultSitePage: getStatsDefaultSitePage,
 	getStatsPathForTab: getStatsPathForTab,
 	sectionify: sectionify,
+	sectionifyWithRoutes: sectionifyWithRoutes,
 	mapPostStatus: mapPostStatus,
 	externalRedirect: externalRedirect
 };

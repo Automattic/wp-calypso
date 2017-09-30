@@ -1,16 +1,19 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/impure-lodash', () => ( {
+	uniqueId: () => 'media-13',
+} ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { map } from 'lodash';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
 import JetpackSite from 'lib/site/jetpack';
-import useMockery from 'test/helpers/use-mockery';
+import MediaUtils from '../utils';
 
 const UNIQUEID = 'media-13';
 const DUMMY_FILENAME = 'test.jpg';
@@ -48,24 +51,6 @@ const EXPECTED_FILE_OBJECT = {
 };
 
 describe( 'MediaUtils', function() {
-	let MediaUtils;
-
-	useFakeDom();
-	useMockery();
-
-	before( () => {
-		mockery.registerMock( 'lib/impure-lodash', {
-			uniqueId: () => UNIQUEID,
-		} );
-
-		MediaUtils = require( '../utils' );
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
 	describe( '#url()', function() {
 		var media;
 
@@ -280,7 +265,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are not set', function() {
+		it( 'should return the item with the greater ID if the dates are not set', function() {
 			items = items.map( function( item ) {
 				item.date = null;
 				return item;
@@ -289,7 +274,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are equal', function() {
+		it( 'should return the item with the greater ID if the dates are equal', function() {
 			items = items.map( function( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;

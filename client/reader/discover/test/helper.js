@@ -1,4 +1,12 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+jest.mock( 'config', () => {
+	return () => require( './fixtures' ).discoverSiteId;
+} );
+jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
+
 /**
  * External dependencies
  */
@@ -8,25 +16,11 @@ import { get, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 import * as fixtures from './fixtures';
+import * as helper from '../helper';
 
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;
-	let helper;
-	useMockery( mockery => {
-		mockery.registerMock( 'config', () => fixtures.discoverSiteId );
-		mockery.registerMock( 'lib/user/utils', { getLocaleSlug: () => 'en' } );
-	} );
-
-	useFakeDom();
-
-	before( () => {
-		helper = require( '../helper' );
-	} );
 
 	describe( 'isDiscoverPost', () => {
 		it( 'returns true if discover metadata is present', () => {

@@ -1,4 +1,6 @@
+/** @jest-environment jsdom */
 /* eslint-disable no-restricted-modules */
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies
@@ -9,7 +11,6 @@ import { match } from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { SITES_UPDATE, SITE_RECEIVE } from 'state/action-types';
 import sitesSync from '../enhancer';
@@ -32,8 +33,6 @@ describe( 'sitesSync()', () => {
 		sites: { items: {} },
 		siteSettings: { items: {} },
 	};
-
-	useFakeDom();
 
 	useSandbox( ( sandbox ) => {
 		Site = require( 'lib/site' );

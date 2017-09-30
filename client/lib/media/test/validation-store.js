@@ -1,15 +1,18 @@
+jest.mock( 'lib/sites-list', () => () => ( {
+	getSite: () => ( {
+		options: {
+			allowed_file_types: [ 'gif', 'pdf', 'avi' ],
+			max_upload_size: 1024
+		}
+	} )
+} ) );
+
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { assign } from 'lodash';
-import mockery from 'mockery';
+import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -21,8 +24,6 @@ const ERROR_GLOBAL_ITEM_ID = 0;
 describe( 'MediaValidationStore', function() {
 	let sandbox, MediaValidationStore, handler, Dispatcher, MediaValidationErrors;
 
-	useMockery();
-
 	before( function() {
 		Dispatcher = require( 'dispatcher' );
 		MediaValidationErrors = require( '../constants' ).ValidationErrors;
@@ -30,21 +31,6 @@ describe( 'MediaValidationStore', function() {
 		// Sinon
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
-
-		// Mockery
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
-		mockery.registerMock( 'lib/sites-list', function() {
-			return {
-				getSite: function() {
-					return {
-						options: {
-							allowed_file_types: [ 'gif', 'pdf', 'avi' ],
-							max_upload_size: 1024
-						}
-					};
-				}
-			};
-		} );
 
 		// Load store
 		MediaValidationStore = require( '../validation-store' );

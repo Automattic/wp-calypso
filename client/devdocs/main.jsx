@@ -10,6 +10,7 @@ import { isFunction } from 'lodash';
  * Internal dependencies
  */
 import DocService from './service';
+import DocumentHead from 'components/data/document-head';
 import Card from 'components/card';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
@@ -159,6 +160,8 @@ export default class Devdocs extends React.Component {
 	render() {
 		return (
 			<Main className="devdocs">
+				<DocumentHead title="Calypso Docs" />
+
 				<SearchCard
 					autoFocus
 					placeholder="Search documentation…"

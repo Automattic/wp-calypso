@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 /**
  * External dependencies
  */
@@ -9,7 +10,6 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import CloseOnEscape from '../';
 
 const simulateEscapeKeydown = () => (
@@ -25,8 +25,6 @@ describe( 'CloseOnEscape', () => {
 	} );
 
 	describe( 'escape keydown event', () => {
-		useFakeDom();
-
 		it( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
 			const onEscapeSpy = spy();
 

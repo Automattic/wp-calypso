@@ -1,5 +1,11 @@
 .post-schedule {
 	position: relative;
+
+	&.is-future-date {
+		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
+			background-color: $orange-jazzy;
+		}
+	}
 }
 
 .post-schedule__header {

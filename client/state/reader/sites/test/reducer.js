@@ -132,8 +132,8 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.have.a
-				.property( 'description' )
+			)
+				.to.have.a.property( 'description' )
 				.that.equals( 'Apples&Pears' );
 		} );
 
@@ -264,7 +264,9 @@ describe( 'reducer', () => {
 				type: READER_SITE_REQUEST_SUCCESS,
 				payload: { ID: 1 },
 			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			expect( lastFetched( original, action ) )
+				.to.have.a.property( 1 )
+				.that.is.a( 'number' );
 		} );
 
 		it( 'should update the last fetched time on site update', () => {
@@ -273,7 +275,9 @@ describe( 'reducer', () => {
 				type: READER_SITE_UPDATE,
 				payload: [ { ID: 1 } ],
 			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			expect( lastFetched( original, action ) )
+				.to.have.a.property( 1 )
+				.that.is.a( 'number' );
 		} );
 	} );
 } );

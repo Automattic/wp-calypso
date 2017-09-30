@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
@@ -42,22 +43,22 @@ import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.shape( {
-			ID: React.PropTypes.number.isRequired,
-			site_ID: React.PropTypes.number.isRequired,
+		post: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			site_ID: PropTypes.number.isRequired,
 		} ).isRequired,
-		pageSize: React.PropTypes.number,
-		initialSize: React.PropTypes.number,
-		showCommentCount: React.PropTypes.bool,
-		startingCommentId: React.PropTypes.number,
-		commentCount: React.PropTypes.number,
-		maxDepth: React.PropTypes.number,
-		showNestingReplyArrow: React.PropTypes.bool,
+		pageSize: PropTypes.number,
+		initialSize: PropTypes.number,
+		showCommentCount: PropTypes.bool,
+		startingCommentId: PropTypes.number,
+		commentCount: PropTypes.number,
+		maxDepth: PropTypes.number,
+		showNestingReplyArrow: PropTypes.bool,
 
 		// connect()ed props:
-		commentsTree: React.PropTypes.object,
-		requestPostComments: React.PropTypes.func.isRequired,
-		requestComment: React.PropTypes.func.isRequired,
+		commentsTree: PropTypes.object,
+		requestPostComments: PropTypes.func.isRequired,
+		requestComment: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {

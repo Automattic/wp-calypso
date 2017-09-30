@@ -6,18 +6,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
+	endsWith,
 	noop,
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isDomainOnlySite } from 'state/selectors';
 
 const impressionEventName = 'calypso_upgrade_nudge_impression';
 const clickEventName = 'calypso_upgrade_nudge_cta_click';
@@ -37,11 +39,15 @@ export class DomainToPaidPlanNotice extends Component {
 	};
 
 	render() {
-		const { eligible, site, translate } = this.props;
+		const { eligible, isConflicting, isDomainOnly, site, translate } = this.props;
 
-		if ( ! site || ! eligible ) {
+		if ( ! site || ! eligible || isConflicting ) {
 			return null;
 		}
+
+		const actionLink = isDomainOnly
+			? `/start/site-selected/?siteSlug=${ encodeURIComponent( site.slug ) }&siteId=${ encodeURIComponent( site.ID ) }`
+			: `/plans/my-plan/${ site.slug }`;
 
 		return (
 			<Notice
@@ -51,7 +57,7 @@ export class DomainToPaidPlanNotice extends Component {
 				showDismiss={ false }
 				text={ translate( 'Upgrade your site and save.' ) }
 			>
-				<NoticeAction onClick={ this.onClick } href={ `/plans/my-plan/${ site.slug }` }>
+				<NoticeAction onClick={ this.onClick } href={ actionLink }>
 					{ translate( 'Go' ) }
 					<TrackComponentView
 						eventName={ impressionEventName }
@@ -64,9 +70,14 @@ export class DomainToPaidPlanNotice extends Component {
 }
 
 const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+	const isDomainOnly = isDomainOnlySite( state, site.ID );
+
 	return {
-		site: getSelectedSite( state ),
-		eligible: isEligibleForDomainToPaidPlanUpsell( state, getSelectedSiteId( state ) ),
+		eligible: isEligibleForDomainToPaidPlanUpsell( state, site.ID ),
+		isConflicting: isDomainOnly && endsWith( site.domain, '.wordpress.com' ),
+		isDomainOnly,
+		site,
 	};
 };
 const mapDispatchToProps = { recordTracksEvent };

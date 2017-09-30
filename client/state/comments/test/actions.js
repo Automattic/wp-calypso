@@ -33,7 +33,10 @@ const POST_ID = 287;
 describe( 'actions', () => {
 	describe( '#requestPostComments()', () => {
 		useSandbox( sandbox => {
-			sandbox.stub( config, 'isEnabled' ).withArgs( 'comments/filters-in-posts' ).returns( true );
+			sandbox
+				.stub( config, 'isEnabled' )
+				.withArgs( 'comments/filters-in-posts' )
+				.returns( true );
 		} );
 
 		it( 'should return a comment request action', function() {

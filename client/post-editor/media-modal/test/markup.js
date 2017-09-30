@@ -1,29 +1,21 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+
 /**
  * External dependencies
  */
 import ReactDomServer from 'react-dom/server';
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'markup', function() {
 	let sandbox, markup, site;
 
-	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
 
 	before( () => {
 		markup = require( '../markup' );

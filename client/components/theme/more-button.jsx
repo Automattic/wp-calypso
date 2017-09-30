@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isFunction, map } from 'lodash';
 
@@ -15,7 +16,7 @@ import { isOutsideCalypso } from 'lib/url';
 /**
  * Component
  */
-class ThemeMoreButton extends React.Component {
+class ThemeMoreButton extends Component {
 
 	constructor( props ) {
 		super( props );
@@ -111,22 +112,22 @@ class ThemeMoreButton extends React.Component {
 
 ThemeMoreButton.propTypes = {
 	// See Theme component propTypes
-	theme: React.PropTypes.object,
+	theme: PropTypes.object,
 	// Index of theme in results list
-	index: React.PropTypes.number,
+	index: PropTypes.number,
 	// More elaborate onClick action, used for tracking.
 	// Made to not interfere with DOM onClick
-	onMoreButtonClick: React.PropTypes.func,
+	onMoreButtonClick: PropTypes.func,
 	// Options to populate the popover menu with
-	options: React.PropTypes.objectOf(
-		React.PropTypes.shape( {
-			label: React.PropTypes.string,
-			header: React.PropTypes.string,
-			action: React.PropTypes.func,
-			getUrl: React.PropTypes.func
+	options: PropTypes.objectOf(
+		PropTypes.shape( {
+			label: PropTypes.string,
+			header: PropTypes.string,
+			action: PropTypes.func,
+			getUrl: PropTypes.func
 		} )
 	).isRequired,
-	active: React.PropTypes.bool
+	active: PropTypes.bool
 };
 
 export default ThemeMoreButton;

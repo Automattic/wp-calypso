@@ -1,15 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { noop, identity } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { noop, identity } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 
@@ -58,11 +59,11 @@ export class ExpandableSidebarAddForm extends Component {
 		} );
 		return (
 			<div className={ classes }>
-				{ this.props.hideAddButton
-					? null
-					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>
-							{ translate( 'Add' ) }
-						</Button> }
+				{ this.props.hideAddButton ? null : (
+					<Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>
+						{ translate( 'Add' ) }
+					</Button>
+				) }
 				<div className="sidebar__menu-add">
 					<input
 						aria-label={ addLabel }

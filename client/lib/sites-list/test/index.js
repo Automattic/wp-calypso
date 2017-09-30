@@ -1,37 +1,25 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import { cloneDeep, forEach, noop } from 'lodash';
+import { cloneDeep, forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { original, updated } from './fixtures/data';
+import Site from 'lib/site';
+import SitesList from '../list';
 
 describe( 'SitesList', () => {
-	let SitesList, Site, data;
 	let sitesList, originalData, initializedSites;
 
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
-	useFakeDom();
-
-	before( () => {
-		Site = require( 'lib/site' );
-		SitesList = require( '../list' );
-		data = require( './fixtures/data' );
-	} );
-
 	beforeEach( () => {
-		originalData = cloneDeep( data.original );
+		originalData = cloneDeep( original );
 		sitesList = SitesList();
 		sitesList.initialize( originalData );
 		initializedSites = sitesList.get();
@@ -68,7 +56,7 @@ describe( 'SitesList', () => {
 		let updatedData, originalList;
 
 		before( () => {
-			updatedData = cloneDeep( data.updated );
+			updatedData = cloneDeep( updated );
 			originalList = sitesList.initialize( originalData );
 		} );
 
@@ -110,7 +98,7 @@ describe( 'SitesList', () => {
 			const siteId = originalData[ 0 ].ID;
 			const changeCallback = sinon.spy();
 
-			sitesList.initialize( cloneDeep( data.original ) );
+			sitesList.initialize( cloneDeep( original ) );
 			sitesList.once( 'change', changeCallback );
 
 			const site = sitesList.getSite( siteId );

@@ -58,9 +58,7 @@ class SuccessBanner extends PureComponent {
 					{ translate( 'View site' ) }
 				</Button>
 				{ '  ' }
-				<Button onClick={ this.handleDismiss }>
-					{ translate( 'Thanks, got it!' ) }
-				</Button>
+				<Button onClick={ this.handleDismiss }>{ translate( 'Thanks, got it!' ) }</Button>
 			</ActivityLogBanner>
 		);
 	}

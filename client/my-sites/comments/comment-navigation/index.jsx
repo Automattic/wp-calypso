@@ -12,13 +12,19 @@ import { get, includes, isUndefined, map } from 'lodash';
  */
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
+import ControlItem from 'components/segmented-control/item';
 import Count from 'components/count';
 import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
+import {
+	isJetpackMinimumVersion,
+	isJetpackSite
+} from 'state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
 import {
@@ -27,6 +33,10 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 import { getSiteComment } from 'state/selectors';
+import {
+	NEWEST_FIRST,
+	OLDEST_FIRST,
+} from '../constants';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -41,6 +51,7 @@ export class CommentNavigation extends Component {
 		isSelectedAll: false,
 		selectedCount: 0,
 		status: 'unapproved',
+		sortOrder: NEWEST_FIRST,
 	};
 
 	bulkDeletePermanently = () => {
@@ -48,13 +59,16 @@ export class CommentNavigation extends Component {
 		if ( isUndefined( window ) || window.confirm( translate( 'Delete these comments permanently?' ) ) ) {
 			setBulkStatus( 'delete' )();
 		}
-	}
+	};
 
 	changeFilter = status => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate } = this.props;
 		const navItems = {
+			all: {
+				label: translate( 'All' ),
+			},
 			unapproved: {
 				label: translate( 'Pending' ),
 			},
@@ -69,14 +83,8 @@ export class CommentNavigation extends Component {
 			},
 		};
 
-		if ( isEnabled( 'comments/management/all-list' ) ) {
-			navItems.all = {
-				label: translate( 'All' ),
-			};
-		}
-
 		return navItems;
-	}
+	};
 
 	getStatusPath = status => 'unapproved' !== status
 		? `/comments/${ status }/${ this.props.siteFragment }`
@@ -90,17 +98,20 @@ export class CommentNavigation extends Component {
 		}
 
 		return this.props.toggleSelectAll( this.props.visibleComments );
-	}
+	};
 
 	render() {
 		const {
 			doSearch,
 			hasSearch,
 			isBulkEdit,
+			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
 			selectedCount,
 			setBulkStatus,
+			setSortOrder,
+			sortOrder,
 			status: queryStatus,
 			toggleBulkEdit,
 			translate,
@@ -196,13 +207,34 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				{ isEnabled( 'manage/comments/bulk-actions' ) &&
-					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-						<Button compact onClick={ toggleBulkEdit }>
-							{ translate( 'Bulk Edit' ) }
-						</Button>
-					</CommentNavigationTab>
-				}
+				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+					{ isEnabled( 'comments/management/sorting' ) && isCommentsTreeSupported &&
+						<SegmentedControl compact className="comment-navigation__sort-buttons">
+							<ControlItem
+								onClick={ setSortOrder( NEWEST_FIRST ) }
+								selected={ sortOrder === NEWEST_FIRST }
+							>
+								{ translate(
+									'Newest',
+									{ comment: 'Chronological order for sorting the comments list.' }
+								) }
+							</ControlItem>
+							<ControlItem
+								onClick={ setSortOrder( OLDEST_FIRST ) }
+								selected={ sortOrder === OLDEST_FIRST }
+							>
+								{ translate(
+									'Oldest',
+									{ comment: 'Chronological order for sorting the comments list.' }
+								) }
+							</ControlItem>
+						</SegmentedControl>
+					}
+
+					<Button compact onClick={ toggleBulkEdit }>
+						{ translate( 'Bulk Edit' ) }
+					</Button>
+				</CommentNavigationTab>
 
 				{ hasSearch &&
 					<Search
@@ -230,7 +262,11 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 			};
 		}
 	} );
-	return { visibleComments };
+
+	return {
+		visibleComments,
+		isCommentsTreeSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+	};
 };
 
 const mapDispatchToProps = {

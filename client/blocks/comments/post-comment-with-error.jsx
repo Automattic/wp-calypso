@@ -1,6 +1,7 @@
-/***
+/**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /***
@@ -48,10 +49,10 @@ export default class PostCommentWithError extends React.Component {
 }
 
 PostCommentWithError.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	repliesList: React.PropTypes.object.isRequired,
-	commentsTree: React.PropTypes.object.isRequired,
-	onUpdateCommentText: React.PropTypes.func.isRequired,
-	commentId: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] )
+	post: PropTypes.object.isRequired,
+	repliesList: PropTypes.object.isRequired,
+	commentsTree: PropTypes.object.isRequired,
+	onUpdateCommentText: PropTypes.func.isRequired,
+	commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] )
 		.isRequired,
 };

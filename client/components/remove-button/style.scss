@@ -1,0 +1,25 @@
+.remove-button {
+	position: absolute;
+		top: 0;
+		/*rtl:ignore*/
+		right: 0;
+	width: 28px;
+	height: 28px;
+	/*rtl:ignore*/
+	transform: translate( 25%, -25% );
+	border: 1px solid lighten( $gray, 10% );
+	border-radius: 50%;
+	background-color: $gray-light;
+	cursor: pointer;
+}
+
+.remove-button .remove-button__icon.gridicon {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	color: lighten( $gray, 10% );
+}

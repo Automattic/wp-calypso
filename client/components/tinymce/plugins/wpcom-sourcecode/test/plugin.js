@@ -1,3 +1,5 @@
+jest.mock( 'tinymce/tinymce', () => ( {} ) );
+
 /**
  * External dependencies
  */
@@ -6,19 +8,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { wrapPre, unwrapPre } from '../plugin';
 
 describe( 'wpcom-sourcecode', () => {
-	let wrapPre, unwrapPre;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'tinymce/tinymce', {} );
-
-		const plugin = require( '../plugin' );
-		wrapPre = plugin.wrapPre;
-		unwrapPre = plugin.unwrapPre;
-	} );
-
 	describe( '#wrapPre()', () => {
 		it( 'should wrap a code shortcode', () => {
 			const wrapped = wrapPre( {

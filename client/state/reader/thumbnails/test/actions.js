@@ -17,7 +17,7 @@ import {
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
 import { receiveThumbnail, requestThumbnail } from '../actions';
-import sampleVimeoResponse from './sample-vimeo-response.js';
+import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -51,8 +51,12 @@ describe( 'actions', () => {
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
 		useNock( nock => {
-			nock( vimeoSuccessApiUrl ).get( '' ).reply( 200, deepFreeze( sampleVimeoResponse ) );
-			nock( vimeoFailureApiUrl ).get( '' ).reply( 500, deepFreeze( {} ) );
+			nock( vimeoSuccessApiUrl )
+				.get( '' )
+				.reply( 200, deepFreeze( sampleVimeoResponse ) );
+			nock( vimeoFailureApiUrl )
+				.get( '' )
+				.reply( 500, deepFreeze( {} ) );
 		} );
 
 		it( 'vimeo: should dispatch properly when receiving a valid response', () => {

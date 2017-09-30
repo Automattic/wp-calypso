@@ -86,7 +86,7 @@
 
 .plugins-browser-item .plugin-icon.is-placeholder,
 .plugins-browser-item .plugin-icon[style*='undefined'] {
-	&:before {
+	&::before {
 		width: 40px;
 		height: 40px;
 		font: normal 40px/40px Noticons;
@@ -97,11 +97,9 @@
 	margin-right: 0;
 }
 
-.plugins-browser-item  .rating {
-	padding-top: 10px;
+.plugins-browser-item .rating {
+	margin-top: 12px;
 	position: absolute;
-		bottom: 16px;
-		left: 16px;
 }
 
 .plugins-browser-item__installed {
@@ -111,12 +109,17 @@
 		bottom: 16px;
 		right: 16px;
 	color: $alert-green;
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: 500;
 	animation: appear .15s ease-in;
 
 	.gridicon {
 		margin-right: 3px;
 	}
+}
+
+.button.plugins-browser-item__upgrade-button {
+	position: absolute;
+		bottom: 16px;
+		right: 16px;
 }

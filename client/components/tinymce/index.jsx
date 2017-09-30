@@ -4,6 +4,7 @@
 import { assign, forEach } from 'lodash';
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
+	PropTypes = require( 'prop-types' ),
 	classnames = require( 'classnames' ),
 	autosize = require( 'autosize' ),
 	tinymce = require( 'tinymce/tinymce' );
@@ -151,9 +152,9 @@ mentionsPlugin();
 PLUGINS.push( 'wpcom/mentions' );
 
 const CONTENT_CSS = [
-	window.app.tinymceWpSkin,
+	window.app.staticUrls[ 'tinymce/skins/wordpress/wp-content.css' ],
 	'//s1.wp.com/wp-includes/css/dashicons.css',
-	window.app.tinymceEditorCss,
+	window.app.staticUrls[ 'editor.css' ],
 	'//fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
@@ -161,29 +162,31 @@ module.exports = React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
-		mode: React.PropTypes.string,
-		onActivate: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		onDeactivate: React.PropTypes.func,
-		onFocus: React.PropTypes.func,
-		onHide: React.PropTypes.func,
-		onInit: React.PropTypes.func,
-		onRedo: React.PropTypes.func,
-		onRemove: React.PropTypes.func,
-		onReset: React.PropTypes.func,
-		onShow: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		onUndo: React.PropTypes.func,
-		onSetContent: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		isNew: React.PropTypes.bool,
-		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func
+		isNew: PropTypes.bool,
+		mode: PropTypes.string,
+		tabIndex: PropTypes.number,
+		onActivate: PropTypes.func,
+		onBlur: PropTypes.func,
+		onChange: PropTypes.func,
+		onDeactivate: PropTypes.func,
+		onFocus: PropTypes.func,
+		onHide: PropTypes.func,
+		onInit: PropTypes.func,
+		onInput: PropTypes.func,
+		onKeyUp: PropTypes.func,
+		onMouseUp: PropTypes.func,
+		onRedo: PropTypes.func,
+		onRemove: PropTypes.func,
+		onReset: PropTypes.func,
+		onShow: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onSetContent: PropTypes.func,
+		onUndo: PropTypes.func,
+		onTextEditorChange: PropTypes.func,
 	},
 
 	contextTypes: {
-		store: React.PropTypes.object
+		store: PropTypes.object,
 	},
 
 	getDefaultProps: function() {

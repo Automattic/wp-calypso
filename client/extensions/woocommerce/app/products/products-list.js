@@ -89,9 +89,9 @@ ProductsList.propTypes = {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currentPage = site && getProductListCurrentPage( state, site.ID );
-	const currentPageLoaded = site && currentPage && areProductsLoaded( state, currentPage, site.ID );
+	const currentPageLoaded = site && currentPage && areProductsLoaded( state, { page: currentPage, per_page: 10 }, site.ID );
 	const requestedPage = site && getProductListRequestedPage( state, site.ID );
-	const requestedPageLoaded = site && requestedPage && areProductsLoaded( state, requestedPage, site.ID );
+	const requestedPageLoaded = site && requestedPage && areProductsLoaded( state, { page: requestedPage, per_page: 10 }, site.ID );
 	const products = site && getProductListProducts( state, site.ID );
 	const totalProducts = site && getTotalProducts( state, site.ID );
 

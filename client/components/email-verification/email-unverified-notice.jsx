@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -24,9 +25,9 @@ export default class EmailUnverifiedNotice extends React.Component {
 	};
 
 	static propTypes = {
-		userEmail: React.PropTypes.string,
-		noticeText: React.PropTypes.node,
-		noticeStatus: React.PropTypes.string
+		userEmail: PropTypes.string,
+		noticeText: PropTypes.node,
+		noticeStatus: PropTypes.string
 	};
 
 	static defaultProps = {
