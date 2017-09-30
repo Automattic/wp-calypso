@@ -62,7 +62,7 @@ class PluginsTab extends Component {
 						'Set {{strong}}$wp_cache_plugins_dir{{/strong}} to the new location in wp-config.php and WP Super Cache ' +
 						'will look there instead. More info available in the {{a}}developer documentation.{{/a}}',
 						{ components: {
-							a: <ExternalLink href="https://odd.blog/wp-super-cache-developers/" icon={ true } target="_blank" />,
+							a: <ExternalLink href="https://odd.blog/wp-super-cache-developers/" target="_blank" />,
 							strong: <strong />,
 						} }
 					) }</p>
@@ -82,7 +82,7 @@ class PluginsTab extends Component {
 								</FormToggle>
 								<FormSettingExplanation>
 									{ desc + ' ' }
-									{ url && <ExternalLink href={ url } icon={ true } target="_blank">
+									{ url && <ExternalLink href={ url } target="_blank">
 										{ translate( 'Plugin Information' ) }
 									</ExternalLink> }
 								</FormSettingExplanation>
