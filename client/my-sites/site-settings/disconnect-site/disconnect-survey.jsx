@@ -18,32 +18,31 @@ import { isJetpackSite } from 'state/sites/selectors';
 class DisconnectSurvey extends Component {
 	state = {
 		reasonSelected: 'onlyNeedFree',
-		compactButtons: false,
-		renderFull: false,
+		renderInitial: true,
 	};
 
-	renderFull() {
+	renderFollowUp() {
 		// placeholder
-		return <div>{ ' follow-up QA' }</div>;
+		return <Card className="disconnect-site__question">{ 'follow-up' }</Card>;
 	}
 
-	logReason = option => {
+	logSelection = option => {
 		this.setState( {
 			reasonSelected: option.value,
-			renderFull: true,
+			renderInitial: false,
 		} );
 	};
 
 	getOptions() {
-		const { site } = this.props;
+		const { translate, site } = this.props;
 
 		const options = [
-			{ value: 'tooHard', label: 'It was too hard to configure Jetpack' },
-			{ value: 'didNotInclude', label: 'This plan didn’t include what I needed' },
+			{ value: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
+			{ value: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
 		if ( ! isFreeJetpackPlan( site.plan ) ) {
-			options.push( { value: 'onlyNeedFree', label: 'This plan is too expensive' } );
+			options.push( { value: 'onlyNeedFree', label: translate( 'This plan is too expensive' ) } );
 		}
 		return options;
 	}
@@ -52,7 +51,7 @@ class DisconnectSurvey extends Component {
 		const questions = [];
 		for ( let i = 0; i < options.length; i++ ) {
 			questions.push(
-				<CompactCard href="#" onClick={ this.logReason } className="disconnect-site__survey-one">
+				<CompactCard href="#" onClick={ this.logSelection } className="disconnect-site__survey-one">
 					{ options[ i ].label }
 				</CompactCard>
 			);
@@ -60,9 +59,8 @@ class DisconnectSurvey extends Component {
 		return questions;
 	}
 
-	render() {
+	renderEntryQuestion() {
 		const { translate, siteSlug } = this.props;
-		const { reasonSelected, renderFull } = this.state;
 
 		const textShareWhy = translate(
 			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
@@ -71,15 +69,21 @@ class DisconnectSurvey extends Component {
 				args: { siteName: siteSlug },
 			}
 		);
-
 		const options = this.getOptions();
 		const surveyQuestionsOne = this.getSurveyQuestions( options );
-
 		return (
-			<div className="disconnect-site__survey main">
+			<div>
 				<Card className="disconnect-site__question">{ textShareWhy }</Card>
 				{ surveyQuestionsOne }
-				{ renderFull ? this.renderFull( reasonSelected ) : null }
+			</div>
+		);
+	}
+
+	render() {
+		const { reasonSelected, renderInitial } = this.state;
+		return (
+			<div className="disconnect-site__survey main">
+				{ renderInitial ? this.renderEntryQuestion() : this.renderFollowUp( reasonSelected ) }
 			</div>
 		);
 	}
