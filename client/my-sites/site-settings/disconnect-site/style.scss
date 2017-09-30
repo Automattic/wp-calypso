@@ -1,32 +1,22 @@
 .disconnect-site__site-settings {
 	position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+		top: 15%;
+		left: 30%;
+	width: 550px;
+
+	@include breakpoint( ">660px" ) {
+		max-width: 800px;
 	}
+}
 
 .disconnect-site__card {
 		position: relative;
 		padding: 24px;
-
-		@include breakpoint( "<480px" ) {
-			max-width: 300px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			margin-top: 2em;
-			max-width: 500px;
-		}
-
-		@include breakpoint( ">660px" ) {
-			margin-top: 17px;
-			max-width: 800px;
-		}
 	}
 
 .disconnect-site__skip-survey {
 		&.main {
-			margin: 16px 0 24px 0;
+			margin: 16px 10px 24px 10px;
 			text-align: center;
 		}
 }
@@ -47,6 +37,13 @@
 }
 
 .disconnect-site__question {
+	position: relative;
 	padding-bottom: 20px;
 	text-align: left;
+	margin:0;
+}
+
+.disconnect-site__survey-one {
+	position: relative;
+	margin:0;
 }

@@ -9,7 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isFreeJetpackPlan } from 'lib/products-values';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -47,9 +48,21 @@ class DisconnectSurvey extends Component {
 		return options;
 	}
 
+	getSurveyQuestions( options ) {
+		const questions = [];
+		for ( let i = 0; i < options.length; i++ ) {
+			questions.push(
+				<CompactCard href="#" onClick={ this.logReason } className="disconnect-site__survey-one">
+					{ options[ i ].label }
+				</CompactCard>
+			);
+		}
+		return questions;
+	}
+
 	render() {
 		const { translate, siteSlug } = this.props;
-		const { reasonSelected, compactButtons, renderFull } = this.state;
+		const { reasonSelected, renderFull } = this.state;
 
 		const textShareWhy = translate(
 			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
@@ -60,15 +73,12 @@ class DisconnectSurvey extends Component {
 		);
 
 		const options = this.getOptions();
+		const surveyQuestionsOne = this.getSurveyQuestions( options );
 
 		return (
 			<div className="disconnect-site__survey main">
-				<div className="disconnect-site__question">{ textShareWhy }</div>
-				<SelectDropdown
-					compact={ compactButtons }
-					onSelect={ this.logReason }
-					options={ options }
-				/>
+				<Card className="disconnect-site__question">{ textShareWhy }</Card>
+				{ surveyQuestionsOne }
 				{ renderFull ? this.renderFull( reasonSelected ) : null }
 			</div>
 		);
