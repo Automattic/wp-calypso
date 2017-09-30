@@ -23,6 +23,7 @@ import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
 import { Tabs, WPSC_MIN_VERSION } from './constants';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
 
@@ -61,6 +62,7 @@ class WPSuperCache extends Component {
 	render() {
 		const {
 			siteId,
+			siteSlug,
 			status: { cache_disabled: cacheDisabled },
 			tab,
 			translate,
@@ -71,11 +73,19 @@ class WPSuperCache extends Component {
 		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
 		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
 
+		let redirectUrl = '';
+		if ( minVersion !== WPSC_MIN_VERSION ) {
+			// We have a tab specific minimum version. If that version isn't fulfilled, we want to redirect
+			// to the 'default' tab (instead of the plugin installation page).
+			redirectUrl = '/extensions/wp-super-cache/' + siteSlug;
+		}
+
 		return (
 			<Main className={ mainClassName }>
 				<ExtensionRedirect pluginId="wp-super-cache"
 					minimumVersion={ minVersion }
-					siteId={ siteId } />
+					siteId={ siteId }
+					redirectUrl={ redirectUrl } />
 				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
@@ -95,10 +105,12 @@ class WPSuperCache extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
 			status: getStatus( state, siteId ),
-			siteId
+			siteId,
+			siteSlug
 		};
 	}
 );
