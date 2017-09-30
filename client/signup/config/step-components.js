@@ -4,6 +4,7 @@
 import config from 'config';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
+import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
 import DomainsStepComponent from 'signup/steps/domains';
 import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
@@ -20,6 +21,7 @@ import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 export default {
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
+	'design-type-with-atomic-store': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,

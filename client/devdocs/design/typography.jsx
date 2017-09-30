@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 
 export default class Typography extends React.PureComponent {
@@ -67,9 +68,11 @@ export default class Typography extends React.PureComponent {
 
 		return (
 			<Main className="design">
+				<DocumentHead title="Typography" />
+
 				<div className="docs__design-group">
 					<h2>
-						<a href="/devdocs/design/typography">Typography</a>
+						<a href="/devdocs/typography">Typography</a>
 					</h2>
 					<h3>Interface Typography</h3>
 					<Card>

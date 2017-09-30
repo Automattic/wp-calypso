@@ -27,6 +27,8 @@ env-config.sh
 # config overrides
 /config/*.local.json
 
+/coverage
+
 /build
 
 /public/*.js
@@ -35,6 +37,8 @@ env-config.sh
 /public/style*.css.map
 /public/editor*.css
 /public/directly*.css
+/public/sections/*
+/public/sections-rtl/*
 /public/images/flags/*.svg
 /public/images/flags/*.png
 /server/devdocs/search-index.js

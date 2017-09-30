@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -8,11 +10,8 @@ var chai = require( 'chai' ),
  * Internal dependencies
  */
 import highlight from '../';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'highlight', function() {
-	useFakeDom();
-
 	context( 'unit test', function() {
 		it( 'should return html as is if there\'s no term', function() {
 			expect( highlight( '', 'lorem ipsum hello world' ) )

@@ -440,7 +440,7 @@ class SimplePaymentsDialog extends Component {
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"
-							title={ translate( 'Upgrade your plan!' ) }
+							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							message={ translate(
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
@@ -448,6 +448,14 @@ class SimplePaymentsDialog extends Component {
 							event="editor_simple_payments_modal_nudge"
 							shouldDisplay={ this.returnTrue }
 						/>
+					}
+					secondaryAction={
+						<a
+							className="empty-content__action button"
+							href="https://support.wordpress.com/simple-payments/"
+						>
+							{ translate( 'Learn more about Simple Payments' ) }
+						</a>
 					}
 				/>,
 				true

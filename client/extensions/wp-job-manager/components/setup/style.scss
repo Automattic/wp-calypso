@@ -43,9 +43,24 @@
 	margin-right: 8px;
 }
 
+.wp-job-manager__setup .confirmation__link {
+	margin-bottom: 0;
+	font-size: 14px;
+	line-height: 18px;
+	color: $gray-text-min;
+}
+
+.wp-job-manager__setup .confirmation__help {
+	margin: 0;
+}
+
 .wp-job-manager__setup .confirmation__support {
 	list-style: none;
 	margin: 0;
+}
+
+.wp-job-manager__setup .confirmation__support li {
+	margin-bottom: 5px;
 }
 
 .wp-job-manager__setup .confirmation__support .gridicon {

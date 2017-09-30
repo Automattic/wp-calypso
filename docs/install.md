@@ -4,7 +4,7 @@ You can install Calypso directly on your machine by following the next steps, or
 
 ## Quick Summary of Steps
 
-1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details.
+1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details. Pay close attention to software versions.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
 4.	Execute `npm start` or `npm run dashboard` (for a more visually-oriented interface) from the root directory of the repository.
@@ -14,7 +14,7 @@ You can install Calypso directly on your machine by following the next steps, or
 
 To be able to clone the repository and run the application you need:
 
--	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the engines section of [package.json](https://github.com/Automattic/wp-calypso/blob/master/package.json). On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist). 
+-	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the `"engines"` section of [package.json](https://github.com/Automattic/wp-calypso/blob/master/package.json) **(this bit about versions is important, that's why I'm using bold)**. On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
 -	Please note that in Debian/Ubuntu versions of Linux, `node` command is renamed to `nodejs`. This will cause Calypso to fail during installation. Follow the instructions [here](https://stackoverflow.com/a/18130296) to create a symlink to `node`.
 -	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 -	[Yarn](https://yarnpkg.com). Type the `yarn` command in your terminal. In case it is not found, follow the instructions [here](https://yarnpkg.com/lang/en/docs/install/) to install it on your system.

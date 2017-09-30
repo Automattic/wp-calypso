@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -5,14 +7,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'AppPromo', ( ) => {
-	useFakeDom();
-
 	const appPromoDetails = {
 		promoCode: 'a0001',
 		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.'

@@ -1,9 +1,21 @@
+jest.mock( 'config', () => require( 'sinon' ).stub() );
+jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
+	statsdTimingUrl: require( 'sinon' ).stub()
+} ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import useMockery from 'test/helpers/use-mockery';
+import superagent from 'superagent';
+
+/**
+ * Internal dependencies
+ */
+import analytics from '../index';
+import config from 'config';
+import { statsdTimingUrl } from '../../../../client/lib/analytics/statsd';
 
 describe( 'Server-Side Analytics', function() {
 	describe( 'tracks.recordEvent', function() {
@@ -11,52 +23,33 @@ describe( 'Server-Side Analytics', function() {
 	} );
 
 	describe( 'statsd.recordTiming', function() {
-		// Allow us to mock disabling statsd.
-		const mockConfig = {
-			server_side_boom_analytics_enabled: true
-		};
-
-		useMockery( mockery => {
-			mockery.registerMock( 'config', ( key ) => {
-				return mockConfig[ key ];
-			} );
-		} );
-
-		let superagent, analytics, statsd;
-
-		beforeEach( function() {
-			superagent = require( 'superagent' );
-			analytics = require( '../index' );
-			statsd = require( '../../../../client/lib/analytics/statsd' );
-
+		beforeAll( function() {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 
 		afterEach( function() {
-			superagent.get.restore();
+			config.reset();
+			statsdTimingUrl.reset();
+			superagent.get.reset();
 		} );
 
 		it( 'sends an HTTP request to the statsd URL', function() {
-			sinon.stub( statsd, 'statsdTimingUrl' ).returns( 'http://example.com/boom.gif' );
+			config.withArgs( 'server_side_boom_analytics_enabled' ).returns( true );
+			statsdTimingUrl.returns( 'http://example.com/boom.gif' );
 
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
-			expect( statsd.statsdTimingUrl ).to.have.been.calledWith( 'reader', 'page-render', 150 );
+			expect( statsdTimingUrl ).to.have.been.calledWith( 'reader', 'page-render', 150 );
 			expect( superagent.get ).to.have.been.calledWith( 'http://example.com/boom.gif' );
-
-			statsd.statsdTimingUrl.restore();
 		} );
 
 		it( 'does nothing if statsd analytics is not allowed', function() {
-			mockConfig.server_side_boom_analytics_enabled = false;
-			sinon.stub( statsd, 'statsdTimingUrl' );
+			config.withArgs( 'server_side_boom_analytics_enabled' ).returns( false );
 
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
-			expect( statsd.statsdTimingUrl ).not.to.have.been.called;
+			expect( statsdTimingUrl ).not.to.have.been.called;
 			expect( superagent.get ).not.to.have.been.called;
-
-			statsd.statsdTimingUrl.restore();
 		} );
 	} );
 } );

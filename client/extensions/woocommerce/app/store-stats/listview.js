@@ -18,17 +18,13 @@ import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
 import Module from './store-stats-module';
-import SectionNav from 'components/section-nav';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import StoreStatsNavigationTabs from './store-stats-navigation/navtabs';
+import Intervals from 'blocks/stats-navigation/intervals';
 import {
 	topProducts,
 	topCategories,
 	topCoupons,
-	UNITS
 } from 'woocommerce/app/store-stats/constants';
-import { getJetpackSites } from 'state/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteStats from 'components/data/query-site-stats';
 
 const listType = {
@@ -39,13 +35,13 @@ const listType = {
 
 class StoreStatsListView extends Component {
 	static propTypes = {
-		jetPackSites: PropTypes.array,
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		querystring: PropTypes.string,
 		type: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 	};
 
 	goBack = () => {
@@ -60,7 +56,7 @@ class StoreStatsListView extends Component {
 	};
 
 	render() {
-		const { jetPackSites, siteId, slug, selectedDate, type, unit } = this.props;
+		const { siteId, slug, selectedDate, type, unit } = this.props;
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const listviewQuery = {
 			unit,
@@ -70,7 +66,6 @@ class StoreStatsListView extends Component {
 		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout={ true }>
-				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } /> }
 				<HeaderCake onClick={ this.goBack }>{ listType[ type ].title }</HeaderCake>
 				<StatsPeriodNavigation
@@ -90,15 +85,11 @@ class StoreStatsListView extends Component {
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				<SectionNav className="store-stats__list-view-navigation" selectedText={ UNITS[ unit ].title }>
-					<StoreStatsNavigationTabs
-						label={ 'Stats' }
-						slug={ slug }
-						type={ type }
-						unit={ unit }
-						units={ UNITS }
-					/>
-				</SectionNav>
+				<Intervals
+					selected={ unit }
+					pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }` }
+					standalone
+				/>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
@@ -122,6 +113,5 @@ export default connect(
 	state => ( {
 		slug: getSelectedSiteSlug( state ),
 		siteId: getSelectedSiteId( state ),
-		jetPackSites: getJetpackSites( state ),
 	} )
 )( StoreStatsListView );

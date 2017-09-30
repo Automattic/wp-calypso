@@ -4,6 +4,8 @@
 import React from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { flow } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:me:sidebar' );
 
@@ -66,7 +68,7 @@ const MeSidebar = React.createClass( {
 	},
 
 	render: function() {
-		const { context } = this.props;
+		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
 			'/me/security/account-recovery': 'security',
@@ -105,18 +107,18 @@ const MeSidebar = React.createClass( {
 						compact
 						className="me-sidebar__signout-button"
 						onClick={ this.onSignOut }
-						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
+						title={ translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 					>
-						{ this.translate( 'Sign Out' ) }
+						{ translate( 'Sign Out' ) }
 					</Button>
 				</div>
 				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
+					<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'profile' }
 							link={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-							label={ this.translate( 'My Profile' ) }
+							label={ translate( 'My Profile' ) }
 							icon="user"
 							onNavigate={ this.onNavigate }
 						/>
@@ -124,7 +126,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'account' }
 							link={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-							label={ this.translate( 'Account Settings' ) }
+							label={ translate( 'Account Settings' ) }
 							icon="cog"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="account"
@@ -133,7 +135,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'purchases' }
 							link={ purchasesPaths.purchasesRoot() }
-							label={ this.translate( 'Manage Purchases' ) }
+							label={ translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="purchases"
@@ -142,7 +144,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'security' }
 							link={ '/me/security' }
-							label={ this.translate( 'Security' ) }
+							label={ translate( 'Security' ) }
 							icon="lock"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="security"
@@ -151,7 +153,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-							label={ this.translate( 'Notification Settings' ) }
+							label={ translate( 'Notification Settings' ) }
 							icon="bell"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="notification-settings"
@@ -160,12 +162,12 @@ const MeSidebar = React.createClass( {
 					</ul>
 				</SidebarMenu>
 				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
+					<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'get-apps' }
 							link={ '/me/get-apps' }
-							label={ this.translate( 'Get Apps' ) }
+							label={ translate( 'Get Apps' ) }
 							icon="my-sites"
 							onNavigate={ this.onNavigate }
 						/>
@@ -178,13 +180,14 @@ const MeSidebar = React.createClass( {
 	},
 
 	renderNextStepsItem: function( selected ) {
-		const currentUser = this.props.currentUser;
+		const { currentUser, translate } = this.props;
+
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
 				<SidebarItem
 					selected={ selected === 'next' }
 					link="/me/next"
-					label={ this.translate( 'Next Steps' ) }
+					label={ translate( 'Next Steps' ) }
 					icon="list-checkmark"
 					onNavigate={ this.onNavigate }
 				/>
@@ -193,10 +196,17 @@ const MeSidebar = React.createClass( {
 	}
 } );
 
-function mapStateToProps( state ) {
-	return {
-		currentUser: getCurrentUser( state ),
-	};
-}
+const enhance = flow(
+	localize,
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{
+			logoutUser,
+			setNextLayoutFocus
+		}
+	)
+);
 
-export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( MeSidebar );
+export default enhance( MeSidebar );

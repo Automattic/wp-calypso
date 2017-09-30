@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -6,15 +8,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'Accordion', function() {
 	let Accordion, AccordionStatus;
 
-	useFakeDom();
 	before( () => {
 		Accordion = require( '../' );
 		AccordionStatus = require( '../status' );

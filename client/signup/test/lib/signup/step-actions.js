@@ -1,5 +1,0 @@
-/**
- * StepActions stub
- */
-
-export default {};

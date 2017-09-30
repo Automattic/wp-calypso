@@ -357,8 +357,8 @@ export class MySitesSidebar extends Component {
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'Plan', { context: 'noun' } ) }</span>
+					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 				</a>
-				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick }>{ planName }</a>
 			</li>
 		);
 	}

@@ -1,43 +1,24 @@
+jest.mock( 'store', () => require( './mocks/store' ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 
-let deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler;
-
-let storeData = {};
-const store = {
-	get( key ) {
-		return storeData[ key ];
-	},
-
-	set( key, value ) {
-		storeData[ key ] = value;
-	},
-
-	remove( key ) {
-		delete storeData[ key ];
-	}
-};
+import {
+	deleteOldTicket,
+	GUEST_TICKET_LOCALFORAGE_KEY,
+	injectGuestSandboxTicketHandler
+} from '../guest-sandbox-ticket';
 
 describe( 'guest-sandbox-ticket', () => {
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'store', store );
-
-		const guestSandboxTicket = require( '../guest-sandbox-ticket' );
-
-		deleteOldTicket = guestSandboxTicket.deleteOldTicket;
-		GUEST_TICKET_LOCALFORAGE_KEY = guestSandboxTicket.GUEST_TICKET_LOCALFORAGE_KEY;
-		injectGuestSandboxTicketHandler = guestSandboxTicket.injectGuestSandboxTicketHandler;
-	} );
-
 	beforeEach( () => {
-		storeData = {};
+		store.clear();
 	} );
 
 	describe( '#deleteOldTicket', () => {

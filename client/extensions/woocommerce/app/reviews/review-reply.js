@@ -2,6 +2,7 @@
  * External depedencies
  */
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -10,7 +11,18 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import Button from 'components/button';
+import { decodeEntities, removep } from 'lib/formatting';
+import {
+	deleteReviewReply,
+	updateReviewReply
+} from 'woocommerce/state/sites/review-replies/actions';
+import { editReviewReply, clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
+import {
+	getCurrentlyEditingReviewReplyId,
+	getReviewReplyEdits
+} from 'woocommerce/state/ui/review-replies/selectors';
 import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
 import Gravatar from './gravatar';
 import humanDate from 'lib/human-date';
@@ -22,15 +34,49 @@ class ReviewReply extends Component {
 		replyId: PropTypes.number.isRequired,
 	};
 
+	onEdit = () => {
+		const { siteId, reviewId, reply } = this.props;
+		let content = reply.content && reply.content.rendered || '';
+		content = removep( decodeEntities( content ) );
+		this.props.editReviewReply( siteId, reviewId, { id: reply.id, content } );
+	}
+
+	onCancel = () => {
+		const { siteId } = this.props;
+		this.props.clearReviewReplyEdits( siteId );
+	}
+
+	onTextChange = ( event ) => {
+		const { value } = event.target;
+		const { siteId, reviewId, replyId } = this.props;
+		this.props.editReviewReply( siteId, reviewId, { id: replyId, content: value } );
+	}
+
+	onDelete = () => {
+		const { siteId, reviewId, replyId, translate } = this.props;
+		const areYouSure = translate( 'Are you sure you want to permanently delete this reply?' );
+		accept( areYouSure, ( accepted ) => {
+			if ( ! accepted ) {
+				return;
+			}
+			this.props.deleteReviewReply( siteId, reviewId, replyId );
+		} );
+	}
+
+	onSave = () => {
+		const { siteId, reviewId, replyId, replyEdits } = this.props;
+		this.props.updateReviewReply( siteId, reviewId, replyId, replyEdits );
+	}
+
 	renderReplyActions = () => {
 		const { translate } = this.props;
 		return (
 			<div className="reviews__reply-actions">
-				<Button borderless className="reviews__reply-action-edit">
+				<Button borderless className="reviews__reply-action-edit" onClick={ this.onEdit }>
 					<Gridicon icon="pencil" />
 					<span>{ translate( 'Edit reply' ) }</span>
 				</Button>
-				<Button borderless className="reviews__reply-action-delete">
+				<Button borderless className="reviews__reply-action-delete" onClick={ this.onDelete }>
 					<Gridicon icon="trash" />
 					<span>{ translate( 'Delete reply' ) }</span>
 				</Button>
@@ -39,6 +85,37 @@ class ReviewReply extends Component {
 	}
 
 	render() {
+		const { isEditing } = this.props;
+		if ( isEditing ) {
+			return this.renderEdit();
+		}
+
+		return this.renderView();
+	}
+
+	renderEdit() {
+		const { translate, editContent } = this.props;
+		return (
+			<div className="reviews__reply-edit">
+				<textarea
+					onChange={ this.onTextChange }
+					value={ editContent }
+				/>
+
+				<div className="reviews__reply-edit-buttons">
+					<Button compact onClick={ this.onCancel }>
+						{ translate( 'Cancel' ) }
+					</Button>
+
+					<Button compact primary onClick={ this.onSave }>
+						{ translate( 'Save' ) }
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
+	renderView() {
 		const { reply } = this.props;
 		const content = reply.content && reply.content.rendered || '';
 		return (
@@ -70,11 +147,29 @@ class ReviewReply extends Component {
 
 }
 
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			editReviewReply,
+			clearReviewReplyEdits,
+			deleteReviewReply,
+			updateReviewReply,
+		},
+		dispatch
+	);
+}
+
 export default connect(
 	( state, props ) => {
 		const reply = getReviewReply( state, props.reviewId, props.replyId );
+		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+		const replyEdits = getReviewReplyEdits( state );
+		const editContent = replyEdits.content || '';
 		return {
 			reply,
+			isEditing,
+			replyEdits,
+			editContent,
 		};
-	}
+	}, mapDispatchToProps
 )( localize( ReviewReply ) );

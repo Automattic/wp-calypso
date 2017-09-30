@@ -1,7 +1,7 @@
 /**
  * sections-preload
  *
- * This is a simple eventbus that sections.js listens to to know when to preload sections.
+ * This is a simple eventbus that sections.js listens to, to know when to preload sections.
  *
  * In days past, the preloader was part of sections.js. To preload a module you would import sections
  * and call preload directly. However, all of the require.ensure calls live in sections.js. This makes

@@ -1,3 +1,5 @@
+jest.mock( 'lib/analytics', () => ( {} ) );
+
 /**
  * External dependencies
  */
@@ -8,7 +10,7 @@ import { render } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import LanguagePicker from '../';
 
 const languages = [
 	{
@@ -27,16 +29,6 @@ const languages = [
 ];
 
 describe( 'LanguagePicker', () => {
-	let LanguagePicker;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
-	} );
-
-	before( () => {
-		LanguagePicker = require( '../' );
-	} );
-
 	it( 'should render the right icon and label', () => {
 		const wrapper = render(
 			<LanguagePicker

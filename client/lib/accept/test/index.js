@@ -1,29 +1,16 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import accept from '../';
 
 describe( '#accept()', function() {
-	let accept;
-
-	useFakeDom();
-	useMockery();
-
-	before( function() {
-		mockery.registerSubstitute( 'event', 'component-event' );
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-		mockery.registerSubstitute( 'query', 'component-query' );
-
-		accept = require( '../' );
-	} );
-
 	beforeEach( function() {
 		document.body.innerHTML = '';
 	} );

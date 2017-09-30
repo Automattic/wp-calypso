@@ -49,9 +49,19 @@ describe( 'receiveStatus', () => {
 	it( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
+		expect( dispatch ).to.have.been.calledThrice;
 		expect( dispatch ).to.have.been.calledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
+	} );
+
+	it( 'should dispatch success notice if complete', () => {
+		const dispatch = sinon.spy();
+		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
+		expect( dispatch ).to.have.been.calledThrice;
+		expect( dispatch ).to.have.been.calledWithMatch( {
+			notice: { text: "You've successfully uploaded the hello-dolly plugin." }
+		} );
 	} );
 
 	it( 'should request status again if not complete', () => {

@@ -94,7 +94,10 @@ class ActivityLogDay extends Component {
 			>
 				<Gridicon icon="history" size={ 18 } />
 				{ ' ' }
-				{ this.props.translate( 'Rewind to this day' ) }
+				{ this.props.translate(
+					'Rewind {{em}}to this day{{/em}}',
+					{ components: { em: <em /> } },
+				) }
 			</Button>
 		);
 	}

@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
 import { v4 as uuid } from 'uuid';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -36,7 +37,12 @@ import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import {
+	getEditorPostId,
+	getEditorPath,
+	isConfirmationSidebarEnabled,
+	isEditorOnlyRouteInHistory,
+} from 'state/ui/editor/selectors';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -50,7 +56,7 @@ import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus, setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
@@ -59,7 +65,7 @@ import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 import { removep } from 'lib/formatting';
@@ -71,6 +77,7 @@ export const PostEditor = React.createClass( {
 		setEditorModePreference: PropTypes.func,
 		setEditorSidebar: PropTypes.func,
 		setLayoutFocus: PropTypes.func.isRequired,
+		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
 		user: PropTypes.object,
@@ -464,6 +471,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
+							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
@@ -821,6 +829,15 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreviewEdit: function() {
+		if ( this.props.editorSidebarPreference === 'open' ) {
+			// When returning to the editor from the preview, set the "next
+			// layout focus" to the sidebar if the editor sidebar should be
+			// visible.  Otherwise, according to its default behavior, the
+			// LAYOUT_NEXT_FOCUS_ACTIVATE action will cause the 'content'
+			// layout area to be activated, which hides the editor sidebar.
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
@@ -1018,6 +1035,18 @@ export const PostEditor = React.createClass( {
 				status: 'is-success',
 				message,
 			};
+
+			const referrer = get( window, 'document.referrer', '' );
+			const referrerDomain = parseUrl( referrer ).hostname;
+			const shouldReturnToSite = (
+				this.props.isEditorOnlyRouteInHistory &&
+				referrerDomain === this.props.selectedSiteDomain
+			);
+
+			if ( shouldReturnToSite ) {
+				window.location.href = this.getExternalUrl();
+				return;
+			}
 
 			window.scrollTo( 0, 0 );
 
@@ -1331,6 +1360,7 @@ export default connect(
 			siteId,
 			postId,
 			selectedSite: getSelectedSite( state ),
+			selectedSiteDomain: getSiteDomain( state, siteId ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
@@ -1340,6 +1370,7 @@ export default connect(
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSitePreviewable: isSitePreviewable( state, siteId ),
+			isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 			isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
@@ -1353,6 +1384,7 @@ export default connect(
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
+			setNextLayoutFocus,
 			saveConfirmationSidebarPreference,
 		}, dispatch );
 	},

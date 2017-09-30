@@ -1,42 +1,39 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+jest.mock( 'reader/stats', () => ( {
+	pageViewForPost: () => {},
+	recordAction: () => {},
+	recordGaEvent: () => {},
+	recordTrackForPost: () => {},
+} ) );
+jest.mock( 'lib/analytics', () => ( {
+	mc: {
+		bumpStat: () => {},
+	},
+} ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'page', () => require( 'sinon' ).spy() );
+
 /**
  * External  dependencies
  */
 import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
-import { stub, spy } from 'sinon';
 import qs from 'qs';
 import { noop } from 'lodash';
+import pageSpy from 'page';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { DailyPostButton } from '../index';
 import { sites, dailyPromptPost } from './fixtures';
 
 describe( 'DailyPostButton', () => {
-	const SitesPopover = props => <span { ...props } />;
-	const pageSpy = spy();
-	let DailyPostButton;
-
-	useMockery( mockery => {
-		const statsMocks = {
-			recordAction: noop,
-			recordGaEvent: noop,
-			recordTrackForPost: noop,
-		};
-		mockery.registerMock( 'reader/stats', statsMocks );
-		mockery.registerMock( 'lib/analytics', stub() );
-		mockery.registerMock( 'page', pageSpy );
-		mockery.registerMock( 'components/sites-popover', SitesPopover );
-	} );
-
 	const [ sampleUserSite, sampleReadingSite ] = sites;
-
-	before( () => {
-		DailyPostButton = require( '../index' ).DailyPostButton;
-	} );
 
 	describe( 'rendering', () => {
 		it( 'does not render if the user can not participate (does not have any sites)', () => {

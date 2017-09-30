@@ -1,8 +1,14 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
@@ -28,7 +34,22 @@ export const receiveResponse = ( { dispatch }, { siteId } ) => {
 	dispatch( getAutomatedTransferStatus( siteId ) );
 };
 
+const showErrorNotice = ( dispatch, error ) => {
+	if ( error.error === 'invalid_input' ) {
+		dispatch( errorNotice( translate( 'Not a valid zip file.' ) ) );
+		return;
+	}
+	if ( error.error ) {
+		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
+			args: { error: error.error }
+		} ) ) );
+		return;
+	}
+	dispatch( errorNotice( translate( 'Problem uploading the plugin.' ) ) );
+};
+
 export const receiveError = ( { dispatch }, { siteId }, error ) => {
+	showErrorNotice( dispatch, error );
 	dispatch( pluginUploadError( siteId, error ) );
 };
 

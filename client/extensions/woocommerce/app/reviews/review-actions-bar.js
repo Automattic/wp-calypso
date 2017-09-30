@@ -92,21 +92,21 @@ ReviewActionsBar.propTypes = {
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { review, siteId, currentStatus, toggleExpanded } = ownProps;
+	const { review, siteId, toggleExpanded } = ownProps;
 	const { product } = review;
 	const postId = product.id;
 	const commentId = review.id;
 	return {
 		approveReview: () => {
-			dispatch( changeReviewStatus( siteId, postId, commentId, currentStatus, 'approved' ) );
+			dispatch( changeReviewStatus( siteId, postId, commentId, review.status, 'approved' ) );
 			toggleExpanded();
 		},
 		unapproveReview: () => {
-			dispatch( changeReviewStatus( siteId, postId, commentId, currentStatus, 'pending' ) );
+			dispatch( changeReviewStatus( siteId, postId, commentId, review.status, 'pending' ) );
 			toggleExpanded();
 		},
 		trashReview: () => {
-			dispatch( changeReviewStatus( siteId, postId, commentId, currentStatus, 'trash' ) );
+			dispatch( changeReviewStatus( siteId, postId, commentId, review.status, 'trash' ) );
 			toggleExpanded();
 		},
 		deleteTheReview: () => {
@@ -114,7 +114,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 			toggleExpanded();
 		},
 		spamReview: () => {
-			dispatch( changeReviewStatus( siteId, postId, commentId, currentStatus, 'spam' ) );
+			dispatch( changeReviewStatus( siteId, postId, commentId, review.status, 'spam' ) );
 			toggleExpanded();
 		}
 	};

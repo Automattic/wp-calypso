@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import initialState from './initial-state';
+import initialState from './data/initial-state';
 import reducer from '../reducer';
 import {
 	addPackage,

@@ -43,7 +43,6 @@ import {
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
 import { isSiteAutomatedTransfer } from 'state/selectors';
-import { abtest } from 'lib/abtest';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -240,42 +239,12 @@ class Plans extends Component {
 			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 
-		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_personal_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_personal_monthly' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_premium_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_premium_monthly' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business' );
-		}
-		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_business_monthly', {
-				user: this.props.userId,
-			} );
-			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_business_monthly' );
-		}
+		this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
+			user: this.props.userId,
+			productSlug: cartItem.product_slug,
+		} );
+		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+
 		addItem( cartItem );
 		this.redirecting = true;
 		this.props.completeFlow();
@@ -303,8 +272,6 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
-		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
-
 		return (
 			<div>
 				<QueryPlans />
@@ -319,9 +286,9 @@ class Plans extends Component {
 					onSelect={
 						this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan
 					}
-					hideFreePlan={ hideFreePlanTest }
+					hideFreePlan={ true }
 				>
-					{ hideFreePlanTest && <PlansSkipButton onClick={ this.handleSkipButtonClick } /> }
+					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 				</PlansGrid>
 			</div>
 		);

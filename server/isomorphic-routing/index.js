@@ -7,7 +7,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { serverRender, serverRenderError } from 'render';
+import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
@@ -23,7 +23,11 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				( err, req, res, next ) => {
 					route( err, req.context, next );
 				},
-				serverRenderError
+				( err, req, res, next ) => {
+					req.error = err;
+					res.status( err.status || 404 );
+					serverRender( req, res, next );
+				}
 			);
 		} else {
 			expressApp.get(
@@ -34,8 +38,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					setRouteMiddleware,
 					...middlewares
 				),
-				serverRender,
-				serverRenderError
+				serverRender
 			);
 		}
 	};

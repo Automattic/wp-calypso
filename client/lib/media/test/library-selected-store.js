@@ -1,15 +1,12 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
@@ -22,16 +19,6 @@ var DUMMY_SITE_ID = 1,
 
 describe( 'MediaLibrarySelectedStore', function() {
 	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
-
-	useFakeDom();
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} ),
-			site: noop
-		} );
-	} );
 
 	before( function() {
 		sandbox = sinon.sandbox.create();

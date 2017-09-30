@@ -9,6 +9,7 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
+	"rebrand_cities_prefix": "rebrandcitiessite",
 	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
@@ -17,8 +18,7 @@
 		"catch-js-errors": false,
 		"code-splitting": false,
 		"comments/management": true,
-		"comments/management/all-list": false,
-		"manage/comments/bulk-actions": false,
+		"comments/management/sorting": false,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,

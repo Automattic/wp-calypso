@@ -55,6 +55,7 @@ class EditorSeoAccordion extends Component {
 			<Accordion
 				title={ translate( 'SEO Description' ) }
 				className="editor-seo-accordion"
+				e2eTitle="seo"
 			>
 				<AccordionSection>
 					<EditorDrawerLabel

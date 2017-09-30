@@ -15,22 +15,30 @@ test:
           fi
       : parallel: true
   override:
-    - bin/run-integration :
+    - bin/run-integration:
         parallel: true
+        files:
+          - bin/**/integration/*.js
+          - client/**/integration/*.js
+          - server/**/integration/*.js
     - npm run lint:config-defaults
-    - ./node_modules/.bin/eslint-eslines :
+    - ./node_modules/.bin/eslint-eslines:
         parallel: true
         files:
           - client/**/*.js
           - client/**/*.jsx
           - server/**/*.js
           - server/**/*.jsx
-    - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
+    - npm run test-client:ci:
         parallel: true
-    - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
+        files:
+          - client/**/test/*.js
+          - client/**/test/*.jsx
+    - npm run test-server:ci:
         parallel: true
-    - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
-        parallel: true
+        files:
+          - server/**/test/*.js
+          - server/**/test/*.jsx
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true

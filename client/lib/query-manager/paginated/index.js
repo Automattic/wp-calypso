@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,7 +28,7 @@ export default class PaginatedQueryManager extends QueryManager {
 			return false;
 		}
 
-		return PAGINATION_QUERY_KEYS.some( ( key ) => {
+		return PAGINATION_QUERY_KEYS.some( key => {
 			return query.hasOwnProperty( key );
 		} );
 	}
@@ -79,7 +80,7 @@ export default class PaginatedQueryManager extends QueryManager {
 			return items;
 		}
 
-		return items.filter( ( item ) => undefined !== item );
+		return items.filter( item => undefined !== item );
 	}
 
 	/**
@@ -120,11 +121,15 @@ export default class PaginatedQueryManager extends QueryManager {
 		// simulated in `PaginatedQueryManager.prototype.getItems`.
 		let modifiedOptions = options;
 		if ( options.query ) {
-			modifiedOptions = Object.assign( {
-				mergeQuery: true
-			}, options, {
-				query: omit( options.query, PAGINATION_QUERY_KEYS )
-			} );
+			modifiedOptions = Object.assign(
+				{
+					mergeQuery: true,
+				},
+				options,
+				{
+					query: omit( options.query, PAGINATION_QUERY_KEYS ),
+				}
+			);
 		}
 
 		// Receive the updated manager, passing a modified set of options to
@@ -155,7 +160,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// If the item set for the queried page is identical, there are no
 		// updates to be made
-		const pageItemKeys = items.map( ( item ) => item[ this.options.itemKey ] );
+		const pageItemKeys = items.map( item => item[ this.options.itemKey ] );
 
 		// If we've reached this point, we know that we've received a paged
 		// set of data where our assumed item set is incorrect.
@@ -171,12 +176,12 @@ export default class PaginatedQueryManager extends QueryManager {
 			// of items received added to the summed per page total. Note that
 			// we can reach this point if receiving the last page of items, but
 			// the updated value should still be correct given this logic.
-			modifiedNextQuery.found = ( ( page - 1 ) * perPage ) + items.length;
+			modifiedNextQuery.found = ( page - 1 ) * perPage + items.length;
 		}
 
 		// Replace the assumed set with the received items.
 		modifiedNextQuery.itemKeys = [
-			...range( 0, startOffset ).map( ( index ) => {
+			...range( 0, startOffset ).map( index => {
 				// Ensure that item set is comprised of all indices leading up
 				// to received page, even if those items are not known.
 				const itemKey = nextQuery.itemKeys[ index ];
@@ -184,22 +189,22 @@ export default class PaginatedQueryManager extends QueryManager {
 					return itemKey;
 				}
 			} ),
-			...range( 0, perPage ).map( ( index ) => {
+			...range( 0, perPage ).map( index => {
 				// Fill page with items from the received set, or undefined to
 				// at least ensure page matches expected range
 				return pageItemKeys[ index ];
 			} ),
-			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( ( itemKey ) => {
+			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( itemKey => {
 				// Filter out any item keys which exist in the page set, as
 				// this indicates that they've trickled down from later page
 				return itemKey && ! includes( pageItemKeys, itemKey );
-			} )
+			} ),
 		];
 
 		// If found is known from options, ensure that we fill the end of the
 		// array with undefined entries until found count
 		if ( modifiedNextQuery.hasOwnProperty( 'found' ) ) {
-			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( ( index ) => {
+			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( index => {
 				return modifiedNextQuery.itemKeys[ index ];
 			} );
 		}
@@ -207,8 +212,8 @@ export default class PaginatedQueryManager extends QueryManager {
 		return new this.constructor(
 			Object.assign( {}, nextManager.data, {
 				queries: Object.assign( {}, nextManager.data.queries, {
-					[ queryKey ]: modifiedNextQuery
-				} )
+					[ queryKey ]: modifiedNextQuery,
+				} ),
 			} ),
 			nextManager.options
 		);

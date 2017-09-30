@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import { delay, noop } from 'lodash';
 
 /**
@@ -8,7 +9,9 @@ import { delay, noop } from 'lodash';
  */
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { successNotice } from 'state/notices/actions';
 import {
 	getAutomatedTransferStatus,
 	setAutomatedTransferStatus,
@@ -24,10 +27,23 @@ export const requestStatus = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveStatus = ( { dispatch }, { siteId }, { status, uploaded_plugin_slug } ) => {
-	dispatch( setAutomatedTransferStatus( siteId, status, uploaded_plugin_slug ) );
+export const receiveStatus = ( { dispatch, getState }, { siteId }, { status, uploaded_plugin_slug } ) => {
+	const pluginId = uploaded_plugin_slug;
+
+	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 	if ( status !== 'complete' ) {
 		delay( dispatch, 3000, getAutomatedTransferStatus( siteId ) );
+	}
+
+	if ( status === 'complete' ) {
+		// Update the now-atomic site to ensure plugin page displays correctly.
+		dispatch( requestSite( siteId ) );
+		dispatch( successNotice(
+			translate( "You've successfully uploaded the %(pluginId)s plugin.", {
+				args: { pluginId }
+			} ),
+			{ duration: 8000 }
+		) );
 	}
 };
 

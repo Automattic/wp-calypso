@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -10,6 +11,7 @@ import React from 'react';
 import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
+import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
@@ -119,6 +121,14 @@ const controller = {
 		renderPage(
 			context,
 			<DeleteSite path={ context.path } />
+		);
+	},
+
+	disconnectSite( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		renderPage(
+			context,
+			<DisconnectSite />
 		);
 	},
 

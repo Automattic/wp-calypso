@@ -1,3 +1,6 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
+
 /**
  * External dependencies
  */
@@ -8,8 +11,6 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 
 function identifyTransform( post, callback ) {
@@ -27,9 +28,6 @@ function asyncTransform( post, callback ) {
 
 describe( 'index', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
-
-	useFakeDom();
-	useFilesystemMocks( __dirname );
 
 	before( function() {
 		normalizer = require( '../' );
@@ -1094,7 +1092,7 @@ describe( 'index', function() {
 				{ content: source },
 				[ normalizer.withContentDOM( [ linkJetpackCarousels ] ) ],
 				( err, normalized ) => {
-					assert.deepEqual( normalized.content, expected );
+					assert.deepEqual( normalized.content.trim(), expected.trim() );
 					done( err );
 				} );
 		} );

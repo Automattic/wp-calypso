@@ -3159,7 +3159,7 @@ describe( 'selectors', () => {
 			} );
 
 			after( () => {
-				delete global.window;
+				global.window = undefined;
 			} );
 
 			it( 'should return customizer URL for Jetpack site', () => {

@@ -148,7 +148,8 @@ const sections = [
 		module: 'signup',
 		secondary: false,
 		enableLoggedOut: true,
-		isomorphic: true
+		isomorphic: true,
+		css: 'signup',
 	},
 	{
 		name: 'stats',
@@ -341,7 +342,8 @@ sections.push( {
 	module: 'login',
 	enableLoggedOut: true,
 	secondary: false,
-	isomorphic: true
+	isomorphic: true,
+	css: 'login',
 } );
 
 sections.push( {

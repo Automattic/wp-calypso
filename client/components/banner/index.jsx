@@ -51,6 +51,7 @@ class Banner extends Component {
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
+		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		siteSlug: PropTypes.string,
@@ -61,6 +62,7 @@ class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		onClick: noop,
+		onDismiss: noop,
 	};
 
 	getHref() {
@@ -96,7 +98,26 @@ class Banner extends Component {
 		}
 
 		onClick( e );
-	}
+	};
+
+	handleDismiss = ( e ) => {
+		const {
+			event,
+			feature,
+			onDismiss,
+		} = this.props;
+
+		if ( event ) {
+			this.props.recordTracksEvent(
+				'calypso_banner_dismiss', {
+					cta_name: event,
+					cta_feature: feature,
+				}
+			);
+		}
+
+		onDismiss( e );
+	};
 
 	getIcon() {
 		const {
@@ -241,6 +262,7 @@ class Banner extends Component {
 					className={ classes }
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
+					onClick={ this.handleDismiss }
 				>
 					{ this.getIcon() }
 					{ this.getContent() }

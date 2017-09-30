@@ -74,11 +74,16 @@ export default {
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
+		providesDependencies: [ 'designType' ]
 	},
 
 	'design-type-with-store': {
 		stepName: 'design-type-with-store',
+		providesDependencies: [ 'designType' ]
+	},
+
+	'design-type-with-atomic-store': {
+		stepName: 'design-type-with-atomic-store',
 		providesDependencies: [ 'designType', 'themeSlugWithRepo' ]
 	},
 

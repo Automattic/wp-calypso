@@ -17,7 +17,7 @@ import {
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
 import { receiveThumbnail, requestThumbnail } from '../actions';
-import sampleVimeoResponse from './sample-vimeo-response.js';
+import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

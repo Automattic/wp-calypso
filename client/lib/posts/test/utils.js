@@ -1,32 +1,17 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+
 /**
  * External dependencies
  */
 import assert from 'assert';
-import { noop } from 'lodash';
 
 /**
 * Internal dependencies
 */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import postUtils from '../utils';
 
 describe( 'utils', function() {
-	let postUtils;
-
-	useFakeDom();
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
-
-	before( () => {
-		postUtils = require( '../utils' );
-	} );
-
 	describe( '#getEditURL', function() {
 		it( 'should return correct path type=post is supplied', function() {
 			const url = postUtils.getEditURL( { ID: 123, type: 'post' }, { slug: 'en.blog.wordpress.com' } );

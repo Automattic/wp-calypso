@@ -1,17 +1,18 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import { isPlainObject, isArray, noop } from 'lodash';
-import mockery from 'mockery';
+import { isPlainObject, isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
-
-let Dispatcher;
+import Dispatcher from 'dispatcher';
+import { getRemovedPosts } from 'lib/posts/post-list-store';
+import postListStoreFactory from 'lib/posts/post-list-store-factory';
 
 /**
  * Mock Data
@@ -100,25 +101,7 @@ function dispatchQueryPosts( postListStoreId, options ) {
 }
 
 describe( 'post-list-store', () => {
-	let defaultPostListStore, getRemovedPosts, postListStoreFactory;
-
-	useFakeDom();
-	useMockery();
-
-	before( () => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-		mockery.registerAllowable( 'lib/posts/post-list-store-factory' );
-		mockery.registerAllowable( 'lib/posts/post-list-cache-store' );
-		mockery.registerAllowable( 'lib/posts/post-list-store' );
-
-		getRemovedPosts = require( 'lib/posts/post-list-store' ).getRemovedPosts;
-		postListStoreFactory = require( 'lib/posts/post-list-store-factory' );
-		Dispatcher = require( 'dispatcher' );
-	} );
+	let defaultPostListStore;
 
 	beforeEach( () => {
 		postListStoreFactory._reset();
@@ -171,7 +154,7 @@ describe( 'post-list-store', () => {
 		} );
 
 		// fairly certain this doesn't actually work. Thes store ID is not part of the cache key...
-		it.skip( 'should globally increment ids across all stores', () => {
+		it( 'should globally increment ids across all stores', () => {
 			const anotherPostListStore = postListStoreFactory( 'post-lists-nom' );
 			dispatchQueryPosts( defaultPostListStore.id, {
 				type: 'page',

@@ -15,12 +15,14 @@ const noop = () => null;
 const nudgeObject = ( o, value ) => () => ( o.counter += value );
 
 describe( 'Interval Runner', function() {
+	let clock;
+
 	before( function() {
-		this.clock = sinon.useFakeTimers();
+		clock = sinon.useFakeTimers();
 	} );
 
 	after( function() {
-		this.clock.restore();
+		clock.restore();
 	} );
 
 	beforeEach( function() {
@@ -35,7 +37,7 @@ describe( 'Interval Runner', function() {
 			assert( 1 === id );
 			assert( 0 === o.counter );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 42 === o.counter );
 		} );
 
@@ -50,15 +52,15 @@ describe( 'Interval Runner', function() {
 			add( EVERY_TEN_SECONDS, nudgeObject( o, 42 ) );
 
 			// plus 1 second
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 0 === o.counter );
 
 			// plus 5 seconds
-			this.clock.tick( 1000 * 4 );
+			clock.tick( 1000 * 4 );
 			assert( 0 === o.counter );
 
 			// plus 10 seconds
-			this.clock.tick( 1000 * 5 );
+			clock.tick( 1000 * 5 );
 			assert( 42 === o.counter );
 		} );
 
@@ -72,11 +74,11 @@ describe( 'Interval Runner', function() {
 			assert( 0 === o.counter );
 
 			// plus 5 seconds
-			this.clock.tick( 1000 * 5 );
+			clock.tick( 1000 * 5 );
 			assert( 5 === o.counter );
 
 			// plus 10 seconds
-			this.clock.tick( 1000 * 5 );
+			clock.tick( 1000 * 5 );
 			assert( 5 + 5 + 3 + 7 === o.counter );
 		} );
 	} );
@@ -86,11 +88,11 @@ describe( 'Interval Runner', function() {
 			const o = { counter: 0 };
 			const id = add( EVERY_SECOND, nudgeObject( o, 42 ) );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 42 === o.counter );
 
 			remove( id );
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 42 === o.counter );
 		} );
 
@@ -112,7 +114,7 @@ describe( 'Interval Runner', function() {
 			add( EVERY_SECOND, nudgeObject( o, 3 ) );
 			add( EVERY_SECOND, nudgeObject( o, 5 ) );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 
 			assert( 3 + 5 === o.counter );
 		} );
@@ -124,11 +126,11 @@ describe( 'Interval Runner', function() {
 			add( EVERY_MINUTE, nudgeObject( o, 5 ) );
 
 			// plus 1 second
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 3 === o.counter );
 
 			// plus 1 minute
-			this.clock.tick( 1000 * 59 );
+			clock.tick( 1000 * 59 );
 			assert( 3 * 60 + 5 === o.counter );
 		} );
 
@@ -137,14 +139,14 @@ describe( 'Interval Runner', function() {
 
 			const id = add( EVERY_SECOND, nudgeObject( o, 3 ) );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 3 === o.counter );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 6 === o.counter );
 
 			remove( id );
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 6 === o.counter );
 		} );
 	} );

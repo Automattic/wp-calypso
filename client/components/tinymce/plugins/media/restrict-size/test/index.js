@@ -1,17 +1,12 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;
-
-	useFakeDom();
 
 	before( () => {
 		const restrictSize = require( '../' );

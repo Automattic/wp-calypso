@@ -12,17 +12,9 @@
 		width: 2px;
 		background-color: lighten( $gray, 20% );
 
-		@include breakpoint( "<660px" ) {
-			left: 48px;
-		}
-
 		@include breakpoint( "<480px" ) {
-			left: 41px;
+			left: 29px;
 		}
-	}
-
-	@include breakpoint( "<660px" ) {
-		padding: 0 16px;
 	}
 }
 

@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import { reject } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -12,17 +13,16 @@ import Gridicon from 'gridicons';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryRemoveButton',
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-	mixins: [ PureRenderMixin ],
+class RemoveButton extends PureComponent {
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		itemId: PropTypes.number
-	},
+	};
 
-	remove() {
+	remove = () => {
 		const { siteId, itemId } = this.props;
 		if ( ! siteId || ! itemId ) {
 			return;
@@ -32,17 +32,24 @@ export default React.createClass( {
 		const items = reject( selected, ( item ) => item.ID === itemId );
 
 		MediaActions.setLibrarySelectedItems( siteId, items );
-	},
+	};
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<button
 				onClick={ this.remove }
 				onMouseDown={ ( event ) => event.stopPropagation() }
-				className="editor-media-modal-gallery__remove">
-				<span className="screen-reader-text">{ this.translate( 'Remove' ) }</span>
+				className="editor-media-modal-gallery__remove"
+			>
+				<span className="screen-reader-text">{ translate( 'Remove' ) }</span>
 				<Gridicon icon="cross" />
 			</button>
 		);
 	}
-} );
+}
+
+RemoveButton.displayName = 'RemoveButton';
+
+export default localize( RemoveButton );

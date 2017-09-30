@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StatsNavigation from '../stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
@@ -51,8 +51,8 @@ const StatsInsights = ( props ) => {
 			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation
+				selectedItem={ 'insights' }
 				siteId={ siteId }
-				section="insights"
 				slug={ siteSlug }
 			/>
 			<div>

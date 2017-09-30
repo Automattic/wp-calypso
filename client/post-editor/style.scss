@@ -236,6 +236,7 @@
 
 	&.is-assigned {
 		display: block;
+		padding: 12px 0 18px; /* Make room for the RemoveButton */
 
 		@include breakpoint( ">660px" ) {
 			margin: -24px 0 24px;

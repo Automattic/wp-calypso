@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,48 +16,47 @@ import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryPreview',
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-	propTypes: {
+class EditorMediaModalGalleryPreview extends Component {
+
+	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
 		invalidItemDropped: PropTypes.bool,
-		onDismissInvalidItemDropped: PropTypes.func
-	},
+		onDismissInvalidItemDropped: PropTypes.func,
+	};
 
-	getInitialState() {
-		return {
-			isEditing: false
-		};
-	},
+	static defaultProps = {
+		settings: Object.freeze( {} ),
+		onUpdateSetting: noop,
+		invalidItemDropped: false,
+		onDismissInvalidItemDropped: noop,
+	};
 
-	getDefaultProps() {
-		return {
-			settings: Object.freeze( {} ),
-			onUpdateSetting: () => {},
-			invalidItemDropped: false,
-			onDismissInvalidItemDropped: () => {}
-		};
-	},
+	state = {
+		isEditing: false,
+	};
 
 	renderPreviewModeToggle() {
+		const { translate } = this.props;
+
 		return (
-			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
+			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: false } ) }>
-					{ this.translate( 'Preview' ) }
+					{ translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
 					selected={ this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: true } ) }>
-					{ this.translate( 'Edit' ) }
+					{ translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
-	},
+	}
 
 	renderPreview() {
 		const { site, settings, onUpdateSetting } = this.props;
@@ -68,7 +70,8 @@ export default React.createClass( {
 				<EditorMediaModalGalleryEdit
 					site={ site }
 					settings={ settings }
-					onUpdateSetting={ onUpdateSetting } />
+					onUpdateSetting={ onUpdateSetting }
+				/>
 			);
 		}
 
@@ -84,14 +87,16 @@ export default React.createClass( {
 				siteId={ site.ID }
 				settings={ settings } />
 		);
-	},
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
 					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
+						{ translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
 					</Notice>
 				) }
 				<div className="editor-media-modal-gallery__preview-wrapper">
@@ -101,5 +106,9 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+EditorMediaModalGalleryPreview.displayName = 'EditorMediaModalGalleryPreview';
+
+export default localize( EditorMediaModalGalleryPreview );
 

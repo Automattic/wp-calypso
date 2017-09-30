@@ -271,7 +271,7 @@ i18n.registerTranslateHook( ( translation, options ) => {
 } );
 
 // callback when translated component changes.
-// the callback is overwritten by the the translator on load/unload, so we're returning it within an anonymous function.
+// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 i18n.registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
 		return translationDataFromPage.contentChangedCallback();

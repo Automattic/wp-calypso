@@ -1,3 +1,6 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+
 /**
  * External dependencies
  */
@@ -9,27 +12,9 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import { EditPostStatus } from '../';
 
 describe( 'EditPostStatus', function() {
-	let EditPostStatus;
-
-	useFakeDom();
-	useMockery();
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
-
-	before( function() {
-		EditPostStatus = require( '../' ).EditPostStatus;
-	} );
-
 	it( 'should hide sticky option for password protected posts', function() {
 		const wrapper = shallow(
 			<EditPostStatus post={ { password: 'password' } } isPostPrivate={ false } type={ 'post' } />

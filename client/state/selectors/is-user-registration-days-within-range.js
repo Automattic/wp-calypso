@@ -4,7 +4,7 @@
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
 /**
- * Returns true if the the number of days the current user has been registered for falls within the specied range of values.
+ * Returns true if the number of days the current user has been registered for falls within the specied range of values.
  *
  * @param {Object} state Global state tree
  * @param {Object} moment Current moment for determination of elapsed days since registration

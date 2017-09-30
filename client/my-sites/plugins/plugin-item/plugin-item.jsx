@@ -188,7 +188,7 @@ class PluginItem extends Component {
 		if ( this.props.isAutoManaged ) {
 			return (
 				<div className="plugin-item__last-updated">
-					{ translate( '%(pluginName)s is automatically managed on this site', { args: { pluginName: pluginData.name } } ) }
+					{ translate( 'Auto-managed on this site' ) }
 				</div>
 			);
 		}

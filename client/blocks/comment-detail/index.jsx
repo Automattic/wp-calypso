@@ -23,6 +23,11 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
 /**
  * Creates a stripped down comment object containing only the information needed by
@@ -48,7 +53,6 @@ export class CommentDetail extends Component {
 		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
-		authorIsBlocked: PropTypes.bool,
 		authorName: PropTypes.string,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
@@ -64,13 +68,18 @@ export class CommentDetail extends Component {
 		editComment: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 		isRawContentSupported: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
+		postUrl: PropTypes.string,
+		recordReaderArticleOpened: PropTypes.func,
+		recordReaderCommentOpened: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
+		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
@@ -84,23 +93,13 @@ export class CommentDetail extends Component {
 	};
 
 	state = {
-		authorIsBlocked: false,
 		isEditMode: false,
 	};
-
-	componentWillMount() {
-		const { authorIsBlocked } = this.props;
-		this.setState( { authorIsBlocked } );
-	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isBulkEdit && ! this.props.isBulkEdit ) {
 			this.setState( { isExpanded: false } );
 		}
-	}
-
-	blockUser = () => {
-		this.setState( { authorIsBlocked: ! this.state.authorIsBlocked } );
 	}
 
 	deleteCommentPermanently = () => {
@@ -113,6 +112,10 @@ export class CommentDetail extends Component {
 			deleteCommentPermanently( commentId, postId );
 		}
 	}
+
+	isAuthorBlacklisted = () => ( !! this.props.authorEmail && !! this.props.siteBlacklist )
+		? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
+		: false;
 
 	toggleApprove = () => {
 		if ( this.state.isEditMode ) {
@@ -196,6 +199,17 @@ export class CommentDetail extends Component {
 		}
 	}
 
+	trackDeepReaderLinkClick = () => {
+		const { isJetpack, parentCommentContent } = this.props;
+		if ( isJetpack ) {
+			return;
+		}
+		if ( parentCommentContent ) {
+			return this.props.recordReaderCommentOpened();
+		}
+		this.props.recordReaderArticleOpened();
+	}
+
 	render() {
 		const {
 			authorAvatarUrl,
@@ -212,6 +226,7 @@ export class CommentDetail extends Component {
 			commentIsSelected,
 			commentRawContent,
 			commentStatus,
+			commentType,
 			commentUrl,
 			editComment,
 			isBulkEdit,
@@ -223,18 +238,19 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
+			postUrl,
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
+			siteBlacklist,
 			siteId,
 			translate,
 		} = this.props;
 
-		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 		const authorDisplayName = authorName || translate( 'Anonymous' );
+		const authorIsBlocked = this.isAuthorBlacklisted();
 
 		const {
-			authorIsBlocked,
 			isEditMode,
 			isExpanded,
 		} = this.state;
@@ -272,6 +288,7 @@ export class CommentDetail extends Component {
 					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
+					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
@@ -297,6 +314,7 @@ export class CommentDetail extends Component {
 							postTitle={ postTitle }
 							postUrl={ postUrl }
 							siteId={ siteId }
+							onClick={ this.trackDeepReaderLinkClick }
 						/>
 
 						{ isEditMode &&
@@ -320,19 +338,23 @@ export class CommentDetail extends Component {
 									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									authorEmail={ authorEmail }
+									authorId={ authorId }
 									authorIp={ authorIp }
 									authorIsBlocked={ authorIsBlocked }
 									authorUrl={ authorUrl }
 									authorUsername={ authorUsername }
-									blockUser={ this.blockUser }
 									commentContent={ commentContent }
 									commentDate={ commentDate }
+									commentId={ commentId }
 									commentStatus={ commentStatus }
+									commentType={ commentType }
 									commentUrl={ commentUrl }
 									repliedToComment={ repliedToComment }
+									siteBlacklist={ siteBlacklist }
 									siteId={ siteId }
 								/>
 								<CommentDetailReply
+									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
 									postTitle={ postTitle }
@@ -365,13 +387,16 @@ const mapStateToProps = ( state, ownProps ) => {
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
+	const authorName = decodeEntities( get( comment, 'author.name' ) );
+
+	const isJetpack = isJetpackSite( state, siteId );
+
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
-		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorName: get( comment, 'author.name' ),
+		authorIp: get( comment, 'author.ip_address' ),
+		authorName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		commentContent: get( comment, 'content' ),
@@ -380,18 +405,32 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
+		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
-		isEditCommentSupported: ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		isEditCommentSupported: ! isJetpack || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		isJetpack,
 		isLoading,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
+		postUrl: isJetpack ? get( comment, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
 	} );
 };
 
-export default connect( mapStateToProps )( localize( CommentDetail ) );
+const mapDispatchToProps = dispatch => ( {
+	recordReaderArticleOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_article_opened' ),
+		bumpStat( 'calypso_comment_management', 'article_opened' )
+	) ),
+	recordReaderCommentOpened: () => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_comment_opened' ),
+		bumpStat( 'calypso_comment_management', 'comment_opened' )
+	) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetail ) );

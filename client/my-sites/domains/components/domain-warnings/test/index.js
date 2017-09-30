@@ -1,3 +1,6 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/analytics', () => ( {} ) );
+
 /**
  * External dependencies
  */
@@ -12,22 +15,12 @@ import TestUtils from 'react-addons-test-utils';
 /**
  * Internal dependencies
  */
+import { DomainWarnings } from '../';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 import support from 'lib/url/support';
 
 describe( 'index', () => {
-	let DomainWarnings;
-
-	useFakeDom();
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
-		DomainWarnings = require( '../' ).DomainWarnings;
-	} );
-
 	beforeEach( () => {
 		Notice.prototype.translate = identity;
 	} );

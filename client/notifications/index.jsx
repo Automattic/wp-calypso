@@ -17,7 +17,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import wpcom from 'lib/wp';
-import { get } from 'lodash';
 import 'config';
 import { connect } from 'react-redux';
 
@@ -26,15 +25,10 @@ import { connect } from 'react-redux';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import userLib from 'lib/user';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-
-/**
- * Module variables
- */
-const user = userLib();
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 /**
  * Returns whether or not the browser session
@@ -153,7 +147,7 @@ export class Notifications extends Component {
 	};
 
 	render() {
-		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
+		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
@@ -220,4 +214,6 @@ export class Notifications extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( Notifications );
+export default connect( state => ( {
+	currentLocaleSlug: getCurrentLocaleSlug( state )
+} ), { recordTracksEvent } )( Notifications );

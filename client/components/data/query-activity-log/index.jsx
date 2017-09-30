@@ -35,7 +35,7 @@ class QueryActivityLog extends PureComponent {
 		this.request( nextProps );
 	}
 
-	request( { siteId, dateEnd, dateStart, number } ) {
+	request( { dateEnd, dateStart, number, siteId } ) {
 		if ( siteId ) {
 			this.props.activityLogRequest( siteId, {
 				dateEnd,

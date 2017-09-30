@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 
+import url from 'url';
 import debugModule from 'debug';
 import page from 'page';
 import React from 'react';
@@ -38,6 +39,7 @@ import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -257,6 +259,12 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
+		const urlPath = location.href;
+		const query = url.parse( urlPath, true ).query;
+		const affiliateId = query.aff;
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.affiliateReferral( { urlPath, affiliateId } );
+		}
 	}
 
 	componentWillUnmount() {
@@ -487,6 +495,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey, loadTrackingTool },
+	{ setSurvey, loadTrackingTool, affiliateReferral },
 	undefined,
 	{ pure: false } )( Signup );

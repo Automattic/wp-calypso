@@ -1,3 +1,7 @@
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+
 /**
  * External dependencies
  */
@@ -6,7 +10,6 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { createStore } from 'redux';
 import { reducer } from 'state';
 
@@ -14,9 +17,6 @@ describe( 'dependency-store', function() {
 	let SignupProgressStore,
 		SignupDependencyStore,
 		SignupActions;
-
-	useFakeDom();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
 		SignupProgressStore = require( '../progress-store' );

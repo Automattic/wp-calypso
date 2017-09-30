@@ -21,7 +21,6 @@ import {
 } from '../actions';
 import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
@@ -34,7 +33,6 @@ describe( 'actions', () => {
 	describe( '#fetchSetupChoices()', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -100,7 +98,6 @@ describe( 'actions', () => {
 	describe( '#setFinishedInitialSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -156,7 +153,6 @@ describe( 'actions', () => {
 	describe( '#setOptedOutOfShippingSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -212,7 +208,6 @@ describe( 'actions', () => {
 	describe( '#setOptedOutOfTaxesSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -268,7 +263,6 @@ describe( 'actions', () => {
 	describe( '#setTriedCustomizerDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -324,7 +318,6 @@ describe( 'actions', () => {
 	describe( '#setCreatedDefaultShippingZone', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -380,7 +373,6 @@ describe( 'actions', () => {
 	describe( '#setFinishedInstallOfRequiredPlugins', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -445,7 +437,6 @@ describe( 'actions', () => {
 			message: 'All missing WooCommerce pages successfully installed',
 		};
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -483,7 +474,6 @@ describe( 'actions', () => {
 	describe( '#setCheckedTaxSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -541,7 +531,6 @@ describe( 'actions', () => {
 	describe( '#setSetStoreAddressDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

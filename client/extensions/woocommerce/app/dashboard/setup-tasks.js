@@ -63,7 +63,7 @@ class SetupTasks extends Component {
 			this.props.fetchSetupChoices( site.ID );
 
 			if ( ! areProductsLoaded ) {
-				this.props.fetchProducts( site.ID, 1 );
+				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
 	}
@@ -77,7 +77,7 @@ class SetupTasks extends Component {
 		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
 			if ( ! areProductsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
+				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
 	}
@@ -108,6 +108,8 @@ class SetupTasks extends Component {
 			taxesAreSetUp,
 			translate
 		} = this.props;
+		const siteSlug = encodeURIComponent( '//' + site.slug );
+		const customizerUrl = getLink( 'https://:site/wp-admin/customize.php?store-wpcom-nux=true&return=' + siteSlug, site );
 
 		return [
 			{
@@ -184,7 +186,7 @@ class SetupTasks extends Component {
 				actions: [
 					{
 						label: translate( 'View and customize' ),
-						path: getLink( 'https://:site/wp-admin/customize.php?return=' + encodeURIComponent( '//' + site.slug ), site ),
+						path: customizerUrl,
 						onClick: this.onClickOpenCustomizer,
 						analyticsProp: 'view-and-customize',
 					}

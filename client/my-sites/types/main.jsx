@@ -29,14 +29,14 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 				title="Custom Post Type"
 			/>
 			<SidebarNavigation />
-			{ false !== userCanEdit && false !== postTypeSupported && [
+			{ userCanEdit && false !== postTypeSupported && [
 				<PostTypeFilter
 					key="filter"
-					query={ userCanEdit ? query : null }
+					query={ query }
 				/>,
 				<PostTypeList
 					key="list"
-					query={ userCanEdit ? query : null }
+					query={ query }
 					largeTitles={ true }
 					wrapTitles={ true }
 				/>,

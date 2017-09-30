@@ -58,7 +58,7 @@ function updateCachedProduct( products, product ) {
 
 export function productsRequestSuccess( state, action ) {
 	const prevState = state || {};
-	const isLoading = setLoading( prevState, action.page, false );
+	const isLoading = setLoading( prevState, action.params, false );
 	let products = prevState.products && [ ...prevState.products ] || [];
 	action.products.forEach( function( product ) {
 		products = updateCachedProduct( products, product );
@@ -83,34 +83,34 @@ export function productsDeleteSuccess( state, action ) {
 
 export function productsRequest( state, action ) {
 	const prevState = state || {};
-	const isLoading = setLoading( prevState, action.page, true );
+	const isLoading = setLoading( prevState, action.params, true );
 	return { ...prevState, isLoading };
 }
 
 export function productsRequestFailure( state, action ) {
 	const prevState = state || {};
-	const isLoading = setLoading( prevState, action.page, false );
+	const isLoading = setLoading( prevState, action.params, false );
 	return { ...prevState, isLoading };
 }
 
 export function productsSearchRequest( state, action ) {
 	const prevState = state || {};
 	const prevSearch = prevState.search || {};
-	const isLoading = setLoading( prevSearch, action.page, true );
+	const isLoading = setLoading( prevSearch, action.params, true );
 	return { ...prevState, search: { ...prevSearch, isLoading, query: action.query } };
 }
 
 export function productsSearchRequestFailure( state, action ) {
 	const prevState = state || {};
 	const prevSearch = prevState.search || {};
-	const isLoading = setLoading( prevSearch, action.page, false );
+	const isLoading = setLoading( prevSearch, action.params, false );
 	return { ...prevState, search: { ...prevSearch, isLoading, query: action.query } };
 }
 
 export function productsSearchRequestSuccess( state, action ) {
 	const prevState = state || {};
 	const prevSearch = prevState.search || {};
-	const isLoading = setLoading( prevSearch, action.page, false );
+	const isLoading = setLoading( prevSearch, action.params, false );
 
 	let products = prevState.products && [ ...prevState.products ] || [];
 	action.products.forEach( function( product ) {
@@ -134,8 +134,8 @@ export function productsSearchClear( state ) {
 	};
 }
 
-function setLoading( state, page, newStatus ) {
+function setLoading( state, params, newStatus ) {
 	const isLoading = state.isLoading && { ...state.isLoading } || {};
-	isLoading[ page ] = newStatus;
+	isLoading[ JSON.stringify( params ) ] = newStatus;
 	return isLoading;
 }

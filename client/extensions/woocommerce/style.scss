@@ -3,6 +3,7 @@
 
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-create/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
 	@import 'app/order/order-details/style';
@@ -19,7 +20,6 @@
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
-	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -82,6 +82,13 @@
 		border: 1px solid lighten( $gray, 20% );
 	}
 
+	@include breakpoint( ">660px" ) {
+		&.store-stats {
+			.stats-navigation .section-nav {
+				margin-top: 0;
+			}
+		}
+	}
 }
 
 .is-section-woocommerce {
@@ -185,9 +192,16 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 4px;
+				margin-top: 0;
 				background: transparent;
 				border: none;
+				padding-top: 11px;
+				padding-bottom: 11px;
+			}
+
+			.gridicons-chevron-left {
+				margin-left: 11px;
+				margin-right: 11px;
 			}
 		}
 	}

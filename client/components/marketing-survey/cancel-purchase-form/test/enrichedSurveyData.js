@@ -1,3 +1,5 @@
+jest.mock( 'lib/analytics', () => ( {} ) );
+
 /**
  * External dependencies
  */
@@ -6,20 +8,10 @@ import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
+*/
+import enrichedSurveyData from '../enrichedSurveyData';
 
 describe( 'enrichedSurveyData', function() {
-	let enrichedSurveyData;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
-	} );
-
-	before( function() {
-		enrichedSurveyData = require( '../enrichedSurveyData' );
-	} );
-
 	it( 'should duplicate survey data if no site or purchase are provided', function() {
 		expect(
 			enrichedSurveyData( { key: 'value' }, moment() )

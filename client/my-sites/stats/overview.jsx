@@ -14,7 +14,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
-import StatsNavigation from './stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
 import QuerySites from 'components/data/query-sites';
@@ -95,7 +95,10 @@ class StatsOverview extends Component {
 				<QuerySites allSites />
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation section={ period } />
+				<StatsNavigation
+					selectedItem={ 'traffic' }
+					interval={ period }
+				/>
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
 				<JetpackColophon />
 			</Main>

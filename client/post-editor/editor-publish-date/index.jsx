@@ -46,9 +46,21 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	handleOutsideClick = event => {
-		const targetClasses = event.target.className.split( /\s/ );
-		const hasDatePickerDayClass = intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
-		const isChildOfPublishDate = ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target );
+		// The `className` of a `svg` element is a `SVGAnimatedString`, which
+		// does not have a `split` method.  Since an `svg` element will not
+		// have any of the classes we're interested in, don't bother trying to
+		// handle this situation.
+		const targetClasses = typeof event.target.className === 'string'
+			? event.target.className.split( /\s/ )
+			: [];
+
+		const hasDatePickerDayClass = intersection( targetClasses, [
+			'DayPicker-Day', 'date-picker__day'
+		] ).length > 0;
+
+		const isChildOfPublishDate =
+			ReactDom.findDOMNode( this.refs.editorPublishDateWrapper )
+				.contains( event.target );
 
 		if ( ! hasDatePickerDayClass && ! isChildOfPublishDate ) {
 			this.setState( { isOpen: false } );
@@ -127,7 +139,11 @@ export class EditorPublishDate extends React.Component {
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
-				<Gridicon icon="calendar" size={ 18 } />
+				<Gridicon
+					className="editor-publish-date__header-icon"
+					icon="calendar"
+					size={ 18 }
+				/>
 				<div className="editor-publish-date__header-wrapper">
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
@@ -147,8 +163,13 @@ export class EditorPublishDate extends React.Component {
 			? this.props.post.date
 			: null;
 
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const className = classNames( 'editor-publish-date__schedule', {
+			'is-scheduled': isScheduled,
+		} );
+
 		return (
-			<div className="editor-publish-date__schedule">
+			<div className={ className }>
 				{ this.renderCalendarHeader() }
 				<PostScheduler
 					post={ this.props.post }

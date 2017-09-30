@@ -12,7 +12,6 @@ import page from 'page';
  */
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
@@ -79,7 +78,6 @@ class PlansLanding extends Component {
 
 	render() {
 		const { basePlansPath, interval } = this.props;
-		const hideFreePlanTest = abtest( 'jetpackConnectHideFreePlan' ) === 'hide';
 
 		return (
 			<div>
@@ -88,12 +86,12 @@ class PlansLanding extends Component {
 				<PlansGrid
 					basePlansPath={ basePlansPath }
 					calypsoStartedConnection={ true }
-					hideFreePlan={ hideFreePlanTest }
+					hideFreePlan={ true }
 					interval={ interval }
 					isLanding={ true }
 					onSelect={ this.storeSelectedPlan }
 				>
-					{ hideFreePlanTest && <PlansSkipButton onClick={ this.handleSkipButtonClick } /> }
+					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 				</PlansGrid>
 			</div>
 		);

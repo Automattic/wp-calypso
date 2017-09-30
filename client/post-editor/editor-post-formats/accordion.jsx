@@ -68,7 +68,8 @@ const EditorPostFormatsAccordion = React.createClass( {
 					<Accordion
 						title={ this.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						className={ classes }>
+						className={ classes }
+						e2eTitle="post-format">
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>
 				) }

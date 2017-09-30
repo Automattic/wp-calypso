@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  */
@@ -7,27 +9,21 @@ import sinon from 'sinon';
  /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useNock from 'test/helpers/use-nock';
 
 let directly;
 let loadScript;
 
 describe( 'index', () => {
-	// Need to use `require` to correctly spy on loadScript
-	loadScript = require( 'lib/load-script' );
-	sinon.stub( loadScript, 'loadScript' );
-
 	// Helpers to simulate whether the remote Directly script loads or fails
 	const simulateSuccessfulScriptLoad = () => loadScript.loadScript.callsArg( 1 );
 	const simulateFailedScriptLoad = ( error ) => loadScript.loadScript.callsArgWith( 1, error );
 
-	useFakeDom();
-
 	beforeEach( () => {
+		loadScript = require( 'lib/load-script' );
+		sinon.stub( loadScript, 'loadScript' );
 		directly = require( '..' );
 
-		loadScript.loadScript.reset();
 		// Since most tests expect the script to load, make this the default
 		simulateSuccessfulScriptLoad();
 	} );
@@ -38,8 +34,9 @@ describe( 'index', () => {
 		if ( script ) {
 			script.remove();
 		}
-		delete window.DirectlyRTM;
-		delete require.cache[ require.resolve( '..' ) ];
+		window.DirectlyRTM = undefined;
+		// We need to reset local state in directly library
+		jest.resetModules();
 	} );
 
 	describe( 'when the API says Directly is available', () => {
@@ -53,16 +50,14 @@ describe( 'index', () => {
 		} );
 
 		describe( '#initialize()', () => {
-			it( 'creates a window.DirectlyRTM function', ( done ) => {
-				directly.initialize()
-					.then( () => expect( typeof window.DirectlyRTM ).to.equal( 'function' ) )
-					.then( () => done() );
+			it( 'creates a window.DirectlyRTM function', () => {
+				return directly.initialize()
+					.then( () => expect( typeof window.DirectlyRTM ).to.equal( 'function' ) );
 			} );
 
-			it( 'attempts to load the remote script', ( done ) => {
-				directly.initialize()
-					.then( () => expect( loadScript.loadScript ).to.have.been.calledOnce )
-					.then( () => done() );
+			it( 'attempts to load the remote script', () => {
+				return directly.initialize()
+					.then( () => expect( loadScript.loadScript ).to.have.been.calledOnce );
 			} );
 
 			it( 'does nothing after the first call', ( done ) => {
