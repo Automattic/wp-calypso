@@ -44,8 +44,31 @@ class PluginsTab extends Component {
 
 		return (
 			<div className="wp-super-cache__plugins-tab">
-				<SectionHeader label={ translate( 'Plugins' ) } />
 				<QueryPlugins siteId={ siteId } />
+
+				<Card>
+					<p>{ translate(
+						'Cache plugins are PHP scripts that live in a plugins folder inside the wp-super-cache folder. ' +
+						'They are loaded when Supercache loads, much sooner than regular WordPress plugins.'
+					) }</p>
+					<p>{ translate(
+						'This is strictly an advanced feature only and knowledge of both PHP and WordPress actions ' +
+						'is required to create them.'
+					) }</p>
+					<p>{ translate(
+						'{{strong}}Warning!{{/strong}} Due to the way WordPress upgrades plugins, the plugins you upload to ' +
+						'wp-super-cache/plugins/ will be deleted when you upgrade WP Super Cache. ' +
+						'You can avoid this by loading the plugins from elsewhere. ' +
+						'Set {{strong}}$wp_cache_plugins_dir{{/strong}} to the new location in wp-config.php and WP Super Cache ' +
+						'will look there instead. More info available in the {{a}}developer documentation.{{/a}}',
+						{ components: {
+							a: <ExternalLink href="https://odd.blog/wp-super-cache-developers/" icon={ true } target="_blank" />,
+							strong: <strong />,
+						} }
+					) }</p>
+				</Card>
+
+				<SectionHeader label={ translate( 'Plugins' ) } />
 				<Card>
 					{ map( plugins, ( { desc, enabled, key, title, toggling, url } ) => {
 						return (
