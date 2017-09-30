@@ -249,6 +249,24 @@ describe( 'post-list-store', () => {
 		} );
 	} );
 
+	describe( '#sort', () => {
+		it( 'should sort posts in ascending order if specified', () => {
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { order: 'ASC', orderBy: 'global_ID' } );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, TWO_POST_PAYLOAD );
+			const results = defaultPostListStore.getAll();
+			const expectedResults = [ { global_ID: 778 }, { global_ID: 779 } ];
+			assert.deepEqual( expectedResults, results );
+		} );
+
+		it( 'should sort posts in descending order if specified', () => {
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { order: 'DESC', orderBy: 'global_ID' } );
+			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, TWO_POST_PAYLOAD );
+			const results = defaultPostListStore.getAll();
+			const expectedResults = [ { global_ID: 779 }, { global_ID: 778 } ];
+			assert.deepEqual( expectedResults, results );
+		} );
+	} );
+
 	describe( 'RECEIVE_POSTS_PAGE', () => {
 		it( 'should add post ids for matching postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
