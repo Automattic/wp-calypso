@@ -19,6 +19,7 @@ class ExtensionRedirect extends Component {
 	static propTypes = {
 		minimumVersion: PropTypes.string,
 		pluginId: PropTypes.string.isRequired,
+		redirectUrl: PropTypes.string,
 		siteId: PropTypes.number,
 		// Connected props
 		pluginActive: PropTypes.bool.isRequired,
@@ -41,7 +42,11 @@ class ExtensionRedirect extends Component {
 		// Has the request completed?
 		// If it has, and the above criteria aren't fulfilled, we redirect.
 		if ( this.props.requestingPlugins && ! nextProps.requestingPlugins ) {
-			page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+			if ( nextProps.redirectUrl ) {
+				page.redirect( nextProps.redirectUrl );
+			} else {
+				page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+			}
 		}
 	}
 
