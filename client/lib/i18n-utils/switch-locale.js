@@ -45,7 +45,7 @@ export default function switchLocale( localeSlug ) {
 		if ( typeof document !== 'undefined' ) {
 			document.documentElement.lang = localeSlug;
 			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-			const cssUrl = language.rtl ? window.app.urls[ 'style-rtl.css' ] : window.app.urls[ 'style.css' ];
+			const cssUrl = language.rtl ? window.app.staticUrls[ 'style-rtl.css' ] : window.app.staticUrls[ 'style.css' ];
 			switchCSS( 'main-css', cssUrl );
 		}
 	} );
