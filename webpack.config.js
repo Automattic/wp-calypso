@@ -154,12 +154,21 @@ const webpackConfig = {
 			] )
 		} ),
 		new webpack.NamedModulesPlugin(),
+		/*
 		new webpack.NamedChunksPlugin( chunk => {
 			if ( chunk.name ) {
 				return chunk.name;
 			}
-			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
-		} ),
+
+			return chunk.modules.map( m => {
+				// Context: https://github.com/webpack/webpack/issues/5017#issuecomment-307524314
+				if ( ! m.context && ! m.request ) {
+					return '';
+				}
+
+				return path.relative( m.context, m.request );
+			} ).join( '_' );
+		} ),*/
 		new NameAllModulesPlugin(),
 	] ),
 	externals: [ 'electron' ]
