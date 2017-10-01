@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { camelCase, find, mapKeys, without } from 'lodash';
-
 import i18n from 'i18n-calypso';
 
 /**
@@ -70,5 +69,6 @@ function ensurePrimaryDomainIsFirst( domains ) {
 }
 
 module.exports = {
+	assembleGoogleAppsSubscription,
 	createDomainObjects
 };
