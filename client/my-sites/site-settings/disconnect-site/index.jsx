@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import DisconnectSurvey from './disconnect-survey';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -44,10 +44,10 @@ class DisconnectSite extends Component {
 					<FormattedHeader
 						headerText={ translate( 'Disconnect Site' ) }
 						subHeaderText={ translate(
-							'Tell us why you want to disconnect your site from WordPress.com.'
+							"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
 						) }
 					/>
-					<Card className="disconnect-site__card"> </Card>
+					<DisconnectSurvey />
 					<SkipSurvey />
 				</Main>
 			</div>
