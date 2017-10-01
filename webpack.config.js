@@ -9,7 +9,6 @@ const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
-const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
@@ -26,7 +25,6 @@ const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified
  */
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
-const isWindows = os.type() === 'Windows_NT';
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -64,9 +62,6 @@ const babelLoader = {
 	}
 };
 
-// happypack is not compatible with windows: https://github.com/amireh/happypack/blob/caaed26eec1795d464ac4b66abd29e60343e6252/README.md#does-it-work-under-windows
-const jsLoader = isWindows ? babelLoader : 'happypack/loader';
-
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
 	entry: {},
@@ -86,7 +81,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ jsLoader ]
+				loader: [ 'happypack/loader' ]
 			},
 			{
 				test: /extensions[\/\\]index/,
@@ -147,7 +142,7 @@ const webpackConfig = {
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
-		! isWindows && new HappyPack( {
+		new HappyPack( {
 			loaders: _.compact( [
 				process.env.NODE_ENV === 'development' && 'react-hot-loader',
 				babelLoader
