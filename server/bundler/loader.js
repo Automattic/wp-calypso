@@ -21,7 +21,7 @@ function getSectionsModule( sections ) {
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+			loadSection += singleEnsure( section );
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
@@ -115,7 +115,6 @@ function getRequires( sections ) {
 function splitTemplate( path, section ) {
 	var pathRegex = getPathRegex( path ),
 		sectionString = JSON.stringify( section ),
-		moduleString = JSON.stringify( section.module ),
 		result;
 
 	result = [
@@ -128,8 +127,8 @@ function splitTemplate( path, section ) {
 		'		return;',
 		'	}',
 		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
-		'	preload( ' + moduleString + ' )',
-		'		.then( sectionModule => setSection( context, ' + sectionString + ', sectionModule ));',
+		'	preload( ' + JSON.stringify( section.name ) + ' )',
+		'		.then( sectionModule => { setSection( context, ' + sectionString + ', sectionModule ); next() } );',
 		'} );\n'
 	];
 
@@ -167,10 +166,10 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function singleEnsure( chunkName ) {
+function singleEnsure( section ) {
 	var result = [
-		'case ' + JSON.stringify( chunkName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
+		'case ' + JSON.stringify( section.name ) + ':',
+		'	return import( /* webpackChunkName: ' + JSON.stringify( section.name ) + ' */ ' + JSON.stringify( section.module ) + ' );',
 		'	break;\n'
 	];
 
