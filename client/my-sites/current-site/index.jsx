@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -31,12 +32,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		isPreviewShowing: React.PropTypes.bool,
-		siteCount: React.PropTypes.number.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		selectedSite: React.PropTypes.object,
-		translate: React.PropTypes.func.isRequired,
-		anySiteSelected: React.PropTypes.array
+		isPreviewShowing: PropTypes.bool,
+		siteCount: PropTypes.number.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		anySiteSelected: PropTypes.array
 	};
 
 	componentWillMount() {
@@ -131,11 +132,13 @@ class CurrentSite extends Component {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
 					{ this.props.siteCount > 1 &&
 						<span className="current-site__switch-sites">&nbsp;</span>
 					}
+
 					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
@@ -146,6 +149,7 @@ class CurrentSite extends Component {
 					</div>
 				</Card>
 			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
 		return (
