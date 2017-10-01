@@ -9,7 +9,7 @@ import { get } from 'lodash';
  *
  * @param  {Object}  state       Global state tree
  * @param  {Number}  siteId      The ID of the site we're querying
- * @return {?Boolean}            Whether Jetpack credentials are currently being requested
+ * @return {Boolean}            Whether Jetpack credentials are currently being requested
  */
 export default function isRequestingJetpackCredentials( state, siteId ) {
 	return get( state.jetpack.credentials.requests, [ siteId, 'requesting' ], null );
