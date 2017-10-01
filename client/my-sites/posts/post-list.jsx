@@ -87,7 +87,8 @@ class PostList extends PureComponent {
 					incrementPage={ this.incrementPage }
 					pathname={ context.pathname }
 					query={ query }
-					siteId={ siteId } />
+					siteId={ siteId }
+					statusSlug={ statusSlug } />
 			</div>
 		);
 	}
@@ -95,13 +96,20 @@ class PostList extends PureComponent {
 
 const Posts = localize( class extends Component {
 	static propTypes = {
-		author: PropTypes.number,
 		lastPage: PropTypes.bool.isRequired,
 		loading: PropTypes.bool.isRequired,
-		page: PropTypes.number.isRequired,
 		pathname: PropTypes.string.isRequired,
 		posts: PropTypes.array.isRequired,
-		search: PropTypes.string,
+		query: PropTypes.shape( {
+			page: PropTypes.number,
+			number: PropTypes.number,
+			author: PropTypes.number,
+			category: PropTypes.string,
+			search: PropTypes.string,
+			status: PropTypes.oneOf( [ 'draft,pending', 'future', 'trash', 'publish,private' ] ),
+			tag: PropTypes.string,
+			type: PropTypes.oneOf( [ 'post' ] ),
+		} ),
 		siteId: PropTypes.number,
 		hasSites: PropTypes.bool.isRequired,
 		statusSlug: PropTypes.string,
@@ -111,7 +119,6 @@ const Posts = localize( class extends Component {
 	static defaultProps = {
 		loading: false,
 		lastPage: false,
-		page: 0,
 		posts: [],
 		trackScrollPage: function() {}
 	};
@@ -161,13 +168,13 @@ const Posts = localize( class extends Component {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
-			this.props.trackScrollPage( this.props.page + 1 );
+			this.props.trackScrollPage( this.props.query.page + 1 );
 		}
 		this.props.incrementPage();
 	};
 
 	getNoContentMessage = () => {
-		const { hasRecentError, siteId, search, statusSlug, translate } = this.props;
+		const { hasRecentError, query: { search }, siteId, statusSlug, translate } = this.props;
 		let attributes;
 
 		if ( search ) {
@@ -244,7 +251,7 @@ const Posts = localize( class extends Component {
 
 	renderLoadingPlaceholders = () => {
 		return (
-			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
+			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.query.page } />
 		);
 	};
 
