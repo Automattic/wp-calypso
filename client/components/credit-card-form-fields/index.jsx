@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { assign } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,16 +14,16 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import Input from 'my-sites/domains/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
 
-const CreditCardFormFields = React.createClass( {
-	propTypes: {
-		card: React.PropTypes.object.isRequired,
-		countriesList: React.PropTypes.object.isRequired,
-		eventFormName: React.PropTypes.string.isRequired,
-		isFieldInvalid: React.PropTypes.func.isRequired,
-		onFieldChange: React.PropTypes.func.isRequired
-	},
+class CreditCardFormFields extends React.Component {
+	static propTypes = {
+		card: PropTypes.object.isRequired,
+		countriesList: PropTypes.object.isRequired,
+		eventFormName: PropTypes.string.isRequired,
+		isFieldInvalid: PropTypes.func.isRequired,
+		onFieldChange: PropTypes.func.isRequired
+	};
 
-	field: function( fieldName, componentClass, props ) {
+	field = ( fieldName, componentClass, props ) => {
 		return React.createElement( componentClass, assign( {}, props, {
 			additionalClasses: 'credit-card-form-fields__field',
 			eventFormName: this.props.eventFormName,
@@ -32,13 +34,13 @@ const CreditCardFormFields = React.createClass( {
 			value: this.getFieldValue( fieldName ),
 			autoComplete: 'off'
 		} ) );
-	},
+	};
 
-	getFieldValue: function( fieldName ) {
+	getFieldValue = fieldName => {
 		return this.props.card[ fieldName ];
-	},
+	};
 
-	handleFieldChange: function( event ) {
+	handleFieldChange = event => {
 		const { name: fieldName, value: nextValue } = event.target;
 
 		const previousValue = this.getFieldValue( fieldName );
@@ -52,15 +54,17 @@ const CreditCardFormFields = React.createClass( {
 		};
 
 		this.props.onFieldChange( rawDetails, maskedDetails );
-	},
+	};
 
-	render: function() {
+	render() {
+		const translate = this.props.translate;
+
 		return (
 			<div className="credit-card-form-fields">
 				{ this.field( 'name', Input, {
 					labelClass: 'credit-card-form-fields__label',
 					autoFocus: true,
-					label: this.translate( 'Name on Card', {
+					label: translate( 'Name on Card', {
 						context: 'Card holder name label on credit card form'
 					} )
 				} ) }
@@ -68,7 +72,7 @@ const CreditCardFormFields = React.createClass( {
 				{ this.field( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
 					labelClass: 'credit-card-form-fields__label',
-					label: this.translate( 'Card Number', {
+					label: translate( 'Card Number', {
 						context: 'Card number label on credit card form'
 					} )
 				} ) }
@@ -77,7 +81,7 @@ const CreditCardFormFields = React.createClass( {
 					{ this.field( 'expiration-date', Input, {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'MM/YY', {
+						label: translate( 'MM/YY', {
 							context: 'Expiry label on credit card form'
 						} )
 					} ) }
@@ -85,19 +89,19 @@ const CreditCardFormFields = React.createClass( {
 					{ this.field( 'cvv', Input, {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'CVV', {
+						label: translate( 'CVV', {
 							context: '3 digit security number on credit card form'
 						} )
 					} ) }
 
 					{ this.field( 'country', CountrySelect, {
-						label: this.translate( 'Country' ),
+						label: translate( 'Country' ),
 						countriesList: this.props.countriesList
 					} ) }
 
 					{ this.field( 'postal-code', Input, {
 						labelClass: 'credit-card-form-fields__label',
-						label: this.translate( 'Postal Code', {
+						label: translate( 'Postal Code', {
 							context: 'Postal code on credit card form'
 						} )
 					} ) }
@@ -105,6 +109,6 @@ const CreditCardFormFields = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default CreditCardFormFields;
+export default localize( CreditCardFormFields );
