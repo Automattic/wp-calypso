@@ -1,4 +1,4 @@
-Navigation Back Button
+*Navigation Back Button*
 
 This component is used to display a `Back` button for redirection to the previously
 visited site.
@@ -19,10 +19,9 @@ getRoute() {
 
 ```
 
-#Props:
+#Props (required):
 
-- `getRoute()` is a function returning redirection route loaded in the `onClick`
-event of the `Back` button.
+- `redirectRoute` -- destination redirect route (string)
 
 ##Exemplary use
 
@@ -39,3 +38,4 @@ getRoute() {
 }
 
 ```
+- `props` -- used to pass `translate` function to the component
