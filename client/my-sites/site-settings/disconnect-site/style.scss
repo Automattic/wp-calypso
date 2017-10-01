@@ -31,8 +31,17 @@
 		}
 }
 
-.disconnect-site__back-button {
+.disconnect-site__back-button-container {
 	position: fixed;
-	top: 10%;
-  left: 2%;
+		top: 47px;
+		left: 10px;
+
+	@include breakpoint( "<660px" ) {
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 46px;
+		background: $white;
+		border-bottom: 1px solid $gray-light;
+	}
 }
