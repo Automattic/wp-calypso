@@ -4,7 +4,6 @@ import { isEmpty } from 'lodash';
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -29,7 +28,7 @@ class NewCardForm extends Component {
 	};
 
 	render() {
-		let classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
+		const classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
 
 		return (
 			<div className="new-card">
