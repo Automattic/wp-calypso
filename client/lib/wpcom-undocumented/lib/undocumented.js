@@ -207,10 +207,43 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
 };
 
 /**
+ * Retrieve all Jetpack credentials for a specific site
+ *
+ * @param {int}      siteId  Jetpack blog ID
+ * @param {Function} fn      Response function
+ * @returns {Promise}             A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.fetchJetpackCredentials = function( siteId, fn ) {
+	return this.wpcom.req.get( { path: `/activity-log/${ siteId }/get-credentials` }, fn );
+};
+
+/**
+ * Update or add Jetpack credentials for a specific site
+ *
+ * @param {int}       siteId      Jetpack blog ID
+ * @param {Object}    credentials Formatted credentials payload
+ * @param {Function}  fn          Response function
+ * @returns {Promise}             A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.updateJetpackCredentials = function( siteId, credentials, fn ) {
+	const payload = {
+		credentials: credentials
+	};
+
+	return this.wpcom.req.post( {
+		path: `/activity-log/${ siteId }/update-credentials`,
+		body: payload,
+	}, fn );
+};
+
+/**
  * Update WordPress core install on the site with id siteId
  *
  * @param {int} [siteId] The site ID
  * @param {Function} fn The callback function
+ * @returns {Promise}             A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
