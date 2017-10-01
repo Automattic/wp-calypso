@@ -4,8 +4,8 @@
 			"targets": {
 				"browsers": [
 					"last 2 versions",
-					"Safari >= 9",
-					"iOS >= 9",
+					"Safari >= 10",
+					"iOS >= 10",
 					"not ie <= 10"
 				]
 			}
