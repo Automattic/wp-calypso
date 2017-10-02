@@ -2,35 +2,35 @@
  * External dependencies
  */
 import { includes, startsWith } from 'lodash';
-const React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
-	store = require( 'store' ),
-	debug = require( 'debug' )( 'calypso' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import store from 'store';
+import page from 'page';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' ),
-	abtestModule = require( 'lib/abtest' ), // used by error logger
-	getSavedVariations = abtestModule.getSavedVariations, // used by logger
-	initializeHappychat = require( 'state/happychat/actions' ).initialize,
-	analytics = require( 'lib/analytics' ),
-	reduxBridge = require( 'lib/redux-bridge' ),
-	route = require( 'lib/route' ),
-	normalize = require( 'lib/route/normalize' ),
-	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
-	superProps = require( 'lib/analytics/super-props' ),
-	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	nuxWelcome = require( 'layout/nux-welcome' ),
-	emailVerification = require( 'components/email-verification' ),
-	viewport = require( 'lib/viewport' ),
-	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	syncHandler = require( 'lib/wp/sync-handler' ),
-	supportUser = require( 'lib/user/support-user-interop' );
-
+import config from 'config';
+import { getSavedVariations } from 'lib/abtest'; // used by error logger
+import { initialize as initializeHappychat } from 'state/happychat/actions';
+import analytics from 'lib/analytics';
+import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
+import route from 'lib/route';
+import normalize from 'lib/route/normalize';
+import { isLegacyRoute } from 'lib/route/legacy-routes';
+import superProps from 'lib/analytics/super-props';
+import translatorJumpstart from 'lib/translator-jumpstart';
+import nuxWelcome from 'layout/nux-welcome';
+import emailVerification from 'components/email-verification';
+import viewport from 'lib/viewport';
+import { init as pushNotificationsInit } from 'state/push-notifications/actions';
+import { pruneStaleRecords } from 'lib/wp/sync-handler';
+import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+
+const debug = debugFactory( 'calypso' );
 
 function renderLayout( reduxStore ) {
 	const Layout = require( 'controller' ).ReduxWrappedLayout;
@@ -51,7 +51,7 @@ export function utils() {
 	debug( 'Executing WordPress.com utils.' );
 
 	// prune sync-handler records more than two days old
-	syncHandler.pruneStaleRecords( '2 days' );
+	pruneStaleRecords( '2 days' );
 
 	translatorJumpstart.init();
 }
@@ -59,8 +59,8 @@ export function utils() {
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
-	supportUser.setReduxStore( reduxStore );
-	reduxBridge.setReduxStore( reduxStore );
+	setSupportUserReduxStore( reduxStore );
+	setReduxBridgeReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {

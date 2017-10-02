@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:posts' ),
-	store = require( 'store' );
+import store from 'store';
 import { assign, clone, defer, fromPairs } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	PostsStore = require( './posts-store' ),
-	PostEditStore = require( './post-edit-store' ),
-	postListStoreFactory = require( './post-list-store-factory' ),
-	PreferencesStore = require( 'lib/preferences/store' ),
-	sites = require( 'lib/sites-list' )(),
-	utils = require( './utils' ),
-	versionCompare = require( 'lib/version-compare' ),
-	Dispatcher = require( 'dispatcher' ),
-	stats = require( './stats' );
+import wpcom from 'lib/wp';
+import PostsStore from './posts-store';
+import PostEditStore from './post-edit-store';
+import postListStoreFactory from './post-list-store-factory';
+import PreferencesStore from 'lib/preferences/store';
+import sitesFactory from 'lib/sites-list';
+import utils from './utils';
+import versionCompare from 'lib/version-compare';
+import Dispatcher from 'dispatcher';
+import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
+
+const sites = sitesFactory();
+const debug = debugFactory( 'calypso:posts' );
 
 var PostActions;
 
@@ -335,7 +338,7 @@ PostActions = {
 		};
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			stats.recordSaveEvent( context ); // do this before changing status from 'future'
+			recordSaveEvent( context ); // do this before changing status from 'future'
 		}
 
 		if ( ( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||

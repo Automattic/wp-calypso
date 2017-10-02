@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	constants = require( 'lib/invites/constants' );
+import Dispatcher from 'dispatcher';
+import { action as ActionTypes } from 'lib/invites/constants';
 
 describe( 'Invites Create Validation Store', () => {
 	let InvitesCreateValidationStore;
@@ -27,7 +27,7 @@ describe( 'Invites Create Validation Store', () => {
 
 	const actions = {
 		receiveValidaton: {
-			type: constants.action.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
+			type: ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
 			siteId: siteId,
 			data: validationData
 		},
