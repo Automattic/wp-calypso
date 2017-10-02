@@ -37,8 +37,8 @@ const showErrorNotice = ( dispatch, error ) => {
 	const knownErrors = {
 		exists: translate( 'This plugin is already installed on your site.' ),
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
-		incompatible: translate( 'Not a compatible plugin.' ),
-		unsupported_mime_type: translate( 'Not a valid zip file.' ),
+		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
+		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
 	const errorString = toLower( error.error + error.message );
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
@@ -49,7 +49,7 @@ const showErrorNotice = ( dispatch, error ) => {
 	}
 	if ( error.error ) {
 		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
-			args: { error: error.error }
+			args: { error: error.error },
 		} ) ) );
 		return;
 	}
@@ -62,7 +62,7 @@ export const uploadComplete = ( { dispatch, getState }, { siteId }, data ) => {
 	const site = getSite( state, siteId );
 
 	dispatch( recordTracksEvent( 'calypso_plugin_upload_complete', {
-		plugin_id: pluginId
+		plugin_id: pluginId,
 	} ) );
 
 	dispatch( completePluginUpload( siteId, pluginId ) );

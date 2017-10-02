@@ -36,7 +36,13 @@ export const initiateTransferWithPluginZip = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveResponse = ( { dispatch }, { siteId } ) => {
+export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
+	if ( success === false ) {
+		dispatch( errorNotice( translate( 'The uploaded file is not a valid plugin.' ) ) );
+		dispatch( pluginUploadError( siteId, 'Initiate failed' ) );
+		return;
+	}
+
 	dispatch( recordTracksEvent(
 		'calypso_automated_transfer_inititate_success',
 		{ context: 'plugin_upload' }
@@ -46,7 +52,7 @@ export const receiveResponse = ( { dispatch }, { siteId } ) => {
 
 const showErrorNotice = ( dispatch, error ) => {
 	if ( error.error === 'invalid_input' ) {
-		dispatch( errorNotice( translate( 'Not a valid zip file.' ) ) );
+		dispatch( errorNotice( translate( 'The uploaded file is not a valid zip.' ) ) );
 		return;
 	}
 	if ( error.error ) {
