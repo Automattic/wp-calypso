@@ -9,9 +9,6 @@ import { bindActionCreators } from 'redux';
 import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:wrap-settings-form' );
 
 /**
  * Internal dependencies
@@ -154,10 +151,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Support site settings for older Jetpacks as needed
 			const siteFields = pick( fields, settingsFields.site );
 			const apiVersion = siteIsJetpack && jetpackSiteRequiresLegacySettingsAPI ? '1.1' : '1.3';
-
-			debug( 'submitForm siteFields=', siteFields );
-			debug( 'submitForm apiVersion=', apiVersion );
-
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 			if ( jetpackSettingsUISupported ) {
 				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
@@ -273,7 +266,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isJetpack = isJetpackSite( state, siteId );
 			const jetpackSettingsUISupported =
 				isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-			const jetpackSiteRequiresLegacySettingsAPI = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.4' );
+			const jetpackSiteRequiresLegacySettingsAPI = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
