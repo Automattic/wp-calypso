@@ -83,9 +83,12 @@ const getAssets = ( () => {
  **/
 function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
-
 	const assets = getAssets();
-	forEach( assets, ( asset, name ) => ( urls[ name ] = asset.js ) );
+
+	forEach( assets, ( asset, name ) => {
+		urls[ name ] =
+			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
+	} );
 
 	return urls;
 }
