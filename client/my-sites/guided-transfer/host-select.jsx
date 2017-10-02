@@ -11,6 +11,8 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
 export default React.createClass( {
+	displayName: 'HostSelect',
+
 	propTypes: {
 		hosts: PropTypes.arrayOf(
 			PropTypes.shape( {

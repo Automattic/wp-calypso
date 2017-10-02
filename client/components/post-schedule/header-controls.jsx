@@ -10,6 +10,8 @@ import Gridicon from 'gridicons';
 var noop = () => {};
 
 export default React.createClass( {
+	displayName: 'PostScheduleHeaderControls',
+
 	propTypes: {
 		onYearChange: React.PropTypes.func
 	},

@@ -6,6 +6,8 @@ import Gridicon from 'gridicons';
 import Spinner from 'components/spinner';
 
 export default React.createClass( {
+	displayName: 'PhoneInputCountryFlag',
+
 	propTypes: {
 		countryCode: React.PropTypes.string.isRequired
 	},

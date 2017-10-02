@@ -11,6 +11,8 @@ import shortcodeUtils from 'lib/shortcode';
 import renderField from './preview-fields';
 
 export default React.createClass( {
+	displayName: 'ContactForm',
+
 	statics: {
 		match( content ) {
 			const match = shortcodeUtils.next( 'contact-form', content );

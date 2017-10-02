@@ -15,6 +15,8 @@ import classNames from 'classnames';
 var noop = () => {};
 
 export default React.createClass( {
+	displayName: 'PostScheduleHeader',
+
 	propTypes: {
 		date: React.PropTypes.object,
 		inputChronoDisplayed: React.PropTypes.bool,
