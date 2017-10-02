@@ -147,7 +147,10 @@ class PlansAtomicStoreStep extends Component {
 	}
 
 	render() {
+		const { designType } = this.props;
+
 		const classes = classNames( 'plans plans-step', {
+			'is-store-flow': designType === DESIGN_TYPE_STORE,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
