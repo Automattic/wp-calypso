@@ -365,17 +365,6 @@
       "version": "1.0.4",
       "dev": true
     },
-    "babel-plugin-lodash": {
-      "version": "3.2.11",
-      "dependencies": {
-        "glob": {
-          "version": "7.1.2"
-        },
-        "lodash": {
-          "version": "4.17.4"
-        }
-      }
-    },
     "babel-plugin-member-expression-literals": {
       "version": "1.0.1",
       "dev": true
@@ -866,10 +855,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000739"
+      "version": "1.0.30000740"
     },
     "caniuse-lite": {
-      "version": "1.0.30000739"
+      "version": "1.0.30000740"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1556,7 +1545,7 @@
       "dev": true
     },
     "electron-to-chromium": {
-      "version": "1.3.23"
+      "version": "1.3.24"
     },
     "element-class": {
       "version": "0.2.2"
@@ -1649,7 +1638,7 @@
       "version": "1.3.1"
     },
     "es-abstract": {
-      "version": "1.8.2"
+      "version": "1.9.0"
     },
     "es-to-primitive": {
       "version": "1.1.1"
@@ -2714,7 +2703,8 @@
       "version": "0.0.0"
     },
     "glob": {
-      "version": "7.0.3"
+      "version": "7.0.3",
+      "dev": true
     },
     "glob-base": {
       "version": "0.3.0",
@@ -2742,7 +2732,12 @@
       "version": "9.18.0"
     },
     "globby": {
-      "version": "6.1.0"
+      "version": "6.1.0",
+      "dependencies": {
+        "glob": {
+          "version": "7.1.2"
+        }
+      }
     },
     "globjoin": {
       "version": "0.1.4",
@@ -4712,6 +4707,9 @@
     "node-gyp": {
       "version": "3.6.2",
       "dependencies": {
+        "glob": {
+          "version": "7.1.2"
+        },
         "semver": {
           "version": "5.3.0"
         }
@@ -4756,6 +4754,9 @@
       "dependencies": {
         "chalk": {
           "version": "1.1.3"
+        },
+        "glob": {
+          "version": "7.1.2"
         },
         "supports-color": {
           "version": "2.0.0"
@@ -5165,7 +5166,7 @@
       }
     },
     "postcss-less": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "dev": true
     },
     "postcss-media-query-parser": {
@@ -6173,6 +6174,9 @@
         },
         "cliui": {
           "version": "3.2.0"
+        },
+        "glob": {
+          "version": "7.1.2"
         },
         "yargs": {
           "version": "7.1.0"
@@ -7253,7 +7257,7 @@
           "dev": true
         },
         "express": {
-          "version": "4.16.0",
+          "version": "4.16.1",
           "dev": true
         },
         "filesize": {
@@ -7313,11 +7317,11 @@
           "dev": true
         },
         "send": {
-          "version": "0.16.0",
+          "version": "0.16.1",
           "dev": true
         },
         "serve-static": {
-          "version": "1.13.0",
+          "version": "1.13.1",
           "dev": true
         },
         "setprototypeof": {
