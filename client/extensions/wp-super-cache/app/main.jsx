@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +19,11 @@ import EasyTab from '../components/easy';
 import Main from 'components/main';
 import Navigation from '../components/navigation';
 import Notice from 'components/notice';
+import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
-import { Tabs } from './constants';
+import { Tabs, WPSC_MIN_VERSION } from './constants';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
 
@@ -47,6 +50,8 @@ class WPSuperCache extends Component {
 				return <ContentsTab isReadOnly={ isReadOnly } />;
 			case Tabs.PRELOAD.slug:
 				return <PreloadTab />;
+			case Tabs.PLUGINS.slug:
+				return <PluginsTab />;
 			case Tabs.DEBUG.slug:
 				return <DebugTab />;
 			default:
@@ -57,17 +62,30 @@ class WPSuperCache extends Component {
 	render() {
 		const {
 			siteId,
+			siteSlug,
 			status: { cache_disabled: cacheDisabled },
 			tab,
 			translate,
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
 
+		const currentTab = find( Tabs, t => ( t.slug === tab ) );
+		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
+		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
+
+		let redirectUrl = '';
+		if ( minVersion !== WPSC_MIN_VERSION ) {
+			// We have a tab specific minimum version. If that version isn't fulfilled, we want to redirect
+			// to the 'default' tab (instead of the plugin installation page).
+			redirectUrl = '/extensions/wp-super-cache/' + siteSlug;
+		}
+
 		return (
 			<Main className={ mainClassName }>
 				<ExtensionRedirect pluginId="wp-super-cache"
-					minimumVersion="1.5.4"
-					siteId={ siteId } />
+					minimumVersion={ minVersion }
+					siteId={ siteId }
+					redirectUrl={ redirectUrl } />
 				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
@@ -87,10 +105,12 @@ class WPSuperCache extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
 			status: getStatus( state, siteId ),
-			siteId
+			siteId,
+			siteSlug
 		};
 	}
 );
