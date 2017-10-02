@@ -40,7 +40,7 @@ describe( 'loadScript', () => {
 		} );
 
 		test( 'should add the callback onto the pending callbacks object', () => {
-			expect( getCallbacksMap().get( url ) ).toEqual( [ callback ] );
+			expect( getCallbacksMap().get( url ) ).toEqual( new Set( [ callback ] ) );
 		} );
 
 		test( 'should call functions attachToHead and createScriptElement', () => {

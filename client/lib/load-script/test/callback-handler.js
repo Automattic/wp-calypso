@@ -43,7 +43,7 @@ describe( 'loadScript/callback-handler', () => {
 			const callback = () => {};
 			addScriptCallback( url, callback );
 
-			expect( callbacks.get( url ) ).toEqual( [ callback ] );
+			expect( callbacks.get( url ) ).toEqual( new Set( [ callback ] ) );
 		} );
 
 		test( 'should append to an existing array for a callback function to an old URL', () => {
@@ -54,10 +54,10 @@ describe( 'loadScript/callback-handler', () => {
 			const callback2 = () => {};
 
 			addScriptCallback( url, callback1 );
-			expect( callbacks.get( url ) ).toEqual( [ callback1 ] );
+			expect( callbacks.get( url ) ).toEqual( new Set( [ callback1 ] ) );
 
 			addScriptCallback( url, callback2 );
-			expect( callbacks.get( url ) ).toEqual( [ callback1, callback2 ] );
+			expect( callbacks.get( url ) ).toEqual( new Set( [ callback1, callback2 ] ) );
 		} );
 	} );
 
@@ -71,7 +71,7 @@ describe( 'loadScript/callback-handler', () => {
 			const callback = () => {};
 			addScriptCallback( url, callback );
 
-			expect( callbacks ).toEqual( new Map( [ [ url, [ callback ] ] ] ) );
+			expect( callbacks ).toEqual( new Map( [ [ url, new Set( [ callback ] ) ] ] ) );
 
 			removeAllScriptCallbacks();
 
@@ -120,10 +120,12 @@ describe( 'loadScript/callback-handler', () => {
 			addScriptCallback( url, callback1 );
 			addScriptCallback( url, callback2 );
 			addScriptCallback( url, callback3 );
-			expect( callbacks ).toEqual( new Map( [ [ url, [ callback1, callback2, callback3 ] ] ] ) );
+			expect( callbacks ).toEqual(
+				new Map( [ [ url, new Set( [ callback1, callback2, callback3 ] ) ] ] )
+			);
 
 			removeScriptCallback( url, callback2 );
-			expect( callbacks ).toEqual( new Map( [ [ url, [ callback1, callback3 ] ] ] ) );
+			expect( callbacks ).toEqual( new Map( [ [ url, new Set( [ callback1, callback3 ] ) ] ] ) );
 		} );
 	} );
 
@@ -145,11 +147,13 @@ describe( 'loadScript/callback-handler', () => {
 			addScriptCallback( url1, callback );
 			addScriptCallback( url2, callback );
 
-			expect( callbacks ).toEqual( new Map( [ [ url1, [ callback ] ], [ url2, [ callback ] ] ] ) );
+			expect( callbacks ).toEqual(
+				new Map( [ [ url1, new Set( [ callback ] ) ], [ url2, new Set( [ callback ] ) ] ] )
+			);
 
 			removeScriptCallbacks( url1 );
 
-			expect( callbacks ).toEqual( new Map( [ [ url2, [ callback ] ] ] ) );
+			expect( callbacks ).toEqual( new Map( [ [ url2, new Set( [ callback ] ) ] ] ) );
 		} );
 	} );
 

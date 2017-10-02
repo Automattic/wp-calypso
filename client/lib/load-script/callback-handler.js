@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'lib/load-script/callback-handler' );
 
@@ -23,10 +22,10 @@ export function addScriptCallback( url, callback ) {
 	const callbacksMap = getCallbacksMap();
 	if ( isLoading( url ) ) {
 		debug( `Adding a callback for an existing script from "${ url }"` );
-		callbacksMap.get( url ).push( callback );
+		callbacksMap.get( url ).add( callback );
 	} else {
 		debug( `Adding a callback for a new script from "${ url }"` );
-		callbacksMap.set( url, [ callback ] );
+		callbacksMap.set( url, new Set( [ callback ] ) );
 	}
 }
 
@@ -39,18 +38,11 @@ export function removeScriptCallback( url, callback ) {
 
 	const callbacksMap = getCallbacksMap();
 	const callbacksAtUrl = callbacksMap.get( url );
+	callbacksAtUrl.delete( callback );
 
-	if ( ! includes( callbacksAtUrl, callback ) ) {
-		return;
-	}
-
-	if ( 1 === callbacksAtUrl.length ) {
+	if ( callbacksAtUrl.size === 0 ) {
 		callbacksMap.delete( url );
-		return;
 	}
-
-	const index = callbacksAtUrl.indexOf( callback );
-	callbacksAtUrl.splice( index, 1 );
 }
 
 export function removeScriptCallbacks( url ) {
@@ -75,8 +67,7 @@ export function executeCallbacks( url, callbackArguments = null ) {
 				: debugMessage + ` with args "${ callbackArguments }"`
 		);
 
-		callbacksMap
-			.get( url )
+		[ ...callbacksMap.get( url ) ]
 			.filter( cb => typeof cb === 'function' )
 			.forEach( cb => cb( callbackArguments ) );
 		callbacksMap.delete( url );
