@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -52,8 +51,22 @@ class OrderDetails extends Component {
 		);
 	};
 
+	renderDetails = () => {
+		const { isEditing, order, site } = this.props;
+		if ( isEditing ) {
+			return <OrderDetailsTable order={ order } site={ site } />;
+		}
+
+		return [
+			<OrderCreated key="order-date" order={ order } site={ site } />,
+			<OrderDetailsTable key="order-details" order={ order } site={ site } />,
+			<OrderPaymentCard key="order-payment" order={ order } site={ site } />,
+			<OrderFulfillment key="order-fulfillment" order={ order } site={ site } />,
+		];
+	};
+
 	render() {
-		const { isEditing, order, site, translate } = this.props;
+		const { order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -67,12 +80,7 @@ class OrderDetails extends Component {
 				>
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
-				<Card className="order-details__card">
-					{ ! isEditing && <OrderCreated order={ order } site={ site } /> }
-					<OrderDetailsTable order={ order } site={ site } />
-					{ ! isEditing && <OrderPaymentCard order={ order } site={ site } /> }
-					{ ! isEditing && <OrderFulfillment order={ order } site={ site } /> }
-				</Card>
+				<Card className="order-details__card">{ this.renderDetails() }</Card>
 			</div>
 		);
 	}
