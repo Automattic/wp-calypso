@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,11 +18,11 @@ class OrderRefundRow extends Component {
 			refunds: PropTypes.array.isRequired,
 		} ),
 		showTax: PropTypes.bool,
-	}
+	};
 
-	getRefundedTotal = ( order ) => {
-		return order.refunds.reduce( ( total, i ) => total + ( i.total * 1 ), 0 );
-	}
+	getRefundedTotal = order => {
+		return order.refunds.reduce( ( total, i ) => total + i.total * 1, 0 );
+	};
 
 	render() {
 		const { order, showTax, translate } = this.props;
@@ -33,7 +34,7 @@ class OrderRefundRow extends Component {
 		return (
 			<div className="order-details__total-refund">
 				<div className="order-details__totals-label">{ translate( 'Refunded' ) }</div>
-				{ showTax && <div className="order-details__totals-tax"></div> }
+				{ showTax && <div className="order-details__totals-tax" /> }
 				<div className="order-details__totals-value">
 					{ formatCurrency( refundValue, order.currency ) }
 				</div>

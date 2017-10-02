@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,17 +19,16 @@ import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getOrders,
-	getTotalOrders
+	getTotalOrders,
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
+import {
+	getOrdersCurrentPage,
+	getOrdersCurrentSearch,
+} from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-} from 'woocommerce/lib/order-status';
+import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
 import OrderStatus from 'woocommerce/components/order-status';
 import Pagination from 'components/pagination';
@@ -52,12 +52,11 @@ class Orders extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const hasAnythingChanged = (
+		const hasAnythingChanged =
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentSearch !== this.props.currentSearch ||
 			newProps.currentStatus !== this.props.currentStatus ||
-			newProps.siteId !== this.props.siteId
-		);
+			newProps.siteId !== this.props.siteId;
 		if ( ! newProps.siteId || ! hasAnythingChanged ) {
 			return;
 		}
@@ -78,25 +77,33 @@ class Orders extends Component {
 		this.props.fetchOrders( newProps.siteId, query );
 	}
 
-	clearSearch = ( event ) => {
+	clearSearch = event => {
 		const { site, siteId } = this.props;
 		this.search.closeSearch( event );
 		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
 		page( getLink( '/store/orders/:site', site ) );
-	}
+	};
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( ( i ) => {
+		return range( 5 ).map( i => {
 			return (
 				<TableRow key={ i } className="orders__row-placeholder">
-					<TableItem className="orders__table-name" isRowHeader><span /></TableItem>
-					<TableItem className="orders__table-date"><span /></TableItem>
-					<TableItem className="orders__table-status"><span /></TableItem>
-					<TableItem className="orders__table-total"><span /></TableItem>
+					<TableItem className="orders__table-name" isRowHeader>
+						<span />
+					</TableItem>
+					<TableItem className="orders__table-date">
+						<span />
+					</TableItem>
+					<TableItem className="orders__table-status">
+						<span />
+					</TableItem>
+					<TableItem className="orders__table-total">
+						<span />
+					</TableItem>
 				</TableRow>
 			);
 		} );
-	}
+	};
 
 	renderNoContent = () => {
 		const { currentSearch, currentStatus, site, translate } = this.props;
@@ -104,11 +111,11 @@ class Orders extends Component {
 		if ( currentSearch ) {
 			emptyMessage = translate( 'There are no orders matching your search.' );
 		} else if ( ORDER_UNPAID === currentStatus ) {
-			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
+			emptyMessage = translate( "You don't have any orders awaiting payment." );
 		} else if ( ORDER_UNFULFILLED === currentStatus ) {
-			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
+			emptyMessage = translate( "You don't have any orders awaiting fulfillment." );
 		} else if ( ORDER_COMPLETED === currentStatus ) {
-			emptyMessage = translate( 'You don\'t have any completed orders.' );
+			emptyMessage = translate( "You don't have any completed orders." );
 		}
 
 		return (
@@ -119,13 +126,16 @@ class Orders extends Component {
 				actionCallback={ this.clearSearch }
 			/>
 		);
-	}
+	};
 
 	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
 		return (
-			<TableRow className={ 'orders__status-' + order.status } key={ i }
-				href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
+			<TableRow
+				className={ 'orders__status-' + order.status }
+				key={ i }
+				href={ getLink( `/store/order/:site/${ order.number }`, site ) }
+			>
 				<TableItem className="orders__table-name" isRowHeader>
 					<span className="orders__item-link">#{ order.number }</span>
 					<span className="orders__item-name">
@@ -143,36 +153,41 @@ class Orders extends Component {
 				</TableItem>
 			</TableRow>
 		);
-	}
+	};
 
 	renderOrderItems = () => {
 		const { orders, ordersLoading, translate } = this.props;
 
 		const headers = (
 			<TableRow isHeader>
-				<TableItem className="orders__table-name" isHeader>{ translate( 'Order' ) }</TableItem>
-				<TableItem className="orders__table-date" isHeader>{ translate( 'Date' ) }</TableItem>
-				<TableItem className="orders__table-status" isHeader>{ translate( 'Status' ) }</TableItem>
-				<TableItem className="orders__table-total" isHeader>{ translate( 'Total' ) }</TableItem>
+				<TableItem className="orders__table-name" isHeader>
+					{ translate( 'Order' ) }
+				</TableItem>
+				<TableItem className="orders__table-date" isHeader>
+					{ translate( 'Date' ) }
+				</TableItem>
+				<TableItem className="orders__table-status" isHeader>
+					{ translate( 'Status' ) }
+				</TableItem>
+				<TableItem className="orders__table-total" isHeader>
+					{ translate( 'Total' ) }
+				</TableItem>
 			</TableRow>
 		);
 
 		return (
 			<Table className="orders__table" header={ headers } horizontalScroll>
-				{ ordersLoading
-					? this.renderPlaceholders()
-					: orders.map( this.renderOrderItem )
-				}
+				{ ordersLoading ? this.renderPlaceholders() : orders.map( this.renderOrderItem ) }
 			</Table>
 		);
-	}
+	};
 
 	onPageClick = nextPage => {
 		this.props.updateCurrentOrdersQuery( this.props.siteId, {
 			page: nextPage,
 			status: this.props.currentStatus,
 		} );
-	}
+	};
 
 	render() {
 		const {
@@ -182,30 +197,29 @@ class Orders extends Component {
 			orders,
 			ordersLoaded,
 			total,
-			translate
+			translate,
 		} = this.props;
 
 		// Orders are done loading, and there are definitely no orders for this site
 		if ( ordersLoaded && ! total && isDefaultPage ) {
 			return (
 				<div className="orders__container">
-					<EmptyContent
-						title={ translate( 'Your orders will appear here as they come in.' ) }
-					/>
+					<EmptyContent title={ translate( 'Your orders will appear here as they come in.' ) } />
 				</div>
 			);
 		}
 
-		const setSearchRef = ref => this.search = ref;
+		const setSearchRef = ref => ( this.search = ref );
 
 		return (
 			<div className="orders__container">
 				<OrdersFilterNav searchRef={ setSearchRef } status={ currentStatus } />
 
-				{ ( ! ordersLoaded || ( orders && orders.length ) )
-					? this.renderOrderItems()
-					: this.renderNoContent()
-				}
+				{ ! ordersLoaded || ( orders && orders.length ) ? (
+					this.renderOrderItems()
+				) : (
+					this.renderNoContent()
+				) }
 
 				<Pagination
 					page={ currentPage }
@@ -226,7 +240,7 @@ export default connect(
 		const currentSearch = getOrdersCurrentSearch( state, siteId );
 		const currentStatus = props.currentStatus || 'any';
 
-		const isDefaultPage = ( '' === currentSearch && 'any' === currentStatus );
+		const isDefaultPage = '' === currentSearch && 'any' === currentStatus;
 
 		const query = {
 			page: currentPage,

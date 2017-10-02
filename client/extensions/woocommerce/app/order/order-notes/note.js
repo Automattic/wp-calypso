@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,16 +17,10 @@ class OrderNote extends Component {
 		customer_note: PropTypes.bool,
 		date_created_gmt: PropTypes.string,
 		note: PropTypes.string.isRequired,
-	}
+	};
 
 	render() {
-		const {
-			customer_note,
-			date_created_gmt,
-			note,
-			moment,
-			translate
-		} = this.props;
+		const { customer_note, date_created_gmt, note, moment, translate } = this.props;
 
 		const createdMoment = date_created_gmt ? moment( date_created_gmt + 'Z' ) : moment();
 
@@ -45,9 +40,7 @@ class OrderNote extends Component {
 				</div>
 				<div className="order-notes__note-body">
 					<div className="order-notes__note-type">{ note_type }</div>
-					<div className="order-notes__note-content">
-						{ decodeEntities( stripHTML( note ) ) }
-					</div>
+					<div className="order-notes__note-content">{ decodeEntities( stripHTML( note ) ) }</div>
 				</div>
 			</div>
 		);
