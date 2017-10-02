@@ -38,11 +38,11 @@ class FormAnalyticsStores extends Component {
 		const { translate } = this.props;
 		const settings = [
 			{
-				key: 'track_purchases',
+				key: 'ec_track_purchases',
 				label: translate( 'Purchase transactions' )
 			},
 			{
-				key: 'track_add_to_cart',
+				key: 'ec_track_add_to_cart',
 				label: translate( 'Add to cart events' )
 			}
 		];
