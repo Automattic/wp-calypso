@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
+import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
@@ -19,17 +20,6 @@ class OrderCustomerInfo extends Component {
 			billing: PropTypes.object.isRequired,
 			shipping: PropTypes.object.isRequired,
 		} ),
-	};
-
-	getAddressViewFormat = address => {
-		return {
-			street: address.address_1 || '',
-			street2: address.address_2 || '',
-			city: address.city || '',
-			state: address.state || '',
-			country: address.country || '',
-			postcode: address.postcode || '',
-		};
 	};
 
 	render() {
@@ -52,7 +42,7 @@ class OrderCustomerInfo extends Component {
 							<h4>{ translate( 'Address' ) }</h4>
 							<div className="order-customer__billing-address">
 								<p>{ `${ billing.first_name } ${ billing.last_name }` }</p>
-								<AddressView address={ this.getAddressViewFormat( billing ) } />
+								<AddressView address={ getAddressViewFormat( billing ) } />
 							</div>
 
 							<h4>{ translate( 'Email' ) }</h4>
@@ -69,7 +59,7 @@ class OrderCustomerInfo extends Component {
 							<h4>{ translate( 'Address' ) }</h4>
 							<div className="order-customer__shipping-address">
 								<p>{ `${ shipping.first_name } ${ shipping.last_name }` }</p>
-								<AddressView address={ this.getAddressViewFormat( shipping ) } />
+								<AddressView address={ getAddressViewFormat( shipping ) } />
 							</div>
 						</div>
 					</div>
