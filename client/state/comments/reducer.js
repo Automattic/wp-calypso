@@ -15,6 +15,7 @@ import {
 	includes,
 	isArray,
 	values,
+	omitBy,
 } from 'lodash';
 
 /**
@@ -332,6 +333,14 @@ export const activeReplies = createReducer(
 		[ COMMENTS_SET_ACTIVE_REPLY ]: ( state, action ) => {
 			const { siteId, postId, commentId } = action.payload;
 			const stateKey = getStateKey( siteId, postId );
+
+			// If commentId is null, remove the key from the state map entirely
+			if ( commentId === null ) {
+				return omitBy( state, ( value, key ) => {
+					return key === stateKey;
+				} );
+			}
+
 			return { ...state, [ stateKey ]: commentId };
 		},
 	}

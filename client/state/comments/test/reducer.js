@@ -408,5 +408,23 @@ describe( 'reducer', () => {
 				[ '1-2' ]: 124,
 			} );
 		} );
+
+		it( 'should remove the given site and post from state entirely if commentId is null', () => {
+			const prevState = {
+				[ '1-2' ]: 123,
+				[ '2-3' ]: 456,
+			};
+
+			const action = setActiveReply( {
+				siteId: 1,
+				postId: 2,
+				commentId: null,
+			} );
+
+			const nextState = activeReplies( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '2-3' ]: 456,
+			} );
+		} );
 	} );
 } );
