@@ -24,6 +24,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import {
 	// isBusiness,
 	// isEnterprise,
+	isVipPlan,
 	isJetpackBusiness
 } from 'lib/products-values';
 
@@ -167,7 +168,7 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
-		const isSearchEligible = site && site.plan && hasBusinessPlan( site.plan );
+		const isSearchEligible = site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) );
 
 		return {
 			siteId,
