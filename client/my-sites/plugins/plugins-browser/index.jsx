@@ -39,12 +39,12 @@ import {
 } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import jetpackPlugins from 'my-sites/plugins-wpcom/jetpack-plugins';
 import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
+import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -252,7 +252,7 @@ const PluginsBrowser = React.createClass( {
 		const { siteSlug, translate } = this.props;
 		searchTerm = searchTerm.toLocaleLowerCase();
 		let matchingPlugins;
-		const plugins = jetpackPlugins( translate );
+		const plugins = wpcomFeaturesAsPlugins( translate );
 
 		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
 		// Then return the whole group as search results.
