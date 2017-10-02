@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
@@ -67,16 +68,6 @@ module.exports = {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-	},
-	readerIntroIllustration: {
-		datestamp: '20170718',
-		variations: {
-			blue: 33,
-			lightBlue: 33,
-			white: 34,
-		},
-		defaultVariation: 'white',
-		assignmentMethod: 'userId',
 	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
