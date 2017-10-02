@@ -66,7 +66,7 @@ class ActivityLogItem extends Component {
 
 	handleClickRestore = () => {
 		const { log, requestRestore } = this.props;
-		requestRestore( log.activityTs, 'item' );
+		requestRestore( log.activityId, 'item' );
 	};
 
 	handleOpen = () => {
