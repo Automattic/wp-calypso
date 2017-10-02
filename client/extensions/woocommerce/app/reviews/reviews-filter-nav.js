@@ -17,6 +17,8 @@ import { getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors'
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import { updateCurrentReviewsQuery } from 'woocommerce/state/ui/reviews/actions';
@@ -104,8 +106,8 @@ class ReviewsFilterNav extends Component {
 		return (
 			<div className="reviews__filter-nav">
 				{ product && (
-					<em>{ translate(
-						'Viewing reviews for {{productLink}}%(productName)s{{/productLink}}',
+					<Notice text={ translate(
+						'Viewing reviews for {{productLink}}%(productName)s{{/productLink}}.',
 						{
 							args: {
 								productName: product.name,
@@ -114,7 +116,11 @@ class ReviewsFilterNav extends Component {
 								productLink: <a href={ getLink( `/store/product/:site/${ product.id }`, site ) } />
 							}
 						}
-					) }</em>
+					) } showDismiss={ false }>
+						<NoticeAction href={ getLink( `/store/reviews/${ status }/:site/`, site ) }>
+							{ translate( 'View all reviews' ) }
+						</NoticeAction>
+					</Notice>
 				) }
 				<SectionNav selectedText={ currentSelection }>
 					<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>

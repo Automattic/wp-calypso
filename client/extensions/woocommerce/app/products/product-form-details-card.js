@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import config from 'config';
-import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { trim, debounce, isNumber } from 'lodash';
@@ -17,11 +16,10 @@ import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-inpu
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProductFormImages from './product-form-images';
-import ProductReviewsWidget from './product-reviews-widget';
+import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 
-class ProductFormDetailsCard extends Component {
+export default class ProductFormDetailsCard extends Component {
 
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -105,7 +103,14 @@ class ProductFormDetailsCard extends Component {
 	}
 
 	render() {
-		const { site, product } = this.props;
+		const { product } = this.props;
+
+		let productReviewsWidget = null;
+
+		if ( isNumber( product.id ) && config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			productReviewsWidget = <ProductReviewsWidget product={ product } />;
+		}
+
 		const images = product.images || [];
 		const __ = i18n.translate;
 
@@ -142,18 +147,10 @@ class ProductFormDetailsCard extends Component {
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
 							{ this.renderTinyMCE() }
 						</FormFieldSet>
-						{ isNumber( product.id ) && config.isEnabled( 'woocommerce/extension-reviews' ) &&
-						<ProductReviewsWidget site={ site } product={ product } /> }
+						{ productReviewsWidget }
 					</div>
 				</div>
 			</Card>
 		);
 	}
 }
-
-export default connect( ( state ) => {
-	const site = getSelectedSiteWithFallback( state );
-	return {
-		site
-	};
-} )( ProductFormDetailsCard );

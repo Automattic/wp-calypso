@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -10,6 +11,7 @@ import PropTypes from 'prop-types';
  */
 import Rating from 'components/rating';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 const ProductReviewsWidget = ( { site, product, translate } ) => {
 	if ( ! product.rating_count ) {
@@ -28,12 +30,12 @@ const ProductReviewsWidget = ( { site, product, translate } ) => {
 	);
 
 	return (
-		<div className="products__reviews-widget">
-			<div className="products__reviews-widget-label">{ translate( 'Average rating' ) }</div>
+		<div className="product-reviews-widget">
+			<div className="product-reviews-widget__label">{ translate( 'Average rating' ) }</div>
 
-			<div className="products__reviews-widget-container">
+			<div className="product-reviews-widget__container">
 				<Rating rating={ product.average_rating * 20 } size={ 16 } />
-				<a href={ getLink( `/store/reviews/${ product.id }/pending/:site`, site ) }>{ reviewLabel }</a>
+				<a href={ getLink( `/store/reviews/${ product.id }/approved/:site`, site ) }>{ reviewLabel }</a>
 			</div>
 		</div>
 	);
@@ -49,4 +51,9 @@ ProductReviewsWidget.propTypes = {
 	} ),
 };
 
-export default localize( ProductReviewsWidget );
+export default connect( ( state ) => {
+	const site = getSelectedSiteWithFallback( state );
+	return {
+		site
+	};
+} )( localize( ProductReviewsWidget ) );
