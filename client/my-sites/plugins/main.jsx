@@ -365,7 +365,7 @@ const PluginsMain = React.createClass( {
 
 	renderAddPluginButton() {
 		const { selectedSiteSlug, translate } = this.props;
-		const browserUrl = '/plugins/browse' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
 			<HeaderButton

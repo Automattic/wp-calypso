@@ -151,7 +151,7 @@ class JetpackPluginsPanel extends Component {
 			} ) )
 			.filter( group => group.plugins.length > 0 );
 
-		const browserUrl = [ '/plugins/browse', this.props.siteSlug ].join( '/' );
+		const browserUrl = '/plugins' + ( this.props.siteSlug ? '/' + this.props.siteSlug : '' );
 		const uploadUrl = '/plugins/upload' + ( this.props.siteSlug ? '/' + this.props.siteSlug : '' );
 
 		return (

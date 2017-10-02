@@ -202,7 +202,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
-		const actionUrl = '/plugins/browse' + ( selectedSite ? '/' + selectedSite.slug : '' ),
+		const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' ),
 			action = this.translate( 'Browse all plugins' );
 
 		return (

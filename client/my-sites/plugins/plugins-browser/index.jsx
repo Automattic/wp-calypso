@@ -213,7 +213,7 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getPluginSingleListView( category ) {
-		const listLink = '/plugins/browse/' + category + '/';
+		const listLink = '/plugins/' + category + '/';
 		return (
 			<PluginsBrowserList
 				plugins={ this.getPluginsShortList( category ) }
@@ -319,24 +319,24 @@ const PluginsBrowser = React.createClass( {
 				} ) }
 			>
 				<NavTabs label="Category">
-					<NavItem path={ '/plugins/browse' + site } selected={ false }>
+					<NavItem path={ '/plugins' + site } selected={ false }>
 						{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/featured' + site }
-						selected={ this.props.path === '/plugins/browse/featured' + site }
+						path={ '/plugins/featured' + site }
+						selected={ this.props.path === '/plugins/featured' + site }
 					>
 						{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/popular' + site }
-						selected={ this.props.path === '/plugins/browse/popular' + site }
+						path={ '/plugins/popular' + site }
+						selected={ this.props.path === '/plugins/popular' + site }
 					>
 						{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/new' + site }
-						selected={ this.props.path === '/plugins/browse/new' + site }
+						path={ '/plugins/new' + site }
+						selected={ this.props.path === '/plugins/new' + site }
 					>
 						{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
 					</NavItem>
