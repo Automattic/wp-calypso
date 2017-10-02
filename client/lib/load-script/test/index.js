@@ -7,7 +7,7 @@
  * Internal dependencies
  */
 import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../';
-import { executeCallbacks, getCallbackMap, removeAllScriptCallbacks } from '../callback-handler';
+import { executeCallbacks, getCallbacksMap, removeAllScriptCallbacks } from '../callback-handler';
 import { attachToHead, createScriptElement } from '../dom-operations';
 import config from 'config';
 
@@ -40,7 +40,7 @@ describe( 'loadScript', () => {
 		} );
 
 		test( 'should add the callback onto the pending callbacks object', () => {
-			expect( getCallbackMap().get( url ) ).toEqual( [ callback ] );
+			expect( getCallbacksMap().get( url ) ).toEqual( [ callback ] );
 		} );
 
 		test( 'should call functions attachToHead and createScriptElement', () => {

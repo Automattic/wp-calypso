@@ -9,7 +9,7 @@
 import {
 	addScriptCallback,
 	executeCallbacks,
-	getCallbackMap,
+	getCallbacksMap,
 	handleRequestError,
 	handleRequestSuccess,
 	isLoading,
@@ -19,9 +19,9 @@ import {
 } from '../callback-handler';
 
 describe( 'loadScript/callback-handler', () => {
-	describe( 'getCallbackMap()', () => {
+	describe( 'getCallbacksMap()', () => {
 		test( 'should initially return an empty object', () => {
-			expect( getCallbackMap() ).toEqual( new Map() );
+			expect( getCallbacksMap() ).toEqual( new Map() );
 		} );
 	} );
 
@@ -37,7 +37,7 @@ describe( 'loadScript/callback-handler', () => {
 		} );
 
 		test( 'should create a new array for a callback function to a new URL', () => {
-			const callbacks = getCallbackMap();
+			const callbacks = getCallbacksMap();
 
 			const url = '/';
 			const callback = () => {};
@@ -47,7 +47,7 @@ describe( 'loadScript/callback-handler', () => {
 		} );
 
 		test( 'should append to an existing array for a callback function to an old URL', () => {
-			const callbacks = getCallbackMap();
+			const callbacks = getCallbacksMap();
 
 			const url = '/';
 			const callback1 = () => {};
@@ -65,7 +65,7 @@ describe( 'loadScript/callback-handler', () => {
 		// NOTE: This test is tightly coupled with addScriptCallback tests
 
 		test( 'should reset callbacks object to empty', () => {
-			const callbacks = getCallbackMap();
+			const callbacks = getCallbacksMap();
 
 			const url = '/';
 			const callback = () => {};
@@ -111,7 +111,7 @@ describe( 'loadScript/callback-handler', () => {
 		} );
 
 		test( 'should remove the callback from the second parameter', () => {
-			const callbacks = getCallbackMap();
+			const callbacks = getCallbacksMap();
 			const url = '/';
 			const callback1 = () => {};
 			const callback2 = () => {};
@@ -137,7 +137,7 @@ describe( 'loadScript/callback-handler', () => {
 		} );
 
 		test( 'should remove all callbacks associated with the URL', () => {
-			const callbacks = getCallbackMap();
+			const callbacks = getCallbacksMap();
 
 			const url1 = '/';
 			const url2 = '/information';

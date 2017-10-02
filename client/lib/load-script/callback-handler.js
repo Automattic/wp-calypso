@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { includes } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'lib/load-script/callback-handler' );
 
@@ -10,58 +11,63 @@ const debug = debugFactory( 'lib/load-script/callback-handler' );
  */
 const callbacksForURLsInProgress = new Map();
 
-export function getCallbackMap() {
+export function getCallbacksMap() {
 	return callbacksForURLsInProgress;
 }
 
 export function isLoading( url ) {
-	return callbacksForURLsInProgress.has( url );
+	return getCallbacksMap().has( url );
 }
 
 export function addScriptCallback( url, callback ) {
+	const callbacksMap = getCallbacksMap();
 	if ( isLoading( url ) ) {
 		debug( `Adding a callback for an existing script from "${ url }"` );
-		callbacksForURLsInProgress.get( url ).push( callback );
+		callbacksMap.get( url ).push( callback );
 	} else {
 		debug( `Adding a callback for a new script from "${ url }"` );
-		callbacksForURLsInProgress.set( url, [ callback ] );
+		callbacksMap.set( url, [ callback ] );
 	}
 }
 
 export function removeScriptCallback( url, callback ) {
 	debug( `Removing a known callback for a script from "${ url }"` );
 
-	if ( ! callbacksForURLsInProgress.has( url ) ) {
+	if ( ! isLoading( url ) ) {
 		return;
 	}
 
-	const index = callbacksForURLsInProgress.get( url ).indexOf( callback );
+	const callbacksMap = getCallbacksMap();
+	const callbacksAtUrl = callbacksMap.get( url );
 
-	if ( -1 === index ) {
+	if ( ! includes( callbacksAtUrl, callback ) ) {
 		return;
 	}
 
-	if ( 1 === callbacksForURLsInProgress.get( url ).length ) {
-		callbacksForURLsInProgress.delete( url );
+	if ( 1 === callbacksAtUrl.length ) {
+		callbacksMap.delete( url );
 		return;
 	}
 
-	callbacksForURLsInProgress.get( url ).splice( index, 1 );
+	const index = callbacksAtUrl.indexOf( callback );
+	callbacksAtUrl.splice( index, 1 );
 }
 
 export function removeScriptCallbacks( url ) {
 	debug( `Removing all callbacks for a script from "${ url }"` );
-	callbacksForURLsInProgress.delete( url );
+	getCallbacksMap().delete( url );
 }
 
 export function removeAllScriptCallbacks() {
 	debug( 'Removing all callbacks for scripts from all URLs' );
 
-	callbacksForURLsInProgress.clear();
+	getCallbacksMap().clear();
 }
 
 export function executeCallbacks( url, callbackArguments = null ) {
-	if ( callbacksForURLsInProgress.has( url ) ) {
+	const callbacksMap = getCallbacksMap();
+
+	if ( callbacksMap.has( url ) ) {
 		const debugMessage = `Executing callbacks for "${ url }"`;
 		debug(
 			callbackArguments === null
@@ -69,11 +75,11 @@ export function executeCallbacks( url, callbackArguments = null ) {
 				: debugMessage + ` with args "${ callbackArguments }"`
 		);
 
-		callbacksForURLsInProgress
+		callbacksMap
 			.get( url )
 			.filter( cb => typeof cb === 'function' )
 			.forEach( cb => cb( callbackArguments ) );
-		callbacksForURLsInProgress.delete( url );
+		callbacksMap.delete( url );
 	}
 }
 
