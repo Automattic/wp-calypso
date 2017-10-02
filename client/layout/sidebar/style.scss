@@ -438,15 +438,24 @@ form.sidebar__button input {
 
 .sidebar__region {
 	flex-shrink: 0;
+
 	@include breakpoint( ">660px" ) {
 		display: flex;
 		flex-direction: column;
-		overflow-y: auto;
-		overflow-x: hidden;
 		flex: 1;
-		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
-		-webkit-overflow-scrolling: touch;
+		&-scrolls {
+			overflow-y: auto;
+			overflow-x: hidden;
+			transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
+			-webkit-overflow-scrolling: touch;
+		}
 	}
+}
+
+.sidebar .scroll-container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
 }
 
 .sidebar__menu {

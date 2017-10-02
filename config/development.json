@@ -44,6 +44,7 @@
 		"comments/management": true,
 		"comments/management/sorting": true,
 		"css-hot-reload": true,
+		"custom-scrollbars": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,

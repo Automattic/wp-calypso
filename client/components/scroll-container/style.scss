@@ -1,0 +1,95 @@
+$scroll-ns: 'scroll-container';
+$scroll-border-radius: 10px;
+$scroll-puck-min-size: 36px;
+$scroll-track-size: 10px;
+$scroll-opacity-transition: opacity 0.4s ease;
+$scroll-width-transition: width 0.1s linear 0.2s;
+
+.#{$scroll-ns} {
+	overflow: hidden;
+	position: relative;
+
+	// Smooth scroll related properties
+	&__content-container {
+		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
+		-webkit-overflow-scrolling: touch;
+	}
+
+	// Scroll direction helpers
+	&__vertical .#{$scroll-ns}__content-container {
+		min-height: 100%;
+		overflow-x: hidden;
+		overflow-y: scroll;
+	}
+
+	&-dragging {
+		cursor: pointer !important;
+		user-select: none;
+	}
+
+    // Autohide functionality
+    &-autohide .#{$scroll-ns}__track {
+        opacity: 0;
+		transition: $scroll-opacity-transition, $scroll-width-transition;
+    }
+    &-autohide:hover, &__force-visible {
+		.#{$scroll-ns}__track {
+			opacity: 1;
+			transition: $scroll-width-transition;
+		}
+	}
+
+    // Puck (draggable element)
+    &__puck {
+		background: transparentize( darken( $gray, 10% ), 0.7);
+		background-clip: padding-box;
+		border-radius: $scroll-border-radius;
+		box-sizing: border-box;
+		position: relative;
+
+		&.#{$scroll-ns}-is-hovered {
+			background: transparentize( darken( $gray, 10% ), 0.2 );
+		}
+
+		.#{$scroll-ns}-dragging & {
+			background: darken( $gray, 10% );
+		}
+
+		&-vertical {
+			min-height: $scroll-puck-min-size;
+			padding: $scroll-border-radius 0;
+			top: 0;
+			width: 100%;
+		}
+    }
+
+    // Track (clickable background)
+    &__track {
+		background-clip: padding-box;
+		border-radius: $scroll-border-radius;
+		box-sizing: border-box;
+		margin: 2px;
+		pointer-events: none;
+		position: absolute;
+
+		// Since the track has "pointer-events: none", a class gets added for the
+		// "hover" state
+		&.#{$scroll-ns}-is-hovered {
+			background-color: transparentize( lighten( $gray, 20% ), 0.5 );
+		}
+
+		&-vertical {
+			bottom: 0;
+			right: 0;
+			transition: background-color 0.25s linear, width 0.3s linear;
+			top: 0;
+			width: $scroll-track-size - 4;
+
+			// Since the track has "pointer-events: none", a class gets added for the
+			// "hover" state
+			&.#{$scroll-ns}-is-hovered {
+				width: $scroll-track-size;
+			}
+		}
+    }
+}
