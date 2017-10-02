@@ -13,5 +13,5 @@
 		"<rootDir>/server/**/integration/*.js",
 		"<rootDir>/test/test/helpers/**/integration/*.js"
 	],
-	"verbose": true
+	"verbose": false
 }
