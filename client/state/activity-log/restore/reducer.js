@@ -5,7 +5,9 @@
 import { restoreProgressSchema } from './schema';
 import {
 	REWIND_RESTORE,
+	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
+	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'state/action-types';
 import { createReducer, keyedReducer } from 'state/utils';
@@ -49,4 +51,11 @@ export const restoreProgress = keyedReducer(
 );
 restoreProgress.schema = restoreProgressSchema;
 
-export const restoreRequest = keyedReducer( 'siteId', createReducer( {}, {} ) );
+export const restoreRequest = keyedReducer(
+	'siteId',
+	createReducer( undefined, {
+		[ REWIND_RESTORE ]: () => undefined,
+		[ REWIND_RESTORE_DISMISS ]: () => undefined,
+		[ REWIND_RESTORE_REQUEST ]: ( state, { activityId } ) => activityId,
+	} )
+);
