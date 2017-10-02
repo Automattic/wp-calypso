@@ -190,14 +190,15 @@ describe( 'loadScript/callback-handler', () => {
 		} );
 	} );
 
-	describe( 'handleRequestSuccess( url )', () => {
-		const someObject = {};
+	describe( 'handleRequestSuccess( event )', () => {
 		const url = '/';
+		const thisObject = {};
+		const eventObject = { target: { src: url } };
 		const callback = jest.fn();
 
 		beforeAll( function() {
 			addScriptCallback( url, callback );
-			handleRequestSuccess.bind( someObject )( url );
+			handleRequestSuccess.bind( thisObject )( eventObject );
 		} );
 
 		test( 'should execute callbacks associated with the url', () => {
@@ -205,18 +206,19 @@ describe( 'loadScript/callback-handler', () => {
 			expect( callback ).toHaveBeenCalledWith( null );
 		} );
 		test( 'should set this.onload to null', () => {
-			expect( someObject ).toEqual( { onload: null } );
+			expect( thisObject ).toEqual( { onload: null } );
 		} );
 	} );
 
-	describe( 'handleRequestError( url )', () => {
-		const someObject = {};
+	describe( 'handleRequestError( event )', () => {
 		const url = '/';
+		const thisObject = {};
+		const eventObject = { target: { src: url } };
 		const callback = jest.fn();
 
 		beforeAll( function() {
 			addScriptCallback( url, callback );
-			handleRequestError.bind( someObject )( url );
+			handleRequestError.bind( thisObject )( eventObject );
 		} );
 
 		test( 'should execute callbacks associated with the url with an error', () => {
@@ -224,7 +226,7 @@ describe( 'loadScript/callback-handler', () => {
 			expect( callback ).toHaveBeenCalledWith( new Error( `Failed to load script "${ url }"` ) );
 		} );
 		test( 'should set this.onerror to null', () => {
-			expect( someObject ).toEqual( { onerror: null } );
+			expect( thisObject ).toEqual( { onerror: null } );
 		} );
 	} );
 } );

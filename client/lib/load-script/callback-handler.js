@@ -83,13 +83,15 @@ export function executeCallbacks( url, callbackArguments = null ) {
 	}
 }
 
-export function handleRequestSuccess( url ) {
+export function handleRequestSuccess( event ) {
+	const { target: { src: url } } = event;
 	debug( `Handling successful request for "${ url }"` );
 	executeCallbacks( url );
 	this.onload = null;
 }
 
-export function handleRequestError( url ) {
+export function handleRequestError( event ) {
+	const { target: { src: url } } = event;
 	debug( `Handling failed request for "${ url }"` );
 	executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
 	this.onerror = null;
