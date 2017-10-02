@@ -15,7 +15,7 @@ import {
 	includes,
 	isArray,
 	values,
-	omitBy,
+	omit,
 } from 'lodash';
 
 /**
@@ -336,9 +336,7 @@ export const activeReplies = createReducer(
 
 			// If commentId is null, remove the key from the state map entirely
 			if ( commentId === null ) {
-				return omitBy( state, ( value, key ) => {
-					return key === stateKey;
-				} );
+				return omit( state, stateKey );
 			}
 
 			return { ...state, [ stateKey ]: commentId };
