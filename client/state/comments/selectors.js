@@ -2,7 +2,22 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
+import {
+	filter,
+	find,
+	first,
+	flatMap,
+	get,
+	groupBy,
+	keyBy,
+	last,
+	map,
+	mapValues,
+	partition,
+	pickBy,
+	size,
+	sortBy,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,15 +123,29 @@ export const getPostCommentsTree = createSelector(
 				? filter( allItems, item => item.isPlaceholder || item.status === status )
 				: allItems;
 
+		// separate out root comments from comments that have parents
+		const [ roots, children ] = partition( items, item => item.parent === false );
+
+		// group children by their parent ID
+		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
+
+		// Generate a new map of parent ID to an array of chilren IDs
+		// Reverse the order to keep it in chrono order
+		const parentToChildIdMap = mapValues( childrenGroupedByParent, _children =>
+			map( _children, 'ID' ).reverse()
+		);
+
+		// convert all of the comments to comment nodes for our tree structure
+		const transformItemToNode = item => ( {
+			data: item,
+			children: parentToChildIdMap[ item.ID ] || [],
+		} );
+
+		const commentsByIdMap = keyBy( map( items, transformItemToNode ), 'data.ID' );
+
 		return {
-			...keyBy(
-				map( items, item => ( {
-					children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ).reverse(),
-					data: item,
-				} ) ),
-				'data.ID'
-			),
-			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
+			...commentsByIdMap,
+			children: map( roots, root => root.ID ).reverse(),
 		};
 	},
 	state => state.comments.items

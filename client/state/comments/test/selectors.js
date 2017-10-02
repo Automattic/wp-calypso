@@ -2,15 +2,11 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/***
- * Internal dependencies
- */
 import {
 	getPostOldestCommentDate,
 	getPostMostRecentCommentDate,
 	getCommentLike,
+	getPostCommentsTree,
 } from '../selectors';
 
 const state = {
@@ -38,15 +34,59 @@ const state = {
 	},
 };
 
+const stateWithDeeperChildren = {
+	comments: {
+		items: {
+			'1-1': [
+				{
+					ID: 4,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:04Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 3,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:03Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 2,
+					parent: { ID: 1 },
+					date: '2017-01-31T00:00:02Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 1,
+					parent: false,
+					date: '2017-01-31T00:00:01Z',
+					i_like: false,
+					like_count: 0,
+				},
+				{
+					ID: 50,
+					parent: false,
+					date: '2017-01-30T00:00:00Z',
+					i_like: false,
+					like_count: 0,
+				},
+			],
+		},
+	},
+};
+
 describe( 'selectors', () => {
 	describe( '#getPostMostRecentCommentDate()', () => {
-		it( 'should get most recent date', () => {
+		test( 'should get most recent date', () => {
 			const res = getPostMostRecentCommentDate( state, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( '2017-01-31T10:07:18-08:00' ) );
+			expect( res ).toEqual( new Date( '2017-01-31T10:07:18-08:00' ) );
 		} );
 
-		it( 'should return undefined if no comment items', () => {
+		test( 'should return undefined if no comment items', () => {
 			const res = getPostMostRecentCommentDate(
 				{
 					comments: { items: { '1-1': [] } },
@@ -55,18 +95,18 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( res ).to.be.eql( undefined );
+			expect( res ).toEqual( undefined );
 		} );
 	} ); // end of getPostMostRecentCommentDate
 
 	describe( '#getPostOldestCommentDate()', () => {
-		it( 'should get earliest date', () => {
+		test( 'should get earliest date', () => {
 			const res = getPostOldestCommentDate( state, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( '2015-01-29T10:07:18-08:00' ) );
+			expect( res ).toEqual( new Date( '2015-01-29T10:07:18-08:00' ) );
 		} );
 
-		it( 'should return undefined if no comment items', () => {
+		test( 'should return undefined if no comment items', () => {
 			const res = getPostOldestCommentDate(
 				{
 					comments: { items: { '1-1': [] } },
@@ -75,16 +115,27 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( res ).to.be.eql( undefined );
+			expect( res ).toEqual( undefined );
 		} );
 	} ); // end of getPostOldestCommentDate
 
 	describe( '#getCommentLike()', () => {
-		it( 'should provide only like statistics', () => {
+		test( 'should provide only like statistics', () => {
 			const res = getCommentLike( state, 1, 1, 2 );
 
-			expect( res.i_like ).to.eql( false );
-			expect( res.like_count ).to.eql( 456 );
+			expect( res.i_like ).toEqual( false );
+			expect( res.like_count ).toEqual( 456 );
+		} );
+	} );
+
+	describe( '#getPostCommentsTree', () => {
+		test( 'should return the tree structure', () => {
+			const tree = getPostCommentsTree( state, 1, 1, 'all' );
+			expect( tree ).toMatchSnapshot();
+		} );
+
+		test( 'should reverse children', () => {
+			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
 		} );
 	} );
 } );
