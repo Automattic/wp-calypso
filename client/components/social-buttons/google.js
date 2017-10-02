@@ -86,8 +86,8 @@ class GoogleLoginButton extends Component {
 					client_id: this.props.clientId,
 					scope: this.props.scope,
 					fetch_basic_profile: this.props.fetchBasicProfile,
-					ux_mode: 'redirect',
-					redirect_uri: 'https://wordpress.com/log-in/google/callback'
+					ux_mode: this.props.redirectUri ? 'redirect' : 'popup',
+					redirect_uri: this.props.redirectUri,
 				} )
 				.then( () => {
 					this.setState( { isDisabled: false } );
