@@ -45,7 +45,7 @@ describe( 'loadScript', () => {
 
 		test( 'should call functions attachToHead and createScriptElement', () => {
 			expect( attachToHead ).toHaveBeenCalled();
-			expect( createScriptElement ).toHaveBeenCalled();
+			expect( createScriptElement ).toHaveBeenCalledWith( url );
 		} );
 	} );
 
