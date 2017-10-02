@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default React.createClass( {
+	displayName: 'Test',
 
 	changeVariant( variation ) {
 		this.props.onChangeVariant( this.props.test, variation );

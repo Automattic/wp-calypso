@@ -10,6 +10,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import FirstView from 'components/first-view';
 
 export default React.createClass( {
+	displayName: 'StatsFirstView',
+
 	mixins: [ PureRenderMixin ],
 
 	render() {

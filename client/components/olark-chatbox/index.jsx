@@ -11,6 +11,9 @@ var ReactDom = require( 'react-dom' ),
 var OlarkEvents = require( 'lib/olark-events' );
 
 module.exports = React.createClass( {
+
+	displayName: 'OlarkChatBox',
+
 	/**
 	 * Initialize our component by binding to all of the necessary olark events.
 	 */

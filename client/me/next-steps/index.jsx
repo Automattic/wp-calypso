@@ -16,6 +16,7 @@ var NextStepsBox = require( './next-steps-box' ),
 	sites = require( 'lib/sites-list' )();
 
 module.exports = React.createClass( {
+	displayName: 'NextSteps',
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 
