@@ -53,19 +53,19 @@ class ProductItem extends Component {
 			const lowercasePart = part.toLowerCase();
 			if ( lowercasePart === highlightedText ) {
 				return (
-					<span key={ key } className="product-search__value-emphasis">
+					<span aria-hidden key={ key } className="product-search__value-emphasis">
 						{ part }
 					</span>
 				);
 			}
 			return (
-				<span key={ key } className="product-search__value-normal">
+				<span aria-hidden key={ key } className="product-search__value-normal">
 					{ part }
 				</span>
 			);
 		} );
 
-		return token;
+		return <span aria-label={ text }>{ token }</span>;
 	};
 
 	renderItem = product => {
