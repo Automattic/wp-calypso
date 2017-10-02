@@ -99,6 +99,7 @@ export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-site
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getRegistrantWhois from './get-registrant-whois';
+export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
 export getRestoreProgress from './get-restore-progress';
 export getRewindStartDate from './get-rewind-start-date';
