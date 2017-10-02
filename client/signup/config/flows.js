@@ -239,8 +239,7 @@ const flows = {
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 	flows[ 'atomic-store' ] = {
-		// TODO: add new plan step with just Business plan
-		steps: [ 'design-type-with-atomic-store', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type-with-atomic-store', 'themes', 'domains', 'plans-atomic-store', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for creating an online store with an Atomic site',
 		lastModified: '2017-09-27'

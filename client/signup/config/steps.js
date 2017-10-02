@@ -130,6 +130,13 @@ export default {
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
+	'plan-business-only': {
+		stepName: 'plan-business-only',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
+	},
+
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
