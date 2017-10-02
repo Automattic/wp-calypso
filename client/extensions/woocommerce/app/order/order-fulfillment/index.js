@@ -26,7 +26,11 @@ import Notice from 'components/notice';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded as areLabelsLoaded, getLabelsCount } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	getLabelsCount,
+	getSelectedPaymentMethod,
+	isLoaded as areLabelsLoaded,
+ } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
@@ -119,14 +123,15 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { labelsLoaded, order, site, translate } = this.props;
+		const { labelsLoaded, order, site, translate, labelsPaymentMethod } = this.props;
 		const isShippable = this.isShippable( order );
+		const renderLabelsButton = wcsEnabled && labelsPaymentMethod;
 
-		if ( ! wcsEnabled && ! isShippable ) {
+		if ( ! renderLabelsButton && ! isShippable ) {
 			return null;
 		}
 
-		if ( ! wcsEnabled ) {
+		if ( ! renderLabelsButton ) {
 			return (
 				<Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
 			);
@@ -220,6 +225,7 @@ export default connect(
 	( state, { order, site } ) => ( {
 		labelsLoaded: wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) ),
 		labelsCount: wcsEnabled ? getLabelsCount( state, order.id, site.ID ) : 0,
+		labelsPaymentMethod: wcsEnabled ? getSelectedPaymentMethod( state, order.id, site.ID ) : null,
 	} ),
 	dispatch => bindActionCreators( { createNote, updateOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );
