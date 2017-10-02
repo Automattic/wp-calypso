@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, filter, get } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -17,8 +17,12 @@ import { cartItems } from 'lib/cart-values';
 import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import { isEnabled } from 'config';
+import PlanFeatures from 'my-sites/plan-features';
 
 class PlansAtomicStoreStep extends Component {
 	static propTypes = {
@@ -89,18 +93,30 @@ class PlansAtomicStoreStep extends Component {
 	plansFeaturesList() {
 		const { hideFreePlan, selectedSite } = this.props;
 
+		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+
+		const plans = filter(
+			[
+				hideFreePlan ? null : PLAN_FREE,
+				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+			],
+			value => !! value
+		);
+
 		return (
 			<div>
 				<QueryPlans />
+				<QuerySitePlans siteId={ get( selectedSite, 'ID' ) } />
 
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
+				<PlanFeatures
+					plans={ plans }
 					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
+					isInSignup={ true }
+					site={ selectedSite || {} }
 					domainName={ this.getDomainName() }
+					displayJetpackPlans={ false }
 				/>
 			</div>
 		);
@@ -136,8 +152,6 @@ class PlansAtomicStoreStep extends Component {
 }
 
 export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	// This step could be used to set up an existing site, in which case
-	// some descendants of this component may display discounted prices if
-	// they apply to the given site.
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+	designType: getDesignType( state ),
 } ) )( localize( PlansAtomicStoreStep ) );

@@ -130,8 +130,8 @@ export default {
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
-	'plan-business-only': {
-		stepName: 'plan-business-only',
+	'plans-atomic-store': {
+		stepName: 'plans-atomic-store',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
