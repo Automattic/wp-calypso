@@ -14,6 +14,17 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
+const ruleWhiteList = [
+	'unverifiedDomainsCanManage',
+	'unverifiedDomainsCannotManage',
+	'expiredDomainsCanManage',
+	'expiringDomainsCanManage',
+	'expiredDomainsCannotManage',
+	'expiringDomainsCannotManage',
+	'wrongNSMappedDomains',
+	'pendingGappsTosAcceptanceDomains',
+];
+
 const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {
 	if ( ! selectedSite || isJetpack ) {
 		return null;
@@ -27,16 +38,7 @@ const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {
 				isCompact
 				selectedSite={ selectedSite }
 				domains={ domains }
-				ruleWhiteList={ [
-					'unverifiedDomainsCanManage',
-					'unverifiedDomainsCannotManage',
-					'expiredDomainsCanManage',
-					'expiringDomainsCanManage',
-					'expiredDomainsCannotManage',
-					'expiringDomainsCannotManage',
-					'wrongNSMappedDomains',
-					'pendingGappsTosAcceptanceDomains',
-				] } />
+				ruleWhiteList={ ruleWhiteList } />
 		</div>
 	);
 };
