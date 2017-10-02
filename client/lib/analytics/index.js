@@ -351,8 +351,6 @@ const analytics = {
 					featureSlug = 'tag__id';
 				} else if ( startsWith( featureSlug, 'domains_add_suggestion_' ) ) {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
-				} else if ( startsWith( document.location.pathname, '/plugins/browse/' ) ) {
-					featureSlug = 'plugins_browse__site';
 				} else if ( featureSlug.match( /^plugins_[^_].*__/ ) ) {
 					featureSlug = 'plugins__site__plugin';
 				} else if ( featureSlug.match( /^plugins_[^_]/ ) ) {
