@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import config from 'config';
 import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { trim, debounce, isNumber } from 'lodash';
 
 /**
@@ -16,6 +17,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ProductFormImages from './product-form-images';
+import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 
 export default class ProductFormDetailsCard extends Component {
 
@@ -102,6 +104,13 @@ export default class ProductFormDetailsCard extends Component {
 
 	render() {
 		const { product } = this.props;
+
+		let productReviewsWidget = null;
+
+		if ( isNumber( product.id ) && config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			productReviewsWidget = <ProductReviewsWidget product={ product } />;
+		}
+
 		const images = product.images || [];
 		const __ = i18n.translate;
 
@@ -138,10 +147,10 @@ export default class ProductFormDetailsCard extends Component {
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
 							{ this.renderTinyMCE() }
 						</FormFieldSet>
+						{ productReviewsWidget }
 					</div>
 				</div>
 			</Card>
 		);
 	}
-
 }
