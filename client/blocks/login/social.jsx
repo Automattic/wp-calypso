@@ -35,16 +35,24 @@ class SocialLoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		linkingSocialService: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 	};
 
 	static defaultProps = {
 		linkingSocialService: '',
 	};
 
-	handleGoogleResponse = response => {
-		const { onSuccess, redirectTo } = this.props;
+	handleGoogleResponse = ( response, triggeredByUser = true ) => {
+		const { onSuccess, redirectTo, socialService } = this.props;
 
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+			return;
+		}
+
+		// ignore response if the user did not click on the google button
+		// and did not follow the redirect flow
+		if ( ! triggeredByUser && socialService !== 'google' ) {
 			return;
 		}
 

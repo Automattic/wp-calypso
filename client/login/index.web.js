@@ -21,6 +21,7 @@ export default router => {
 			[
 				'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)/:lang?',
 				'/log-in/:flow(social-connect|private-site)/:lang?',
+				'/log-in/:socialService(google)/callback/:lang?',
 				'/log-in/:lang?',
 			],
 			setUpLocale,
