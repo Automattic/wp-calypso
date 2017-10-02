@@ -1060,7 +1060,7 @@ export const siteSupportsJetpackSettingsUi = ( state, siteId ) => {
  * @return {?Boolean}     Whether site supports the setting.
  */
 export const siteSupportsGoogleAnalyticsIPAnonymization = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.4.0' );
+	return isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
 };
 
 /**
@@ -1072,5 +1072,5 @@ export const siteSupportsGoogleAnalyticsIPAnonymization = ( state, siteId ) => {
  * @return {?Boolean}     Whether site supports the settings.
  */
 export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.4.0' );
+	return isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
 };
