@@ -941,6 +941,10 @@
 .products__reviews-widget {
 	margin-top: 16px;
 
+	.products__reviews-widget-container {
+		display: flex;
+	}
+
 	.products__reviews-widget-label {
 		color: $gray-dark;
 		display: block;
@@ -950,12 +954,11 @@
 	}
 
 	.rating {
-		display: inline;
-		margin-right: 96px;
+		margin-right: 6px;
 	}
 
 	a {
 		font-size: 13px;
-		vertical-align: top;
+		line-height: 1.25;
 	}
 }

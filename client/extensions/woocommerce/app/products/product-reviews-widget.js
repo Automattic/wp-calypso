@@ -17,20 +17,19 @@ const ProductReviewsWidget = ( { site, product, translate } ) => {
 	}
 
 	const reviewLabel = translate(
-		'%(reviewCount)d review for %(productName)s',
-		'%(reviewCount)d reviews for %(productName)s',
+		'Based on %(reviewCount)d review',
+		'Based on %(reviewCount)d reviews',
 		{
 			count: product.rating_count,
 			args: {
 				reviewCount: product.rating_count,
-				productName: product.name,
 			},
 		}
 	);
 
 	return (
 		<div className="products__reviews-widget">
-			<div className="products__reviews-widget-label">{ translate( 'Reviews' ) }</div>
+			<div className="products__reviews-widget-label">{ translate( 'Average rating' ) }</div>
 
 			<div className="products__reviews-widget-container">
 				<Rating rating={ product.average_rating * 20 } size={ 16 } />
