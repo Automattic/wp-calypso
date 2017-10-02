@@ -271,6 +271,9 @@ class PlanFeatures extends Component {
 					case 'grid':
 						audience = planConstantObj.getPortfolioAudience();
 						break;
+					case 'store':
+						audience = planConstantObj.getStoreAudience();
+						break;
 					default:
 						audience = planConstantObj.getAudience();
 				}

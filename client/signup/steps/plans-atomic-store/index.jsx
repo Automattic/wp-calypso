@@ -128,9 +128,20 @@ class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			signupProgress,
+			translate,
+			designType,
+		} = this.props;
 
-		const headerText = translate( "Pick a plan that's right for you." );
+		let headerText = translate( "Pick a plan that's right for you." );
+
+		if ( designType === DESIGN_TYPE_STORE ) {
+			headerText = translate( "You'll need the Business plan." );
+		}
 
 		return (
 			<StepWrapper
