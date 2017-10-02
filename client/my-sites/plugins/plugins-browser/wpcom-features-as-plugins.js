@@ -3,7 +3,7 @@
  */
 import { identity } from 'lodash';
 
-const jetpackPlugins = ( translate = identity ) => [
+const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 	{
 		category: 'engagement',
 		name: translate( 'Engagement' ),
@@ -182,4 +182,4 @@ const jetpackPlugins = ( translate = identity ) => [
 	},
 ];
 
-export default jetpackPlugins;
+export default wpcomFeaturesAsPlugins;

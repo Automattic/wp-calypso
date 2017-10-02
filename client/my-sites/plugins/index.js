@@ -12,10 +12,10 @@ import pluginsController from './controller';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const nonJetpackRedirectTo = path => ( context, next ) => {
+const ifSimpleSiteThenRedirectTo = path => ( context, next ) => {
 	const site = getSelectedSite( context.store.getState() );
 
-	if ( site.jetpack ) {
+	if ( site && ! site.jetpack ) {
 		page.redirect( `${ path }/${ site.slug }` );
 	}
 
@@ -61,13 +61,6 @@ module.exports = function() {
 			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
 		} );
 
-		page( '/plugins/category/:category/:site_id',
-			controller.siteSelection,
-			controller.navigation,
-			nonJetpackRedirectTo( '/plugins/manage' ),
-			pluginsController.plugins.bind( null, 'all' ),
-		);
-
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
 			page( '/plugins/upload', controller.sites );
 			page( '/plugins/upload/:site_id',
@@ -86,6 +79,7 @@ module.exports = function() {
 		page( '/plugins/manage/:site?',
 			controller.siteSelection,
 			controller.navigation,
+			ifSimpleSiteThenRedirectTo( '/plugins' ),
 			pluginsController.plugins.bind( null, 'all' ),
 			controller.sites
 		);

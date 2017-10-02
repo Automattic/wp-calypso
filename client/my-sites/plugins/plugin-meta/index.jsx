@@ -29,7 +29,7 @@ import config from 'config';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
-import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
+import WpcomPluginInstallButton from 'my-sites/plugins/plugin-install-button-wpcom';
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';

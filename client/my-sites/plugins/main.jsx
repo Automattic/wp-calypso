@@ -25,7 +25,6 @@ import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
@@ -403,27 +402,11 @@ const PluginsMain = React.createClass( {
 
 	render() {
 		const {
-			category,
-			search,
-			selectedSite,
 			selectedSiteId,
 		} = this.props;
 
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
-		}
-
-		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
-			return (
-				<Main wideLayout>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<WpcomPluginPanel { ...{
-						category,
-						search,
-					} } />
-				</Main>
-			);
 		}
 
 		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
