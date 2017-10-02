@@ -41,7 +41,6 @@ export function loadScript( url, callback ) {
 	}
 }
 
-// NOTE: __config and __loadScript are used for testing only.
 export function loadjQueryDependentScript( url, callback ) {
 	debug( `Loading a jQuery dependent script from "${ url }"` );
 
