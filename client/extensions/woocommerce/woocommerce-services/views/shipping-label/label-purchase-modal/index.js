@@ -97,7 +97,7 @@ const PurchaseDialog = ( props ) => {
 
 	return (
 		<Dialog
-			additionalClassNames="woocommerce"
+			additionalClassNames="woocommerce label-purchase-modal"
 			isVisible={ props.showPurchaseDialog }
 			onClose={ onClose }
 			buttons={ buttons } >
