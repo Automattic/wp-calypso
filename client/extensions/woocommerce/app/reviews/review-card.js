@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,6 +16,8 @@ import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import Card from 'components/card';
 import Emojify from 'components/emojify';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Gravatar from './gravatar';
 import humanDate from 'lib/human-date';
 import Rating from 'components/rating';
@@ -59,16 +62,6 @@ class ReviewCard extends Component {
 		);
 	}
 
-	renderProductImage() {
-		const { review } = this.props;
-		const productImageClasses = classNames( 'reviews__product', { 'is-placeholder': ! review.product.image } );
-		return (
-			<div className={ productImageClasses }>
-				{ review.product.image && ( <img src={ review.product.image } /> ) }
-			</div>
-		);
-	}
-
 	renderActionsBar() {
 		const { review, currentStatus, siteId } = this.props;
 		return (
@@ -91,71 +84,87 @@ class ReviewCard extends Component {
 				className={ classNames( 'reviews__header', 'is-preview' ) }
 				onClick={ this.toggleExpanded }
 			>
-				<div className="reviews__author-gravatar">
-					<Gravatar
-						object={ review }
-						forType="review"
-					/>
-				</div>
-				<div className="reviews__info">
-					<div className="reviews__author-name">
-						{ review.name }
-						{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
-					</div>
-					<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
-				</div>
-				<AutoDirection>
-					<div className="reviews__content">
-						{ decodeEntities( stripHTML( review.review ) ) }
-					</div>
-				</AutoDirection>
-				<div className="reviews__rating">
-					<Rating rating={ review.rating * 20 } />
-				</div>
-				{ this.renderProductImage() }
-				{ this.renderToggle() }
-			</div>
-		);
-	}
-
-	renderExpandedCard() {
-		const { review, translate } = this.props;
-		return (
-			<div className="reviews__expanded-card">
-				<div className="reviews__expanded-card-details">
+				<div className="reviews__header-content">
 					<div className="reviews__author-gravatar">
 						<Gravatar
 							object={ review }
 							forType="review"
 						/>
 					</div>
-
 					<div className="reviews__info">
-						<div className="reviews__author-name">{ review.name }</div>
+						<div className="reviews__author-name">
+							{ review.name }
+							{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
+						</div>
 						<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
 					</div>
-
-					{ review.verified && (
-						<div className="reviews__verified-label">
-							<Gridicon icon="checkmark-circle" size={ 18 } />
-							<span>{ translate( 'Verified buyer' ) }</span>
+					<AutoDirection>
+						<div className="reviews__content">
+							{ decodeEntities( stripHTML( review.review ) ) }
 						</div>
-					) }
-
+					</AutoDirection>
 					<div className="reviews__rating">
-						<Rating rating={ review.rating * 20 } />
+						<Rating rating={ review.rating * 20 } size={ 18 } />
 					</div>
-					{ this.renderProductImage() }
 				</div>
+				{ this.renderToggle() }
+			</div>
+		);
+	}
 
-				<AutoDirection>
-					<Emojify>
-						<div className="reviews__content"
-							dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
-							// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
-						/>
-					</Emojify>
-				</AutoDirection>
+	renderExpandedCard() {
+		const { site, review, translate } = this.props;
+		return (
+			<div className="reviews__expanded-card">
+				<div className="reviews__product-name">
+					{ translate(
+						'Review for {{productLink}}%(productName)s{{/productLink}}.',
+						{
+							args: {
+								productName: review.product.name,
+							},
+							components: {
+								productLink: <a href={ getLink( `/store/product/:site/${ review.product.id }`, site ) } />
+							}
+						}
+					) }
+				</div>
+				<div className="reviews__expanded-card-details-wrap">
+					<div className="reviews__expanded-card-details">
+						<div className="reviews__author-gravatar">
+							<Gravatar
+								object={ review }
+								forType="review"
+							/>
+						</div>
+
+						<div className="reviews__info">
+							<div className="reviews__author-name">
+								{ review.name }
+								{ review.verified && (
+									<span className="reviews__verified-label">
+										<Gridicon icon="checkmark-circle" size={ 18 } />
+										<span>{ translate( 'Verified buyer' ) }</span>
+									</span>
+								) }
+							</div>
+							<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
+						</div>
+
+						<div className="reviews__rating">
+							<Rating rating={ review.rating * 20 } size={ 18 } />
+						</div>
+					</div>
+
+					<AutoDirection>
+						<Emojify>
+							<div className="reviews__content"
+								dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
+								// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
+							/>
+						</Emojify>
+					</AutoDirection>
+				</div>
 
 				<ReviewReplies
 					review={ review }
@@ -184,4 +193,9 @@ class ReviewCard extends Component {
 	}
 }
 
-export default localize( ReviewCard );
+export default connect( ( state ) => {
+	const site = getSelectedSiteWithFallback( state );
+	return {
+		site
+	};
+} )( localize( ReviewCard ) );
