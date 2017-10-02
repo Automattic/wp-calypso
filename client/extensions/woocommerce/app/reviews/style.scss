@@ -300,7 +300,6 @@
 .reviews__reply-textarea {
 	line-height: 0;
 	overflow: hidden;
-	padding: 2px;
 	position: relative;
 	border-top: 1px solid lighten( $gray, 30% );
 
@@ -348,13 +347,12 @@
 		color: $gray;
 		font-size: 12px;
 		font-weight: 600;
-		padding: 16px;
-		padding-top: 4px;
 		position: absolute;
 		right: -70px;
-		top: 11px;
+		top: 1px;
 		text-transform: uppercase;
 		transition: transform 0.2s ease-in-out;
+		padding: 10px;
 
 		&.is-active {
 			color: $blue-medium;
@@ -362,10 +360,10 @@
 		}
 
 		&.is-visible {
-			transform: translate3d( -88px, 0, 0 );
+			transform: translate3d( -78px, 0, 0 );
 		}
 		&.is-visible.has-scrollbar {
-			transform: translate3d( -94px, 0, 0 );
+			transform: translate3d( -84px, 0, 0 );
 		}
 	}
 }
