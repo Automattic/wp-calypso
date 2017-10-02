@@ -241,7 +241,7 @@ class Plans extends Component {
 
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
 			user: this.props.userId,
-			productSlug: cartItem.product_slug,
+			product_slug: cartItem.product_slug,
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
 
