@@ -44,7 +44,32 @@ class ProductItem extends Component {
 		this.props.onClick( product );
 	};
 
+	createTextWithHighlight = ( text, highlightedText ) => {
+		highlightedText = highlightedText.toLowerCase();
+		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
+		const parts = text.split( re );
+		const token = parts.map( ( part, i ) => {
+			const key = text + i;
+			const lowercasePart = part.toLowerCase();
+			if ( lowercasePart === highlightedText ) {
+				return (
+					<span key={ key } className="product-search__value-emphasis">
+						{ part }
+					</span>
+				);
+			}
+			return (
+				<span key={ key } className="product-search__value-normal">
+					{ part }
+				</span>
+			);
+		} );
+
+		return token;
+	};
+
 	renderItem = product => {
+		const { search } = this.props;
 		const featuredImage = get( product, 'images[0]', false );
 		return (
 			<CompactCard
@@ -59,7 +84,9 @@ class ProductItem extends Component {
 					{ featuredImage && <img src={ featuredImage.src } /> }
 				</div>
 				<div className="product-search__label">
-					<div className="product-search__name">{ product.name }</div>
+					<div className="product-search__name">
+						{ this.createTextWithHighlight( product.name, search ) }
+					</div>
 					<div className="product-search__sku">{ product.sku }</div>
 				</div>
 			</CompactCard>
