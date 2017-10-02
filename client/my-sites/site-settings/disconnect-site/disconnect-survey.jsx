@@ -44,6 +44,11 @@ class DisconnectSurvey extends Component {
 		if ( ! isFreeJetpackPlan( site.plan ) ) {
 			options.push( { value: 'onlyNeedFree', label: translate( 'This plan is too expensive' ) } );
 		}
+		options.push( {
+			value: 'troubleshoot',
+			label: translate( "This is temporary -- I'm troubleshooting a problem." ),
+		} );
+
 		return options;
 	}
 
@@ -62,13 +67,10 @@ class DisconnectSurvey extends Component {
 	renderEntryQuestion() {
 		const { translate, siteSlug } = this.props;
 
-		const textShareWhy = translate(
-			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
-			{
-				textOnly: true,
-				args: { siteName: siteSlug },
-			}
-		);
+		const textShareWhy = translate( "I'm disconnecting my site %(siteName)s because:", {
+			textOnly: true,
+			args: { siteName: siteSlug },
+		} );
 		const options = this.getOptions();
 		const surveyQuestionsOne = this.getSurveyQuestions( options );
 		return (
@@ -82,7 +84,7 @@ class DisconnectSurvey extends Component {
 	render() {
 		const { reasonSelected, renderInitial } = this.state;
 		return (
-			<div className="disconnect-site__survey main">
+			<div className="disconnect-site__card">
 				{ renderInitial ? this.renderEntryQuestion() : this.renderFollowUp( reasonSelected ) }
 			</div>
 		);
