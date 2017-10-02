@@ -155,6 +155,13 @@ function isJetpackPremium( product ) {
 	return isPremium( product ) && isJetpackPlan( product );
 }
 
+function isVipPlan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return 'vip' === product.product_slug;
+}
+
 function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
@@ -381,6 +388,7 @@ module.exports = {
 	isJetpackPlan,
 	isJetpackPremium,
 	isJetpackMonthlyPlan,
+	isVipPlan,
 	isMonthly,
 	isJpphpBundle,
 	isNoAds,
