@@ -1,16 +1,20 @@
 .product-search {
 	position: relative;
+
+	.search-card {
+		box-shadow: none;
+		border: 1px solid lighten( $gray, 30% );
+	}
 }
 
 .product-search__results {
 	position: absolute;
-	top: 52px;
+	top: 100%;
 	z-index: 1;
-	margin: 0 -5px;
-	padding: 0 5px 5px;
 	width: 100%;
 	max-height: 250px;
 	overflow-y: scroll;
+	border-bottom: 1px solid lighten( $gray, 30% );
 
 	&.is-placeholder {
 		overflow-y: visible;
@@ -52,11 +56,21 @@
 			text-transform: none;
 		}
 	}
+
+	> div:first-child {
+		.product-search__item {
+			border-top: 0;
+		}
+	}
 }
 
 .product-search__item {
 	display: flex;
 	cursor: pointer;
+	box-shadow: none;
+	border: 1px solid lighten( $gray, 30% );
+	border-bottom-width: 0;
+	margin: 0;
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
