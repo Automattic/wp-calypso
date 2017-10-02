@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -14,8 +15,8 @@ module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewVideo',
 
 	propTypes: {
-		className: React.PropTypes.string,
-		item: React.PropTypes.object.isRequired
+		className: PropTypes.string,
+		item: PropTypes.object.isRequired
 	},
 
 	render() {

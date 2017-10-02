@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+var PropTypes = require('prop-types');
 var React = require( 'react' );
 
 /**
@@ -14,7 +15,7 @@ import CartToggle from './cart-toggle';
 
 var FreeCartPaymentBox = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired
+		products: PropTypes.object.isRequired
 	},
 
 	content: function() {

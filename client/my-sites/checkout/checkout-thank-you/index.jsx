@@ -4,7 +4,8 @@
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import page from 'page';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import moment from 'moment';
 
 /**

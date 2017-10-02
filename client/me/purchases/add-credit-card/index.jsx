@@ -4,7 +4,8 @@
 import { connect } from 'react-redux';
 import { curry } from 'lodash';
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies

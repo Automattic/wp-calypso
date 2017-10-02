@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	createFragment = require( 'react-addons-create-fragment' ),
 	classNames = require( 'classnames' );
@@ -14,7 +15,7 @@ module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',
 
 	propTypes: {
-		item: React.PropTypes.object
+		item: PropTypes.object
 	},
 
 	getItemValue( attribute ) {

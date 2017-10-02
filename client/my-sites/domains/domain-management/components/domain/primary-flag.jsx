@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -27,9 +28,9 @@ class DomainPrimaryFlag extends Component {
 }
 
 DomainPrimaryFlag.propTypes = {
-	domain: React.PropTypes.object.isRequired,
-	isDomainOnly: React.PropTypes.bool,
-	translate: React.PropTypes.func.isRequired,
+	domain: PropTypes.object.isRequired,
+	isDomainOnly: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
 };
 
 export default connect( ( state ) => {

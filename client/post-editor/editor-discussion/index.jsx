@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get, pick } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' );
 
 /**
@@ -25,9 +26,9 @@ export default React.createClass( {
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
-		isNew: React.PropTypes.bool,
-		post: React.PropTypes.object,
-		site: React.PropTypes.object
+		isNew: PropTypes.bool,
+		post: PropTypes.object,
+		site: PropTypes.object
 	},
 
 	getDefaultProps: function() {

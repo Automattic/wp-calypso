@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -18,7 +19,7 @@ const user = userModule();
 
 export class EditorWordCount extends PureComponent {
 	static propTypes = {
-		selectedText: React.PropTypes.string
+		selectedText: PropTypes.string
 	};
 
 	state = {

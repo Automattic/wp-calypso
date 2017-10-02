@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
@@ -37,9 +38,9 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		doSMSFlow: React.PropTypes.bool,
-		onCancel: React.PropTypes.func.isRequired,
-		onSuccess: React.PropTypes.func.isRequired,
+		doSMSFlow: PropTypes.bool,
+		onCancel: PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {

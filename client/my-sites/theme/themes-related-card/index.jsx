@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -18,7 +19,7 @@ const THEME_THUMBNAIL_WIDTH = 660;
 const ThemesRelatedCard = React.createClass( {
 
 	propTypes: {
-		currentTheme: React.PropTypes.string.isRequired
+		currentTheme: PropTypes.string.isRequired
 	},
 
 	getRelatedThemes() {

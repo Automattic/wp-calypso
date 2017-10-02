@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -20,7 +21,7 @@ export class Notice extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
-		duration: React.PropTypes.number,
+		duration: PropTypes.number,
 		icon: PropTypes.string,
 		isCompact: PropTypes.bool,
 		onDismissClick: PropTypes.func,

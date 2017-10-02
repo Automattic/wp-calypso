@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' );
+var PropTypes = require('prop-types');
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibrarySelectedData',
 
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired
+		siteId: PropTypes.number.isRequired
 	},
 
 	getInitialState: function() {

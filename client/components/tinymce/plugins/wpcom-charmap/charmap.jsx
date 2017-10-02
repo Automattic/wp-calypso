@@ -11,6 +11,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -23,9 +24,9 @@ export default React.createClass( {
 	displayName: 'CharMap',
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		showDialog: React.PropTypes.bool,
-		editor: React.PropTypes.object
+		onClose: PropTypes.func,
+		showDialog: PropTypes.bool,
+		editor: PropTypes.object
 	},
 
 	defaultCharMap() {

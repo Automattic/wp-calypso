@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { compact } from 'lodash';
 
 import {

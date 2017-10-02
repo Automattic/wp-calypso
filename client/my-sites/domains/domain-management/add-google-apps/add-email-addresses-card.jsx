@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+const PropTypes = require('prop-types');
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
 	page = require( 'page' );
@@ -31,8 +32,8 @@ const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
 
 	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string
+		domains: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string
 	},
 
 	getInitialState() {

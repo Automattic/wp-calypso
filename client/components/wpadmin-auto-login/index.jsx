@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { get } from 'lodash';
 
 /**
@@ -45,4 +46,4 @@ export default class WpadminAutoLogin extends Component {
 	render() {
 		return null;
 	}
-};
+}

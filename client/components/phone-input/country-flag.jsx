@@ -1,4 +1,5 @@
 /** External Dependencies */
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -9,7 +10,7 @@ export default React.createClass( {
 	displayName: 'PhoneInputCountryFlag',
 
 	propTypes: {
-		countryCode: React.PropTypes.string.isRequired
+		countryCode: PropTypes.string.isRequired
 	},
 	getInitialState() {
 		return {

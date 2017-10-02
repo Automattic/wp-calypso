@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+var PropTypes = require('prop-types');
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-setup-backup-codes' );
 
@@ -22,7 +23,7 @@ module.exports = React.createClass( {
 	mixins: [ eventRecorder ],
 
 	propTypes: {
-		onFinished: React.PropTypes.func.isRequired
+		onFinished: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

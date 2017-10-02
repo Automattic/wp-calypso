@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -15,7 +16,7 @@ export default React.createClass( {
 	},
 
 	propTypes: {
-		status: React.PropTypes.string
+		status: PropTypes.string
 	},
 
 	render: function() {

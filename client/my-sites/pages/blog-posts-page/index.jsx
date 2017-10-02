@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { identity } from 'lodash';
@@ -21,8 +22,8 @@ import {
 class BlogPostsPage extends React.Component {
 
 	static propTypes = {
-		site: React.PropTypes.object,
-		pages: React.PropTypes.array,
+		site: PropTypes.object,
+		pages: PropTypes.array,
 	}
 
 	static defaultProps = {

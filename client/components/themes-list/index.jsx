@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { isEqual, noop, times } from 'lodash';

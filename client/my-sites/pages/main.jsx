@@ -3,6 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -32,7 +33,7 @@ class PagesMain extends React.Component {
 	static displayName = 'Pages';
 
 	static propTypes = {
-		trackScrollPage: React.PropTypes.func.isRequired
+		trackScrollPage: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {

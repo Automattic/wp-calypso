@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -14,8 +15,8 @@ import { DISCOVER_POST } from 'reader/follow-button/follow-sources';
 
 class DiscoverFollowButton extends React.Component {
 	static propTypes = {
-		siteName: React.PropTypes.string.isRequired,
-		followUrl: React.PropTypes.string.isRequired,
+		siteName: PropTypes.string.isRequired,
+		followUrl: PropTypes.string.isRequired,
 	};
 
 	recordFollowToggle = isFollowing => {

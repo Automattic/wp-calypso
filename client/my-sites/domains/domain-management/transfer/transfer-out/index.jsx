@@ -2,6 +2,7 @@
  * External dependencies
  */
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -22,13 +23,13 @@ import TransferProhibited from './transfer-prohibited.jsx';
 
 class Transfer extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		domains: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ).isRequired,
-		wapiDomainInfo: React.PropTypes.object.isRequired
+		wapiDomainInfo: PropTypes.object.isRequired
 	};
 
 	renderSection() {
