@@ -70,7 +70,7 @@ class GoogleAnalyticsForm extends Component {
 	}
 
 	handleAnonymizeChange = () => {
-		this.handleToggleChange( 'anonymize' );
+		this.handleToggleChange( 'anonymize_ip' );
 	}
 
 	isSubmitButtonDisabled() {
@@ -221,7 +221,7 @@ class GoogleAnalyticsForm extends Component {
 						{ showAnonymizeIP &&
 							<fieldset>
 								<CompactFormToggle
-									checked={ fields.wga ? fields.wga.anonymize : false }
+									checked={ fields.wga ? fields.wga.anonymize_ip : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ this.handleAnonymizeChange }
 								>
@@ -240,7 +240,7 @@ class GoogleAnalyticsForm extends Component {
 							</fieldset>
 						}
 						{
-							showAnalyticsForStores && wooCommerceActive &&
+							showAnalyticsForStores &&
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
