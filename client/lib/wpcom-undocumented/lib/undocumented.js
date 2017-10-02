@@ -404,6 +404,21 @@ Undocumented.prototype.jetpackIsUserConnected = function( siteId ) {
 	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
 };
 
+Undocumented.prototype.dismissJetpackJITM = function( siteId, jitmId, jitmFeatureClass ) {
+	debug( '/jetpack-blogs/:site_id:/rest-api/' );
+	const endpointUrl = `/jetpack-blogs/${ siteId }/rest-api/`;
+	return this.wpcom.req.post( {
+		path: endpointUrl,
+	}, {
+		path: '/jetpack/v4/jitm',
+		body: JSON.stringify( {
+			feature_class: jitmFeatureClass,
+			id: jitmId,
+		} ),
+		json: false,
+	} );
+};
+
 /**
  * Gets the current status of a full sync for a Jetpack site.
  *

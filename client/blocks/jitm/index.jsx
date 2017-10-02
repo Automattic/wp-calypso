@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External Dependencies
  */
@@ -9,6 +11,7 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
+import { dismissJetpackJITM } from 'state/jitm/actions';
 import Banner from 'components/banner';
 
 export const JITM = ( {
@@ -19,25 +22,32 @@ export const JITM = ( {
 	featureClass,
 	id,
 	message,
-} ) => ( hasJitm && currentSite ) && (
-	<Banner
-		callToAction={ callToAction }
-		title={ message }
-		description={ description }
-		disableHref
-		dismissPreferenceName={ featureClass + '123' }
-		dismissTemporary={ true }
-		event={ `jitm_nudge_click_${ id }` }
-		href={ `https://jetpack.com/redirect/?source=jitm-${ id }&site=${ currentSite.domain }` }
-	/>
-);
+	onDismiss,
+} ) =>
+	hasJitm &&
+	currentSite && (
+		<Banner
+			callToAction={ callToAction }
+			title={ message }
+			description={ description }
+			disableHref
+			dismissPreferenceName={ featureClass + '123' }
+			dismissTemporary={ true }
+			onDismiss={ onDismiss( currentSite.ID, id, featureClass ) }
+			event={ `jitm_nudge_click_${ id }` }
+			href={ `https://jetpack.com/redirect/?source=jitm-${ id }&site=${ currentSite.domain }` }
+		/>
+	);
 
-const mapStateToProps = ( state ) => (
-	{
-		currentSite: getSelectedSite( state ),
-		hasJitm: !! getTopJITM( state ),
-		...getTopJITM( state ),
-	}
-);
+const mapStateToProps = state => ( {
+	currentSite: getSelectedSite( state ),
+	hasJitm: !! getTopJITM( state ),
+	...getTopJITM( state ),
+} );
 
-export default connect( mapStateToProps )( JITM );
+const mapDispatchToProps = dispatch => ( {
+	onDismiss: ( siteId, id, featureClass ) => () =>
+		dismissJetpackJITM( dispatch, siteId, id, featureClass ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( JITM );

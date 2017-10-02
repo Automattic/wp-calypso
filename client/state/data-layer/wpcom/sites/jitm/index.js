@@ -14,6 +14,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
+import { JITM_DISMISS } from "../../../../action-types";
 
 /**
  * Poor man's process manager
