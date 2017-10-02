@@ -13,8 +13,10 @@ import {
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
+	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
+	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_STATUS_ERROR,
@@ -152,6 +154,35 @@ export function rewindStatusError( siteId, error ) {
 		type: REWIND_STATUS_ERROR,
 		siteId,
 		error,
+	};
+}
+
+/**
+ * Restore a site to the given timestamp.
+ *
+ * @param  {string|number} siteId Site ID
+ * @param  {number}        activityId Activity ID
+ * @return {Object}        action object
+ */
+export function rewindRequestRestore( siteId, activityId ) {
+	return {
+		type: REWIND_RESTORE_REQUEST,
+		siteId,
+		activityId,
+	};
+}
+
+/**
+ * Restore a site to the given timestamp.
+ *
+ * @param  {string|number} siteId Site ID
+ * @param  {number}        activityId Activity ID
+ * @return {Object}        action object
+ */
+export function rewindRequestDismiss( siteId ) {
+	return {
+		type: REWIND_RESTORE_DISMISS,
+		siteId,
 	};
 }
 
