@@ -22,7 +22,10 @@ import { isRequestingPlugins, isTogglingPlugin, getPlugins } from '../../state/
 
 class PluginsTab extends Component {
 	static propTypes = {
+		// Connected props
+		isRequesting: PropTypes.bool,
 		plugins: PropTypes.object,
+		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -36,8 +39,8 @@ class PluginsTab extends Component {
 
 	render() {
 		const {
-			plugins,
 			isRequesting,
+			plugins,
 			siteId,
 			translate,
 		} = this.props;
