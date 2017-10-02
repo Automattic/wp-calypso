@@ -23,6 +23,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class PlansAtomicStoreStep extends Component {
 	static propTypes = {
@@ -91,11 +92,11 @@ class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSite } = this.props;
+		const { hideFreePlan, selectedSite, designType } = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
-		const plans = filter(
+		let plans = filter(
 			[
 				hideFreePlan ? null : PLAN_FREE,
 				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
@@ -104,6 +105,10 @@ class PlansAtomicStoreStep extends Component {
 			],
 			value => !! value
 		);
+
+		if ( designType === DESIGN_TYPE_STORE ) {
+			plans = [ PLAN_BUSINESS ];
+		}
 
 		return (
 			<div>
