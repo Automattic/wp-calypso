@@ -1,0 +1,55 @@
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
+// Utils
+@import '../shared/utils';
+
+// Required to access variables or @extend styles
+@import '../main';
+@import '../shared/forms';
+@import 'components/accordion/style';
+@import 'components/global-notices/style';
+@import 'components/select-dropdown/style';
+@import 'layout/sidebar/style';
+
+@import 'post-editor/style';
+@import 'post-editor/edit-post-status/style';
+@import 'post-editor/editor-action-bar/style';
+@import 'post-editor/editor-author/style';
+@import 'post-editor/editor-categories-tags/style';
+@import 'post-editor/editor-confirmation-sidebar/style';
+@import 'post-editor/editor-delete-post/style';
+@import 'post-editor/editor-diff-viewer/style';
+@import 'post-editor/editor-discussion/style';
+@import 'post-editor/editor-drawer/style';
+@import 'post-editor/editor-drawer-well/style';
+@import 'post-editor/editor-featured-image/style';
+@import 'post-editor/editor-fieldset/style';
+@import 'post-editor/editor-forbidden/style';
+@import 'post-editor/editor-ground-control/style';
+@import 'post-editor/editor-html-toolbar/style';
+@import 'post-editor/editor-location/style';
+@import 'post-editor/editor-notice/style';
+@import 'post-editor/editor-more-options/style';
+@import 'post-editor/editor-notice/style';
+@import 'post-editor/editor-page-parent/style';
+@import 'post-editor/editor-page-order/style';
+@import 'post-editor/editor-page-templates/style';
+@import 'post-editor/editor-permalink/style';
+@import 'post-editor/editor-post-formats/style';
+@import 'post-editor/editor-post-type/style';
+@import 'post-editor/editor-post-type-unsupported/style';
+@import 'post-editor/editor-preview/style';
+@import 'post-editor/editor-publish-date/style';
+@import 'post-editor/editor-revisions/style';
+@import 'post-editor/editor-revisions-list/style';
+@import 'post-editor/editor-seo-accordion/style';
+@import 'post-editor/editor-sharing/style';
+@import 'post-editor/editor-sidebar/style';
+@import 'post-editor/editor-status-label/style';
+@import 'post-editor/editor-slug/style';
+@import 'post-editor/editor-sticky/style';
+@import 'post-editor/editor-term-selector/add-term';
+@import 'post-editor/editor-title/style';
+@import 'post-editor/editor-visibility/style';
+@import 'post-editor/editor-word-count/style';
+@import 'post-editor/media-modal/style';

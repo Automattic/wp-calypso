@@ -174,7 +174,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 
 		// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
 		const metadata = reduce( postToCopy.metadata, ( newMetadata, { key, value } ) => {
-			newMetadata[ key ] = value;
+			newMetadata[ key ] = value;
 			return newMetadata;
 		}, {} );
 
