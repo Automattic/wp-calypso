@@ -18,6 +18,7 @@ import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
 import SkipSurvey from './skip-survey';
+import Reconnect from './reconnect';
 
 class DisconnectSite extends Component {
 	getRoute() {
@@ -49,6 +50,7 @@ class DisconnectSite extends Component {
 					/>
 					<DisconnectSurvey />
 					<SkipSurvey />
+					<Reconnect />
 				</Main>
 			</div>
 		);
