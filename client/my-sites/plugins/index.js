@@ -38,25 +38,28 @@ module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins' ) ) {
 		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
-			page.redirect( '/plugins/' + context.params.site );
+			page.redirect( `/plugins/${ context.params.site }` );
 		} );
 
 		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
-			page.redirect( '/plugins/browse/' + context.params.site );
+			page.redirect( `/plugins/browse/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/:category/:site',
-			controller.siteSelection,
-			controller.navigation,
-			pluginsController.browsePlugins
-		);
+		page( '/plugins/manage/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
+			page.redirect( `/plugins/manage/${ context.params.site }` );
+		} );
 
-		page( '/plugins/browse/:siteOrCategory?',
-			controller.siteSelection,
-			controller.navigation,
-			pluginsController.browsePlugins
-		);
+		page( '/plugins/browse/:category/:site', context => {
+			const { category, site } = context.params;
+			page.redirect( `/plugins/${ category }/${ site }` );
+		} );
+
+		page( '/plugins/browse/:siteOrCategory?', context => {
+			const { siteOrCategory } = context.params;
+			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
+		} );
 
 		page( '/plugins/category/:category/:site_id',
 			controller.siteSelection,
@@ -100,6 +103,7 @@ module.exports = function() {
 		page( '/plugins/:plugin/:site_id?',
 			controller.siteSelection,
 			controller.navigation,
+			pluginsController.maybeBrowsePlugins,
 			pluginsController.plugin
 		);
 
