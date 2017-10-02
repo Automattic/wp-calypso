@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,10 +8,37 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	isOrderEditable,
 	isOrderWaitingPayment,
 	isOrderWaitingFulfillment,
 	isOrderFinished,
 } from '../index';
+
+describe( 'isOrderEditable', () => {
+	it( 'should be true for a pending order', () => {
+		expect( isOrderEditable( 'pending' ) ).to.be.true;
+	} );
+
+	it( 'should be true for an on-hold order', () => {
+		expect( isOrderEditable( 'on-hold' ) ).to.be.true;
+	} );
+
+	it( 'should be false for a processing order', () => {
+		expect( isOrderEditable( 'processing' ) ).to.be.false;
+	} );
+
+	it( 'should be false for a completed order', () => {
+		expect( isOrderEditable( 'completed' ) ).to.be.false;
+	} );
+
+	it( 'should be false for a failed order', () => {
+		expect( isOrderEditable( 'failed' ) ).to.be.false;
+	} );
+
+	it( 'should be false for a fake order status', () => {
+		expect( isOrderEditable( 'fake' ) ).to.be.false;
+	} );
+} );
 
 describe( 'isOrderWaitingPayment', () => {
 	it( 'should be true for a pending order', () => {
