@@ -1,0 +1,295 @@
+.jpo-site-type {
+	position: relative;
+	text-align: center;
+}
+
+.jpo-site-type__image {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+}
+
+@include breakpoint( ">480px" ) {
+	.jpo-site-type__choice-copy {
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	}
+}
+
+.jpo-site-type__cta {
+	color: $blue-wordpress;
+
+	@include breakpoint( "<480px" ) {
+		background: none;
+		font-size: 1.1em;
+		border: 0;
+		padding: 0;
+		text-transform: none;
+		margin: 0;
+		line-height: 1.1em;
+	}
+}
+
+.jpo-site-type__wrapper {
+	margin-left: auto;
+	margin-right: auto;
+
+	header {
+		text-align: center;
+	}
+}
+
+.jpo-site-type__row {
+	margin: 0 auto;
+	display: flex;
+	flex-flow: row wrap;
+	max-width: 640px;
+
+	opacity: 1;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+
+	&.is-hidden {
+		pointer-events: none;
+		transform: translateZ( 0 ) translateX( -25% );
+		opacity: 0;
+	}
+
+	.card {
+		width: 46%;
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
+		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			width: 100%;
+			text-align: left;
+		}
+
+		svg {
+			max-width: 100%;
+			max-height: 190px;
+		}
+
+		.button {
+			font-size: 1.25rem;
+			margin-bottom: 1rem;
+			color: $blue-wordpress;
+			line-height: 1;
+
+			@include breakpoint( ">480px" ) {
+				padding: 7px;
+			}
+
+			@media (max-width: 480px) {
+				margin-bottom: 0;
+				font-size:1.5rem;
+				padding: 0;
+			}
+
+			.jpo-site-type__cta {
+				@include breakpoint( ">480px" ) {
+					background: none;
+					font-size: 1.1em;
+					border: 0;
+					padding: 0;
+					text-transform: none;
+					margin: 0;
+					line-height: 1.1em;
+				}
+			}
+		}
+
+		&:first-child {
+			@include breakpoint( ">480px" ) {
+				margin-right: 2%;
+			}
+
+			@media (max-width: 480px) {
+				margin-right: 10px;
+			}
+		}
+	}
+}
+
+.jpo-site-type__row-small {
+	.card {
+		.button {
+			padding: 7px;
+		}
+
+		svg {
+			max-height: 117px;
+		}
+	}
+}
+
+p.jpo-site-type__description {
+	font-size: 1.25rem;
+	color: $gray;
+	margin: 0;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 10px;
+	}
+}
+
+.jpo-site-type__note {
+	text-align: center;
+	color: darken( $gray, 20% );
+	font-size: 14px;
+
+		@include breakpoint( "<480px" ) {
+		padding: 0 20px;
+	}
+}
+
+.business-address {
+	.card {
+		text-align: left;
+		max-width: 320px;
+
+		input {
+			margin-bottom: 1rem;
+		}
+
+		.button {
+			width: 100%;
+			margin-top: 1rem;
+
+			@include breakpoint( "<480px" ) {
+				&:not(.is-primary) {
+					background: none;
+					font-size: 1.1em;
+					border: 0;
+					padding: 0;
+					text-transform: none;
+					margin: 0;
+					line-height: 1.1em;
+				}
+			}
+		}
+	}
+}
+
+.jpo-site-type__choice {
+	transition: all 100ms ease-in-out;
+	position: relative;
+	border: 1px solid lighten( $gray, 20% );
+	border-bottom: 0;
+	margin: 0 10px;
+	
+	@include breakpoint( "<480px" ) {
+		box-shadow: none; //inherited from .card, remove for mobile only
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding: 0;
+		margin-bottom: 20px;
+		width: 230px;
+		text-align: center;
+		flex-grow: 1;
+		border: 0;
+
+		&:hover,
+		&.is-selected {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+		}
+	}
+
+	&:active {
+		.jpo-site-type__cta {
+			color: $blue-dark;
+		}
+
+		.jpo-site-type__choice-link {
+			border-top-color: $blue-dark;
+			border-right-color: $blue-dark;
+		}
+	}
+
+	&:first-child {
+		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
+
+		@include breakpoint( ">480px" ) {
+			border-radius: 0;
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 20px;
+		border: 1px solid lighten( $gray, 20% );
+		border-bottom-right-radius: 6px;
+		border-bottom-left-radius: 6px;
+
+		@include breakpoint( ">480px" ) {
+			border-radius: 0;
+			border: 0;
+		}
+	}
+
+	a, svg {
+		display: block;
+		width: 100%; // Safari fix
+	}
+}
+
+.jpo-site-type__choice-copy {
+	border-top: 1px solid rgba(200, 215, 225, 0.5);
+
+	@include breakpoint( "<480px" ) {
+		padding: 16px;
+		border-top: 0;
+	}
+}
+
+@include breakpoint( ">480px" ) {
+	.jpo-site-type__choice-copy {
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	}
+}
+
+
+.jpo-site-type__image {
+	padding:15px;
+}
+
+.jpo-site-type__choice-link {
+	padding-right: 40px;
+	display: block;
+	box-sizing: border-box;
+
+	&:after {
+		content: '';
+		display: block;
+		width: 8px; //Match the size of the cta copy
+		height: 8px; //Match the size of the cta copy
+		position: absolute;
+		top: 20px;
+		right: 15px;
+		border-top: 2px solid lighten( $gray, 20% );
+		border-right: 2px solid lighten( $gray, 20% );
+		transform: rotate(45deg);
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding-right: 0;
+		&:after {
+			display: none;
+		}
+	}
+}
+
+.jpo-site-type__image {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+}

@@ -1,0 +1,121 @@
+.jpo__contact-form-wrapper {
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+	max-width: 325px;
+}
+
+.jpo__contact-form-wrapper .card {
+	max-width: 320px;
+	text-align: center;
+}
+
+.jpo-contact-form__description {
+	font-size: 1.25rem;
+	color: $gray;
+}
+
+.jpo-contact-form__image {
+	padding:15px;
+}
+
+.jpo-contact-form__choice-copy {
+	padding: 15px;
+	border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+}
+
+.jpo-contact-form__choice.card {
+	width: 46%;
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	padding: 0;
+
+	@include breakpoint( "<480px" ) {
+	width: 100%;
+	text-align: left;
+	}
+
+	&:hover,
+	&.is-selected {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
+
+	svg {
+		width: 94%;
+		height: auto;
+		margin-bottom: 1rem;
+	}
+
+	.button {
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+		color: $blue-wordpress;
+		line-height: 1;
+		padding: 7px;
+	}
+}
+
+.jpo-contact-form__choice {
+	transition: all 100ms ease-in-out;
+	position: relative;
+	margin: 0 10px 20px;
+	padding: 0;
+	width: 230px;
+	text-align: center;
+	flex-grow: 1;
+	border: 0;
+
+	&:hover,
+	&.is-selected {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
+
+	&:active {
+		.jpo-contact-form__cta {
+			color: $blue-dark;
+		}
+
+		.jpo-contact-form__choice-link:after {
+			border-top-color: $blue-dark;
+			border-right-color: $blue-dark;
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 20px;
+		border-radius: 0;
+		border: 0;
+	}
+
+	a, svg {
+		display: block;
+		width: 100%; // Safari fix
+	}
+}
+
+.jpo-homepage__choice-link {
+	padding-right: 40px;
+	display: block;
+	box-sizing: border-box;
+
+	&:after {
+		content: '';
+		display: block;
+		width: 8px; //Match the size of the cta copy
+		height: 8px; //Match the size of the cta copy
+		position: absolute;
+		top: 20px;
+		right: 15px;
+		border: solid lighten( $gray, 20% );
+		border-width: 2px 2px 0 0;
+		transform: rotate(45deg);
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding-right: 0;
+		&:after {
+			display: none;
+		}
+	}
+}

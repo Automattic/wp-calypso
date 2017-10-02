@@ -30,7 +30,7 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
+	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
@@ -129,7 +129,7 @@ class JetpackConnectAuthorizeForm extends Component {
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( 'undefined' === typeof queryObject ) {
 			return this.renderNoQueryArgsError();
 		}
 
@@ -164,7 +164,7 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
+			userAlreadyConnected: getUserAlreadyConnected( state )
 		};
 	},
 	{

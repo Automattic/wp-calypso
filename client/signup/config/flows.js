@@ -22,6 +22,12 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 }
 
+function getJetpackSiteDestination( dependencies ) {
+	const protocol = dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ? 'https' : 'http';
+
+	return protocol + '://' + dependencies.siteSlug;
+}
+
 function getSiteDestination( dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
@@ -275,6 +281,15 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 		description: 'A flow to test updating an existing site with `Signup`',
 		lastModified: '2017-01-19'
+	};
+}
+
+if ( config.isEnabled( 'jetpack/onboarding' ) ) {
+	flows[ 'jetpack-onboarding' ] = {
+		steps: [ 'jpo-site-title', 'jpo-site-type', 'jpo-homepage', 'jpo-contact-form', 'jpo-connect', 'jpo-summary' ],
+		destination: getJetpackSiteDestination,
+		description: 'Configure a JPO site.',
+		lastModified: '2017-07-14'
 	};
 }
 
