@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import { capitalize, some } from 'lodash';
+import { capitalize, includes, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -116,23 +116,26 @@ function renderPluginList( context, basePath ) {
 		.record( baseAnalyticsPath, analyticsPageTitle );
 }
 
+// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
+// the `:plugin` param is actually the side ID or category.
+function getCategoryForPluginsBrowser( context ) {
+	if ( context.params.plugin && includes( allowedCategoryNames, context.params.plugin ) ) {
+		return context.params.plugin;
+	}
+
+	return context.params.category;
+}
+
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
 	const site = getSelectedSite( context.store.getState() );
-	let { category } = context.params;
+	const category = getCategoryForPluginsBrowser( context );
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	if (
-		context.params.siteOrCategory &&
-		allowedCategoryNames.indexOf( context.params.siteOrCategory ) >= 0
-	) {
-		category = context.params.siteOrCategory;
-	}
-
 	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
-	let baseAnalyticsPath = 'plugins/browse' + ( category ? '/' + category : '' );
+	let baseAnalyticsPath = 'plugins' + ( category ? '/' + category : '' );
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
 	}
@@ -207,18 +210,26 @@ const controller = {
 	plugin( context ) {
 		const siteUrl = route.getSiteFragment( context.path );
 
-		// If the "plugin" part of the route is actually a site, browse the plugins for that site instead.
+		notices.clearNotices( 'notices' );
+		renderSinglePlugin( context, siteUrl );
+	},
+
+	// If the "plugin" part of the route is actually a site or a valid category, render the
+	// plugin browser for that site or category. Otherwise, fall through to the next hander,
+	// which is most likely the `plugin()`.
+	maybeBrowsePlugins( context, next ) {
+		const siteUrl = route.getSiteFragment( context.path );
+		const { plugin } = context.params;
+
 		if (
-			siteUrl &&
-			context.params.plugin &&
-			context.params.plugin === siteUrl.toString()
+			plugin &&
+			( ( siteUrl && plugin === siteUrl.toString() ) || includes( allowedCategoryNames, plugin ) )
 		) {
 			controller.browsePlugins( context );
 			return;
 		}
 
-		notices.clearNotices( 'notices' );
-		renderSinglePlugin( context, siteUrl );
+		next();
 	},
 
 	browsePlugins( context ) {
