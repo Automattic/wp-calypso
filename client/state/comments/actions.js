@@ -16,7 +16,7 @@ import {
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
 	READER_EXPAND_COMMENTS,
-	COMMENTS_SET_ACTIVE_COMMENT_REPLY,
+	COMMENTS_SET_ACTIVE_REPLY,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -156,7 +156,7 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} commentId comment identifier
- * @returns {Function} think that unlikes a comment
+ * @returns {Object} Action that unlikes a comment
  */
 export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	type: COMMENTS_UNLIKE,
@@ -231,16 +231,16 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
 } );
 
 /***
- * Creates an action that sets the active comment reply for a given site ID and post ID
- * This is used on the front end to show a comment reply box under the active comment.
+ * Creates an action that sets the active reply for a given site ID and post ID
+ * This is used on the front end to show a reply box under the specified comment.
  *
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} commentId comment identifier
- * @returns {Function} think that unlikes a comment
+ * @returns {Object} Action to set active reply
  */
-export const setActiveCommentReply = ( { siteId, postId, commentId } ) => ( {
-	type: COMMENTS_SET_ACTIVE_COMMENT_REPLY,
+export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
+	type: COMMENTS_SET_ACTIVE_REPLY,
 	payload: {
 		siteId,
 		postId,

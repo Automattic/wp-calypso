@@ -8,7 +8,7 @@ describe( 'getActiveReplyCommentId()', () => {
 	it( 'should return the active reply comment ID for a known site and post', () => {
 		const prevState = {
 			comments: {
-				activeReplyComments: {
+				activeReplies: {
 					'1-2': 124,
 				},
 			},
@@ -22,7 +22,7 @@ describe( 'getActiveReplyCommentId()', () => {
 	it( 'should return null for an unknown site and post', () => {
 		const prevState = {
 			comments: {
-				activeReplyComments: {
+				activeReplies: {
 					'1-2': 124,
 				},
 			},
