@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {Number}  postId  The ID of the post we're querying
  * @return {Number|String}	commentId 	Can be a string if the comment is a placeholder
  */
-export default function getActiveReplyCommentId( state, siteId, postId ) {
+export default function getActiveReplyCommentId( { state, siteId, postId } ) {
 	return get( state.comments.activeReplies, `${ siteId }-${ postId }`, null );
 }

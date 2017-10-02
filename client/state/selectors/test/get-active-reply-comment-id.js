@@ -15,7 +15,7 @@ describe( 'getActiveReplyCommentId()', () => {
 		};
 		const siteId = 1;
 		const postId = 2;
-		const nextState = getActiveReplyCommentId( prevState, siteId, postId );
+		const nextState = getActiveReplyCommentId( { state: prevState, siteId, postId } );
 		expect( nextState ).toEqual( 124 );
 	} );
 
@@ -29,7 +29,7 @@ describe( 'getActiveReplyCommentId()', () => {
 		};
 		const siteId = 1;
 		const postId = 3;
-		const nextState = getActiveReplyCommentId( prevState, siteId, postId );
+		const nextState = getActiveReplyCommentId( { state: prevState, siteId, postId } );
 		expect( nextState ).toEqual( null );
 	} );
 } );
