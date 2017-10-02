@@ -6,7 +6,7 @@
 /**
  * Internal dependencies
  */
-import { attachToHead, createScriptElement } from '../dom-operations';
+import { createScriptElement } from '../dom-operations';
 
 describe( 'loadScript', () => {
 	describe( 'createScriptElement( url )', () => {
@@ -51,42 +51,6 @@ describe( 'loadScript', () => {
 
 		test( 'should have a defined onerror function', () => {
 			expect( script.onerror ).toBeInstanceOf( Function );
-		} );
-	} );
-
-	describe( 'attachToHead( element )', () => {
-		const element = { example: 'data' };
-		const getElementsByTagNameSpy = jest.fn();
-		const appendChildSpy = jest.fn();
-		let getElementsByTagName;
-
-		beforeAll( function() {
-			getElementsByTagName = global.window.document.getElementsByTagName;
-			global.window.document.getElementsByTagName = function( ...args ) {
-				getElementsByTagNameSpy( ...args );
-				return [
-					{
-						appendChild: function( ...innerArgs ) {
-							appendChildSpy( ...innerArgs );
-							return {};
-						},
-					},
-				];
-			};
-
-			attachToHead( element );
-		} );
-
-		afterAll( function() {
-			global.window.document.getElementsByTagName = getElementsByTagName;
-		} );
-
-		test( 'should look for the document head using document.getElementsByTagName( "head" )', () => {
-			expect( getElementsByTagNameSpy ).toHaveBeenCalledWith( 'head' );
-		} );
-
-		test( 'should append the element to the head using document.appendChild( element )', () => {
-			expect( appendChildSpy ).toHaveBeenCalledWith( element );
 		} );
 	} );
 } );

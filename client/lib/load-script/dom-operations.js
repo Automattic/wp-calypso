@@ -24,5 +24,5 @@ export function createScriptElement( url ) {
 
 export function attachToHead( element ) {
 	debug( 'Attaching element to head' );
-	document.getElementsByTagName( 'head' )[ 0 ].appendChild( element );
+	document.head.appendChild( element );
 }
