@@ -8,7 +8,8 @@ import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pick
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getStateKey, deconstructStateKey, fetchStatusInitialState } from './reducer';
+import { fetchStatusInitialState } from './reducer';
+import { getStateKey, deconstructStateKey } from './utils';
 
 /***
  * Gets comment items for post

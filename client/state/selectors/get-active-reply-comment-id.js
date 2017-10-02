@@ -5,6 +5,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { getStateKey } from 'state/comments/utils';
+
+/**
  * Returns the active reply comment for a given site and post.
  *
  * @param  {Object}  state   Global state tree
@@ -13,5 +18,5 @@ import { get } from 'lodash';
  * @return {Number|String}	commentId 	Can be a string if the comment is a placeholder
  */
 export default function getActiveReplyCommentId( { state, siteId, postId } ) {
-	return get( state.comments.activeReplies, `${ siteId }-${ postId }`, null );
+	return get( state.comments.activeReplies, getStateKey( siteId, postId ), null );
 }

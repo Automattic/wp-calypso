@@ -42,15 +42,9 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
+import { getStateKey } from './utils';
 
 const getCommentDate = ( { date } ) => new Date( date );
-
-export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
-
-export const deconstructStateKey = key => {
-	const [ siteId, postId ] = key.split( '-' );
-	return { siteId: +siteId, postId: +postId };
-};
 
 const isCommentManagementEdit = newProperties =>
 	has( newProperties, 'commentContent' ) &&
