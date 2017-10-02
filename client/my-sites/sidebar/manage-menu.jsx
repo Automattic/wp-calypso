@@ -3,7 +3,7 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
+import { compact, findIndex, includes, omit, reduce, get, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,11 +15,13 @@ import config from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -31,6 +33,7 @@ class ManageMenu extends PureComponent {
 		canUser: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
+		plugins: PropTypes.array,
 		postTypes: PropTypes.object,
 		postTypeLinks: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
@@ -102,6 +105,19 @@ class ManageMenu extends PureComponent {
 			} );
 		}
 
+		if ( this.isPluginActive( 'zoninator' ) ) {
+			items.push( {
+				name: 'zones',
+				label: this.props.translate( 'Zones' ),
+				config: 'zoninator/extension-settings',
+				queryable: true,
+				link: '/extensions/zoninator',
+				buttonLink: `/extensions/zoninator/new/${ siteSlug }`,
+				wpAdminLink: 'admin.php?page=zoninator',
+				showOnAllMySites: false,
+			} );
+		}
+
 		if ( config.isEnabled( 'comments/management' ) ) {
 			items.push( {
 				name: 'comments',
@@ -118,6 +134,10 @@ class ManageMenu extends PureComponent {
 		return items;
 	}
 
+	isPluginActive( slug ) {
+		return 0 <= findIndex( this.props.plugins, { slug } );
+	}
+
 	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
@@ -129,7 +149,7 @@ class ManageMenu extends PureComponent {
 	renderMenuItem( menuItem ) {
 		const { canUser, site, siteId, siteAdminUrl } = this.props;
 
-		if ( siteId && ! canUser( menuItem.capability ) ) {
+		if ( siteId && menuItem.capability && ! canUser( menuItem.capability ) ) {
 			return null;
 		}
 
@@ -159,16 +179,15 @@ class ManageMenu extends PureComponent {
 			preload = 'posts-custom';
 		}
 
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post': icon = 'posts'; break;
-			case 'page': icon = 'pages'; break;
-			case 'jetpack-portfolio': icon = 'folder'; break;
-			case 'jetpack-testimonial': icon = 'quote'; break;
-			case 'media': icon = 'image'; break;
-			case 'comments': icon = 'chat'; break;
-			default: icon = 'custom-post-type';
-		}
+		const icon = {
+			post: 'posts',
+			page: 'pages',
+			'jetpack-portfolio': 'folder',
+			'jetpack-testimonial': 'quote',
+			media: 'image',
+			zones: 'layout',
+			comments: 'chat',
+		}[ menuItem.name ] || 'custom-post-type';
 
 		const className = this.props.itemLinkClass(
 			menuItem.paths ? menuItem.paths : menuItem.link
@@ -241,9 +260,8 @@ class ManageMenu extends PureComponent {
 
 		return (
 			<ul>
-				{ this.props.siteId && (
-					<QueryPostTypes siteId={ this.props.siteId } />
-				) }
+				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+				{ this.props.siteId && <QueryJetpackPlugins siteIds={ [ this.props.siteId ] } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
 			</ul>
 		);
@@ -260,6 +278,7 @@ export default connect( ( state, { siteId } ) => {
 		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
+		plugins: getPlugins( state, [ siteId ], 'active' ),
 		postTypes,
 		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
 			return getEditorPath( state, siteId, null, postTypeSlug );

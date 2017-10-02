@@ -143,7 +143,8 @@
 		"woocommerce/extension-settings-stripe-connect-flows": false,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"zoninator/extension-settings": true
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",
