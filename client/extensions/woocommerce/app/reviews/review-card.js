@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,6 +16,8 @@ import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import Card from 'components/card';
 import Emojify from 'components/emojify';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Gravatar from './gravatar';
 import humanDate from 'lib/human-date';
 import Rating from 'components/rating';
@@ -56,16 +59,6 @@ class ReviewCard extends Component {
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
-		);
-	}
-
-	renderProductImage() {
-		const { review } = this.props;
-		const productImageClasses = classNames( 'reviews__product', { 'is-placeholder': ! review.product.image } );
-		return (
-			<div className={ productImageClasses }>
-				{ review.product.image && ( <img src={ review.product.image } /> ) }
-			</div>
 		);
 	}
 
@@ -113,7 +106,6 @@ class ReviewCard extends Component {
 					<div className="reviews__rating">
 						<Rating rating={ review.rating * 20 } size={ 18 } />
 					</div>
-					{ this.renderProductImage() }
 				</div>
 				{ this.renderToggle() }
 			</div>
@@ -121,9 +113,22 @@ class ReviewCard extends Component {
 	}
 
 	renderExpandedCard() {
-		const { review, translate } = this.props;
+		const { site, review, translate } = this.props;
 		return (
 			<div className="reviews__expanded-card">
+				<div className="reviews__product-name">
+					{ translate(
+						'Review for {{productLink}}%(productName)s{{/productLink}}.',
+						{
+							args: {
+								productName: review.product.name,
+							},
+							components: {
+								productLink: <a href={ getLink( `/store/product/:site/${ review.product.id }`, site ) } />
+							}
+						}
+					) }
+				</div>
 				<div className="reviews__expanded-card-details-wrap">
 					<div className="reviews__expanded-card-details">
 						<div className="reviews__author-gravatar">
@@ -149,7 +154,6 @@ class ReviewCard extends Component {
 						<div className="reviews__rating">
 							<Rating rating={ review.rating * 20 } size={ 18 } />
 						</div>
-						{ this.renderProductImage() }
 					</div>
 
 					<AutoDirection>
@@ -189,4 +193,9 @@ class ReviewCard extends Component {
 	}
 }
 
-export default localize( ReviewCard );
+export default connect( ( state ) => {
+	const site = getSelectedSiteWithFallback( state );
+	return {
+		site
+	};
+} )( localize( ReviewCard ) );
