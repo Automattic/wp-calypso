@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-import React from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Input from './input';
 
-export default class extends React.Component {
-	static displayName = 'HiddenInput';
+class HiddenInput extends Component {
 
 	state = {
 		toggled: false
@@ -29,7 +29,7 @@ export default class extends React.Component {
 		}
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {
@@ -51,3 +51,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( HiddenInput );

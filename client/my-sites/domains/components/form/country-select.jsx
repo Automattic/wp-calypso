@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -16,8 +16,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import FormSelect from 'components/forms/form-select';
 
-export default localize( class extends React.Component {
-	static displayName = 'CountrySelect';
+class CountrySelect extends Component {
 
 	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
@@ -25,11 +24,11 @@ export default localize( class extends React.Component {
 		}
 	};
 
-	focus = () => {
+	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
-	};
+	}
 
 	render() {
 		const classes = classNames( this.props.additionalClasses, 'country' );
@@ -84,4 +83,6 @@ export default localize( class extends React.Component {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( CountrySelect );

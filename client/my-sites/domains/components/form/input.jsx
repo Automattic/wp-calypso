@@ -2,8 +2,9 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'lib/analytics';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-export default class extends React.Component {
+class Input extends Component {
 	static displayName = 'Input';
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
@@ -23,7 +24,7 @@ export default class extends React.Component {
 		this.autoFocusInput();
 	}
 
-	setupInputModeHandlers = () => {
+	setupInputModeHandlers() {
 		const inputElement = ReactDom.findDOMNode( this.refs.input );
 
 		if ( this.props.inputMode === 'numeric' ) {
@@ -38,7 +39,7 @@ export default class extends React.Component {
 			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
 				inputElement.addEventListener( eventName, () => inputElement.pattern = '.*' ) );
 		}
-	};
+	}
 
 	componentDidUpdate( oldProps ) {
 		if ( oldProps.disabled && ! this.props.disabled ) {
@@ -48,17 +49,17 @@ export default class extends React.Component {
 		}
 	}
 
-	focus = () => {
+	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
-	};
+	}
 
-	autoFocusInput = () => {
+	autoFocusInput() {
 		if ( this.props.autoFocus ) {
 			this.focus();
 		}
-	};
+	}
 
 	recordFieldClick = () => {
 		if ( this.props.eventFormName ) {
@@ -91,3 +92,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( Input );
