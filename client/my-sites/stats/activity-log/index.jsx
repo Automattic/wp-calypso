@@ -256,12 +256,11 @@ class ActivityLog extends Component {
 			isRewindActive,
 			logs,
 			moment,
-			requestedRestoreActivityId,
 			requestedRestoreActivity,
+			requestedRestoreActivityId,
 			siteId,
 			translate,
 		} = this.props;
-
 		const startMoment = this.getStartMoment();
 
 		if ( isNull( logs ) ) {
@@ -290,6 +289,15 @@ class ActivityLog extends Component {
 				.endOf( 'day' )
 				.valueOf()
 		);
+		const rewindConfirmDialog = requestedRestoreActivity && (
+			<ActivityLogConfirmDialog
+				applySiteOffset={ this.applySiteOffset }
+				key="activity-rewind-dialog"
+				onClose={ this.handleRestoreDialogClose }
+				onConfirm={ this.handleRestoreDialogConfirm }
+				timestamp={ requestedRestoreActivity.activityTs }
+			/>
+		);
 
 		const activityDays = [];
 		// loop backwards through each day in the month
@@ -313,6 +321,7 @@ class ActivityLog extends Component {
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					requestedRestoreActivityId={ requestedRestoreActivityId }
+					rewindConfirmDialog={ rewindConfirmDialog }
 					disableRestore={ disableRestore }
 					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
@@ -325,19 +334,7 @@ class ActivityLog extends Component {
 			);
 		}
 
-		return (
-			<section className="activity-log__wrapper">
-				{ activityDays }
-				{ requestedRestoreActivity && (
-					<ActivityLogConfirmDialog
-						applySiteOffset={ this.applySiteOffset }
-						timestamp={ requestedRestoreActivity.activityTs }
-						onClose={ this.handleRestoreDialogClose }
-						onConfirm={ this.handleRestoreDialogConfirm }
-					/>
-				) }
-			</section>
-		);
+		return <section className="activity-log__wrapper">{ activityDays }</section>;
 	}
 
 	renderMonthNavigation( position ) {
