@@ -23,6 +23,8 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -49,6 +51,7 @@ class OrderFulfillment extends Component {
 		errorMessage: false,
 		shouldEmail: false,
 		showDialog: false,
+		showPopoverMenu: false,
 		trackingNumber: '',
 	}
 
@@ -61,6 +64,12 @@ class OrderFulfillment extends Component {
 			showDialog: ! this.state.showDialog,
 		} );
 	}
+
+	togglePopoverMenu = () => {
+		this.setState( {
+			showPopoverMenu: ! this.state.showPopoverMenu,
+		} );
+	};
 
 	updateTrackingNumber = ( event ) => {
 		this.setState( {
@@ -123,9 +132,9 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { labelsLoaded, order, site, translate, labelsPaymentMethod } = this.props;
+		const { labelsLoaded, order, site, translate, hasLabelsPaymentMethod } = this.props;
 		const isShippable = this.isShippable( order );
-		const renderLabelsButton = wcsEnabled && labelsPaymentMethod;
+		const renderLabelsButton = wcsEnabled && hasLabelsPaymentMethod;
 
 		if ( ! renderLabelsButton && ! isShippable ) {
 			return null;
@@ -153,15 +162,25 @@ class OrderFulfillment extends Component {
 		}
 
 		return (
-			<ButtonGroup className="order-fulfillment__button-group">
-				<Button
-					primary={ labelsLoaded }
-					onClick={ onLabelPrint }
-					className={ buttonClassName }>
-					{ translate( 'Print label' ) }
-				</Button>
-				<Button onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
-			</ButtonGroup>
+			<div>
+				<ButtonGroup className="order-fulfillment__button-group">
+					<Button
+						primary={ labelsLoaded }
+						onClick={ onLabelPrint }
+						className={ buttonClassName }>
+						{ translate( 'Print label & fulfill' ) }
+					</Button>
+					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
+						<Gridicon icon="ellipsis" />
+					</Button>
+				</ButtonGroup>
+				<PopoverMenu
+					isVisible={ this.state.showPopoverMenu }
+					onClose={ this.togglePopoverMenu }
+					context={ this.refs && this.refs.popoverMenuButton }>
+					<PopoverMenuItem onClick={ this.toggleDialog }>{ translate( 'Fulfill without printing a label' ) }</PopoverMenuItem>
+				</PopoverMenu>
+			</div>
 		);
 	}
 
@@ -222,10 +241,17 @@ class OrderFulfillment extends Component {
 }
 
 export default connect(
-	( state, { order, site } ) => ( {
-		labelsLoaded: wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) ),
-		labelsCount: wcsEnabled ? getLabelsCount( state, order.id, site.ID ) : 0,
-		labelsPaymentMethod: wcsEnabled ? getSelectedPaymentMethod( state, order.id, site.ID ) : null,
-	} ),
+	( state, { order, site } ) => {
+		const labelsLoaded = wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) );
+		const hasLabelsPaymentMethod =
+			( wcsEnabled && ! labelsLoaded ) ||
+			( wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID ) );
+
+		return {
+			labelsLoaded,
+			labelsCount: labelsLoaded ? getLabelsCount( state, order.id, site.ID ) : 0,
+			hasLabelsPaymentMethod,
+		};
+	},
 	dispatch => bindActionCreators( { createNote, updateOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );
