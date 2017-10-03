@@ -1,5 +1,8 @@
-// Utils
-@import '../shared/utils';
+@import '../shared/colors';
+@import '../shared/mixins/breakpoints';
+@import '../shared/mixins/hide-content-accessibly';
+@import '../shared/mixins/placeholder';
+@import '../shared/typography';
 
 @import 'signup/style';
 @import 'signup/flow-progress-indicator/style';
