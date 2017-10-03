@@ -18,6 +18,7 @@
 
 	&.is-active > * {
 		box-shadow: 0 0 0 2px white, 0 0 0 4px $blue-medium;
+		z-index: 10;
 	}
 
 	&.is-draggable.is-active {
