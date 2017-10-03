@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
+import Shortcode from 'lib/shortcode';
 
 /**
  * Internal dependecies
@@ -28,6 +29,11 @@ class GalleryView extends Component {
 
 	static serialize( content ) {
 		return encodeURIComponent( content );
+	}
+
+	static isEditable( editor, content ) {
+		const shortcode = Shortcode.parse( content );
+		return !! ( shortcode.attrs && shortcode.attrs.named.ids );
 	}
 
 	static edit( editor, content ) {

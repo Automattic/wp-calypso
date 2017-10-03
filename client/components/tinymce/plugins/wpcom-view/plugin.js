@@ -837,7 +837,7 @@ function wpview( editor ) {
 				}
 
 				type = editor.dom.getAttrib( selected, 'data-wpview-type' );
-				this.visible( views.isEditable( type ) );
+				this.visible( views.isEditable( type, editor, getText( selected ) ) );
 			}.bind( this ) );
 		},
 		onClick: function() {
@@ -854,7 +854,7 @@ function wpview( editor ) {
 
 	editor.addButton( 'wp_view_remove', {
 		tooltip: i18n.translate( 'Remove' ),
-		icon: 'dashicon dashicons-no',
+		icon: 'dashicon dashicons-trash',
 		onClick: function() {
 			selected && removeView( selected );
 		}
