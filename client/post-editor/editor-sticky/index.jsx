@@ -1,9 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flow, get } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
 /**
@@ -17,32 +20,28 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
-const EditorSticky = React.createClass( {
-	displayName: 'EditorSticky',
+class EditorSticky extends Component {
 
-	propTypes: {
-		postId: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		sticky: React.PropTypes.bool
-	},
+	static propTypes = {
+		postId: PropTypes.number,
+		siteId: PropTypes.number,
+		sticky: PropTypes.bool,
+	};
 
-	getInitialState: function() {
-		return {
-			tooltip: false
-		};
-	},
+	state = {
+		tooltip: false,
+	};
 
-	toggleStickyStatus: function() {
-		let stickyStat;
-		let stickyEventLabel;
-
-		if ( ! this.props.sticky ) {
-			stickyStat = 'advanced_sticky_enabled_toolbar';
-			stickyEventLabel = 'On';
-		} else {
-			stickyStat = 'advanced_sticky_disabled_toolbar';
-			stickyEventLabel = 'Off';
-		}
+	toggleStickyStatus = () => {
+		const { stickyStat, stickyEventLabel } = this.props.sticky
+			? {
+				stickyStat: 'advanced_sticky_disabled_toolbar',
+				stickyEventLabel: 'Off',
+			}
+			: {
+				stickyStat: 'advanced_sticky_enabled_toolbar',
+				stickyEventLabel: 'On',
+			};
 
 		recordStat( stickyStat );
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
@@ -51,17 +50,18 @@ const EditorSticky = React.createClass( {
 			sticky: ! this.props.sticky
 		} );
 		this.setState( { tooltip: false } );
-	},
+	}
 
-	enableTooltip: function() {
+	enableTooltip = () => {
 		this.setState( { tooltip: true } );
-	},
+	}
 
-	disableTooltip: function() {
+	disableTooltip = () => {
 		this.setState( { tooltip: false } );
-	},
+	}
 
-	render: function() {
+	render() {
+		const { translate } = this.props;
 		const classes = classnames(
 			'editor-sticky',
 			{ 'is-sticky': this.props.sticky }
@@ -74,36 +74,43 @@ const EditorSticky = React.createClass( {
 				onClick={ this.toggleStickyStatus }
 				onMouseEnter={ this.enableTooltip }
 				onMouseLeave={ this.disableTooltip }
-				aria-label={ this.translate( 'Stick post to the front page' ) }
+				aria-label={ translate( 'Stick post to the front page' ) }
 				ref="stickyPostButton"
 			>
 				<Gridicon icon="bookmark" />
 				{ this.props.sticky &&
 					<Tooltip
 						className="editor-sticky__tooltip"
-						context={ this.refs && this.refs.stickyPostButton }
+						context={ get( this.refs, 'stickyPostButton' ) }
 						isVisible={ this.state.tooltip }
 						position="bottom left"
 					>
-						<span>{ this.translate( 'Marked as sticky' ) }</span>
+						<span>{ translate( 'Marked as sticky' ) }</span>
 					</Tooltip>
 				}
 			</Button>
 		);
 	}
-} );
+}
 
-export default connect(
-	( state ) => {
-		const postId = getEditorPostId( state );
-		const siteId = getSelectedSiteId( state );
-		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
+EditorSticky.displayName = 'EditorSticky';
 
-		return {
-			postId,
-			siteId,
-			sticky
-		};
-	},
-	{ editPost }
-)( EditorSticky );
+const enhance = flow(
+	localize,
+	connect(
+		( state ) => {
+			const postId = getEditorPostId( state );
+			const siteId = getSelectedSiteId( state );
+			const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
+
+			return {
+				postId,
+				siteId,
+				sticky
+			};
+		},
+		{ editPost }
+	)
+);
+
+export default enhance( EditorSticky );
