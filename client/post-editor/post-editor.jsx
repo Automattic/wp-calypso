@@ -363,6 +363,8 @@ export const PostEditor = React.createClass( {
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
 						nestedSidebar={ this.state.nestedSidebar }
+						setNestedSidebar={ this.setNestedSidebar }
+						selectRevision={ this.selectRevision }
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
