@@ -3,15 +3,19 @@ jest.mock( 'lib/analytics', () => {} );
 /**
  * External dependencies
  */
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 import assert from 'assert';
 import sinon from 'sinon';
 import { identity } from 'lodash';
 
+/**
+ * External dependencies
+ */
+import { MappedDomain } from '../mapped-domain.jsx';
+
 describe( 'mapped-domain', () => {
-	let React,
-		MappedDomain,
-		props,
-		TestUtils;
+	let props;
 
 	before( () => {
 		props = {
@@ -26,15 +30,6 @@ describe( 'mapped-domain', () => {
 			settingPrimaryDomain: false,
 			translate: identity
 		};
-	} );
-
-	before( () => {
-		React = require( 'react' );
-		TestUtils = require( 'react-addons-test-utils' );
-
-		const ReactClass = require( 'react/lib/ReactClass' );
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-		MappedDomain = require( '../mapped-domain.jsx' ).MappedDomain;
 	} );
 
 	it( 'should render when props.domain.expirationMoment is null', () => {
