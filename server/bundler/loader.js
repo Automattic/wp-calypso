@@ -4,7 +4,7 @@ var config = require( 'config' ),
 
 function getSectionsModule( sections ) {
 	const sectionsLoaders = sections.map( section => {
-		return `case '${ section.name }':\n\treturn import( '${ section.module }' );`
+		return `case '${ section.name }':\n\treturn import( /* webpackChunkName: ${ JSON.stringify( section.name ) } */ '${ section.module }' );`
 	} ).join( '\n' );
 
 	return fs.readFileSync( __dirname  + '/loader_template.js', 'utf8' )
