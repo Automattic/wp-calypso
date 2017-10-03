@@ -68,13 +68,6 @@ class ConversationCaterpillarComponent extends React.Component {
 			commentIds: map( commentsToExpand, 'ID' ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
-		// for each of those comments, expand the comment's parent to singleLine
-		this.props.expandComments( {
-			siteId: blogId,
-			postId,
-			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
-		} );
 	};
 
 	render() {

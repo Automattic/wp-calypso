@@ -5,13 +5,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact } from 'lodash';
+import { map, zipObject, fill, size, filter, get, some, has } from 'lodash';
 
 /***
  * Internal dependencies
  */
 import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import { isAncestor } from 'blocks/comments/utils';
 import {
 	commentsFetchingStatus,
 	getPostCommentsTree,
@@ -155,16 +156,24 @@ export class ConversationCommentList extends React.Component {
 	getCommentsToShow = () => {
 		const { commentIds, expansions, commentsTree } = this.props;
 
-		const parentIds = compact( map( commentIds, id => this.getParentId( commentsTree, id ) ) );
+		// context-comments:
+		const rootIdsToExpand = commentsTree.children
+			.filter( rootId => ! has( expansions, rootId ) )
+			.filter( rootId =>
+				some(
+					Object.keys( expansions || {} ),
+					expandedId => isAncestor( rootId, expandedId, commentsTree )
+				)
+			);
+
 		const commentExpansions = fill(
-			Array( commentIds.length ),
+			Array( commentIds.length + rootIdsToExpand.length ),
 			POST_COMMENT_DISPLAY_TYPES.excerpt
 		);
-		const parentExpansions = fill( Array( parentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt );
 
 		const startingExpanded = zipObject(
-			commentIds.concat( parentIds ),
-			commentExpansions.concat( parentExpansions )
+			commentIds.concat( rootIdsToExpand ),
+			commentExpansions
 		);
 
 		return { ...startingExpanded, ...expansions };
