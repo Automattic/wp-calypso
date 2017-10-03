@@ -319,7 +319,10 @@ export class EditorGroundControl extends PureComponent {
 						) }
 					</div>
 				) }
-				<HistoryButton onClick={ this.onSaveButtonClick } />
+				<HistoryButton
+					selectRevision={ this.props.selectRevision }
+					setNestedSidebar={ this.props.setNestedSidebar }
+				/>
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);
