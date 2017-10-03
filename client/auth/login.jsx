@@ -160,7 +160,6 @@ export const Login = createReactClass( {
 								<Gridicon icon="user" />
 								<FormTextInput
 									name="login"
-									ref="login"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Username or email address' ) }
 									onFocus={ this.recordFocusEvent( 'Username or email address' ) }
@@ -171,7 +170,6 @@ export const Login = createReactClass( {
 								<Gridicon icon="lock" />
 								<FormPasswordInput
 									name="password"
-									ref="password"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Password' ) }
 									onFocus={ this.recordFocusEvent( 'Password' ) }
