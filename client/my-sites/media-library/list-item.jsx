@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign, isEqual, noop, omit } from 'lodash';
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
