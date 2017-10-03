@@ -164,7 +164,7 @@ describe( 'Domain Details Form', () => {
 				value: '',
 				name: 'countryCode'
 			} } );
-			expect( wrapper.find( '.checkout__domain-details-fieldset' ) ).to.have.length( 0 );
+			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 0 );
 		} );
 
 		it( 'should render address fieldset when a valid countryCode is selected', () => {
@@ -175,29 +175,7 @@ describe( 'Domain Details Form', () => {
 				name: 'countryCode'
 			} } );
 
-			expect( wrapper.find( '.checkout__domain-details-fieldset' ) ).to.have.length( 1 );
-		} );
-
-		it( 'should not render address fieldset when the country field is showing an error', () => {
-			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-			const newCountyCodeState = {
-				value: 'BR',
-				name: 'countryCode'
-			};
-
-			wrapper.find( 'CountrySelect' ).simulate( 'change', { target: newCountyCodeState } );
-			wrapper.setState( {
-				form: Object.assign( {}, wrapper.state().form, {
-					countryCode: {
-						value: 'BR',
-						name: 'countryCode',
-						errors: [ 1, 2, 3 ]
-					}
-				} )
-			} );
-
-			wrapper.update();
-			expect( wrapper.find( '.checkout__domain-details-fieldset' ) ).to.have.length( 0 );
+			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 1 );
 		} );
 
 		it( 'should render address, city, and postal code fields when the cart does not contain a Google App ', () => {
@@ -208,18 +186,18 @@ describe( 'Domain Details Form', () => {
 				name: 'countryCode'
 			} } );
 
-			expect( wrapper.find( '.checkout__domain-details-fieldset Input' ) ).to.have.length( 3 );
+			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields Input' ) ).to.have.length( 3 );
 		} );
 
 		it( 'should render postal code field when the cart contains only a Google App ', () => {
 			needsOnlyGoogleAppsDetailsStub.returns( true );
-			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-			wrapper.find( 'CountrySelect' ).simulate( 'change', { target: {
-				value: 'AU',
-				name: 'countryCode'
-			} } );
 
-			const inputs = wrapper.find( '.checkout__domain-details-fieldset Input' );
+			const wrapper = shallow(
+				<DomainDetailsForm
+					{ ...defaultProps }
+					contactDetails={ { countryCode: 'AU' } } /> );
+
+			const inputs = wrapper.find( '.checkout__domain-details-country-dependent-address-fields Input' );
 			expect( inputs ).to.have.length( 1 );
 			expect( inputs.get( 0 ).props.name ).to.equal( 'postal-code' );
 		} );

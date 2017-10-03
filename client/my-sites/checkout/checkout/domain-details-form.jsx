@@ -38,7 +38,6 @@ import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
@@ -390,12 +389,12 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) {
 		return (
-			<FormFieldset className="checkout__domain-details-fieldset">
+			<div className="checkout__domain-details-country-dependent-address-fields">
                 { ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
                 { ! needsOnlyGoogleAppsDetails && this.renderCityField() }
                 { ! needsOnlyGoogleAppsDetails && this.renderStateField() }
                 { this.renderPostalCodeField() }
-			</FormFieldset>
+			</div>
 		);
 	}
 
