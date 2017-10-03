@@ -17,6 +17,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	signupPressableStoreFlow: {
+		datestamp: '20171018',
+		variations: {
+			atomic: 99,
+			pressable: 1,
+		},
+		defaultVariation: 'atomic',
+	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
 		variations: {

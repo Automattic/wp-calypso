@@ -101,7 +101,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		if ( designType === DESIGN_TYPE_STORE ) {
+		if (
+			abtest( 'signupPressableStoreFlow' ) === 'pressable' &&
+			designType === DESIGN_TYPE_STORE
+		) {
 			this.scrollUp();
 
 			this.setState( {
