@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,24 +24,24 @@ class CreateOrderNote extends Component {
 	static propTypes = {
 		orderId: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
-	}
+	};
 
 	state = {
 		note: '',
 		type: 'internal',
-	}
+	};
 
-	setNote = ( event ) => {
+	setNote = event => {
 		this.setState( {
 			note: event.target.value,
 		} );
-	}
+	};
 
-	setType = ( event ) => {
+	setType = event => {
 		this.setState( {
 			type: event.target.value,
 		} );
-	}
+	};
 
 	saveNote = () => {
 		const { orderId, siteId } = this.props;
@@ -53,7 +54,7 @@ class CreateOrderNote extends Component {
 		};
 		this.props.createNote( siteId, orderId, note );
 		this.setState( { note: '' } );
-	}
+	};
 
 	render() {
 		const { isNoteSaving, translate } = this.props;
@@ -61,7 +62,9 @@ class CreateOrderNote extends Component {
 		return (
 			<div className="order-notes__new-note">
 				<FormFieldSet className="order-notes__new-note-content">
-					<ScreenReaderText><FormLabel htmlFor="note">{ translate( 'Add a note' ) }</FormLabel></ScreenReaderText>
+					<ScreenReaderText>
+						<FormLabel htmlFor="note">{ translate( 'Add a note' ) }</FormLabel>
+					</ScreenReaderText>
 					<FormTextarea
 						id="note"
 						value={ this.state.note }
@@ -74,11 +77,7 @@ class CreateOrderNote extends Component {
 						<option value={ 'internal' }>{ translate( 'Private Note' ) }</option>
 						<option value={ 'email' }>{ translate( 'Send to Customer' ) }</option>
 					</FormSelect>
-					<Button
-						primary
-						onClick={ this.saveNote }
-						busy={ isNoteSaving }
-						disabled={ isNoteSaving }>
+					<Button primary onClick={ this.saveNote } busy={ isNoteSaving } disabled={ isNoteSaving }>
 						{ translate( 'Add Note' ) }
 					</Button>
 				</div>
@@ -89,7 +88,7 @@ class CreateOrderNote extends Component {
 
 export default connect(
 	( state, props ) => ( {
-		isNoteSaving: isOrderNoteSaving( state, props.orderId )
+		isNoteSaving: isOrderNoteSaving( state, props.orderId ),
 	} ),
 	dispatch => bindActionCreators( { createNote }, dispatch )
 )( localize( CreateOrderNote ) );

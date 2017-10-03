@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,7 +30,7 @@ function Orders( { className, params, site, translate } ) {
 
 	return (
 		<Main className={ className }>
-			<ActionHeader breadcrumbs={ ( <span>{ translate( 'Orders' ) }</span> ) }>
+			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>
 			<OrdersList currentStatus={ params && params.filter } />
@@ -37,8 +38,6 @@ function Orders( { className, params, site, translate } ) {
 	);
 }
 
-export default connect(
-	state => ( {
-		site: getSelectedSiteWithFallback( state ),
-	} )
-)( localize( Orders ) );
+export default connect( state => ( {
+	site: getSelectedSiteWithFallback( state ),
+} ) )( localize( Orders ) );

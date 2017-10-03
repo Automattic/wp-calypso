@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ class OrderDetails extends Component {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ),
-	}
+	};
 
 	constructor( props ) {
 		super( props );
@@ -35,19 +36,21 @@ class OrderDetails extends Component {
 		};
 	}
 
-	updateStatus = ( event ) => {
+	updateStatus = event => {
 		this.setState( { status: event.target.value } );
 		// Send the order back to the parent component
 		this.props.onUpdate( { status: event.target.value } );
-	}
+	};
 
 	renderStatus = () => {
 		const { order } = this.props;
 
-		return isOrderWaitingPayment( order.status )
-			? <OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
-			: <OrderStatus status={ order.status } showShipping={ false } />;
-	}
+		return isOrderWaitingPayment( order.status ) ? (
+			<OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
+		) : (
+			<OrderStatus status={ order.status } showShipping={ false } />
+		);
+	};
 
 	render() {
 		const { order, site, translate } = this.props;
@@ -57,7 +60,11 @@ class OrderDetails extends Component {
 
 		return (
 			<div className="order-details">
-				<SectionHeader label={ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ order.id }` } } ) }>
+				<SectionHeader
+					label={ translate( 'Order %(orderId)s Details', {
+						args: { orderId: `#${ order.id }` },
+					} ) }
+				>
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
 				<Card className="order-details__card">

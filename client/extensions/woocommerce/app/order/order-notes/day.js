@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,11 +18,11 @@ class OrderNotesByDay extends Component {
 		index: PropTypes.number.isRequired,
 		isOpen: PropTypes.bool.isRequired,
 		onClick: PropTypes.func.isRequired,
-	}
+	};
 
 	onClick = () => {
 		this.props.onClick( this.props.index );
-	}
+	};
 
 	render() {
 		const { count, date, isOpen, moment, translate } = this.props;
@@ -30,7 +31,9 @@ class OrderNotesByDay extends Component {
 		const header = (
 			<div>
 				<h3>{ displayDate }</h3>
-				<small>{ translate( '%(count)s event', '%(count)s events', { count, args: { count } } ) }</small>
+				<small>
+					{ translate( '%(count)s event', '%(count)s events', { count, args: { count } } ) }
+				</small>
 			</div>
 		);
 
@@ -41,7 +44,10 @@ class OrderNotesByDay extends Component {
 					className="order-notes__day-header"
 					expanded={ isOpen }
 					header={ header }
-					screenReaderText={ translate( 'Show notes from %(date)s', { args: { date: displayDate } } ) }>
+					screenReaderText={ translate( 'Show notes from %(date)s', {
+						args: { date: displayDate },
+					} ) }
+				>
 					{ this.props.children }
 				</FoldableCard>
 			</div>

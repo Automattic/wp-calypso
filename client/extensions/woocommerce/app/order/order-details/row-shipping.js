@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ class OrderShippingRow extends Component {
 			shipping_total: PropTypes.string.isRequired,
 		} ),
 		showTax: PropTypes.bool,
-	}
+	};
 
 	render() {
 		const { order, showTax, translate } = this.props;
