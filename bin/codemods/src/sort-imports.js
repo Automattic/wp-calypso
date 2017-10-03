@@ -31,13 +31,14 @@ const getPragmaDocblock = text => docblock.print( { pragmas: docblock.parse( doc
  * Removes the extra newlines between two import statements
  */
 const removeExtraNewlines = str => str.replace(/(import.*\n)\n+(import)/g, '$1$2');
-const removeNonFirstFormatPragmas = str => str.replace(/[^^]\/\*\* @format \*\//gm, '' );
-const srcModifications = _.flow( removeNonFirstFormatPragmas, removeExtraNewlines );
 
 /**
  * Adds a newline in between the last import of external deps + the internal deps docblock
  */
 const addNewlineBeforeDocBlock = str => str.replace( /(import.*\n)(\/\*\*)/, '$1\n$2' );
+
+const srcModifications = _.flow( [ removeExtraNewlines, addNewlineBeforeDocBlock, _.trimStart ] );
+
 const isExternal = importNode => externalDependenciesSet.has( importNode.source.value.split('/')[ 0 ] );
 
 /**
@@ -49,9 +50,11 @@ const sortImports = importNodes => _.sortBy( importNodes, node => node.source.va
 
 module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
-	const src = j(file.source);
-	const originalFileContents = src.toSource();
-	const declarations = src.find(j.ImportDeclaration);
+	const srcWithoutDocblock = docblock.strip( file.source );
+	const newDocblock = getPragmaDocblock( file.source );
+
+	const src = j( srcWithoutDocblock );
+	const declarations = src.find( j.ImportDeclaration );
 
 	// if there are no deps at all, then return early.
 	if ( _.isEmpty( declarations.nodes() ) ) {
@@ -74,7 +77,7 @@ module.exports = function ( file, api ) {
 	}
 
 	const newDeclarations = []
-		.concat( getPragmaDocblock( originalFileContents ) )
+		.concat( newDocblock )
 		.concat( externalDeps )
 		.concat( internalDeps );
 
