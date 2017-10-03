@@ -30,6 +30,7 @@ Object {
     "children": Array [],
     "data": Object {
       "ID": 3,
+      "contiguous": true,
       "date": "2017-01-31T10:07:18-08:00",
       "i_like": false,
       "like_count": 0,
@@ -42,6 +43,7 @@ Object {
     "children": Array [],
     "data": Object {
       "ID": 4,
+      "contiguous": true,
       "date": "2015-01-29T10:07:18-08:00",
       "i_like": false,
       "like_count": 0,
