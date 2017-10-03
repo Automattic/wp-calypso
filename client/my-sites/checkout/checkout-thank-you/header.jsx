@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import {
 	isPlan,
 	isSiteRedirect
 } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 
 class CheckoutThankYouHeader extends PureComponent {
@@ -138,6 +140,32 @@ class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	visitSite = ( event ) => {
+		event.preventDefault();
+
+		const { primaryPurchase, selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_view_site', { product: primaryPurchase.productName } );
+		window.location.href = selectedSite.URL;
+	}
+
+	getButton() {
+		const { translate, primaryPurchase } = this.props;
+		const headerButtonClassName = 'button is-primary';
+
+		if ( isPlan( primaryPurchase ) ) {
+			return (
+				<div className="checkout-thank-you__header-button" >
+					<button className={ headerButtonClassName } onClick={ this.visitSite }>
+						{ translate( 'View your site' ) }
+					</button>
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const { isDataLoaded, hasFailedPurchases } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
@@ -156,6 +184,8 @@ class CheckoutThankYouHeader extends PureComponent {
 						<h2 className="checkout-thank-you__header-text">
 							{ this.getText() }
 						</h2>
+
+						{ this.getButton() }
 					</div>
 				</div>
 			</div>
@@ -163,4 +193,9 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 }
 
-export default localize( CheckoutThankYouHeader );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( CheckoutThankYouHeader ) );
