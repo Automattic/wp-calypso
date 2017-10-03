@@ -10,6 +10,7 @@ import classNames from 'classnames';
  */
 import PromotionFormTypeCard from './promotion-form-type-card';
 import PromotionFormCouponCard from './promotion-form-coupon-card';
+import PromotionFormProductSaleCard from './promotion-form-product-sale-card';
 
 function renderPlaceholder() {
 	const { className } = this.props;
@@ -39,7 +40,14 @@ function renderEditCard( siteId, currency, promotion, editPromotion, products, p
 				/>
 			);
 		case 'product_sale':
-			return null;
+			return (
+				<PromotionFormProductSaleCard
+					siteId={ siteId }
+					promotion={ promotion }
+					editPromotion={ editPromotion }
+					products={ products }
+				/>
+			);
 		default:
 			return null;
 	}
