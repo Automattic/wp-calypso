@@ -15,42 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import PriceInput from 'woocommerce/components/price-input';
-
-function renderDiscountTypeSelect( coupon, translate, onDiscountTypeSelect ) {
-	return (
-		<FormSelect value={ coupon.discountType } onChange={ onDiscountTypeSelect } >
-			<option value="percent">{ translate( 'Percentage discount' ) }</option>
-			<option value="fixed_cart">{ translate( 'Cart discount' ) }</option>
-			<option value="fixed_product">{ translate( 'Product discount' ) }</option>
-		</FormSelect>
-	);
-}
-
-function renderAmountInput( coupon, currency, onAmountChange ) {
-	if ( 'percent' === coupon.discount_type ) {
-		// TODO: Consider making a FormPercentInput general-purpose component?
-		return (
-			<FormTextInputWithAffixes
-				type="number"
-				min="0"
-				max="100"
-				suffix="%"
-				value={ coupon.amount }
-				onChange={ onAmountChange }
-			/>
-		);
-	}
-
-	return (
-		<PriceInput
-			currency={ currency }
-			value={ coupon.amount }
-			onChange={ onAmountChange }
-		/>
-	);
-}
+import PromotionFormDiscountTypeAndAmount from './promotion-form-discount-type-and-amount';
 
 function renderAppliesTo( coupon, translate, onAppliesToChange ) {
 	// TODO: Add support for including/excluding products and product categories
@@ -99,28 +64,25 @@ const PromotionFormCouponCard = ( {
 	editPromotion,
 	translate,
 } ) => {
-	const coupon = ( promotion && promotion.coupon ) || { code: '', discount_type: 'percent', amount: '0' };
+	const coupon = ( promotion && promotion.coupon ) || { code: '', discount_type: 'percent', amount: '' };
+	const discountTypesAvailable = [
+		{ type: 'percent', value: 'percent', text: translate( 'Percentage discount' ) },
+		{ type: 'price', value: 'fixed_cart', text: translate( 'Cart discount' ) },
+		{ type: 'price', value: 'fixed_product', text: translate( 'Product discount' ) },
+	];
 
 	const onCodeChange = ( e ) => {
 		editCoupon( siteId, promotion, coupon, { code: e.target.value }, editPromotion );
 	};
 
-	const onDiscountTypeSelect = ( e ) => {
+	const onDiscountTypeSelect = ( discountTypeValue ) => {
 		// Clear out the amount whenever the type is changed.
 		// This ensures a valid value when switching between currency and percent
-		editCoupon( siteId, promotion, coupon, { discount_type: e.target.value, amount: 0 }, editPromotion );
+		editCoupon( siteId, promotion, coupon, { discount_type: discountTypeValue, amount: '' }, editPromotion );
 	};
 
-	const onAmountChange = ( e ) => {
-		const value = Number( e.target.value );
-		if ( 'percent' === coupon.discount_type ) {
-			if ( value < 0 || value > 100 ) {
-				// Don't make a change that would invalidate the field.
-				return;
-			}
-		}
-
-		editCoupon( siteId, promotion, coupon, { amount: value }, editPromotion );
+	const onAmountChange = ( amount ) => {
+		editCoupon( siteId, promotion, coupon, { amount }, editPromotion );
 	};
 
 	const onAppliesToChange = () => {
@@ -147,16 +109,14 @@ const PromotionFormCouponCard = ( {
 					placeholder={ translate( 'Enter coupon code' ) }
 				/>
 			</FormFieldset>
-			<div className="promotions__promotion-form-coupon-discount-type-amount">
-				<FormFieldset className="promotions__promotion-form-coupon-discount-type">
-					<FormLabel>{ translate( 'Discount type' ) }</FormLabel>
-					{ renderDiscountTypeSelect( coupon, translate, onDiscountTypeSelect ) }
-				</FormFieldset>
-				<FormFieldset className="promotions__promotion-form-coupon-amount">
-					<FormLabel>{ translate( 'Amount' ) }</FormLabel>
-					{ renderAmountInput( coupon, currency, onAmountChange ) }
-				</FormFieldset>
-			</div>
+			<PromotionFormDiscountTypeAndAmount
+				discountTypesAvailable={ discountTypesAvailable }
+				discountTypeValue={ coupon.discount_type }
+				amount={ coupon.amount }
+				currency={ currency }
+				onDiscountTypeSelect={ onDiscountTypeSelect }
+				onAmountChange={ onAmountChange }
+			/>
 			<FormFieldset className="promotions__promotion-form-coupon-applies-to">
 				<FormLabel>{ translate( 'Applies to' ) }</FormLabel>
 				{ renderAppliesTo( coupon, translate, onAppliesToChange ) }
