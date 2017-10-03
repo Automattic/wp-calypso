@@ -104,7 +104,7 @@ export class ImageEditorToolbar extends Component {
 	onAspectClose( action ) {
 		this.setState( { showAspectPopover: false } );
 
-		if ( 'string' === typeof action ) {
+		if ( typeof action === 'string' ) {
 			this.props.setImageEditorAspectRatio( action );
 		}
 	}

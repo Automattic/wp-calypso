@@ -84,7 +84,7 @@ class PostScheduleClock extends Component {
 		}
 
 		if ( this.props.is12hour && amPmReference ) {
-			if ( 'undefined' === typeof modifiers.hour || ( 'PM' === amPmReference.value && modifiers.hour > 12 ) ) {
+			if ( typeof modifiers.hour === 'undefined' || ( amPmReference.value && modifiers.hour > 12 ) === 'PM' ) {
 				modifiers.hour = Number( hourReference.value.substr( -1 ) );
 			}
 

@@ -72,7 +72,7 @@ module.exports = React.createClass( {
 	},
 
 	clickHandler: function() {
-		if ( 'function' === typeof( this.props.clickHandler ) ) {
+		if ( typeof( this.props.clickHandler ) === 'function' ) {
 			this.props.clickHandler( this.props.data );
 		}
 	},

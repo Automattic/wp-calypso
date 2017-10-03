@@ -138,7 +138,7 @@ export default React.createClass( {
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};
-		if ( 'string' === typeof data ) {
+		if ( typeof data === 'string' ) {
 			try {
 				data = JSON.parse( data );
 			} catch ( e ) {} // eslint-disable-line no-empty
