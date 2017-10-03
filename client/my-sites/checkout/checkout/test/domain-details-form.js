@@ -165,8 +165,14 @@ describe( 'Domain Details Form', () => {
 			needsOnlyGoogleAppsDetailsStub = sandbox.stub( DomainDetailsForm.prototype, 'needsOnlyGoogleAppsDetails' );
 		} );
 
-		it( 'should not render address fieldset when no country selected', () => {
+		it( 'should not render address fieldset with no country data', () => {
 			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
+
+			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 0 );
+		} );
+
+		it( 'should not render address fieldset when no country selected', () => {
+			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } contactDetails={ { countryCode: '' } } /> );
 
 			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 0 );
 		} );
