@@ -2,6 +2,15 @@
 	color: $gray-text-min;
 	font-size: 12px;
 	vertical-align: middle;
+
+	a,
+	&.post-actions__relative-time {
+		color: $gray-text-min;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
 }
 
 .page-card-info__item {
@@ -28,4 +37,8 @@
 
 .page-card-info__site-url {
 	font-style: italic;
+}
+
+p.post-relative-time-status {
+	margin-bottom: 0px;
 }

@@ -6,6 +6,7 @@
 	}
 
 	// Apply colors on /posts/* cards
+	.pages__page-list &,
 	.posts__list & {
 		.is-sticky {
 			color: $orange-jazzy;
