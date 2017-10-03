@@ -1,6 +1,5 @@
 var config = require( 'config' ),
 	page = require( 'page' ),
-	React = require( 'react' ),
 	activateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,
 	LoadingError = require( 'layout/error' ),
 	controller = require( 'controller' ),
@@ -25,19 +24,15 @@ function pathToRegExp( path ) {
 	if ( path === '/' ) {
 		return path;
 	}
+
+	//TODO: Escape path
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
 
-function getPathRegex( pathString ) {
-	if ( pathString === '/' ) {
-		return pathString;
-	}
-	const regex = pathToRegExp( pathString );
-	return '/' + regex.toString().slice( 1, -1 ) + '/';
-}
-
 function createPageDefinition( path, sectionDefinition ) {
-	page( getPathRegex( path ), function( context, next ) {
+	const pathRegex = pathToRegExp( path );
+
+	page( pathRegex, function( context, next ) {
 		const envId = sectionDefinition.envId;
 
 		if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {
