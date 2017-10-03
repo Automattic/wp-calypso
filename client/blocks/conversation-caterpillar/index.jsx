@@ -13,11 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import {
-	getPostCommentsTree,
-	getDateSortedPostComments,
-	getHiddenCommentsForPost,
-} from 'state/comments/selectors';
+import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import Card from 'components/card';
@@ -32,11 +28,12 @@ class ConversationCaterpillarComponent extends React.Component {
 		postId: PropTypes.number.isRequired,
 		commentsTree: PropTypes.object.isRequired,
 		comments: PropTypes.array.isRequired,
+		commentsToShow: PropTypes.object,
 		parentCommentId: PropTypes.number,
 	};
 
 	getExpandableComments = () => {
-		const { comments, hiddenComments, parentCommentId, commentsTree } = this.props;
+		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
 		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
 
@@ -44,7 +41,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			? comments
 			: filter( comments, child => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, comment => hiddenComments[ comment.ID ] );
+		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
 	};
@@ -179,7 +176,6 @@ const ConnectedConversationCaterpillar = connect(
 		const { blogId, postId } = ownProps;
 		return {
 			comments: getDateSortedPostComments( state, blogId, postId ),
-			hiddenComments: getHiddenCommentsForPost( state, blogId, postId ),
 			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},

@@ -434,6 +434,7 @@ class PostComment extends React.PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						commentsToShow={ commentsToShow }
 					/>
 				) }
 				{ this.renderRepliesList() }
