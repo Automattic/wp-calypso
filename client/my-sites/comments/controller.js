@@ -11,7 +11,7 @@ import { each, includes, startsWith } from 'lodash';
  * Internal dependencies
  */
 import CommentsManagement from './main';
-import route from 'lib/route';
+import route, { addQueryArgs } from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
@@ -51,8 +51,16 @@ export const redirect = function( context, next ) {
 	next();
 };
 
+const changePage = ( status, siteFragment ) => pageNumber => {
+	if ( window ) {
+		window.scrollTo( 0, 0 );
+	}
+
+	page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
+};
+
 export const comments = function( context ) {
-	const { status } = context.params;
+	const status = 'pending' === context.params.status ? 'unapproved' : context.params.status;
 	const siteFragment = route.getSiteFragment( context.path );
 	const validPage = setValidPage( context.query.page );
 
@@ -60,8 +68,9 @@ export const comments = function( context ) {
 		<CommentsManagement
 			basePath={ context.path }
 			page={ validPage }
+			changePage={ changePage( status, siteFragment ) }
 			siteFragment={ siteFragment }
-			status={ 'pending' === status ? 'unapproved' : status }
+			status={ status }
 		/>,
 		'primary',
 		context.store

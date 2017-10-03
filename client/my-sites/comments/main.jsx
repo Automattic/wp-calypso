@@ -41,6 +41,7 @@ export class CommentsManagement extends Component {
 			showPermissionError,
 			basePath,
 			page,
+			changePage,
 			siteId,
 			siteFragment,
 			status,
@@ -66,6 +67,7 @@ export class CommentsManagement extends Component {
 				{ ! showPermissionError && (
 					<CommentList
 						page={ page }
+						changePage={ changePage }
 						siteId={ siteId }
 						siteFragment={ siteFragment }
 						status={ status }

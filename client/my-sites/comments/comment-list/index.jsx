@@ -17,7 +17,6 @@ import {
 	uniq
 } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -51,7 +50,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
-import { addQueryArgs } from 'lib/route';
 import {
 	COMMENTS_PER_PAGE,
 	NEWEST_FIRST,
@@ -64,6 +62,7 @@ export class CommentList extends Component {
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
 		recordChangePage: PropTypes.func,
+		changePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		siteBlacklist: PropTypes.string,
@@ -98,19 +97,14 @@ export class CommentList extends Component {
 	changePage = pageNumber => {
 		const {
 			recordChangePage,
-			siteFragment,
-			status,
+			changePage,
 		} = this.props;
 
 		recordChangePage( pageNumber, this.getTotalPages() );
 
 		this.setState( { selectedComments: [] } );
 
-		if ( window ) {
-			window.scrollTo( 0, 0 );
-		}
-
-		page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
+		changePage( pageNumber );
 	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
