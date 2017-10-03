@@ -10,7 +10,6 @@ import {
 	camelCase,
 	deburr,
 	first,
-    get,
 	head,
 	includes,
 	indexOf,
@@ -261,12 +260,10 @@ export class DomainDetailsForm extends PureComponent {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	}
 
-	canDisplayAddressFieldset() {
-		const countryCodeFieldState = get( this.state, 'form.countryCode' );
-			// To avoid a lag effect when displaying the AddressFieldset
-			// we show it when there are no errors AND the value is not empty
-		return countryCodeFieldState && countryCodeFieldState.errors
-				? !! countryCodeFieldState.value && countryCodeFieldState.errors.length === 0 : true;
+	shouldDisplayAddressFieldset() {
+		const { countryCode } = this.props.contactDetails;
+
+		return !! countryCode;
 	}
 
 	renderSubmitButton() {
@@ -413,7 +410,8 @@ export class DomainDetailsForm extends PureComponent {
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ this.canDisplayAddressFieldset() && this.renderAddressFieldset( needsOnlyGoogleAppsDetails ) }
+				{ this.shouldDisplayAddressFieldset() &&
+					this.renderAddressFieldset( needsOnlyGoogleAppsDetails ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
