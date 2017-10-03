@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormRadio from 'components/forms/form-radio';
 
 function calculateAppliesTo( promotion ) {
 	if ( promotion.appliesTo ) {
@@ -63,7 +65,7 @@ function isProductSelected( appliesTo, promotion, productId ) {
 			return true;
 		case 'one_product':
 			const product = promotion.product || {};
-			return productId === product.productId;
+			return productId === product.id;
 		case 'products':
 			const coupon = promotion.coupon || {};
 			const productIds = coupon.product_ids || [];
@@ -92,7 +94,17 @@ const renderProductCheckboxRow = ( appliesTo, promotion, onChange ) => ( product
 	);
 };
 
-const renderProductCategoryCheckboxRow = ( appliesTo, promotion, onChange ) => ( category ) => {
+const renderProductRadioRow = ( appliesTo, promotion, onChange ) => ( product ) => {
+	const checked = isProductSelected( appliesTo, promotion, product.id );
+	return (
+		<div key={ product.id }>
+			<FormRadio value={ product.id } checked={ checked } onChange={ onChange } />
+			<FormLabel>{ product.name }</FormLabel>
+		</div>
+	);
+};
+
+const renderProductCategoryCheckboxRow = ( promotion, onChange ) => ( category ) => {
 	const checked = isProductCategorySelected( promotion, category.id );
 	return (
 		<div key={ category.id }>
@@ -105,17 +117,24 @@ const renderProductCategoryCheckboxRow = ( appliesTo, promotion, onChange ) => (
 function renderProductList( appliesTo, products, productCategories, promotion, onProductChange, onCategoryChange ) {
 	switch ( appliesTo ) {
 		case 'products':
-			const renderProductRow = renderProductCheckboxRow( appliesTo, promotion, onProductChange );
+			const renderProductCheckbox = renderProductCheckboxRow( appliesTo, promotion, onProductChange );
 			return (
 				<div className="promotions__promotion-form-applies-to-products" >
-					{ products.map( renderProductRow ) }
+					{ products.map( renderProductCheckbox ) }
 				</div>
 			);
 		case 'product_categories':
-			const renderCategoryRow = renderProductCategoryCheckboxRow( appliesTo, promotion, onCategoryChange );
+			const renderCategoryCheckbox = renderProductCategoryCheckboxRow( promotion, onCategoryChange );
 			return (
 				<div className="promotions__promotion-form-applies-to-product-categories" >
-					{ productCategories.map( renderCategoryRow ) }
+					{ productCategories.map( renderCategoryCheckbox ) }
+				</div>
+			);
+		case 'one_product':
+			const renderProductRadio = renderProductRadioRow( appliesTo, promotion, onProductChange );
+			return (
+				<div className="promotions__promotion-form-applies-to-one-product" >
+					{ products.map( renderProductRadio ) }
 				</div>
 			);
 		default:
@@ -147,17 +166,25 @@ const PromotionFormAppliesTo = ( {
 
 	const onProductCheck = ( e ) => {
 		const productId = Number( e.target.value );
-		const coupon = promotion.coupon || {};
-		const productIds = coupon.product_ids || [];
-		const isSelected = isProductSelected( appliesTo, promotion, productId );
-		let newProductIds;
-		if ( isSelected ) {
-			newProductIds = productIds.filter( ( id ) => id !== productId );
-		} else {
-			newProductIds = [ ...productIds, productId ];
+
+		if ( 'coupon' === promotion.type ) {
+			const coupon = promotion.coupon || {};
+			const productIds = coupon.product_ids || [];
+			const isSelected = isProductSelected( appliesTo, promotion, productId );
+			let newProductIds;
+			if ( isSelected ) {
+				newProductIds = productIds.filter( ( id ) => id !== productId );
+			} else {
+				newProductIds = [ ...productIds, productId ];
+			}
+			const newCoupon = { ...coupon, product_ids: newProductIds };
+			editPromotion( siteId, promotion, { coupon: newCoupon } );
 		}
-		const newCoupon = { ...coupon, product_ids: newProductIds };
-		editPromotion( siteId, promotion, { coupon: newCoupon } );
+
+		if ( 'product_sale' === promotion.type ) {
+			const product = find( products, ( p ) => productId === p.id );
+			editPromotion( siteId, promotion, { product } );
+		}
 	};
 
 	const onCategoryCheck = ( e ) => {
