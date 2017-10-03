@@ -73,12 +73,12 @@ describe( '#rewindStatus()', () => {
 		expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] );
 	} );
 
-	it( 'should null status on error', () => {
+	it( 'should clear status on error', () => {
 		const prevState = deepFreeze( {
 			[ SITE_ID ]: STATUS_ACTION.status,
 		} );
 		const state = rewindStatus( prevState, ERROR_ACTION );
-		expect( state[ SITE_ID ] ).to.be.null;
+		expect( state ).to.not.have.property( SITE_ID );
 	} );
 
 	it( 'should preserve other site\'s status on error', () => {
@@ -116,12 +116,12 @@ describe( '#rewindStatusError()', () => {
 		expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] );
 	} );
 
-	it( 'should null an error on status', () => {
+	it( 'should clear an error on status', () => {
 		const prevState = deepFreeze( {
 			[ SITE_ID ]: ERROR_ACTION.error,
 		} );
 		const state = rewindStatusError( prevState, STATUS_ACTION );
-		expect( state[ SITE_ID ] ).to.be.null;
+		expect( state ).to.not.have.property( SITE_ID );
 	} );
 
 	it( 'should preserve other site\'s error on status', () => {

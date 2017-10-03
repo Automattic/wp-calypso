@@ -15,8 +15,6 @@ import ActivityQueryManager from '..';
  */
 const DEFAULT_ACTIVITY_DATE = '2014-09-14T00:30:00+02:00';
 const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_DATE );
-
-// TODO: Update with wpcom/v2 style activity stream data
 const DEFAULT_ACTIVITY = deepFreeze( {
 	activityDate: DEFAULT_ACTIVITY_DATE,
 	activityGroup: 'plugin',
