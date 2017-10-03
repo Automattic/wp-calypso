@@ -1,0 +1,46 @@
+exports[`test incorrect-docblocks.js 0`] = `
+"/**
+ * External dependencies
+ */
+import fs from \"fs\";
+
+/**
+ * Internal dependencies
+ */
+import chickenLibrary from \"chicken\";
+import okapiMe from \"okapi-me\";
+
+function hello() {}
+
+"
+`;
+
+exports[`test only-imports.js 0`] = `
+"/**
+ * External dependencies
+ */
+import fs from \"fs\";
+
+/**
+ * Internal dependencies
+ */
+import chickenLibrary from \"chicken\";
+import okapiMe from \"okapi-me\";
+"
+`;
+
+exports[`test with-body.js 0`] = `
+"/**
+ * External dependencies
+ */
+import fs from \"fs\";
+
+/**
+ * Internal dependencies
+ */
+import chickenLibrary from \"chicken\";
+import okapiMe from \"okapi-me\";
+
+const x = 5;
+"
+`;

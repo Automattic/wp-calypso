@@ -19,5 +19,17 @@
   "devDependencies": {
     "jest": "^21.2.1",
     "prettier": "^1.7.4"
+  },
+  "dependencies": {
+    "5to6-codemod": "^1.7.1",
+    "jscodeshift": "0.3.32",
+    "lodash": "^4.17.4",
+    "react-codemod": "^4.0.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/setup-tests.js"
+    ],
+    "testRegex": "codemod\\.spec\\.js$"
   }
 }
