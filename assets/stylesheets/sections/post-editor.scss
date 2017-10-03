@@ -1,7 +1,13 @@
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
-// Utils
-@import '../shared/utils';
+@import '../shared/colors';
+@import '../shared/mixins/breakpoints';
+@import '../shared/mixins/clear-fix';
+@import '../shared/mixins/clear-text';
+@import '../shared/mixins/long-content-fade';
+@import '../shared/mixins/noticon';
+@import '../shared/mixins/placeholder';
+@import '../shared/typography';
 
 // Required to access variables or @extend styles
 @import '../main';
