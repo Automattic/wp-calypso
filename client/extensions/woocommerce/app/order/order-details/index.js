@@ -62,7 +62,7 @@ class OrderDetails extends Component {
 		return [
 			<OrderCreated key="order-date" order={ order } site={ site } />,
 			<OrderDetailsTable key="order-details" order={ order } site={ site } />,
-			<OrderPaymentCard key="order-payment" order={ order } site={ site } />,
+			<OrderPaymentCard key="order-payment" order={ order } siteId={ site.ID || null } />,
 			<OrderFulfillment key="order-fulfillment" order={ order } site={ site } />,
 		];
 	};
