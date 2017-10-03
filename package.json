@@ -89,6 +89,7 @@
     "inherits": "2.0.1",
     "is-my-json-valid": "2.13.1",
     "jade": "pugjs/jade#29784fd",
+    "jest-docblock": "21.3.0-alpha.eff7a1cf",
     "jquery": "1.11.3",
     "json-loader": "0.5.4",
     "json-stable-stringify": "1.0.1",
