@@ -36,12 +36,12 @@ export const receiveResponse = ( { dispatch }, { siteId } ) => {
 
 const showErrorNotice = ( dispatch, error ) => {
 	if ( error.error === 'invalid_input' ) {
-		dispatch( errorNotice( translate( 'Not a valid zip file.' ) ) );
+		dispatch( errorNotice( translate( 'The uploaded file is not a valid zip.' ) ) );
 		return;
 	}
 	if ( error.error ) {
 		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
-			args: { error: error.error }
+			args: { error: error.error },
 		} ) ) );
 		return;
 	}

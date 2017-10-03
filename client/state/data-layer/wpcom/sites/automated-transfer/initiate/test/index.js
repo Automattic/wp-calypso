@@ -63,7 +63,7 @@ describe( 'receiveError', () => {
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: 'Not a valid zip file.' }
+			notice: { text: 'The uploaded file is not a valid zip.' },
 		} );
 	} );
 } );
