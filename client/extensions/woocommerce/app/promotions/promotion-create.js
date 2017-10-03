@@ -14,6 +14,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
+import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
+import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
@@ -21,6 +24,7 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import {
 	getCurrentlyEditingPromotionId,
 	getPromotionWithLocalEdits,
+	getPromotionableProducts,
 } from 'woocommerce/state/selectors/promotions';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
@@ -44,6 +48,8 @@ class PromotionCreate extends React.Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchSettingsGeneral( site.ID );
+			this.props.fetchPromotions( site.ID );
+			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
@@ -53,6 +59,8 @@ class PromotionCreate extends React.Component {
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSettingsGeneral( newSiteId );
+			this.props.fetchPromotions( newSiteId );
+			this.props.fetchProductCategories( newSiteId );
 		}
 	}
 
@@ -75,15 +83,14 @@ class PromotionCreate extends React.Component {
 	}
 
 	render() {
-		const { site, currency, className, promotion } = this.props;
+		const { site, currency, className, promotion, products, productCategories } = this.props;
 
 		// TODO: Update with real info.
 		const isValid = 'undefined' !== typeof site && this.isPromotionValid();
 		const isBusy = false;
 		const saveEnabled = isValid && ! isBusy;
 
-		return (
-			<Main className={ className }>
+		return ( <Main className={ className }>
 				<PromotionHeader
 					site={ site }
 					promotion={ promotion }
@@ -95,6 +102,8 @@ class PromotionCreate extends React.Component {
 					currency={ currency }
 					promotion={ promotion }
 					editPromotion={ this.props.editPromotion }
+					products={ products }
+					productCategories={ productCategories }
 				/>
 			</Main>
 		);
@@ -107,11 +116,15 @@ function mapStateToProps( state ) {
 	const currency = ( currencySettings ? currencySettings.value : null );
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
 	const promotion = ( promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null );
+	const products = getPromotionableProducts( state, site.ID );
+	const productCategories = getProductCategories( state, site.ID );
 
 	return {
 		site,
 		promotion,
 		currency,
+		products,
+		productCategories,
 	};
 }
 
@@ -121,6 +134,8 @@ function mapDispatchToProps( dispatch ) {
 			editPromotion,
 			clearPromotionEdits,
 			fetchSettingsGeneral,
+			fetchPromotions,
+			fetchProductCategories,
 		},
 		dispatch
 	);
