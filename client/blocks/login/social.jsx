@@ -45,7 +45,8 @@ class SocialLoginForm extends Component {
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		const { onSuccess, redirectTo, socialService } = this.props;
+		const { onSuccess, socialService } = this.props;
+		let redirectTo = this.props.redirectTo;
 
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
@@ -56,6 +57,13 @@ class SocialLoginForm extends Component {
 		if ( ! triggeredByUser && socialService !== 'google' ) {
 			return;
 		}
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
+		if ( ! triggeredByUser && ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const socialInfo = {
 			service: 'google',
@@ -99,6 +107,8 @@ class SocialLoginForm extends Component {
 
 	trackGoogleLogin = () => {
 		this.recordEvent( 'calypso_login_social_button_click' );
+
+		window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
 	};
 
 	renderText() {
