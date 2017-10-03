@@ -25,12 +25,14 @@ const externalDependenciesSet = new Set( packageJsonDeps );
 const externalBlock = { type: "Block", value: "*\n * External dependencies\n " };
 const internalBlock = { type: "Block", value: "*\n * Internal dependencies\n " };
 
-const getPragmaDocblock = text => docblock.print( docblock.parse( docblock.extract( text ) ) );
+const getPragmaDocblock = text => docblock.print( { pragmas: docblock.parse( docblock.extract( text ) ) } );
 
 /**
  * Removes the extra newlines between two import statements
  */
 const removeExtraNewlines = str => str.replace(/(import.*\n)\n+(import)/g, '$1$2');
+const removeNonFirstFormatPragmas = str => str.replace(/[^^]\/\*\* @format \*\//gm, '' );
+const srcModifications = _.flow( removeNonFirstFormatPragmas, removeExtraNewlines );
 
 /**
  * Adds a newline in between the last import of external deps + the internal deps docblock
@@ -48,6 +50,7 @@ const sortImports = importNodes => _.sortBy( importNodes, node => node.source.va
 module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
 	const src = j(file.source);
+	const originalFileContents = src.toSource();
 	const declarations = src.find(j.ImportDeclaration);
 
 	// if there are no deps at all, then return early.
@@ -71,18 +74,17 @@ module.exports = function ( file, api ) {
 	}
 
 	const newDeclarations = []
-		.concat( getPragmaDocblock( file.source.toSource() ) )
+		.concat( getPragmaDocblock( originalFileContents ) )
 		.concat( externalDeps )
 		.concat( internalDeps );
 
 	declarations.remove();
 
-	return  addNewlineBeforeDocBlock(
-		removeExtraNewlines(
+	return  srcModifications(
 			src
 				.find(j.Statement)
 				.at(0)
 				.insertBefore(newDeclarations)
-				.toSource(config.recastOptions) )
+				.toSource(config.recastOptions)
 		);
 };
