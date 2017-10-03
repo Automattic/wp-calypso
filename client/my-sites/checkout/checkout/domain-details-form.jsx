@@ -260,9 +260,8 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	shouldDisplayAddressFieldset() {
-		const { countryCode } = this.props.contactDetails;
-
-		return !! countryCode;
+		const { contactDetails } = this.props;
+		return !! ( contactDetails || {} ).countryCode;
 	}
 
 	renderSubmitButton() {
