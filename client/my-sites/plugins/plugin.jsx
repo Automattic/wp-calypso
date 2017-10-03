@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, uniq, upperFirst } from 'lodash';
+import { includes, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,8 +44,6 @@ import NoPermissionsError from './no-permissions-error';
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
 
-	_currentPageTitle: null,
-
 	mixins: [ PluginNotices ],
 
 	componentWillMount() {
@@ -57,7 +55,6 @@ const SinglePlugin = React.createClass( {
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
-		this.updatePageTitle();
 	},
 
 	getInitialState() {
@@ -90,36 +87,20 @@ const SinglePlugin = React.createClass( {
 		return {
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
-			plugin: plugin,
-			pageTitle: this.buildPageTitle( plugin.name ),
+			plugin,
 		};
 	},
 
 	refreshSitesAndPlugins( nextProps ) {
 		this.setState( this.getSitesPlugin( nextProps ) );
-		// setTimeout to avoid React dispatch conflicts.
-		this.updatePageTitle();
 	},
 
-	buildPageTitle( pluginName ) {
-		return this.props.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
-			count: pluginName.toLowerCase() !== 'standard' | 0,
-			args: { pluginName: upperFirst( this._currentPageTitle ) },
+	getPageTitle() {
+		const plugin = this.getPlugin();
+		return this.props.translate( '%(pluginName)s Plugin', {
+			args: { pluginName: plugin.name },
 			textOnly: true,
 			context: 'Page title: Plugin detail'
-		} );
-	},
-
-	updatePageTitle() {
-		const pageTitle = this.state.plugin ? this.state.plugin.name : this.props.pluginSlug;
-		if ( this._currentPageTitle === pageTitle ) {
-			return;
-		}
-
-		this._currentPageTitle = pageTitle;
-
-		this.setState( {
-			pageTitle: this.buildPageTitle( pageTitle )
 		} );
 	},
 
@@ -235,7 +216,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	renderDocumentHead() {
-		return <DocumentHead title={ this.state.pageTitle } />;
+		return <DocumentHead title={ this.getPageTitle() } />;
 	},
 
 	renderSitesList( plugin ) {
@@ -331,7 +312,7 @@ const SinglePlugin = React.createClass( {
 		const { selectedSite } = this.props;
 
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
-			return <NoPermissionsError title={ this.state.pageTitle } />;
+			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
 
 		const plugin = this.getPlugin();
