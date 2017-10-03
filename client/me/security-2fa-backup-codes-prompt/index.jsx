@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );

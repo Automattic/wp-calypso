@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' );
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 
 /**
  * Internal dependencies

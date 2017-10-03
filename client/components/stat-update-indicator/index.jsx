@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -51,7 +51,7 @@ var StatUpdateIndicator = React.createClass( {
 
 			this.setState( {
 				updating: false
-			} );				
+			} );
 		}.bind( this ), 800 );
 	},
 

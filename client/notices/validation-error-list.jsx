@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { map } from 'lodash';
-const PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' );
 
 module.exports = React.createClass( {

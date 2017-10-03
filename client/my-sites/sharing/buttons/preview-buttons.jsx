@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { filter, isEqual } from 'lodash';
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );

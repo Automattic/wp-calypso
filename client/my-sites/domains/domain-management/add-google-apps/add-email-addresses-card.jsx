@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
-const PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
 	page = require( 'page' );

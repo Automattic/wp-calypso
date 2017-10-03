@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	createFragment = require( 'react-addons-create-fragment' ),
 	classNames = require( 'classnames' );
