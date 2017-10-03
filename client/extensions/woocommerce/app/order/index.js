@@ -97,7 +97,7 @@ class Order extends Component {
 				{ translate( 'Save Order' ) }
 			</Button>
 		);
-		if ( ! isEditing && config.isEnabled( 'woocommerce/extension-orders-create' ) ) {
+		if ( ! isEditing ) {
 			button = (
 				<Button primary onClick={ this.toggleEditing }>
 					{ translate( 'Edit Order' ) }
@@ -107,7 +107,9 @@ class Order extends Component {
 
 		return (
 			<Main className={ className }>
-				<ActionHeader breadcrumbs={ breadcrumbs }>{ button }</ActionHeader>
+				<ActionHeader breadcrumbs={ breadcrumbs }>
+					{ config.isEnabled( 'woocommerce/extension-orders-create' ) && button }
+				</ActionHeader>
 
 				<div className="order__container">
 					<OrderDetails orderId={ orderId } />
