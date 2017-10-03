@@ -45,8 +45,7 @@ describe( 'Domain Details Form', () => {
 		},
 		contactDetails: {
 		},
-		translate: identity,
-		updateContactDetailsCache: identity
+		translate: identity
 	};
 
 	const propsWithCountry = {
