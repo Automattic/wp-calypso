@@ -560,6 +560,9 @@ function recordOrder( cart, orderId ) {
 		return;
 	}
 
+	// load the ecommerce plugin
+	window.ga( 'require', 'ecommerce' );
+
 	// Purchase tracking happens in one of three ways:
 
 	// 1. Fire one tracking event that includes details about the entire order
