@@ -152,10 +152,10 @@ const PostSelectorPosts = React.createClass( {
 
 		// By falling back to the item height constant, we avoid an unnecessary
 		// forced update if all of the items match our guessed height
-		const height = this.itemHeights[ item.global_ID ] || ITEM_HEIGHT;
+		const height = this.itemHeights[ item.short_URL ] || ITEM_HEIGHT;
 
 		const nextHeight = itemRef.clientHeight;
-		this.itemHeights[ item.global_ID ] = nextHeight;
+		this.itemHeights[ item.short_URL ] = nextHeight;
 
 		// If height changes, wait until the end of the current call stack and
 		// fire a single forced update to recompute the row heights
@@ -216,8 +216,8 @@ const PostSelectorPosts = React.createClass( {
 			return 0;
 		}
 
-		if ( this.itemHeights[ item.global_ID ] ) {
-			return this.itemHeights[ item.global_ID ];
+		if ( this.itemHeights[ item.short_URL ] ) {
+			return this.itemHeights[ item.short_URL ];
 		}
 
 		return reduce( this.getPostChildren( item.ID ), ( memo, nestedItem ) => {
@@ -303,7 +303,7 @@ const PostSelectorPosts = React.createClass( {
 
 		return (
 			<div
-				key={ item.global_ID }
+				key={ item.short_URL }
 				ref={ setItemRef }
 				className="post-selector__list-item">
 				<label>
