@@ -63,6 +63,12 @@ class Order extends Component {
 		}
 	};
 
+	// Clear this order's edits, takes it out of edit state
+	cancelEditing = () => {
+		const { siteId } = this.props;
+		this.props.clearOrderEdits( siteId );
+	};
+
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order } = this.props;
@@ -92,11 +98,20 @@ class Order extends Component {
 			</span>,
 		];
 
-		let button = (
-			<Button primary onClick={ this.saveOrder } busy={ isSaving } disabled={ ! hasOrderEdits }>
+		let button = [
+			<Button key="cancel" onClick={ this.cancelEditing }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+			<Button
+				key="save"
+				primary
+				onClick={ this.saveOrder }
+				busy={ isSaving }
+				disabled={ ! hasOrderEdits }
+			>
 				{ translate( 'Save Order' ) }
-			</Button>
-		);
+			</Button>,
+		];
 		if ( ! isEditing ) {
 			button = (
 				<Button primary onClick={ this.toggleEditing }>
