@@ -49,6 +49,13 @@ describe( 'Domain Details Form', () => {
 		updateContactDetailsCache: identity
 	};
 
+	const propsWithCountry = {
+		...defaultProps,
+		contactDetails: {
+			countryCode: 'AU',
+		},
+	};
+
 	const domainProduct = domainRegistration( {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
@@ -160,31 +167,20 @@ describe( 'Domain Details Form', () => {
 
 		it( 'should not render address fieldset when no country selected', () => {
 			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-			wrapper.find( 'CountrySelect' ).simulate( 'change', { target: {
-				value: '',
-				name: 'countryCode'
-			} } );
+
 			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 0 );
 		} );
 
 		it( 'should render address fieldset when a valid countryCode is selected', () => {
-			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-
-			wrapper.find( 'CountrySelect' ).simulate( 'change', { target: {
-				value: 'AU',
-				name: 'countryCode'
-			} } );
+			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
 
 			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields' ) ).to.have.length( 1 );
 		} );
 
 		it( 'should render address, city, and postal code fields when the cart does not contain a Google App ', () => {
 			needsOnlyGoogleAppsDetailsStub.returns( false );
-			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-			wrapper.find( 'CountrySelect' ).simulate( 'change', { target: {
-				value: 'AU',
-				name: 'countryCode'
-			} } );
+			const wrapper = shallow(
+				<DomainDetailsForm { ...propsWithCountry } /> );
 
 			expect( wrapper.find( '.checkout__domain-details-country-dependent-address-fields Input' ) ).to.have.length( 3 );
 		} );
@@ -193,9 +189,7 @@ describe( 'Domain Details Form', () => {
 			needsOnlyGoogleAppsDetailsStub.returns( true );
 
 			const wrapper = shallow(
-				<DomainDetailsForm
-					{ ...defaultProps }
-					contactDetails={ { countryCode: 'AU' } } /> );
+				<DomainDetailsForm { ...propsWithCountry } /> );
 
 			const inputs = wrapper.find( '.checkout__domain-details-country-dependent-address-fields Input' );
 			expect( inputs ).to.have.length( 1 );
