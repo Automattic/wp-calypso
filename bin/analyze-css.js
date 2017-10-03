@@ -5,28 +5,20 @@
  */
 const execSync = require( 'child_process' ).execSync;
 const fs = require( 'fs-extra' );
+const glob = require( 'glob' );
 const path = require( 'path' );
 
+/**
+ * Constants
+ */
 const PROJECT_DIRECTORY = path.resolve( __dirname, '..' );
 const TEMP_DIRECTORY = path.resolve( PROJECT_DIRECTORY, 'temp' );
-const DEBUG_BUNDLE = path.join( TEMP_DIRECTORY, 'styles.debug.css' );
+const DEBUG_BUNDLE = path.join( TEMP_DIRECTORY, 'assets', 'stylesheets', 'style.css' );
+const NODE_SASS = path.join( PROJECT_DIRECTORY, 'node_modules', 'node-sass', 'bin', 'node-sass' );
 
-console.log( `> Cleaning up ${ TEMP_DIRECTORY } directory` );
-
-fs.removeSync( TEMP_DIRECTORY );
-
-console.log( '> Generating CSS bundle with source comments' );
-
-execSync( `node_modules/node-sass/bin/node-sass --include-path client --source-comments assets/stylesheets/style.scss ${ DEBUG_BUNDLE }` );
-
-console.log( '> Opening CSS bundle' );
-
-const bundle = fs.readFileSync( DEBUG_BUNDLE, 'utf8' );
-
-console.log( '> Consolidating CSS' );
-
-const fragments = bundle.split( /\/\* line \d+, /g ).slice( 1 );
-
+/**
+ * Functions
+ */
 const extractRuleFromFragment = ( fragment ) => {
 	const lines = fragment.split( '\n' );
 
@@ -57,15 +49,66 @@ const extractRuleFromFragment = ( fragment ) => {
 	}, { content: '' } );
 };
 
+const generateCSS = ( files, withComments = false ) => {
+	files.forEach( file => {
+		const input = path.join( PROJECT_DIRECTORY, 'assets', 'stylesheets', file );
+		let output = path.join( TEMP_DIRECTORY, 'assets', 'stylesheets' );
+
+		if ( !file.includes( '.' ) ) {
+			output = path.join( output, file );
+		}
+
+		const options = [
+			'--include-path client',
+			`--output ${ output }`,
+			'--quiet'
+		];
+
+		if ( withComments ) {
+			options.push( '--source-comments' );
+		}
+
+		execSync( `${ NODE_SASS } ${ options.join( ' ' ) } ${ input }` );
+	} );
+};
+
 const normalizePath = ( file ) => {
 	let newFile = file.replace( '.scss', '.css' );
 
-	if ( file.startsWith( '/' ) ) {
+	if ( path.isAbsolute( file ) ) {
 		newFile = newFile.replace( PROJECT_DIRECTORY, '' );
 	}
 
 	return path.join( TEMP_DIRECTORY, newFile );
 };
+
+console.log( `> Cleaning up ${ TEMP_DIRECTORY } directory` );
+
+fs.removeSync( TEMP_DIRECTORY );
+
+console.log( '> Generating CSS from SASS' );
+
+generateCSS( [
+	'directly.scss',
+	'editor.scss',
+	'sections'
+] );
+
+generateCSS( [ 'style.scss' ], true );
+
+console.log( '> Autoprefixing CSS' );
+
+glob.sync( '**/*.css', { cwd: TEMP_DIRECTORY } ).forEach( file => {
+	execSync( `npm run --silent autoprefixer -- ${ file }` );
+} );
+
+console.log( '> Opening CSS bundle' );
+
+const bundle = fs.readFileSync( DEBUG_BUNDLE, 'utf8' );
+
+console.log( '> Parsing CSS bundle' );
+
+const fragments = bundle.split( /\/\* line \d+, /g ).slice( 1 );
 
 const rules = fragments.reduce( ( result, fragment ) => {
 	const rule = extractRuleFromFragment( fragment );
