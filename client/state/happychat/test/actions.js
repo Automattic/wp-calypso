@@ -8,19 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { setGeoLocation } from '../actions';
-import { HAPPYCHAT_SET_GEO_LOCATION } from 'state/action-types';
+import { HAPPYCHAT_CONNECTED } from 'state/action-types';
+import { setConnected } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#setGeoLocation()', () => {
+	describe( '#setConnected()', () => {
 		it( 'should return an action object', () => {
-			const action = setGeoLocation( { country_long: 'Romania' } );
+			const action = setConnected( { geo_location: { country_long: 'Romania' } } );
 
 			expect( action ).to.eql( {
-				type: HAPPYCHAT_SET_GEO_LOCATION,
-				geoLocation: {
-					country_long: 'Romania',
-				},
+				type: HAPPYCHAT_CONNECTED,
+				user: { geo_location: { country_long: 'Romania' } }
 			} );
 		} );
 	} );
