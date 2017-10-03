@@ -349,6 +349,11 @@ export const activeReplies = createReducer(
 
 			return { ...state, [ stateKey ]: commentId };
 		},
+		[ COMMENTS_WRITE_ERROR ]: ( state, action ) => {
+			const { siteId, postId, commentId } = action;
+			const stateKey = getStateKey( siteId, postId );
+			return { ...state, [ stateKey ]: commentId };
+		},
 	}
 );
 

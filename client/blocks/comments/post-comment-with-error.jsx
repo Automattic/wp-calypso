@@ -13,7 +13,11 @@ import PostCommentForm from './form';
 
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {
-		const { post, commentsTree, commentId, onUpdateCommentText } = this.props;
+		const { post, commentsTree, commentId, onUpdateCommentText, activeReplyCommentId } = this.props;
+
+		if ( activeReplyCommentId !== commentId ) {
+			return null;
+		}
 
 		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
 		const commentParentId = get( commentsTree, [ commentId, 'parentId' ] );
