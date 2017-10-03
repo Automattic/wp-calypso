@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @return {Boolean}        Whether Jetpack credentials are currently being requested
  */
 export default function getJetpackCredentials( state, siteId ) {
-	return get( state.jetpack.credentials.items, siteId, null );
+	return get( state.jetpack.credentials.items, siteId, {} );
 }
