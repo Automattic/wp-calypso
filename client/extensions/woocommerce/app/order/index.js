@@ -19,7 +19,11 @@ import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
+import {
+	isCurrentlyEditingOrder,
+	getOrderEdits,
+	getOrderWithEdits,
+} from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
 import OrderCustomer from './order-customer';
@@ -67,7 +71,16 @@ class Order extends Component {
 	};
 
 	render() {
-		const { className, isEditing, isSaving, order, orderId, site, translate } = this.props;
+		const {
+			className,
+			hasOrderEdits,
+			isEditing,
+			isSaving,
+			order,
+			orderId,
+			site,
+			translate,
+		} = this.props;
 		if ( isEmpty( order ) ) {
 			return null;
 		}
@@ -80,7 +93,7 @@ class Order extends Component {
 		];
 
 		let button = (
-			<Button primary onClick={ this.saveOrder } busy={ isSaving }>
+			<Button primary onClick={ this.saveOrder } busy={ isSaving } disabled={ ! hasOrderEdits }>
 				{ translate( 'Save Order' ) }
 			</Button>
 		);
@@ -113,9 +126,11 @@ export default connect(
 		const orderId = parseInt( props.params.order );
 		const isSaving = isOrderUpdating( state, orderId );
 		const isEditing = isCurrentlyEditingOrder( state );
+		const hasOrderEdits = ! isEmpty( getOrderEdits( state ) );
 		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
 
 		return {
+			hasOrderEdits,
 			isEditing,
 			isSaving,
 			order,
