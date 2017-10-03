@@ -16,7 +16,7 @@ import {
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
-	REWIND_RESTORE_REQUEST,
+	REWIND_RESTORE_PLEASE,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_STATUS_ERROR,
@@ -166,7 +166,7 @@ export function rewindStatusError( siteId, error ) {
  */
 export function rewindRequestRestore( siteId, activityId ) {
 	return {
-		type: REWIND_RESTORE_REQUEST,
+		type: REWIND_RESTORE_PLEASE,
 		siteId,
 		activityId,
 	};
