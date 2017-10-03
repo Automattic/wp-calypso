@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
-import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import Gridicon from 'gridicons';
@@ -95,9 +94,9 @@ export const Login = createReactClass( {
 		this.setState( AuthStore.get() );
 	},
 
-	componentDidUpdate() {
+	focusInput( input ) {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
-			ReactDom.findDOMNode( this.refs.auth_code ).focus();
+			input.focus();
 		}
 	},
 
@@ -186,7 +185,7 @@ export const Login = createReactClass( {
 									<FormTextInput
 										name="auth_code"
 										type="number"
-										ref="auth_code"
+										ref={ this.focusInput }
 										disabled={ inProgress }
 										placeholder={ translate( 'Verification code' ) }
 										onFocus={ this.recordFocusEvent( 'Verification code' ) }
