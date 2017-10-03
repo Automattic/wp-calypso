@@ -17,6 +17,7 @@
 
 .editor-ground-control .site,
 .editor-ground-control .editor-ground-control__status,
+.editor-ground-control .editor-ground-control__history,
 .editor-ground-control .editor-ground-control__action-buttons {
 	height: 46px;
 	line-height: 46px;
@@ -55,6 +56,18 @@
 
 	@include breakpoint( "<660px" ) {
 		border-left: none;
+	}
+}
+
+.editor-ground-control__history {
+	display: flex;
+	min-height: 20px;
+	justify-content: space-between;
+	position: relative;
+	padding-left: 16px;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
 	}
 }
 
