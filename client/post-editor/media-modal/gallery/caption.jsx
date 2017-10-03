@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -9,19 +11,18 @@ import React, { PropTypes } from 'react';
 import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryCaption',
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-	propTypes: {
+class EditorMediaModalGalleryCaption extends Component {
+
+	static propTypes = {
 		siteId: PropTypes.number,
-		item: PropTypes.object
-	},
+		item: PropTypes.object,
+	};
 
-	getInitialState() {
-		return {
-			caption: null
-		};
-	},
+	state = {
+		caption: null,
+	};
 
 	getValue() {
 		if ( null !== this.state.caption ) {
@@ -31,15 +32,14 @@ export default React.createClass( {
 		if ( this.props.item ) {
 			return this.props.item.caption;
 		}
-	},
+	}
 
-	setCaption( event ) {
+	setCaption = ( event ) =>
 		this.setState( {
 			caption: event.target.value
 		} );
-	},
 
-	saveCaption() {
+	saveCaption = () => {
 		const { siteId, item } = this.props;
 		if ( ! siteId || ! item ) {
 			return;
@@ -52,17 +52,24 @@ export default React.createClass( {
 		}
 
 		MediaActions.update( siteId, Object.assign( {}, item, { caption } ) );
-	},
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<FormTextInput
 				value={ this.getValue() }
-				placeholder={ this.translate( 'Caption this image…' ) }
+				placeholder={ translate( 'Caption this image…' ) }
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
 				onMouseDown={ ( event ) => event.stopPropagation() }
-				className="editor-media-modal-gallery__caption" />
+				className="editor-media-modal-gallery__caption"
+			/>
 		);
 	}
-} );
+}
+
+EditorMediaModalGalleryCaption.displayName = 'EditorMediaModalGalleryCaption';
+
+export default localize( EditorMediaModalGalleryCaption );
