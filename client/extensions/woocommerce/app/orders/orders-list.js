@@ -161,7 +161,7 @@ class Orders extends Component {
 		const headers = (
 			<TableRow isHeader>
 				<TableItem className="orders__table-name" isHeader>
-					{ translate( 'Order' ) }
+					{ translate( 'Order', { context: 'Order list table header' } ) }
 				</TableItem>
 				<TableItem className="orders__table-date" isHeader>
 					{ translate( 'Date' ) }

@@ -215,7 +215,7 @@ class OrderPaymentCard extends Component {
 		const dialogButtons = [
 			<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>
-				{ translate( 'Refund' ) }
+				{ translate( 'Refund', { context: 'Button to open refund dialog' } ) }
 			</Button>,
 		];
 
