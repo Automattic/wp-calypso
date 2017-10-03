@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-setup-backup-codes' );
 

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { forEach } from 'lodash';
-const PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' );
 
 /**

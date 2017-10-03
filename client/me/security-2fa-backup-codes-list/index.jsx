@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const PropTypes = require('prop-types');
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	Clipboard = require( 'clipboard' ),
