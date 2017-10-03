@@ -73,27 +73,22 @@ class Login extends Component {
 		}
 	};
 
-	handleValidLogin = () => {
+	handleValidLogin = redirectTo => {
 		if ( this.props.twoFactorEnabled ) {
-			page(
-				login( {
-					isNative: true,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
-						'none',
-						'authenticator'
-					),
-				} )
-			);
+			page( login( {
+				isNative: true,
+				// If no notification is sent, the user is using the authenticator for 2FA by default
+				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' ),
+				redirectTo,
+			} ) );
 		} else if ( this.props.isLinking ) {
-			page(
-				login( {
-					isNative: true,
-					socialConnect: true,
-				} )
-			);
+			page( login( {
+				isNative: true,
+				socialConnect: true,
+				redirectTo,
+			} ) );
 		} else {
-			this.rebootAfterLogin();
+			this.rebootAfterLogin( redirectTo );
 		}
 	};
 
@@ -110,8 +105,8 @@ class Login extends Component {
 		}
 	};
 
-	rebootAfterLogin = () => {
-		const { redirectTo } = this.props;
+	rebootAfterLogin = redirectTo => {
+		redirectTo = redirectTo || this.props.redirectTo;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,

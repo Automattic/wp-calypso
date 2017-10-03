@@ -124,19 +124,16 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
-		this.props
-			.loginUser( usernameOrEmail, password, rememberMe, redirectTo )
-			.then( () => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
-				onSuccess();
-			} )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+			onSuccess( redirectTo );
+		} ).catch( error => {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+				error_code: error.code,
+				error_message: error.message
 			} );
+		} );
 	};
 
 	savePasswordRef = input => {
