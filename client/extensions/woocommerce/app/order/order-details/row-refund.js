@@ -21,7 +21,7 @@ class OrderRefundRow extends Component {
 	};
 
 	getRefundedTotal = order => {
-		return order.refunds.reduce( ( total, i ) => total + i.total * 1, 0 );
+		return order.refunds.reduce( ( total, i ) => total + parseFloat( i.total ), 0 );
 	};
 
 	render() {
