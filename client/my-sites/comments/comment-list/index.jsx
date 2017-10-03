@@ -102,7 +102,7 @@ export class CommentList extends Component {
 			status,
 		} = this.props;
 
-		recordChangePage( page, this.getTotalPages() );
+		recordChangePage( pageNumber, this.getTotalPages() );
 
 		this.setState( { selectedComments: [] } );
 
