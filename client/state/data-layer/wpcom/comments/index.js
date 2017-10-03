@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, startsWith, pickBy } from 'lodash';
+import { get, isDate, noop, startsWith, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -235,6 +235,6 @@ export const announceDeleteFailure = ( { dispatch }, action ) => {
 };
 
 export default {
-	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
+	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure, noop, { freshness: 10000 } ) ],
 	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
 };
