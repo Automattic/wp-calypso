@@ -1,6 +1,5 @@
 /**
  * @format
- * @jest-environment jsdom
 */
 
 /**

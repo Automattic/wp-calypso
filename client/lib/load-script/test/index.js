@@ -98,7 +98,6 @@ describe( 'loadScript', () => {
 			global.window.jQuery = false;
 
 			const callback = jest.fn();
-			// config.isEnabled.mockReturnValueOnce( { isEnabled: () => false } );
 			loadjQueryDependentScript( url, callback, true );
 
 			expect( callback ).not.toHaveBeenCalled();
