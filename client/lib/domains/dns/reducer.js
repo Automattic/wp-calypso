@@ -5,7 +5,7 @@
  */
 
 import { findIndex, pick, reject } from 'lodash';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies

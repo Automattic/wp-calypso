@@ -4,7 +4,7 @@
  * @format
  */
 
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import { every, reject } from 'lodash';
 
 const WPCOM_DEFAULTS = [ 'ns1.wordpress.com', 'ns2.wordpress.com' ];
