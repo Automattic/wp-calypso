@@ -34,12 +34,6 @@ import { PluginsList } from '../';
 import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
-	before( () => {
-		const ReactClass = require( 'react/lib/ReactClass' );
-
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-	} );
-
 	describe( 'rendering bulk actions', function() {
 		let renderedPluginsList, plugins, props;
 

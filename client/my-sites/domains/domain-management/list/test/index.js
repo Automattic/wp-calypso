@@ -9,6 +9,9 @@ jest.mock( 'lib/wp', () => ( {
 /**
  * External dependencies
  */
+import React from 'react';
+import ReactDom from 'react-dom';
+import TestUtils from 'react-addons-test-utils';
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -19,30 +22,17 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'state';
 import { useSandbox } from 'test/helpers/use-sinon';
 
+import {
+	PRIMARY_DOMAIN_CHANGE_SUCCESS,
+	PRIMARY_DOMAIN_CHANGE_FAIL,
+} from '../constants';
+import { List as DomainList } from '../';
+
 describe( 'index', function() {
-	let React,
-		ReactDom,
-		ReactClass,
-		DomainList,
-		TestUtils,
-		noticeTypes,
-		component,
+	let component,
 		sandbox;
 
 	useSandbox( newSandbox => sandbox = newSandbox );
-
-	before( () => {
-		React = require( 'react' );
-		ReactDom = require( 'react-dom' );
-		TestUtils = require( 'react-addons-test-utils' );
-
-		noticeTypes = require( '../constants' );
-
-		ReactClass = require( 'react/lib/ReactClass' );
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-
-		DomainList = require( '../' ).List;
-	} );
 
 	const selectedSite = deepFreeze( {
 		slug: 'example.com',
@@ -164,7 +154,7 @@ describe( 'index', function() {
 					setTimeout( () => {
 						assert( ! component.state.settingPrimaryDomain, 'Setting Primary Domain should be false' );
 						assert( ! component.changePrimaryDomainModeEnabled );
-						assert.equal( component.state.notice.type, noticeTypes.PRIMARY_DOMAIN_CHANGE_SUCCESS );
+						assert.equal( component.state.notice.type, PRIMARY_DOMAIN_CHANGE_SUCCESS );
 						assert.equal( component.state.notice.previousDomainName, defaultProps.domains.list[ 1 ].name );
 						done();
 					}, 0 );
@@ -177,7 +167,7 @@ describe( 'index', function() {
 						assert( ! component.state.settingPrimaryDomain );
 						assert( component.state.changePrimaryDomainModeEnabled );
 						assert.equal( component.state.primaryDomainIndex, 1 );
-						assert.equal( component.state.notice.type, noticeTypes.PRIMARY_DOMAIN_CHANGE_FAIL );
+						assert.equal( component.state.notice.type, PRIMARY_DOMAIN_CHANGE_FAIL );
 						done();
 					}, 0 );
 				} );
