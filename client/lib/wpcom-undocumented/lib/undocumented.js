@@ -211,7 +211,7 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
  *
  * @param {int}      siteId  Jetpack blog ID
  * @param {Function} fn      Response function
- * @returns {Promise}             A promise that resolves when the request completes
+ * @returns {Promise}        A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.fetchJetpackCredentials = function( siteId, fn ) {
@@ -242,8 +242,8 @@ Undocumented.prototype.updateJetpackCredentials = function( siteId, credentials,
  * Update WordPress core install on the site with id siteId
  *
  * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @returns {Promise}             A promise that resolves when the request completes
+ * @param {Function} fn  The callback function
+ * @returns {Promise}    A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
