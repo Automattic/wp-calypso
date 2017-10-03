@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
+import ReactDom from 'react-dom';
+import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import Gridicon from 'gridicons';
 
@@ -27,69 +27,56 @@ import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
-const LostPassword = localize(
-	class extends React.Component {
-		render() {
-			const url = addLocaleToWpcomUrl(
-				'https://wordpress.com/wp-login.php?action=lostpassword',
-				getLocaleSlug()
-			);
-			return (
-				<p className="auth__lost-password">
-					<a href={ url } target="_blank" rel="noopener noreferrer">
-						{ this.props.translate( 'Lost your password?' ) }
-					</a>
-				</p>
-			);
-		}
-	}
-);
+const LostPassword = localize( ( { translate } ) => {
+	const url = addLocaleToWpcomUrl(
+		'https://wordpress.com/wp-login.php?action=lostpassword',
+		getLocaleSlug()
+	);
+	return (
+		<p className="auth__lost-password">
+			<a href={ url } target="_blank" rel="noopener noreferrer">
+				{ translate( 'Lost your password?' ) }
+			</a>
+		</p>
+	);
+} );
 
-const SelfHostedInstructions = localize(
-	class extends React.Component {
-		render() {
-			return (
-				<div className="auth__self-hosted-instructions">
-					<a
-						href="#"
-						onClick={ this.props.onClickClose }
-						className="auth__self-hosted-instructions-close"
-					>
-						<Gridicon icon="cross" size={ 24 } />
-					</a>
+const SelfHostedInstructions = localize( ( { onClickClose, translate } ) => (
+	<div className="auth__self-hosted-instructions">
+		<a href="#" onClick={ onClickClose } className="auth__self-hosted-instructions-close">
+			<Gridicon icon="cross" size={ 24 } />
+		</a>
 
-					<h2>{ this.props.translate( 'Add self-hosted site' ) }</h2>
-					<p>
-						{ this.props.translate(
-							'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com'
-						) }
-					</p>
-					<p>
-						{ this.props.translate(
-							"If you'd like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:"
-						) }
-					</p>
+		<h2>{ translate( 'Add self-hosted site' ) }</h2>
+		<p>
+			{ translate(
+				'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com'
+			) }
+		</p>
+		<p>
+			{ translate(
+				"If you'd like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:"
+			) }
+		</p>
 
-					<ol>
-						<li>
-							<strong>{ this.props.translate( 'Install the Jetpack plugin.' ) }</strong>
-							<br />
-							<a href="http://jetpack.me/install/">
-								{ this.props.translate( 'Please follow these instructions to install Jetpack' ) }
-							</a>.
-						</li>
-						<li>{ this.props.translate( 'Connect Jetpack to WordPress.com.' ) }</li>
-						<li>
-							{ this.props.translate(
-								'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, and you can find your self-hosted site under the "My Sites" section.'
-							) }
-						</li>
-					</ol>
-				</div>
-			);
-		}
-	}
-);
+		<ol>
+			<li>
+				<strong>{ translate( 'Install the Jetpack plugin.' ) }</strong>
+				<br />
+				<a href="http://jetpack.me/install/">
+					{ translate( 'Please follow these instructions to install Jetpack' ) }
+				</a>.
+			</li>
+			<li>{ translate( 'Connect Jetpack to WordPress.com.' ) }</li>
+			<li>
+				{ translate(
+					'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, ' +
+						'and you can find your self-hosted site under the "My Sites" section.'
+				) }
+			</li>
+		</ol>
+	</div>
+) );
 
 module.exports = localize(
 	createReactClass( {
@@ -157,11 +144,12 @@ module.exports = localize(
 		},
 
 		toggleSelfHostedInstructions: function() {
-			var isShowing = ! this.state.showInstructions;
+			const isShowing = ! this.state.showInstructions;
 			this.setState( { showInstructions: isShowing } );
 		},
 
 		render: function() {
+			const { translate } = this.props;
 			const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 			return (
@@ -176,7 +164,7 @@ module.exports = localize(
 										name="login"
 										ref="login"
 										disabled={ requires2fa || inProgress }
-										placeholder={ this.props.translate( 'Username or email address' ) }
+										placeholder={ translate( 'Username or email address' ) }
 										onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 										valueLink={ this.linkState( 'login' ) }
 									/>
@@ -187,7 +175,7 @@ module.exports = localize(
 										name="password"
 										ref="password"
 										disabled={ requires2fa || inProgress }
-										placeholder={ this.props.translate( 'Password' ) }
+										placeholder={ translate( 'Password' ) }
 										onFocus={ this.recordFocusEvent( 'Password' ) }
 										hideToggle={ requires2fa }
 										submitting={ inProgress }
@@ -201,7 +189,7 @@ module.exports = localize(
 											type="number"
 											ref="auth_code"
 											disabled={ inProgress }
-											placeholder={ this.props.translate( 'Verification code' ) }
+											placeholder={ translate( 'Verification code' ) }
 											onFocus={ this.recordFocusEvent( 'Verification code' ) }
 											valueLink={ this.linkState( 'auth_code' ) }
 										/>
@@ -213,11 +201,7 @@ module.exports = localize(
 									disabled={ ! this.canSubmitForm() }
 									onClick={ this.recordClickEvent( 'Sign in' ) }
 								>
-									{ requires2fa ? (
-										this.props.translate( 'Verify' )
-									) : (
-										this.props.translate( 'Sign in' )
-									) }
+									{ requires2fa ? translate( 'Verify' ) : translate( 'Sign in' ) }
 								</FormButton>
 							</FormButtonsBar>
 							{ ! requires2fa && <LostPassword /> }
@@ -232,16 +216,16 @@ module.exports = localize(
 							className="auth__help"
 							target="_blank"
 							rel="noopener noreferrer"
-							title={ this.props.translate( 'Visit the WordPress.com support site for help' ) }
+							title={ translate( 'Visit the WordPress.com support site for help' ) }
 							href="https://en.support.wordpress.com/"
 						>
 							<Gridicon icon="help" />
 						</a>
 						<div className="auth__links">
 							<a href="#" onClick={ this.toggleSelfHostedInstructions }>
-								{ this.props.translate( 'Add self-hosted site' ) }
+								{ translate( 'Add self-hosted site' ) }
 							</a>
-							<a href={ config( 'signup_url' ) }>{ this.props.translate( 'Create account' ) }</a>
+							<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
 						</div>
 						{ showInstructions && (
 							<SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } />
