@@ -593,6 +593,19 @@
 					width: 66%;
 				}
 			}
+
+			&.is-international-address {
+				.postal-code {
+					 float: left;
+					 width: calc( 33% - 7px );
+				 }
+
+				.city {
+					float: right;
+					width: calc( 66% );
+				}
+			}
+
 		}
 
 		.form__hidden-input a {
