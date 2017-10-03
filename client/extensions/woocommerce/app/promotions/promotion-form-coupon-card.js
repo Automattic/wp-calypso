@@ -12,21 +12,10 @@ import Card from 'components/card';
 import DatePicker from 'components/date-picker';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import PromotionFormDiscountTypeAndAmount from './promotion-form-discount-type-and-amount';
-
-function renderAppliesTo( coupon, translate, onAppliesToChange ) {
-	// TODO: Add support for including/excluding products and product categories
-	const appliesTo = 'all_products';
-
-	return (
-		<FormSelect value={ appliesTo } onChange={ onAppliesToChange } >
-			<option value="all_products">{ translate( 'All Products' ) }</option>
-		</FormSelect>
-	);
-}
+import PromotionFormAppliesTo from './promotion-form-applies-to';
 
 function renderExpiration( coupon, translate, onEnable, onChange ) {
 	const hasExpirationDate = Boolean( coupon.date_expires_gmt );
@@ -62,9 +51,11 @@ const PromotionFormCouponCard = ( {
 	currency,
 	promotion,
 	editPromotion,
+	products,
+	productCategories,
 	translate,
 } ) => {
-	const coupon = ( promotion && promotion.coupon ) || { code: '', discount_type: 'percent', amount: '' };
+	const { coupon } = promotion;
 	const discountTypesAvailable = [
 		{ type: 'percent', value: 'percent', text: translate( 'Percentage discount' ) },
 		{ type: 'price', value: 'fixed_cart', text: translate( 'Cart discount' ) },
@@ -83,10 +74,6 @@ const PromotionFormCouponCard = ( {
 
 	const onAmountChange = ( amount ) => {
 		editCoupon( siteId, promotion, coupon, { amount }, editPromotion );
-	};
-
-	const onAppliesToChange = () => {
-		// TODO: Add support for other "Applies to" selections.
 	};
 
 	const onExpirationEnable = () => {
@@ -117,10 +104,13 @@ const PromotionFormCouponCard = ( {
 				onDiscountTypeSelect={ onDiscountTypeSelect }
 				onAmountChange={ onAmountChange }
 			/>
-			<FormFieldset className="promotions__promotion-form-coupon-applies-to">
-				<FormLabel>{ translate( 'Applies to' ) }</FormLabel>
-				{ renderAppliesTo( coupon, translate, onAppliesToChange ) }
-			</FormFieldset>
+			<PromotionFormAppliesTo
+				siteId={ siteId }
+				promotion={ promotion }
+				editPromotion={ editPromotion }
+				products={ products }
+				productCategories={ productCategories }
+			/>
 			{ renderExpiration( coupon, translate, onExpirationEnable, onExpirationChange ) }
 		</Card>
 	);
@@ -128,13 +118,18 @@ const PromotionFormCouponCard = ( {
 
 PromotionFormCouponCard.PropTypes = {
 	siteId: PropTypes.number,
+	currency: PropTypes.string,
 	promotion: PropTypes.shape( {
 		id: PropTypes.isRequired,
-		code: PropTypes.string,
-		discount_type: PropTypes.string,
-		amount: PropTypes.number,
+		coupon: PropTypes.shape( {
+			code: PropTypes.string,
+			discount_type: PropTypes.string,
+			amount: PropTypes.number,
+		} ),
 	} ),
 	editPromotion: PropTypes.func.isRequired,
+	products: PropTypes.array,
+	productCategories: PropTypes.array,
 };
 
 export default localize( PromotionFormCouponCard );

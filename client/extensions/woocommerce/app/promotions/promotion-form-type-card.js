@@ -22,7 +22,11 @@ const PromotionFormTypeCard = ( {
 	const promotionType = ( promotion && promotion.type ? promotion.type : '' );
 
 	const onTypeSelect = ( e ) => {
-		editPromotion( siteId, promotion, { type: e.target.value } );
+		const data = { type: e.target.value };
+		if ( 'coupon' === data.type ) {
+			data.coupon = { code: '', discount_type: 'percent', amount: '' };
+		}
+		editPromotion( siteId, promotion, data );
 	};
 
 	return (

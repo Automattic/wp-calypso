@@ -22,7 +22,7 @@ function renderPlaceholder() {
 	);
 }
 
-function renderEditCard( siteId, currency, promotion, editPromotion ) {
+function renderEditCard( siteId, currency, promotion, editPromotion, products, productCategories ) {
 	if ( ! promotion ) {
 		return null;
 	}
@@ -34,6 +34,8 @@ function renderEditCard( siteId, currency, promotion, editPromotion ) {
 					siteId={ siteId }
 					promotion={ promotion }
 					editPromotion={ editPromotion }
+					products={ products }
+					productCategories={ productCategories }
 				/>
 			);
 		case 'product_sale':
@@ -52,10 +54,12 @@ export default class PromotionForm extends React.PureComponent {
 			id: PropTypes.isRequired,
 		} ),
 		editPromotion: PropTypes.func.isRequired,
+		products: PropTypes.array,
+		productCategories: PropTypes.array,
 	};
 
 	render() {
-		const { siteId, currency, promotion, editPromotion } = this.props;
+		const { siteId, currency, promotion, editPromotion, products, productCategories } = this.props;
 
 		if ( ! siteId ) {
 			return renderPlaceholder();
@@ -69,7 +73,7 @@ export default class PromotionForm extends React.PureComponent {
 					editPromotion={ editPromotion }
 				/>
 
-				{ renderEditCard( siteId, currency, promotion, editPromotion ) }
+				{ renderEditCard( siteId, currency, promotion, editPromotion, products, productCategories ) }
 			</div>
 		);
 	}
