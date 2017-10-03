@@ -189,6 +189,7 @@ export class ConversationCommentList extends React.Component {
 							blogId={ post.site_ID }
 							postId={ post.ID }
 							commentCount={ post.discussion.comment_count }
+							commentsToShow={ commentsToShow }
 						/>
 					) }
 					{ map( commentsTree.children, commentId => {
