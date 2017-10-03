@@ -5,7 +5,6 @@ $theme-info-height: 54px;
 	margin: 0 10px 20px 10px;
 	width: 230px; // Fixed width gives desired wrapping...
 	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
-	overflow: hidden;
 	transition: all 100ms ease-in-out;
 
 	&.is-active {
@@ -155,7 +154,8 @@ $theme-info-height: 54px;
 .theme__content {
 	padding-top: 75%; // 4:3 screenshot ratio
 	padding-bottom: $theme-info-height;
-
+	position: relative;
+	overflow: hidden;
 }
 
 .theme__img {
