@@ -71,5 +71,16 @@ describe( 'MySitesSidebar', () => {
 
 			expect( isSelected ).to.be.true;
 		} );
+
+		it( 'should return true if one of the paths is a prefix of the current path and separated by search query', () => {
+			const instance = new MySitesSidebar();
+			const isSelected = instance.isItemLinkSelected.call( {
+				props: {
+					path: '/posts?s=search'
+				}
+			}, [ '/posts' ] );
+
+			expect( isSelected ).to.be.true;
+		} );
 	} );
 } );
