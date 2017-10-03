@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
@@ -38,11 +39,11 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		action: React.PropTypes.string,
-		onCancel: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired,
-		requestSMSOnMount: React.PropTypes.bool,
-		showCancelButton: React.PropTypes.bool
+		action: PropTypes.string,
+		onCancel: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
+		requestSMSOnMount: PropTypes.bool,
+		showCancelButton: PropTypes.bool
 	},
 
 	componentDidMount: function() {

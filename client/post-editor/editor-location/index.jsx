@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' ),
 	qs = require( 'querystring' );
 
@@ -23,7 +24,7 @@ export default React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
-		label: React.PropTypes.string,
+		label: PropTypes.string,
 		coordinates: function( props, propName ) {
 			var prop = props[ propName ];
 			if ( prop && ( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length ) ) {

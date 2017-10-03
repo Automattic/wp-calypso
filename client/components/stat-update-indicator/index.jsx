@@ -2,6 +2,7 @@
  * External dependencies
  */
 
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -11,11 +12,11 @@ var React = require( 'react' ),
 var StatUpdateIndicator = React.createClass( {
 
 	propTypes: {
-		children: React.PropTypes.node.isRequired,
-		updateOn: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number,
-			React.PropTypes.bool
+		children: PropTypes.node.isRequired,
+		updateOn: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number,
+			PropTypes.bool
 		] ).isRequired
 	},
 
@@ -50,7 +51,7 @@ var StatUpdateIndicator = React.createClass( {
 
 			this.setState( {
 				updating: false
-			} );				
+			} );
 		}.bind( this ), 800 );
 	},
 

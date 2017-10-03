@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

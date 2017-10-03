@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	photon = require( 'photon' );
 
@@ -16,9 +17,9 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		maxImageWidth: React.PropTypes.number,
-		thumbnailType: React.PropTypes.string,
+		media: PropTypes.object,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
 	},
 
 	getDefaultProps: function() {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -35,11 +36,11 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 };
 
 PersonalPlanDetails.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
 	] ).isRequired,
-	sitePlans: React.PropTypes.object.isRequired
+	sitePlans: PropTypes.object.isRequired
 };
 
 export default localize( PersonalPlanDetails );

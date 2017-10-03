@@ -2,6 +2,7 @@
  * External dependencies
  */
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -12,8 +13,8 @@ import Main from 'components/main';
 
 const LoadingPlaceholder = React.createClass( {
 	propTypes: {
-		path: React.PropTypes.string,
-		title: React.PropTypes.string.isRequired,
+		path: PropTypes.string,
+		title: PropTypes.string.isRequired,
 	},
 
 	goBack() {

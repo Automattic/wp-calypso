@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -195,10 +196,10 @@ class PurchaseItem extends Component {
 }
 
 PurchaseItem.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	isDisconnectedSite: React.PropTypes.bool,
-	purchase: React.PropTypes.object,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	isDisconnectedSite: PropTypes.bool,
+	purchase: PropTypes.object,
+	slug: PropTypes.string,
 };
 
 export default localize( PurchaseItem );

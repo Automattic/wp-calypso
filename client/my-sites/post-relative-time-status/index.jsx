@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 
@@ -16,10 +17,10 @@ module.exports = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		includeNonDraftStatuses: React.PropTypes.bool,
-		link: React.PropTypes.string,
-		target: React.PropTypes.string
+		post: PropTypes.object.isRequired,
+		includeNonDraftStatuses: PropTypes.bool,
+		link: PropTypes.string,
+		target: PropTypes.string
 	},
 
 	getDefaultProps: function() {

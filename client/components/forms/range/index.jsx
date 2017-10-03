@@ -7,7 +7,7 @@ import { omit, uniqueId } from 'lodash';
 import classnames from 'classnames';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import FormRange from 'components/forms/form-range';
 

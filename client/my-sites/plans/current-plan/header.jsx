@@ -3,7 +3,8 @@
  */
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { invoke } from 'lodash';
 
 /**
@@ -33,7 +34,7 @@ class CurrentPlanHeader extends Component {
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: React.PropTypes.oneOf( [
+		currentPlanSlug: PropTypes.oneOf( [
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
 			PLAN_JETPACK_FREE,

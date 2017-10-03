@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	Clipboard = require( 'clipboard' ),
@@ -55,7 +56,7 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		onNextStep: React.PropTypes.func.isRequired
+		onNextStep: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import url from 'url';
 import debugModule from 'debug';
 import page from 'page';

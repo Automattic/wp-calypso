@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -29,12 +30,12 @@ import { getPrimarySiteId } from 'state/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
-		domainOnlySite: React.PropTypes.bool,
-		user: React.PropTypes.object,
-		sites: React.PropTypes.object,
-		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		siteSlug: React.PropTypes.string,
+		domainOnlySite: PropTypes.bool,
+		user: PropTypes.object,
+		sites: PropTypes.object,
+		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string,
 	},
 
 	clickMySites() {

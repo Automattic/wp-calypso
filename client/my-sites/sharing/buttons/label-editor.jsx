@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
@@ -13,11 +14,11 @@ var SharingButtonsLabelEditor = module.exports = React.createClass( {
 	displayName: 'SharingButtonsLabelEditor',
 
 	propTypes: {
-		active: React.PropTypes.bool,
-		value: React.PropTypes.string,
-		onChange: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		hasEnabledButtons: React.PropTypes.bool
+		active: PropTypes.bool,
+		value: PropTypes.string,
+		onChange: PropTypes.func,
+		onClose: PropTypes.func,
+		hasEnabledButtons: PropTypes.bool
 	},
 
 	statics: {

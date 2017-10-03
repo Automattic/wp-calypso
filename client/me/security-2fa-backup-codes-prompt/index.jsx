@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
@@ -25,8 +26,8 @@ module.exports = React.createClass( {
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
+		onPrintAgain: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find } from 'lodash';
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 
@@ -17,7 +18,7 @@ module.exports = React.createClass( {
 	displayName: 'SecuritySectionNav',
 
 	propTypes: {
-		path: React.PropTypes.string.isRequired
+		path: PropTypes.string.isRequired
 	},
 
 	getNavtabs: function() {

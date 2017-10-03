@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const EditorMention = ( { username } ) => (
@@ -8,7 +9,7 @@ const EditorMention = ( { username } ) => (
 );
 
 EditorMention.propTypes = {
-	username: React.PropTypes.string.isRequired,
+	username: PropTypes.string.isRequired,
 };
 
 export default EditorMention;

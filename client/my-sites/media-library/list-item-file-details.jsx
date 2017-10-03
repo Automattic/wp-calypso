@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' );
 
 /**
@@ -12,9 +13,9 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemFileDetails',
 
 	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number,
-		icon: React.PropTypes.string
+		media: PropTypes.object,
+		scale: PropTypes.number,
+		icon: PropTypes.string
 	},
 
 	getDefaultProps: function() {

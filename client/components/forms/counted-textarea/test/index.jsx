@@ -6,7 +6,7 @@ import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { CountedTextarea } from '../';
 

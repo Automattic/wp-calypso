@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const PropTypes = require( 'prop-types' );
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-initial-setup' );
 
@@ -23,7 +24,7 @@ module.exports = React.createClass( {
 	},
 
 	propTypes: {
-		onSuccess: React.PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	render: function() {
