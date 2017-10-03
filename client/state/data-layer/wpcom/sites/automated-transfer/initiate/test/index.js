@@ -13,6 +13,7 @@ import {
 	receiveError,
 	updateUploadProgress,
 } from '../';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import {
 	pluginUploadError,
@@ -36,6 +37,16 @@ describe( 'initiateTransferWithPluginZip', () => {
 			formData: [ [ 'plugin_zip', 'foo' ] ],
 		} );
 	} );
+
+	it( 'should dispatch a tracks call', () => {
+		const dispatch = sinon.spy();
+		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
+				context: 'plugin_upload',
+			} )
+		);
+	} );
 } );
 
 describe( 'receiveResponse', () => {
@@ -46,13 +57,22 @@ describe( 'receiveResponse', () => {
 			getAutomatedTransferStatus( siteId )
 		);
 	} );
+
+	it( 'should dispatch a tracks call', () => {
+		const dispatch = sinon.spy();
+		receiveResponse( { dispatch }, { siteId } );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
+				context: 'plugin_upload',
+			} )
+		);
+	} );
 } );
 
 describe( 'receiveError', () => {
 	it( 'should dispatch a plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledThrice;
 		expect( dispatch ).to.have.been.calledWith(
 			pluginUploadError( siteId, ERROR_RESPONSE )
 		);
@@ -61,10 +81,20 @@ describe( 'receiveError', () => {
 	it( 'should dispatch an error notice', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledThrice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			notice: { text: 'Not a valid zip file.' }
 		} );
+	} );
+
+	it( 'should dispatch a tracks call', () => {
+		const dispatch = sinon.spy();
+		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+				context: 'plugin_upload',
+				error: 'invalid_input',
+			} )
+		);
 	} );
 } );
 

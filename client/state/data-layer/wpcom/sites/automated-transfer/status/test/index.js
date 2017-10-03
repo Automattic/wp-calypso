@@ -7,6 +7,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 import {
 	requestStatus,
@@ -23,6 +24,7 @@ const COMPLETE_RESPONSE = {
 	blog_id: 1916284,
 	status: 'complete',
 	uploaded_plugin_slug: 'hello-dolly',
+	transfer_id: 1,
 };
 
 const IN_PROGRESS_RESPONSE = {
@@ -60,8 +62,21 @@ describe( 'receiveStatus', () => {
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
 		expect( dispatch ).to.have.callCount( 4 );
 		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: "You've successfully uploaded the hello-dolly plugin." }
+			notice: { text: "You've successfully uploaded the hello-dolly plugin." },
 		} );
+	} );
+
+	it( 'should dispatch tracks event if complete', () => {
+		const dispatch = sinon.spy();
+		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
+		expect( dispatch ).to.have.callCount( 4 );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_complete', {
+				context: 'plugin_upload',
+				transfer_id: 1,
+				uploaded_plugin_slug: 'hello-dolly',
+			} )
+		);
 	} );
 
 	it( 'should request status again if not complete', () => {
