@@ -388,7 +388,7 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
-	renderAddressFieldset( needsOnlyGoogleAppsDetails ) {
+	renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) {
 		return (
 			<FormFieldset className="checkout__domain-details-fieldset">
                 { ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
@@ -411,7 +411,7 @@ export class DomainDetailsForm extends PureComponent {
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
 				{ this.shouldDisplayAddressFieldset() &&
-					this.renderAddressFieldset( needsOnlyGoogleAppsDetails ) }
+					this.renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
