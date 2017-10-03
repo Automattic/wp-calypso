@@ -1,7 +1,11 @@
 .order-customer {
-	
 	.order-customer__shipping-details {
 		margin-top: 32px;
+	}
+
+	.order-customer__edit-link {
+		float: right;
+		padding: 3px;
 	}
 
 	h4 {
@@ -25,7 +29,7 @@
 }
 
 .order-customer__billing-details,
-.order-create__billing-details, 
+.order-create__billing-details,
 .order-customer__shipping-details,
 .order-create__shipping-details {
 	margin-bottom: 16px;
