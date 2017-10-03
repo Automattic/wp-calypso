@@ -5,7 +5,7 @@
 import { get } from 'lodash';
 
 /**
- * Returns an Activity log.
+ * Returns the requested rewind Activity ID.
  *
  * @param  {Object}        state      Global state tree
  * @param  {number|string} siteId     the site ID

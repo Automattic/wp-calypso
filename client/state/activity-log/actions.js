@@ -158,7 +158,7 @@ export function rewindStatusError( siteId, error ) {
 }
 
 /**
- * Restore a site to the given timestamp.
+ * Request a restore to a specific Activity.
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        activityId Activity ID
@@ -173,7 +173,7 @@ export function rewindRequestRestore( siteId, activityId ) {
 }
 
 /**
- * Restore a site to the given timestamp.
+ * Dismiss a restore request.
  *
  * @param  {string|number} siteId Site ID
  * @param  {number}        activityId Activity ID
