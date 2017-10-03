@@ -24,58 +24,8 @@ import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
 import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
-
-const LostPassword = localize( ( { translate } ) => {
-	const url = addLocaleToWpcomUrl(
-		'https://wordpress.com/wp-login.php?action=lostpassword',
-		getLocaleSlug()
-	);
-	return (
-		<p className="auth__lost-password">
-			<a href={ url } target="_blank" rel="noopener noreferrer">
-				{ translate( 'Lost your password?' ) }
-			</a>
-		</p>
-	);
-} );
-
-const SelfHostedInstructions = localize( ( { onClickClose, translate } ) => (
-	<div className="auth__self-hosted-instructions">
-		<a href="#" onClick={ onClickClose } className="auth__self-hosted-instructions-close">
-			<Gridicon icon="cross" size={ 24 } />
-		</a>
-
-		<h2>{ translate( 'Add self-hosted site' ) }</h2>
-		<p>
-			{ translate(
-				'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com'
-			) }
-		</p>
-		<p>
-			{ translate(
-				"If you'd like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:"
-			) }
-		</p>
-
-		<ol>
-			<li>
-				<strong>{ translate( 'Install the Jetpack plugin.' ) }</strong>
-				<br />
-				<a href="http://jetpack.me/install/">
-					{ translate( 'Please follow these instructions to install Jetpack' ) }
-				</a>.
-			</li>
-			<li>{ translate( 'Connect Jetpack to WordPress.com.' ) }</li>
-			<li>
-				{ translate(
-					'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, ' +
-						'and you can find your self-hosted site under the "My Sites" section.'
-				) }
-			</li>
-		</ol>
-	</div>
-) );
+import SelfHostedInstructions from './self-hosted-instructions';
+import LostPassword from './lost-password';
 
 export const Login = createReactClass( {
 	displayName: 'Auth',
