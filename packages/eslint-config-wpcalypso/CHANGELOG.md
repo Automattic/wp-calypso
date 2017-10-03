@@ -1,3 +1,7 @@
+#### v1.1.0 (2017-10-03)
+
+- Removed: `quote-props` will no longer flag keyword properties as error ([reference](https://eslint.org/docs/rules/quote-props#keywords))
+
 #### v1.0.0 (2017-09-07)
 
 - Breaking: Upgraded ESLint peer dependency from 3.x to 4.x. [See v4.0.0 Migration Guide](https://eslint.org/docs/user-guide/migrating-to-4.0.0)

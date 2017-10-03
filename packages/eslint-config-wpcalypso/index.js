@@ -70,7 +70,7 @@ module.exports = {
 		} } ],
 		'padded-blocks': [ 2, 'never' ],
 		'prefer-const': 2,
-		'quote-props': [ 2, 'as-needed', { keywords: true } ],
+		'quote-props': [ 2, 'as-needed' ],
 		quotes: [ 2, 'single', 'avoid-escape' ],
 		semi: 2,
 		'semi-spacing': 2,
