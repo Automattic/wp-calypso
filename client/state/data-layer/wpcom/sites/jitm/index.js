@@ -4,7 +4,6 @@
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
 import config from 'config';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
@@ -72,11 +71,12 @@ export const fetchJITM = ( state, dispatch, action ) => {
 	}
 
 	dispatch( http( {
-		apiNamespace: 'wpcom',
+		apiNamespace: 'rest',
 		method: 'GET',
-		path: `/v2/sites/${ currentSite }/jitm/calypso:${ process.lastSection }:admin_notices`,
+		path: `/v1.1/jetpack-blogs/${ currentSite }/rest-api/`,
 		query: {
-			external_user_id: getCurrentUserId( state ),
+			path: '/jetpack/v4/jitm',
+			query: JSON.stringify( { message_path: `calypso:${ process.lastSection }:admin_notices` } ),
 		}
 	}, { ...action, messagePath: process.lastSection } ) );
 };
