@@ -14,14 +14,13 @@ import PostCommentForm from './form';
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {
 		const { post, commentsTree, commentId, onUpdateCommentText, activeReplyCommentId } = this.props;
+		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
+		const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ] );
+		const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
 
-		if ( activeReplyCommentId !== commentId ) {
+		if ( activeReplyCommentId !== commentParentId ) {
 			return null;
 		}
-
-		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
-		const commentParentId = get( commentsTree, [ commentId, 'parentId' ] );
-		const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
 
 		return (
 			<PostCommentForm
@@ -48,7 +47,7 @@ export default class PostCommentWithError extends React.Component {
 
 PostCommentWithError.propTypes = {
 	post: PropTypes.object.isRequired,
-	repliesList: PropTypes.object.isRequired,
+	repliesList: PropTypes.object,
 	commentsTree: PropTypes.object,
 	onUpdateCommentText: PropTypes.func.isRequired,
 	commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,

@@ -350,9 +350,9 @@ export const activeReplies = createReducer(
 			return { ...state, [ stateKey ]: commentId };
 		},
 		[ COMMENTS_WRITE_ERROR ]: ( state, action ) => {
-			const { siteId, postId, commentId } = action;
+			const { siteId, postId, parentCommentId } = action;
 			const stateKey = getStateKey( siteId, postId );
-			return { ...state, [ stateKey ]: commentId };
+			return { ...state, [ stateKey ]: parentCommentId };
 		},
 	}
 );
