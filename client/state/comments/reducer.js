@@ -15,6 +15,7 @@ import {
 	includes,
 	isArray,
 	values,
+	omit,
 } from 'lodash';
 
 /**
@@ -32,6 +33,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	READER_EXPAND_COMMENTS,
+	COMMENTS_SET_ACTIVE_REPLY,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
@@ -40,15 +42,9 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
+import { getStateKey } from './utils';
 
 const getCommentDate = ( { date } ) => new Date( date );
-
-export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
-
-export const deconstructStateKey = key => {
-	const [ siteId, postId ] = key.split( '-' );
-	return { siteId: +siteId, postId: +postId };
-};
 
 const isCommentManagementEdit = newProperties =>
 	has( newProperties, 'commentContent' ) &&
@@ -319,6 +315,29 @@ export const treesInitialized = keyedReducer(
 	keyedReducer( 'status', treesInitializedReducer )
 );
 
+/***
+ * Stores the active reply comment for a given siteId and postId
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export const activeReplies = createReducer(
+	{},
+	{
+		[ COMMENTS_SET_ACTIVE_REPLY ]: ( state, action ) => {
+			const { siteId, postId, commentId } = action.payload;
+			const stateKey = getStateKey( siteId, postId );
+
+			// If commentId is null, remove the key from the state map entirely
+			if ( commentId === null ) {
+				return omit( state, stateKey );
+			}
+
+			return { ...state, [ stateKey ]: commentId };
+		},
+	}
+);
+
 export default combineReducers( {
 	items,
 	fetchStatus,
@@ -327,4 +346,5 @@ export default combineReducers( {
 	totalCommentsCount,
 	trees,
 	treesInitialized,
+	activeReplies,
 } );

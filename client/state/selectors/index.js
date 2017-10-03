@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Every selector contained within this directory should have its default
  * export included in the list below. Please keep this list alphabetized for
@@ -28,6 +29,7 @@ export getAccountRecoveryResetSelectedMethod from './get-account-recovery-reset-
 export getAccountRecoveryResetUserData from './get-account-recovery-reset-user-data';
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
 export getAccountRecoveryValidationKey from './get-account-recovery-validation-key';
+export getActiveReplyCommentId from './get-active-reply-comment-id';
 export getActivityLogs from './get-activity-logs';
 export getBillingTransactions from './get-billing-transactions';
 export getBlockedSites from './get-blocked-sites';

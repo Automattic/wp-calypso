@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +11,13 @@ import { get, size, takeRight, delay } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getActiveReplyCommentId } from 'state/selectors';
 import {
 	getPostCommentsTree,
 	commentsFetchingStatus,
 	getCommentById,
 } from 'state/comments/selectors';
-import { requestPostComments, requestComment } from 'state/comments/actions';
+import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostComment from './post-comment';
@@ -40,7 +42,6 @@ import SegmentedControlItem from 'components/segmented-control/item';
  *    This also activates a "Show More" button at the end of the comment list instead of just at the top
  *
  */
-
 class PostCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.shape( {
@@ -70,7 +71,6 @@ class PostCommentList extends React.Component {
 	};
 
 	state = {
-		activeReplyCommentId: null,
 		amountOfCommentsToTake: this.props.initialSize,
 		commentsFilter: 'all',
 		activeEditCommentId: null,
@@ -152,6 +152,10 @@ class PostCommentList extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.resetActiveReplyComment();
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		const siteId = get( nextProps, 'post.site_ID' );
 		const postId = get( nextProps, 'post.ID' );
@@ -200,7 +204,7 @@ class PostCommentList extends React.Component {
 				key={ commentId }
 				showModerationTools={ this.props.showModerationTools }
 				activeEditCommentId={ this.state.activeEditCommentId }
-				activeReplyCommentId={ this.state.activeReplyCommentId }
+				activeReplyCommentId={ this.props.activeReplyCommentId }
 				onEditCommentClick={ onEditCommentClick }
 				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
@@ -221,13 +225,13 @@ class PostCommentList extends React.Component {
 
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
-	onReplyClick = commentID => {
-		this.setState( { activeReplyCommentId: commentID } );
+	onReplyClick = commentId => {
+		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: commentID,
+			comment_id: commentId,
 		} );
 	};
 
@@ -245,8 +249,18 @@ class PostCommentList extends React.Component {
 		this.setState( { commentText: commentText } );
 	};
 
+	setActiveReplyComment = commentId => {
+		const siteId = get( this.props, 'post.site_ID' );
+		const postId = get( this.props, 'post.ID' );
+		this.props.setActiveReply( {
+			siteId,
+			postId,
+			commentId,
+		} );
+	};
+
 	resetActiveReplyComment = () => {
-		this.setState( { activeReplyCommentId: null } );
+		this.setActiveReplyComment( null );
 	};
 
 	renderCommentsList = commentIds => {
@@ -262,7 +276,7 @@ class PostCommentList extends React.Component {
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
-		if ( this.state.activeReplyCommentId && ! this.state.errors ) {
+		if ( this.props.activeReplyCommentId && ! this.state.errors ) {
 			return null;
 		}
 
@@ -374,21 +388,22 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
-				{ ( this.props.showCommentCount || showViewMoreComments ) &&
+				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
-						{ showViewMoreComments
-							? <span className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
-									{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-										args: {
-											shown: displayedCommentsCount,
-											total: actualCommentsCount,
-										},
-									} ) }
-								</span>
-							: null }
-					</div> }
-				{ showFilters &&
+						{ showViewMoreComments ? (
+							<span className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
+								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+									args: {
+										shown: displayedCommentsCount,
+										total: actualCommentsCount,
+									},
+								} ) }
+							</span>
+						) : null }
+					</div>
+				) }
+				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'all' }
@@ -420,10 +435,11 @@ class PostCommentList extends React.Component {
 						>
 							{ translate( 'Trash', { context: 'comment status' } ) }
 						</SegmentedControlItem>
-					</SegmentedControl> }
+					</SegmentedControl>
+				) }
 				{ this.renderCommentsList( displayedComments ) }
 				{ showViewMoreComments &&
-					this.props.startingCommentId &&
+				this.props.startingCommentId && (
 					<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
@@ -431,7 +447,8 @@ class PostCommentList extends React.Component {
 								total: actualCommentsCount,
 							},
 						} ) }
-					</span> }
+					</span>
+				) }
 				{ this.renderCommentForm() }
 			</div>
 		);
@@ -457,6 +474,11 @@ export default connect(
 			siteId: ownProps.post.site_ID,
 			commentId: ownProps.startingCommentId,
 		} ),
+		activeReplyCommentId: getActiveReplyCommentId( {
+			state,
+			siteId: ownProps.post.site_ID,
+			postId: ownProps.post.ID,
+		} ),
 	} ),
-	{ requestPostComments, requestComment }
+	{ requestPostComments, requestComment, setActiveReply }
 )( PostCommentList );

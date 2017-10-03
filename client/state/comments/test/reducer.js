@@ -16,6 +16,7 @@ import {
 	fetchStatus,
 	fetchStatusInitialState,
 	treesInitialized,
+	activeReplies,
 } from '../reducer';
 import {
 	COMMENTS_LIKE,
@@ -29,7 +30,7 @@ import {
 	COMMENTS_EDIT,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
-import { expandComments } from '../actions';
+import { expandComments, setActiveReply } from '../actions';
 
 const commentsNestedTree = [
 	{ ID: 11, parent: { ID: 9 }, content: 'eleven', date: '2016-01-31T10:07:18-08:00' },
@@ -364,6 +365,7 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
+
 		it( 'expandComments should only expand them, never unexpand', () => {
 			const prevState = {
 				[ '1-2' ]: {
@@ -385,6 +387,43 @@ describe( 'reducer', () => {
 					3: 'is-full',
 					4: 'is-excerpt',
 				},
+			} );
+		} );
+	} );
+
+	describe( '#activeReplies', () => {
+		it( 'should set the active reply comment for a given site and post', () => {
+			const prevState = {
+				[ '1-2' ]: 123,
+			};
+
+			const action = setActiveReply( {
+				siteId: 1,
+				postId: 2,
+				commentId: 124,
+			} );
+
+			const nextState = activeReplies( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '1-2' ]: 124,
+			} );
+		} );
+
+		it( 'should remove the given site and post from state entirely if commentId is null', () => {
+			const prevState = {
+				[ '1-2' ]: 123,
+				[ '2-3' ]: 456,
+			};
+
+			const action = setActiveReply( {
+				siteId: 1,
+				postId: 2,
+				commentId: null,
+			} );
+
+			const nextState = activeReplies( prevState, action );
+			expect( nextState ).to.eql( {
+				[ '2-3' ]: 456,
 			} );
 		} );
 	} );
