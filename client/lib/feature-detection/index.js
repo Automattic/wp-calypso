@@ -8,10 +8,10 @@ const featureDetection = {
 	 */
 	supportsCssCustomProperties: () => {
 		return (
-			window &&
-			( window.CSS &&
-				window.CSS.supports &&
-				( window.CSS.supports( '--a', 0 ) || window.CSS.supports( 'color', 'var(--a)' ) ) )
+			typeof window !== 'undefined' &&
+			window.CSS &&
+			window.CSS.supports &&
+			( window.CSS.supports( '--a', 0 ) || window.CSS.supports( 'color', 'var(--a)' ) )
 		);
 	},
 };
