@@ -1,7 +1,6 @@
 /** @jest-environment jsdom */
 jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () => require( './mocks/plugin-action' ) );
 jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 /**

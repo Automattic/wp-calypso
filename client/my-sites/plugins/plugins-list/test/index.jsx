@@ -12,7 +12,6 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 /**

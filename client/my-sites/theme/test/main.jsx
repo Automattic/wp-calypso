@@ -7,7 +7,6 @@ jest.mock( 'lib/wp', () => ( {
 		getProducts: () => {}
 	} ),
 } ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
 jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/themes/themes-site-selector-modal', () => require( 'components/empty-component' ) );
 
