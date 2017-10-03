@@ -122,8 +122,10 @@ class SocialLoginForm extends Component {
 	}
 
 	render() {
-		const isPopup = window.opener && window.opener !== window;
-		const redirectUri = isPopup ? login( { isNative: true, socialService: 'google' } ) : null;
+		const { redirectTo } = this.props;
+		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+		const loginCallbackRoute = login( { isNative: true, socialService: 'google' } );
+		const redirectUri = isPopup ? `https://${ config( 'hostname' ) + loginCallbackRoute }` : null;
 
 		return (
 			<div className="login__social">
@@ -146,7 +148,7 @@ class SocialLoginForm extends Component {
 					<WpcomLoginForm
 						log={ this.props.username }
 						authorization={ 'Bearer ' + this.props.bearerToken }
-						redirectTo={ this.props.redirectTo || '/start' }
+						redirectTo={ redirectTo || '/start' }
 					/>
 				) }
 			</div>
