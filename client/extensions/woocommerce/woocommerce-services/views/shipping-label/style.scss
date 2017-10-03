@@ -5,24 +5,11 @@
 }
 
 .shipping-label__item {
-	// padding: 16px;
-	// border-bottom: 1px solid #eee;
-
-	// .shipping-label__item-created {
-	// 	color: $gray;
-	// 	font-size: 12px;
-	// }
-
-	// &:last-child {
-	// 	border: none;
-	// }
-
 	p {
 		margin-bottom: 3px;
 		text-align: left;
 
 		&.shipping-label__item-tracking {
-			// margin-bottom: 16px;
 			font-size: 12px;
 
 			a:focus {
@@ -30,16 +17,6 @@
 				box-shadow: none;
 			}
 		}
-
-		// & .shipping-label__item-detail {
-		// 	font-weight: bold;
-		// 	font-size: 14px;
-		// 	color: $gray-dark;
-		// 	cursor: help;
-		// 	text-decoration: underline;
-		// 	text-decoration-color: $gray-dark;
-		// 	text-decoration-style: dotted;
-		// }
 	}
 
 	.shipping-label__new-label-button {

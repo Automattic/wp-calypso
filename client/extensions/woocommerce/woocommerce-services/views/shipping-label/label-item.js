@@ -16,12 +16,7 @@ import ButtonGroup from 'components/button-group';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import TrackingLink from './tracking-link';
-//import InfoTooltip from 'components/info-tooltip';
 import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-
-// const formatDate = ( date ) => {
-// 	return moment( date ).format( 'MMMM Do YYYY, h:mm a' );
-// };
 
 class LabelItem extends Component {
 	renderRefund = ( label ) => {
@@ -78,15 +73,6 @@ class LabelItem extends Component {
 				{ __( 'Label #%(labelIndex)s', { args: { labelIndex: label.labelIndex + 1 } } ) }
 			</span>
 		);
-		// return (
-		// 	<InfoTooltip anchor={ tooltipAnchor }>
-		// 		<h3>{ label.packageName }</h3>
-		// 		<p>{ label.serviceName }</p>
-		// 		<ul>
-		// 			{ label.productNames.map( ( productName, productIdx ) => <li key={ productIdx }>{ productName }</li> ) }
-		// 		</ul>
-		// 	</InfoTooltip>
-		// );
 	};
 
 	render() {
