@@ -55,6 +55,7 @@ import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import config from 'config';
+import { CHECKOUT_US_ADDRESS_FORMAT_COUNTRIES } from 'my-sites/checkout/constants';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
@@ -144,6 +145,10 @@ export class DomainDetailsForm extends PureComponent {
 
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
+	}
+
+	isInternationalAddress() {
+		return ! includes( CHECKOUT_US_ADDRESS_FORMAT_COUNTRIES, formState.getFieldValue( this.state.form, 'countryCode' ) );
 	}
 
 	switchToNextStep() {
@@ -427,19 +432,20 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) {
+		const isInternationalAddress = this.isInternationalAddress();
+
 		return (
 			<div className="checkout__domain-details-country-dependent-address-fields">
 				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
+				{ isInternationalAddress && this.renderPostalCodeField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
+				{ ! isInternationalAddress && ! needsOnlyGoogleAppsDetails && this.renderStateField() }
+				{ ! isInternationalAddress && this.renderPostalCodeField() }
 			</div>
 		);
 	}
 
-	renderDetailsForm() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
-
+	renderDetailsForm( needsOnlyGoogleAppsDetails ) {
 		return (
 			<form>
 				{ this.renderNameFields() }
@@ -521,7 +527,7 @@ export class DomainDetailsForm extends PureComponent {
 		}
 	}
 
-	// We want to cache the functions to avoid triggering unecessary rerenders
+	// We want to cache the functions to avoid triggering unnecessary rerenders
 	getInputRefCallback( name ) {
 		if ( ! this.inputRefCallbacks[ name ] ) {
 			this.inputRefCallbacks[ name ] = el => ( this.inputRefs[ name ] = el );
@@ -530,11 +536,11 @@ export class DomainDetailsForm extends PureComponent {
 		return this.inputRefCallbacks[ name ];
 	}
 
-	renderCurrentForm() {
+	renderCurrentForm( needsOnlyGoogleAppsDetails ) {
 		const { currentStep } = this.state;
 		return includes( tldsWithAdditionalDetailsForms, currentStep )
 			? this.renderExtraDetailsForm( this.state.currentStep )
-			: this.renderDetailsForm();
+			: this.renderDetailsForm( needsOnlyGoogleAppsDetails );
 	}
 
 	render() {
@@ -543,6 +549,7 @@ export class DomainDetailsForm extends PureComponent {
 				'domain-details': true,
 				selected: true,
 				'only-google-apps-details': needsOnlyGoogleAppsDetails,
+				'is-international-address': this.isInternationalAddress(),
 			} );
 
 		let title;
@@ -561,7 +568,7 @@ export class DomainDetailsForm extends PureComponent {
 					this.allDomainRegistrationsSupportPrivacy() &&
 					this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
-					{ this.renderCurrentForm() }
+					{ this.renderCurrentForm( needsOnlyGoogleAppsDetails ) }
 				</PaymentBox>
 			</div>
 		);
