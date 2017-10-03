@@ -9,6 +9,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
+import ExtensionRedirect from 'blocks/extension-redirect';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -23,6 +24,7 @@ const Settings = ( {
 
 	return (
 		<Main className={ mainClassName }>
+			<ExtensionRedirect pluginId="zoninator" siteId={ siteId } />
 			<QueryZones siteId={ siteId } />
 			<DocumentHead title={ translate( 'WP Zone Manager' ) } />
 			{ children }
