@@ -1,70 +1,71 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
+import { flow, noop, partial } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var DetailItem = require( './detail-item' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	HeaderCake = require( 'components/header-cake' ),
-	preloadImage = require( '../preload-image' );
+import MediaUtils from 'lib/media/utils';
+import HeaderCake from 'components/header-cake';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import DetailItem from './detail-item';
+import preloadImage from '../preload-image';
 
-export const EditorMediaModalDetail = React.createClass( {
-	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number,
-		onSelectedIndexChange: React.PropTypes.func,
-		onReturnToList: React.PropTypes.func,
-		onEdit: React.PropTypes.func,
-		onRestore: React.PropTypes.func,
-	},
+class EditorMediaModalDetail extends Component {
 
-	getDefaultProps: function() {
-		return {
-			selectedIndex: 0,
-			onSelectedIndexChange: noop
-		};
-	},
+	static propTypes = {
+		site: PropTypes.object,
+		items: PropTypes.array,
+		selectedIndex: PropTypes.number,
+		onSelectedIndexChange: PropTypes.func,
+		onReturnToList: PropTypes.func,
+		onEdit: PropTypes.func,
+		onRestore: PropTypes.func,
+	};
 
-	componentDidMount: function() {
+	static defaultProps = {
+		selectedIndex: 0,
+		onSelectedIndexChange: noop,
+	};
+
+	componentDidMount() {
 		this.preloadImages();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.preloadImages();
-	},
+	}
 
-	preloadImages: function() {
-		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-			var src = MediaUtils.url( image, {
+	preloadImages() {
+		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( ( image ) => {
+			const src = MediaUtils.url( image, {
 				photon: this.props.site && ! this.props.site.is_private
 			} );
 
 			preloadImage( src );
-		}, this );
-	},
+		} );
+	}
 
-	incrementIndex: function( increment ) {
-		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-	},
+	incrementIndex = () => this.props.onSelectedIndexChange( this.props.selectedIndex + 1 )
 
-	render: function() {
+	decrementIndex = () => this.props.onSelectedIndexChange( this.props.selectedIndex - 1 )
+
+	render() {
 		const {
 			items,
 			selectedIndex,
 			site,
-
 			onEditImageItem,
 			onEditVideoItem,
 			onRestoreItem,
 			onReturnToList,
+			translate,
 		} = this.props;
 
 		const item = items[ selectedIndex ];
@@ -72,23 +73,32 @@ export const EditorMediaModalDetail = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
+				<HeaderCake onClick={ onReturnToList } backText={ translate( 'Media Library' ) } />
 				<DetailItem
 					site={ site }
 					item={ item }
 					hasPreviousItem={ selectedIndex - 1 >= 0 }
 					hasNextItem={ selectedIndex + 1 < items.length }
-					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
+					onShowPreviousItem={ this.decrementIndex }
+					onShowNextItem={ this.incrementIndex }
 					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
+					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+				/>
 			</div>
 		);
 	}
-} );
+}
 
-export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( EditorMediaModalDetail );
+const enhance = flow(
+	localize,
+	connect(
+		null,
+		{
+			onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+			onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+			onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
+		}
+	)
+);
+
+export default enhance( EditorMediaModalDetail );
