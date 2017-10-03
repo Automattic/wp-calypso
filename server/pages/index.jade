@@ -59,6 +59,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			if sectionCss
 				link(rel='stylesheet', id='section-css', href=sectionCss)
 
+		//- Preload our scripts
 		if i18nLocaleScript
 			link(rel='preload' as='script' href=i18nLocaleScript)
 		if 'development' === env || isDebug
