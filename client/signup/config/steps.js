@@ -130,6 +130,13 @@ export default {
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
+	'plans-atomic-store': {
+		stepName: 'plans-atomic-store',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
+	},
+
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,

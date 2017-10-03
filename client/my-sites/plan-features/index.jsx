@@ -271,6 +271,9 @@ class PlanFeatures extends Component {
 					case 'grid':
 						audience = planConstantObj.getPortfolioAudience();
 						break;
+					case 'store':
+						audience = planConstantObj.getStoreAudience();
+						break;
 					default:
 						audience = planConstantObj.getAudience();
 				}
@@ -610,8 +613,9 @@ export default connect(
 					primaryUpgrade: (
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
-						popular,
-						newPlan
+						popular ||
+						newPlan ||
+						plans.length === 1
 					),
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan: relatedMonthlyPlan
