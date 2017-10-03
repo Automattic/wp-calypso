@@ -10,7 +10,7 @@ import sinon from 'sinon';
 import { identity } from 'lodash';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { MappedDomain } from '../mapped-domain.jsx';
 
