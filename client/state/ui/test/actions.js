@@ -35,7 +35,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setPreviewShowing()', () => {
-		it( 'should return an action object where isShowing equals to true', () => {
+		it( 'should return an action object where isShowing is true', () => {
 			const action = setPreviewShowing( true );
 
 			expect( action ).to.eql( {
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object where isShowing equals to false', () => {
+		it( 'should return an action object where isShowing is false', () => {
 			const action = setPreviewShowing( false );
 
 			expect( action ).to.eql( {
@@ -57,7 +57,7 @@ describe( 'actions', () => {
 	describe( 'setRoute()', () => {
 		const route = '/foo';
 
-		it( 'should return an action object with path and no query arguments', () => {
+		it( 'should return an action with an empty query object if no query is supplied', () => {
 			const action = setRoute( route );
 
 			expect( action ).to.eql( {
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSection()', () => {
-		it( 'should return an action object where hasSidebar equals true by default', () => {
+		it( 'should return an action object where hasSidebar is true by default', () => {
 			expect( setSection() ).to.eql( {
 				type: SECTION_SET,
 				hasSidebar: true,
