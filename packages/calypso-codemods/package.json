@@ -1,0 +1,23 @@
+{
+  "name": "calypso-codemods",
+  "version": "0.1.0",
+  "description": "jscodeshift transforms used to upgrade calypso code",
+  "main": "run.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Automattic/calypso-codemods.git"
+  },
+  "author": "samouri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Automattic/calypso-codemods/issues"
+  },
+  "homepage": "https://github.com/Automattic/calypso-codemods#readme",
+  "devDependencies": {
+    "jest": "^21.2.1",
+    "prettier": "^1.7.4"
+  }
+}
