@@ -12,7 +12,6 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 /**
@@ -34,12 +33,6 @@ import { PluginsList } from '../';
 import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
-	before( () => {
-		const ReactClass = require( 'react/lib/ReactClass' );
-
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-	} );
-
 	describe( 'rendering bulk actions', function() {
 		let renderedPluginsList, plugins, props;
 

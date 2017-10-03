@@ -13,7 +13,6 @@ jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => {}
 } ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
 jest.mock( 'post-editor/editor-document-head', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-action-bar', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-drawer', () => require( 'components/empty-component' ) );
