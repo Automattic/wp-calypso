@@ -36,29 +36,17 @@ export const initiateTransferWithPluginZip = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
-	if ( success === false ) {
-		dispatch( errorNotice( translate( 'The uploaded file is not a valid plugin.' ) ) );
-		dispatch( pluginUploadError( siteId, 'Initiate failed' ) );
-		dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
-			context: 'plugin_upload',
-			error: 'Initiate failed',
-		} ) );
-		return;
-	}
-
-	dispatch( recordTracksEvent(
-		'calypso_automated_transfer_inititate_success',
-		{ context: 'plugin_upload' }
-	) );
-	dispatch( getAutomatedTransferStatus( siteId ) );
-};
-
 const showErrorNotice = ( dispatch, error ) => {
 	if ( error.error === 'invalid_input' ) {
 		dispatch( errorNotice( translate( 'The uploaded file is not a valid zip.' ) ) );
 		return;
 	}
+
+	if ( error.error === 'api_success_false' ) {
+		dispatch( errorNotice( translate( 'The uploaded file is not a valid plugin.' ) ) );
+		return;
+	}
+
 	if ( error.error ) {
 		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
 			args: { error: error.error },
@@ -75,6 +63,19 @@ export const receiveError = ( { dispatch }, { siteId }, error ) => {
 	} ) );
 	showErrorNotice( dispatch, error );
 	dispatch( pluginUploadError( siteId, error ) );
+};
+
+export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
+	if ( success === false ) {
+		receiveError( { dispatch }, { siteId }, { error: 'api_success_false' } );
+		return;
+	}
+
+	dispatch( recordTracksEvent(
+		'calypso_automated_transfer_inititate_success',
+		{ context: 'plugin_upload' }
+	) );
+	dispatch( getAutomatedTransferStatus( siteId ) );
 };
 
 export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
