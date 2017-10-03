@@ -27,6 +27,7 @@ import {
 	NESTED_SIDEBAR_REVISIONS,
 	NestedSidebarPropType,
 } from 'post-editor/editor-sidebar/constants';
+import HistoryButton from 'post-editor/editor-ground-control/history-button';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -318,6 +319,7 @@ export class EditorGroundControl extends PureComponent {
 						) }
 					</div>
 				) }
+				<HistoryButton onClick={ this.onSaveButtonClick } />
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);
