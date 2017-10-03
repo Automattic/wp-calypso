@@ -83,10 +83,20 @@ describe( 'receiveResponse', () => {
 	it( 'should dispatch error notice on unsuccessful initiation', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			notice: { text: 'The uploaded file is not a valid plugin.' },
 		} );
+	} );
+
+	it( 'should dispatch a tracks call on unsuccessful initiation', () => {
+		const dispatch = sinon.spy();
+		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+				context: 'plugin_upload',
+				error: 'Initiate failed',
+			} )
+		);
 	} );
 } );
 

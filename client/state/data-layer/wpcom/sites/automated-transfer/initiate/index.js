@@ -40,6 +40,10 @@ export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
 	if ( success === false ) {
 		dispatch( errorNotice( translate( 'The uploaded file is not a valid plugin.' ) ) );
 		dispatch( pluginUploadError( siteId, 'Initiate failed' ) );
+		dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+			context: 'plugin_upload',
+			error: 'Initiate failed',
+		} ) );
 		return;
 	}
 
@@ -57,7 +61,7 @@ const showErrorNotice = ( dispatch, error ) => {
 	}
 	if ( error.error ) {
 		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
-			args: { error: error.error }
+			args: { error: error.error },
 		} ) ) );
 		return;
 	}
@@ -84,5 +88,5 @@ export default {
 		receiveResponse,
 		receiveError,
 		{ onProgress: updateUploadProgress }
-	) ]
+	) ],
 };
