@@ -15,7 +15,7 @@ import {
 	products2,
 	productParams1,
 	productParams2,
-} from './fixtures';
+} from './fixtures/promotions';
 import reducer from '../reducer';
 import {
 	WOOCOMMERCE_COUPONS_UPDATED,

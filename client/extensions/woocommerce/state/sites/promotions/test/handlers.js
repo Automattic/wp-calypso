@@ -12,7 +12,7 @@ import {
 	coupons2,
 	products1,
 	products2,
-} from './fixtures';
+} from './fixtures/promotions';
 import { fetchPromotions } from '../actions';
 import {
 	promotionsRequest,
