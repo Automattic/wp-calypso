@@ -855,10 +855,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000743"
+      "version": "1.0.30000744"
     },
     "caniuse-lite": {
-      "version": "1.0.30000743"
+      "version": "1.0.30000744"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -920,11 +920,29 @@
       }
     },
     "cheerio": {
-      "version": "0.20.0",
+      "version": "0.22.0",
       "dev": true,
       "dependencies": {
         "entities": {
           "version": "1.1.1",
+          "dev": true
+        },
+        "htmlparser2": {
+          "version": "3.9.2",
+          "dev": true
+        },
+        "readable-stream": {
+          "version": "2.3.3",
+          "dev": true,
+          "dependencies": {
+            "inherits": {
+              "version": "2.0.3",
+              "dev": true
+            }
+          }
+        },
+        "string_decoder": {
+          "version": "1.0.3",
           "dev": true
         }
       }
@@ -1627,8 +1645,18 @@
       "version": "1.0.0"
     },
     "enzyme": {
-      "version": "2.4.1",
-      "dev": true
+      "version": "2.9.1",
+      "dev": true,
+      "dependencies": {
+        "lodash": {
+          "version": "4.17.4",
+          "dev": true
+        },
+        "uuid": {
+          "version": "3.1.0",
+          "dev": true
+        }
+      }
     },
     "errno": {
       "version": "0.1.4",
@@ -1795,20 +1823,8 @@
       "version": "1.1.0",
       "dev": true,
       "dependencies": {
-        "fast-levenshtein": {
-          "version": "1.1.4",
-          "dev": true
-        },
         "jest-docblock": {
           "version": "20.0.3",
-          "dev": true
-        },
-        "optionator": {
-          "version": "0.8.1",
-          "dev": true
-        },
-        "wordwrap": {
-          "version": "1.0.0",
           "dev": true
         }
       }
@@ -1829,8 +1845,16 @@
           "version": "1.5.0",
           "dev": true
         },
+        "fast-levenshtein": {
+          "version": "2.0.6",
+          "dev": true
+        },
         "inquirer": {
           "version": "0.12.0",
+          "dev": true
+        },
+        "optionator": {
+          "version": "0.8.2",
           "dev": true
         },
         "strip-bom": {
@@ -1847,6 +1871,10 @@
         },
         "user-home": {
           "version": "2.0.0",
+          "dev": true
+        },
+        "wordwrap": {
+          "version": "1.0.0",
           "dev": true
         }
       }
@@ -2025,7 +2053,7 @@
       "version": "1.0.2"
     },
     "fast-levenshtein": {
-      "version": "2.0.6",
+      "version": "1.1.4",
       "dev": true
     },
     "fast-luhn": {
@@ -2667,6 +2695,10 @@
     },
     "function-bind": {
       "version": "1.1.1"
+    },
+    "function.prototype.name": {
+      "version": "1.0.3",
+      "dev": true
     },
     "fuse.js": {
       "version": "2.6.1"
@@ -3640,21 +3672,7 @@
     },
     "jest-environment-jsdom": {
       "version": "21.2.1",
-      "dev": true,
-      "dependencies": {
-        "acorn": {
-          "version": "4.0.13",
-          "dev": true
-        },
-        "jsdom": {
-          "version": "9.12.0",
-          "dev": true
-        },
-        "webidl-conversions": {
-          "version": "4.0.2",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "jest-environment-node": {
       "version": "21.2.1",
@@ -4147,18 +4165,12 @@
       }
     },
     "jsdom": {
-      "version": "7.2.2",
+      "version": "9.12.0",
       "dev": true,
-      "optional": true,
       "dependencies": {
         "acorn": {
-          "version": "2.7.0",
+          "version": "4.0.13",
           "dev": true
-        },
-        "acorn-globals": {
-          "version": "1.0.9",
-          "dev": true,
-          "optional": true
         }
       }
     },
@@ -4393,6 +4405,14 @@
     "lodash.assign": {
       "version": "4.2.0"
     },
+    "lodash.assignin": {
+      "version": "4.2.0",
+      "dev": true
+    },
+    "lodash.bind": {
+      "version": "4.2.1",
+      "dev": true
+    },
     "lodash.camelcase": {
       "version": "4.3.0"
     },
@@ -4400,12 +4420,24 @@
       "version": "3.0.2",
       "dev": true
     },
+    "lodash.defaults": {
+      "version": "4.2.0",
+      "dev": true
+    },
     "lodash.escape": {
       "version": "3.2.0",
       "dev": true
     },
+    "lodash.filter": {
+      "version": "4.6.0",
+      "dev": true
+    },
     "lodash.flatten": {
       "version": "4.4.0"
+    },
+    "lodash.foreach": {
+      "version": "4.5.0",
+      "dev": true
     },
     "lodash.isarguments": {
       "version": "3.1.0",
@@ -4422,7 +4454,27 @@
       "version": "3.1.2",
       "dev": true
     },
+    "lodash.map": {
+      "version": "4.6.0",
+      "dev": true
+    },
+    "lodash.merge": {
+      "version": "4.6.0",
+      "dev": true
+    },
+    "lodash.pick": {
+      "version": "4.4.0",
+      "dev": true
+    },
     "lodash.pickby": {
+      "version": "4.6.0",
+      "dev": true
+    },
+    "lodash.reduce": {
+      "version": "4.6.0",
+      "dev": true
+    },
+    "lodash.reject": {
       "version": "4.6.0",
       "dev": true
     },
@@ -4432,6 +4484,10 @@
     },
     "lodash.snakecase": {
       "version": "4.1.1"
+    },
+    "lodash.some": {
+      "version": "4.6.0",
+      "dev": true
     },
     "lodash.template": {
       "version": "3.6.2",
@@ -4641,7 +4697,7 @@
       }
     },
     "mout": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "dev": true
     },
     "ms": {
@@ -4927,6 +4983,10 @@
     "object.assign": {
       "version": "4.0.4"
     },
+    "object.entries": {
+      "version": "1.0.4",
+      "dev": true
+    },
     "object.omit": {
       "version": "2.0.1"
     },
@@ -4957,7 +5017,7 @@
       "dev": true
     },
     "optionator": {
-      "version": "0.8.2",
+      "version": "0.8.1",
       "dev": true,
       "dependencies": {
         "wordwrap": {
@@ -5540,10 +5600,6 @@
       "resolved": "git://github.com/reactjs/react-codemod.git#0e6aabb233453b17c23d68bb181a3d70ad03f9c9",
       "dev": true,
       "dependencies": {
-        "acorn": {
-          "version": "4.0.13",
-          "dev": true
-        },
         "babel-jest": {
           "version": "15.0.0",
           "dev": true
@@ -5692,10 +5748,6 @@
           "version": "17.0.2",
           "dev": true
         },
-        "jsdom": {
-          "version": "9.12.0",
-          "dev": true
-        },
         "minimist": {
           "version": "1.2.0",
           "dev": true
@@ -5738,10 +5790,6 @@
         },
         "watch": {
           "version": "0.10.0",
-          "dev": true
-        },
-        "webidl-conversions": {
-          "version": "4.0.2",
           "dev": true
         },
         "yargs": {
@@ -7126,9 +7174,8 @@
       }
     },
     "webidl-conversions": {
-      "version": "2.0.1",
-      "dev": true,
-      "optional": true
+      "version": "4.0.2",
+      "dev": true
     },
     "webpack": {
       "version": "3.4.1",
@@ -7510,11 +7557,6 @@
           "dev": true
         }
       }
-    },
-    "whatwg-url-compat": {
-      "version": "0.6.5",
-      "dev": true,
-      "optional": true
     },
     "which": {
       "version": "1.3.0"
