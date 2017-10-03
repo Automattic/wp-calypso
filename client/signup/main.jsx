@@ -9,7 +9,7 @@ import url from 'url';
 import debugModule from 'debug';
 import page from 'page';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import {
 	assign,
 	defer,
