@@ -259,6 +259,11 @@ export class DomainDetailsForm extends PureComponent {
 		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
 	}
 
+	shouldDisplayAddressFieldset() {
+		const { contactDetails } = this.props;
+		return !! ( contactDetails || {} ).countryCode;
+	}
+
 	renderSubmitButton() {
 		const continueText = this.hasAnotherStep()
 			? this.props.translate( 'Continue' )
@@ -381,6 +386,17 @@ export class DomainDetailsForm extends PureComponent {
 		);
 	}
 
+	renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) {
+		return (
+			<div className="checkout__domain-details-country-dependent-address-fields">
+                { ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
+                { ! needsOnlyGoogleAppsDetails && this.renderCityField() }
+                { ! needsOnlyGoogleAppsDetails && this.renderStateField() }
+                { this.renderPostalCodeField() }
+			</div>
+		);
+	}
+
 	renderDetailsForm() {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
 
@@ -392,11 +408,8 @@ export class DomainDetailsForm extends PureComponent {
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
-
+				{ this.shouldDisplayAddressFieldset() &&
+					this.renderCountryDependentAddressFields( needsOnlyGoogleAppsDetails ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
