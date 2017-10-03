@@ -47,7 +47,7 @@ describe( 'getActivityLog()', () => {
 
 	it( 'should return log by id', () => {
 		const activityId = 'fooBarBaz';
-		const activity = { activityId: 'a', activityTs: 1 };
+		const activity = { activityId, activityTs: 1 };
 		const items = [ { activityId: 'anotherActivity', activityTs: 2 }, activity ];
 
 		const result = getActivityLog(
