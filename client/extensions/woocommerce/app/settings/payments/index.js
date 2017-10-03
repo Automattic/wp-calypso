@@ -83,7 +83,7 @@ class SettingsPayments extends Component {
 		const { isSaving, site, translate, className, finishedInitialSetup } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a>,
+			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
 			<span>{ translate( 'Payments' ) }</span>,
 		];
 
