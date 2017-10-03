@@ -26,12 +26,13 @@ import {
 	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
-	COMMENTS_ERROR,
+	COMMENTS_RECEIVE_ERROR,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
+	COMMENTS_WRITE_ERROR,
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from '../action-types';
@@ -138,7 +139,8 @@ export function items( state = {}, action ) {
 					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
-		case COMMENTS_ERROR:
+		case COMMENTS_RECEIVE_ERROR:
+		case COMMENTS_WRITE_ERROR:
 			const { error } = action;
 			return {
 				...state,
@@ -288,7 +290,19 @@ export const totalCommentsCount = createReducer(
 export const errors = createReducer(
 	{},
 	{
-		[ COMMENTS_ERROR ]: ( state, action ) => {
+		[ COMMENTS_RECEIVE_ERROR ]: ( state, action ) => {
+			const key = `${ action.siteId }-${ action.commentId }`;
+
+			if ( state[ key ] ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ key ]: { error: true },
+			};
+		},
+		[ COMMENTS_WRITE_ERROR ]: ( state, action ) => {
 			const key = `${ action.siteId }-${ action.commentId }`;
 
 			if ( state[ key ] ) {

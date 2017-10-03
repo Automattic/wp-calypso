@@ -12,7 +12,7 @@ import { map, forEach } from 'lodash';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
-	COMMENTS_ERROR,
+	COMMENTS_RECEIVE_ERROR,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 			} );
 
 			const result = items( state, {
-				type: COMMENTS_ERROR,
+				type: COMMENTS_RECEIVE_ERROR,
 				siteId: 1,
 				postId: 1,
 				commentId: 'placeholder-123',
