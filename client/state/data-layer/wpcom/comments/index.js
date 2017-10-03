@@ -23,7 +23,7 @@ import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/commen
 import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
 
-const commentsFromApi = comments =>
+export const commentsFromApi = comments =>
 	map( comments, comment => ( {
 		...comment,
 		...( comment.author && {
@@ -173,7 +173,14 @@ export const writePostCommentSuccess = (
 
 export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) => {
 	const post = getSitePost( getState(), siteId, postId );
-	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
+	const postTitle =
+		post &&
+		post.title &&
+		post.title
+			.trim()
+			.slice( 0, 20 )
+			.trim()
+			.concat( '…' );
 	const error = postTitle
 		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not retrieve comments for requested post' );

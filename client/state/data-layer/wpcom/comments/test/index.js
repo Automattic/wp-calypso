@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ import { spy } from 'sinon';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
-import { fetchPostComments, addComments, announceFailure } from '../';
+import { fetchPostComments, addComments, announceFailure, commentsFromApi } from '../';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 
 describe( 'wpcom-api', () => {
@@ -47,8 +48,8 @@ describe( 'wpcom-api', () => {
 							path: '/sites/2916284/posts/1010/replies',
 							query,
 						},
-						action,
-					),
+						action
+					)
 				);
 			} );
 
@@ -92,8 +93,8 @@ describe( 'wpcom-api', () => {
 								before: '2017-05-25T19:41:25.841Z',
 							},
 						},
-						action,
-					),
+						action
+					)
 				);
 			} );
 		} );
@@ -152,6 +153,16 @@ describe( 'wpcom-api', () => {
 					postId: 1010,
 					totalCommentsCount: 2,
 				} );
+			} );
+		} );
+
+		describe( 'commentsFromApi', () => {
+			it( 'should decode author name entities', () => {
+				const comments = [ { author: { name: 'joe' } }, { author: { name: '&#9829;' } } ];
+				expect( commentsFromApi( comments ) ).eql( [
+					{ author: { name: 'joe' } },
+					{ author: { name: '♥' } },
+				] );
 			} );
 		} );
 
