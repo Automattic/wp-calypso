@@ -78,8 +78,8 @@ function calculatePromotions( coupons, products ) {
 	if (
 		coupons &&
 		products &&
-		coupons.indexOf( null ) === -1 &&
-		products.indexOf( null ) === -1
+		-1 === coupons.indexOf( null ) &&
+		-1 === products.indexOf( null )
 	) {
 		const saleProducts = products.filter(
 			( product ) => '' !== product.sale_price

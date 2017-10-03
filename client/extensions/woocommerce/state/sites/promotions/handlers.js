@@ -70,7 +70,7 @@ export function couponsUpdated( { dispatch }, action ) {
 		debug( `Coupons ${ params.offset + 1 }-${ params.offset + coupons.length } out of ${ totalCoupons } received.` );
 
 		const remainder = totalCoupons - params.offset - coupons.length;
-		if ( remainder ) {
+		if ( 0 < remainder ) {
 			const offset = params.offset + coupons.length;
 			dispatch( fetchCoupons( siteId, { offset, per_page: params.per_page } ) );
 		}

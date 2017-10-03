@@ -39,7 +39,7 @@ class Promotions extends Component {
 		const oldSiteId = site && site.ID || null;
 
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchPromotions( site.ID );
+			this.props.fetchPromotions( newSiteId );
 		}
 	}
 
