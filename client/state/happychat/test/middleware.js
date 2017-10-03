@@ -62,6 +62,11 @@ describe( 'middleware', () => {
 						name: 'Manual Automattic Updates',
 					}
 				}
+			},
+			ui: {
+				section: {
+					name: 'reader',
+				}
 			}
 		} );
 
@@ -225,6 +230,11 @@ describe( 'middleware', () => {
 						name: 'Manual Automattic Updates',
 					}
 				}
+			},
+			ui: {
+				section: {
+					name: 'reader',
+				}
 			}
 		} );
 		let connection, store;
@@ -327,6 +337,11 @@ describe( 'middleware', () => {
 				sites: {
 					items: {
 						1: { ID: 1 }
+					}
+				},
+				ui: {
+					section: {
+						name: 'reader',
 					}
 				}
 			};
