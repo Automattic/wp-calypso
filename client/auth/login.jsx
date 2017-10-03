@@ -5,6 +5,7 @@
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import Gridicon from 'gridicons';
 
@@ -26,8 +27,8 @@ import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
-const LostPassword = localize(React.createClass( {
-	render: function() {
+const LostPassword = localize(class extends React.Component {
+    render() {
 		const url = addLocaleToWpcomUrl(
 			'https://wordpress.com/wp-login.php?action=lostpassword',
 			getLocaleSlug()
@@ -39,11 +40,11 @@ const LostPassword = localize(React.createClass( {
 				</a>
 			</p>
         );
-	},
-} ));
+	}
+});
 
-const SelfHostedInstructions = localize(React.createClass( {
-	render: function() {
+const SelfHostedInstructions = localize(class extends React.Component {
+    render() {
 		return (
             <div className="auth__self-hosted-instructions">
 				<a
@@ -83,10 +84,10 @@ const SelfHostedInstructions = localize(React.createClass( {
 				</ol>
 			</div>
         );
-	},
-} ));
+	}
+});
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'Auth',
 
 	mixins: [ LinkedStateMixin, eventRecorder ],
@@ -240,4 +241,4 @@ module.exports = localize(React.createClass( {
 			</Main>
         );
 	},
-} ));
+}));
