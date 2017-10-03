@@ -28,7 +28,7 @@ import emailVerification from './email-verification/reducer';
  * @return {Object}        Updated state
  */
 export const id = createReducer( null, {
-	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId
+	[ CURRENT_USER_ID_SET ]: ( state, action ) => get( action, 'userId', state )
 }, idSchema );
 
 export const flags = createReducer( [], {

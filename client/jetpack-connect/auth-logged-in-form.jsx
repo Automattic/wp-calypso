@@ -163,7 +163,7 @@ class LoggedInForm extends Component {
 				this.props.isSSO
 			);
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else if ( queryObject.onboarding && '1' === queryObject.onboarding ) {
+		} else if ( queryObject.onboarding ) {
 			page.redirect( '/start/jetpack-onboarding/jpo-summary' );
 		} else {
 			page.redirect( this.getRedirectionTarget() );

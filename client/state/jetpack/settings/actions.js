@@ -56,9 +56,10 @@ export const fetchSettings = ( siteId ) => {
  *
  * @param  {Int}      siteId      ID of the site.
  * @param  {Object}   settings    New settings.
+ * @param  {Boolean}  sanitize    Whether to sanitize settings to prevent double saving.
  * @return {Function}             Action thunk to update the Jetpack settings when called.
  */
-export const updateSettings = ( siteId, settings ) => {
+export const updateSettings = ( siteId, settings, sanitize = true ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_SETTINGS_UPDATE,
@@ -66,7 +67,11 @@ export const updateSettings = ( siteId, settings ) => {
 			settings
 		} );
 
-		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules( sanitizeSettings( settings ) ) )
+		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules(
+			sanitize
+				? sanitizeSettings( settings )
+				: settings
+		) )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
