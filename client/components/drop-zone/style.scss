@@ -65,11 +65,13 @@
 	font-size: 30px;
 }
 
+.editor-drawer-well .drop-zone.editor-featured-image__dropzone {
+	margin: 0;
+}
+
 .drop-zone.editor-featured-image__dropzone {
 	background-color: rgba( $orange-jazzy, 0.7 );
 	border: 6px solid $orange-jazzy;
-
-	margin: 0;
 
 	&.is-dragging-over-element {
 		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );

@@ -522,8 +522,18 @@ module.exports = React.createClass( {
 			'is-visible': mode === 'html'
 		} );
 
+		/*
+		 * Using `classnames()` here is just a hack to avoid the linter complaining that the
+		 * container is named `tinymce-container` instead of `tinymce`. Ideally the containing
+		 * `div` and the `textarea` should be refactored so that the `div` has the `tinymce`
+		 * class, but that would interfere with higher priority fixes. This component is slated
+		 * for some refactoring in the near future, so that will be a more convenient time to
+		 * clean this up.
+		 */
+		const containerClassName = classnames( 'tinymce-container' );
+
 		return (
-			<div>
+			<div className={ containerClassName }>
 				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) &&
 					<EditorHtmlToolbar
 						content={ this.refs.text }
