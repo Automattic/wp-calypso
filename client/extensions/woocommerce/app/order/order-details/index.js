@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -11,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
@@ -35,9 +37,9 @@ class OrderDetails extends Component {
 	}
 
 	updateStatus = event => {
-		const { siteId } = this.props;
+		const { siteId, order } = this.props;
 		if ( siteId ) {
-			this.props.editOrder( siteId, { status: event.target.value } );
+			this.props.editOrder( siteId, { id: order.id, status: event.target.value } );
 		}
 	};
 
@@ -45,7 +47,7 @@ class OrderDetails extends Component {
 		const { isEditing, order } = this.props;
 
 		return isEditing ? (
-			<OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
+			<OrderStatusSelect value={ order.status } onChange={ this.updateStatus } />
 		) : (
 			<OrderStatus status={ order.status } showShipping={ false } />
 		);
@@ -86,16 +88,19 @@ class OrderDetails extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const site = getSelectedSiteWithFallback( state );
-	const siteId = site ? site.ID : false;
-	const isEditing = isCurrentlyEditingOrder( state );
-	const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
+export default connect(
+	( state, props ) => {
+		const site = getSelectedSiteWithFallback( state );
+		const siteId = site ? site.ID : false;
+		const isEditing = isCurrentlyEditingOrder( state );
+		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
 
-	return {
-		isEditing,
-		order,
-		site,
-		siteId,
-	};
-} )( localize( OrderDetails ) );
+		return {
+			isEditing,
+			order,
+			site,
+			siteId,
+		};
+	},
+	dispatch => bindActionCreators( { editOrder }, dispatch )
+)( localize( OrderDetails ) );

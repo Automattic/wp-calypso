@@ -61,8 +61,8 @@ class Order extends Component {
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
-		const { siteId } = this.props;
-		// this.props.updateOrder( siteId, order );
+		const { siteId, order } = this.props;
+		this.props.updateOrder( siteId, order );
 		this.props.clearOrderEdits( siteId );
 	};
 
