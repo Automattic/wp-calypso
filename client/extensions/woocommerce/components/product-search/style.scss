@@ -49,6 +49,19 @@
 	&.is-not-found {
 		overflow-y: visible;
 
+		.product-search__item {
+			cursor: default;
+
+			&:hover {
+				background: $white;
+				color: $gray-text;
+
+				.product-search__sku {
+					color: $gray-text-min;
+				}
+			}
+		}
+
 		.product-search__image {
 			padding: 8px;
 			flex: 0 0 24px;
