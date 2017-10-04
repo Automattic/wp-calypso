@@ -10,7 +10,27 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items, queryRequests, queries, siteRequests, edits } from '../reducer';
 import PostQueryManager from 'lib/query-manager/post';
-import { EDITOR_START, EDITOR_STOP, POST_DELETE, POST_DELETE_SUCCESS, POST_DELETE_FAILURE, POST_EDIT, POST_REQUEST, POST_REQUEST_SUCCESS, POST_REQUEST_FAILURE, POST_RESTORE, POST_RESTORE_FAILURE, POST_SAVE, POST_SAVE_SUCCESS, POSTS_RECEIVE, POSTS_REQUEST, POSTS_REQUEST_FAILURE, POSTS_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	EDITOR_START,
+	EDITOR_STOP,
+	POST_DELETE,
+	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
+	POST_EDIT,
+	POST_REQUEST,
+	POST_REQUEST_SUCCESS,
+	POST_REQUEST_FAILURE,
+	POST_RESTORE,
+	POST_RESTORE_FAILURE,
+	POST_SAVE,
+	POST_SAVE_SUCCESS,
+	POSTS_RECEIVE,
+	POSTS_REQUEST,
+	POSTS_REQUEST_FAILURE,
+	POSTS_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

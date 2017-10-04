@@ -10,7 +10,11 @@ import deepFreeze from 'deep-freeze';
  */
 import order from '../../test/fixtures/order';
 import { isSaving } from '../reducer';
-import { WOOCOMMERCE_ORDER_REFUND_CREATE, WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS, WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_ORDER_REFUND_CREATE,
+	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
+	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
+} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'isSaving', () => {

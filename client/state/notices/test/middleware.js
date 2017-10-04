@@ -9,10 +9,20 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import noticesMiddleware, { handlers, onPostDeleteFailure, onPostRestoreFailure, onPostSaveSuccess } from '../middleware';
+import noticesMiddleware, {
+	handlers,
+	onPostDeleteFailure,
+	onPostRestoreFailure,
+	onPostSaveSuccess,
+} from '../middleware';
 import { dispatchSuccess, dispatchError } from '../utils';
 import PostQueryManager from 'lib/query-manager/post';
-import { NOTICE_CREATE, POST_DELETE_FAILURE, POST_RESTORE_FAILURE, POST_SAVE_SUCCESS } from 'state/action-types';
+import {
+	NOTICE_CREATE,
+	POST_DELETE_FAILURE,
+	POST_RESTORE_FAILURE,
+	POST_SAVE_SUCCESS,
+} from 'state/action-types';
 import { successNotice } from 'state/notices/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 

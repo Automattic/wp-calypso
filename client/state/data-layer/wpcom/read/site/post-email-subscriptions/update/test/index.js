@@ -9,7 +9,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { requestUpdatePostEmailSubscription, receiveUpdatePostEmailSubscription, receiveUpdatePostEmailSubscriptionError } from '../';
+import {
+	requestUpdatePostEmailSubscription,
+	receiveUpdatePostEmailSubscription,
+	receiveUpdatePostEmailSubscriptionError,
+} from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';

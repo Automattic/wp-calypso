@@ -8,7 +8,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { showError, uploadProgress, url } from '../reducer';
-import { VIDEO_EDITOR_SET_POSTER_URL, VIDEO_EDITOR_SHOW_ERROR, VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS } from 'state/action-types';
+import {
+	VIDEO_EDITOR_SET_POSTER_URL,
+	VIDEO_EDITOR_SHOW_ERROR,
+	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

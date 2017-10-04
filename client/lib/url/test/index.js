@@ -7,7 +7,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isExternal, withoutHttp, addSchemeIfMissing, setUrlScheme, urlToSlug, resemblesUrl, omitUrlParams } from '../';
+import {
+	isExternal,
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
+	urlToSlug,
+	resemblesUrl,
+	omitUrlParams,
+} from '../';
 
 describe( 'withoutHttp', () => {
 	it( 'should return null if URL is not provided', () => {

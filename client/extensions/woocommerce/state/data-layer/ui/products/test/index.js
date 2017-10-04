@@ -9,11 +9,26 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { actionAppendProductVariations, handleProductCategoryEdit, makeProductActionList } from '../';
+import {
+	actionAppendProductVariations,
+	handleProductCategoryEdit,
+	makeProductActionList,
+} from '../';
 import { actionListStepFailure } from 'woocommerce/state/action-list/actions';
-import { WOOCOMMERCE_PRODUCT_CREATE, WOOCOMMERCE_PRODUCT_UPDATE, WOOCOMMERCE_PRODUCT_VARIATION_CREATE, WOOCOMMERCE_PRODUCT_VARIATION_UPDATE, WOOCOMMERCE_PRODUCT_VARIATION_DELETE, WOOCOMMERCE_PRODUCT_CATEGORY_CREATE } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+} from 'woocommerce/state/action-types';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
-import { editProduct, editProductAttribute, editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
+import {
+	editProduct,
+	editProductAttribute,
+	editProductRemoveCategory,
+} from 'woocommerce/state/ui/products/actions';
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {

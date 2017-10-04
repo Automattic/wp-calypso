@@ -9,7 +9,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, isFetching } from '../reducer';
-import { DESERIALIZE, PRODUCTS_LIST_RECEIVE, PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE, SERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	PRODUCTS_LIST_RECEIVE,
+	PRODUCTS_LIST_REQUEST,
+	PRODUCTS_LIST_REQUEST_FAILURE,
+	SERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

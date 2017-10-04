@@ -7,7 +7,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getBrokenSiteUserConnectionsForService, getConnectionsBySiteId, getSiteUserConnections, getSiteUserConnectionsForService, getRemovableConnections, hasFetchedConnections, isFetchingConnection, isFetchingConnections } from '../selectors';
+import {
+	getBrokenSiteUserConnectionsForService,
+	getConnectionsBySiteId,
+	getSiteUserConnections,
+	getSiteUserConnectionsForService,
+	getRemovableConnections,
+	hasFetchedConnections,
+	isFetchingConnection,
+	isFetchingConnections,
+} from '../selectors';
 
 describe( 'getBrokenSiteUserConnectionsForService()', () => {
 	const state = {

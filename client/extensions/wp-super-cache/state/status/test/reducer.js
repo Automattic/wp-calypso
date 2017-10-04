@@ -8,7 +8,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { WP_SUPER_CACHE_RECEIVE_STATUS, WP_SUPER_CACHE_REQUEST_STATUS, WP_SUPER_CACHE_REQUEST_STATUS_FAILURE } from '../../action-types';
+import {
+	WP_SUPER_CACHE_RECEIVE_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
+} from '../../action-types';
 import reducer from '../reducer';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';

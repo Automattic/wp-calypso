@@ -7,7 +7,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { openPaymentMethodForEdit, closeEditingPaymentMethod, cancelEditingPaymentMethod, changePaymentMethodEnabled, changePaymentMethodField } from '../actions';
+import {
+	openPaymentMethodForEdit,
+	closeEditingPaymentMethod,
+	cancelEditingPaymentMethod,
+	changePaymentMethodEnabled,
+	changePaymentMethodField,
+} from '../actions';
 import reducer from '../reducer';
 
 const siteId = 123;

@@ -9,7 +9,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT, WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT,
+	WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
+} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should store the currently editing reply', () => {

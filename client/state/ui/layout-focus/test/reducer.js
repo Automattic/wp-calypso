@@ -9,7 +9,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import layoutFocus from '../reducer';
-import { LAYOUT_FOCUS_SET, LAYOUT_NEXT_FOCUS_SET, LAYOUT_NEXT_FOCUS_ACTIVATE } from 'state/action-types';
+import {
+	LAYOUT_FOCUS_SET,
+	LAYOUT_NEXT_FOCUS_SET,
+	LAYOUT_NEXT_FOCUS_ACTIVATE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'starts with current focus set to "content"', function() {

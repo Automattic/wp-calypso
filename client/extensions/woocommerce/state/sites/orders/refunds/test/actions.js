@@ -11,7 +11,11 @@ import { spy } from 'sinon';
 import order from '../../test/fixtures/order';
 import { sendRefund } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { WOOCOMMERCE_ORDER_REFUND_CREATE, WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE, WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_ORDER_REFUND_CREATE,
+	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
+	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
+} from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#sendRefund()', () => {

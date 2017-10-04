@@ -9,7 +9,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { requestRelatedPosts } from '../actions';
-import { READER_RELATED_POSTS_REQUEST, READER_RELATED_POSTS_REQUEST_SUCCESS, READER_RELATED_POSTS_REQUEST_FAILURE, READER_RELATED_POSTS_RECEIVE } from 'state/action-types';
+import {
+	READER_RELATED_POSTS_REQUEST,
+	READER_RELATED_POSTS_REQUEST_SUCCESS,
+	READER_RELATED_POSTS_REQUEST_FAILURE,
+	READER_RELATED_POSTS_RECEIVE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts( posts ) {

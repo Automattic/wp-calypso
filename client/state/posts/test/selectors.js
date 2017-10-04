@@ -9,7 +9,29 @@ import { values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPost, getNormalizedPost, getSitePosts, getSitePost, getSitePostsForQuery, isPostPublished, isRequestingSitePostsForQuery, getSitePostsFoundForQuery, getSitePostsLastPageForQuery, isSitePostsLastPageForQuery, getSitePostsForQueryIgnoringPage, isRequestingSitePostsForQueryIgnoringPage, isEditedPostPrivate, isPrivateEditedPostPasswordValid, getEditedPost, getPostEdits, getEditedPostValue, getEditedPostSlug, isEditedPostDirty, getPostPreviewUrl, getSitePostsByTerm } from '../selectors';
+import {
+	getPost,
+	getNormalizedPost,
+	getSitePosts,
+	getSitePost,
+	getSitePostsForQuery,
+	isPostPublished,
+	isRequestingSitePostsForQuery,
+	getSitePostsFoundForQuery,
+	getSitePostsLastPageForQuery,
+	isSitePostsLastPageForQuery,
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQueryIgnoringPage,
+	isEditedPostPrivate,
+	isPrivateEditedPostPasswordValid,
+	getEditedPost,
+	getPostEdits,
+	getEditedPostValue,
+	getEditedPostSlug,
+	isEditedPostDirty,
+	getPostPreviewUrl,
+	getSitePostsByTerm,
+} from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 

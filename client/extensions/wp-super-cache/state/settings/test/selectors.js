@@ -7,7 +7,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingSettings, isRestoringSettings, isSavingSettings, isSettingsSaveSuccessful, getSettings, getSettingsSaveStatus } from '../selectors';
+import {
+	isRequestingSettings,
+	isRestoringSettings,
+	isSavingSettings,
+	isSettingsSaveSuccessful,
+	getSettings,
+	getSettingsSaveStatus,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

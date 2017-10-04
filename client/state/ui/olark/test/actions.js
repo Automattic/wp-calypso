@@ -10,7 +10,13 @@ import { expect } from 'chai';
 import { olarkTimeout, requestOlark } from '../actions';
 import { setChatAvailability, operatorsAvailable, operatorsAway } from '../actions';
 import { OLARK_TIMEOUT_MS } from '../constants';
-import { OLARK_REQUEST, OLARK_TIMEOUT, OLARK_OPERATORS_AVAILABLE, OLARK_OPERATORS_AWAY, OLARK_SET_AVAILABILITY } from 'state/action-types';
+import {
+	OLARK_REQUEST,
+	OLARK_TIMEOUT,
+	OLARK_OPERATORS_AVAILABLE,
+	OLARK_OPERATORS_AWAY,
+	OLARK_SET_AVAILABILITY,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 

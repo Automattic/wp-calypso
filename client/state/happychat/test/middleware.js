@@ -11,11 +11,39 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import middleware, { connectChat, connectIfRecentlyActive, requestTranscript, sendActionLogsAndEvents, sendAnalyticsLogEvent, sendRouteSetEventMessage, updateChatPreferences, sendInfo } from '../middleware';
+import middleware, {
+	connectChat,
+	connectIfRecentlyActive,
+	requestTranscript,
+	sendActionLogsAndEvents,
+	sendAnalyticsLogEvent,
+	sendRouteSetEventMessage,
+	updateChatPreferences,
+	sendInfo,
+} from '../middleware';
 import * as selectors from '../selectors';
-import { HAPPYCHAT_CHAT_STATUS_ASSIGNED, HAPPYCHAT_CHAT_STATUS_DEFAULT, HAPPYCHAT_CHAT_STATUS_PENDING } from '../selectors';
+import {
+	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+} from '../selectors';
 import wpcom from 'lib/wp';
-import { ANALYTICS_EVENT_RECORD, HAPPYCHAT_BLUR, HAPPYCHAT_CONNECTED, HAPPYCHAT_CONNECTING, HAPPYCHAT_DISCONNECTED, HAPPYCHAT_RECEIVE_EVENT, HAPPYCHAT_RECONNECTING, HAPPYCHAT_SEND_USER_INFO, HAPPYCHAT_SEND_MESSAGE, HAPPYCHAT_SET_MESSAGE, HAPPYCHAT_SET_AVAILABLE, HAPPYCHAT_SET_CHAT_STATUS, HAPPYCHAT_TRANSCRIPT_RECEIVE, HAPPYCHAT_TRANSCRIPT_REQUEST } from 'state/action-types';
+import {
+	ANALYTICS_EVENT_RECORD,
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_DISCONNECTED,
+	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_RECONNECTING,
+	HAPPYCHAT_SEND_USER_INFO,
+	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_SET_AVAILABLE,
+	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_TRANSCRIPT_RECEIVE,
+	HAPPYCHAT_TRANSCRIPT_REQUEST,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {

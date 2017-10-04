@@ -7,8 +7,24 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { COMMENTS_DELETE, COMMENTS_REQUEST, COMMENTS_LIKE, COMMENTS_UNLIKE, COMMENTS_WRITE, COMMENTS_REPLY_WRITE, COMMENTS_SET_ACTIVE_REPLY } from '../../action-types';
-import { requestPostComments, writeComment, replyComment, deleteComment, likeComment, unlikeComment, setActiveReply } from '../actions';
+import {
+	COMMENTS_DELETE,
+	COMMENTS_REQUEST,
+	COMMENTS_LIKE,
+	COMMENTS_UNLIKE,
+	COMMENTS_WRITE,
+	COMMENTS_REPLY_WRITE,
+	COMMENTS_SET_ACTIVE_REPLY,
+} from '../../action-types';
+import {
+	requestPostComments,
+	writeComment,
+	replyComment,
+	deleteComment,
+	likeComment,
+	unlikeComment,
+	setActiveReply,
+} from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';

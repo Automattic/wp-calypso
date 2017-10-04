@@ -12,7 +12,11 @@ import { keyBy } from 'lodash';
 import { isQueryLoading, isQueryError, items, queries, total } from '../reducer';
 import review from './fixtures/review';
 import reviews from './fixtures/reviews';
-import { WOOCOMMERCE_REVIEWS_REQUEST, WOOCOMMERCE_REVIEWS_RECEIVE, WOOCOMMERCE_REVIEW_STATUS_CHANGE } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_REVIEWS_REQUEST,
+	WOOCOMMERCE_REVIEWS_RECEIVE,
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+} from 'woocommerce/state/action-types';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {

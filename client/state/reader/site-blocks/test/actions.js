@@ -10,7 +10,15 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { requestSiteBlock, requestSiteUnblock } from '../actions';
-import { READER_SITE_BLOCK_REQUEST, READER_SITE_BLOCK_REQUEST_SUCCESS, READER_SITE_BLOCK_REQUEST_FAILURE, READER_SITE_UNBLOCK_REQUEST, READER_SITE_UNBLOCK_REQUEST_SUCCESS, READER_SITE_UNBLOCK_REQUEST_FAILURE, NOTICE_CREATE } from 'state/action-types';
+import {
+	READER_SITE_BLOCK_REQUEST,
+	READER_SITE_BLOCK_REQUEST_SUCCESS,
+	READER_SITE_BLOCK_REQUEST_FAILURE,
+	READER_SITE_UNBLOCK_REQUEST,
+	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
+	READER_SITE_UNBLOCK_REQUEST_FAILURE,
+	NOTICE_CREATE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 const sampleSuccessResponse = require( './sample-success-response.json' );

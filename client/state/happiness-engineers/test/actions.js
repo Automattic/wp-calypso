@@ -9,7 +9,12 @@ import { match } from 'sinon';
  * Internal dependencies
  */
 import { receiveHappinessEngineers, fetchHappinessEngineers } from '../actions';
-import { HAPPINESS_ENGINEERS_FETCH, HAPPINESS_ENGINEERS_RECEIVE, HAPPINESS_ENGINEERS_FETCH_FAILURE, HAPPINESS_ENGINEERS_FETCH_SUCCESS } from 'state/action-types';
+import {
+	HAPPINESS_ENGINEERS_FETCH,
+	HAPPINESS_ENGINEERS_RECEIVE,
+	HAPPINESS_ENGINEERS_FETCH_FAILURE,
+	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

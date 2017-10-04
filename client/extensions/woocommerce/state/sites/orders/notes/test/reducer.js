@@ -12,7 +12,14 @@ import { keyBy } from 'lodash';
 import { isLoading, isSaving, items, orders } from '../reducer';
 import note from './fixtures/note';
 import notes from './fixtures/notes';
-import { WOOCOMMERCE_ORDER_NOTE_CREATE, WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE, WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS, WOOCOMMERCE_ORDER_NOTES_REQUEST, WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE, WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_ORDER_NOTE_CREATE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
+	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+	WOOCOMMERCE_ORDER_NOTES_REQUEST,
+	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
+	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'isLoading', () => {

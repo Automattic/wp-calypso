@@ -10,7 +10,11 @@ import { spy, match } from 'sinon';
  */
 import { handleProductCreate, handleProductUpdate, handleProductRequest } from '../';
 import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
-import { createProduct, updateProduct, fetchProduct } from 'woocommerce/state/sites/products/actions';
+import {
+	createProduct,
+	updateProduct,
+	fetchProduct,
+} from 'woocommerce/state/sites/products/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCreate', () => {

@@ -7,7 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getAllSelectedPackages, getCurrentlyEditingPredefinedPackages, getPredefinedPackagesChangesSummary } from '../selectors';
+import {
+	getAllSelectedPackages,
+	getCurrentlyEditingPredefinedPackages,
+	getPredefinedPackagesChangesSummary,
+} from '../selectors';
 import initialPackagesState from './data/initial-state';
 
 const siteId = 123;

@@ -7,7 +7,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingWordAdsApproval, isRequestingWordAdsApprovalForSite, getWordAdsError, getWordAdsErrorForSite, getWordAdsSuccess, getWordAdsSuccessForSite } from '../selectors';
+import {
+	isRequestingWordAdsApproval,
+	isRequestingWordAdsApprovalForSite,
+	getWordAdsError,
+	getWordAdsErrorForSite,
+	getWordAdsSuccess,
+	getWordAdsSuccessForSite,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingWordAdsApproval()', () => {

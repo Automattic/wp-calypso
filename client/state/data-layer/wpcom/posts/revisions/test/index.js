@@ -11,7 +11,12 @@ import sinon from 'sinon';
  */
 import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisions, receivePostRevisionsSuccess, receivePostRevisionsFailure, requestPostRevisions } from 'state/posts/revisions/actions';
+import {
+	receivePostRevisions,
+	receivePostRevisionsSuccess,
+	receivePostRevisionsFailure,
+	requestPostRevisions,
+} from 'state/posts/revisions/actions';
 
 const successfulPostRevisionsResponse = [
 	{

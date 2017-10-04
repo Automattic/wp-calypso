@@ -8,8 +8,24 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { cancelPrivacyProtection, clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
-import { PRIVACY_PROTECTION_CANCEL, PRIVACY_PROTECTION_CANCEL_COMPLETED, PURCHASES_REMOVE, PURCHASES_SITE_FETCH, PURCHASES_SITE_FETCH_COMPLETED, PURCHASES_USER_FETCH, PURCHASES_USER_FETCH_COMPLETED, PURCHASE_REMOVE_COMPLETED, PURCHASE_REMOVE_FAILED } from 'state/action-types';
+import {
+	cancelPrivacyProtection,
+	clearPurchases,
+	fetchSitePurchases,
+	fetchUserPurchases,
+	removePurchase,
+} from '../actions';
+import {
+	PRIVACY_PROTECTION_CANCEL,
+	PRIVACY_PROTECTION_CANCEL_COMPLETED,
+	PURCHASES_REMOVE,
+	PURCHASES_SITE_FETCH,
+	PURCHASES_SITE_FETCH_COMPLETED,
+	PURCHASES_USER_FETCH,
+	PURCHASES_USER_FETCH_COMPLETED,
+	PURCHASE_REMOVE_COMPLETED,
+	PURCHASE_REMOVE_FAILED,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 jest.mock( 'lib/olark', () => ( {

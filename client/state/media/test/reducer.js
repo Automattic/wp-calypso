@@ -10,7 +10,18 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { queries, queryRequests, mediaItemRequests } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
-import { DESERIALIZE, MEDIA_DELETE, MEDIA_ITEM_REQUEST_FAILURE, MEDIA_ITEM_REQUEST_SUCCESS, MEDIA_ITEM_REQUESTING, MEDIA_RECEIVE, MEDIA_REQUEST_FAILURE, MEDIA_REQUEST_SUCCESS, MEDIA_REQUESTING, SERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	MEDIA_DELETE,
+	MEDIA_ITEM_REQUEST_FAILURE,
+	MEDIA_ITEM_REQUEST_SUCCESS,
+	MEDIA_ITEM_REQUESTING,
+	MEDIA_RECEIVE,
+	MEDIA_REQUEST_FAILURE,
+	MEDIA_REQUEST_SUCCESS,
+	MEDIA_REQUESTING,
+	SERIALIZE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

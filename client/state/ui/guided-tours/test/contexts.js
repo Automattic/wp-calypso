@@ -8,8 +8,16 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { hasAnalyticsEventFired, hasUserPastedFromGoogleDocs, hasUserRegisteredBefore, isUserNewerThan } from '../contexts';
-import { SOURCE_GOOGLE_DOCS, SOURCE_UNKNOWN } from 'components/tinymce/plugins/wpcom-track-paste/sources';
+import {
+	hasAnalyticsEventFired,
+	hasUserPastedFromGoogleDocs,
+	hasUserRegisteredBefore,
+	isUserNewerThan,
+} from '../contexts';
+import {
+	SOURCE_GOOGLE_DOCS,
+	SOURCE_UNKNOWN,
+} from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
 
 /** @jest-environment jsdom */

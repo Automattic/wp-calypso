@@ -9,7 +9,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, revisions } from '../reducer';
-import { POST_REVISIONS_RECEIVE, POST_REVISIONS_REQUEST, POST_REVISIONS_REQUEST_FAILURE, POST_REVISIONS_REQUEST_SUCCESS } from 'state/action-types';
+import {
+	POST_REVISIONS_RECEIVE,
+	POST_REVISIONS_REQUEST,
+	POST_REVISIONS_REQUEST_FAILURE,
+	POST_REVISIONS_REQUEST_SUCCESS,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

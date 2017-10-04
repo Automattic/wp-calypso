@@ -8,7 +8,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { postTypeList } from '../reducer';
-import { POST_TYPE_LIST_SHARE_PANEL_HIDE, POST_TYPE_LIST_SHARE_PANEL_TOGGLE } from 'state/action-types';
+import {
+	POST_TYPE_LIST_SHARE_PANEL_HIDE,
+	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

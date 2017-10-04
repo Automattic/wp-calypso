@@ -7,7 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { areSettingsGeneralLoaded, areSettingsGeneralLoading, getPaymentCurrencySettings } from '../selectors';
+import {
+	areSettingsGeneralLoaded,
+	areSettingsGeneralLoading,
+	getPaymentCurrencySettings,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {

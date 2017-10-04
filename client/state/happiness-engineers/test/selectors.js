@@ -7,7 +7,11 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import { isRequestingHappinessEngineers, getHappinessEngineers, hasReceivedHappinessEngineers } from '../selectors';
+import {
+	isRequestingHappinessEngineers,
+	getHappinessEngineers,
+	hasReceivedHappinessEngineers,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingHappinessEngineers()', () => {

@@ -11,7 +11,16 @@ import { stub, spy } from 'sinon';
  */
 import { testSchema } from './mocks/schema';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { cachingActionCreatorFactory, createReducer, extendAction, keyedReducer, withSchemaValidation, combineReducers, isValidStateWithSchema, withoutPersistence } from 'state/utils';
+import {
+	cachingActionCreatorFactory,
+	createReducer,
+	extendAction,
+	keyedReducer,
+	withSchemaValidation,
+	combineReducers,
+	isValidStateWithSchema,
+	withoutPersistence,
+} from 'state/utils';
 jest.mock( 'lib/warn', () => () => {} );
 
 describe( 'utils', () => {

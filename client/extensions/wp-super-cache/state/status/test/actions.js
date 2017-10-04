@@ -7,7 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { WP_SUPER_CACHE_RECEIVE_STATUS, WP_SUPER_CACHE_REQUEST_STATUS, WP_SUPER_CACHE_REQUEST_STATUS_FAILURE } from '../../action-types';
+import {
+	WP_SUPER_CACHE_RECEIVE_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS,
+	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
+} from '../../action-types';
 import { receiveStatus, requestStatus } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';

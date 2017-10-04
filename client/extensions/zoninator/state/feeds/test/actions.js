@@ -7,7 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED, ZONINATOR_UPDATE_FEED } from '../../action-types';
+import {
+	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_SAVE_FEED,
+	ZONINATOR_UPDATE_FEED,
+} from '../../action-types';
 import { requestFeed, saveFeed, updateFeed } from '../actions';
 
 describe( 'actions', () => {

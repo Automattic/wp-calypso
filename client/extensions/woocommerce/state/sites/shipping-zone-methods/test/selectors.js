@@ -7,7 +7,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getShippingZoneMethod, areShippingZoneMethodsLoaded, areShippingZoneMethodsLoading } from '../selectors';
+import {
+	getShippingZoneMethod,
+	areShippingZoneMethodsLoaded,
+	areShippingZoneMethodsLoading,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {

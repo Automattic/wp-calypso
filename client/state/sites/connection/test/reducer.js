@@ -9,7 +9,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, requesting } from '../reducer';
-import { SITE_CONNECTION_STATUS_RECEIVE, SITE_CONNECTION_STATUS_REQUEST, SITE_CONNECTION_STATUS_REQUEST_FAILURE, SITE_CONNECTION_STATUS_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	SITE_CONNECTION_STATUS_RECEIVE,
+	SITE_CONNECTION_STATUS_REQUEST,
+	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
+	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

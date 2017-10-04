@@ -9,7 +9,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items as unwrappedItems, requesting, errors } from '../reducer';
-import { DOMAINS_SUGGESTIONS_RECEIVE, DOMAINS_SUGGESTIONS_REQUEST, DOMAINS_SUGGESTIONS_REQUEST_FAILURE, DOMAINS_SUGGESTIONS_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	DOMAINS_SUGGESTIONS_RECEIVE,
+	DOMAINS_SUGGESTIONS_REQUEST,
+	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
+	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 

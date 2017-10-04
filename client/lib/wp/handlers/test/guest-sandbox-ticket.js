@@ -8,7 +8,11 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import { deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler } from '../guest-sandbox-ticket';
+import {
+	deleteOldTicket,
+	GUEST_TICKET_LOCALFORAGE_KEY,
+	injectGuestSandboxTicketHandler,
+} from '../guest-sandbox-ticket';
 
 jest.mock( 'store', () => require( './mocks/store' ) );
 

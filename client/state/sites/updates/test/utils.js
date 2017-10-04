@@ -7,7 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { siteUpdatesRequestAction, siteUpdatesRequestSuccessAction, siteUpdatesReceiveAction, siteUpdatesRequestFailureAction } from '../actions';
+import {
+	siteUpdatesRequestAction,
+	siteUpdatesRequestSuccessAction,
+	siteUpdatesReceiveAction,
+	siteUpdatesRequestFailureAction,
+} from '../actions';
 import { requestSiteUpdates } from '../utils';
 import useNock from 'test/helpers/use-nock';
 

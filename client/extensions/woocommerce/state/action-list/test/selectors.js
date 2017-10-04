@@ -8,7 +8,12 @@ import { set } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getActionList, getCurrentStepIndex, getTotalStepCount, getStepCountRemaining } from '../selectors';
+import {
+	getActionList,
+	getCurrentStepIndex,
+	getTotalStepCount,
+	getStepCountRemaining,
+} from '../selectors';
 import * as fxt from './fixtures';
 
 describe( 'selectors', () => {

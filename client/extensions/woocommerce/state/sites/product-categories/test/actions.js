@@ -10,7 +10,11 @@ import { spy } from 'sinon';
  */
 import { fetchProductCategories } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST, WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS, WOOCOMMERCE_ERROR_SET } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_ERROR_SET,
+} from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchProductCategories()', () => {

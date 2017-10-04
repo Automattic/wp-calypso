@@ -10,7 +10,18 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { announceDeleteFailure, announceSaveFailure, announceZoneSaved, createZone, deleteZone, handleZoneSaved, requestZonesError, requestZonesList, saveZone, updateZonesList } from '../';
+import {
+	announceDeleteFailure,
+	announceSaveFailure,
+	announceZoneSaved,
+	createZone,
+	deleteZone,
+	handleZoneSaved,
+	requestZonesError,
+	requestZonesList,
+	saveZone,
+	updateZonesList,
+} from '../';
 import { fromApi } from '../utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';

@@ -8,7 +8,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { requestSiteRoles } from '../actions';
-import { SITE_ROLES_RECEIVE, SITE_ROLES_REQUEST, SITE_ROLES_REQUEST_FAILURE, SITE_ROLES_REQUEST_SUCCESS } from 'state/action-types';
+import {
+	SITE_ROLES_RECEIVE,
+	SITE_ROLES_REQUEST,
+	SITE_ROLES_REQUEST_FAILURE,
+	SITE_ROLES_REQUEST_SUCCESS,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

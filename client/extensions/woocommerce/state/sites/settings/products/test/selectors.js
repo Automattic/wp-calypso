@@ -7,7 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { areSettingsProductsLoaded, areSettingsProductsLoading, getWeightUnitSetting, getDimensionsUnitSetting } from '../selectors';
+import {
+	areSettingsProductsLoaded,
+	areSettingsProductsLoading,
+	getWeightUnitSetting,
+	getDimensionsUnitSetting,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {

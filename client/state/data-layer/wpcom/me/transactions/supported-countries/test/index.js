@@ -8,7 +8,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchCountriesTransactions, updateCountriesTransactions, showCountriesTransactionsLoadingError } from '../';
+import {
+	fetchCountriesTransactions,
+	updateCountriesTransactions,
+	showCountriesTransactionsLoadingError,
+} from '../';
 import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 

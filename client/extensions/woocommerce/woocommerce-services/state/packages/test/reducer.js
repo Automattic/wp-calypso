@@ -8,7 +8,23 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addPackage, removePackage, editPackage, dismissModal, savePackage, updatePackagesField, toggleOuterDimensions, setModalErrors, setIsSaving, setIsFetching, removePredefinedPackage, savePredefinedPackages, toggleAll, togglePackage, setAddMode } from '../actions';
+import {
+	addPackage,
+	removePackage,
+	editPackage,
+	dismissModal,
+	savePackage,
+	updatePackagesField,
+	toggleOuterDimensions,
+	setModalErrors,
+	setIsSaving,
+	setIsFetching,
+	removePredefinedPackage,
+	savePredefinedPackages,
+	toggleAll,
+	togglePackage,
+	setAddMode,
+} from '../actions';
 import reducer from '../reducer';
 import initialState from './data/initial-state';
 

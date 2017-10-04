@@ -9,7 +9,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { schedulingSharePostActionStatus, updateDataForPost } from '../reducer';
-import { PUBLICIZE_SHARE_DISMISS, PUBLICIZE_SHARE_ACTION_SCHEDULE, PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS, PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE } from 'state/action-types';
+import {
+	PUBLICIZE_SHARE_DISMISS,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
+	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'updateDataForPost()', () => {

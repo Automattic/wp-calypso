@@ -9,9 +9,17 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import { handleStepNext, handleStepSuccess, handleStepFailure } from '../';
-import { actionListAnnotate, actionListStepNext, actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
+import {
+	actionListAnnotate,
+	actionListStepNext,
+	actionListStepSuccess,
+	actionListStepFailure,
+} from 'woocommerce/state/action-list/actions';
 import * as fxt from 'woocommerce/state/action-list/test/fixtures';
-import { WOOCOMMERCE_ACTION_LIST_ANNOTATE, WOOCOMMERCE_ACTION_LIST_STEP_NEXT } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
+	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
+} from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	let store;

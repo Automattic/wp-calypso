@@ -10,8 +10,15 @@ import { expect } from 'chai';
 import { clearProductEdits, editProduct, editProductAttribute } from '../actions';
 import reducer from '../edits-reducer';
 import { WOOCOMMERCE_PRODUCT_DELETE } from 'woocommerce/state/action-types';
-import { createProductCategory, productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
-import { createProduct, updateProduct, productUpdated } from 'woocommerce/state/sites/products/actions';
+import {
+	createProductCategory,
+	productCategoryUpdated,
+} from 'woocommerce/state/sites/product-categories/actions';
+import {
+	createProduct,
+	updateProduct,
+	productUpdated,
+} from 'woocommerce/state/sites/products/actions';
 
 const siteId = 123;
 
