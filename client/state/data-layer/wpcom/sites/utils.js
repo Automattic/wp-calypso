@@ -143,5 +143,5 @@ export const handleWriteCommentFailure = (
 		error,
 	} );
 
-	dispatch( errorNotice( error ), { duration: 5000 } );
+	dispatch( errorNotice( error, { duration: 5000 } ) );
 };

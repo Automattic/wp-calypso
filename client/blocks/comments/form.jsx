@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +13,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import FormInputValidation from 'components/forms/form-input-validation';
 import Gravatar from 'components/gravatar';
-import Notice from 'components/notice';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
@@ -87,7 +88,7 @@ class PostCommentForm extends React.Component {
 				this.props.deleteComment(
 					this.props.post.site_ID,
 					this.props.post.ID,
-					this.props.placeholderId,
+					this.props.placeholderId
 				);
 			}
 		}
@@ -161,7 +162,7 @@ class PostCommentForm extends React.Component {
 		switch ( error.error ) {
 			case 'comment_duplicate':
 				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!",
+					"Duplicate comment detected. It looks like you've already said that!"
 				);
 				break;
 
@@ -170,14 +171,7 @@ class PostCommentForm extends React.Component {
 				break;
 		}
 
-		return (
-			<Notice
-				text={ message }
-				className="comments__notice"
-				showDismiss={ false }
-				status="is-error"
-			/>
-		);
+		return <FormInputValidation isError text={ message } />;
 	}
 
 	render() {
@@ -192,11 +186,7 @@ class PostCommentForm extends React.Component {
 		) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
-				return (
-					<p className="comments__form-closed">
-						{ translate( 'Comments are closed.' ) }
-					</p>
-				);
+				return <p className="comments__form-closed">{ translate( 'Comments are closed.' ) }</p>;
 			}
 
 			return null;
@@ -221,9 +211,7 @@ class PostCommentForm extends React.Component {
 					<label>
 						<div className={ expandingAreaClasses }>
 							<pre>
-								<span>
-									{ this.state.commentText }
-								</span>
+								<span>{ this.state.commentText }</span>
 								<br />
 							</pre>
 							<AutoDirection>
@@ -278,5 +266,5 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
-	{ writeComment, deleteComment, replyComment },
+	{ writeComment, deleteComment, replyComment }
 )( PostCommentForm );

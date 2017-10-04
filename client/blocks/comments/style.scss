@@ -244,6 +244,10 @@
 		.notice {
 			margin-top: 10px;
 		}
+
+		textarea {
+			border-color: $alert-red;
+		}
 	}
 
 	.comments__form {
