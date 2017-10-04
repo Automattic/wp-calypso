@@ -79,14 +79,17 @@ class LoggedInForm extends Component {
 	componentWillMount() {
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
-		if (
+
+		const doAutoAuthorize =
 			! this.props.isAlreadyOnSitesList &&
 			! queryObject.already_authorized &&
 			( this.props.calypsoStartedConnection ||
-				this.props.isSSO ||
 				queryObject.new_user_started_connection ||
-				autoAuthorize )
-		) {
+				autoAuthorize );
+
+		// isSSO is a separate case from the rest since we have already validated
+		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
+		if ( this.props.isSSO || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
 			return this.props.authorize( queryObject );
