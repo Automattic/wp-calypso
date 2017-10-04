@@ -183,6 +183,7 @@ if ( calypsoEnv === 'desktop' ) {
 		'create-react-class',
 		'gridicons',
 		'i18n-calypso',
+		'immutable',
 		'lodash',
 		'moment',
 		'page',
