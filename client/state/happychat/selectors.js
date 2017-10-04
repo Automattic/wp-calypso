@@ -17,6 +17,7 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 } from './constants';
+import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
 import { getSectionName } from 'state/ui/selectors';
@@ -43,7 +44,7 @@ export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 export const getGroups = ( state, siteId ) => {
 	const groups = [];
 
-	if ( getSectionName( state ) === 'jetpackConnect' ) {
+	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpackConnect' ) {
 		groups.push( HAPPYCHAT_GROUP_JPOP );
 		return groups;
 	}

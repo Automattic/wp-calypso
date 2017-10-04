@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+import { isEnabled } from 'config';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -378,22 +379,26 @@ describe( 'selectors', () => {
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
-		it( 'should return JPOP group if within the jetpackConnect section', () => {
-			const state = {
-				...userState,
-				sites: {
-					items: {
-						1: {}
+		if ( isEnabled( 'jetpack/happychat' ) ) {
+			it( 'should return JPOP group if within the jetpackConnect section', () => {
+				const state = {
+					...userState,
+					sites: {
+						items: {
+							1: {}
+						}
+					},
+					ui: {
+						section: {
+							name: 'jetpackConnect',
+						}
 					}
-				},
-				ui: {
-					section: {
-						name: 'jetpackConnect',
-					}
-				}
-			};
+				};
 
-			expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
-		} );
+				expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+			} );
+		} else {
+			it.skip( 'should not return JPOP group if within the jetpackConnect section' );
+		}
 	} );
 } );
