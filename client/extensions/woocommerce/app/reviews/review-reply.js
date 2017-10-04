@@ -73,11 +73,11 @@ class ReviewReply extends Component {
 		return (
 			<div className="reviews__reply-actions">
 				<Button borderless className="reviews__reply-action-edit" onClick={ this.onEdit }>
-					<Gridicon icon="pencil" />
+					<Gridicon icon="pencil" size={ 18 } />
 					<span>{ translate( 'Edit reply' ) }</span>
 				</Button>
 				<Button borderless className="reviews__reply-action-delete" onClick={ this.onDelete }>
-					<Gridicon icon="trash" />
+					<Gridicon icon="trash" size={ 18 } />
 					<span>{ translate( 'Delete reply' ) }</span>
 				</Button>
 			</div>

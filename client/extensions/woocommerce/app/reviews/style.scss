@@ -304,9 +304,17 @@
 
 .reviews__reply {
 	border-top: 1px solid lighten( $gray, 30% );
+	border-left: 4px solid lighten( $gray, 30% );
+	margin-left: 16px;
+	padding-bottom: 16px;
+	background: lighten( $gray, 35% );
 
 	.reviews__reply-content {
-		padding: 16px;
+		padding: 0 16px;
+
+		p:last-child {
+			margin-bottom: 0;
+		}
 	}
 }
 
@@ -402,14 +410,20 @@
 .reviews__reply-bar {
 	display: flex;
 	flex-flow: row nowrap;
-	padding: 16px;
+	align-items: center;
 
 	.reviews__reply-actions {
-		align-self: flex-start;
 		margin-left: auto;
+		margin-right: 16px;
+
+		.gridicon {
+			margin-right: 4px;
+		}
 
 		.button {
-			margin-left: 32px;
+			margin-left: 16px;
+			font-size: 14px;
+			font-weight: 400;
 		}
 	}
 }
