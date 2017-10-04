@@ -92,7 +92,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 			if ( label.refund ) {
 				switch ( label.refund.status ) {
 					case 'complete':
-						events.push( {
+						events.unshift( {
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
@@ -102,7 +102,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						} );
 						break;
 					case 'rejected':
-						events.push( {
+						events.unshift( {
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REJECTED,
 							timestamp: label.refund.refund_date,
@@ -111,7 +111,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						break;
 					default:
 						// Only render the "refund requested" event if the refund hasn't yet completed/rejected
-						events.push( {
+						events.unshift( {
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
@@ -121,7 +121,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						} );
 				}
 			}
-			events.push( {
+			events.unshift( {
 				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,
 				timestamp: label.created_date,
