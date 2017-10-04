@@ -122,6 +122,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-backups',
+		paths: [ '/settings/backups' ],
+		module: 'my-sites/site-settings/settings-backups',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',

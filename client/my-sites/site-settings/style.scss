@@ -463,3 +463,78 @@
 		margin-left: 36px;
 	}
 }
+
+.site-settings__backups .foldable-card,
+.site-settings__backups .foldable-card.is-expanded {
+	margin-bottom: 0;
+}
+
+.site-settings__backups .foldable-card__header {
+	padding: 8px;
+}
+
+.site-settings__backups .foldable-card .gridicon {
+	width: 36px;
+	height: 36px;
+}
+
+.site-settings__backups .foldable-card .status-icon {
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: $gray;
+}
+
+.site-settings__backups .foldable-card .status-icon.green {
+	color: #0a0;
+}
+
+.site-settings__backups .foldable-card .status-icon.gray {
+	color: $gray;
+}
+
+.site-settings__backups .foldable-card h2 {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.site-settings__backups .foldable-card h3 {
+	font-size: 1.2rem;
+}
+
+.site-settings__backups .foldable-card table {
+	margin-bottom: 0;
+}
+
+.site-settings__backups .credentials-help div span {
+	color: #0087be;
+}
+
+.site-settings__backups .credentials-help .gridicon {
+	margin-right: 5px;
+	width: 20px;
+	color: #0087be;
+}
+
+.site-settings__backups .credentials-context td {
+	padding: 10px;
+}
+
+.site-settings__backups .public-key-field {
+	height: 190px;
+	background: #333;
+	color: #fff;
+}
+
+.site-settings__backups .form-text-input {
+	margin-bottom: 1rem;
+}
+
+.site-settings__backups .form-password-input svg {
+	margin-top: -7px;
+}
+
+.site-settings__backups .server-address {
+	width: 80%;
+	padding-right: 5%;
+}

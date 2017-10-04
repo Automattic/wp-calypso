@@ -17,6 +17,9 @@ import {
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
+	REWIND_SET_CREDENTIALS,
+	REWIND_SET_CREDENTIALS_FAILURE,
+	REWIND_SET_CREDENTIALS_SUCCESS,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_REQUEST,
 	REWIND_STATUS_UPDATE,
@@ -203,5 +206,36 @@ export function rewindRestoreUpdateError( siteId, timestamp, error ) {
 		siteId,
 		timestamp,
 		error,
+	};
+}
+
+/**
+ * Update Rewind credentials for a site and connection type
+ *
+ * @param {String|number} siteId the site ID
+ * @param {Object} Credentials to update
+ * @return {Object} action object
+ */
+export function rewindSetCredentials( siteId, credentials ) {
+	return {
+		type: REWIND_SET_CREDENTIALS,
+		siteId,
+		credentials
+	};
+}
+
+export function rewindSetCredentialsError( siteId, error ) {
+	return {
+		type: REWIND_SET_CREDENTIALS_FAILURE,
+		siteId,
+		error
+	};
+}
+
+export function rewindSetCredentialsSuccess( siteId, status ) {
+	return {
+		type: REWIND_SET_CREDENTIALS_SUCCESS,
+		siteId,
+		status
 	};
 }
