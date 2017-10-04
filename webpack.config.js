@@ -173,6 +173,7 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.entry.vendor = [
 		'classnames',
 		'i18n-calypso',
+		'immutable',
 		'lodash',
 		'moment',
 		'page',
