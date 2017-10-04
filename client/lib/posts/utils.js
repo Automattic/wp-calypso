@@ -10,9 +10,10 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import postNormalizer from 'lib/post-normalizer';
+/* eslint-disable no-restricted-imports */
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
-
+/* eslint-enable no-restricted-imports */
 import { getFeaturedImageId } from './utils-ssr-ready';
 
 var utils = {

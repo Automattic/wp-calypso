@@ -9,12 +9,14 @@ import React from 'react';
  */
 import NextStepsBox from './next-steps-box';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
 import steps from './steps';
 import analytics from 'lib/analytics';
 import productsValues from 'lib/products-values';
+/* eslint-disable no-restricted-imports */
+import observe from 'lib/mixins/data-observe';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
+/* eslint-enable no-restricted-imports */
 
 module.exports = React.createClass( {
 	displayName: 'NextSteps',

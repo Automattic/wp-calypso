@@ -20,8 +20,10 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp' ;
+/* eslint-disable no-restricted-imports */
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
+/* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';

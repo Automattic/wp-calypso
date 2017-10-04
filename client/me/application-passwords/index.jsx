@@ -11,7 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
 import AppPasswordItem from 'me/application-password-item';
 import notices from 'notices';
 import SectionHeader from 'components/section-header';

@@ -9,7 +9,9 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
+/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
 
 describe( 'observe()', function() {
 	it( 'should return proper mixin with no arguments', function() {

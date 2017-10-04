@@ -21,7 +21,9 @@ import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
+/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
 import purchasePaths from 'me/purchases/paths';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';

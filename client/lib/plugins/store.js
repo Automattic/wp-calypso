@@ -11,8 +11,10 @@ import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
+/* eslint-disable no-restricted-imports */
 import sitesListFactory from 'lib/sites-list';
 const sitesList = sitesListFactory();
+/* eslint-enable no-restricted-imports */
 import PluginsActions from 'lib/plugins/actions';
 import versionCompare from 'lib/version-compare';
 import PluginUtils from 'lib/plugins/utils';

@@ -27,7 +27,9 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormInputValidation from 'components/forms/form-input-validation';
+/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 

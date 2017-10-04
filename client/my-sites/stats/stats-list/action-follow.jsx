@@ -9,7 +9,9 @@ const debug = debugFactory( 'calypso:stats:action-follow' );
 /**
  * Internal dependencies
  */
+/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
+/* eslint-enable no-restricted-imports */
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
