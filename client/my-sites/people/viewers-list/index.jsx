@@ -1,25 +1,29 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var PeopleListItem = require( 'my-sites/people/people-list-item' ),
-	Card = require( 'components/card' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
-	ViewersActions = require( 'lib/viewers/actions' ),
-	ViewersStore = require( 'lib/viewers/store' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	ViewersData = require( 'components/data/viewers-data' ),
-	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'lib/analytics' ),
-	accept = require( 'lib/accept' );
+import PeopleListItem from 'my-sites/people/people-list-item';
+
+import Card from 'components/card';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
+import ViewersActions from 'lib/viewers/actions';
+import ViewersStore from 'lib/viewers/store';
+import InfiniteList from 'components/infinite-list';
+import ViewersData from 'components/data/viewers-data';
+import EmptyContent from 'components/empty-content';
+import analytics from 'lib/analytics';
+import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
-let Viewers = React.createClass( {
+let Viewers = localize(React.createClass( {
 
 	displayName: 'Viewers',
 
@@ -50,13 +54,13 @@ let Viewers = React.createClass( {
 			<div>
 				<p>
 				{
-					this.translate(
+					this.props.translate(
 						'If you remove this viewer, he or she will not be able to visit this site.'
 					)
 				}
 				</p>
 				<p>
-					{ this.translate( 'Would you still like to remove this viewer?' ) }
+					{ this.props.translate( 'Would you still like to remove this viewer?' ) }
 				</p>
 			</div>
 			),
@@ -68,7 +72,7 @@ let Viewers = React.createClass( {
 					analytics.ga.recordEvent( 'People', 'Clicked Cancel Button In Remove Viewer Confirmation' );
 				}
 			},
-			this.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
+			this.props.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
 	},
 
@@ -105,8 +109,8 @@ let Viewers = React.createClass( {
 		var viewers,
 			emptyContentArgs = {
 				title: this.props.site && this.props.site.jetpack
-					? this.translate( "Oops, Jetpack sites don't support viewers." )
-					: this.translate( "You don't have any viewers yet." )
+					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+					: this.props.translate( "You don't have any viewers yet." )
 			},
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null;
 
@@ -115,11 +119,11 @@ let Viewers = React.createClass( {
 				emptyContentArgs = Object.assign(
 					emptyContentArgs,
 					{
-						line: this.translate(
+						line: this.props.translate(
 							'Only private sites can have viewers. You can make your site private by ' +
 							'changing its visibility settings.'
 						),
-						action: this.translate( 'Visit Site Settings' ),
+						action: this.props.translate( 'Visit Site Settings' ),
 						actionURL: '/settings/general/' + this.props.site.slug
 					}
 				);
@@ -163,9 +167,9 @@ let Viewers = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ));
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'ViewersList',
 
 	mixins: [ PureRenderMixin ],
@@ -177,4 +181,4 @@ module.exports = React.createClass( {
 			</ViewersData>
 		);
 	}
-} );
+} ));

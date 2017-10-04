@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import SegmentedControl from 'components/segmented-control';
+
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Segmented Control Demo

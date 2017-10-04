@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	config = require( 'config' ),
-	peopleController = require( './controller' );
+import controller from 'my-sites/controller';
+
+import config from 'config';
+import peopleController from './controller';
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {

@@ -11,10 +11,10 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
-var tinymce = require( 'tinymce/tinymce' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	i18n = require( 'i18n-calypso' );
+import tinymce from 'tinymce/tinymce';
+import ReactDom from 'react-dom';
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies

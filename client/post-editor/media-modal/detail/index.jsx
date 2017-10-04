@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop, partial } from 'lodash';
@@ -9,10 +10,11 @@ import { noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-var DetailItem = require( './detail-item' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	HeaderCake = require( 'components/header-cake' ),
-	preloadImage = require( '../preload-image' );
+import DetailItem from './detail-item';
+
+import MediaUtils from 'lib/media/utils';
+import HeaderCake from 'components/header-cake';
+import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
@@ -72,8 +74,8 @@ export const EditorMediaModalDetail = React.createClass( {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		return (
-			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
+            <div className="editor-media-modal-detail">
+				<HeaderCake onClick={ onReturnToList } backText={ this.props.translate( 'Media Library' ) } />
 				<DetailItem
 					site={ site }
 					item={ item }
@@ -84,7 +86,7 @@ export const EditorMediaModalDetail = React.createClass( {
 					onRestore={ onRestoreItem }
 					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
 			</div>
-		);
+        );
 	}
 } );
 
@@ -92,4 +94,4 @@ export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( EditorMediaModalDetail );
+} )( localize(EditorMediaModalDetail) );

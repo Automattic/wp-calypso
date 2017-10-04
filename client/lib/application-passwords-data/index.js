@@ -2,9 +2,10 @@
  * External dependencies
  */
 import { filter } from 'lodash';
-var debug = require( 'debug' )( 'calypso:application-passwords-data' ),
-	makeEmitter = require( 'lib/mixins/emitter' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:application-passwords-data');
+import makeEmitter from 'lib/mixins/emitter';
+import store from 'store';
 
 /**
  * Internal dependencies

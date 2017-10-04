@@ -2,20 +2,22 @@
  * External dependencies
  */
 import { filter, find } from 'lodash';
-const React = require( 'react' ),
-	titleCase = require( 'to-title-case' ),
-	classNames = require( 'classnames' );
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import titleCase from 'to-title-case';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const analytics = require( 'lib/analytics' ),
-	Card = require( 'components/card' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+import Card from 'components/card';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+
+module.exports = localize(React.createClass( {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 
@@ -45,35 +47,35 @@ module.exports = React.createClass( {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'installation',
-				title: this.translate( 'Installation', {
+				title: this.props.translate( 'Installation', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'changelog',
-				title: this.translate( 'Changelog', {
+				title: this.props.translate( 'Changelog', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'faq',
-				title: this.translate( 'FAQs', {
+				title: this.props.translate( 'FAQs', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'other_notes',
-				title: this.translate( 'Other Notes', {
+				title: this.props.translate( 'Other Notes', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
@@ -85,12 +87,12 @@ module.exports = React.createClass( {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			}
-		]
+		];
 	},
 
 	getInitialState: function() {
@@ -147,7 +149,7 @@ module.exports = React.createClass( {
 		const button = (
 			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
 				<span className="plugin-sections__read-more-text">
-					{ this.translate( 'Read More' ) }
+					{ this.props.translate( 'Read More' ) }
 				</span>
 			</button>
 		);
@@ -206,4 +208,4 @@ module.exports = React.createClass( {
 		);
 		/*eslint-enable react/no-danger*/
 	}
-} );
+} ));

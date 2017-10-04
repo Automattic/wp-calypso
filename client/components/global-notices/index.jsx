@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugModule from 'debug';
 
 /**
@@ -18,7 +19,7 @@ import { getNotices } from 'state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 
-const NoticesList = React.createClass( {
+const NoticesList = createReactClass({
 
 	displayName: 'NoticesList',
 
@@ -107,7 +108,7 @@ const NoticesList = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
 export default connect(
 	state => {

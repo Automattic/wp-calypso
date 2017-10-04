@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 var TokenInput = React.createClass( {
 	propTypes: {

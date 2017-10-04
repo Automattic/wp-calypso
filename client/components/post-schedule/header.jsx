@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -15,7 +16,7 @@ import classNames from 'classnames';
  */
 var noop = () => {};
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'PostScheduleHeader',
 
 	propTypes: {
@@ -38,17 +39,17 @@ export default React.createClass( {
 	},
 
 	setToCurrentMonth() {
-		var month = this.moment().month();
+		var month = this.props.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
 	},
 
 	setToCurrentYear() {
-		var year = this.moment().year();
+		var year = this.props.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
 	},
 
 	setYear( modifier ) {
-		var date = this.moment( this.props.date );
+		var date = this.props.moment( this.props.date );
 		date.year( date.year() + modifier );
 
 		if ( 0 > date.year() || date.year() > 9999 ) {
@@ -92,4 +93,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

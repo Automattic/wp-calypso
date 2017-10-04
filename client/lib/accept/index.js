@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import ReactDom from 'react-dom';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var AcceptDialog = require( './dialog' );
+import AcceptDialog from './dialog';
 
 module.exports = function( message, callback, confirmButtonText, cancelButtonText, options ) {
 	var wrapper = document.createElement( 'div' );

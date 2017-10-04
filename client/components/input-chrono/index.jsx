@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
 
@@ -10,72 +11,68 @@ import chrono from 'chrono-node';
  */
 const supportedLanguages = [ 'en', 'jp' ];
 
-export default React.createClass( {
-	displayName: 'InputChrono',
+export default localize(class extends React.Component {
+    static displayName = 'InputChrono';
 
-	focused: false,
-
-	propTypes: {
+	static propTypes = {
 		value: PropTypes.string,
 		lang: PropTypes.string,
 		onSet: PropTypes.func,
 		placeholder: PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			value: '',
-			lang: '',
-			placeholder: '',
-			onSet: () => {}
-		};
-	},
+	static defaultProps = {
+		value: '',
+		lang: '',
+		placeholder: '',
+		onSet: () => {}
+	};
 
-	getInitialState() {
-		return {
-			value: this.props.value
-		};
-	},
+	state = {
+		value: this.props.value
+	};
 
-	componentWillReceiveProps( nextProps ) {
+	focused = false;
+
+	componentWillReceiveProps(nextProps) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}
-	},
+	}
 
-	handleChange( event ) {
+	handleChange = event => {
 		this.setState( { value: event.target.value } );
-	},
+	};
 
-	handleBlur( event ) {
+	handleBlur = event => {
 		this.setDateText( event );
 		this.focused = false;
-	},
+	};
 
-	handleFocus() {
+	handleFocus = () => {
 		this.focused = true;
-	},
+	};
 
-	onKeyDown( event ) {
+	onKeyDown = event => {
 		if ( 13 !== event.keyCode ) {
 			return;
 		}
 
 		this.setDateText( event );
-	},
+	};
 
-	setDateText( event ) {
+	setDateText = event => {
 		var date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
-			this.setState( { value: this.moment( date ).calendar() } );
-			this.props.onSet( this.moment( date ) );
+			this.setState( { value: this.props.moment( date ).calendar() } );
+			this.props.onSet( this.props.moment( date ) );
 		}
-	},
+	};
 
-	isLangSupported( lang ) {
+	isLangSupported = lang => {
 		return supportedLanguages.indexOf( lang ) >= 0;
-	},
+	};
 
 	render() {
 		return (
@@ -96,5 +93,5 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 

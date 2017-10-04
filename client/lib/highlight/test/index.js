@@ -11,8 +11,12 @@ import highlight from '../';
 /**
  * External dependencies
  */
-var chai = require( 'chai' ),
-	expect = chai.expect;
+import chai from 'chai';
+
+/**
+ * External dependencies
+ */
+var expect = chai.expect;
 
 describe( 'highlight', function() {
 	context( 'unit test', function() {

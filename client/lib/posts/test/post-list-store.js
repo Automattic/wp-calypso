@@ -16,6 +16,8 @@ import Dispatcher from 'dispatcher';
 import { getRemovedPosts } from 'lib/posts/post-list-store';
 import postListStoreFactory from 'lib/posts/post-list-store-factory';
 
+import postListCacheStore from 'lib/posts/post-list-cache-store';
+
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
@@ -127,8 +129,7 @@ describe( 'post-list-store', () => {
 	let defaultPostListStore;
 
 	beforeEach( () => {
-		postListStoreFactory._reset();
-		const postListCacheStore = require( 'lib/posts/post-list-cache-store' ).default;
+	    postListStoreFactory._reset();
 		postListCacheStore._reset();
 		defaultPostListStore = postListStoreFactory( DEFAULT_POST_LIST_ID );
 	} );

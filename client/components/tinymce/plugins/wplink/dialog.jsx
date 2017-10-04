@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
@@ -242,9 +243,9 @@ var LinkDialog = React.createClass( {
 		var buttonText, buttons;
 
 		if ( this.state.isNew ) {
-			buttonText = this.translate( 'Add Link' );
+			buttonText = this.props.translate( 'Add Link' );
 		} else {
-			buttonText = this.translate( 'Save' );
+			buttonText = this.props.translate( 'Save' );
 		}
 
 		buttons = [
@@ -257,7 +258,7 @@ var LinkDialog = React.createClass( {
 				key="cancel"
 				isPrimary={ false }
 				onClick={ this.closeDialog }>
-					{ this.translate( 'Cancel' ) }
+					{ this.props.translate( 'Cancel' ) }
 			</FormButton>
 		];
 
@@ -265,7 +266,7 @@ var LinkDialog = React.createClass( {
 			buttons.push(
 				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
 					<Gridicon icon="link-break" />
-					{ this.translate( 'Remove' ) }
+					{ this.props.translate( 'Remove' ) }
 				</button>
 			);
 		}
@@ -306,7 +307,7 @@ var LinkDialog = React.createClass( {
 
 	render: function() {
 		return (
-			<Dialog
+            <Dialog
 				isVisible={ this.props.visible }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtons() }
@@ -315,7 +316,7 @@ var LinkDialog = React.createClass( {
 			>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.translate( 'URL' ) }</span>
+						<span>{ this.props.translate( 'URL' ) }</span>
 						<FormTextInput
 							ref="url"
 							autoFocus={ true }
@@ -326,7 +327,7 @@ var LinkDialog = React.createClass( {
 					</FormLabel>
 					{ this.state.showLinkText ?
 						<FormLabel>
-							<span>{ this.translate( 'Link Text' ) }</span>
+							<span>{ this.props.translate( 'Link Text' ) }</span>
 							<FormTextInput
 								onChange={ this.setLinkText }
 								value={ this.state.linkText }
@@ -338,12 +339,12 @@ var LinkDialog = React.createClass( {
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
-						<span>{ this.translate( 'Open link in a new window/tab' ) }</span>
+						<span>{ this.props.translate( 'Open link in a new window/tab' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.translate( 'Link to existing content' ) }</span>
+						<span>{ this.props.translate( 'Link to existing content' ) }</span>
 						{ this.props.site && (
 							<PostSelector
 								siteId={ this.props.site.ID }
@@ -355,12 +356,12 @@ var LinkDialog = React.createClass( {
 								selected={ this.getSelectedPostId() }
 								onChange={ this.setExistingContent }
 								suppressFirstPageLoad={ ! this.props.firstLoad }
-								emptyMessage={ this.translate( 'No posts found' ) } />
+								emptyMessage={ this.props.translate( 'No posts found' ) } />
 						) }
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
-		);
+        );
 	}
 } );
 
@@ -370,4 +371,4 @@ export default connect( ( state ) => {
 		site: selectedSite,
 		sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null
 	};
-} )( LinkDialog );
+} )( localize(LinkDialog) );

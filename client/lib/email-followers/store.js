@@ -3,7 +3,8 @@
  */
 import { omit } from 'lodash';
 import deterministicStringify from 'json-stable-stringify';
-const debug = require( 'debug' )( 'calypso:email-followers-store' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:email-followers-store');
 
 /**
  * Internal dependencies

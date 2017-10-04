@@ -15,10 +15,10 @@ import sinon from 'sinon';
 import UserUtils from '../utils';
 import configMock from 'config';
 
-jest.mock( 'config', () => {
-	const { stub } = require( 'sinon' );
+import { stub } from 'sinon';
 
-	const configMock = stub();
+jest.mock( 'config', () => {
+    const configMock = stub();
 	configMock.isEnabled = stub();
 
 	return configMock;

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
@@ -36,11 +37,11 @@ let InviteAcceptLoggedOut = React.createClass( {
 	submitButtonText() {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
-			text = this.translate( 'Sign Up & Follow' );
+			text = this.props.translate( 'Sign Up & Follow' );
 		} else if ( 'viewer' === this.props.invite.role ) {
-			text = this.translate( 'Sign Up & View' );
+			text = this.props.translate( 'Sign Up & View' );
 		} else {
-			text = this.translate( 'Sign Up & Join' );
+			text = this.props.translate( 'Sign Up & Join' );
 		}
 		return text;
 	},
@@ -109,13 +110,13 @@ let InviteAcceptLoggedOut = React.createClass( {
 
 	renderFooterLink() {
 		return (
-			<LoggedOutFormLinks>
+            <LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
-					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
 			</LoggedOutFormLinks>
-		);
+        );
 	},
 
 	renderEmailOnlySubscriptionLink() {
@@ -124,25 +125,25 @@ let InviteAcceptLoggedOut = React.createClass( {
 		}
 
 		return (
-			<LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
-				{ this.translate( 'Follow by email subscription only.' ) }
+            <LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
+				{ this.props.translate( 'Follow by email subscription only.' ) }
 			</LoggedOutFormLinkItem>
-		);
+        );
 	},
 
 	renderSignInLinkOnly() {
 		return (
-			<div className="sign-up-form">
+            <div className="sign-up-form">
 				<Card className="logged-out-form">
 					{ this.renderFormHeader() }
 					<Card className="logged-out-form__footer">
 						<FormButton className="signup-form__submit" onClick={ this.clickSignInLink }>
-							{ this.translate( 'Sign In' ) }
+							{ this.props.translate( 'Sign In' ) }
 						</FormButton>
 					</Card>
 				</Card>
 			</div>
-		);
+        );
 	},
 
 	render() {
@@ -151,7 +152,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 		}
 
 		return (
-			<div>
+            <div>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
@@ -163,10 +164,10 @@ let InviteAcceptLoggedOut = React.createClass( {
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
 					disableEmailInput={ this.props.forceMatchingEmail }
-					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
+					disableEmailExplanation={ this.props.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
 				{ this.state.userData && this.loginUser() }
 			</div>
-		);
+        );
 	}
 
 } );
@@ -174,4 +175,4 @@ let InviteAcceptLoggedOut = React.createClass( {
 export default connect(
 	null,
 	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
-)( InviteAcceptLoggedOut );
+)( localize(InviteAcceptLoggedOut) );

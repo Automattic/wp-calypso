@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:paygate' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:paygate');
 
 /**
  * Internal dependencies
  */
-var loadScript = require( 'lib/load-script' );
+import loadScript from 'lib/load-script';
 
 /**
  * PaygateLoader component

@@ -21,8 +21,8 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
-const sampleSuccessResponse = require( './sample-success-response.json' );
-const sampleFailureResponse = require( './sample-failure-response.json' );
+import sampleSuccessResponse from './sample-success-response.json';
+import sampleFailureResponse from './sample-failure-response.json';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

@@ -19,10 +19,11 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import HeaderCake from 'components/header-cake';
 import paths from 'my-sites/domains/paths';
 
+import { spy } from 'sinon';
+
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
-	const { spy } = require( 'sinon' );
-	const pageSpy = spy();
+    const pageSpy = spy();
 
 	pageSpy.redirect = spy();
 

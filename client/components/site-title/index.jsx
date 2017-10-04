@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -39,21 +40,21 @@ const SiteTitleControl = React.createClass( {
 
 	render() {
 		return (
-			<div className="site-title">
+            <div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
+					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput name="blogname" value={ this.props.blogname } onChange={ this.onChangeSiteTitle } />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.translate( 'Tagline' ) }</FormLabel>
+					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput name="blogdescription"
 						value={ this.props.blogdescription }
 						onChange={ this.onChangeDescription }
 					/>
 				</FormFieldset>
 			</div>
-		);
+        );
 	}
 } );
 
-export default SiteTitleControl;
+export default localize(SiteTitleControl);

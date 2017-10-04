@@ -14,6 +14,7 @@ import {
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOW_ERROR,
 } from 'state/action-types';
+import actions from '../actions';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts: posts => Promise.resolve( posts ),
 } ) );
@@ -22,8 +23,7 @@ describe( 'actions', () => {
 	let recordFollow, recordUnfollow;
 
 	before( () => {
-		const actions = require( '../actions' );
-		recordFollow = actions.recordFollow;
+	    recordFollow = actions.recordFollow;
 		recordUnfollow = actions.recordUnfollow;
 	} );
 

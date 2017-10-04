@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
 import analytics from 'lib/analytics';
@@ -10,10 +11,11 @@ import { preventWidows } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-const EmptyContent = require( 'components/empty-content' ),
-	Button = require( 'components/button' );
+import EmptyContent from 'components/empty-content';
 
-module.exports = React.createClass( {
+import Button from 'components/button';
+
+module.exports = localize(React.createClass( {
 	displayName: 'MediaLibraryListPlanPromo',
 
 	propTypes: {
@@ -24,13 +26,13 @@ module.exports = React.createClass( {
 	getTitle: function() {
 		switch ( this.props.filter ) {
 			case 'videos':
-				return this.translate( 'Upload Videos', { textOnly: true, context: 'Media upload plan needed' } );
+				return this.props.translate( 'Upload Videos', { textOnly: true, context: 'Media upload plan needed' } );
 
 			case 'audio':
-				return this.translate( 'Upload Audio', { textOnly: true, context: 'Media upload plan needed' } );
+				return this.props.translate( 'Upload Audio', { textOnly: true, context: 'Media upload plan needed' } );
 
 			default:
-				return this.translate( 'Upload Media', { textOnly: true, context: 'Media upload plan needed' } );
+				return this.props.translate( 'Upload Media', { textOnly: true, context: 'Media upload plan needed' } );
 		}
 	},
 
@@ -38,21 +40,21 @@ module.exports = React.createClass( {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
-					this.translate(
+					this.props.translate(
 						'To upload video files to your site, upgrade your plan.',
 						{ textOnly: true, context: 'Media upgrade promo' }
 				), 2 );
 
 			case 'audio':
 				return preventWidows(
-					this.translate(
+					this.props.translate(
 						'To upload audio files to your site, upgrade your plan.',
 						{ textOnly: true, context: 'Media upgrade promo' }
 				), 2 );
 
 			default:
 				return preventWidows(
-					this.translate(
+					this.props.translate(
 						'To upload audio and video files to your site, upgrade your plan.',
 						{ textOnly: true, context: 'Media upgrade promo' }
 				), 2 );
@@ -69,7 +71,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>{ this.translate( 'See Plans' ) }</Button>
+			<Button className="button is-primary" onClick={ this.viewPlansPage }>{ this.props.translate( 'See Plans' ) }</Button>
 		);
 
 		return (
@@ -80,4 +82,4 @@ module.exports = React.createClass( {
 				illustration={ '' } />
 		);
 	}
-} );
+} ));

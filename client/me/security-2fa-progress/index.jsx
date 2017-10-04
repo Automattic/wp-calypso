@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
-	ProgressItem = require( './progress-item' );
+import React from 'react';
 
-module.exports = React.createClass( {
+import { localize } from 'i18n-calypso';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-progress');
+import ProgressItem from './progress-item';
+
+module.exports = localize(React.createClass( {
 
 	displayName: 'Security2faProgress',
 
@@ -28,25 +32,24 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-
-			<div className="security-2fa-progress__container">
+            <div className="security-2fa-progress__container">
 
 				<div className="security-2fa-progress__inner-container">
 
 					<ProgressItem
-						label={ this.translate( 'Enter Phone Number' ) }
+						label={ this.props.translate( 'Enter Phone Number' ) }
 						icon="phone"
 						step={ this.stepClass( 1 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Verify Code' ) }
+						label={ this.props.translate( 'Verify Code' ) }
 						icon="send-to-phone"
 						step={ this.stepClass( 2 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Generate Backup Codes' ) }
+						label={ this.props.translate( 'Generate Backup Codes' ) }
 						icon="refresh"
 						step={ this.stepClass( 3 ) }
 					/>
@@ -54,7 +57,6 @@ module.exports = React.createClass( {
 				</div>
 
 			</div>
-
-		);
+        );
 	}
-} );
+} ));

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var qs = require( 'querystring' ),
-	i18n = require( 'i18n-calypso' );
+import qs from 'querystring';
+
+import i18n from 'i18n-calypso';
 
 var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 

@@ -1,17 +1,21 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormButton = require( 'components/forms/form-button' ),
-	Gridicon = require( 'gridicons' );
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
-module.exports = React.createClass( {
+import FormButton from 'components/forms/form-button';
+import Gridicon from 'gridicons';
+
+module.exports = localize(React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',
 
 	propTypes: {
@@ -25,18 +29,18 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<FormButtonsBar>
+            <FormButtonsBar>
 				<FormButton
 					disabled={ ! this.props.isSavable }
 					onClick={ this.props.onSave }>
-					{ this.props.saveText ? this.props.saveText : this.translate( 'Save' ) }
+					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
 				</FormButton>
 
 				<FormButton
 					isPrimary={ false }
 					onClick={ this.props.onCancel }
 					>
-					{ this.translate( 'Cancel' ) }
+					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 
 				{
@@ -44,12 +48,12 @@ module.exports = React.createClass( {
 					? (
 						<button className={ 'security-account-recovery-contact__remove' } onClick={ this.props.onDelete }>
 							<Gridicon icon="trash" size={ 24 } />
-							<span>{ this.translate( 'Remove' ) }</span>
+							<span>{ this.props.translate( 'Remove' ) }</span>
 						</button>
 					)
 					: null
 				}
 			</FormButtonsBar>
-		);
+        );
 	}
-} );
+} ));

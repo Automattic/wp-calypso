@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -18,7 +19,7 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
 
-export const UploadingPane = React.createClass( {
+export const UploadingPane = localize(React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -46,7 +47,7 @@ export const UploadingPane = React.createClass( {
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
-				return <p>{ this.translate( 'Drag a file here, or click to upload a file' ) }</p>;
+				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 
 			case appStates.UPLOADING:
 				let uploadPercent = percentComplete,
@@ -56,11 +57,11 @@ export const UploadingPane = React.createClass( {
 					uploaderPrompt;
 
 				if ( uploadPercent < 99 ) {
-					uploaderPrompt = this.translate( 'Uploading %(filename)s\u2026', {
+					uploaderPrompt = this.props.translate( 'Uploading %(filename)s\u2026', {
 						args: { filename }
 					} );
 				} else {
-					uploaderPrompt = this.translate( 'Processing uploaded file\u2026' );
+					uploaderPrompt = this.props.translate( 'Processing uploaded file\u2026' );
 				}
 
 				return (
@@ -72,16 +73,16 @@ export const UploadingPane = React.createClass( {
 
 			case appStates.UPLOAD_SUCCESS:
 				return (
-					<div>
-						<p>{ this.translate( 'Success! File uploaded.' ) }</p>
+                    <div>
+						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
 						<Button
 							className="importer__start"
 							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
 						>
-							{ this.translate( 'Continue' ) }
+							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</div>
-				);
+                );
 		}
 	},
 
@@ -134,7 +135,7 @@ export const UploadingPane = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ));
 
 const mapDispatchToProps = dispatch => ( {
 	startUpload: flowRight( dispatch, startUpload )

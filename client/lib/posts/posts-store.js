@@ -2,13 +2,15 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:posts');
 
 /**
  * Internal dependencies
  */
-var utils = require( './utils' ),
-	Dispatcher = require( 'dispatcher' );
+import utils from './utils';
+
+import Dispatcher from 'dispatcher';
 
 var _posts = {},
 	PostsStore;

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { flowRight, includes } from 'lodash';
@@ -29,7 +30,7 @@ const startStates = [ appStates.DISABLED, appStates.INACTIVE ],
 	stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ],
 	doneStates = [ appStates.IMPORT_SUCCESS ];
 
-export const ImporterHeader = React.createClass( {
+export const ImporterHeader = localize(React.createClass( {
 	displayName: 'ImporterHeader',
 
 	mixins: [ PureRenderMixin ],
@@ -71,19 +72,19 @@ export const ImporterHeader = React.createClass( {
 		const { importerState } = this.props.importerStatus;
 
 		if ( includes( startStates, importerState ) ) {
-			return this.translate( 'Start Import', { context: 'verb' } );
+			return this.props.translate( 'Start Import', { context: 'verb' } );
 		}
 
 		if ( includes( cancelStates, importerState ) ) {
-			return this.translate( 'Close', { context: 'verb, to Close a dialog' } );
+			return this.props.translate( 'Close', { context: 'verb, to Close a dialog' } );
 		}
 
 		if ( includes( stopStates, importerState ) ) {
-			return this.translate( 'Importing...' );
+			return this.props.translate( 'Importing...' );
 		}
 
 		if ( includes( doneStates, importerState ) ) {
-			return this.translate( 'Done', { context: 'adjective' } );
+			return this.props.translate( 'Done', { context: 'adjective' } );
 		}
 	},
 
@@ -112,7 +113,7 @@ export const ImporterHeader = React.createClass( {
 			</header>
 		);
 	}
-} );
+} ));
 
 const mapDispatchToProps = dispatch => ( {
 	startImport: flowRight( dispatch, startImport )

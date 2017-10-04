@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+import PayButton from './pay-button';
+
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 
 import CartToggle from './cart-toggle';
 
@@ -22,18 +26,18 @@ var FreeCartPaymentBox = React.createClass( {
 		var cart = this.props.cart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+            <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>{
 						cart.has_bundle_credit ?
-							this.translate( 'You have a free domain credit!' ) :
-							this.translate( "Woohoo! You don't owe us anything!" ) }
+							this.props.translate( 'You have a free domain credit!' ) :
+							this.props.translate( "Woohoo! You don't owe us anything!" ) }
 					</h6>
 
 					<span>{
 						cart.has_bundle_credit ?
-							this.translate( 'You get one free domain with your subscription to %(productName)s. Time to celebrate!', { args: { productName: this.getProductName() } } ) :
-							this.translate( 'Just complete checkout to add these upgrades to your site.' ) }
+							this.props.translate( 'You get one free domain with your subscription to %(productName)s. Time to celebrate!', { args: { productName: this.getProductName() } } ) :
+							this.props.translate( 'Just complete checkout to add these upgrades to your site.' ) }
 					</span>
 				</div>
 
@@ -45,10 +49,10 @@ var FreeCartPaymentBox = React.createClass( {
 					<PayButton
 						cart={ cart }
 						transactionStep={ this.props.transactionStep }
-						beforeSubmitText={ this.translate( 'Complete Checkout' ) } />
+						beforeSubmitText={ this.props.translate( 'Complete Checkout' ) } />
 				</div>
 			</form>
-		);
+        );
 	},
 
 	getProductName: function() {
@@ -68,13 +72,13 @@ var FreeCartPaymentBox = React.createClass( {
 
 	render: function() {
 		return (
-			<PaymentBox
+            <PaymentBox
 				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+				title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
-		);
+        );
 	}
 } );
 
-module.exports = FreeCartPaymentBox;
+module.exports = localize(FreeCartPaymentBox);

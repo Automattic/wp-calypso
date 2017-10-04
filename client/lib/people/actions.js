@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 var PeopleActions = {
 

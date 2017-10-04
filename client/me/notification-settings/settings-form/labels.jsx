@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -10,7 +11,7 @@ import React from 'react';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'NotificationSettingsFormLabels',
 
 	propTypes: {
@@ -23,10 +24,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="notification-settings-form-labels">
-				<StreamHeader title={ this.translate( 'notifications' ) } />
+            <div className="notification-settings-form-labels">
+				<StreamHeader title={ this.props.translate( 'notifications' ) } />
 				<LabelsList settingKeys={ this.props.settingKeys } />
 			</div>
-		);
+        );
 	}
-} );
+}));

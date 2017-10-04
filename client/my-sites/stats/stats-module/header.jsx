@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -11,7 +12,7 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'StatsModuleHeader',
 
 	propTypes: {
@@ -74,12 +75,12 @@ export default React.createClass( {
 		}
 
 		return (
-			<ul className="module-header-actions">
+            <ul className="module-header-actions">
 				<li className="module-header-action toggle-info">
 					<a href="#"
 						className="module-header-action-link"
-						aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
-						title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						aria-label={ this.props.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						title={ this.props.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
 						onClick={ this.toggleInfo }
 					>
 						<Gridicon icon={ infoIcon } />
@@ -87,23 +88,23 @@ export default React.createClass( {
 				</li>
 				{ showCollapse ? this.renderChevron() : null }
 			</ul>
-		);
+        );
 	},
 
 	renderChevron() {
 		return (
-			<li className="module-header-action toggle-services">
+            <li className="module-header-action toggle-services">
 				<a
 					href="#"
 					className="module-header-action-link"
 					aria-label={
-						this.translate(
+						this.props.translate(
 							'Expand or collapse panel',
 							{ context: 'Stats panel action' }
 						)
 					}
 					title={
-						this.translate(
+						this.props.translate(
 							'Expand or collapse panel',
 							{ context: 'Stats panel action' }
 						)
@@ -115,7 +116,7 @@ export default React.createClass( {
 					<Gridicon icon="chevron-down" />
 				</a>
 			</li>
-		);
+        );
 	},
 
 	renderTitle() {
@@ -145,4 +146,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+
+import Emitter from 'lib/mixins/emitter';
 
 var _deletedSite = {},
 	DeletedSiteStore;

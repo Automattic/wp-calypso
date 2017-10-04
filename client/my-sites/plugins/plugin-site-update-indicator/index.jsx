@@ -1,17 +1,21 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' ),
-	PluginsActions = require( 'lib/plugins/actions' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+import Gridicon from 'gridicons';
+import PluginsActions from 'lib/plugins/actions';
+
+module.exports = localize(React.createClass( {
 
 	displayName: 'PluginSiteUpdateIndicator',
 
@@ -55,11 +59,11 @@ module.exports = React.createClass( {
 			isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
-			message = this.translate( 'Updating to version %(version)s', {
+			message = this.props.translate( 'Updating to version %(version)s', {
 				args: { version: ongoingUpdates[ 0 ].plugin.update.new_version }
 			} );
 		} else {
-			message = this.translate( 'Update to %(version)s', {
+			message = this.props.translate( 'Update to %(version)s', {
 				args: { version: this.props.site.plugin.update.new_version }
 			} );
 		}
@@ -89,4 +93,4 @@ module.exports = React.createClass( {
 		return null;
 	}
 
-} );
+} ));

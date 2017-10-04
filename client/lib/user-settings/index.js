@@ -2,16 +2,23 @@
  * External dependencies
  */
 import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
-var debug = require( 'debug' )( 'calypso:user:settings' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities;
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:user:settings');
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
-var emitterClass = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	user = require( 'lib/user' )(),
-	userUtils = require( 'lib/user/utils' );
+import emitterClass from 'lib/mixins/emitter';
+
+import userFactory from 'lib/user';
+const user = userFactory();
+import userUtils from 'lib/user/utils';
+
+/**
+ * Internal dependencies
+ */
+var wpcom = require( 'lib/wp' ).undocumented();
 /*
  * Decodes entities in those specific user settings properties
  * that the REST API returns already HTML-encoded

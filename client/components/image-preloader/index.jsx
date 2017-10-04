@@ -15,38 +15,36 @@ const LoadStatus = {
 	FAILED: 'FAILED'
 };
 
-export default React.createClass( {
-	displayName: 'ImagePreloader',
+export default class extends React.Component {
+    static displayName = 'ImagePreloader';
 
-	propTypes: {
+	static propTypes = {
 		src: PropTypes.string,
 		placeholder: PropTypes.element.isRequired,
 		children: PropTypes.node,
 		onLoad: PropTypes.func,
 		onError: PropTypes.func
-	},
+	};
 
-	getInitialState() {
-		return {
-			status: LoadStatus.PENDING
-		};
-	},
+	state = {
+		status: LoadStatus.PENDING
+	};
 
 	componentWillMount() {
 		this.createLoader();
-	},
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		this.destroyLoader();
-	},
+	}
 
-	createLoader( nextProps ) {
+	createLoader = nextProps => {
 		const src = ( nextProps || this.props ).src;
 
 		this.destroyLoader();
@@ -62,9 +60,9 @@ export default React.createClass( {
 		this.image.src = src;
 		this.image.onload = this.onLoadComplete;
 		this.image.onerror = this.onLoadComplete;
-	},
+	};
 
-	destroyLoader() {
+	destroyLoader = () => {
 		if ( ! this.image ) {
 			return;
 		}
@@ -72,9 +70,9 @@ export default React.createClass( {
 		this.image.onload = noop;
 		this.image.onerror = noop;
 		delete this.image;
-	},
+	};
 
-	onLoadComplete( event ) {
+	onLoadComplete = event => {
 		this.destroyLoader();
 
 		if ( event.type !== 'load' ) {
@@ -90,7 +88,7 @@ export default React.createClass( {
 				this.props.onLoad( event );
 			}
 		} );
-	},
+	};
 
 	render() {
 		let children, imageProps;
@@ -118,4 +116,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

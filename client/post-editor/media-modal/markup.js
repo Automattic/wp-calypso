@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-var ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import ReactDomServer from 'react-dom/server';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Shortcode = require( 'lib/shortcode' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	MediaSerialization = require( 'lib/media-serialization' );
+import Shortcode from 'lib/shortcode';
+
+import MediaUtils from 'lib/media/utils';
+import MediaSerialization from 'lib/media-serialization';
 
 /**
  * Module variables

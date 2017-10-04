@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { assign, clone, isEqual } from 'lodash';
-const config = require( 'config' );
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action,
-	LikeActions = require( './actions' ),
-	key = require( './utils' ).key;
+import Dispatcher from 'dispatcher';
+
+import Emitter from 'lib/mixins/emitter';
+import { action as FeedPostStoreActionType } from 'lib/feed-post-store/constants';
+import LikeActions from './actions';
+import { key } from './utils';
 
 
 

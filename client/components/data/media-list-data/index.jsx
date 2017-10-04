@@ -8,10 +8,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaListStore = require( 'lib/media/list-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+import MediaActions from 'lib/media/actions';
+
+import MediaListStore from 'lib/media/list-store';
+import passToChildren from 'lib/react-pass-to-children';
+import utils from './utils';
 
 function getStateData( siteId ) {
 	return {

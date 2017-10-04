@@ -1,6 +1,6 @@
-var site = require( './mock-site' ),
-	followerData = require( './mock-email-followers' ),
-	moreFollowerData = require( './mock-more-email-followers' );
+import site from './mock-site';
+import followerData from './mock-email-followers';
+import moreFollowerData from './mock-more-email-followers';
 
 module.exports = {
 	fetchedFollowers: {

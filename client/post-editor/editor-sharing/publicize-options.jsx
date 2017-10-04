@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, map } from 'lodash';
@@ -154,13 +155,13 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		}
 
 		return (
-			<Button borderless compact onClick={ this.newConnection }>
-				<Gridicon icon="add" /> { this.translate( 'Connect new service' ) }
+            <Button borderless compact onClick={ this.newConnection }>
+				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
 				<span className="editor-sharing__external-link-indicator">
 					<Gridicon icon="external" size={ 18 } />
 				</span>
 			</Button>
-		);
+        );
 	},
 
 	renderInfoNotice: function() {
@@ -171,10 +172,10 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		}
 
 		return (
-			<p className="editor-drawer__description">
-				{ this.translate( 'Connect and select social media services to automatically share this post.' ) }
+            <p className="editor-drawer__description">
+				{ this.props.translate( 'Connect and select social media services to automatically share this post.' ) }
 			</p>
-		);
+        );
 	},
 
 	dismissRepublicizeMessage: function() {
@@ -187,23 +188,23 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
 			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
+                <div className="editor-sharing__publicize-disabled">
+					<p><span>{ this.props.translate( 'Publicize is disabled on this site.' ) }</span></p>
 				</div>
-			);
+            );
 		}
 
 		if ( this.props.site && this.props.site.jetpack && ! this.props.isPublicizeEnabled ) {
 			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
+                <div className="editor-sharing__publicize-disabled">
+					<p><span>{ this.props.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
 					<button
 							className="editor-sharing__jetpack-modules-button button is-secondary"
 							onClick={ this.jetpackModulePopup } >
-						{ this.translate( 'View Module Settings' ) }
+						{ this.props.translate( 'View Module Settings' ) }
 					</button>
 				</div>
-			);
+            );
 		}
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
@@ -241,4 +242,4 @@ export default connect(
 		};
 	},
 	{ requestConnections }
-)( EditorSharingPublicizeOptions );
+)( localize(EditorSharingPublicizeOptions) );

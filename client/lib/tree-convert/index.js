@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-var Traverser = require( './tree-traverser' );
+import Traverser from './tree-traverser';
 
 /**
  * TreeConvert provides methods to convert a linearly structured set of "items"

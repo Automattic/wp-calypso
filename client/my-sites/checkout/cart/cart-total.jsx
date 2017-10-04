@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems;
+import { cartItems } from 'lib/cart-values';
 
 var CartTotal = React.createClass({
 	render: function() {
@@ -14,12 +16,12 @@ var CartTotal = React.createClass({
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
-				<div className="cart-total">
-					{ this.translate( 'Recalculating…', {
+                <div className="cart-total">
+					{ this.props.translate( 'Recalculating…', {
 							context: 'Upgrades: Updating cart cost in checkout'
 						} ) }
 				</div>
-			);
+            );
 		}
 
 		if ( ! cart.total_cost_display ) {
@@ -42,15 +44,15 @@ var CartTotal = React.createClass({
 		var cart = this.props.cart;
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
-			return this.translate( 'Total Due Now:', {
+			return this.props.translate( 'Total Due Now:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a free trial'
 			} );
 		} else {
-			return this.translate( 'Total:', {
+			return this.props.translate( 'Total:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a full price upgrade'
 			} );
 		}
 	}
 });
 
-module.exports = CartTotal;
+module.exports = localize(CartTotal);

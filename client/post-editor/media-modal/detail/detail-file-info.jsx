@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' );
+import MediaUtils from 'lib/media/utils';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',
 
 	propTypes: {
@@ -22,7 +25,7 @@ module.exports = React.createClass( {
 		let value;
 
 		if ( ! this.props.item ) {
-			return this.translate( 'Loading…' );
+			return this.props.translate( 'Loading…' );
 		}
 
 		switch ( attribute ) {
@@ -32,14 +35,14 @@ module.exports = React.createClass( {
 
 			case 'dimensions':
 				value = createFragment( {
-					width: <abbr title={ this.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
+					width: <abbr title={ this.props.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
 					separator: ' ✕ ',
-					height: <abbr title={ this.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>
+					height: <abbr title={ this.props.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>
 				} );
 				break;
 
 			case 'date':
-				value = this.moment( this.props.item[ attribute ] ).format( 'D MMMM YYYY' );
+				value = this.props.moment( this.props.item[ attribute ] ).format( 'D MMMM YYYY' );
 				break;
 
 			case 'length':
@@ -59,11 +62,11 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<tr>
-				<th>{ this.translate( 'Dimensions' ) }</th>
+            <tr>
+				<th>{ this.props.translate( 'Dimensions' ) }</th>
 				<td>{ this.getItemValue( 'dimensions' ) }</td>
 			</tr>
-		);
+        );
 	},
 
 	renderDuration() {
@@ -72,11 +75,11 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<tr>
-				<th>{ this.translate( 'Duration' ) }</th>
+            <tr>
+				<th>{ this.props.translate( 'Duration' ) }</th>
 				<td>{ this.getItemValue( 'length' ) }</td>
 			</tr>
-		);
+        );
 	},
 
 	render() {
@@ -85,26 +88,26 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<table className={ classes }>
+            <table className={ classes }>
 				<tbody>
 					<tr>
-						<th>{ this.translate( 'File Name' ) }</th>
+						<th>{ this.props.translate( 'File Name' ) }</th>
 						<td title={ this.getItemValue( 'file' ) }>
 							<span>{ this.getItemValue( 'file' ) }</span>
 						</td>
 					</tr>
 					<tr>
-						<th>{ this.translate( 'File Type' ) }</th>
+						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					<tr>
-						<th>{ this.translate( 'Upload Date' ) }</th>
+						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>
 					</tr>
 				</tbody>
 			</table>
-		);
+        );
 	}
-} );
+} ));

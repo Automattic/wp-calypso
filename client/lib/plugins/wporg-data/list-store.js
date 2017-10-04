@@ -6,9 +6,10 @@ import { clone } from 'lodash';
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	PluginsDataActions = require( './actions' );
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
+import PluginsDataActions from './actions';
 
 var _shortLists = {},
 	_fullLists = {},

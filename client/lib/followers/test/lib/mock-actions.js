@@ -1,6 +1,6 @@
-var site = require( './mock-site' ),
-	followerData = require( './mock-wpcom-followers1' ),
-	moreFollowerData = require( './mock-wpcom-followers2' );
+import site from './mock-site';
+import followerData from './mock-wpcom-followers1';
+import moreFollowerData from './mock-wpcom-followers2';
 
 module.exports = {
 	fetchedFollowers: {

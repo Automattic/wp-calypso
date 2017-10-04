@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 module.exports = function( element, additionalProps ) {
 	var props = assign( {}, element.props, additionalProps ),

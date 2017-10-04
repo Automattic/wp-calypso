@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' ),
-	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
+import MediaUtils from 'lib/media/utils';
+
+import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 

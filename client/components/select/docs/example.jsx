@@ -1,8 +1,9 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 var Selects = React.createClass( {
 	mixins: [ PureRenderMixin ],

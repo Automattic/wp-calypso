@@ -12,16 +12,18 @@ const debug = debugFactory( 'calypso:me:sidebar' );
 /**
  * Internal dependencies
  */
-const Sidebar = require( 'layout/sidebar' ),
-	SidebarFooter = require( 'layout/sidebar/footer' ),
-	SidebarHeading = require( 'layout/sidebar/heading' ),
-	SidebarItem = require( 'layout/sidebar/item' ),
-	SidebarMenu = require( 'layout/sidebar/menu' ),
-	config = require( 'config' ),
-	ProfileGravatar = require( 'me/profile-gravatar' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	user = require( 'lib/user' )(),
-	userUtilities = require( 'lib/user/utils' );
+import Sidebar from 'layout/sidebar';
+
+import SidebarFooter from 'layout/sidebar/footer';
+import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
+import config from 'config';
+import ProfileGravatar from 'me/profile-gravatar';
+import eventRecorder from 'me/event-recorder';
+import userFactory from 'lib/user';
+const user = userFactory();
+import userUtilities from 'lib/user/utils';
 
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';

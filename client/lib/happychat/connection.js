@@ -14,7 +14,9 @@ import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
 /*
  * Happychat client connection for Socket.IO
  */
-const debug = require( 'debug' )( 'calypso:happychat:connection' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:happychat:connection');
 
 class Connection extends EventEmitter {
 

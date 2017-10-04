@@ -3,8 +3,8 @@
  */
 import React from 'react';
 
-export default React.createClass( {
-	displayName: 'FeatureExample',
+export default class extends React.Component {
+    static displayName = 'FeatureExample';
 
 	render() {
 		return (
@@ -16,4 +16,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

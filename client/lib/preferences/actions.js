@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { forOwn } from 'lodash';
-var store = require( 'store' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import store from 'store';
+var wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( './constants' ),
-	userUtils = require( 'lib/user/utils' );
+import Dispatcher from 'dispatcher';
+
+import PreferencesConstants from './constants';
+import userUtils from 'lib/user/utils';
 /**
  * Module variables
  */

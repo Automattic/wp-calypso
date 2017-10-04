@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var decodeEntities = require( 'lib/formatting' ).decodeEntities;
+import { decodeEntities } from 'lib/formatting';
 
-var SharingButtonsLabelEditor = module.exports = React.createClass( {
+var SharingButtonsLabelEditor = module.exports = localize(React.createClass( {
 	displayName: 'SharingButtonsLabelEditor',
 
 	propTypes: {
@@ -53,12 +56,12 @@ var SharingButtonsLabelEditor = module.exports = React.createClass( {
 	getNoButtonsNoticeElement: function() {
 		if ( ! this.props.hasEnabledButtons ) {
 			return (
-				<em className="sharing-buttons-preview__panel-notice">
-					{ this.translate( 'This text won\'t appear until you add at least one sharing button.', {
+                <em className="sharing-buttons-preview__panel-notice">
+					{ this.props.translate( 'This text won\'t appear until you add at least one sharing button.', {
 						context: 'Sharing: Buttons'
 					} ) }
 				</em>
-			);
+            );
 		}
 	},
 
@@ -68,21 +71,21 @@ var SharingButtonsLabelEditor = module.exports = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes }>
+            <div className={ classes }>
 				<div className="sharing-buttons-preview__panel-content">
 					<h3 className="sharing-buttons-preview__panel-heading">
-						{ this.translate( 'Edit label text', { context: 'Sharing: buttons' } ) }
+						{ this.props.translate( 'Edit label text', { context: 'Sharing: buttons' } ) }
 					</h3>
 					<p className="sharing-buttons-preview__panel-instructions">
-						{ this.translate( 'Change the text of the sharing buttons label' ) }
+						{ this.props.translate( 'Change the text of the sharing buttons label' ) }
 					</p>
 					<input type="text" value={ decodeEntities( this.props.value ) } onKeyDown={ this.onKeyDown } onChange={ this.onInputChange } className="sharing-buttons-label-editor__input" />
 					{ this.getNoButtonsNoticeElement() }
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
-					<button type="button" className="button" onClick={ this.props.onClose }>{ this.translate( 'Close' ) }</button>
+					<button type="button" className="button" onClick={ this.props.onClose }>{ this.props.translate( 'Close' ) }</button>
 				</footer>
 			</div>
-		);
+        );
 	}
-} );
+} ));

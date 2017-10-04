@@ -1,20 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' );
+import config from 'config';
+
+import route from 'lib/route';
+import analytics from 'lib/analytics';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 
 	displayName: 'NuxWelcomeMessage',
 
@@ -55,11 +58,11 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="NuxWelcomeMessage__primary-content">
+            <div className="NuxWelcomeMessage__primary-content">
 				<img src="/calypso/images/illustrations/illustration-write.svg" />
-				<h3 className="NuxWelcomeMessage__title">{ this.translate( 'Welcome to WordPress.com!' ) }</h3>
+				<h3 className="NuxWelcomeMessage__title">{ this.props.translate( 'Welcome to WordPress.com!' ) }</h3>
 				<p className="NuxWelcomeMessage__intro">
-					{ this.translate(
+					{ this.props.translate(
 						'This is your site dashboard where you can write posts and control your site. ' +
 						'Since you\'re new, check out our {{startLink}}setup guides{{/startLink}}. ' +
 						'Our {{docsLink}}support documentation{{/docsLink}} is available 24/7.', {
@@ -82,17 +85,17 @@ module.exports = React.createClass( {
 				<p>
 					{ customizeEnabled
 					? <a href={ customizeLink } className="button is-primary" onClick={ this.analyticsEvents.customize }>{
-						this.translate( 'Customize your Site' )
+						this.props.translate( 'Customize your Site' )
 					}</a>
 					: null }
 					<a href={ postLink } className="button" onClick={ this.analyticsEvents.firstPost }>{
-						this.translate( 'Start your first Post' )
+						this.props.translate( 'Start your first Post' )
 					}</a>
 					<a href={ sharingLink } className="button" onClick={ this.analyticsEvents.facebook }>{
-						this.translate( 'Connect to Facebook' )
+						this.props.translate( 'Connect to Facebook' )
 					}</a>
 				</p>
 			</div>
-		);
+        );
 	}
-} );
+} ));

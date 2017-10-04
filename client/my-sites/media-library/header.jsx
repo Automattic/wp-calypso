@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -20,7 +21,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'MediaLibraryHeader',
 
 	propTypes: {
@@ -78,14 +79,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<ButtonGroup className="media-library__upload-buttons">
+            <ButtonGroup className="media-library__upload-buttons">
 				<UploadButton
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
 					className="button is-compact">
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
+					<span className="is-desktop">{ this.props.translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
 				<Button
 					compact
@@ -93,7 +94,7 @@ export default React.createClass( {
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more">
 					<span className="screen-reader-text">
-						{ this.translate( 'More Options' ) }
+						{ this.props.translate( 'More Options' ) }
 					</span>
 					<Gridicon icon="chevron-down" size={ 20 }/>
 					<PopoverMenu
@@ -103,12 +104,12 @@ export default React.createClass( {
 						position="bottom right"
 						className="is-dialog-visible media-library__header-popover">
 						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
+							{ this.props.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
 				</Button>
 			</ButtonGroup>
-		);
+        );
 	},
 
 	render() {
@@ -149,4 +150,4 @@ export default React.createClass( {
 			return card;
 		}
 	}
-} );
+}));

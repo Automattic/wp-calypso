@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -11,7 +12,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
+export default localize(React.createClass({
 
 	displayName: 'PostTrendsDay',
 
@@ -43,7 +44,7 @@ export default React.createClass( {
 
 	buildTooltipData() {
 		const { label, postCount } = this.props;
-		const content = this.translate(
+		const content = this.props.translate(
 			'%(posts)d post',
 			'%(posts)d posts', {
 				count: postCount,
@@ -84,4 +85,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

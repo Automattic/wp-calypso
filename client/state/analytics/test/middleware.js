@@ -22,9 +22,11 @@ import { dispatcher as dispatch } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
 
+import { analyticsMock } from './helpers/analytics-mock';
+import { adTrackingMock } from './helpers/analytics-mock';
+
 jest.mock( 'lib/analytics', () => {
-	const analyticsSpy = require( 'sinon' ).spy();
-	const { analyticsMock } = require( './helpers/analytics-mock' );
+    const analyticsSpy = require( 'sinon' ).spy();
 
 	const mock = analyticsMock( analyticsSpy );
 	mock.spy = analyticsSpy;
@@ -32,8 +34,7 @@ jest.mock( 'lib/analytics', () => {
 	return mock;
 } );
 jest.mock( 'lib/analytics/ad-tracking', () => {
-	const adTrackingSpy = require( 'sinon' ).spy();
-	const { adTrackingMock } = require( './helpers/analytics-mock' );
+    const adTrackingSpy = require( 'sinon' ).spy();
 
 	const mock = adTrackingMock( adTrackingSpy );
 	mock.spy = adTrackingSpy;

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var TokenField = require( 'components/token-field' ),
-	unescapeAndFormatSpaces = require( 'lib/formatting' ).unescapeAndFormatSpaces;
+import TokenField from 'components/token-field';
+
+import { unescapeAndFormatSpaces } from 'lib/formatting';
 
 var suggestions = [
 	'the', 'of', 'and', 'to', 'a', 'in', 'for', 'is', 'on', 'that', 'by', 'this', 'with', 'i', 'you', 'it',

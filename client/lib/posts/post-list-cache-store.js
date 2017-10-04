@@ -11,6 +11,9 @@ import sitesFactory from 'lib/sites-list';
 import Dispatcher from 'dispatcher';
 import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
 
+import PostListStoreFactory from './post-list-store-factory';
+const PostListStore = PostListStoreFactory();
+
 let cache = {};
 const _canonicalCache = {};
 const TTL_IN_MS = 5 * 60 * 1000; // five minutes
@@ -109,8 +112,7 @@ function isListKeyFresh( listKey ) {
 }
 
 PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		PostListStore = require( './post-list-store-factory' )();
+	var action = payload.action;
 
 	Dispatcher.waitFor( [ PostListStore.dispatchToken ] );
 

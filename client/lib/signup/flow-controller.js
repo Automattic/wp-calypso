@@ -17,21 +17,24 @@ import {
 	pick,
 	reject
 } from 'lodash';
-const debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
-	store = require( 'store' ),
-	page = require( 'page' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:signup:flow-controller'); // eslint-disable-line no-unused-vars
+import store from 'store';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var SignupActions = require( './actions' ),
-	SignupProgressStore = require( './progress-store' ),
-	SignupDependencyStore = require( './dependency-store' ),
-	flows = require( 'signup/config/flows' ),
-	steps = require( 'signup/config/steps' ),
-	wpcom = require( 'lib/wp' ),
-	user = require( 'lib/user' )(),
-	utils = require( 'signup/utils' );
+import SignupActions from './actions';
+
+import SignupProgressStore from './progress-store';
+import SignupDependencyStore from './dependency-store';
+import flows from 'signup/config/flows';
+import steps from 'signup/config/steps';
+import wpcom from 'lib/wp';
+import userFactory from 'lib/user';
+const user = userFactory();
+import utils from 'signup/utils';
 
 /**
  * Constants

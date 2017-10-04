@@ -2,19 +2,20 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-var store = require( 'store' ),
-	debug = require( 'debug' )( 'calypso:user' ),
-	config = require( 'config' ),
-	qs = require( 'qs' );
+import store from 'store';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:user');
+import config from 'config';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	userUtils = require( './shared-utils' ),
-	localforage = require( 'lib/localforage' );
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+import userUtils from './shared-utils';
+import localforage from 'lib/localforage';
 
 /**
  * User component

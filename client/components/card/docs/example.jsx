@@ -1,13 +1,14 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' );
+import Card from 'components/card';
+
+import CompactCard from 'components/card/compact';
 
 var Cards = React.createClass( {
 	displayName: 'Cards',

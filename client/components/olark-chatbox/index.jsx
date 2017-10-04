@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:olark:chatbox' );
+import ReactDom from 'react-dom';
+
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:olark:chatbox');
 
 /**
  * Internal dependencies
  */
-var OlarkEvents = require( 'lib/olark-events' );
+import OlarkEvents from 'lib/olark-events';
 
 module.exports = React.createClass( {
 

@@ -2,16 +2,18 @@
  * External dependencies
  */
 import { find, isEqual, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:site' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:site');
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	notices = require( 'notices' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	getAttributes = require( './computed-attributes' );
+import wpcom from 'lib/wp';
+
+import notices from 'notices';
+import Emitter from 'lib/mixins/emitter';
+import getAttributes from './computed-attributes';
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {

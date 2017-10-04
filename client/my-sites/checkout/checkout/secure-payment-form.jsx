@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { get, find, defer } from 'lodash';
 
@@ -213,11 +214,11 @@ const SecurePaymentForm = React.createClass( {
 		}
 
 		return (
-			<Notice icon="notice" showDismiss={ false }>
-				{ preventWidows( this.translate( 'You can reuse the payment information you entered on get.blog, ' +
+            <Notice icon="notice" showDismiss={ false }>
+				{ preventWidows( this.props.translate( 'You can reuse the payment information you entered on get.blog, ' +
 					'a WordPress.com service. Confirm your order below.' ), 4 ) }
 			</Notice>
-		);
+        );
 	},
 
 	renderPaymentBox() {
@@ -248,13 +249,13 @@ const SecurePaymentForm = React.createClass( {
 	render() {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
-				<EmptyContent
+                <EmptyContent
 					illustration="/calypso/images/illustrations/illustration-500.svg"
-					title={ this.translate( 'Checkout is not available' ) }
-					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
-					action={ this.translate( 'Back to Plans' ) }
+					title={ this.props.translate( 'Checkout is not available' ) }
+					line={ this.props.translate( "We're hard at work on the issue. Please check back shortly." ) }
+					action={ this.props.translate( 'Back to Plans' ) }
 					actionURL={ '/plans/' + this.props.selectedSite.slug } />
-			);
+            );
 		}
 
 		return (
@@ -266,5 +267,5 @@ const SecurePaymentForm = React.createClass( {
 	}
 } );
 
-export default SecurePaymentForm;
+export default localize(SecurePaymentForm);
 

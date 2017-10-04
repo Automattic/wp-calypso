@@ -1,15 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+import upgradesActions from 'lib/upgrades/actions';
+
+module.exports = localize(React.createClass( {
 	displayName: 'CartCoupon',
 
 	getInitialState: function() {
@@ -72,9 +75,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		return (
-			<a href="" onClick={ this.toggleCouponDetails }>{ this.translate( 'Have a coupon code?' ) }</a>
-		);
+		return <a href="" onClick={ this.toggleCouponDetails }>{ this.props.translate( 'Have a coupon code?' ) }</a>;
 	},
 
 	getCouponForm: function() {
@@ -87,13 +88,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<form onSubmit={ this.applyCoupon }>
-				<input type="text" placeholder={ this.translate( 'Enter Coupon Code', { textOnly: true } ) } onChange={ this.handleCouponInput } value={ this.state.couponInputValue } />
+            <form onSubmit={ this.applyCoupon }>
+				<input type="text" placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) } onChange={ this.handleCouponInput } value={ this.state.couponInputValue } />
 				<button type="submit" className="button">
-					{ this.translate( 'Apply' ) }
+					{ this.props.translate( 'Apply' ) }
 				</button>
 			</form>
-		);
+        );
 	},
 
 	render: function() {
@@ -104,4 +105,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ));

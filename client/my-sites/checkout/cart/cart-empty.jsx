@@ -2,24 +2,25 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-var React = require( 'react' ),
-	page = require( 'page' );
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import page from 'page';
 
 var CartEmpty = React.createClass({
 	render: function() {
 		return (
-			<div>
+            <div>
 				<div className="cart-empty">
-					{ this.translate( 'There are no items in your cart.' ) }
+					{ this.props.translate( 'There are no items in your cart.' ) }
 				</div>
 				<div className="cart-buttons">
 					<button className="cart-checkout-button button is-primary"
 							onClick={ this.handleClick }>
-							{ this.shouldShowPlanButton() ? this.translate( 'Add a Plan' ) : this.translate( 'Add a Domain' ) }
+							{ this.shouldShowPlanButton() ? this.props.translate( 'Add a Plan' ) : this.props.translate( 'Add a Domain' ) }
 					</button>
 				</div>
 			</div>
-		);
+        );
 	},
 
 	shouldShowPlanButton: function() {
@@ -36,4 +37,4 @@ var CartEmpty = React.createClass({
 	}
 });
 
-module.exports = CartEmpty;
+module.exports = localize(CartEmpty);

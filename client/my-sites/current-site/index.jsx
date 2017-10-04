@@ -30,6 +30,8 @@ import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+import { cartItems } from 'lib/cart-values';
+
 class CurrentSite extends Component {
 	static propTypes = {
 		isPreviewShowing: PropTypes.bool,
@@ -49,9 +51,7 @@ class CurrentSite extends Component {
 	}
 
 	showStaleCartItemsNotice = () => {
-		const { selectedSite } = this.props,
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			staleCartItemNoticeId = 'stale-cart-item-notice';
+		const { selectedSite } = this.props, staleCartItemNoticeId = 'stale-cart-item-notice';
 
 		// Remove any existing stale cart notice
 		this.props.removeNotice( staleCartItemNoticeId );

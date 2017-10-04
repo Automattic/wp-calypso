@@ -15,10 +15,10 @@ import React from 'react';
  */
 import { ImageEditorCanvas } from '../image-editor-canvas';
 
-jest.mock( 'blocks/image-editor/image-editor-crop', () => {
-	const { Component } = require( 'react' );
+import { Component } from 'react';
 
-	class ImageEditorCropMock extends Component {
+jest.mock( 'blocks/image-editor/image-editor-crop', () => {
+    class ImageEditorCropMock extends Component {
 		render() {
 			return <dfn />;
 		}

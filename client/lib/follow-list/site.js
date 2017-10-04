@@ -1,13 +1,16 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:follow-list:site' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:follow-list:site');
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import wpcom from 'lib/wp';
+
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * FollowList component

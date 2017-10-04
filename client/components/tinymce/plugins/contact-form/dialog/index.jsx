@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -46,14 +47,14 @@ const ContactFormDialog = React.createClass( {
 				data-e2e-button="save"
 				disabled={ ! isValidForm }
 				onClick={ this.props.onInsert } >
-				{ this.props.isEdit ? this.translate( 'Update' ) : this.translate( 'Insert' ) }
+				{ this.props.isEdit ? this.props.translate( 'Update' ) : this.props.translate( 'Insert' ) }
 			</FormButton>,
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
 				data-e2e-button="cancel"
 				onClick={ this.props.onClose } >
-				{ this.translate( 'Cancel' ) }
+				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
 		];
 
@@ -65,7 +66,7 @@ const ContactFormDialog = React.createClass( {
 						isPrimary={ false }
 						data-e2e-button="add"
 						onClick={ this.props.onFieldAdd } >
-						{ this.translate( 'Add New Field' ) }
+						{ this.props.translate( 'Add New Field' ) }
 					</FormButton>
 				</div>,
 				...actionButtons
@@ -113,4 +114,4 @@ export default connect( state => {
 		currentUser: getCurrentUser( state ),
 		contactForm: state.ui.editor.contactForm
 	};
-} )( ContactFormDialog );
+} )( localize(ContactFormDialog) );

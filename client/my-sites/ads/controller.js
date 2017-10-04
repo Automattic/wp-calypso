@@ -1,9 +1,10 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' );
+import React from 'react';
+
+import i18n from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies

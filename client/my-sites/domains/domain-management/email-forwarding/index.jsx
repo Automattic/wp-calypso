@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 
@@ -33,14 +34,14 @@ const EmailForwarding = React.createClass( {
 			return <MainPlaceholder goBack={ this.goToEditEmail } />;
 		}
 		return (
-			<Main className="email-forwarding">
+            <Main className="email-forwarding">
 				<Header
 					onClick={ this.goToEditEmail }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Email Forwarding' ) }
+					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
 
-				<SectionHeader label={ this.translate( 'Email Forwarding' ) } />
+				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
 				<Card className="email-forwarding-card">
 					<EmailForwardingDetails
 						selectedDomainName={ this.props.selectedDomainName } />
@@ -55,7 +56,7 @@ const EmailForwarding = React.createClass( {
 						selectedSite={ this.props.selectedSite } />
 				</Card>
 			</Main>
-		);
+        );
 	},
 
 	isDataLoading() {
@@ -67,4 +68,4 @@ const EmailForwarding = React.createClass( {
 	}
 } );
 
-export default EmailForwarding;
+export default localize(EmailForwarding);

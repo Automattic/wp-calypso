@@ -62,6 +62,12 @@ import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
 import { getPrimaryDomainBySiteId } from 'state/selectors';
 
+import NoSitesMessage from 'components/empty-content/no-sites-message';
+import EmptyContentComponent from 'components/empty-content';
+import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
+import Main from 'components/main';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -107,9 +113,7 @@ function removeSidebar( context ) {
 }
 
 function renderEmptySites( context ) {
-	const NoSitesMessage = require( 'components/empty-content/no-sites-message' );
-
-	removeSidebar( context );
+    removeSidebar( context );
 
 	renderWithReduxStore(
 		React.createElement( NoSitesMessage ),
@@ -119,8 +123,7 @@ function renderEmptySites( context ) {
 }
 
 function renderNoVisibleSites( context ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
-	const currentUser = user.get();
+    const currentUser = user.get();
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
@@ -148,8 +151,7 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const DomainOnly = require( 'my-sites/domains/domain-management/list/domain-only' );
-	const { store: reduxStore } = reactContext;
+    const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (
 			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
@@ -429,9 +431,7 @@ module.exports = {
 	},
 
 	jetPackWarning( context, next ) {
-		const { getState } = getStore( context );
-		const Main = require( 'components/main' );
-		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+	    const { getState } = getStore( context );
 		const basePath = route.sectionify( context.path );
 		const selectedSite = getSelectedSite( getState() );
 

@@ -1,27 +1,32 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-code-prompt');
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
+import FormButton from 'components/forms/form-button';
+
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTelInput from 'components/forms/form-tel-input';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 
 	displayName: 'Security2faCodePrompt',
 
@@ -111,7 +116,7 @@ module.exports = React.createClass( {
 			this.setState(
 				{
 					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
+					lastError: this.props.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
 					lastErrorType: 'is-info'
 				}
 			);
@@ -141,14 +146,14 @@ module.exports = React.createClass( {
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+					lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
 					lastErrorType: 'is-error'
 				}
 			);
 		} else if ( ! data.success ) {
 			this.setState(
 				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
 					lastErrorType: 'is-error'
 				}
 			);
@@ -162,13 +167,13 @@ module.exports = React.createClass( {
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Disabling Two-Step…' ) : this.props.translate( 'Disable Two-Step' );
 				break;
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Enabling Two-Step…' ) : this.props.translate( 'Enable Two-Step' );
 				break;
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				label = this.state.submittingCode ? this.props.translate( 'Submitting…' ) : this.props.translate( 'Submit' );
 		}
 
 		return label;
@@ -202,9 +207,9 @@ module.exports = React.createClass( {
 			: constants.sixDigit2faPlaceholder;
 
 		return (
-			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
+            <form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
+					<FormLabel htmlFor="verification-code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
 					<FormTelInput
 						autoFocus
 						className="security-2fa-code-prompt__verification-code"
@@ -222,7 +227,7 @@ module.exports = React.createClass( {
 						? (
 							<FormSettingExplanation>
 								{
-									this.translate(
+									this.props.translate(
 										'A code has been sent to your device via SMS.  ' +
 										'You may request another code after one minute.'
 									)
@@ -256,7 +261,7 @@ module.exports = React.createClass( {
 									this.onRequestCode( event );
 								}.bind( this ) }
 							>
-								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
+								{ this.state.codeRequestPerformed ? this.props.translate( 'Resend Code' ) : this.props.translate( 'Send Code via SMS' ) }
 							</FormButton>
 						)
 						: null
@@ -273,13 +278,13 @@ module.exports = React.createClass( {
 									this.onCancel( event );
 								}.bind( this ) }
 							>
-								{ this.translate( 'Cancel' ) }
+								{ this.props.translate( 'Cancel' ) }
 							</FormButton>
 						)
 						: null
 					}
 				</FormButtonsBar>
 			</form>
-		);
+        );
 	}
-} );
+} ));

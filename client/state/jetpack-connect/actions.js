@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:jetpack-connect:actions');
 import { omit, pick } from 'lodash';
 import page from 'page';
 

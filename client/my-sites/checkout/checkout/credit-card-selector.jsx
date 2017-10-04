@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	StoredCard = require( './stored-card' ),
-	NewCardForm = require( './new-card-form' ),
-	storeTransactions = require( 'lib/store-transactions' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
+
+import StoredCard from './stored-card';
+import NewCardForm from './new-card-form';
+import storeTransactions from 'lib/store-transactions';
+import upgradesActions from 'lib/upgrades/actions';
 
 var CreditCardSelector = React.createClass({
 	getInitialState: function() {

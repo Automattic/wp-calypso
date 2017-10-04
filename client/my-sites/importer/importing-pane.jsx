@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import { numberFormat, translate } from 'i18n-calypso';
+import { numberFormat, translate, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
 
 /**
@@ -77,7 +77,7 @@ const hasProgressInfo = progress => {
 	return true;
 };
 
-export const ImportingPane = React.createClass( {
+export const ImportingPane = localize(React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -132,7 +132,7 @@ export const ImportingPane = React.createClass( {
 		const postCount = post.total;
 
 		if ( pageCount && postCount ) {
-			return this.translate(
+			return this.props.translate(
 				'All done! Check out {{a}}Posts{{/a}} or ' +
 				'{{b}}Pages{{/b}} to see your imported content.', {
 					components: {
@@ -144,7 +144,7 @@ export const ImportingPane = React.createClass( {
 		}
 
 		if ( pageCount || postCount ) {
-			return this.translate(
+			return this.props.translate(
 				'All done! Check out {{a}}%(articles)s{{/a}} ' +
 				'to see your imported content.', {
 					components: { a: pageCount ? pageLink : postLink },
@@ -250,7 +250,7 @@ export const ImportingPane = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ));
 
 const mapDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
