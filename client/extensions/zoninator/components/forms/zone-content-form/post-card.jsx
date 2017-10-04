@@ -46,13 +46,15 @@ class PostCard extends Component {
 					compact
 					onMouseDown={ this.handleMouseDown }
 					href={ url }
+					draggable="false"
 					target="_blank">
 					{ translate( 'View' ) }
 				</Button>
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }
-					href={ editorPath }>
+					href={ editorPath }
+					draggable="false">
 					{ translate( 'Edit' ) }
 				</Button>
 				<Button
