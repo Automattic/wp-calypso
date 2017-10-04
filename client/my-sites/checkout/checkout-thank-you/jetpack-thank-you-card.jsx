@@ -613,7 +613,8 @@ class JetpackThankYouCard extends Component {
 				return total += 1;
 			}, 0 );
 
-		return Math.ceil( completed / features.length * 100 );
+		// We're intentionally showing at least 10% progress to indicate that setup has started.
+		return Math.max( 10, Math.ceil( completed / features.length * 100 ) );
 	}
 
 	renderAction( progress = 0 ) {
