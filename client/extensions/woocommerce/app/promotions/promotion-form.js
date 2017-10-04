@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import PromotionFormTypeCard from './promotion-form-type-card';
+import PromotionFormTypeHeader from './promotion-form-type-header';
 import PromotionFormCouponCard from './promotion-form-coupon-card';
 import PromotionFormProductSaleCard from './promotion-form-product-sale-card';
 
@@ -75,12 +75,11 @@ export default class PromotionForm extends React.PureComponent {
 
 		return (
 			<div className={ classNames( 'promotions__form', this.props.className ) }>
-				<PromotionFormTypeCard
+				<PromotionFormTypeHeader
 					siteId={ siteId }
 					promotion={ promotion }
 					editPromotion={ editPromotion }
 				/>
-
 				{ renderEditCard( siteId, currency, promotion, editPromotion, products, productCategories ) }
 			</div>
 		);
