@@ -276,7 +276,12 @@ class PostCommentList extends React.Component {
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
-		if ( this.props.activeReplyCommentId && ! this.state.errors ) {
+		if (
+			this.props.activeReplyCommentId ||
+			find( this.props.commentsTree, comment => {
+				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+			} )
+		) {
 			return null;
 		}
 
