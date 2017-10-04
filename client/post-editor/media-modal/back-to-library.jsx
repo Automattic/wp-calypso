@@ -2,16 +2,17 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
-export default React.createClass( {
-	displayName: 'BackToLibrary',
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-	render() {
-		return (
-			<span className="editor-media-modal__back-to-library">
-				<span className="is-mobile">{ this.translate( 'Library' ) }</span>
-				<span className="is-desktop">{ this.translate( 'Media Library' ) }</span>
-			</span>
-		);
-	}
-} );
+const BackToLibrary = ( { translate } ) => (
+	<span className="editor-media-modal__back-to-library">
+		<span className="is-mobile">{ translate( 'Library' ) }</span>
+		<span className="is-desktop">{ translate( 'Media Library' ) }</span>
+	</span>
+);
+
+BackToLibrary.displayName = 'BackToLibrary';
+
+export default localize( BackToLibrary );
