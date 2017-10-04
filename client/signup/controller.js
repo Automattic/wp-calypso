@@ -31,7 +31,7 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 /**
  * Module variables
  */
-let queryObject, hashstring;
+let initialContext;
 
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
@@ -60,14 +60,8 @@ export default {
 		next();
 	},
 
-	saveQueryObject( context, next ) {
-		if ( ! isEmpty( context.query ) ) {
-			queryObject = context.query;
-		}
-
-		if ( context.hashstring ) {
-			hashstring = context.hashstring;
-		}
+	saveInitialContext( context, next ) {
+		initialContext = Object.assign( {}, context );
 
 		next();
 	},
@@ -100,9 +94,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( SignupComponent, {
 				path: context.path,
-				refParameter: queryObject && queryObject.ref,
-				queryObject,
-				hashstring,
+				initialContext,
 				locale: utils.getLocale( context.params ),
 				flowName: flowName,
 				stepName: stepName,

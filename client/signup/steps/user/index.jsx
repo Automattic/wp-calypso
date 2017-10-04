@@ -30,6 +30,7 @@ export class UserStep extends Component {
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
+		initialContext: PropTypes.object,
 	};
 
 	static defaultProps = {
