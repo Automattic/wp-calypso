@@ -45,7 +45,7 @@ const getStorePages = () => {
 		{
 			container: Dashboard,
 			configKey: 'woocommerce/extension-dashboard',
-			path: '/store/:site',
+			path: '/store/:site/:signup?',
 		},
 		{
 			container: Products,

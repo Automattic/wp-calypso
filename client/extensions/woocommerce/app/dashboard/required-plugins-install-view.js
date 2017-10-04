@@ -37,6 +37,7 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		isInSignup: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -53,7 +54,13 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	componentDidMount = () => {
+		const { isInSignup } = this.props;
+
 		this.createUpdateTimer();
+
+		if ( isInSignup ) {
+			this.startSetup();
+		}
 	};
 
 	componentWillUnmount = () => {
@@ -342,7 +349,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	startSetup = () => {
-		const { atomicStoreDoingTransfer } = this.props;
+		const { atomicStoreDoingTransfer, isInSignup } = this.props;
 
 		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'initial-setup',
@@ -350,7 +357,7 @@ class RequiredPluginsInstallView extends Component {
 
 		let engineState = 'INITIALIZING';
 
-		if ( atomicStoreDoingTransfer ) {
+		if ( atomicStoreDoingTransfer || isInSignup ) {
 			engineState = 'DOING_TRANSFER';
 		}
 
@@ -385,10 +392,10 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	render = () => {
-		const { site, translate } = this.props;
+		const { site, translate, isInSignup } = this.props;
 		const { engineState } = this.state;
 
-		if ( 'CONFIRMING' === engineState ) {
+		if ( ! isInSignup && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
 		}
 
