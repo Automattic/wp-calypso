@@ -150,10 +150,10 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getButton() {
-		const { translate, primaryPurchase } = this.props;
+		const { translate, primaryPurchase, selectedSite } = this.props;
 		const headerButtonClassName = 'button is-primary';
 
-		if ( isPlan( primaryPurchase ) ) {
+		if ( isPlan( primaryPurchase ) && ! selectedSite.jetpack ) {
 			return (
 				<div className="checkout-thank-you__header-button" >
 					<button className={ headerButtonClassName } onClick={ this.visitSite }>
