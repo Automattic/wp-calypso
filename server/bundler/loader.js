@@ -1,13 +1,23 @@
-const fs = require( 'fs' ),
+const config = require( 'config' ),
+	fs = require( 'fs' ),
 	utils = require( './utils' ),
-	mustache = require( 'mustache' );
+	Handlebars = require( 'handlebars' );
+
+Handlebars.registerHelper( 'json', function( context ) {
+	return context && JSON.stringify( context ) || 'undefined';
+} );
 
 function getSectionsModule( sections ) {
-	const template = fs.readFileSync( __dirname + '/loader.js.mst', 'utf8' );
-	return mustache.render( template.toString(), {
-		sectionsString: JSON.stringify( sections ),
-		sections: sections
-	} );
+	let templateName;
+	if ( config.isEnabled( 'code-splitting' ) ) {
+		templateName = 'loader-code-splitting.js.mst';
+	} else {
+		templateName = 'loader.js.mst';
+	}
+
+	const source = fs.readFileSync( __dirname + '/' + templateName, 'utf8' );
+	const template = Handlebars.compile( source.toString() );
+	return template( { sections: sections } );
 }
 
 function sectionsWithCSSUrls( sections ) {
