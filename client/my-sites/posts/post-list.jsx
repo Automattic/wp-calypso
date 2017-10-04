@@ -70,6 +70,7 @@ class PostList extends PureComponent {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			author,
 			category,
+			order_by: statusSlug === 'drafts' ? 'modified' : undefined,
 			search,
 			status: mapStatus( statusSlug ),
 			tag,
