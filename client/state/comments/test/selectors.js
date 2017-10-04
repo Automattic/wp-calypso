@@ -4,7 +4,7 @@
  */
 import {
 	getPostOldestCommentDate,
-	getPostMostRecentCommentDate,
+	getPostNewestCommentDate,
 	getCommentLike,
 	getPostCommentsTree,
 } from '../selectors';
@@ -18,6 +18,7 @@ const state = {
 					parent: { ID: 1 },
 					date: '2017-01-31T10:07:18-08:00',
 					i_like: false,
+					contiguous: true,
 					like_count: 0,
 				},
 				{ ID: 1, parent: false, date: '2016-01-31T10:07:18-08:00', i_like: true, like_count: 5 },
@@ -27,6 +28,7 @@ const state = {
 					parent: { ID: 2 },
 					date: '2015-01-29T10:07:18-08:00',
 					i_like: false,
+					contiguous: true,
 					like_count: 0,
 				},
 			],
@@ -79,15 +81,15 @@ const stateWithDeeperChildren = {
 };
 
 describe( 'selectors', () => {
-	describe( '#getPostMostRecentCommentDate()', () => {
+	describe( '#getPostNewestCommentDate()', () => {
 		test( 'should get most recent date', () => {
-			const res = getPostMostRecentCommentDate( state, 1, 1 );
+			const res = getPostNewestCommentDate( state, 1, 1 );
 
 			expect( res ).toEqual( new Date( '2017-01-31T10:07:18-08:00' ) );
 		} );
 
 		test( 'should return undefined if no comment items', () => {
-			const res = getPostMostRecentCommentDate(
+			const res = getPostNewestCommentDate(
 				{
 					comments: { items: { '1-1': [] } },
 				},
@@ -97,7 +99,7 @@ describe( 'selectors', () => {
 
 			expect( res ).toEqual( undefined );
 		} );
-	} ); // end of getPostMostRecentCommentDate
+	} ); // end of getPostNewestCommentDate
 
 	describe( '#getPostOldestCommentDate()', () => {
 		test( 'should get earliest date', () => {

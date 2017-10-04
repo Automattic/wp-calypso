@@ -129,7 +129,7 @@ class PostComment extends React.PureComponent {
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
 		return immediateChildren.concat(
-			flatMap( immediateChildren, child => this.getAllChildrenIds( child.ID ) )
+			flatMap( immediateChildren, childId => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -434,6 +434,7 @@ class PostComment extends React.PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						commentsToShow={ commentsToShow }
 					/>
 				) }
 				{ this.renderRepliesList() }
