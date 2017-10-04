@@ -8,6 +8,7 @@ import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
 import config from 'config';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 /**
  * Poor man's process manager
@@ -70,6 +71,8 @@ export const fetchJITM = ( state, dispatch, action ) => {
 		return insertJITM( dispatch, currentSite, process.lastSection, [] );
 	}
 
+	debugger;
+
 	dispatch( http( {
 		apiNamespace: 'rest',
 		method: 'GET',
@@ -88,7 +91,7 @@ export const fetchJITM = ( state, dispatch, action ) => {
  * @param {function} dispatch A function to dispatch an action
  */
 export const handleRouteChange = ( { getState, dispatch }, action ) => {
-	if ( ! config.isEnabled( 'jitms' ) ) {
+	if ( ! config.isEnabled( 'jitms' ) ) { // || process.hasInitializedSection && process.lastSection === action.section.name ) {
 		return;
 	}
 
@@ -115,7 +118,7 @@ export const handleRouteChange = ( { getState, dispatch }, action ) => {
  * @param {function} dispatch The dispatch function
  */
 export const handleSiteSelection = ( { getState, dispatch }, action ) => {
-	if ( ! config.isEnabled( 'jitms' ) ) {
+	if ( ! config.isEnabled( 'jitms' ) ) { // || process.hasInitializedSites && process.lastSite === action.siteId ) {
 		return;
 	}
 
@@ -133,8 +136,10 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * @param {number} site_id The site id
  * @return {undefined} Nothing
  */
-export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) =>
-	insertJITM( dispatch, siteId || site_id, messagePath, jitms );
+export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) => {
+	debugger;
+	return insertJITM( dispatch, siteId || site_id, messagePath, jitms );
+}
 
 /**
  * Called when a jitm fails for any network related reason
@@ -143,8 +148,10 @@ export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jit
  * @param {number} site_id The site id
  * @return {undefined} Nothing
  */
-export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
-	insertJITM( dispatch, siteId || site_id, messagePath, [] );
+export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) => {
+	debugger;
+	return insertJITM( dispatch, siteId || site_id, messagePath, [] );
+}
 
 export default {
 	[ SECTION_SET ]: [
