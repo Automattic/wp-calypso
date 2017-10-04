@@ -311,15 +311,6 @@ class ActivityLog extends Component {
 				.endOf( 'day' )
 				.valueOf()
 		);
-		const rewindConfirmDialog = requestedRestoreActivityId && (
-			<ActivityLogConfirmDialog
-				applySiteOffset={ this.applySiteOffset }
-				activityId={ requestedRestoreActivityId }
-				key="activity-rewind-dialog"
-				onClose={ this.handleRestoreDialogClose }
-				onConfirm={ this.handleRestoreDialogConfirm }
-			/>
-		);
 
 		const activityDays = [];
 		// loop backwards through each day in the month
@@ -343,7 +334,6 @@ class ActivityLog extends Component {
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					requestedRestoreActivityId={ requestedRestoreActivityId }
-					rewindConfirmDialog={ rewindConfirmDialog }
 					disableRestore={ disableRestore }
 					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }

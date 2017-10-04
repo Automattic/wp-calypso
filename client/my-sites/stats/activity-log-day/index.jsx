@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty } from 'lodash';
+import { get, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,6 @@ class ActivityLogDay extends Component {
 		logs: PropTypes.array.isRequired,
 		requestedRestoreActivityId: PropTypes.string,
 		requestRestore: PropTypes.func.isRequired,
-		rewindConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
 
@@ -140,9 +139,7 @@ class ActivityLogDay extends Component {
 			hideRestore,
 			isToday,
 			logs,
-			requestedRestoreActivityId,
 			requestRestore,
-			rewindConfirmDialog,
 			siteId,
 		} = this.props;
 
@@ -158,19 +155,17 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 				>
-					{ hasLogs &&
-						flatMap( logs, log => [
-							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
-							<ActivityLogItem
-								applySiteOffset={ applySiteOffset }
-								disableRestore={ disableRestore }
-								hideRestore={ hideRestore }
-								key={ log.activityId }
-								log={ log }
-								requestRestore={ requestRestore }
-								siteId={ siteId }
-							/>,
-						] ) }
+					{ hasLogs && map( logs, log => (
+						<ActivityLogItem
+							applySiteOffset={ applySiteOffset }
+							disableRestore={ disableRestore }
+							hideRestore={ hideRestore }
+							key={ log.activityId }
+							log={ log }
+							requestRestore={ requestRestore }
+							siteId={ siteId }
+						/>
+					) ) }
 				</FoldableCard>
 			</div>
 		);

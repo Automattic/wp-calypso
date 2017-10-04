@@ -59,12 +59,16 @@ class ActivityLogConfirmDialog extends Component {
 
 				<div className="activity-log-confirm-dialog__line">
 					<Gridicon icon={ 'history' } />
-					{ translate( 'Restoring to {{b}}%(time)s{{/b}}', {
-						args: {
-							time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
-						},
-						components: { b: <b /> },
-					} ) }
+					{ timestamp ? (
+						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
+							args: {
+								time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
+							},
+							components: { b: <b /> },
+						} )
+					) : (
+						' '
+					) }
 				</div>
 				<div className="activity-log-confirm-dialog__line">
 					<Gridicon icon={ 'notice' } />
