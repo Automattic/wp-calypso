@@ -5,14 +5,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
 import { translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import TrackingLink from './tracking-link';
@@ -34,10 +31,10 @@ class LabelItem extends Component {
 		};
 
 		return (
-			<Button compact onClick={ openDialog } >
+			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Gridicon icon="refund" size={ 12 } />{ __( 'Request refund' ) }
-			</Button>
+				<a href="#" onClick={ openDialog } >{ __( 'Request refund' ) }</a>
+			</span>
 		);
 	};
 
@@ -56,10 +53,10 @@ class LabelItem extends Component {
 		};
 
 		return (
-			<Button compact onClick={ openDialog }>
+			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<Gridicon icon="print" size={ 12 } />{ __( 'Reprint' ) }
-			</Button>
+				<a href="#" onClick={ openDialog } >{ __( 'Reprint' ) }</a>
+			</span>
 		);
 	};
 
@@ -92,10 +89,8 @@ class LabelItem extends Component {
 				</p>
 				{ label.showDetails &&
 					<p className="shipping-label__item-actions">
-						<ButtonGroup>
-							{ this.renderRefund( label ) }
-							{ this.renderReprint( label ) }
-						</ButtonGroup>
+						{ this.renderRefund( label ) }
+						{ this.renderReprint( label ) }
 					</p>
 				}
 			</div>
