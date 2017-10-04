@@ -12,9 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { createReviewReply } from 'woocommerce/state/sites/review-replies/actions';
-import { editReviewReply, clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getReviewReplyEdits } from 'woocommerce/state/ui/review-replies/selectors';
 import Gravatar from 'components/gravatar';
 import { successNotice } from 'state/notices/actions';
 
@@ -32,7 +30,10 @@ class ReviewReplyCreate extends Component {
 		} ).isRequired,
 	};
 
+	// TODO Update this to use Redux edits state for creates at some point. Unfortunately it only supports holding one at a time,
+	// so we will use internal component state to hold the text for now.
 	state = {
+		commentText: '',
 		hasFocus: false,
 		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
@@ -56,13 +57,11 @@ class ReviewReplyCreate extends Component {
 	}
 
 	onTextChange = ( event ) => {
-		const { siteId, review } = this.props;
 		const { value } = event.target;
-
-		this.props.editReviewReply( siteId, review.id, { content: value } );
 
 		const textareaHeight = this.calculateTextareaHeight();
 		this.setState( {
+			commentText: value,
 			textareaHeight,
 		} );
 	}
@@ -79,13 +78,17 @@ class ReviewReplyCreate extends Component {
 
 	onSubmit = ( event ) => {
 		event.preventDefault();
-		const { siteId, review, commentText, translate } = this.props;
+		const { siteId, review, translate } = this.props;
+		const { commentText } = this.state;
 		const { product } = review;
 
 		const shouldApprove = 'pending' === review.status ? true : false;
 
 		this.props.createReviewReply( siteId, product.id, review.id, commentText, shouldApprove );
-		this.props.clearReviewReplyEdits( siteId );
+
+		this.setState( {
+			commentText: '',
+		} );
 
 		this.props.successNotice(
 			translate( 'Reply submitted.' ),
@@ -94,8 +97,8 @@ class ReviewReplyCreate extends Component {
 	}
 
 	render() {
-		const { translate, currentUser, commentText } = this.props;
-		const { hasFocus, textareaHeight } = this.state;
+		const { translate, currentUser } = this.props;
+		const { hasFocus, textareaHeight, commentText } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
@@ -152,19 +155,14 @@ class ReviewReplyCreate extends Component {
 }
 
 function mapStateToProps( state ) {
-	const replyEdits = getReviewReplyEdits( state );
-	const commentText = replyEdits.content || '';
 	return {
 		currentUser: getCurrentUser( state ),
-		commentText,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			editReviewReply,
-			clearReviewReplyEdits,
 			createReviewReply,
 			successNotice,
 		},
