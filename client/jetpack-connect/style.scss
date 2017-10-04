@@ -10,7 +10,6 @@
 				top: 4px;
 			}
 		}
-
 	}
 
 	.formatted-header{
@@ -26,6 +25,10 @@
 	.button.is-primary {
 		width: 320px;
 	}
+
+	.jetpack-connect__happychat-button {
+		text-align: center;
+	}
 }
 
 .jetpack-connect__main-error {
@@ -38,6 +41,10 @@
 				position: relative;
 				top: 4px;
 			}
+		}
+
+		.jetpack-connect__happychat-button {
+			text-align: center;
 		}
 	}
 }
@@ -491,6 +498,24 @@
 	.button.is-compact {
 		font-size: 14px;
 		font-weight: 500;
+	}
+}
+
+.jetpack-connect__happychat-button {
+	background: none;
+	border: none;
+	color: darken( $gray, 20% );
+	font-weight: normal;
+	padding: 16px 24px;
+	text-align: left;
+	width: 100%;
+
+	&:visited {
+		color: $gray;
+	}
+
+	&:hover {
+		color: $blue-medium;
 	}
 }
 
