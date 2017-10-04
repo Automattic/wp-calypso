@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+import { isEnabled } from 'config';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -277,6 +278,13 @@ describe( 'selectors', () => {
 
 	describe( '#getGroups()', () => {
 		let _window; // Keep a copy of the original window if any
+		const uiState = {
+			ui: {
+				section: {
+					name: 'reader',
+				}
+			}
+		};
 
 		beforeEach( () => {
 			_window = global.window;
@@ -290,6 +298,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
+				...uiState,
 				...userState,
 				sites: {
 					items: {}
@@ -302,6 +311,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no siteId', () => {
 			const siteId = undefined;
 			const state = {
+				...uiState,
 				...userState,
 				sites: {
 					items: {
@@ -316,6 +326,7 @@ describe( 'selectors', () => {
 		it( 'should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
+				...uiState,
 				...userState,
 				currentUser: {
 					id: 1,
@@ -344,6 +355,7 @@ describe( 'selectors', () => {
 		it( 'should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 			const state = {
+				...uiState,
 				...userState,
 				currentUser: {
 					id: 1,
@@ -366,5 +378,27 @@ describe( 'selectors', () => {
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
+
+		if ( isEnabled( 'jetpack/happychat' ) ) {
+			it( 'should return JPOP group if within the jetpackConnect section', () => {
+				const state = {
+					...userState,
+					sites: {
+						items: {
+							1: {}
+						}
+					},
+					ui: {
+						section: {
+							name: 'jetpackConnect',
+						}
+					}
+				};
+
+				expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+			} );
+		} else {
+			it.skip( 'should not return JPOP group if within the jetpackConnect section' );
+		}
 	} );
 } );

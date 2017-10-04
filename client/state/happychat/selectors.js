@@ -17,8 +17,10 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 } from './constants';
+import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
+import { getSectionName } from 'state/ui/selectors';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
@@ -41,6 +43,14 @@ export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
  */
 export const getGroups = ( state, siteId ) => {
 	const groups = [];
+
+	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
+	// when the user does not have a site yet, or their primary site is not a Jetpack site.
+	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpackConnect' ) {
+		groups.push( HAPPYCHAT_GROUP_JPOP );
+		return groups;
+	}
+
 	const siteDetails = getSite( state, siteId );
 
 	if ( isATEnabled( siteDetails ) ) {
