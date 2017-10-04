@@ -32,7 +32,7 @@ import reviewReplies from './fixtures/review-replies';
 import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
-	WOOCOMMERCE_REVIEW_REPLY_CREATED,
+	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
@@ -206,14 +206,12 @@ describe( 'handlers', () => {
 			expect( dispatch ).to.have.been.calledWith( match( {
 				type: WPCOM_HTTP_REQUEST,
 				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
 				query: {
-					json: true,
 					apiVersion: '1.1',
 				},
 				body: {
-					path: '/wp/v2/comments&_method=POST',
-					body: JSON.stringify( { content: 'Hello world', parent: reviewId, post: productId } ),
+					content: 'Hello world',
 				}
 			} ) );
 		} );
@@ -247,7 +245,7 @@ describe( 'handlers', () => {
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
 			handleReviewReplyCreateSuccess( store, action, create );
 			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
+				type: WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
 			} ) );
 			expect( store.dispatch ).to.not.have.been.calledWith( match( {
 				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,

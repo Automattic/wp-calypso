@@ -10,13 +10,14 @@ import { changeReviewStatus } from 'woocommerce/state/sites/reviews/actions';
 import { clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
 import { getReview } from 'woocommerce/state/sites/reviews/selectors';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
-	WOOCOMMERCE_REVIEW_REPLY_CREATED,
 	WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
@@ -73,25 +74,27 @@ export function handleReviewRepliesRequestError( { dispatch }, action, error ) {
 }
 
 export function handleReviewReplyCreate( { dispatch }, action ) {
-	const { siteId, productId, reviewId, replyText } = action;
+	const { siteId, reviewId, replyText } = action;
 
-	dispatch( request( siteId, action, '/wp/v2' ).post( 'comments', {
-		content: replyText,
-		parent: reviewId,
-		post: productId,
+	// TODO - Update to use /wp/v2/comments again if possible. POST `/wp/v2/comments`
+	// has been timing out on creates for a couple test sites, so we will use the .com endpoint in the meantime.
+	dispatch( http( {
+		method: 'POST',
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
+		body: {
+			content: replyText
+		},
+		onSuccess: action,
+		onFailure: action,
 	} ) );
 }
 
-export function handleReviewReplyCreateSuccess( { dispatch, getState }, action, { data } ) {
+export function handleReviewReplyCreateSuccess( { dispatch, getState }, action ) {
 	const { siteId, productId, reviewId, shouldApprove } = action;
 	const state = getState();
 
-	dispatch( {
-		type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
-		siteId,
-		reviewId,
-		reply: data,
-	} );
+	dispatch( fetchReviewReplies( siteId, reviewId ) );
 
 	const review = getReview( state, reviewId, siteId );
 	if ( shouldApprove && review ) {
