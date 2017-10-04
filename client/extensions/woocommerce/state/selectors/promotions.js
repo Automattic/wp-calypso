@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isObject } from 'lodash';
+import { get, find, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ export function getPromotion(
 	siteId = getSelectedSiteWithFallback( rootState )
 ) {
 	const promotions = getPromotions( rootState, siteId );
-	return promotions.find( ( p ) => promotionId === p.id ) || null;
+	return ( find( promotions, ( p ) => promotionId === p.id ) || null );
 }
 
 export function getPromotionsPage(
@@ -62,9 +62,9 @@ export function getPromotionEdits(
 	const edits = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ], {} );
 
 	if ( isObject( promotionId ) ) {
-		return ( edits.creates && edits.creates.find( ( p ) => promotionId === p.id ) ) || null;
+		return ( edits.creates && find( edits.creates, ( p ) => promotionId === p.id ) || null );
 	}
-	return ( edits.updates && edits.updates.find( ( p ) => promotionId === p.id ) ) || null;
+	return ( edits.updates && find( edits.updates, ( p ) => promotionId === p.id ) || null );
 }
 
 export function getPromotionWithLocalEdits(
