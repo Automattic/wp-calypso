@@ -20,7 +20,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp' ;
-const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
@@ -170,21 +169,6 @@ function createSiteWithCart( callback, dependencies, {
 	} );
 }
 
-function fetchSitesUntilSiteAppears( siteSlug, callback ) {
-	if ( sites.select( siteSlug ) ) {
-		callback();
-		return;
-	}
-
-	sites.once( 'change', function() {
-		fetchSitesUntilSiteAppears( siteSlug, callback );
-	} );
-
-	// this call is deferred because sites.fetching is not set to false until
-	// after sites has emitted a `change` event
-	defer( sites.fetch.bind( sites ) );
-}
-
 function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 	if ( getSiteId( getState(), siteSlug ) ) {
 		debug( 'fetchReduxSite: found new site' );
@@ -202,16 +186,13 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel( [
 		callback => {
-			fetchSitesUntilSiteAppears( siteSlug, callback );
+			reduxStore
+				? fetchReduxSite( siteSlug, reduxStore, callback )
+				: callback();
 		},
 		callback => {
 			user.once( 'change', callback );
 			user.fetch();
-		},
-		callback => {
-			reduxStore
-				? fetchReduxSite( siteSlug, reduxStore, callback )
-				: callback();
 		},
 	], onComplete );
 }
