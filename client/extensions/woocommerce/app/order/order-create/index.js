@@ -18,8 +18,11 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import Main from 'components/main';
 import OrderCustomerCard from './customer-card';
+import ProductSearch from 'woocommerce/components/product-search';
 import { ProtectFormGuard } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
+
+const noop = () => {};
 
 class OrderCreate extends Component {
 	editOrder = order => {
@@ -47,7 +50,9 @@ class OrderCreate extends Component {
 					<OrderCustomerCard siteId={ site && site.ID } editOrder={ this.editOrder } />
 
 					<SectionHeader label={ translate( 'Add products to the order' ) } />
-					<Card className="order-create__card" />
+					<Card className="order-create__card">
+						<ProductSearch onSelect={ noop } />
+					</Card>
 
 					<SectionHeader label={ translate( 'How will these products be shipped?' ) } />
 					<Card className="order-create__card" />
