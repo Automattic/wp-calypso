@@ -26,9 +26,8 @@ describe( 'ThemeQueryManager', () => {
 				'pachyderm',
 			] );
 			const keys = [ ...originalKeys ];
-			const manager = new ThemeQueryManager();
 
-			manager.sort( keys );
+			ThemeQueryManager.sort( keys );
 			expect( keys ).to.deep.equal( originalKeys );
 		} );
 	} );

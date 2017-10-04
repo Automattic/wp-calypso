@@ -433,6 +433,36 @@ describe( 'QueryManager', () => {
 			expect( newManager.getFound( {} ) ).to.equal( 2 );
 			expect( newManager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
+
+		it( 'should sort items when merging queries', () => {
+			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
+				item =>
+					( manager = manager.receive( item, {
+						mergeQuery: true,
+						query: {},
+					} ) )
+			);
+			// console.log( manager.data.queries );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
+		} );
+
+		it( 'should sort when extended using subclassed static compare', () => {
+			let sortingManager = new class extends QueryManager {
+				static compare( query, a, b ) {
+					return a.ID - b.ID;
+				}
+			}();
+			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
+				item =>
+					( sortingManager = sortingManager.receive( item, {
+						mergeQuery: true,
+						query: {},
+					} ) )
+			);
+			// console.log( sortingManager.data.queries );
+			expect( sortingManager.getItems( {} ) ).to.eql( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
+		} );
 	} );
 
 	describe( '.QueryKey', () => {

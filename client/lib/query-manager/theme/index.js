@@ -22,7 +22,7 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 	 * The themes query REST API endpoint uses ElasticSearch to sort results by
 	 * relevancy, which we cannot easily mimick on the client side.
 	 */
-	sort() {
+	static sort() {
 		return; // Leave the keys argument unchanged.
 	}
 }

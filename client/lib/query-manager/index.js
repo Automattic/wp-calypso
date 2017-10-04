@@ -115,7 +115,7 @@ export default class QueryManager {
 	 * @param  {Array}  items Items by which to sort
 	 * @param  {Object} query Query object
 	 */
-	sort( keys, items, query ) {
+	static sort( keys, items, query ) {
 		keys.sort( ( keyA, keyB ) => {
 			if ( ! items[ keyA ] || ! items[ keyB ] ) {
 				// One of the items has yet to be removed from the
@@ -125,7 +125,7 @@ export default class QueryManager {
 				// method aren't required to implement this check.
 				return 0;
 			}
-			return this.constructor.compare( query, items[ keyA ], items[ keyB ] );
+			return this.compare( query, items[ keyA ], items[ keyB ] );
 		} );
 	}
 
@@ -390,7 +390,7 @@ export default class QueryManager {
 						);
 
 						// Re-sort the set
-						this.sort( memo[ queryKey ].itemKeys, nextItems, query );
+						this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
 					}
 				} );
 
