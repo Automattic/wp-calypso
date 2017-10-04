@@ -19,11 +19,6 @@ const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 
-export const setValidPage = pageNumber => {
-	const parsedPageNumber = parseInt( pageNumber, 10 );
-	return parsedPageNumber > 0 ? parsedPageNumber : 1;
-};
-
 export const getRedirectUrl = ( status, siteFragment ) => {
 	const statusValidity = isValidStatus( status );
 	if ( status === siteFragment ) {
@@ -56,18 +51,22 @@ const changePage = ( status, siteFragment ) => pageNumber => {
 		window.scrollTo( 0, 0 );
 	}
 
-	page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
+	return page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
 };
 
 export const comments = function( context ) {
 	const status = 'pending' === context.params.status ? 'unapproved' : context.params.status;
 	const siteFragment = route.getSiteFragment( context.path );
-	const validPage = setValidPage( context.query.page );
+
+	const pageNumber = parseInt( context.query.page, 10 );
+	if ( isNaN( pageNumber ) || pageNumber === 0 ) {
+		return changePage( status, siteFragment )( 1 );
+	}
 
 	renderWithReduxStore(
 		<CommentsManagement
 			basePath={ context.path }
-			page={ validPage }
+			page={ pageNumber }
 			changePage={ changePage( status, siteFragment ) }
 			siteFragment={ siteFragment }
 			status={ status }

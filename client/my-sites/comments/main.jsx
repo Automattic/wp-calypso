@@ -39,7 +39,6 @@ export class CommentsManagement extends Component {
 	render() {
 		const {
 			showPermissionError,
-			basePath,
 			page,
 			changePage,
 			siteId,

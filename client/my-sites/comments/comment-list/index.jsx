@@ -83,7 +83,12 @@ export class CommentList extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, status } = this.props;
+		const { siteId, status, changePage } = this.props;
+		const totalPages = this.getTotalPages();
+		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
+			return changePage( totalPages );
+		}
+
 		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
 				isBulkEdit: false,
