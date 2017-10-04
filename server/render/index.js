@@ -1,29 +1,25 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
+import { pick } from 'lodash';
+import Lru from 'lru';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import Lru from 'lru';
-import { pick } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { isDefaultLocale } from 'lib/i18n-utils';
-import { isSectionIsomorphic } from 'state/ui/selectors';
-import {
-	getDocumentHeadFormattedTitle,
-	getDocumentHeadMeta,
-	getDocumentHeadLink,
-} from 'state/document-head/selectors';
-import isRTL from 'state/selectors/is-rtl';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { reducer } from 'state';
-import { SERIALIZE } from 'state/action-types';
-import stateCache from 'state-cache';
 import { getCacheKey } from 'isomorphic-routing';
+import { isDefaultLocale } from 'lib/i18n-utils';
+import { reducer } from 'state';
+import stateCache from 'state-cache';
+import { SERIALIZE } from 'state/action-types';
+import { getDocumentHeadFormattedTitle, getDocumentHeadMeta, getDocumentHeadLink } from 'state/document-head/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRTL from 'state/selectors/is-rtl';
+import { isSectionIsomorphic } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;

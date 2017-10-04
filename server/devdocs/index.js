@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-
 import express from 'express';
 import fs from 'fs';
-import fspath from 'path';
-import marked from 'marked';
-import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
+import lunr from 'lunr';
+import marked from 'marked';
+import fspath from 'path';
 import Prism from 'prismjs';
-import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-scss';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import searchIndex from 'devdocs/search-index';
 import componentsUsageStats from 'devdocs/components-usage-stats.json';
+import searchIndex from 'devdocs/search-index';
 
 const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	docsIndex = lunr.Index.load( searchIndex.index ),

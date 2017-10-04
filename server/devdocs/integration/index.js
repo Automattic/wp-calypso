@@ -1,3 +1,10 @@
+/**
+ * External dependencies
+ */
+import fs from 'fs';
+import fspath from 'path';
+import request from 'superagent';
+
 jest.mock( 'config', () => ( {
 	isEnabled: () => true,
 } ) );
@@ -15,13 +22,6 @@ jest.mock( 'lunr', () => ( {
 		load: () => null,
 	},
 } ) );
-
-/**
- * External dependencies
- */
-import fs from 'fs';
-import fspath from 'path';
-import request from 'superagent';
 
 /**
  * Module variables

@@ -2,27 +2,27 @@
 /**
  * External dependencies
  */
-import express from 'express';
-import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import express from 'express';
 import { get, intersection, pick } from 'lodash';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import sanitize from 'sanitize';
-import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
-import { serverRouter, getCacheKey } from 'isomorphic-routing';
-import { serverRender, serverRenderError } from 'render';
-import stateCache from 'state-cache';
-import { createReduxStore, reducer } from 'state';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
-import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
+import utils from 'bundler/utils';
+import config from 'config';
+import { serverRouter, getCacheKey } from 'isomorphic-routing';
+import { login } from 'lib/paths';
+import { serverRender, serverRenderError } from 'render';
+import sanitize from 'sanitize';
+import { createReduxStore, reducer } from 'state';
+import stateCache from 'state-cache';
+import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:pages' );
 
