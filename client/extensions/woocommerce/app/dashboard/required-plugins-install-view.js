@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  *
@@ -59,7 +60,7 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyUpdateTimer();
 	};
 
-	componentWillReceiveProps = ( nextProps ) => {
+	componentWillReceiveProps = nextProps => {
 		if ( nextProps.atomicStoreDoingTransfer && ! this.state.requestedTransferStatus ) {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 
@@ -354,7 +355,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		this.setState( {
-			engineState
+			engineState,
 		} );
 	};
 
