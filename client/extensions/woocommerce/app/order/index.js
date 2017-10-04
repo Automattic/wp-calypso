@@ -43,6 +43,9 @@ class Order extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
+			// New order or site should clear any pending edits
+			this.props.clearOrderEdits( this.props.siteId );
+			// And fetch the new order's info
 			this.props.fetchOrder( newProps.siteId, newProps.orderId );
 			this.props.fetchNotes( newProps.siteId, newProps.orderId );
 		} else if (
@@ -53,6 +56,11 @@ class Order extends Component {
 			// A status change should force a notes refresh
 			this.props.fetchNotes( newProps.siteId, newProps.orderId, true );
 		}
+	}
+
+	componentWillUnmount() {
+		// Removing this component should clear any pending edits
+		this.props.clearOrderEdits( this.props.siteId );
 	}
 
 	// Put this order into the editing state
