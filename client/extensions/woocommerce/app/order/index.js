@@ -81,7 +81,6 @@ class Order extends Component {
 	saveOrder = () => {
 		const { siteId, order } = this.props;
 		this.props.updateOrder( siteId, order );
-		this.props.clearOrderEdits( siteId );
 	};
 
 	render() {
