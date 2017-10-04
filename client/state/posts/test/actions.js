@@ -41,6 +41,7 @@ import {
 	restorePost,
 	addTermForPost
 } from '../actions';
+import { DEFAULT_POST_QUERY } from '../constants';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -95,6 +96,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
+				.query( DEFAULT_POST_QUERY )
 				.reply( 200, {
 					found: 2,
 					posts: [
@@ -103,12 +105,13 @@ describe( 'actions', () => {
 					]
 				} )
 				.get( '/rest/v1.1/sites/2916284/posts' )
-				.query( { search: 'Hello' } )
+				.query( { ...DEFAULT_POST_QUERY, search: 'Hello' } )
 				.reply( 200, {
 					found: 1,
 					posts: [ { ID: 841, title: 'Hello World' } ]
 				} )
 				.get( '/rest/v1.1/sites/77203074/posts' )
+				.query( DEFAULT_POST_QUERY )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
@@ -121,7 +124,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
-				query: {}
+				query: DEFAULT_POST_QUERY
 			} );
 		} );
 
@@ -142,7 +145,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
-					query: {},
+					query: DEFAULT_POST_QUERY,
 					found: 2,
 					posts: [
 						{ ID: 841, title: 'Hello World' },
@@ -157,7 +160,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
-					query: { search: 'Hello' },
+					query: { ...DEFAULT_POST_QUERY, search: 'Hello' },
 					found: 1,
 					posts: [
 						{ ID: 841, title: 'Hello World' }
@@ -171,7 +174,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_FAILURE,
 					siteId: 77203074,
-					query: {},
+					query: DEFAULT_POST_QUERY,
 					error: sinon.match( { message: 'User cannot access this private blog.' } )
 				} );
 			} );
@@ -183,6 +186,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/posts' )
+				.query( DEFAULT_POST_QUERY )
 				.reply( 200, {
 					found: 2,
 					posts: [

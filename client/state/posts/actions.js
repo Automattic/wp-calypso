@@ -28,6 +28,7 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE
 } from 'state/action-types';
+import { DEFAULT_POST_QUERY } from './constants';
 
 /**
  * Returns an action object to be used in signalling that a post object has
@@ -62,11 +63,20 @@ export function receivePosts( posts ) {
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
+	const q = {
+		...DEFAULT_POST_QUERY,
+		...query
+	};
+
+	if ( q.status === 'draft,pending' ) {
+		q.orderBy = 'modified';
+	}
+
 	return ( dispatch ) => {
 		dispatch( {
 			type: POSTS_REQUEST,
 			siteId,
-			query
+			query: q
 		} );
 
 		let source = wpcom;
@@ -80,12 +90,12 @@ export function requestSitePosts( siteId, query = {} ) {
 			source = source.me();
 		}
 
-		return source.postsList( { ...query } ).then( ( { found, posts } ) => {
+		return source.postsList( { ...q } ).then( ( { found, posts } ) => {
 			dispatch( receivePosts( posts ) );
 			dispatch( {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId,
-				query,
+				query: q,
 				found,
 				posts
 			} );
@@ -93,7 +103,7 @@ export function requestSitePosts( siteId, query = {} ) {
 			dispatch( {
 				type: POSTS_REQUEST_FAILURE,
 				siteId,
-				query,
+				query: q,
 				error
 			} );
 		} );
