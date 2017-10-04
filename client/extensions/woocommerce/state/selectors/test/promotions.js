@@ -19,7 +19,7 @@ describe( 'promotions', () => {
 				ui: {
 					promotions: {
 						currentPage: 12,
-						perPage: 42,
+						perPage: 30,
 					}
 				},
 				sites: {
@@ -58,7 +58,7 @@ describe( 'promotions', () => {
 	describe( '#getPromotionsPerPage', () => {
 		it( 'should return the per-page setting for promotions.', () => {
 			const perPage = getPromotionsPerPage( rootState );
-			expect( perPage ).to.equal( 42 );
+			expect( perPage ).to.equal( 30 );
 		} );
 	} );
 } );

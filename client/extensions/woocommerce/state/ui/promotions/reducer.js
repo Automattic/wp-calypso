@@ -16,7 +16,8 @@ export default createReducer( initialState, {
 } );
 
 function promotionsPageSet( state, action ) {
-	const { currentPage, perPage } = action;
+	const currentPage = ( action.currentPage > 0 ? action.currentPage : initialState.currentPage );
+	const perPage = ( action.perPage > 0 ? action.perPage : initialState.perPage );
 
 	return { perPage, currentPage };
 }
