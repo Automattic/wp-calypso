@@ -1,5 +1,5 @@
 /**
- * External dependecies
+ * External dependencies
  */
 import url from 'url';
 import i18n from 'i18n-calypso';

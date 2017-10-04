@@ -4,7 +4,7 @@
 import React from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';

@@ -1,8 +1,7 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import debugFactory from 'debug';
-
 const debug = debugFactory( 'calypso:wpcom-undocumented:mailing-list' );
 
 /**

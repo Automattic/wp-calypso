@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import shortcodeUtils from 'lib/shortcode';
 import GalleryShortcode from 'components/gallery-shortcode';

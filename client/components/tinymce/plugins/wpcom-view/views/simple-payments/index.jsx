@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import shortcodeUtils from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
