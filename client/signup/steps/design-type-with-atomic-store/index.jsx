@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,21 +22,16 @@ import {
 } from '../design-type-with-atomic-store/type-images';
 import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
-
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-
 import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupProgressStore from 'lib/signup/progress-store';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
+import PressableStoreStep from '../design-type-with-store/pressable-store';
 
 class DesignTypeWithAtomicStoreStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			showStore: false,
-		};
-	}
+	state = { showStore: false };
+	setPressableStore = ref => ( this.pressableStore = ref );
 
 	getChoices() {
 		const { translate } = this.props;
@@ -76,6 +72,17 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		];
 	}
 
+	scrollUp() {
+		// Didn't use setInterval in order to fix delayed scroll
+		while ( window.pageYOffset > 0 ) {
+			window.scrollBy( 0, -10 );
+		}
+	}
+
+	handleStoreBackClick = () => {
+		this.setState( { showStore: false }, this.scrollUp );
+	};
+
 	handleChoiceClick = type => event => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -86,6 +93,21 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
+
+		if (
+			abtest( 'signupPressableStoreFlow' ) === 'pressable' &&
+			designType === DESIGN_TYPE_STORE
+		) {
+			this.scrollUp();
+
+			this.setState( {
+				showStore: true,
+			} );
+
+			invoke( this, 'pressableStore.focus' );
+
+			return;
+		}
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			designType,
@@ -122,12 +144,23 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			'Not sure? Pick the closest option. You can always change your settings later.'
 		); // eslint-disable-line max-len
 
+		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
+			'is-hidden': ! this.state.showStore,
+		} );
+
 		const designTypeListClassName = classNames( 'design-type-with-atomic-store__list', {
 			'is-hidden': this.state.showStore,
 		} );
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
+				<div className={ storeWrapperClassName }>
+					<PressableStoreStep
+						{ ...this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>
+				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
 
