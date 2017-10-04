@@ -36,6 +36,7 @@ import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
+import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
@@ -53,6 +54,7 @@ export class EditorHtmlToolbar extends Component {
 		fieldAdd: PropTypes.func,
 		fieldRemove: PropTypes.func,
 		fieldUpdate: PropTypes.func,
+		isDropZoneVisible: PropTypes.bool.isRequired,
 		moment: PropTypes.func,
 		onToolbarChangeContent: PropTypes.func,
 		settingsUpdate: PropTypes.func,
@@ -522,6 +524,7 @@ export class EditorHtmlToolbar extends Component {
 			'is-pinned': this.state.isPinned,
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
+			'has-active-drop-zone': this.props.isDropZoneVisible,
 		} );
 		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
 			'is-visible': this.state.showInsertContentMenu,
@@ -693,6 +696,7 @@ export class EditorHtmlToolbar extends Component {
 
 const mapStateToProps = state => ( {
 	contactForm: get( state, 'ui.editor.contactForm', {} ),
+	isDropZoneVisible: isDropZoneVisible( state ),
 	site: getSelectedSite( state ),
 } );
 

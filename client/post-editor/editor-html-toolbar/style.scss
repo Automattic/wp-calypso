@@ -85,6 +85,17 @@
 		width: 0;
 	}
 
+	&.has-active-drop-zone {
+		/*
+		 * Allow the dropzone to overflow the toolbar and expand to fill the entire editor body.
+		 * `static` prevents `.html-editor-toolbar` from setting the positioning context for its
+		 * children (including the dropzone), which would constrain them to the dimensions of the
+		 * toolbar. Instead, it will be constrained to the next highest positioned element,
+		 * `.tinymce-container.`
+		 */
+		position: static;
+	}
+
 	.button {
 		border-right: 1px solid lighten( $gray, 30% );
 		color: darken( $gray, 20% );
