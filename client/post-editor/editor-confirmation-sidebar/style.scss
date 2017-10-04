@@ -70,7 +70,6 @@
 }
 
 .editor-confirmation-sidebar__ground-control {
-	@extend .card;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -79,7 +78,12 @@
 		top: 0;
 		left: 0;
 		right: 0;
+	margin-bottom: 16px;
 	padding: 0 24px;
+	box-sizing: border-box;
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
 }
 
 .editor-confirmation-sidebar__close {
