@@ -119,15 +119,6 @@ export const handleWriteCommentFailure = (
 	{ dispatch, getState },
 	{ siteId, postId, parentCommentId, placeholderId }
 ) => {
-	// Dispatch an error so we can record the failed comment placeholder in state
-	dispatch( {
-		type: COMMENTS_WRITE_ERROR,
-		siteId,
-		postId,
-		commentId: placeholderId,
-		parentCommentId,
-	} );
-
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
 	const postTitle =
@@ -142,5 +133,15 @@ export const handleWriteCommentFailure = (
 		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not add a reply to this post' );
 
-	dispatch( errorNotice( error ) );
+	// Dispatch an error so we can record the failed comment placeholder in state
+	dispatch( {
+		type: COMMENTS_WRITE_ERROR,
+		siteId,
+		postId,
+		commentId: placeholderId,
+		parentCommentId,
+		error,
+	} );
+
+	dispatch( errorNotice( error ), { duration: 5000 } );
 };
