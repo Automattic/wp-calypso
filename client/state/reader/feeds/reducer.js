@@ -16,8 +16,9 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import { decodeEntities, safeLink } from 'lib/formatting';
+import { decodeEntities } from 'lib/formatting';
 import { itemsSchema } from './schema';
+import { safeLink } from 'lib/post-normalizer/utils';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,

@@ -335,19 +335,6 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
-/**
- * Only accept links that start with http or https. Reject others.
- *
- * @param {String} link
- */
-const safeLinkRe = /^https?:\/\//;
-function safeLink( link ) {
-	if ( safeLinkRe.test( link ) ) {
-		return link;
-	}
-	return null;
-}
-
 module.exports = {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
@@ -358,5 +345,4 @@ module.exports = {
 	capitalPDangit: capitalPDangit,
 	parseHtml: parseHtml,
 	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
-	safeLink: safeLink,
 };
