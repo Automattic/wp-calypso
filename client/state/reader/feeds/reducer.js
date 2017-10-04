@@ -16,7 +16,7 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, safeLink } from 'lib/formatting';
 import { itemsSchema } from './schema';
 
 const actionMap = {
@@ -61,8 +61,8 @@ function adaptFeed( feed ) {
 		feed_ID: +feed.feed_ID,
 		blog_ID: +feed.blog_ID,
 		name: feed.name && decodeEntities( feed.name ),
-		URL: feed.URL,
-		feed_URL: feed.feed_URL,
+		URL: safeLink( feed.URL ),
+		feed_URL: safeLink( feed.feed_URL ),
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,
 		description: feed.description && decodeEntities( feed.description ),
