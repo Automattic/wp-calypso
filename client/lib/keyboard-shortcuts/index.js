@@ -9,17 +9,13 @@ const keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keym
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-
-/**
- * Internal dependencies
- */
-import { getKeyBindings } from 'lib/keyboard-shortcuts/key-bindings';
-const keyBindings = getKeyBindings();
+import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 /**
  * Module variables
  */
 let flatKeyBindings = [];
+const keyBindings = KeyBindings.get();
 
 // flatten the key-bindings object to create an array of key-bindings
 Object.keys( keyBindings ).forEach( function( category ) {
