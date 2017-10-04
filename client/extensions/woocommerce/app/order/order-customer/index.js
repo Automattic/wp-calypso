@@ -14,14 +14,13 @@ import { localize } from 'i18n-calypso';
 import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
+import CustomerAddressDialog from './dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import SectionHeader from 'components/section-header';
-
-const CustomerAddressDialog = () => null;
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
@@ -32,8 +31,44 @@ class OrderCustomerInfo extends Component {
 		} ),
 	};
 
-	toggleDialog = () => {
-		return () => {};
+	state = {
+		showDialog: false,
+	};
+
+	updateAddress = ( type = 'billing' ) => {
+		const { siteId, order } = this.props;
+		return address => {
+			if ( siteId ) {
+				this.props.editOrder( siteId, { id: order.id, [ type ]: address } );
+			}
+		};
+	};
+
+	toggleDialog = type => {
+		return () => {
+			this.setState( { showDialog: type } );
+		};
+	};
+
+	renderDialogs = () => {
+		const { billing, shipping } = this.props.order;
+		return [
+			<CustomerAddressDialog
+				key="dialog-billing"
+				address={ billing }
+				closeDialog={ this.toggleDialog( false ) }
+				isVisible={ 'billing' === this.state.showDialog }
+				updateAddress={ this.updateAddress( 'billing' ) }
+				showPhoneEmail
+			/>,
+			<CustomerAddressDialog
+				key="dialog-shipping"
+				address={ shipping }
+				closeDialog={ this.toggleDialog( false ) }
+				isVisible={ 'shipping' === this.state.showDialog }
+				updateAddress={ this.updateAddress( 'shipping' ) }
+			/>,
+		];
 	};
 
 	render() {
@@ -98,7 +133,7 @@ class OrderCustomerInfo extends Component {
 						</div>
 					</div>
 				</Card>
-				<CustomerAddressDialog />
+				{ isEditing && this.renderDialogs() }
 			</div>
 		);
 	}
