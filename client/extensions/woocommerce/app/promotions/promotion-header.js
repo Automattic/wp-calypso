@@ -24,7 +24,7 @@ function renderTrashButton( onTrash, promotion, isBusy, translate ) {
 }
 
 function renderSaveButton( onSave, promotion, isBusy, translate ) {
-	if ( 'undefined' !== typeof onSave ) {
+	if ( 'undefined' === typeof onSave ) {
 		// 'Save' not allowed here.
 		return null;
 	}

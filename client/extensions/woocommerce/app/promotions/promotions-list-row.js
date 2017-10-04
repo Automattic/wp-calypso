@@ -55,7 +55,7 @@ function getTimeframeText( promotion, translate, moment ) {
 const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
 	return (
 		// TODO: Replace with individual update link for promotion.
-		<TableRow href={ getLink( '/store/promotions/:site', site ) }>
+		<TableRow href={ getLink( '/store/promotion/:site/' + promotion.id, site ) }>
 			<TableItem isTitle className="promotions__list-promotion">
 				<span className="promotions__list-name">{ promotion.name }</span>
 			</TableItem>

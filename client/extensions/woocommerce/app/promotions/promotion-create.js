@@ -9,15 +9,17 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
+import { fetchPromotions, createPromotion } from 'woocommerce/state/sites/promotions/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import {
@@ -26,6 +28,7 @@ import {
 } from 'woocommerce/state/selectors/promotions';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 class PromotionCreate extends React.Component {
 	static propTypes = {
@@ -39,6 +42,7 @@ class PromotionCreate extends React.Component {
 		} ),
 		editPromotion: PropTypes.func.isRequired,
 		clearPromotionEdits: PropTypes.func.isRequired,
+		createPromotion: PropTypes.func.isRequired,
 		fetchProductCategories: PropTypes.func.isRequired,
 		fetchPromotions: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
@@ -73,20 +77,44 @@ class PromotionCreate extends React.Component {
 	}
 
 	onSave = () => {
-		// TODO: Add action to save promotion.
-	};
+		const { site, promotion, translate } = this.props;
+
+		const getSuccessNotice = () => {
+			return successNotice(
+				translate( '%(promotion)s promotion successfully created.', {
+					args: { promotion: promotion.name },
+				} ),
+				{
+					displayOnNextPage: true,
+					duration: 8000,
+				}
+			);
+		};
+
+		const successAction = () => {
+			page.redirect( getLink( '/store/promotions/:site', site ) );
+			return getSuccessNotice( promotion );
+		};
+
+		const failureAction = errorNotice(
+			translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
+				args: { promotion: promotion.name },
+			} )
+		);
+
+		this.props.createPromotion( site.ID, promotion, successAction, failureAction );
+	}
 
 	isPromotionValid() {
 		const { promotion } = this.props;
 
-		// TODO: Update with real info.
-		return promotion && promotion.id;
+		// TODO: Update with complete info.
+		return promotion && promotion.id && promotion.type;
 	}
 
 	render() {
 		const { site, currency, className, promotion } = this.props;
 
-		// TODO: Update with real info.
 		const isValid = 'undefined' !== typeof site && this.isPromotionValid();
 		const isBusy = false;
 		const saveEnabled = isValid && ! isBusy;
@@ -129,6 +157,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editPromotion,
 			clearPromotionEdits,
+			createPromotion,
 			fetchProductCategories,
 			fetchPromotions,
 			fetchSettingsGeneral,
