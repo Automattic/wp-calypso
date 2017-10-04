@@ -81,6 +81,35 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should reject unsafe links', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 2,
+							name: 'ben &amp; jerries',
+							URL: 'javascript:foo',
+							description: 'peaches &amp; cream',
+						},
+					}
+				)[ 1 ]
+			).to.deep.equal( {
+				feed_ID: 1,
+				blog_ID: 2,
+				name: 'ben & jerries',
+				description: 'peaches & cream',
+				URL: undefined,
+				feed_URL: undefined,
+				is_following: undefined,
+				subscribers_count: undefined,
+				last_update: undefined,
+				image: undefined,
+			} );
+		} );
+
 		it( 'should serialize feed entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );

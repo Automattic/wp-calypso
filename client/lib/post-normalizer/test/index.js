@@ -2,6 +2,7 @@
  * @format
  * @jest-environment jsdom
  */
+jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 /**
  * External dependencies
@@ -21,7 +22,7 @@ function identifyTransform( post, callback ) {
 	callback();
 }
 
-function failIfCalledTransform(/* post, callback */) {
+function failIfCalledTransform() {
 	assert( false, 'should not have been called' );
 	// intentionally don't call callback
 }
@@ -50,6 +51,7 @@ describe( 'index', function() {
 				normalizer.content.makeImagesSafe( 300 ),
 				normalizer.content.makeEmbedsSafe,
 				normalizer.content.detectMedia,
+				normalizer.content.makeLinksSafe,
 			] ),
 			normalizer.createBetterExcerpt,
 			normalizer.waitForImagesToLoad,
@@ -432,8 +434,9 @@ describe( 'index', function() {
 				function( err, normalized ) {
 					assert.equal(
 						normalized.content,
-						'<div class="gallery" style="width: 100000px"><style>.gallery{}</style><div style="width:100px">some content</div></div>'
-					); //eslint-disable-line max-len
+						'<div class="gallery" style="width: 100000px">' +
+							'<style>.gallery{}</style><div style="width:100px">some content</div></div>'
+					);
 					done( err );
 				}
 			);
@@ -447,10 +450,13 @@ describe( 'index', function() {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
+					/** @format */
 					assert.equal(
 						normalized.content,
-						'<div class="embed-twitter"><blockquote class="twitter-tweet"><p lang="en" dir="ltr"></p></blockquote><script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>'
-					); //eslint-disable-line max-len
+						'<div class="embed-twitter"><blockquote class="twitter-tweet">' +
+							'<p lang="en" dir="ltr"></p></blockquote>' +
+							'<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>'
+					);
 					done( err );
 				}
 			);
@@ -466,11 +472,50 @@ describe( 'index', function() {
 				function( err, normalized ) {
 					assert.equal(
 						normalized.content,
-						'<blockquote class="instagram-media" style="background:#FFF;"><div style="padding:8px;"><p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p></div></blockquote>'
-					); //eslint-disable-line max-len
+						'<blockquote class="instagram-media" style="background:#FFF;">' +
+							'<div style="padding:8px;">' +
+							'<p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p>' +
+							'</div>' +
+							'</blockquote>'
+					);
 					done( err );
 				}
 			);
+		} );
+	} );
+
+	describe( 'makeLinksSafe', () => {
+		it( 'can make links in the post safe', done => {
+			normalizer(
+				{ content: '', URL: 'javascript:foo' },
+				[ normalizer.makeLinksSafe ],
+				( err, normalized ) => {
+					assert.equal( normalized.URL, '' );
+					done( err );
+				}
+			);
+		} );
+	} );
+
+	describe( 'content.makeContentLinksSafe', function() {
+		const badLinks = [
+			'javascript:foo',
+			'gopher:uminn.edu',
+			'ftp://ftp.example.com',
+			'telnet://localhost',
+			'feed://example.com',
+		];
+		badLinks.forEach( badLink => {
+			it( 'can remove javascript: links', done => {
+				normalizer(
+					{ content: '<a href="' + badLink + '">hi there</a>' },
+					[ normalizer.withContentDOM( [ normalizer.content.makeContentLinksSafe ] ) ],
+					( err, normalized ) => {
+						assert.equal( normalized.content, '<a>hi there</a>' );
+						done( err );
+					}
+				);
+			} );
 		} );
 	} );
 
@@ -486,7 +531,7 @@ describe( 'index', function() {
 					assert.equal(
 						normalized.content,
 						'<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">'
-					); //eslint-disable-line max-len
+					);
 					done( err );
 				}
 			);
@@ -502,8 +547,9 @@ describe( 'index', function() {
 				function( err, normalized ) {
 					assert.equal(
 						normalized.content,
-						'<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">'
-					); //eslint-disable-line max-len
+						'<img src="http://example.wordpress.com/example.jpg-SAFE">' +
+							'<img src="http://example.wordpress.com/example2.jpg-SAFE">'
+					);
 					done( err );
 				}
 			);
@@ -536,8 +582,9 @@ describe( 'index', function() {
 				function( err, normalized ) {
 					assert.equal(
 						normalized.content,
-						'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400"><img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
-					); //eslint-disable-line max-len
+						'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+							'<img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
+					);
 					done( err );
 				}
 			);
