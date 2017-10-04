@@ -99,6 +99,7 @@ function calculatePromotions( coupons, products ) {
 function createPromotionFromProduct( product ) {
 	return {
 		type: 'product_sale',
+		name: product.name,
 		startDate: product.date_on_sale_from_gmt,
 		endDate: product.date_on_sale_to_gmt,
 		product,
@@ -108,6 +109,7 @@ function createPromotionFromProduct( product ) {
 function createPromotionFromCoupon( coupon ) {
 	return {
 		type: 'coupon',
+		name: coupon.code,
 		startDate: coupon.date_created_gmt,
 		endDate: coupon.date_expires_gmt,
 		coupon,
