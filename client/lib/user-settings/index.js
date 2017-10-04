@@ -13,17 +13,15 @@ import emitterClass from 'lib/mixins/emitter';
 import userFactory from 'lib/user';
 const user = userFactory();
 import userUtils from 'lib/user/utils';
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
-/**
- * Internal dependencies
- */
-var wpcom = require( 'lib/wp' ).undocumented();
 /*
  * Decodes entities in those specific user settings properties
  * that the REST API returns already HTML-encoded
  */
 function decodeUserSettingsEntities( data ) {
-	let decodedValues = {
+	const decodedValues = {
 		display_name: data.display_name && decodeEntities( data.display_name ),
 		description: data.description && decodeEntities( data.description ),
 		user_URL: data.user_URL && decodeEntities( data.user_URL )

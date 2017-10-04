@@ -13,11 +13,8 @@ import inherits from 'inherits';
 import paygateLoader from 'lib/paygate-loader';
 import { validateCardDetails } from 'lib/credit-card-details';
 import transactionStepTypes from './step-types';
-
-/**
- * Internal dependencies
- */
-var wpcom = require( 'lib/wp' ).undocumented();
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 /**
  * Make a purchase on WordPress.com.

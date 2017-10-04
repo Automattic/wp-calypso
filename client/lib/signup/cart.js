@@ -9,12 +9,7 @@ import { forEach } from 'lodash';
 import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
-import cartValues from 'lib/cart-values';
-
-/**
- * Internal dependencies
- */
-var cartItems = cartValues.cartItems;
+import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {
@@ -23,7 +18,7 @@ function addProductsToCart( cart, newCartItems ) {
 		} );
 		const addFunction = cartItems.add( cartItem );
 
-		cart = cartValues.fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
+		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 	} );
 
 	return cart;

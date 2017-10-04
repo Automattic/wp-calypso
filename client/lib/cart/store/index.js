@@ -14,12 +14,13 @@ import cartAnalytics from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
-import cartValues from 'lib/cart-values';
-
-/**
- * Internal dependencies
- */
-var wpcom = require( 'lib/wp' ).undocumented(), applyCoupon = cartValues.applyCoupon, cartItems = cartValues.cartItems;
+import {
+	applyCoupon,
+	cartItems,
+	fillInAllCartItemAttributes,
+} from 'lib/cart-values';
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 var _cartKey = null,
 	_synchronizer = null,
@@ -77,7 +78,7 @@ function update( changeFunction ) {
 		nextCart;
 
 	wrappedFunction = flowRight(
-		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
+		partialRight( fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
 

@@ -23,14 +23,30 @@ import {
 /**
  * Internal dependencies
  */
-import productsValues from 'lib/products-values';
+import {
+	formatProduct,
+	isCustomDesign,
+	isDependentProduct,
+	isDomainMapping,
+	isDomainProduct,
+	isDomainRedemption,
+	isDomainRegistration,
+	isFreeTrial,
+	isFreeWordPressComDomain,
+	isGoogleApps,
+	isJetpackPlan,
+	isNoAds,
+	isPlan,
+	isPremium,
+	isPrivacyProtection,
+	isSiteRedirect,
+	isSpaceUpgrade,
+	isUnlimitedSpace,
+	isUnlimitedThemes,
+	isVideoPress,
+} from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-var formatProduct = productsValues.formatProduct, isCustomDesign = productsValues.isCustomDesign, isDependentProduct = productsValues.isDependentProduct, isDomainMapping = productsValues.isDomainMapping, isDomainProduct = productsValues.isDomainProduct, isDomainRedemption = productsValues.isDomainRedemption, isDomainRegistration = productsValues.isDomainRegistration, isGoogleApps = productsValues.isGoogleApps, isNoAds = productsValues.isNoAds, isPlan = productsValues.isPlan, isPremium = productsValues.isPremium, isPrivacyProtection = productsValues.isPrivacyProtection, isSiteRedirect = productsValues.isSiteRedirect, isSpaceUpgrade = productsValues.isSpaceUpgrade, isUnlimitedSpace = productsValues.isUnlimitedSpace, isUnlimitedThemes = productsValues.isUnlimitedThemes, isVideoPress = productsValues.isVideoPress, isJetpackPlan = productsValues.isJetpackPlan, isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain;
 
 import {
 	PLAN_FREE,
@@ -91,7 +107,7 @@ function cartItemShouldReplaceCart( cartItem, cart ) {
 		return true;
 	}
 
-	if ( productsValues.isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
+	if ( isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
 		// adding a free trial plan to your cart replaces the cart
 		// adding another product to a cart containing a free trial removes the free trial
 		return true;
@@ -296,7 +312,7 @@ function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
 }
 
 function hasDomainMapping( cart ) {
-	return some( getAll( cart ), productsValues.isDomainMapping );
+	return some( getAll( cart ), isDomainMapping );
 }
 
 /**

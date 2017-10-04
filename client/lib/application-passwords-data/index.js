@@ -4,13 +4,14 @@
 import { filter } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords-data' );
-import makeEmitter from 'lib/mixins/emitter';
-import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+import makeEmitter from 'lib/mixins/emitter';
+import store from 'store';
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 function ApplicationPasswords() {
 	if ( ! ( this instanceof ApplicationPasswords ) ) {

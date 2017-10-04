@@ -16,12 +16,8 @@ import notices from 'notices';
 import PaymentBox from './payment-box';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
-
-/**
- * Internal dependencies
- */
-var wpcom = require( 'lib/wp' ).undocumented();
-
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';

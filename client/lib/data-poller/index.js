@@ -9,7 +9,7 @@ const debug = debugFactory( 'calypso:poller' );
  */
 import Poller from './poller';
 
-var _pollers = {};
+const _pollers = {};
 
 function add( dataStore, fetcher, options ) {
 	var poller = new Poller( dataStore, fetcher, options );

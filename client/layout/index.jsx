@@ -31,7 +31,7 @@ import QueryPreferences from 'components/data/query-preferences';
 /**
  * Internal dependencies
  */
-var KeyboardShortcutsMenu, Layout, SupportUser;
+let KeyboardShortcutsMenu, SupportUser;
 
 import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
@@ -52,8 +52,9 @@ if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
-
-Layout = React.createClass( {
+/* eslint-disable react/no-deprecated */
+const Layout = React.createClass( {
+	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],

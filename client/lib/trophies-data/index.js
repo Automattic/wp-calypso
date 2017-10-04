@@ -2,15 +2,15 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
 const debug = debugFactory( 'calypso:trophies-data' );
-import Emitter from 'lib/mixins/emitter';
-import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+import Emitter from 'lib/mixins/emitter';
+import store from 'store';
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 function TrophiesData() {
 	if ( ! ( this instanceof TrophiesData ) ) {

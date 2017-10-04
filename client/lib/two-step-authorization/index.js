@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
@@ -14,11 +13,8 @@ import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';
 import profileLinks from 'lib/user-profile-links';
 import analytics from 'lib/analytics';
-
-/**
- * Internal Dependencies
- */
-var wpcom = require( 'lib/wp' ).undocumented();
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 /*
  * Initialize TwoStepAuthorization with defaults

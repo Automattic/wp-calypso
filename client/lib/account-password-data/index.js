@@ -13,7 +13,8 @@ import makeEmitter from 'lib/mixins/emitter';
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+import { undocumented } from 'lib/wp';
+const wpcom = undocumented();
 
 /**
  * Initialize AccountPasswordData with defaults
