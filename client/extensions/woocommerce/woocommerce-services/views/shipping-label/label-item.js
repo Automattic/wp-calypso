@@ -62,11 +62,6 @@ class LabelItem extends Component {
 
 	renderLabelDetails = ( label ) => {
 		const { translate } = this.props;
-
-		if ( ! label.packageName || ! label.productNames ) {
-			return null;
-		}
-
 		return (
 			<span className="shipping-label__item-detail">
 				{ translate( 'Label #%(labelIndex)s', { args: { labelIndex: label.labelIndex + 1 } } ) }
