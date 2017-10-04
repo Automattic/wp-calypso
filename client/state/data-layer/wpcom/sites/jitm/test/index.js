@@ -13,12 +13,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
 	describe( 'fetchJITM', () => {
-		const emptyJITM = {
-			type: 'JITM_SET',
-			jitms: [],
-			keyedPath: 'test100',
-		};
-
 		it( 'should not dispatch', () => {
 			const dispatch = spy();
 			const state = {};
@@ -74,16 +68,18 @@ describe( 'jitms', () => {
 
 			handleRouteChange( { getState, dispatch }, action_transition );
 			expect( dispatch ).to.have.been.calledWithMatch( http( {
-				apiNamespace: 'wpcom',
+				apiNamespace: 'rest',
 				method: 'GET',
-				path: `/v2/sites/${ action_site_selected.siteId }/jitm/calypso:${ action_transition.section.name }:admin_notices`,
+				path: '/v1.1/jetpack-blogs/100/rest-api/',
 				query: {
-					external_user_id: state.currentUser.id,
+					path: '/jetpack/v4/jitm',
+					query: JSON.stringify( { message_path: 'calypso:test:admin_notices' } ),
+					http_envelope: 1
 				}
 			}, action_transition ) );
 		} );
 
-		it( 'should be an empty jitm if its not a jetpack site', () => {
+		it( 'should be not set a jitm if not a jetpack site', () => {
 			const dispatch = spy(),
 				state = {
 					sites: {
@@ -105,7 +101,7 @@ describe( 'jitms', () => {
 				};
 
 			handleRouteChange( { getState, dispatch }, action_transition );
-			expect( dispatch ).to.have.been.calledWithMatch( emptyJITM );
+			expect( dispatch ).to.have.not.been.called;
 		} );
 	} );
 } );
