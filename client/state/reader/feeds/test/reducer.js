@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 				blog_ID: 2,
 				name: 'ben & jerries',
 				description: 'peaches & cream',
-				URL: null,
+				URL: undefined,
 				feed_URL: undefined,
 				is_following: undefined,
 				subscribers_count: undefined,
