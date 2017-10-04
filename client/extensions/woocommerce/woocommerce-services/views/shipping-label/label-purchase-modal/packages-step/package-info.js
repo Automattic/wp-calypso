@@ -181,7 +181,7 @@ const PackageInfo = ( props ) => {
 				<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						id={ `weight_${ packageId }` }
-						placeholder={ translate( 'Package weight' ) }
+						placeholder={ translate( '0' ) }
 						value={ pckg.weight || '' }
 						onChange={ onWeightChange }
 						isError={ Boolean( pckgErrors.weight ) }
