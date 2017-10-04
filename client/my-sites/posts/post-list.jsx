@@ -72,6 +72,7 @@ class PostList extends PureComponent {
 			category,
 			order_by: statusSlug === 'drafts' ? 'modified' : undefined,
 			search,
+			site_visibility: ! siteId ? 'visible' : undefined,
 			status: mapStatus( statusSlug ),
 			tag,
 			type: 'post'

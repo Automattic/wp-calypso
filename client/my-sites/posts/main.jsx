@@ -116,6 +116,7 @@ const PostsMain = React.createClass( {
 			author,
 			category,
 			search,
+			site_visibility: ! siteId ? 'visible' : undefined,
 			status: mapStatus( statusSlug ),
 			tag,
 			type: 'post'
