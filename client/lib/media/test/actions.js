@@ -13,7 +13,15 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { DUMMY_API_RESPONSE, DUMMY_BLOB_UPLOAD, DUMMY_ITEM, DUMMY_QUERY, DUMMY_SITE_ID, DUMMY_UPLOAD, DUMMY_URL } from './fixtures';
+import {
+	DUMMY_API_RESPONSE,
+	DUMMY_BLOB_UPLOAD,
+	DUMMY_ITEM,
+	DUMMY_QUERY,
+	DUMMY_SITE_ID,
+	DUMMY_UPLOAD,
+	DUMMY_URL,
+} from './fixtures';
 import { stubs } from './mocks/lib/wp';
 
 jest.mock( 'lib/media/library-selected-store', () => ( {

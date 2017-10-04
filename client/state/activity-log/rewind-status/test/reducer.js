@@ -10,7 +10,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { rewindStatus, rewindStatusError } from '../reducer';
-import { rewindActivateSuccess, rewindStatusError as rewindStatusErrorAction, updateRewindStatus } from 'state/activity-log/actions';
+import {
+	rewindActivateSuccess,
+	rewindStatusError as rewindStatusErrorAction,
+	updateRewindStatus,
+} from 'state/activity-log/actions';
 
 /**
  * Constants

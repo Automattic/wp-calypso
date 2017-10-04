@@ -9,7 +9,17 @@ import { set } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getProductEdits, getProductWithLocalEdits, getCurrentlyEditingProduct, getProductListCurrentPage, getProductListProducts, getProductListRequestedPage, getProductSearchCurrentPage, getProductSearchResults, getProductSearchRequestedPage } from '../selectors';
+import {
+	getProductEdits,
+	getProductWithLocalEdits,
+	getCurrentlyEditingProduct,
+	getProductListCurrentPage,
+	getProductListProducts,
+	getProductListRequestedPage,
+	getProductSearchCurrentPage,
+	getProductSearchResults,
+	getProductSearchRequestedPage,
+} from '../selectors';
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
 
 const siteId = 123;

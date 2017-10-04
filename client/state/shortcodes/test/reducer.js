@@ -10,7 +10,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, items } from '../reducer';
-import { SHORTCODE_RECEIVE, SHORTCODE_REQUEST, SHORTCODE_REQUEST_FAILURE, SHORTCODE_REQUEST_SUCCESS, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	SHORTCODE_RECEIVE,
+	SHORTCODE_REQUEST,
+	SHORTCODE_REQUEST_FAILURE,
+	SHORTCODE_REQUEST_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

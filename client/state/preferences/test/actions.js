@@ -11,7 +11,16 @@ import sinon from 'sinon';
  */
 import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
 import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
-import { PREFERENCES_RECEIVE, PREFERENCES_FETCH, PREFERENCES_FETCH_FAILURE, PREFERENCES_FETCH_SUCCESS, PREFERENCES_SET, PREFERENCES_SAVE, PREFERENCES_SAVE_FAILURE, PREFERENCES_SAVE_SUCCESS } from 'state/action-types';
+import {
+	PREFERENCES_RECEIVE,
+	PREFERENCES_FETCH,
+	PREFERENCES_FETCH_FAILURE,
+	PREFERENCES_FETCH_SUCCESS,
+	PREFERENCES_SET,
+	PREFERENCES_SAVE,
+	PREFERENCES_SAVE_FAILURE,
+	PREFERENCES_SAVE_SUCCESS,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

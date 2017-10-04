@@ -9,7 +9,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receivePostTypeTaxonomies, requestPostTypeTaxonomies } from '../actions';
-import { POST_TYPES_TAXONOMIES_RECEIVE, POST_TYPES_TAXONOMIES_REQUEST, POST_TYPES_TAXONOMIES_REQUEST_SUCCESS, POST_TYPES_TAXONOMIES_REQUEST_FAILURE } from 'state/action-types';
+import {
+	POST_TYPES_TAXONOMIES_RECEIVE,
+	POST_TYPES_TAXONOMIES_REQUEST,
+	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
+	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

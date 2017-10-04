@@ -11,7 +11,10 @@ import { spy } from 'sinon';
  */
 import { fetchSettingsProducts } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST, WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {

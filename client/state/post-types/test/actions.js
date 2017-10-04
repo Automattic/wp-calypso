@@ -9,7 +9,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receivePostTypes, requestPostTypes } from '../actions';
-import { POST_TYPES_RECEIVE, POST_TYPES_REQUEST, POST_TYPES_REQUEST_SUCCESS, POST_TYPES_REQUEST_FAILURE } from 'state/action-types';
+import {
+	POST_TYPES_RECEIVE,
+	POST_TYPES_REQUEST,
+	POST_TYPES_REQUEST_SUCCESS,
+	POST_TYPES_REQUEST_FAILURE,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

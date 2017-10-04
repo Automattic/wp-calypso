@@ -10,7 +10,12 @@ import { expect } from 'chai';
  */
 import { repliesUpdated, replyCreated, replyDeleted, replyUpdated } from '../reducer';
 import reviewReplies from './fixtures/review-replies';
-import { WOOCOMMERCE_REVIEW_REPLIES_UPDATED, WOOCOMMERCE_REVIEW_REPLY_CREATED, WOOCOMMERCE_REVIEW_REPLY_DELETED, WOOCOMMERCE_REVIEW_REPLY_UPDATED } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
+	WOOCOMMERCE_REVIEW_REPLY_CREATED,
+	WOOCOMMERCE_REVIEW_REPLY_DELETED,
+	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
+} from 'woocommerce/state/action-types';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {

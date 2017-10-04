@@ -11,7 +11,14 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { announceFailure, announceSuccess, fetchExtensionError, fetchExtensionSettings, saveSettings, updateExtensionSettings } from '../';
+import {
+	announceFailure,
+	announceSuccess,
+	fetchExtensionError,
+	fetchExtensionSettings,
+	saveSettings,
+	updateExtensionSettings,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';

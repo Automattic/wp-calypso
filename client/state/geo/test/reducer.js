@@ -10,7 +10,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, geo } from '../reducer';
-import { GEO_RECEIVE, GEO_REQUEST, GEO_REQUEST_FAILURE, GEO_REQUEST_SUCCESS, DESERIALIZE } from 'state/action-types';
+import {
+	GEO_RECEIVE,
+	GEO_REQUEST,
+	GEO_REQUEST_FAILURE,
+	GEO_REQUEST_SUCCESS,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

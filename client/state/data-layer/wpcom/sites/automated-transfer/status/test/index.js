@@ -11,7 +11,10 @@ import sinon from 'sinon';
  */
 import { requestStatus, receiveStatus } from '../';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus, setAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import {
+	getAutomatedTransferStatus,
+	setAutomatedTransferStatus,
+} from 'state/automated-transfer/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const siteId = 1916284;

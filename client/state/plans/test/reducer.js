@@ -9,8 +9,17 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { plansReceiveAction, plansRequestSuccessAction, plansRequestFailureAction, requestPlans } from '../actions';
-import plansReducer, { items, requesting as requestReducer, error as errorReducer } from '../reducer';
+import {
+	plansReceiveAction,
+	plansRequestSuccessAction,
+	plansRequestFailureAction,
+	requestPlans,
+} from '../actions';
+import plansReducer, {
+	items,
+	requesting as requestReducer,
+	error as errorReducer,
+} from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
 import { withSchemaValidation } from 'state/utils';

@@ -9,7 +9,12 @@ import { find, set } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getVariationEdits, getVariationWithLocalEdits, getCurrentlyEditingVariation, getProductVariationsWithLocalEdits } from '../selectors';
+import {
+	getVariationEdits,
+	getVariationWithLocalEdits,
+	getCurrentlyEditingVariation,
+	getProductVariationsWithLocalEdits,
+} from '../selectors';
 import productVariations from 'woocommerce/state/sites/product-variations/test/fixtures/variations';
 import products from 'woocommerce/state/sites/products/test/fixtures/products';
 

@@ -8,7 +8,16 @@ import * as sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { add, remove, resetForTesting as reset, EVERY_SECOND, EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, EVERY_THIRTY_SECONDS, EVERY_MINUTE } from '../runner';
+import {
+	add,
+	remove,
+	resetForTesting as reset,
+	EVERY_SECOND,
+	EVERY_FIVE_SECONDS,
+	EVERY_TEN_SECONDS,
+	EVERY_THIRTY_SECONDS,
+	EVERY_MINUTE,
+} from '../runner';
 
 const noop = () => null;
 const nudgeObject = ( o, value ) => () => ( o.counter += value );

@@ -8,7 +8,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPromotions, getPromotionsPage, getPromotionsCurrentPage, getPromotionsPerPage } from '../promotions';
+import {
+	getPromotions,
+	getPromotionsPage,
+	getPromotionsCurrentPage,
+	getPromotionsPerPage,
+} from '../promotions';
 
 describe( 'promotions', () => {
 	const rootState = {

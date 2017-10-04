@@ -9,7 +9,12 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes, isOrderNoteSaving } from '../selectors';
+import {
+	areOrderNotesLoaded,
+	areOrderNotesLoading,
+	getOrderNotes,
+	isOrderNoteSaving,
+} from '../selectors';
 import notes from './fixtures/notes';
 
 const preInitializedState = {

@@ -12,7 +12,11 @@ import { spy, match } from 'sinon';
 import { fetchPromotions } from '../actions';
 import { promotionsRequest, productsRequestSuccess, couponsUpdated } from '../handlers';
 import { coupons1, coupons2, products1, products2 } from './fixtures/promotions';
-import { WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS, WOOCOMMERCE_COUPONS_REQUEST, WOOCOMMERCE_COUPONS_UPDATED } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_COUPONS_REQUEST,
+	WOOCOMMERCE_COUPONS_UPDATED,
+} from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	const siteId = 123;

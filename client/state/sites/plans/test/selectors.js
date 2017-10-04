@@ -9,8 +9,27 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getSitePlan, getSitePlanRawPrice, getPlanDiscountedRawPrice, getPlanRawDiscount, getPlansBySite, getPlansBySiteId, getCurrentPlan, hasDomainCredit, isCurrentUserCurrentPlanOwner, isRequestingSitePlans, isSitePlanDiscounted, getSitePlanSlug, hasFeature } from '../selectors';
-import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
+import {
+	getSitePlan,
+	getSitePlanRawPrice,
+	getPlanDiscountedRawPrice,
+	getPlanRawDiscount,
+	getPlansBySite,
+	getPlansBySiteId,
+	getCurrentPlan,
+	hasDomainCredit,
+	isCurrentUserCurrentPlanOwner,
+	isRequestingSitePlans,
+	isSitePlanDiscounted,
+	getSitePlanSlug,
+	hasFeature,
+} from '../selectors';
+import {
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_BUSINESS_ONBOARDING,
+} from 'lib/plans/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {

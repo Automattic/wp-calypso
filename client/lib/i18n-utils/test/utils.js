@@ -9,7 +9,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { addLocaleToPath, getLanguage, getLocaleFromPath, isDefaultLocale, removeLocaleFromPath } from 'lib/i18n-utils';
+import {
+	addLocaleToPath,
+	getLanguage,
+	getLocaleFromPath,
+	isDefaultLocale,
+	removeLocaleFromPath,
+} from 'lib/i18n-utils';
 
 describe( 'utils', function() {
 	describe( '#isDefaultLocale', function() {

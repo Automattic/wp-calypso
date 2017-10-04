@@ -9,7 +9,21 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { initialState, JOURNAL_ACTIONS } from '../reducer';
-import { getShippingZoneLocationsWithEdits, isEditLocationsModalOpen, canLocationsBeFiltered, getCurrentSelectedCountryZoneOwner, canLocationsBeFilteredByState, areLocationsFilteredByPostcode, areLocationsFilteredByState, areLocationsUnfiltered, getCurrentlyEditingShippingZoneLocationsList, getCurrentlyEditingShippingZoneCountries, getCurrentlyEditingShippingZoneStates, areCurrentlyEditingShippingZoneLocationsValid, getOrderOperationsToSaveCurrentZone } from '../selectors';
+import {
+	getShippingZoneLocationsWithEdits,
+	isEditLocationsModalOpen,
+	canLocationsBeFiltered,
+	getCurrentSelectedCountryZoneOwner,
+	canLocationsBeFilteredByState,
+	areLocationsFilteredByPostcode,
+	areLocationsFilteredByState,
+	areLocationsUnfiltered,
+	getCurrentlyEditingShippingZoneLocationsList,
+	getCurrentlyEditingShippingZoneCountries,
+	getCurrentlyEditingShippingZoneStates,
+	areCurrentlyEditingShippingZoneLocationsValid,
+	getOrderOperationsToSaveCurrentZone,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
 

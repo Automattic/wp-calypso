@@ -8,7 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS, WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST, WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 

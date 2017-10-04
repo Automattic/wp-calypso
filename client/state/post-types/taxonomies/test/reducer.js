@@ -10,7 +10,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, items } from '../reducer';
-import { POST_TYPES_TAXONOMIES_RECEIVE, POST_TYPES_TAXONOMIES_REQUEST, POST_TYPES_TAXONOMIES_REQUEST_SUCCESS, POST_TYPES_TAXONOMIES_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	POST_TYPES_TAXONOMIES_RECEIVE,
+	POST_TYPES_TAXONOMIES_REQUEST,
+	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
+	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

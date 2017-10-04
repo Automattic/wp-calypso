@@ -11,7 +11,15 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { queries, queryRequests } from '../reducer';
 import TermQueryManager from 'lib/query-manager/term';
-import { DESERIALIZE, TERM_REMOVE, TERMS_RECEIVE, TERMS_REQUEST, TERMS_REQUEST_FAILURE, TERMS_REQUEST_SUCCESS, SERIALIZE } from 'state/action-types';
+import {
+	DESERIALIZE,
+	TERM_REMOVE,
+	TERMS_RECEIVE,
+	TERMS_REQUEST,
+	TERMS_REQUEST_FAILURE,
+	TERMS_REQUEST_SUCCESS,
+	SERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 /**

@@ -14,7 +14,10 @@ import { requestFollowTag, receiveFollowTag, receiveError } from '../';
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { requestFollowTag as requestFollowAction, receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
+import {
+	requestFollowTag as requestFollowAction,
+	receiveTags as receiveTagsAction,
+} from 'state/reader/tags/items/actions';
 
 export const successfulFollowResponse = freeze( {
 	subscribed: true,

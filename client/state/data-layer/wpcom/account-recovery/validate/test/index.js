@@ -9,8 +9,16 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { handleValidateRequest, handleValidateRequestSuccess, handleValidateRequestFailure } from '../';
-import { validateRequestSuccess, validateRequestError, setValidationKey } from 'state/account-recovery/reset/actions';
+import {
+	handleValidateRequest,
+	handleValidateRequestSuccess,
+	handleValidateRequestFailure,
+} from '../';
+import {
+	validateRequestSuccess,
+	validateRequestError,
+	setValidationKey,
+} from 'state/account-recovery/reset/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handleValidateRequest()', () => {

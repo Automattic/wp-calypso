@@ -9,9 +9,26 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchSetupChoices, setCheckedTaxSetup, setFinishedInitialSetup, setFinishedInstallOfRequiredPlugins, setOptedOutOfShippingSetup, setOptedOutOfTaxesSetup, setSetStoreAddressDuringInitialSetup, setTriedCustomizerDuringInitialSetup, setCreatedDefaultShippingZone, setUpStorePages } from '../actions';
+import {
+	fetchSetupChoices,
+	setCheckedTaxSetup,
+	setFinishedInitialSetup,
+	setFinishedInstallOfRequiredPlugins,
+	setOptedOutOfShippingSetup,
+	setOptedOutOfTaxesSetup,
+	setSetStoreAddressDuringInitialSetup,
+	setTriedCustomizerDuringInitialSetup,
+	setCreatedDefaultShippingZone,
+	setUpStorePages,
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST, WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS, WOOCOMMERCE_SETUP_CHOICES_REQUEST, WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS, WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
+	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
+	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
+} from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {

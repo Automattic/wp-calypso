@@ -8,7 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { addMethodToShippingZone, openShippingZoneMethod, cancelShippingZoneMethod, closeShippingZoneMethod, removeMethodFromShippingZone, changeShippingZoneMethodType, changeShippingZoneMethodTitle, toggleShippingZoneMethodEnabled, toggleOpenedShippingZoneMethodEnabled } from '../actions';
+import {
+	addMethodToShippingZone,
+	openShippingZoneMethod,
+	cancelShippingZoneMethod,
+	closeShippingZoneMethod,
+	removeMethodFromShippingZone,
+	changeShippingZoneMethodType,
+	changeShippingZoneMethodTitle,
+	toggleShippingZoneMethodEnabled,
+	toggleOpenedShippingZoneMethodEnabled,
+} from '../actions';
 import { setShippingCost } from '../flat-rate/actions';
 import reducer, { initialState } from '../reducer';
 

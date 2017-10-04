@@ -9,7 +9,11 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { requestBlogStickerRemove, receiveBlogStickerRemove, receiveBlogStickerRemoveError } from '../';
+import {
+	requestBlogStickerRemove,
+	receiveBlogStickerRemove,
+	receiveBlogStickerRemoveError,
+} from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';

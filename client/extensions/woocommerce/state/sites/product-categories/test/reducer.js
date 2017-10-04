@@ -9,7 +9,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { productCategoryUpdated } from '../actions';
-import { WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST, WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 

@@ -9,8 +9,19 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getDomainsBySite, getDomainsBySiteId, isRequestingSiteDomains, getDecoratedSiteDomains } from '../selectors';
-import { SITE_ID_FIRST as firstSiteId, SITE_ID_SECOND as secondSiteId, DOMAIN_PRIMARY, DOMAIN_NOT_PRIMARY, getStateInstance } from './fixture';
+import {
+	getDomainsBySite,
+	getDomainsBySiteId,
+	isRequestingSiteDomains,
+	getDecoratedSiteDomains,
+} from '../selectors';
+import {
+	SITE_ID_FIRST as firstSiteId,
+	SITE_ID_SECOND as secondSiteId,
+	DOMAIN_PRIMARY,
+	DOMAIN_NOT_PRIMARY,
+	getStateInstance,
+} from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getDomainsBySite()', () => {

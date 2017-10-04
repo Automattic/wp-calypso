@@ -8,7 +8,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingPostCounts, getAllPostCounts, getAllPostCount, getMyPostCounts, getMyPostCount, getNormalizedPostCounts, getNormalizedMyPostCounts } from '../selectors';
+import {
+	isRequestingPostCounts,
+	getAllPostCounts,
+	getAllPostCount,
+	getMyPostCounts,
+	getMyPostCount,
+	getNormalizedPostCounts,
+	getNormalizedMyPostCounts,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostCounts()', () => {

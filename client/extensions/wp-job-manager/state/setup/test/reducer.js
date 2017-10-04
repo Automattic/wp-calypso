@@ -9,7 +9,14 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { WP_JOB_MANAGER_CREATE_PAGES, WP_JOB_MANAGER_CREATE_PAGES_ERROR, WP_JOB_MANAGER_FETCH_SETUP_STATUS, WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR, WP_JOB_MANAGER_UPDATE_SETUP_STATUS, WP_JOB_MANAGER_WIZARD_NEXT_STEP } from '../../action-types';
+import {
+	WP_JOB_MANAGER_CREATE_PAGES,
+	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR,
+	WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
+	WP_JOB_MANAGER_WIZARD_NEXT_STEP,
+} from '../../action-types';
 import reducer, { creating, fetching, nextStep, status } from '../reducer';
 
 describe( 'reducer', () => {

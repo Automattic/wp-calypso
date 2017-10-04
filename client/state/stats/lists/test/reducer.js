@@ -10,7 +10,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items as unwrappedItems, requests } from '../reducer';
-import { DESERIALIZE, SERIALIZE, SITE_STATS_RECEIVE, SITE_STATS_REQUEST, SITE_STATS_REQUEST_FAILURE, SITE_STATS_REQUEST_SUCCESS } from 'state/action-types';
+import {
+	DESERIALIZE,
+	SERIALIZE,
+	SITE_STATS_RECEIVE,
+	SITE_STATS_REQUEST,
+	SITE_STATS_REQUEST_FAILURE,
+	SITE_STATS_REQUEST_SUCCESS,
+} from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 

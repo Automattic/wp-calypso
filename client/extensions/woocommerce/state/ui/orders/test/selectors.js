@@ -8,7 +8,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getCurrentlyEditingOrderId, getOrdersCurrentPage, getOrdersCurrentSearch, getOrderEdits, getOrderWithEdits, isCurrentlyEditingOrder } from '../selectors';
+import {
+	getCurrentlyEditingOrderId,
+	getOrdersCurrentPage,
+	getOrdersCurrentSearch,
+	getOrderEdits,
+	getOrderWithEdits,
+	isCurrentlyEditingOrder,
+} from '../selectors';
 import { state, order } from './fixtures/detailed-state';
 
 const preInitializedState = {

@@ -7,7 +7,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { withAnalytics, bumpStat, recordCustomAdWordsRemarketingEvent, recordCustomFacebookConversionEvent, recordGoogleEvent, recordGooglePageView, recordTracksEvent, recordPageView, setTracksAnonymousUserId } from '../actions';
+import {
+	withAnalytics,
+	bumpStat,
+	recordCustomAdWordsRemarketingEvent,
+	recordCustomFacebookConversionEvent,
+	recordGoogleEvent,
+	recordGooglePageView,
+	recordTracksEvent,
+	recordPageView,
+	setTracksAnonymousUserId,
+} from '../actions';
 import { dispatcher as dispatch } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';

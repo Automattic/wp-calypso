@@ -9,8 +9,20 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { coupons1, coupons2, couponParams1, couponParams2, products1, products2, productParams1, productParams2 } from './fixtures/promotions';
-import { WOOCOMMERCE_COUPONS_UPDATED, WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import {
+	coupons1,
+	coupons2,
+	couponParams1,
+	couponParams2,
+	products1,
+	products2,
+	productParams1,
+	productParams2,
+} from './fixtures/promotions';
+import {
+	WOOCOMMERCE_COUPONS_UPDATED,
+	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	const siteId = 123;

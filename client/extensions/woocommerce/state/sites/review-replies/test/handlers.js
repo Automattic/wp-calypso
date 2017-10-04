@@ -3,6 +3,9 @@
 /**
  * External dependencies
  */
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import { keyBy } from 'lodash';
 import { spy, match } from 'sinon';

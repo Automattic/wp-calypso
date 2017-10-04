@@ -8,7 +8,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCreatingPages, isFetchingSetupStatus, shouldGoToNextStep, shouldShowSetupWizard } from '../selectors';
+import {
+	isCreatingPages,
+	isFetchingSetupStatus,
+	shouldGoToNextStep,
+	shouldShowSetupWizard,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

@@ -10,7 +10,11 @@ import sinon, { spy } from 'sinon';
  * Internal dependencies
  */
 import { uploadGravatar, announceSuccess, announceFailure } from '../';
-import { GRAVATAR_UPLOAD_RECEIVE, GRAVATAR_UPLOAD_REQUEST_SUCCESS, GRAVATAR_UPLOAD_REQUEST_FAILURE } from 'state/action-types';
+import {
+	GRAVATAR_UPLOAD_RECEIVE,
+	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
+	GRAVATAR_UPLOAD_REQUEST_FAILURE,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 

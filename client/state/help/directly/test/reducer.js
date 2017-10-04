@@ -8,9 +8,19 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { STATUS_UNINITIALIZED, STATUS_INITIALIZING, STATUS_READY, STATUS_ERROR } from '../constants';
+import {
+	STATUS_UNINITIALIZED,
+	STATUS_INITIALIZING,
+	STATUS_READY,
+	STATUS_ERROR,
+} from '../constants';
 import reducer, { questionAsked, status } from '../reducer';
-import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START, DIRECTLY_INITIALIZATION_SUCCESS, DIRECTLY_INITIALIZATION_ERROR } from 'state/action-types';
+import {
+	DIRECTLY_ASK_QUESTION,
+	DIRECTLY_INITIALIZATION_START,
+	DIRECTLY_INITIALIZATION_SUCCESS,
+	DIRECTLY_INITIALIZATION_ERROR,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

@@ -10,7 +10,11 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
-import { USER_SUGGESTIONS_RECEIVE, USER_SUGGESTIONS_REQUEST, USER_SUGGESTIONS_REQUEST_SUCCESS } from 'state/action-types';
+import {
+	USER_SUGGESTIONS_RECEIVE,
+	USER_SUGGESTIONS_REQUEST,
+	USER_SUGGESTIONS_REQUEST_SUCCESS,
+} from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 const sampleSuccessResponse = require( './sample-response.json' );

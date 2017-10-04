@@ -11,7 +11,11 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import { fetchSettingsGeneral } from '../actions';
-import { handleSettingsGeneral, handleSettingsGeneralSuccess, handleSettingsGeneralError } from '../handlers';
+import {
+	handleSettingsGeneral,
+	handleSettingsGeneralSuccess,
+	handleSettingsGeneralError,
+} from '../handlers';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
 

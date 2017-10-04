@@ -10,7 +10,25 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from '../constants';
-import { HAPPYCHAT_CHAT_STATUS_ABANDONED, HAPPYCHAT_CHAT_STATUS_ASSIGNED, HAPPYCHAT_CHAT_STATUS_ASSIGNING, HAPPYCHAT_CHAT_STATUS_BLOCKED, HAPPYCHAT_CHAT_STATUS_CLOSED, HAPPYCHAT_CHAT_STATUS_DEFAULT, HAPPYCHAT_CHAT_STATUS_NEW, HAPPYCHAT_CHAT_STATUS_MISSED, HAPPYCHAT_CHAT_STATUS_PENDING, canUserSendMessages, getLostFocusTimestamp, hasUnreadMessages, hasActiveHappychatSession, isHappychatAvailable, wasHappychatRecentlyActive, getGeoLocation, getGroups } from '../selectors';
+import {
+	HAPPYCHAT_CHAT_STATUS_ABANDONED,
+	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
+	HAPPYCHAT_CHAT_STATUS_BLOCKED,
+	HAPPYCHAT_CHAT_STATUS_CLOSED,
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	HAPPYCHAT_CHAT_STATUS_NEW,
+	HAPPYCHAT_CHAT_STATUS_MISSED,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+	canUserSendMessages,
+	getLostFocusTimestamp,
+	hasUnreadMessages,
+	hasActiveHappychatSession,
+	isHappychatAvailable,
+	wasHappychatRecentlyActive,
+	getGeoLocation,
+	getGroups,
+} from '../selectors';
 import { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';

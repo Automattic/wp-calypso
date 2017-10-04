@@ -9,7 +9,11 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { ACCOUNT_RECOVERY_SETTINGS_FETCH, ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED } from 'state/action-types';
+import {
+	ACCOUNT_RECOVERY_SETTINGS_FETCH,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
+} from 'state/action-types';
 
 describe( '#account-recovery/isFetchingSettings reducer :', () => {
 	it( 'should set isFetchingSettings flag.', () => {

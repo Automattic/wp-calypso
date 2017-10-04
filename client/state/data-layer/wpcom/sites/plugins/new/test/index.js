@@ -11,7 +11,11 @@ import sinon from 'sinon';
  */
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
 import Dispatcher from 'dispatcher';
-import { completePluginUpload, pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
+import {
+	completePluginUpload,
+	pluginUploadError,
+	updatePluginUploadProgress,
+} from 'state/plugins/upload/actions';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';

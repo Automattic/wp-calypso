@@ -8,7 +8,10 @@
  */
 import { expect } from 'chai';
 import React from 'react';
-import { renderIntoDocument as testRenderer, scryRenderedComponentsWithType } from 'react-addons-test-utils';
+import {
+	renderIntoDocument as testRenderer,
+	scryRenderedComponentsWithType,
+} from 'react-addons-test-utils';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**

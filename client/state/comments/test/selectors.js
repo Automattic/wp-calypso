@@ -2,7 +2,12 @@
 /**
  * Internal dependencies
  */
-import { getPostOldestCommentDate, getPostMostRecentCommentDate, getCommentLike, getPostCommentsTree } from '../selectors';
+import {
+	getPostOldestCommentDate,
+	getPostMostRecentCommentDate,
+	getCommentLike,
+	getPostCommentsTree,
+} from '../selectors';
 
 const state = {
 	comments: {

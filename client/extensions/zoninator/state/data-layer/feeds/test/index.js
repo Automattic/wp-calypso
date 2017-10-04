@@ -11,7 +11,14 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { announceSuccess, announceFailure, requestZoneFeed, requestZoneFeedError, saveZoneFeed, updateZoneFeed } from '../';
+import {
+	announceSuccess,
+	announceFailure,
+	requestZoneFeed,
+	requestZoneFeedError,
+	saveZoneFeed,
+	updateZoneFeed,
+} from '../';
 import { fromApi, toApi } from '../util';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';

@@ -9,7 +9,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { lastActivityTimestamp, lostFocusAt, message, geoLocation } from '../reducer';
-import { HAPPYCHAT_RECEIVE_EVENT, HAPPYCHAT_BLUR, HAPPYCHAT_FOCUS, HAPPYCHAT_SEND_MESSAGE, HAPPYCHAT_SET_MESSAGE, SERIALIZE, DESERIALIZE, HAPPYCHAT_SET_GEO_LOCATION } from 'state/action-types';
+import {
+	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_SET_MESSAGE,
+	SERIALIZE,
+	DESERIALIZE,
+	HAPPYCHAT_SET_GEO_LOCATION,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 // Simulate the time Feb 27, 2017 05:25 UTC

@@ -10,7 +10,11 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { composeAnalytics, withAnalytics, bumpStat, setTracksAnonymousUserId } from '../actions.js';
-import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP, ANALYTICS_TRACKS_ANONID_SET } from 'state/action-types';
+import {
+	ANALYTICS_MULTI_TRACK,
+	ANALYTICS_STAT_BUMP,
+	ANALYTICS_TRACKS_ANONID_SET,
+} from 'state/action-types';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {

@@ -9,7 +9,11 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { recordFollowError } from '../actions';
-import { READER_RECORD_FOLLOW, READER_RECORD_UNFOLLOW, READER_FOLLOW_ERROR } from 'state/action-types';
+import {
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
+	READER_FOLLOW_ERROR,
+} from 'state/action-types';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts: posts => Promise.resolve( posts ),
 } ) );

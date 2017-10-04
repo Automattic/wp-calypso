@@ -8,7 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getNormalizedTermsQuery, getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from '../utils';
+import {
+	getNormalizedTermsQuery,
+	getSerializedTermsQuery,
+	getSerializedTermsQueryWithoutPage,
+} from '../utils';
 
 describe( 'utils', () => {
 	describe( 'getNormalizedTermsQuery()', () => {

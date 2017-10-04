@@ -9,7 +9,16 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPeriodFormat, getSerializedStatsQuery, normalizers, parseOrderDeltas, parseOrdersChartData, rangeOfPeriod, buildExportArray, isAutoRefreshAllowedForQuery } from '../utils';
+import {
+	getPeriodFormat,
+	getSerializedStatsQuery,
+	normalizers,
+	parseOrderDeltas,
+	parseOrdersChartData,
+	rangeOfPeriod,
+	buildExportArray,
+	isAutoRefreshAllowedForQuery,
+} from '../utils';
 
 describe( 'utils', () => {
 	const orderPayload = {
