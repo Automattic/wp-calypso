@@ -32,7 +32,7 @@ function getSortedEvents( events ) {
 	} );
 
 	keys( eventsByDay ).forEach( day => {
-		eventsByDay[ day ] = sortBy( eventsByDay[ day ], 'timestamp' ).reverse();
+		eventsByDay[ day ] = sortBy( eventsByDay[ day ], [ 'timestamp', 'key' ] ).reverse();
 	} );
 	return eventsByDay;
 }
