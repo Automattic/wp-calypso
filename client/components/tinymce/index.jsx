@@ -5,6 +5,7 @@
  */
 
 import { assign, forEach } from 'lodash';
+import { connect } from 'react-redux';
 import ReactDom from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -89,7 +90,15 @@ const user = userFactory();
 import i18n from './i18n';
 import viewport from 'lib/viewport';
 import config from 'config';
+import markup from 'post-editor/media-modal/markup';
+import MediaActions from 'lib/media/actions';
+import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaUtils from 'lib/media/utils';
+import MediaValidationStore from 'lib/media/validation-store';
+import PostActions from 'lib/posts/actions';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Internal Variables
@@ -165,13 +174,15 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
-module.exports = React.createClass( {
+const TinyMCE = React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
 		isNew: PropTypes.bool,
 		mode: PropTypes.string,
 		tabIndex: PropTypes.number,
+
+		// Event handlers
 		onActivate: PropTypes.func,
 		onBlur: PropTypes.func,
 		onChange: PropTypes.func,
@@ -190,6 +201,9 @@ module.exports = React.createClass( {
 		onSetContent: PropTypes.func,
 		onUndo: PropTypes.func,
 		onTextEditorChange: PropTypes.func,
+
+		// Inherited
+		site: PropTypes.object.isRequired,
 	},
 
 	contextTypes: {
@@ -516,6 +530,36 @@ module.exports = React.createClass( {
 		this.setState( { content }, this.doAutosizeUpdate );
 	},
 
+	onFilesDrop: function() {
+		// convert to es6 class? but then "this" is undefined? wtf, that doesn't happen in other places
+		console.log('onfilesdrop!');
+		const { site } = this.props;
+		// Find selected images. Non-images will still be uploaded, but not
+		// inserted directly into the post contents.
+		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
+		const isSingleImage = 1 === selectedItems.length && 'image' === MediaUtils.getMimePrefix( selectedItems[ 0 ] );
+
+		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
+			// For single image upload, insert into post content, blocking save
+			// until the image has finished upload
+			if ( selectedItems[ 0 ].transient ) {
+				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+			}
+
+			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
+				// ugh, ^^^ needs to be pulled into this class? but it's also used by editor-html-toolbar, so it needs to be available there, too. there are lots of interrelated functions that get called
+				// could maybe store a ref to the element, and use that? that'd probably be bad coupling, though, right?
+				// need to grok those functions so can step back and see where they fit best. maybe abstract them into a 3rd object that both classes call?
+
+				// this is getting overly complicated and distracting from more important PRs. maybe take another look at the css-only approach?
+			MediaActions.setLibrarySelectedItems( site.ID, [] );
+		} else {
+			// In all other cases, show the media modal list view
+			this.openMediaModal();
+			// ugh, same thing with ^^^ ?
+		}
+	},
+
 	localize: function() {
 		const userData = user.get();
 		let i18nStrings = i18n;
@@ -535,11 +579,12 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const { mode } = this.props;
+		const { mode, site } = this.props;
 		const className = classnames( {
 			tinymce: true,
 			'is-visible': mode === 'html',
 		} );
+		let htmlModeElements = null;
 
 		/*
 		 * Using `classnames()` here is just a hack to avoid the linter complaining that the
@@ -551,15 +596,27 @@ module.exports = React.createClass( {
 		 */
 		const containerClassName = classnames( 'tinymce-container' );
 
+		if ( 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) ) {
+			htmlModeElements = [
+				<EditorHtmlToolbar
+					key="editorHtmlToolbar"
+					content={ this.refs.text }
+					onToolbarChangeContent={ this.onToolbarChangeContent }
+				/>,
+
+				<MediaLibraryDropZone
+					key="mediaLibraryDropZone"
+					onAddMedia={ this.onFilesDrop }
+					site={ site }
+					fullScreen={ false }
+				/>
+			];
+		}
+
 		return (
 			<div className={ containerClassName }>
-				{ 'html' === mode &&
-				config.isEnabled( 'post-editor/html-toolbar' ) && (
-					<EditorHtmlToolbar
-						content={ this.refs.text }
-						onToolbarChangeContent={ this.onToolbarChangeContent }
-					/>
-				) }
+				{ htmlModeElements }
+
 				<textarea
 					ref="text"
 					className={ className }
@@ -572,3 +629,12 @@ module.exports = React.createClass( {
 		);
 	},
 } );
+
+const mapStateToProps = state => ( {
+	site: getSelectedSite( state ),
+} );
+
+export default connect( mapStateToProps, null, null, { withRef: true } )( TinyMCE );
+	// todo maybe write new tests to cover the fact that it's now connected, and any other changes in pr, or possible side-effects
+
+// seeing some weird behavior. once this is all working, make sure that the two other dropzones still work fine

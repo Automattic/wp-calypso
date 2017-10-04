@@ -48,6 +48,9 @@ class EditorFeaturedImage extends Component {
 	static defaultProps = {
 		hasDropZone: false,
 		isDropZoneVisible: false,
+		//hasDropZone: true,
+		//isDropZoneVisible: true,
+			// ^^^ tmp, should go back to false when done testing
 		maxWidth: 450,
 		onImageSelected: () => {},
 	};
