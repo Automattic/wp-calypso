@@ -112,8 +112,8 @@ export function items( state = {}, action ) {
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort } = action;
-			const comments = map( action.comments, cmt => ( {
-				...cmt,
+			const comments = map( action.comments, _comment => ( {
+				..._comment,
 				contiguous: ! action.commentById,
 			} ) );
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );

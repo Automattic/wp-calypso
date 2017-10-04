@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition } from 'lodash';
 
 /***
  * Internal dependencies
@@ -140,13 +140,14 @@ export class ConversationCommentList extends React.Component {
 		}
 
 		const withParents = filter( commentIds, id => this.commentHasParent( commentsTree, id ) );
-		const accessible = map(
-			filter( withParents, id => this.commentParentIsLoaded( commentsTree, id ) ),
-			id => this.getParentId( commentsTree, id )
+		const [ accessibleChildrenIds, inacessibleChildrenIds ] = partition( withParents, id =>
+			this.commentParentIsLoaded( commentsTree, id )
 		);
+
+		const accessible = map( accessibleChildrenIds, id => this.getParentId( commentsTree, id ) );
 		const inaccessible = map(
-			filter( withParents, id => ! this.commentParentIsLoaded( commentsTree, id ) ),
-			id => this.getParentId( commentsTree, id )
+			inacessibleChildrenIds,
+			id => ! this.getParentId( commentsTree, id )
 		);
 
 		return inaccessible.concat( this.getInaccessibleParentsIds( commentsTree, accessible ) );
