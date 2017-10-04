@@ -4,7 +4,7 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { debounce, isEqual } from 'lodash';
+import { debounce, isEqual, isUndefined, omitBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -65,7 +65,7 @@ class PostList extends PureComponent {
 
 	render() {
 		const { author, category, context, search, siteId, statusSlug, tag } = this.props;
-		const query = {
+		const query = omitBy( {
 			page: this.state.page,
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			author,
@@ -76,7 +76,7 @@ class PostList extends PureComponent {
 			status: mapStatus( statusSlug ),
 			tag,
 			type: 'post'
-		};
+		}, isUndefined );
 
 		return (
 			<div>
