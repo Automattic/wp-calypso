@@ -236,6 +236,16 @@ class PostComment extends React.PureComponent {
 			return null;
 		}
 
+		// If the placeholder state is pending, don't show the form
+		const placeholderState = get( this.props.commentsTree, [
+			this.props.commentId,
+			'data',
+			'placeholderState',
+		] );
+		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
+			return null;
+		}
+
 		return (
 			<PostCommentForm
 				ref="postCommentForm"
