@@ -7,16 +7,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
-import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
 import FormsButton from 'components/forms/form-button';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
 
 describe( 'LoginForm', function() {
 	let LoginForm;

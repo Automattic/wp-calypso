@@ -3,6 +3,21 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import EditorDiscussion from '../';
+import { edit as editPost } from 'lib/posts/actions';
+
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/posts/actions', () => ( {
 	edit: require( 'sinon' ).spy(),
@@ -11,21 +26,6 @@ jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 	recordStat: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
-import sinon from 'sinon';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import EditorDiscussion from '../';
-import { edit as editPost } from 'lib/posts/actions';
 
 /**
  * Module variables

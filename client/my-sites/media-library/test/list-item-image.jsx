@@ -8,13 +8,13 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import photon from 'photon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import photon from 'photon';
 import resize from 'lib/resize-image-url';
 import ListItemImage from 'my-sites/media-library/list-item-image';
 

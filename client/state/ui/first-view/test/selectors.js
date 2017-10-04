@@ -1,22 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isUserEligible,
-	getConfigForCurrentView,
-	isViewEnabled,
-	wasFirstViewHiddenSinceEnteringCurrentSection,
-	secondsSpentOnCurrentView,
-	bucketedTimeSpentOnCurrentView,
-} from '../selectors';
+import { isUserEligible, getConfigForCurrentView, isViewEnabled, wasFirstViewHiddenSinceEnteringCurrentSection, secondsSpentOnCurrentView, bucketedTimeSpentOnCurrentView } from '../selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 describe( 'isUserEligible()', () => {

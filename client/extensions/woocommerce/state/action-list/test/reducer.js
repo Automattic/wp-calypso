@@ -1,18 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { actionListClear, actionListAnnotate } from '../actions';
 import reducer from '../reducer';
 import * as fxt from 'woocommerce/state/action-list/test/fixtures';
-
-import { actionListClear, actionListAnnotate } from '../actions';
 
 describe( 'reducer', () => {
 	it( 'should initialize to null', () => {

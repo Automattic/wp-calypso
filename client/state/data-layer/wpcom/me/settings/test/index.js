@@ -1,8 +1,4 @@
 /** @format */
-jest.mock( 'lib/user', () => () => ( {
-	fetch() {},
-} ) );
-
 /**
  * External dependencies
  */
@@ -12,9 +8,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import * as settingsModule from '../';
-import { useSandbox } from 'test/helpers/use-sinon';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
+import { useSandbox } from 'test/helpers/use-sinon';
+jest.mock( 'lib/user', () => () => ( {
+	fetch() {},
+} ) );
 
 describe( 'wpcom-api', () => {
 	let dispatch;

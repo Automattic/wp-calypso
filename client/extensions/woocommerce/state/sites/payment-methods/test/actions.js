@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -11,12 +10,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchPaymentMethods } from '../actions';
-import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
-import {
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
-	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PAYMENT_METHODS_REQUEST, WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {
 	useNock( nock => {

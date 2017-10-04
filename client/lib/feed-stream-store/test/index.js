@@ -1,4 +1,18 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { set } from 'lodash';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import PostListFactory from '../';
+import PostListStore from '../feed-stream';
+import FeedStreamCache from '../feed-stream-cache';
+import FeedPostStore from 'lib/feed-post-store';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/data-poller', () => require( './mocks/lib/data-poller' ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
@@ -6,21 +20,6 @@ jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 jest.mock( 'reader/stats', () => ( {
 	recordTrack: require( 'sinon' ).spy(),
 } ) );
-
-/**
- * External Dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-import { set } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import FeedPostStore from 'lib/feed-post-store';
-import FeedStreamCache from '../feed-stream-cache';
-import PostListFactory from '../';
-import PostListStore from '../feed-stream';
 
 describe( 'FeedPostList', function() {
 	it( 'should require an id, a fetcher, a keyMaker', function() {

@@ -1,18 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock, { nock } from 'test/helpers/use-nock';
-import { extendAction } from 'state/utils';
 import { failureMeta, queueRequest, successMeta } from '../';
+import { extendAction } from 'state/utils';
+import useNock, { nock } from 'test/helpers/use-nock';
 
 const processInbound = action => action;
 const processOutbound = ( action, store, data, error ) => ( {

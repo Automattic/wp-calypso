@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { assign, constant, mapValues, zipObject } from 'lodash';
 const assert = require( 'assert' );
 

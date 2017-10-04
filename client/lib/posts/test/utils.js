@@ -3,17 +3,17 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
 /**
  * External dependencies
  */
 import assert from 'assert';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import postUtils from '../utils';
+
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 describe( 'utils', function() {
 	describe( '#getEditURL', function() {

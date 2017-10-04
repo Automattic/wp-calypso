@@ -1,26 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	createReviewReply,
-	deleteReviewReply,
-	fetchReviewReplies,
-	updateReviewReply,
-} from '../actions';
-import {
-	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
-	WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
-	WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
-	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
-} from 'woocommerce/state/action-types';
+import { createReviewReply, deleteReviewReply, fetchReviewReplies, updateReviewReply } from '../actions';
+import { WOOCOMMERCE_REVIEW_REPLIES_REQUEST, WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST, WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST, WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchReviewReplies()', () => {

@@ -9,7 +9,7 @@
 import chai from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import decodeEntitiesNode from '../decode-entities/node';
 

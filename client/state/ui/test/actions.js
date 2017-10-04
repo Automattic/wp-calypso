@@ -1,29 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	NOTIFICATIONS_PANEL_TOGGLE,
-	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
-	SECTION_SET,
-	SELECTED_SITE_SET,
-} from 'state/action-types';
-import {
-	setAllSitesSelected,
-	setPreviewShowing,
-	setRoute,
-	setSection,
-	setSelectedSiteId,
-	toggleNotificationsPanel,
-} from '../actions';
+import { setAllSitesSelected, setPreviewShowing, setRoute, setSection, setSelectedSiteId, toggleNotificationsPanel } from '../actions';
+import { NOTIFICATIONS_PANEL_TOGGLE, PREVIEW_IS_SHOWING, ROUTE_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {

@@ -3,6 +3,18 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import MediaListData from 'components/data/media-list-data';
+
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
 jest.mock( 'lib/media/list-store', () => ( {
 	getAll: () => {},
@@ -10,18 +22,6 @@ jest.mock( 'lib/media/list-store', () => ( {
 	isFetchingNextPage: () => {},
 	on: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import MediaListData from 'components/data/media-list-data';
 
 /**
  * Module variables

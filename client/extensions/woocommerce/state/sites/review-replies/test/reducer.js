@@ -1,23 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import { repliesUpdated, replyCreated, replyDeleted, replyUpdated } from '../reducer';
-import reducer from 'woocommerce/state/sites/reducer';
-import {
-	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
-	WOOCOMMERCE_REVIEW_REPLY_CREATED,
-	WOOCOMMERCE_REVIEW_REPLY_DELETED,
-	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
-} from 'woocommerce/state/action-types';
 import reviewReplies from './fixtures/review-replies';
+import { WOOCOMMERCE_REVIEW_REPLIES_UPDATED, WOOCOMMERCE_REVIEW_REPLY_CREATED, WOOCOMMERCE_REVIEW_REPLY_DELETED, WOOCOMMERCE_REVIEW_REPLY_UPDATED } from 'woocommerce/state/action-types';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'repliesUpdate', () => {

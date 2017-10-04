@@ -2,6 +2,19 @@
  * @format
  * @jest-environment jsdom
  */
+
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { ReaderSidebar, shouldRenderAppPromo } from '..';
+
 jest.mock( 'component-closest', () => require( 'sinon' ).stub() );
 jest.mock( 'lib/wp', () => ( {
 	batch: () => ( {
@@ -13,18 +26,6 @@ jest.mock( 'lib/wp', () => ( {
 	} ),
 	undocumented: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { ReaderSidebar, shouldRenderAppPromo } from '..';
 
 describe( 'ReaderSidebar', () => {
 	const shouldRenderAppPromoDefaultProps = {

@@ -1,16 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import reducer from '../reducer';
-
 import { WOOCOMMERCE_COUPONS_UPDATED } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {

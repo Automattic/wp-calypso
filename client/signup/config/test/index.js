@@ -1,4 +1,15 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { intersection, isEmpty, keys } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import flows from '../flows';
+import steps from '../steps';
+
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -10,17 +21,6 @@ jest.mock( 'lib/user', () => () => {
 		},
 	};
 } );
-
-/**
- * External dependencies
- */
-import { intersection, isEmpty, keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import flows from '../flows';
-import steps from '../steps';
 
 describe( 'index', () => {
 	it( 'should not have overlapping step/flow names', () => {

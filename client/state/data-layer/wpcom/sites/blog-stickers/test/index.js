@@ -1,18 +1,17 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { requestBlogStickerList, receiveBlogStickerListError } from '../';
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-list', () => {
 	describe( 'requestBlogStickerList', () => {

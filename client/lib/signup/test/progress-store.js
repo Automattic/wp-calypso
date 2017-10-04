@@ -3,21 +3,20 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-
 /**
  * External dependencies
  */
-import sinon from 'sinon';
-
 import assert from 'assert';
 import { defer, find, last, omit } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'progress-store', function() {
 	let SignupProgressStore, SignupActions;

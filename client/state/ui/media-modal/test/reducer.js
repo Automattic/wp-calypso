@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 import { ModalViews } from '../constants';
 import reducer, { view } from '../reducer';
+import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { isExporting, isDateRangeValid } from '../selectors';
 import { States } from '../constants.js';
+import { isExporting, isDateRangeValid } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isExporting()', () => {

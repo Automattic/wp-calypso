@@ -1,22 +1,15 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isJetpackPlan } from '..';
-import {
-	JETPACK_PLANS,
-	PLAN_BUSINESS,
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+import { JETPACK_PLANS, PLAN_BUSINESS, PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Test helper to build a product object

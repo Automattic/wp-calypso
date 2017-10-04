@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 import { selectedSiteId } from '../reducer';
+import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {

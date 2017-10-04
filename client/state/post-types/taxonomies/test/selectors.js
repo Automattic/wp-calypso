@@ -1,19 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostTypeTaxonomies,
-	getPostTypeTaxonomies,
-	getPostTypeTaxonomy,
-} from '../selectors';
+import { isRequestingPostTypeTaxonomies, getPostTypeTaxonomies, getPostTypeTaxonomy } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPostTypeTaxonomies()', () => {

@@ -1,21 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import reducer from '../edits-reducer';
-
 import { editProductCategory, clearProductCategoryEdits } from '../actions';
-import {
-	createProductCategory,
-	productCategoryUpdated,
-} from 'woocommerce/state/sites/product-categories/actions';
+import reducer from '../edits-reducer';
+import { createProductCategory, productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
 
 const siteId = 123;
 

@@ -1,19 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	areShippingZoneLocationsLoaded,
-	areShippingZoneLocationsLoading,
-	areShippingZonesLocationsValid,
-} from '../selectors';
+import { areShippingZoneLocationsLoaded, areShippingZoneLocationsLoading, areShippingZonesLocationsValid } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
 

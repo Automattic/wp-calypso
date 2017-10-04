@@ -1,22 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 import { requestStatus, receiveStatus } from '../';
-import {
-	getAutomatedTransferStatus,
-	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getAutomatedTransferStatus, setAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const siteId = 1916284;
 

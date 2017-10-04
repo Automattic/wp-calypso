@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assert } from 'chai';
 import validate from 'is-my-json-valid';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { itemsSchema } from '../schema';
 

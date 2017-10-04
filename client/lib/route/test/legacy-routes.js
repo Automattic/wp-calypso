@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
-import config from 'config';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { isLegacyRoute } from '../legacy-routes';
+import config from 'config';
 
 let features = [];
 

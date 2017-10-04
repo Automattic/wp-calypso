@@ -1,21 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getShippingZoneMethods,
-	getCurrentlyEditingShippingZoneMethods,
-	getNewMethodTypeOptions,
-	getCurrentlyOpenShippingZoneMethod,
-	isCurrentlyOpenShippingZoneMethodNew,
-} from '../selectors';
+import { getShippingZoneMethods, getCurrentlyEditingShippingZoneMethods, getNewMethodTypeOptions, getCurrentlyOpenShippingZoneMethod, isCurrentlyOpenShippingZoneMethodNew } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
 

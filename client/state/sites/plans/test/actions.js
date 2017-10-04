@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { SITE_PLANS_FETCH_COMPLETED } from 'state/action-types';
 import { fetchSitePlansCompleted } from '../actions';
+import { SITE_PLANS_FETCH_COMPLETED } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchSitePlansCompleted()', () => {

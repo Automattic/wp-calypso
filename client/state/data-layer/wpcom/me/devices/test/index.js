@@ -1,18 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { NOTICE_CREATE, USER_DEVICES_ADD } from 'state/action-types';
 import { requestUserDevices, handleSuccess, handleError } from '../';
+import { NOTICE_CREATE, USER_DEVICES_ADD } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'user devices', () => {

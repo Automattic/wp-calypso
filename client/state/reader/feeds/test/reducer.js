@@ -9,16 +9,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	READER_FEED_REQUEST,
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-
 import { items, queuedRequests, lastFetched } from '../reducer';
+import { READER_FEED_REQUEST, READER_FEED_REQUEST_SUCCESS, READER_FEED_REQUEST_FAILURE, READER_FEED_UPDATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

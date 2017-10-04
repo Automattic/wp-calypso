@@ -3,6 +3,18 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { EditorGroundControl } from '../';
+
 jest.mock( 'blocks/site', () => require( 'components/empty-component' ) );
 jest.mock( 'components/card', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
@@ -18,18 +30,6 @@ jest.mock( 'lib/posts/actions', () => ( {
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'post-editor/edit-post-status', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-status-label', () => require( 'components/empty-component' ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { EditorGroundControl } from '../';
 
 /**
  * Module variables

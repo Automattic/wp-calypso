@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -11,7 +10,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import selectors from '../selectors';
-// Example state data
 import { initSite, installingSite, finishedSite, configuringSite } from './examples';
 
 const state = deepFreeze( {

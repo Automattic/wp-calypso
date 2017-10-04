@@ -1,23 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	DOCUMENT_HEAD_LINK_SET,
-	DOCUMENT_HEAD_META_SET,
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
-} from 'state/action-types';
-
 import { link, meta, title, unreadCount } from '../reducer';
+import { DOCUMENT_HEAD_LINK_SET, DOCUMENT_HEAD_META_SET, DOCUMENT_HEAD_TITLE_SET, DOCUMENT_HEAD_UNREAD_COUNT_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#title()', () => {

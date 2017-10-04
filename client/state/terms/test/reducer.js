@@ -1,27 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import TermQueryManager from 'lib/query-manager/term';
-import {
-	DESERIALIZE,
-	TERM_REMOVE,
-	TERMS_RECEIVE,
-	TERMS_REQUEST,
-	TERMS_REQUEST_FAILURE,
-	TERMS_REQUEST_SUCCESS,
-	SERIALIZE,
-} from 'state/action-types';
 import reducer, { queries, queryRequests } from '../reducer';
+import TermQueryManager from 'lib/query-manager/term';
+import { DESERIALIZE, TERM_REMOVE, TERMS_RECEIVE, TERMS_REQUEST, TERMS_REQUEST_FAILURE, TERMS_REQUEST_SUCCESS, SERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
  * Test Data

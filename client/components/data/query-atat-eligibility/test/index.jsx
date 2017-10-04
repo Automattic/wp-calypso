@@ -1,20 +1,18 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 import { noop } from 'lodash';
+import React from 'react';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { requestEligibility as requestEligibilityAction } from 'state/automated-transfer/actions';
 import { QueryAutomatedTransferEligibility as QueryEligibility, mapDispatchToProps } from '../';
+import { requestEligibility as requestEligibilityAction } from 'state/automated-transfer/actions';
 
 describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;

@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 import { setEditorLastDraft, resetEditorLastDraft } from '../actions';
+import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setEditorLastDraft()', () => {

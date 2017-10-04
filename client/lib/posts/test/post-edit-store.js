@@ -3,8 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
@@ -16,6 +14,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'post-edit-store', function() {
 	let PostEditStore, dispatcherCallback;

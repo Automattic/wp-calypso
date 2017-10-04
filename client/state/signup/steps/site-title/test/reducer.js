@@ -1,17 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';
-
 import signupDependencyStore from '../reducer';
+import { SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should update the site title', () => {

@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -11,11 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { activationRequesting } from '../reducer';
-import {
-	REWIND_ACTIVATE_FAILURE,
-	REWIND_ACTIVATE_REQUEST,
-	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
+import { REWIND_ACTIVATE_FAILURE, REWIND_ACTIVATE_REQUEST, REWIND_ACTIVATE_SUCCESS } from 'state/action-types';
 
 /**
  * Constants

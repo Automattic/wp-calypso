@@ -1,22 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { openPaymentMethodForEdit, closeEditingPaymentMethod, cancelEditingPaymentMethod, changePaymentMethodEnabled, changePaymentMethodField } from '../actions';
 import reducer from '../reducer';
-import {
-	openPaymentMethodForEdit,
-	closeEditingPaymentMethod,
-	cancelEditingPaymentMethod,
-	changePaymentMethodEnabled,
-	changePaymentMethodField,
-} from '../actions';
 
 const siteId = 123;
 const initialState = {

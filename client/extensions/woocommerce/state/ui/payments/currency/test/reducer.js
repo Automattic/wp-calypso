@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import reducer from '../reducer';
 import { changeCurrency } from '../actions';
+import reducer from '../reducer';
 
 const siteId = 123;
 const state = {};

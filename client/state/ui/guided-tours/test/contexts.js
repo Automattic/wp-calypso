@@ -3,11 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/ui/guided-tours/test/fixtures/config' );
-} );
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
@@ -17,17 +12,14 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	hasAnalyticsEventFired,
-	hasUserPastedFromGoogleDocs,
-	hasUserRegisteredBefore,
-	isUserNewerThan,
-} from '../contexts';
+import { hasAnalyticsEventFired, hasUserPastedFromGoogleDocs, hasUserRegisteredBefore, isUserNewerThan } from '../contexts';
+import { SOURCE_GOOGLE_DOCS, SOURCE_UNKNOWN } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
-import {
-	SOURCE_GOOGLE_DOCS,
-	SOURCE_UNKNOWN,
-} from 'components/tinymce/plugins/wpcom-track-paste/sources';
+
+jest.mock( 'layout/guided-tours/config', () => {
+	return require( 'state/ui/guided-tours/test/fixtures/config' );
+} );
+jest.mock( 'lib/user', () => () => {} );
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 

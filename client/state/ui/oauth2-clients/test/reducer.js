@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { ROUTE_SET, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import reducer, { currentClientId } from '../reducer';
+import { ROUTE_SET, SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

@@ -3,15 +3,13 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
-import { filter, map } from 'lodash';
 import { mount } from 'enzyme';
+import { filter, map } from 'lodash';
+import React from 'react';
 import { test } from 'sinon';
 
 /**
@@ -19,6 +17,8 @@ import { test } from 'sinon';
  */
 import fixtures from './lib/fixtures';
 import TokenFieldWrapper from './lib/token-field-wrapper';
+
+jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
 /**
  * Module variables

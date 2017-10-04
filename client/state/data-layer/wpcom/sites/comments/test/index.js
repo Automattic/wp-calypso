@@ -1,33 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import {
-	addComments,
-	announceEditFailure,
-	editComment,
-	fetchCommentsList,
-	requestComment,
-	receiveCommentError,
-	receiveCommentSuccess,
-	removeCommentStatusErrorNotice,
-} from '../';
-import {
-	requestComment as requestCommentAction,
-	editComment as editCommentAction,
-} from 'state/comments/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
+import { addComments, announceEditFailure, editComment, fetchCommentsList, requestComment, receiveCommentError, receiveCommentSuccess, removeCommentStatusErrorNotice } from '../';
 import { COMMENTS_EDIT, COMMENTS_RECEIVE } from 'state/action-types';
+import { requestComment as requestCommentAction, editComment as editCommentAction } from 'state/comments/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 
 const query = {
 	siteId: 1337,

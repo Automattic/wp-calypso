@@ -3,8 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
 /**
  * External dependencies
  */
@@ -17,6 +15,8 @@ import { isPlainObject, isArray } from 'lodash';
 import Dispatcher from 'dispatcher';
 import { getRemovedPosts } from 'lib/posts/post-list-store';
 import postListStoreFactory from 'lib/posts/post-list-store-factory';
+
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * Mock Data

@@ -3,6 +3,21 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { createStore } from 'redux';
+
+/**
+ * Internal dependencies
+ */
+import { isEnabled } from 'config';
+import localforage from 'lib/localforage';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { useSandbox } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test/helpers/use-sinon';
+
 jest.mock( 'config', () => {
 	const config = () => 'development';
 
@@ -19,21 +34,6 @@ jest.mock( 'lib/user', () => () => ( {
 jest.mock( 'lib/user/support-user-interop', () => ( {
 	isSupportUserSession: jest.fn( false ),
 } ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { createStore } from 'redux';
-
-/**
- * Internal dependencies
- */
-import { isEnabled } from 'config';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
-import localforage from 'lib/localforage';
-import { useSandbox } from 'test/helpers/use-sinon';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'initial-state', () => {
 	let clock,

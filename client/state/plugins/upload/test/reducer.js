@@ -1,26 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	clearPluginUpload,
-	completePluginUpload,
-	pluginUploadError,
-	updatePluginUploadProgress,
-	uploadPlugin,
-} from '../actions';
+import { clearPluginUpload, completePluginUpload, pluginUploadError, updatePluginUploadProgress, uploadPlugin } from '../actions';
 import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
-import {
-	initiateAutomatedTransferWithPluginZip,
-	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
+import { initiateAutomatedTransferWithPluginZip, setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';

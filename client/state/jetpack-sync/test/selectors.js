@@ -1,21 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getSyncStatus,
-	getFullSyncRequest,
-	isPendingSyncStart,
-	isFullSyncing,
-	getSyncProgressPercentage,
-} from '../selectors';
+import { getSyncStatus, getFullSyncRequest, isPendingSyncStart, isFullSyncing, getSyncProgressPercentage } from '../selectors';
 
 const nonExistentId = '111111';
 const requestedSiteId = '123456';

@@ -1,24 +1,19 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
-import { spy, match } from 'sinon';
 import { noop } from 'lodash';
+import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	handleSettingsGeneral,
-	handleSettingsGeneralSuccess,
-	handleSettingsGeneralError,
-} from '../handlers';
 import { fetchSettingsGeneral } from '../actions';
-import { WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
+import { handleSettingsGeneral, handleSettingsGeneralSuccess, handleSettingsGeneralError } from '../handlers';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
 
 const settingsData = [
 	{

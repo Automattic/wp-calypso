@@ -1,22 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isRequestingSiteSettings,
-	isSavingSiteSettings,
-	isSiteSettingsSaveSuccessful,
-	getSiteSettingsSaveRequestStatus,
-	getSiteSettings,
-	getSiteSettingsSaveError,
-} from '../selectors';
+import { isRequestingSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful, getSiteSettingsSaveRequestStatus, getSiteSettings, getSiteSettingsSaveError } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingSiteSettings()', () => {

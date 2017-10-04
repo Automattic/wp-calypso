@@ -1,11 +1,9 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { moment } from 'i18n-calypso';
 
 /**

@@ -3,9 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
-jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
@@ -18,6 +15,9 @@ import TestUtils from 'react-addons-test-utils';
  * Internal dependencies
  */
 import { ThemesList } from '../';
+
+jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
+jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
 
 describe( 'ThemesList', function() {
 	let props, themesList, themesListElement;

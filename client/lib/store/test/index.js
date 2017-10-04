@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy, stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
 import { createReducerStore } from './../index';
+import Dispatcher from 'dispatcher';
 
 describe( 'index', () => {
 	const reducer = state => {

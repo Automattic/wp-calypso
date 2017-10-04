@@ -1,22 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { MODAL_VIEW_STAT_MAPPING, setEditorMediaModalView, startEditingPost, stopEditingPost } from '../actions';
 import { ANALYTICS_STAT_BUMP, EDITOR_START, EDITOR_STOP } from 'state/action-types';
-import {
-	MODAL_VIEW_STAT_MAPPING,
-	setEditorMediaModalView,
-	startEditingPost,
-	stopEditingPost,
-} from '../actions';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 
 describe( 'actions', () => {

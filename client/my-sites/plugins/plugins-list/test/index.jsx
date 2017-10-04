@@ -3,6 +3,21 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import React from 'react';
+import { renderIntoDocument as testRenderer, scryRenderedComponentsWithType } from 'react-addons-test-utils';
+import { Provider as ReduxProvider } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { PluginsList } from '../';
+import { sites } from './fixtures';
+import { createReduxStore } from 'state';
+
 jest.mock( 'lib/analytics', () => ( {
 	ga: {
 		recordEvent: () => {},
@@ -19,24 +34,6 @@ jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
 );
 jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { Provider as ReduxProvider } from 'react-redux';
-import React from 'react';
-import {
-	renderIntoDocument as testRenderer,
-	scryRenderedComponentsWithType,
-} from 'react-addons-test-utils';
-
-/**
- * Internal dependencies
- */
-import { createReduxStore } from 'state';
-import { PluginsList } from '../';
-import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', function() {

@@ -3,10 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'media-13',
-} ) );
-
 /**
  * External dependencies
  */
@@ -16,8 +12,12 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import JetpackSite from 'lib/site/jetpack';
 import MediaUtils from '../utils';
+import JetpackSite from 'lib/site/jetpack';
+
+jest.mock( 'lib/impure-lodash', () => ( {
+	uniqueId: () => 'media-13',
+} ) );
 
 const UNIQUEID = 'media-13';
 const DUMMY_FILENAME = 'test.jpg';

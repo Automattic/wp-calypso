@@ -1,24 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	DESERIALIZE,
-	PRODUCTS_LIST_RECEIVE,
-	PRODUCTS_LIST_REQUEST,
-	PRODUCTS_LIST_REQUEST_FAILURE,
-	SERIALIZE,
-} from 'state/action-types';
 import reducer, { items, isFetching } from '../reducer';
+import { DESERIALIZE, PRODUCTS_LIST_RECEIVE, PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE, SERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {

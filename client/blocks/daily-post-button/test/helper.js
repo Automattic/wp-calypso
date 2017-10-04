@@ -1,16 +1,15 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import * as posts from './fixtures';
 import * as helper from '../helper';
+import * as posts from './fixtures';
 
 describe( 'daily post helper', () => {
 	describe( 'isDailyPostChallengeOrPrompt', () => {

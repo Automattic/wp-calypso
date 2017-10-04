@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -11,10 +10,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
-
-/**
- * Fixture data
- */
 import { PLANS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {

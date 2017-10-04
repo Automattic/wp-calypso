@@ -8,6 +8,7 @@
  */
 import { assert } from 'chai';
 import { findIndex, isUndefined, some } from 'lodash';
+
 /**
  * Internal dependencies
  */

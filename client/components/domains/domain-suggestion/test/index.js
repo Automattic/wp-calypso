@@ -3,15 +3,15 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
-
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
+import React from 'react';
+
+jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;

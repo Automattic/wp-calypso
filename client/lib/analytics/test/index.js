@@ -3,12 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'config', () => require( './mocks/config' ) );
-jest.mock( 'lib/analytics/ad-tracking', () => ( {
-	retarget: () => {},
-} ) );
-jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
-
 /**
  * External dependencies
  */
@@ -19,6 +13,12 @@ import url from 'url';
  * Internal dependencies
  */
 import analytics from '../';
+
+jest.mock( 'config', () => require( './mocks/config' ) );
+jest.mock( 'lib/analytics/ad-tracking', () => ( {
+	retarget: () => {},
+} ) );
+jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
 
 function logImageLoads() {
 	const imagesLoaded = [];

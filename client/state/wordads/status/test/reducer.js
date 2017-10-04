@@ -1,21 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	WORDADS_STATUS_REQUEST,
-	WORDADS_STATUS_REQUEST_SUCCESS,
-	WORDADS_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
 import reducer, { items, fetchingItems } from '../reducer';
+import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_REQUEST_SUCCESS, WORDADS_STATUS_REQUEST_FAILURE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {

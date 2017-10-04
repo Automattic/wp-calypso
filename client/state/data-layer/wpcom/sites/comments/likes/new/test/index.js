@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { COMMENTS_LIKE, COMMENTS_UNLIKE, NOTICE_CREATE } from 'state/action-types';
 import { likeComment, updateCommentLikes, handleLikeFailure } from '../';
+import { COMMENTS_LIKE, COMMENTS_UNLIKE, NOTICE_CREATE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 

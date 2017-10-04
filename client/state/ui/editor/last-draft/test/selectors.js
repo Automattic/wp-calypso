@@ -1,20 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { getEditorLastDraftPost, getEditorLastDraftSiteId, getEditorLastDraftPostId } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
-import {
-	getEditorLastDraftPost,
-	getEditorLastDraftSiteId,
-	getEditorLastDraftPostId,
-} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getEditorLastDraftPost()', () => {

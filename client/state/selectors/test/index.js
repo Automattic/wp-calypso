@@ -1,12 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
-import { camelCase, each, kebabCase } from 'lodash';
 import fs from 'fs';
+import { camelCase, each, kebabCase } from 'lodash';
 import path from 'path';
 
 /**

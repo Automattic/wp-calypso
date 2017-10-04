@@ -1,23 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import sinon, { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	GRAVATAR_UPLOAD_RECEIVE,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-} from 'state/action-types';
 import { uploadGravatar, announceSuccess, announceFailure } from '../';
+import { GRAVATAR_UPLOAD_RECEIVE, GRAVATAR_UPLOAD_REQUEST_SUCCESS, GRAVATAR_UPLOAD_REQUEST_FAILURE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( '#uploadGravatar()', () => {
 	it( 'dispatches an HTTP request to the gravatar upload endpoint', () => {

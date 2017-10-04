@@ -1,23 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import order from '../../test/fixtures/order';
 import { sendRefund } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import {
-	WOOCOMMERCE_ORDER_REFUND_CREATE,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
-	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
-} from 'woocommerce/state/action-types';
-import order from '../../test/fixtures/order';
+import { WOOCOMMERCE_ORDER_REFUND_CREATE, WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE, WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#sendRefund()', () => {

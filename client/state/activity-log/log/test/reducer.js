@@ -8,9 +8,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { logItems } from '../reducer';
 import ActivityQueryManager from 'lib/query-manager/activity';
 import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { logItems } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const SITE_ID = 123456789;

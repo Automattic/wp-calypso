@@ -3,19 +3,19 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-
 /**
  * External dependencies
  */
 import assert from 'assert';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { createStore } from 'redux';
 import { reducer } from 'state';
+
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'dependency-store', function() {
 	let SignupProgressStore, SignupDependencyStore, SignupActions;

@@ -1,31 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
-	WP_SUPER_CACHE_RECEIVE_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
-	WP_SUPER_CACHE_SAVE_SETTINGS,
-	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
-	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-} from '../../action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, WP_SUPER_CACHE_RECEIVE_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS, WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE, WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS, WP_SUPER_CACHE_RESTORE_SETTINGS, WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, WP_SUPER_CACHE_SAVE_SETTINGS, WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS } from '../../action-types';
 import reducer, { items, restoring } from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

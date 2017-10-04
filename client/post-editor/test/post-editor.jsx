@@ -3,6 +3,20 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import React from 'react';
+import { renderIntoDocument } from 'react-addons-test-utils';
+
+/**
+ * Internal dependencies
+ */
+import { PostEditor } from '../post-editor';
+import PostEditStore from 'lib/posts/post-edit-store';
+import { useSandbox } from 'test/helpers/use-sinon';
+
 jest.mock( 'components/tinymce', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'components/forms/clipboard-button', () => require( 'components/empty-component' ) );
@@ -39,20 +53,6 @@ jest.mock( 'tinymce/tinymce', () => require( 'components/empty-component' ) );
 jest.mock( 'react-redux', () => ( {
 	connect: () => component => component,
 } ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { renderIntoDocument } from 'react-addons-test-utils';
-
-/**
- * Internal dependencies
- */
-import { PostEditor } from '../post-editor';
-import PostEditStore from 'lib/posts/post-edit-store';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
 	let sandbox;

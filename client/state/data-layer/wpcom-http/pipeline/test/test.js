@@ -1,11 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
 import { processInboundChain, processOutboundChain } from '../';
 
 const succeeder = { type: 'SUCCESS' };

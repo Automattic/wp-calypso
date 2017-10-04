@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { cloneDeep, forEach, map } from 'lodash';
 import sinon from 'sinon';
@@ -12,13 +11,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
-import {
-	receivePostRevisions,
-	receivePostRevisionsSuccess,
-	receivePostRevisionsFailure,
-	requestPostRevisions,
-} from 'state/posts/revisions/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { receivePostRevisions, receivePostRevisionsSuccess, receivePostRevisionsFailure, requestPostRevisions } from 'state/posts/revisions/actions';
 
 const successfulPostRevisionsResponse = [
 	{

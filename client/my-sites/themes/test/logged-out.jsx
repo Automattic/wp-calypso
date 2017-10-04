@@ -1,9 +1,4 @@
 /** @format */
-jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
@@ -15,11 +10,16 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
 import LoggedOutShowcase from '../logged-out';
+import { createReduxStore } from 'state';
 import { THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+
+jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
 
 describe( 'logged-out', () => {
 	context( 'when calling renderToString()', function() {

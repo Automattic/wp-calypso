@@ -11,12 +11,6 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import {
-	createReviewReply,
-	deleteReviewReply,
-	fetchReviewReplies,
-	updateReviewReply,
-} from 'woocommerce/state/sites/review-replies/actions';
-import {
 	handleDeleteReviewReply,
 	announceDeleteSuccess,
 	announceDeleteFailure,
@@ -31,7 +25,8 @@ import {
 	announceCreateFailure,
 } from '../handlers.js';
 import reviewReplies from './fixtures/review-replies';
-import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
+import { NOTICE_CREATE } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
@@ -39,8 +34,13 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import {
+	createReviewReply,
+	deleteReviewReply,
+	fetchReviewReplies,
+	updateReviewReply,
+} from 'woocommerce/state/sites/review-replies/actions';
+import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewRepliesRequest', () => {

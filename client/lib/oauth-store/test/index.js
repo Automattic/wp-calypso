@@ -4,16 +4,16 @@
  */
 
 /**
+ * Internal dependencies
+ */
+import { actions } from '../constants';
+
+/**
  * External dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' );
-
-/**
- * Internal dependencies
- */
-import { actions } from '../constants';
 
 describe( 'oAuthStore', function() {
 	let oAuthStore, oAuthToken;

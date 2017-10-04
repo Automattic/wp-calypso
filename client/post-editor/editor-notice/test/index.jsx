@@ -1,13 +1,11 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies

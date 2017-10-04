@@ -3,6 +3,18 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import PublicizeConnection from '../publicize-connection';
+
 jest.mock( 'lib/posts/actions', () => ( {
 	recordEvent: () => {},
 	deleteMetadata: () => {},
@@ -12,18 +24,6 @@ jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 	recordState: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import PublicizeConnection from '../publicize-connection';
 
 /**
  * Module variables

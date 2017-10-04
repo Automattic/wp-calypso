@@ -1,34 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import initialState from './data/initial-state';
+import { addPackage, removePackage, editPackage, dismissModal, savePackage, updatePackagesField, toggleOuterDimensions, setModalErrors, setIsSaving, setIsFetching, removePredefinedPackage, savePredefinedPackages, toggleAll, togglePackage, setAddMode } from '../actions';
 import reducer from '../reducer';
-import {
-	addPackage,
-	removePackage,
-	editPackage,
-	dismissModal,
-	savePackage,
-	updatePackagesField,
-	toggleOuterDimensions,
-	setModalErrors,
-	setIsSaving,
-	setIsFetching,
-	removePredefinedPackage,
-	savePredefinedPackages,
-	toggleAll,
-	togglePackage,
-	setAddMode,
-} from '../actions';
+import initialState from './data/initial-state';
 
 const siteId = 123;
 

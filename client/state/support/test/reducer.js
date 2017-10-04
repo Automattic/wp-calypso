@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { SUPPORT_USER_ACTIVATE } from 'state/action-types';
 import { isSupportUser } from '../reducer';
+import { SUPPORT_USER_ACTIVATE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#isSupportUser()', () => {

@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
 import { writePostComment } from '../';
+import * as Utils from 'state/data-layer/wpcom/sites/utils';
 
 describe( '#writePostComment()', () => {
 	const action = {

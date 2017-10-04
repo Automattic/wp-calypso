@@ -3,6 +3,21 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { mount } from 'enzyme';
+import { identity } from 'lodash';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import CartButtons from '../cart-buttons';
+import { recordStub } from 'lib/mixins/analytics';
+import { useSandbox } from 'test/helpers/use-sinon';
+
 jest.mock( 'lib/mixins/analytics', () => {
 	const recordStub = require( 'sinon' ).stub();
 
@@ -13,21 +28,6 @@ jest.mock( 'lib/mixins/analytics', () => {
 
 	return analytics;
 } );
-
-/**
- * External Dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { mount } from 'enzyme';
-import { identity } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import CartButtons from '../cart-buttons';
-import { recordStub } from 'lib/mixins/analytics';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'cart-buttons', function() {
 	let cartButtonsComponent, onKeepSearchingClickStub;

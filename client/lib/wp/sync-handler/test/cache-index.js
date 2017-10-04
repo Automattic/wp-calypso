@@ -1,6 +1,4 @@
 /** @format */
-jest.mock( 'localforage', () => require( './mocks/localforage' ) );
-
 /**
  * External dependencies
  */
@@ -15,6 +13,8 @@ import { cacheIndex } from '../cache-index';
 import { RECORDS_LIST_KEY } from '../constants';
 import { normalizeRequestParams } from '../utils';
 import * as testData from './data';
+
+jest.mock( 'localforage', () => require( './mocks/localforage' ) );
 
 const localData = () => localforageMock.getLocalData();
 const setLocalData = data => localforageMock.setLocalData( data );

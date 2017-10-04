@@ -3,14 +3,14 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { assign, find } from 'lodash';
 import sinon from 'sinon';
+
+jest.mock( 'lib/user', () => () => {} );
 
 const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,

@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -11,13 +10,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { createAccount } from '../actions.js';
-import {
-	handleAccountCreate,
-	handleAccountCreateSuccess,
-	handleAccountCreateFailure,
-} from '../handlers.js';
-import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE } from 'woocommerce/state/action-types';
+import { handleAccountCreate, handleAccountCreateSuccess, handleAccountCreateFailure } from '../handlers.js';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleCreateAccountRequest', () => {

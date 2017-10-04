@@ -1,22 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isCacheDeleteSuccessful,
-	isDeletingCache,
-	isPreloadingCache,
-	isTestingCache,
-	getCacheDeleteStatus,
-	getCacheTestResults,
-} from '../selectors';
+import { isCacheDeleteSuccessful, isDeletingCache, isPreloadingCache, isTestingCache, getCacheDeleteStatus, getCacheTestResults } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;

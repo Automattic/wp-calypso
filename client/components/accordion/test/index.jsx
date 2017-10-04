@@ -7,9 +7,9 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
+import React from 'react';
 
 describe( 'Accordion', function() {
 	let Accordion, AccordionStatus;

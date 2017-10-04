@@ -1,19 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { assert } from 'chai';
 import sinon from 'sinon';
 
+/**
+ * Internal dependencies
+ */
 import { fromApi, validate, requestResetOptionsSuccess, requestResetOptionsError } from '../';
-
-import {
-	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-} from 'state/action-types';
+import { ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE, ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR, ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA } from 'state/action-types';
 
 const validResponse = {
 	primary_email: 'a****@example.com',

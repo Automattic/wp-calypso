@@ -1,28 +1,18 @@
 /** @format */
-jest.mock( 'lib/warn', () => () => {} );
-
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	cachingActionCreatorFactory,
-	createReducer,
-	extendAction,
-	keyedReducer,
-	withSchemaValidation,
-	combineReducers,
-	isValidStateWithSchema,
-	withoutPersistence,
-} from 'state/utils';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { testSchema } from './mocks/schema';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { cachingActionCreatorFactory, createReducer, extendAction, keyedReducer, withSchemaValidation, combineReducers, isValidStateWithSchema, withoutPersistence } from 'state/utils';
+jest.mock( 'lib/warn', () => () => {} );
 
 describe( 'utils', () => {
 	const currentState = deepFreeze( {

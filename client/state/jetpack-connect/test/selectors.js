@@ -1,31 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getConnectingSite,
-	getAuthorizationData,
-	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteSite,
-	getSessions,
-	getSSO,
-	isCalypsoStartedConnection,
-	isRedirectingToWpAdmin,
-	isRemoteSiteOnSitesList,
-	getFlowType,
-	getJetpackSiteByUrl,
-	hasXmlrpcError,
-	getAuthAttempts,
-	hasExpiredSecretError,
-	getSiteIdFromQueryObject,
-} from '../selectors';
+import { getConnectingSite, getAuthorizationData, getAuthorizationRemoteQueryData, getAuthorizationRemoteSite, getSessions, getSSO, isCalypsoStartedConnection, isRedirectingToWpAdmin, isRemoteSiteOnSitesList, getFlowType, getJetpackSiteByUrl, hasXmlrpcError, getAuthAttempts, hasExpiredSecretError, getSiteIdFromQueryObject } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getConnectingSite()', () => {

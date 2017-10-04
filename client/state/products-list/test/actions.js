@@ -1,21 +1,15 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	PRODUCTS_LIST_RECEIVE,
-	PRODUCTS_LIST_REQUEST,
-	PRODUCTS_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
 import { receiveProductsList, requestProductsList } from '../actions';
+import { PRODUCTS_LIST_RECEIVE, PRODUCTS_LIST_REQUEST, PRODUCTS_LIST_REQUEST_FAILURE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

@@ -1,25 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	POST_TYPES_TAXONOMIES_RECEIVE,
-	POST_TYPES_TAXONOMIES_REQUEST,
-	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { POST_TYPES_TAXONOMIES_RECEIVE, POST_TYPES_TAXONOMIES_REQUEST, POST_TYPES_TAXONOMIES_REQUEST_SUCCESS, POST_TYPES_TAXONOMIES_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {

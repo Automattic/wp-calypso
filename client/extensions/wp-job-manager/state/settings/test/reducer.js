@@ -1,22 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
-	WP_JOB_MANAGER_UPDATE_SETTINGS,
-} from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { WP_JOB_MANAGER_FETCH_ERROR, WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_UPDATE_SETTINGS } from '../../action-types';
 import reducer, { fetching, items } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

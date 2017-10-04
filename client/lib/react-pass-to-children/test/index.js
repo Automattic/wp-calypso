@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { assign } from 'lodash';
 var React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),

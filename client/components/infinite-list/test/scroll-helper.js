@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { range } from 'lodash';
 const assert = require( 'chai' ).assert;
 

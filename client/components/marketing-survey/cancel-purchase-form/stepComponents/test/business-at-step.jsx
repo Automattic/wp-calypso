@@ -1,14 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
-import { stub } from 'sinon';
 import { noop } from 'lodash';
+import React from 'react';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies

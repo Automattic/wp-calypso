@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import reducer from '../../reducer';
-import { WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST } from 'woocommerce/state/action-types';
 import { fetchShippingZoneMethodsSuccess } from '../actions';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'fetch shipping zone methods', () => {

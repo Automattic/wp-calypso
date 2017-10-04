@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
 import { NOTICE_CREATE } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
-import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'following/mine/delete', () => {
 	describe( 'requestUnfollow', () => {

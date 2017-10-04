@@ -1,24 +1,24 @@
 /** @format */
-jest.mock( 'localforage', () => require( './mocks/localforage' ) );
-
 /**
  * External dependencies
  */
-import { defer } from 'lodash';
 import { expect } from 'chai';
 import localforageMock from 'localforage';
-import { spy } from 'sinon';
+import { defer } from 'lodash';
 import querystring from 'querystring';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { cacheIndex } from '../cache-index';
-import { generateKey } from '../utils';
 import { hasPaginationChanged, SyncHandler, syncOptOut } from '../';
-import * as testData from './data';
+import { cacheIndex } from '../cache-index';
 import { RECORDS_LIST_KEY } from '../constants';
+import { generateKey } from '../utils';
+import * as testData from './data';
 import wpcomUndocumented from 'lib/wpcom-undocumented';
+
+jest.mock( 'localforage', () => require( './mocks/localforage' ) );
 
 let wpcom, responseData;
 const setLocalData = data => localforageMock.setLocalData( data );

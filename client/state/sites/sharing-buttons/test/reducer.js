@@ -1,29 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	SHARING_BUTTONS_RECEIVE,
-	SHARING_BUTTONS_REQUEST,
-	SHARING_BUTTONS_REQUEST_FAILURE,
-	SHARING_BUTTONS_REQUEST_SUCCESS,
-	SHARING_BUTTONS_SAVE,
-	SHARING_BUTTONS_SAVE_FAILURE,
-	SHARING_BUTTONS_SAVE_SUCCESS,
-	SHARING_BUTTONS_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
 import { items, requesting, saveRequests } from '../reducer';
+import { SHARING_BUTTONS_RECEIVE, SHARING_BUTTONS_REQUEST, SHARING_BUTTONS_REQUEST_FAILURE, SHARING_BUTTONS_REQUEST_SUCCESS, SHARING_BUTTONS_SAVE, SHARING_BUTTONS_SAVE_FAILURE, SHARING_BUTTONS_SAVE_SUCCESS, SHARING_BUTTONS_UPDATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {

@@ -1,22 +1,14 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import {
-	isRequestInflight,
-	markRequestInflight,
-	completeRequest,
-	trackPromise,
-	requestTracker,
-	_clear,
-} from '../';
+import { isRequestInflight, markRequestInflight, completeRequest, trackPromise, requestTracker, _clear } from '../';
 
 describe( 'inflight', () => {
 	const key = '__test';

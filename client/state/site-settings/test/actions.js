@@ -1,33 +1,17 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveSiteSettings, requestSiteSettings, saveSiteSettings, updateSiteSettings } from '../actions';
+import { SITE_SETTINGS_RECEIVE, SITE_SETTINGS_REQUEST, SITE_SETTINGS_REQUEST_FAILURE, SITE_SETTINGS_REQUEST_SUCCESS, SITE_SETTINGS_SAVE, SITE_SETTINGS_SAVE_FAILURE, SITE_SETTINGS_SAVE_SUCCESS, SITE_SETTINGS_UPDATE } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	SITE_SETTINGS_RECEIVE,
-	SITE_SETTINGS_REQUEST,
-	SITE_SETTINGS_REQUEST_FAILURE,
-	SITE_SETTINGS_REQUEST_SUCCESS,
-	SITE_SETTINGS_SAVE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
-import {
-	receiveSiteSettings,
-	requestSiteSettings,
-	saveSiteSettings,
-	updateSiteSettings,
-} from '../actions';
 
 describe( 'actions', () => {
 	let spy;

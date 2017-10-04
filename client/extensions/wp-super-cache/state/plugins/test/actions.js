@@ -1,26 +1,17 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
+
 /**
  * Internal dependencies
  */
+import { WP_SUPER_CACHE_RECEIVE_PLUGINS, WP_SUPER_CACHE_REQUEST_PLUGINS, WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE, WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS, WP_SUPER_CACHE_TOGGLE_PLUGIN, WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS } from '../../action-types';
+import { receivePlugins, requestPlugins, togglePlugin } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_RECEIVE_PLUGINS,
-	WP_SUPER_CACHE_REQUEST_PLUGINS,
-	WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
-	WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
-} from '../../action-types';
-import { receivePlugins, requestPlugins, togglePlugin } from '../actions';
 
 describe( 'actions', () => {
 	let spy;

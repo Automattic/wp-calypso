@@ -1,27 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { openEditLocations, closeEditLocations, cancelEditLocations, toggleContinentSelected, toggleCountrySelected, toggleStateSelected, editPostcode, filterByWholeCountry, filterByState, filterByPostcode } from '../actions';
 import reducer, { initialState, JOURNAL_ACTIONS } from '../reducer';
-import {
-	openEditLocations,
-	closeEditLocations,
-	cancelEditLocations,
-	toggleContinentSelected,
-	toggleCountrySelected,
-	toggleStateSelected,
-	editPostcode,
-	filterByWholeCountry,
-	filterByState,
-	filterByPostcode,
-} from '../actions';
 
 const initialStateWithTempChanges = {
 	...initialState,

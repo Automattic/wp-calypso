@@ -3,22 +3,22 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'post-editor/editor-term-selector', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { EditorCategoriesTagsAccordion } from 'post-editor/editor-categories-tags/accordion';
+
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'post-editor/editor-term-selector', () => require( 'components/empty-component' ) );
 
 describe( 'EditorCategoriesTagsAccordion', function() {
 	let accordion;

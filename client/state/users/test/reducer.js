@@ -1,16 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { USER_RECEIVE } from 'state/action-types';
 import { items } from '../reducer';
+import { USER_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

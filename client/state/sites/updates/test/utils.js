@@ -1,22 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	siteUpdatesRequestAction,
-	siteUpdatesRequestSuccessAction,
-	siteUpdatesReceiveAction,
-	siteUpdatesRequestFailureAction,
-} from '../actions';
+import { siteUpdatesRequestAction, siteUpdatesRequestSuccessAction, siteUpdatesReceiveAction, siteUpdatesRequestFailureAction } from '../actions';
 import { requestSiteUpdates } from '../utils';
+import useNock from 'test/helpers/use-nock';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 

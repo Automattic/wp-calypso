@@ -1,25 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { set, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getProductCategoryEdits,
-	getProductCategoryWithLocalEdits,
-	getProductCategoriesWithLocalEdits,
-	getCurrentlyEditingProductCategory,
-} from '../selectors';
-import {
-	getProductCategory,
-	getProductCategories,
-} from 'woocommerce/state/sites/product-categories/selectors';
+import { getProductCategoryEdits, getProductCategoryWithLocalEdits, getProductCategoriesWithLocalEdits, getCurrentlyEditingProductCategory } from '../selectors';
+import { getProductCategory, getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 
 const siteId = 123;
 

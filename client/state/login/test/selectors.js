@@ -1,36 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	getRememberMe,
-	getRequestError,
-	getTwoFactorAuthNonce,
-	getTwoFactorAuthRequestError,
-	getTwoFactorPushPollInProgress,
-	getTwoFactorPushPollSuccess,
-	getTwoFactorPushToken,
-	getTwoFactorSupportedAuthTypes,
-	getTwoFactorUserId,
-	isRequesting,
-	isRequestingTwoFactorAuth,
-	isTwoFactorAuthTypeSupported,
-	isTwoFactorEnabled,
-	isFormDisabled,
-	getSocialAccountLinkAuthInfo,
-	getCreateSocialAccountError,
-	getSocialAccountIsLinking,
-	getSocialAccountLinkEmail,
-	getSocialAccountLinkService,
-} from '../selectors';
+import { getRememberMe, getRequestError, getTwoFactorAuthNonce, getTwoFactorAuthRequestError, getTwoFactorPushPollInProgress, getTwoFactorPushPollSuccess, getTwoFactorPushToken, getTwoFactorSupportedAuthTypes, getTwoFactorUserId, isRequesting, isRequestingTwoFactorAuth, isTwoFactorAuthTypeSupported, isTwoFactorEnabled, isFormDisabled, getSocialAccountLinkAuthInfo, getCreateSocialAccountError, getSocialAccountIsLinking, getSocialAccountLinkEmail, getSocialAccountLinkService } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getTwoFactorUserId()', () => {

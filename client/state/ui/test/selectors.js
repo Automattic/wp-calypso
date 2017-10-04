@@ -1,25 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-	getSection,
-	getSectionName,
-	getSectionGroup,
-	isSiteSection,
-	isSectionIsomorphic,
-	hasSidebar,
-} from '../selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug, getSection, getSectionName, getSectionGroup, isSiteSection, isSectionIsomorphic, hasSidebar } from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {

@@ -1,17 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { USER_DEVICES_ADD } from 'state/action-types';
 import items from '../reducer';
+import { USER_DEVICES_ADD } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

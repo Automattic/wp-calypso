@@ -1,12 +1,10 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
+import { expect } from 'chai';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import { expect } from 'chai';
 
 /**
  * Internal dependencies

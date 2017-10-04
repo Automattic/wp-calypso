@@ -1,6 +1,12 @@
 /** @format */
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
 import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 
 describe( 'SEO', () => {

@@ -1,12 +1,4 @@
 /** @format */
-jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-user-registration-days-within-range', () =>
-	require( 'sinon' ).stub()
-);
-jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
-
 /**
  * External dependencies
  */
@@ -15,12 +7,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
 import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
+import canCurrentUser from 'state/selectors/can-current-user';
 import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import isVipSite from 'state/selectors/is-vip-site';
+
+jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-user-registration-days-within-range', () =>
+	require( 'sinon' ).stub()
+);
+jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
 
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';

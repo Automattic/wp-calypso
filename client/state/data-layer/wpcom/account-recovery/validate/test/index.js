@@ -1,27 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-
-import {
-	handleValidateRequest,
-	handleValidateRequestSuccess,
-	handleValidateRequestFailure,
-} from '../';
+import { handleValidateRequest, handleValidateRequestSuccess, handleValidateRequestFailure } from '../';
+import { validateRequestSuccess, validateRequestError, setValidationKey } from 'state/account-recovery/reset/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	validateRequestSuccess,
-	validateRequestError,
-	setValidationKey,
-} from 'state/account-recovery/reset/actions';
 
 describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {

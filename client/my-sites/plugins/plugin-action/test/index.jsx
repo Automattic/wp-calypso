@@ -3,8 +3,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
@@ -16,6 +14,8 @@ import React from 'react';
  * Internal dependencies
  */
 import PluginAction from '../plugin-action';
+
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 
 describe( 'PluginAction', function() {
 	describe( 'rendering with form toggle', function() {

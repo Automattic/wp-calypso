@@ -1,23 +1,16 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
-	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS,
-} from 'state/action-types';
 import { receivePostStats, requestPostStats } from '../actions';
+import { POST_STATS_RECEIVE, POST_STATS_REQUEST, POST_STATS_REQUEST_FAILURE, POST_STATS_REQUEST_SUCCESS } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

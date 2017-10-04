@@ -1,9 +1,4 @@
-/**
- * /* eslint-disable no-console
- *
- * @format
- */
-
+/** @format */
 /**
  * External dependencies
  */

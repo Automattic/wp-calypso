@@ -1,4 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import NotificationSettingsStore from '../';
+import * as NotificationSettingsStoreActions from '../actions';
+import { undocumented } from 'lib/wp';
+
 jest.mock( 'lib/wp', () => {
 	const getNotificationSettingsStub = require( 'sinon' ).stub();
 
@@ -10,19 +23,6 @@ jest.mock( 'lib/wp', () => {
 		} ),
 	};
 } );
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import * as NotificationSettingsStoreActions from '../actions';
-import NotificationSettingsStore from '../';
-import { undocumented } from 'lib/wp';
 
 describe( 'index', () => {
 	const changeSpy = sinon.spy();

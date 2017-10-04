@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { assign } from 'lodash';
 const expect = require( 'chai' ).expect;
 

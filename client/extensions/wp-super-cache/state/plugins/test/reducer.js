@@ -1,27 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	WP_SUPER_CACHE_RECEIVE_PLUGINS,
-	WP_SUPER_CACHE_REQUEST_PLUGINS,
-	WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
-	WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
-	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
-} from '../../action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { WP_SUPER_CACHE_RECEIVE_PLUGINS, WP_SUPER_CACHE_REQUEST_PLUGINS, WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE, WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS, WP_SUPER_CACHE_TOGGLE_PLUGIN, WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

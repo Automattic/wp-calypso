@@ -1,21 +1,15 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import sinon, { match } from 'sinon';
 import { expect } from 'chai';
+import sinon, { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	GOOGLE_APPS_USERS_FETCH,
-	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-	GOOGLE_APPS_USERS_FETCH_FAILED,
-} from 'state/action-types';
 import { fetchByDomain, fetchBySiteId } from '../actions';
+import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED, GOOGLE_APPS_USERS_FETCH_FAILED } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

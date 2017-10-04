@@ -1,22 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	CONNECTION_LOST,
-	CONNECTION_RESTORED,
-	NOTICE_REMOVE,
-	NOTICE_CREATE,
-} from 'state/action-types';
 import { connectionLost, connectionRestored } from '../actions';
+import { CONNECTION_LOST, CONNECTION_RESTORED, NOTICE_REMOVE, NOTICE_CREATE } from 'state/action-types';
 
 describe( 'state/application actions', () => {
 	describe( '#connectionLost()', () => {

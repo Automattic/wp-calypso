@@ -1,26 +1,21 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import reducer from '../edits-reducer';
-
-import { editProductVariation, clearProductVariationEdits } from '../actions';
 import { editProduct, editProductAttribute } from '../../actions';
-import { createProduct, productUpdated } from 'woocommerce/state/sites/products/actions';
-import {
-	createProductVariation,
-	updateProductVariation,
-	productVariationUpdated,
-} from 'woocommerce/state/sites/product-variations/actions';
+import { editProductVariation, clearProductVariationEdits } from '../actions';
+import reducer from '../edits-reducer';
 import { actionAppendProductVariations } from 'woocommerce/state/data-layer/ui/products';
+
+import { createProductVariation, updateProductVariation, productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
+import { createProduct, productUpdated } from 'woocommerce/state/sites/products/actions';
 
 const siteId = 123;
 

@@ -1,18 +1,18 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { requestFollow, receiveFollow, followError } from '../';
 import { NOTICE_CREATE } from 'state/action-types';
+import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
-import { requestFollow, receiveFollow, followError } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'requestFollow', () => {
 	it( 'should dispatch a http request', () => {

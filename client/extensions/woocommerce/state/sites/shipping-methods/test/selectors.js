@@ -1,20 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getShippingMethods,
-	areShippingMethodsLoaded,
-	areShippingMethodsLoading,
-	getShippingMethodNameMap,
-} from '../selectors';
+import { getShippingMethods, areShippingMethodsLoaded, areShippingMethodsLoading, getShippingMethodNameMap } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {

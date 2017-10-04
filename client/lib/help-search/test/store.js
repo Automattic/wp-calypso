@@ -1,15 +1,10 @@
-/**
- * External dependencies
- *
- * @format
- */
-
-var assert = require( 'chai' ).assert;
-
+/** @format */
 /**
  * Internal dependencies
  */
 import actions from './lib/mock-actions';
+
+var assert = require( 'chai' ).assert;
 
 describe( 'Help search Store', function() {
 	var Dispatcher, HelpSearchStore;

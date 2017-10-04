@@ -3,25 +3,25 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-} ) );
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { identity } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import sinon from 'sinon';
-import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { EditorPublishButton } from '../';
+
+jest.mock( 'lib/posts/stats', () => ( {
+	recordEvent: () => {},
+} ) );
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * Module variables

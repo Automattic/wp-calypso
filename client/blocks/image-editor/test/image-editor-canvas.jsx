@@ -3,6 +3,18 @@
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { ImageEditorCanvas } from '../image-editor-canvas';
+
 jest.mock( 'blocks/image-editor/image-editor-crop', () => {
 	const { Component } = require( 'react' );
 
@@ -14,18 +26,6 @@ jest.mock( 'blocks/image-editor/image-editor-crop', () => {
 
 	return ImageEditorCropMock;
 } );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { ImageEditorCanvas } from '../image-editor-canvas';
 
 describe( 'ImageEditorToolbar', () => {
 	let wrapper;

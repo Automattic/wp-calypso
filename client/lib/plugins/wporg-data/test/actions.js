@@ -1,9 +1,4 @@
 /** @format */
-jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
-jest.mock( 'lib/impure-lodash', () => ( {
-	debounce: cb => cb,
-} ) );
-
 /**
  * External dependencies
  */
@@ -13,8 +8,12 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import mockedWporg from 'lib/wporg';
 import WPorgActions from 'lib/plugins/wporg-data/actions';
+import mockedWporg from 'lib/wporg';
+jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
+jest.mock( 'lib/impure-lodash', () => ( {
+	debounce: cb => cb,
+} ) );
 
 describe( 'WPorg Data Actions', () => {
 	beforeEach( () => {

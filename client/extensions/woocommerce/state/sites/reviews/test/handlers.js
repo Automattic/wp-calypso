@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { expect } from 'chai';
 import { keyBy } from 'lodash';
 import { spy, match } from 'sinon';
@@ -11,30 +10,12 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	changeReviewStatus,
-	deleteReview,
-	fetchReviews,
-} from 'woocommerce/state/sites/reviews/actions';
-import {
-	handleReviewsRequest,
-	handleReviewsRequestSuccess,
-	handleReviewsRequestError,
-	handleChangeReviewStatus,
-	handleChangeReviewStatusSuccess,
-	announceStatusChangeFailure,
-	handleDeleteReview,
-	announceDeleteSuccess,
-	announceDeleteFailure,
-} from '../handlers.js';
-import { NOTICE_CREATE } from 'state/action-types';
+import { handleReviewsRequest, handleReviewsRequestSuccess, handleReviewsRequestError, handleChangeReviewStatus, handleChangeReviewStatusSuccess, announceStatusChangeFailure, handleDeleteReview, announceDeleteSuccess, announceDeleteFailure } from '../handlers.js';
 import reviews from './fixtures/reviews';
-import {
-	WOOCOMMERCE_REVIEWS_RECEIVE,
-	WOOCOMMERCE_REVIEWS_REQUEST,
-	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
+import { NOTICE_CREATE } from 'state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WOOCOMMERCE_REVIEWS_RECEIVE, WOOCOMMERCE_REVIEWS_REQUEST, WOOCOMMERCE_REVIEW_STATUS_CHANGE } from 'woocommerce/state/action-types';
+import { changeReviewStatus, deleteReview, fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewsRequest', () => {

@@ -1,23 +1,20 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { find } from 'lodash';
 import freeze from 'deep-freeze';
+import { find } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	requestFollowTag as requestFollowAction,
-	receiveTags as receiveTagsAction,
-} from 'state/reader/tags/items/actions';
 import { requestFollowTag, receiveFollowTag, receiveError } from '../';
+import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { NOTICE_CREATE } from 'state/action-types';
+import { requestFollowTag as requestFollowAction, receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
 
 export const successfulFollowResponse = freeze( {
 	subscribed: true,

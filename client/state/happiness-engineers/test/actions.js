@@ -1,24 +1,17 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import { match } from 'sinon';
 import { expect } from 'chai';
+import { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import {
-	HAPPINESS_ENGINEERS_FETCH,
-	HAPPINESS_ENGINEERS_RECEIVE,
-	HAPPINESS_ENGINEERS_FETCH_FAILURE,
-	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-} from 'state/action-types';
 import { receiveHappinessEngineers, fetchHappinessEngineers } from '../actions';
+import { HAPPINESS_ENGINEERS_FETCH, HAPPINESS_ENGINEERS_RECEIVE, HAPPINESS_ENGINEERS_FETCH_FAILURE, HAPPINESS_ENGINEERS_FETCH_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
