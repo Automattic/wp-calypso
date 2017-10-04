@@ -49,15 +49,7 @@ const setupContextMiddleware = reduxStore => {
 			return;
 		}
 
-		// set `context.query`
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-
+		context.query = parsed.query;
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
 
 		// set `context.hash` (we have to parse manually)
