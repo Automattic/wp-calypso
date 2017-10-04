@@ -1,15 +1,14 @@
+/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
 import {
 	announceFailure,
 	createPages,
@@ -21,16 +20,18 @@ import {
 	updateSetupStatus,
 } from '../';
 import {
+	WP_JOB_MANAGER_CREATE_PAGES,
+	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
+	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+} from '../../../action-types';
+import {
 	createPagesError,
 	fetchSetupStatusError as fetchStatusError,
 	nextStep,
 	updateSetupStatus as updateStatus,
 } from '../../../setup/actions';
-import {
-	WP_JOB_MANAGER_CREATE_PAGES,
-	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
-	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
-} from '../../../action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 
 const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;
@@ -60,23 +61,33 @@ describe( 'data layer', () => {
 			} );
 
 			it( 'should dispatch one HTTP request for each title', () => {
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/sites/${ siteId }/posts/new`,
-					body: {
-						title: titles[ 0 ],
-						type: 'page',
-					}
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/sites/${ siteId }/posts/new`,
+							body: {
+								title: titles[ 0 ],
+								type: 'page',
+							},
+						},
+						action
+					)
+				);
 
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/sites/${ siteId }/posts/new`,
-					body: {
-						title: titles[ 1 ],
-						type: 'page',
-					}
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/sites/${ siteId }/posts/new`,
+							body: {
+								title: titles[ 1 ],
+								type: 'page',
+							},
+						},
+						action
+					)
+				);
 			} );
 		} );
 
@@ -90,10 +101,11 @@ describe( 'data layer', () => {
 			it( 'should dispatch `errorNotice`', () => {
 				announceFailure( dispatch, siteId );
 
-				expect( dispatch ).to.have.been.calledWith( errorNotice(
-					translate( 'There was a problem creating the page(s). Please try again.' ),
-					{ id: createPagesNotice }
-				) );
+				expect( dispatch ).to.have.been.calledWith(
+					errorNotice( translate( 'There was a problem creating the page(s). Please try again.' ), {
+						id: createPagesNotice,
+					} )
+				);
 			} );
 		} );
 
@@ -147,13 +159,18 @@ describe( 'data layer', () => {
 				it( 'should dispatch an HTTP request to the status endpoint', () => {
 					fetchSetupStatus( { dispatch }, action );
 
-					expect( dispatch ).to.have.been.calledWith( http( {
-						method: 'GET',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
-						query: {
-							path: '/wpjm/v1/status/run_page_setup',
-						}
-					}, action ) );
+					expect( dispatch ).to.have.been.calledWith(
+						http(
+							{
+								method: 'GET',
+								path: `/jetpack-blogs/${ siteId }/rest-api/`,
+								query: {
+									path: '/wpjm/v1/status/run_page_setup',
+								},
+							},
+							action
+						)
+					);
 				} );
 			} );
 
@@ -184,15 +201,20 @@ describe( 'data layer', () => {
 
 				saveSetupStatus( { dispatch }, saveAction );
 
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
-					query: {
-						body: JSON.stringify( false ),
-						json: true,
-						path: '/wpjm/v1/status/run_page_setup',
-					}
-				}, saveAction ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/jetpack-blogs/${ siteId }/rest-api/`,
+							query: {
+								body: JSON.stringify( false ),
+								json: true,
+								path: '/wpjm/v1/status/run_page_setup',
+							},
+						},
+						saveAction
+					)
+				);
 			} );
 		} );
 	} );

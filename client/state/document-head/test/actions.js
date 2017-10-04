@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +8,17 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_SET,
-	DOCUMENT_HEAD_META_SET,
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET
-} from 'state/action-types';
-
-import {
 	setDocumentHeadTitle,
 	setDocumentHeadLink,
 	setDocumentHeadMeta,
-	setDocumentHeadUnreadCount
+	setDocumentHeadUnreadCount,
 } from '../actions';
+import {
+	DOCUMENT_HEAD_LINK_SET,
+	DOCUMENT_HEAD_META_SET,
+	DOCUMENT_HEAD_TITLE_SET,
+	DOCUMENT_HEAD_UNREAD_COUNT_SET,
+} from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setDocumentHeadTitle()', () => {
@@ -27,7 +27,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_TITLE_SET,
-				title: 'Home'
+				title: 'Home',
 			} );
 		} );
 	} );
@@ -38,7 +38,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-				count: 123
+				count: 123,
 			} );
 		} );
 	} );
@@ -49,7 +49,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_LINK_SET,
-				link: { rel: 'some-rel', content: 'some-content' }
+				link: { rel: 'some-rel', content: 'some-content' },
 			} );
 		} );
 	} );
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_META_SET,
-				meta: { rel: 'some-rel', content: 'some-content' }
+				meta: { rel: 'some-rel', content: 'some-content' },
 			} );
 		} );
 	} );

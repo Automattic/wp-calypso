@@ -1,13 +1,4 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/oauth-store/actions', () => ( {
-	login: require( 'sinon' ).stub()
-} ) );
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {}
-	}
-} ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -18,6 +9,16 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { login as loginStub } from 'lib/oauth-store/actions';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/oauth-store/actions', () => ( {
+	login: require( 'sinon' ).stub(),
+} ) );
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {},
+	},
+} ) );
 
 describe( 'LoginTest', function() {
 	let Login, page, React, ReactDom, ReactClass, TestUtils;

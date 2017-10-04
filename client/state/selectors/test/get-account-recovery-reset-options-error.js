@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
-					options: {}
+					options: {},
 				},
 			},
 		};

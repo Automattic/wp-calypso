@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,17 +7,18 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED, ZONINATOR_UPDATE_FEED } from '../../action-types';
+import {
+	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_SAVE_FEED,
+	ZONINATOR_UPDATE_FEED,
+} from '../../action-types';
 import { requestFeed, saveFeed, updateFeed } from '../actions';
 
 describe( 'actions', () => {
 	const siteId = 1234;
 	const zoneId = 5678;
 
-	const posts = [
-		{ ID: 1, title: 'A test post' },
-		{ ID: 2, title: 'Another test post' },
-	];
+	const posts = [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ];
 
 	describe( 'requestFeed()', () => {
 		it( 'should return an action object', () => {

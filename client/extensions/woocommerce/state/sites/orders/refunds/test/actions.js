@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,6 +8,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import order from '../../test/fixtures/order';
 import { sendRefund } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
@@ -14,7 +16,6 @@ import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
-import order from '../../test/fixtures/order';
 
 describe( 'actions', () => {
 	describe( '#sendRefund()', () => {
@@ -24,7 +25,7 @@ describe( 'actions', () => {
 			reason: 'Testing reason.',
 		};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -38,7 +39,7 @@ describe( 'actions', () => {
 					data: {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
-					}
+					},
 				} );
 		} );
 

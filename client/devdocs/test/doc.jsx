@@ -1,20 +1,21 @@
-/** @jest-environment jsdom */
-jest.mock( 'devdocs/service', () => ( {
-	fetch: () => {}
-} ) );
-
+/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import React from 'react';
-import ReactDom from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import SingleDocClass from '../doc';
+
+/** @jest-environment jsdom */
+jest.mock( 'devdocs/service', () => ( {
+	fetch: () => {},
+} ) );
 
 describe( 'SingleDoc', () => {
 	describe( 'makeSnip', () => {

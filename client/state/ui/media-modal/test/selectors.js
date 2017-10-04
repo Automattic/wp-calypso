@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,9 @@ describe( 'selectors', () => {
 			const view = getMediaModalView( {
 				ui: {
 					mediaModal: {
-						view: ModalViews.DETAIL
-					}
-				}
+						view: ModalViews.DETAIL,
+					},
+				},
 			} );
 
 			expect( view ).to.equal( ModalViews.DETAIL );

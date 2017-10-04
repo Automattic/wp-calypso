@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import reducer from '../reducer';
 import {
 	coupons1,
 	coupons2,
@@ -16,7 +18,6 @@ import {
 	productParams1,
 	productParams2,
 } from './fixtures/promotions';
-import reducer from '../reducer';
 import {
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -148,4 +149,3 @@ describe( 'reducer', () => {
 		expect( state4.promotions[ 9 ].coupon ).to.equal( coupons2[ 1 ] );
 	} );
 } );
-

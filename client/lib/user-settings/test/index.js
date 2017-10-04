@@ -1,8 +1,4 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
-jest.mock( 'lib/wp', () => require( './mocks/wp' ) );
-jest.mock( 'lib/user/utils', () => require( './mocks/user-utils' ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +8,11 @@ import { assert, expect } from 'chai';
  * Internal dependencies
  */
 import userSettings from '..';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+jest.mock( 'lib/wp', () => require( './mocks/wp' ) );
+jest.mock( 'lib/user/utils', () => require( './mocks/user-utils' ) );
 
 describe( 'User Settings', () => {
 	before( () => {
@@ -92,5 +93,4 @@ describe( 'User Settings', () => {
 			done();
 		}
 	} );
-
 } );

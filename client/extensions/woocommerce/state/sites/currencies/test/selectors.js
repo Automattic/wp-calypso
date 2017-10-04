@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	areCurrenciesLoaded,
-	areCurrenciesLoading,
-	getCurrencies,
-} from '../selectors';
+import { areCurrenciesLoaded, areCurrenciesLoading, getCurrencies } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const currencies = [

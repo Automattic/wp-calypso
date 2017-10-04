@@ -7,8 +7,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_REQUEST,
@@ -28,6 +26,8 @@ import {
 	setActiveReply,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
+import config from 'config';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;

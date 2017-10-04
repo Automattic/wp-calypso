@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,26 +11,26 @@ import { isJetpackUserMaster } from '../';
 import { dataItems } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackUserMaster()', () => {
-	it( 'should return true if the user is the master user of the site\'s connection', () => {
+	it( "should return true if the user is the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						dataItems
-					}
-				}
+						dataItems,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = isJetpackUserMaster( stateIn, siteId );
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the user is not the master user of the site\'s connection', () => {
+	it( "should return false if the user is not the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						dataItems
-					}
-				}
+						dataItems,
+					},
+				},
 			},
 			siteId = 87654321;
 		const output = isJetpackUserMaster( stateIn, siteId );
@@ -40,9 +41,9 @@ describe( 'isJetpackUserMaster()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						dataItems
-					}
-				}
+						dataItems,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = isJetpackUserMaster( stateIn, siteId );

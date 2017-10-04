@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,69 +14,84 @@ describe( 'isPublicizeEnabled()', () => {
 	const postType = 'post';
 
 	it( 'should return false when Publicize is permanently disabled', () => {
-		const result = isPublicizeEnabled( {
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-						options: {
-							publicize_permanently_disabled: true
-						}
-					}
-				}
-			}
-		}, siteId, postType );
+		const result = isPublicizeEnabled(
+			{
+				sites: {
+					items: {
+						[ siteId ]: {
+							ID: siteId,
+							options: {
+								publicize_permanently_disabled: true,
+							},
+						},
+					},
+				},
+			},
+			siteId,
+			postType
+		);
 
 		expect( result ).to.be.false;
 	} );
 
 	it( 'should return false for jetpack site with Publicize disabled', () => {
-		const result = isPublicizeEnabled( {
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-						jetpack: true,
-						options: {
-							active_modules: []
-						}
-					}
-				}
-			}
-		}, siteId, postType );
+		const result = isPublicizeEnabled(
+			{
+				sites: {
+					items: {
+						[ siteId ]: {
+							ID: siteId,
+							jetpack: true,
+							options: {
+								active_modules: [],
+							},
+						},
+					},
+				},
+			},
+			siteId,
+			postType
+		);
 
 		expect( result ).to.be.false;
 	} );
 
 	it( 'should return true for jetpack site with Publicize enabled', () => {
-		const result = isPublicizeEnabled( {
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-						jetpack: true,
-						options: {
-							active_modules: [ 'publicize' ]
-						}
-					}
-				}
-			}
-		}, siteId, postType );
+		const result = isPublicizeEnabled(
+			{
+				sites: {
+					items: {
+						[ siteId ]: {
+							ID: siteId,
+							jetpack: true,
+							options: {
+								active_modules: [ 'publicize' ],
+							},
+						},
+					},
+				},
+			},
+			siteId,
+			postType
+		);
 
 		expect( result ).to.be.true;
 	} );
 
-
 	it( 'should return true for regular site and post type', () => {
-		const result = isPublicizeEnabled( {
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: siteId,
-					}
-				}
-			}
-		}, siteId, postType );
+		const result = isPublicizeEnabled(
+			{
+				sites: {
+					items: {
+						[ siteId ]: {
+							ID: siteId,
+						},
+					},
+				},
+			},
+			siteId,
+			postType
+		);
 
 		expect( result ).to.be.true;
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ import { expect } from 'chai';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
-	isRequestingDomainsSuggestions
+	isRequestingDomainsSuggestions,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -20,30 +21,50 @@ describe( 'selectors', () => {
 					suggestions: {
 						items: {
 							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-								{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-								{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+								{
+									domain_name: 'example.me',
+									cost: '$25.00',
+									product_id: 46,
+									product_slug: 'dotme_domain',
+								},
+								{
+									domain_name: 'example.org',
+									cost: '$18.00',
+									product_id: 6,
+									product_slug: 'domain_reg',
+								},
 							],
 							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-								{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-								{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-							]
-						}
-					}
-				}
+								{
+									domain_name: 'foobar.me',
+									cost: '$25.00',
+									product_id: 46,
+									product_slug: 'dotme_domain',
+								},
+								{
+									domain_name: 'foobar.org',
+									cost: '$18.00',
+									product_id: 6,
+									product_slug: 'domain_reg',
+								},
+							],
+						},
+					},
+				},
 			};
 
 			const queryObject = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
 
 			const domainSuggestions = getDomainsSuggestions( state, queryObject );
 
 			expect( domainSuggestions ).to.eql( [
 				{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-				{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+				{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 			] );
 		} );
 	} );
@@ -54,31 +75,31 @@ describe( 'selectors', () => {
 					suggestions: {
 						requesting: {
 							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
-							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false
-						}
-					}
-				}
+							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
+						},
+					},
+				},
 			};
 
 			const example = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
 
 			const foobar = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
 
 			const notDefined = {
 				query: 'notDefined',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
 
 			expect( isRequestingDomainsSuggestions( state, example ) ).to.equal( true );
@@ -93,31 +114,31 @@ describe( 'selectors', () => {
 						suggestions: {
 							errors: {
 								'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
-								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null
-							}
-						}
-					}
+								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
+							},
+						},
+					},
 				};
 
 				const example = {
 					query: 'example',
 					quantity: 2,
 					vendor: 'domainsbot',
-					includeSubdomain: false
+					includeSubdomain: false,
 				};
 
 				const foobar = {
 					query: 'foobar',
 					quantity: 2,
 					vendor: 'domainsbot',
-					includeSubdomain: false
+					includeSubdomain: false,
 				};
 
 				const notDefined = {
 					query: 'notDefined',
 					quantity: 2,
 					vendor: 'domainsbot',
-					includeSubdomain: false
+					includeSubdomain: false,
 				};
 
 				expect( getDomainsSuggestionsError( state, example ) ).to.equal( error );

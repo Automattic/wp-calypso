@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,12 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import initialPackagesState from './data/initial-state';
 import {
 	getAllSelectedPackages,
 	getCurrentlyEditingPredefinedPackages,
 	getPredefinedPackagesChangesSummary,
 } from '../selectors';
+import initialPackagesState from './data/initial-state';
 
 const siteId = 123;
 

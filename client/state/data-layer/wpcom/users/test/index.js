@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,25 +9,19 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	DEFAULT_PER_PAGE,
-	fetchUsers,
-	normalizeUser,
-	receiveSuccess,
-} from '../';
+import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	receiveUser,
-	requestUsers,
-} from 'state/users/actions';
+import { receiveUser, requestUsers } from 'state/users/actions';
 
 describe( '#normalizeRevision', () => {
 	it( 'should rename `id`, `name` and `slug`', () => {
-		expect( normalizeUser( {
-			id: 10,
-			name: 'Alice Bob',
-			slug: 'alicebob',
-		} ) ).to.eql( {
+		expect(
+			normalizeUser( {
+				id: 10,
+				name: 'Alice Bob',
+				slug: 'alicebob',
+			} )
+		).to.eql( {
 			ID: 10,
 			display_name: 'Alice Bob',
 			username: 'alicebob',
@@ -34,9 +29,11 @@ describe( '#normalizeRevision', () => {
 	} );
 
 	it( 'should not return `undefined` properties', () => {
-		expect( normalizeUser( {
-			id: 10,
-		} ) ).to.eql( {
+		expect(
+			normalizeUser( {
+				id: 10,
+			} )
+		).to.eql( {
 			ID: 10,
 		} );
 	} );
@@ -50,16 +47,21 @@ describe( '#fetchUsers', () => {
 		fetchUsers( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/sites/12345678/users',
-			apiNamespace: 'wp/v2',
-			query: {
-				include: [ 10, 11 ],
-				page: 1,
-				per_page: 10,
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/users',
+					apiNamespace: 'wp/v2',
+					query: {
+						include: [ 10, 11 ],
+						page: 1,
+						per_page: 10,
+					},
+				},
+				action
+			)
+		);
 	} );
 
 	it( 'should respect pagination information coming from action', () => {
@@ -71,16 +73,21 @@ describe( '#fetchUsers', () => {
 		fetchUsers( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/sites/12345678/users',
-			apiNamespace: 'wp/v2',
-			query: {
-				include: [ 10 ],
-				page: 2,
-				per_page: 42,
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/users',
+					apiNamespace: 'wp/v2',
+					query: {
+						include: [ 10 ],
+						page: 2,
+						per_page: 42,
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -89,18 +96,19 @@ describe( '#receiveSuccess', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, [
-			{ id: 10 },
-			{ id: 11 },
-		] );
+		receiveSuccess( { dispatch }, action, [ { id: 10 }, { id: 11 } ] );
 
 		expect( dispatch ).to.have.been.called.twice;
-		expect( dispatch ).to.have.been.calledWith( receiveUser( {
-			ID: 10,
-		} ) );
-		expect( dispatch ).to.have.been.calledWith( receiveUser( {
-			ID: 11,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			receiveUser( {
+				ID: 10,
+			} )
+		);
+		expect( dispatch ).to.have.been.calledWith(
+			receiveUser( {
+				ID: 11,
+			} )
+		);
 	} );
 
 	it( 'should fetch another page if it receives a full page of users (default per page)', () => {
@@ -128,20 +136,25 @@ describe( '#receiveSuccess', () => {
 			usersChunks[ 0 ]
 		);
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/sites/12345678/users',
-			apiNamespace: 'wp/v2',
-			query: {
-				include: ids,
-				page: 2,
-				per_page: DEFAULT_PER_PAGE,
-			},
-		}, {
-			...action,
-			page: 2,
-			perPage: DEFAULT_PER_PAGE,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/users',
+					apiNamespace: 'wp/v2',
+					query: {
+						include: ids,
+						page: 2,
+						per_page: DEFAULT_PER_PAGE,
+					},
+				},
+				{
+					...action,
+					page: 2,
+					perPage: DEFAULT_PER_PAGE,
+				}
+			)
+		);
 	} );
 
 	it( 'should fetch another page if it receives a full page of users (custom per page)', () => {
@@ -173,19 +186,24 @@ describe( '#receiveSuccess', () => {
 			usersChunks[ 0 ]
 		);
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/sites/12345678/users',
-			apiNamespace: 'wp/v2',
-			query: {
-				include: ids,
-				page: 2,
-				per_page: perPage,
-			},
-		}, {
-			...action,
-			page: 2,
-			perPage: perPage,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/users',
+					apiNamespace: 'wp/v2',
+					query: {
+						include: ids,
+						page: 2,
+						per_page: perPage,
+					},
+				},
+				{
+					...action,
+					page: 2,
+					perPage: perPage,
+				}
+			)
+		);
 	} );
 } );

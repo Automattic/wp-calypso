@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -523,7 +524,8 @@ describe( 'selectors', () => {
 							state: [],
 							postcode: [],
 						},
-						3: { // wrong!
+						3: {
+							// wrong!
 							continent: [],
 							country: [ 'US' ],
 							state: [ 'US:CA' ],

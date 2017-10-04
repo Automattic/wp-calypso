@@ -1,17 +1,16 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import photon from 'photon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import photon from 'photon';
 import resize from 'lib/resize-image-url';
 import ListItemImage from 'my-sites/media-library/list-item-image';
 
@@ -28,12 +27,14 @@ describe( 'MediaLibraryListItem image', function() {
 
 	const getPhotonUrl = () => photon( fixtures.media[ 0 ].URL, { width: WIDTH } );
 	const getResizedUrl = () => resize( fixtures.media[ 0 ].URL, { w: WIDTH } );
-	const getItem = ( itemPos, type ) =>
+	const getItem = ( itemPos, type ) => (
 		<ListItemImage
 			media={ fixtures.media[ itemPos ] }
 			scale={ 1 }
 			maxImageWidth={ WIDTH }
-			thumbnailType={ type } />;
+			thumbnailType={ type }
+		/>
+	);
 
 	context( 'thumbnail display mode', function() {
 		it( 'defaults to photon when no thumbnail parameter is passed', function() {

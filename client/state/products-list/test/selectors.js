@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,10 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	getProductDisplayCost,
-	isProductsListFetching,
-} from '../selectors';
+import { getProductDisplayCost, isProductsListFetching } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getProductDisplayCost()', () => {
@@ -25,10 +23,10 @@ describe( 'selectors', () => {
 				productsList: {
 					items: {
 						guided_transfer: {
-							cost_display: 'A$169.00'
-						}
-					}
-				}
+							cost_display: 'A$169.00',
+						},
+					},
+				},
 			} );
 
 			expect( getProductDisplayCost( state, 'guided_transfer' ) ).to.equal( 'A$169.00' );

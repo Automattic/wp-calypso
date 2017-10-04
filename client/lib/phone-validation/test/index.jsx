@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import assert from  'assert';
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -19,7 +20,10 @@ describe( 'Phone Validation Library', () => {
 		assert.equal( 'phone_number_contains_letters', phoneValidation( '+123456789a' ).error );
 	} );
 	it( 'should fail a number containing special characters', () => {
-		assert.equal( 'phone_number_contains_special_characters', phoneValidation( '+(12345)6789' ).error );
+		assert.equal(
+			'phone_number_contains_special_characters',
+			phoneValidation( '+(12345)6789' ).error
+		);
 	} );
 	it( 'should fail an invalid number', () => {
 		assert.equal( 'phone_number_invalid', phoneValidation( '+111111111' ).error );

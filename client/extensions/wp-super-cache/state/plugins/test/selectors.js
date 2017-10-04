@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getPlugins,
-	isRequestingPlugins,
-	isTogglingPlugin,
-} from '../selectors';
+import { getPlugins, isRequestingPlugins, isTogglingPlugin } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -21,9 +18,9 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						plugins: undefined
-					}
-				}
+						plugins: undefined,
+					},
+				},
 			};
 			const isRequesting = isRequestingPlugins( state, primarySiteId );
 
@@ -37,10 +34,10 @@ describe( 'selectors', () => {
 						plugins: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPlugins( state, secondarySiteId );
 
@@ -54,10 +51,10 @@ describe( 'selectors', () => {
 						plugins: {
 							requesting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPlugins( state, primarySiteId );
 
@@ -71,10 +68,10 @@ describe( 'selectors', () => {
 						plugins: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPlugins( state, primarySiteId );
 
@@ -89,11 +86,11 @@ describe( 'selectors', () => {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: true }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { no_adverts_for_friends: true },
+							},
+						},
+					},
+				},
 			};
 			const isToggling = isTogglingPlugin( state, secondarySiteId, 'no_adverts_for_friends' );
 
@@ -106,11 +103,11 @@ describe( 'selectors', () => {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: false }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { no_adverts_for_friends: false },
+							},
+						},
+					},
+				},
 			};
 			const isToggling = isTogglingPlugin( state, primarySiteId, 'no_adverts_for_friends' );
 
@@ -123,11 +120,11 @@ describe( 'selectors', () => {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: true }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { no_adverts_for_friends: true },
+							},
+						},
+					},
+				},
 			};
 			const isToggling = isTogglingPlugin( state, primarySiteId, 'no_adverts_for_friends' );
 
@@ -140,7 +137,8 @@ describe( 'selectors', () => {
 			awaitingmoderation: {
 				url: '',
 				title: 'Awaiting Moderation',
-				desc: 'Enables or disables plugin to Remove the text "Your comment is awaiting moderation." ...',
+				desc:
+					'Enables or disables plugin to Remove the text "Your comment is awaiting moderation." ...',
 				enabled: true,
 			},
 			no_adverts_for_friends: {
@@ -148,17 +146,17 @@ describe( 'selectors', () => {
 				url: 'https://odd.blog/no-adverts-for-friends/',
 				title: 'No Adverts for Friends',
 				desc: 'Provides support for No Adverts for Friends plugin.',
-				enabled: false
-			}
+				enabled: false,
+			},
 		};
 
 		it( 'should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						plugins: undefined
-					}
-				}
+						plugins: undefined,
+					},
+				},
 			};
 			const plugins = getPlugins( state, primarySiteId );
 
@@ -172,10 +170,10 @@ describe( 'selectors', () => {
 						plugins: {
 							items: {
 								[ primarySiteId ]: primaryPlugins,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const plugins = getPlugins( state, secondarySiteId );
 
@@ -189,10 +187,10 @@ describe( 'selectors', () => {
 						plugins: {
 							items: {
 								[ primarySiteId ]: primaryPlugins,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const plugins = getPlugins( state, primarySiteId );
 

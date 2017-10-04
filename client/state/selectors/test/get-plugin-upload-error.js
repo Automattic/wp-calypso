@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +20,9 @@ describe( 'getPluginUploadError', () => {
 		const state = {
 			plugins: {
 				upload: {
-					uploadError: {}
-				}
-			}
+					uploadError: {},
+				},
+			},
 		};
 		expect( getPluginUploadError( state, siteId ) ).to.be.null;
 	} );

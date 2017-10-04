@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import {
 	getSectionGroup,
 	isSiteSection,
 	isSectionIsomorphic,
-	hasSidebar
+	hasSidebar,
 } from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
@@ -24,8 +25,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no site is selected', () => {
 			const selected = getSelectedSite( {
 				ui: {
-					selectedSiteId: null
-				}
+					selectedSiteId: null,
+				},
 			} );
 
 			expect( selected ).to.be.null;
@@ -36,15 +37,19 @@ describe( 'selectors', () => {
 				...userState,
 				sites: {
 					items: {
-						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
-					}
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com',
+						},
+					},
 				},
 				siteSettings: {
 					items: {},
 				},
 				ui: {
-					selectedSiteId: 2916284
-				}
+					selectedSiteId: 2916284,
+				},
 			} );
 
 			expect( selected ).to.eql( {
@@ -69,8 +74,8 @@ describe( 'selectors', () => {
 			const selected = getSelectedSiteId( {
 				...userState,
 				ui: {
-					selectedSiteId: null
-				}
+					selectedSiteId: null,
+				},
 			} );
 
 			expect( selected ).to.be.null;
@@ -79,8 +84,8 @@ describe( 'selectors', () => {
 		it( 'should return ID for the selected site', () => {
 			const selected = getSelectedSiteId( {
 				ui: {
-					selectedSiteId: 2916284
-				}
+					selectedSiteId: 2916284,
+				},
 			} );
 
 			expect( selected ).to.eql( 2916284 );
@@ -91,8 +96,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no site is selected', () => {
 			const slug = getSelectedSiteSlug( {
 				ui: {
-					selectedSiteSlug: null
-				}
+					selectedSiteSlug: null,
+				},
 			} );
 
 			expect( slug ).to.be.null;
@@ -105,13 +110,13 @@ describe( 'selectors', () => {
 						2916284: {
 							ID: 2916284,
 							name: 'WordPress.com Example Blog',
-							URL: 'https://example.com'
-						}
-					}
+							URL: 'https://example.com',
+						},
+					},
 				},
 				ui: {
-					selectedSiteId: 2916284
-				}
+					selectedSiteId: 2916284,
+				},
 			} );
 
 			expect( slug ).to.eql( 'example.com' );
@@ -122,8 +127,8 @@ describe( 'selectors', () => {
 		it( 'should return false if no section is assigned', () => {
 			const section = getSection( {
 				ui: {
-					section: false
-				}
+					section: false,
+				},
 			} );
 
 			expect( section ).to.eql( false );
@@ -135,12 +140,12 @@ describe( 'selectors', () => {
 				paths: [ '/post', '/page' ],
 				module: 'post-editor',
 				group: 'editor',
-				secondary: true
+				secondary: true,
 			};
 			const section = getSection( {
 				ui: {
-					section: sectionObj
-				}
+					section: sectionObj,
+				},
 			} );
 
 			expect( section ).to.equal( sectionObj );
@@ -151,8 +156,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no section is assigned', () => {
 			const sectionName = getSectionName( {
 				ui: {
-					section: false
-				}
+					section: false,
+				},
 			} );
 
 			expect( sectionName ).to.be.null;
@@ -166,9 +171,9 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true
-					}
-				}
+						secondary: true,
+					},
+				},
 			} );
 
 			expect( sectionName ).to.equal( 'post-editor' );
@@ -179,8 +184,8 @@ describe( 'selectors', () => {
 		it( 'should return null if no section is assigned', () => {
 			const sectionName = getSectionGroup( {
 				ui: {
-					section: false
-				}
+					section: false,
+				},
 			} );
 
 			expect( sectionName ).to.be.null;
@@ -194,9 +199,9 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true
-					}
-				}
+						secondary: true,
+					},
+				},
 			} );
 
 			expect( sectionName ).to.equal( 'editor' );
@@ -207,8 +212,8 @@ describe( 'selectors', () => {
 		it( 'should return false if no section is assigned', () => {
 			const siteSection = isSiteSection( {
 				ui: {
-					section: false
-				}
+					section: false,
+				},
 			} );
 
 			expect( siteSection ).to.be.false;
@@ -222,9 +227,9 @@ describe( 'selectors', () => {
 						paths: [ '/me' ],
 						module: 'me',
 						group: 'me',
-						secondary: true
-					}
-				}
+						secondary: true,
+					},
+				},
 			} );
 
 			expect( siteSection ).to.be.false;
@@ -238,9 +243,9 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true
-					}
-				}
+						secondary: true,
+					},
+				},
 			} );
 
 			expect( siteSection ).to.be.true;
@@ -251,8 +256,8 @@ describe( 'selectors', () => {
 		it( 'should return false if there is no section currently selected', () => {
 			const selected = isSectionIsomorphic( {
 				ui: {
-					section: false
-				}
+					section: false,
+				},
 			} );
 
 			expect( selected ).to.be.false;
@@ -266,11 +271,11 @@ describe( 'selectors', () => {
 				module: 'my-sites/themes',
 				name: 'themes',
 				paths: [ '/themes' ],
-				secondary: false
+				secondary: false,
 			};
 
 			const selected = isSectionIsomorphic( {
-				ui: { section }
+				ui: { section },
 			} );
 
 			expect( selected ).to.be.true;
@@ -283,23 +288,27 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should be true if true and secondary does not override it', () => {
-			expect( hasSidebar( {
-				ui: {
-					hasSidebar: true,
-					section: {}
-				}
-			} ) ).to.be.true;
+			expect(
+				hasSidebar( {
+					ui: {
+						hasSidebar: true,
+						section: {},
+					},
+				} )
+			).to.be.true;
 		} );
 
 		it( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
-			expect( hasSidebar( {
-				ui: {
-					hasSidebar: true,
-					section: {
-						secondary: false
-					}
-				}
-			} ) ).to.be.false;
+			expect(
+				hasSidebar( {
+					ui: {
+						hasSidebar: true,
+						section: {
+							secondary: false,
+						},
+					},
+				} )
+			).to.be.false;
 		} );
 	} );
 } );

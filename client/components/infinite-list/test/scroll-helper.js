@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ describe( 'scroll-helper', function() {
 			var helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
-				itemsPerRow: 1
+				itemsPerRow: 1,
 			};
 			helper.updateContextHeight( 1000 );
 
@@ -44,7 +45,7 @@ describe( 'scroll-helper', function() {
 			var helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
-				itemsPerRow: 1
+				itemsPerRow: 1,
 			};
 			helper.updateContextHeight( 200 );
 
@@ -70,17 +71,16 @@ describe( 'scroll-helper', function() {
 		var preparedBounds = {
 				topPlaceholder: {
 					top: -2000,
-					height: 1000
+					height: 1000,
 				},
 				bottomPlaceholder: {
 					bottom: 4000,
-					height: 2000
-				}
+					height: 2000,
+				},
 			},
 			helper = new ScrollHelper( function( ref ) {
 				return preparedBounds[ ref ];
-			}
-			);
+			} );
 
 		helper.updatePlaceholderDimensions();
 
@@ -104,7 +104,7 @@ describe( 'scroll-helper', function() {
 			helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 200,
-				itemsPerRow: 1
+				itemsPerRow: 1,
 			};
 			helper.updateContextHeight( 1000 );
 		} );
@@ -136,20 +136,19 @@ describe( 'scroll-helper', function() {
 		describe( 'Hiding batch of items', function() {
 			var preparedBounds = {
 					i0: {
-						bottom: -1850
+						bottom: -1850,
 					},
 					i1: {
-						bottom: -1500
+						bottom: -1500,
 					},
 					// i2: { bottom: -1200 }, Let it use guessedItemHeight for this one
 					i3: {
-						bottom: -900
-					}
+						bottom: -900,
+					},
 				},
 				helper = new ScrollHelper( function( ref ) {
 					return preparedBounds[ ref ];
-				}
-				);
+				} );
 			helper.props = {
 				guessedItemHeight: 300,
 				items: range( 4 ),
@@ -178,27 +177,29 @@ describe( 'scroll-helper', function() {
 			} );
 
 			it( 'stored hidden items height', function() {
-				assert.deepEqual( {
-					i0: 250,
-					i1: 350,
-					i2: 300
-				}, helper.itemHeights );
+				assert.deepEqual(
+					{
+						i0: 250,
+						i1: 350,
+						i2: 300,
+					},
+					helper.itemHeights
+				);
 			} );
 		} );
 
 		describe( 'Completely above context', function() {
 			var preparedBounds = {
 					i0: {
-						bottom: -1850
+						bottom: -1850,
 					},
 					i1: {
-						bottom: -1500
+						bottom: -1500,
 					},
 				},
 				helper = new ScrollHelper( function( ref ) {
 					return preparedBounds[ ref ];
-				}
-				);
+				} );
 
 			helper.props = {
 				guessedItemHeight: 300,
@@ -256,7 +257,7 @@ describe( 'scroll-helper', function() {
 				i0: 250,
 				i1: 350,
 				i3: 300,
-				i4: 300
+				i4: 300,
 			}; // i2 left to default
 
 			helper.showItemsAbove();
@@ -274,9 +275,12 @@ describe( 'scroll-helper', function() {
 			} );
 
 			it( 'removed shown items height', function() {
-				assert.deepEqual( {
-					i0: 250
-				}, helper.itemHeights );
+				assert.deepEqual(
+					{
+						i0: 250,
+					},
+					helper.itemHeights
+				);
 			} );
 		} );
 
@@ -346,23 +350,22 @@ describe( 'scroll-helper', function() {
 		describe( 'Hiding batch of items', function() {
 			var preparedBounds = {
 					i5: {
-						top: 1900
+						top: 1900,
 					},
 					i6: {
-						top: 2200
+						top: 2200,
 					},
 					i7: {
-						top: 2500
+						top: 2500,
 					},
 					// i8: { top: 3400 }, Let it use guessedItemHeight for this one
 					i9: {
-						top: 3700
-					}
+						top: 3700,
+					},
 				},
 				helper = new ScrollHelper( function( ref ) {
 					return preparedBounds[ ref ];
-				}
-				);
+				} );
 			helper.props = {
 				items: range( 10 ),
 				guessedItemHeight: 300,
@@ -392,19 +395,23 @@ describe( 'scroll-helper', function() {
 			} );
 
 			it( 'stored hidden items height', function() {
-				assert.deepEqual( {
-					i6: 300,
-					i7: 900,
-					i8: 300,
-					i9: 500
-				}, helper.itemHeights );
+				assert.deepEqual(
+					{
+						i6: 300,
+						i7: 900,
+						i8: 300,
+						i9: 500,
+					},
+					helper.itemHeights
+				);
 			} );
 		} );
 
 		describe( 'Completely below context', function() {
-			var helper = new ScrollHelper( function() {
-				return null;
-			} // let it use guessed height
+			var helper = new ScrollHelper(
+				function() {
+					return null;
+				} // let it use guessed height
 			);
 			helper.props = {
 				items: range( 2 ),
@@ -462,7 +469,7 @@ describe( 'scroll-helper', function() {
 			helper.itemHeights = {
 				i5: 300,
 				i6: 300,
-				i7: 900
+				i7: 900,
 			};
 			// corresponding itemTops: 1900, 2200, 2500, 3400
 
@@ -481,9 +488,12 @@ describe( 'scroll-helper', function() {
 			} );
 
 			it( 'removed shown items height', function() {
-				assert.deepEqual( {
-					i7: 900
-				}, helper.itemHeights );
+				assert.deepEqual(
+					{
+						i7: 900,
+					},
+					helper.itemHeights
+				);
 			} );
 		} );
 
@@ -505,7 +515,7 @@ describe( 'scroll-helper', function() {
 			helper.bottomPlaceholderHeight = 3100;
 			helper.itemHeights = {
 				i5: 1200,
-				i6: 300
+				i6: 300,
 			};
 			// corresponding itemTops: 3100, 3400
 
@@ -584,7 +594,7 @@ describe( 'scroll-helper', function() {
 			helper = new ScrollHelper();
 			helper.props = {
 				fetchingNextPage: false,
-				lastPage: false
+				lastPage: false,
 			};
 			helper.updateContextHeight( 1000 );
 			helper.bottomPlaceholderHeight = 0;

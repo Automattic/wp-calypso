@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ describe( 'getMenuItemTypes()', () => {
 			renderer: 'renderPostOptions',
 			show: true,
 			createLink: '/page/2916284/new',
-			gaEventLabel: 'Page'
+			gaEventLabel: 'Page',
 		},
 		{
 			name: 'custom',
@@ -25,7 +26,7 @@ describe( 'getMenuItemTypes()', () => {
 			icon: 'link',
 			renderer: 'renderLinkOptions',
 			show: true,
-			gaEventLabel: 'Link'
+			gaEventLabel: 'Link',
 		},
 		{
 			name: 'category',
@@ -34,7 +35,7 @@ describe( 'getMenuItemTypes()', () => {
 			renderer: 'renderTaxonomyOptions',
 			show: true,
 			createLink: 'http://ribs.com/wp-admin/edit-tags.php?taxonomy=category',
-			gaEventLabel: 'Category'
+			gaEventLabel: 'Category',
 		},
 		{
 			name: 'post_tag',
@@ -43,7 +44,7 @@ describe( 'getMenuItemTypes()', () => {
 			renderer: 'renderTaxonomyOptions',
 			show: true,
 			createLink: 'http://ribs.com/wp-admin/edit-tags.php?taxonomy=post_tag',
-			gaEventLabel: 'Tag'
+			gaEventLabel: 'Tag',
 		},
 		{
 			name: 'post_format',
@@ -51,7 +52,7 @@ describe( 'getMenuItemTypes()', () => {
 			icon: 'summary',
 			renderer: 'renderTaxonomyContents',
 			show: false,
-			gaEventLabel: 'Post Format'
+			gaEventLabel: 'Post Format',
 		},
 		{
 			name: 'post',
@@ -60,15 +61,15 @@ describe( 'getMenuItemTypes()', () => {
 			renderer: 'renderPostOptions',
 			show: true,
 			createLink: '/post/2916284/new',
-			gaEventLabel: 'Post'
-		}
+			gaEventLabel: 'Post',
+		},
 	];
 
 	it( 'should return an empty array if the site is untracked', () => {
 		const state = {
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const items = getMenuItemTypes( state, 2916284 );
 
@@ -83,14 +84,14 @@ describe( 'getMenuItemTypes()', () => {
 						ID: 2916284,
 						slug: 'chicken',
 						options: {
-							admin_url: 'http://ribs.com/wp-admin/'
-						}
-					}
-				}
+							admin_url: 'http://ribs.com/wp-admin/',
+						},
+					},
+				},
 			},
 			postTypes: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const items = getMenuItemTypes( state, 2916284 );
 
@@ -105,10 +106,10 @@ describe( 'getMenuItemTypes()', () => {
 						ID: 2916284,
 						slug: 'chicken',
 						options: {
-							admin_url: 'http://ribs.com/wp-admin/'
-						}
-					}
-				}
+							admin_url: 'http://ribs.com/wp-admin/',
+						},
+					},
+				},
 			},
 			postTypes: {
 				items: {
@@ -119,13 +120,12 @@ describe( 'getMenuItemTypes()', () => {
 							api_queryable: true,
 							map_meta_cap: true,
 							labels: {
-								not_found: 'Testimonial not found'
+								not_found: 'Testimonial not found',
 							},
-
-						}
-					}
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 		const items = getMenuItemTypes( state, 2916284 );
 
@@ -141,7 +141,7 @@ describe( 'getMenuItemTypes()', () => {
 				notFoundLabel: 'Testimonial not found.',
 				renderer: 'renderPostOptions',
 				show: true,
-			}
+			},
 		] );
 	} );
 } );

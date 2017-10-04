@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getStats,
-	isDeletingFile,
-	isGeneratingStats,
-} from '../selectors';
+import { getStats, isDeletingFile, isGeneratingStats } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -22,8 +19,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpSuperCache: {
 						stats: undefined,
-					}
-				}
+					},
+				},
 			};
 			const isGenerating = isGeneratingStats( state, primarySiteId );
 
@@ -37,10 +34,10 @@ describe( 'selectors', () => {
 						stats: {
 							generating: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isGenerating = isGeneratingStats( state, secondarySiteId );
 
@@ -54,10 +51,10 @@ describe( 'selectors', () => {
 						stats: {
 							generating: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isGenerating = isGeneratingStats( state, primarySiteId );
 
@@ -71,10 +68,10 @@ describe( 'selectors', () => {
 						stats: {
 							generating: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isGenerating = isGeneratingStats( state, primarySiteId );
 
@@ -89,7 +86,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
-				}
+				},
 			};
 			const stats = getStats( state, primarySiteId );
 
@@ -103,10 +100,10 @@ describe( 'selectors', () => {
 						stats: {
 							items: {
 								[ primarySiteId ]: primaryStats,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const stats = getStats( state, secondarySiteId );
 
@@ -120,10 +117,10 @@ describe( 'selectors', () => {
 						stats: {
 							items: {
 								[ primarySiteId ]: primaryStats,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const stats = getStats( state, primarySiteId );
 
@@ -136,7 +133,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
-				}
+				},
 			};
 			const isDeleting = isDeletingFile( state, primarySiteId );
 
@@ -150,10 +147,10 @@ describe( 'selectors', () => {
 						stats: {
 							deleting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingFile( state, secondarySiteId );
 
@@ -167,10 +164,10 @@ describe( 'selectors', () => {
 						stats: {
 							deleting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingFile( state, primarySiteId );
 
@@ -184,10 +181,10 @@ describe( 'selectors', () => {
 						stats: {
 							deleting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingFile( state, primarySiteId );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +15,15 @@ describe( 'selectors', () => {
 	} );
 
 	it( 'should return signupDependencyStore instance from the state', () => {
-		expect( getSignupDependencyStore( {
-			signup: {
-				dependencyStore: { test: 123 }
-			}
-		}, {} ) ).to.be.eql( { test: 123 } );
+		expect(
+			getSignupDependencyStore(
+				{
+					signup: {
+						dependencyStore: { test: 123 },
+					},
+				},
+				{}
+			)
+		).to.be.eql( { test: 123 } );
 	} );
 } );

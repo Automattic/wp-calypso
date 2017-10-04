@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTerms } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeFilterTerms } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTerms()', () => {
 	it( 'should return undefined for an inexistent filter slug', () => {

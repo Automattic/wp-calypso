@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,19 +18,19 @@ describe( 'assembler', () => {
 			has_registration: false,
 			primary_domain: false,
 			type: 'redirect',
-			wpcom_domain: false
+			wpcom_domain: false,
 		},
 		mappedDataTransferObject = assign( {}, redirectDataTransferObject, {
-			type: 'mapped'
+			type: 'mapped',
 		} ),
 		primaryRegisteredDataTransferObject = assign( {}, redirectDataTransferObject, {
 			has_registration: true,
 			primary_domain: true,
-			type: 'wpcom'
+			type: 'wpcom',
 		} ),
 		wpcomDataTransferObject = assign( {}, redirectDataTransferObject, {
 			type: 'wpcom',
-			wpcom_domain: true
+			wpcom_domain: true,
 		} ),
 		redirectDomainObject = {
 			autoRenewalMoment: undefined,
@@ -57,17 +58,17 @@ describe( 'assembler', () => {
 			transferLockOnWhoisUpdateOptional: undefined,
 			whoisUpdateUnmodifiableFields: undefined,
 			hasZone: undefined,
-			pointsToWpcom: undefined
+			pointsToWpcom: undefined,
 		},
 		mappedDomainObject = assign( {}, redirectDomainObject, {
-			type: domainTypes.MAPPED
+			type: domainTypes.MAPPED,
 		} ),
 		primaryRegisteredDomainObject = assign( {}, redirectDomainObject, {
 			isPrimary: true,
-			type: domainTypes.REGISTERED
+			type: domainTypes.REGISTERED,
 		} ),
 		wpcomDomainObject = assign( {}, redirectDomainObject, {
-			type: domainTypes.WPCOM
+			type: domainTypes.WPCOM,
 		} );
 
 	it( 'should produce empty array when null data transfer object passed', () => {
@@ -75,20 +76,24 @@ describe( 'assembler', () => {
 	} );
 
 	it( 'should produce array with domains even when there is no primary domain', () => {
-		expect( domainsAssembler.createDomainObjects( [ redirectDataTransferObject ] ) ).to.be.eql( [ redirectDomainObject ] );
+		expect( domainsAssembler.createDomainObjects( [ redirectDataTransferObject ] ) ).to.be.eql( [
+			redirectDomainObject,
+		] );
 	} );
 
 	it( 'should produce array with registered domain first when registered domain is set as primary domain', () => {
-		expect( domainsAssembler.createDomainObjects( [
-			mappedDataTransferObject,
-			primaryRegisteredDataTransferObject,
-			redirectDataTransferObject,
-			wpcomDataTransferObject
-		] ) ).to.be.eql( [
+		expect(
+			domainsAssembler.createDomainObjects( [
+				mappedDataTransferObject,
+				primaryRegisteredDataTransferObject,
+				redirectDataTransferObject,
+				wpcomDataTransferObject,
+			] )
+		).to.be.eql( [
 			primaryRegisteredDomainObject,
 			mappedDomainObject,
 			redirectDomainObject,
-			wpcomDomainObject
+			wpcomDomainObject,
 		] );
 	} );
 } );

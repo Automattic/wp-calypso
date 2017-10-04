@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-
 
 describe( 'KeyboardShortcuts', function() {
 	it( 'should emit events to subscribers', function() {

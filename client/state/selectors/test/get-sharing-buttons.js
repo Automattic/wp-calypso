@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +15,10 @@ describe( 'getSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					items: {
-						2916284: [ { ID: 'facebook' } ]
-					}
-				}
-			}
+						2916284: [ { ID: 'facebook' } ],
+					},
+				},
+			},
 		};
 		const buttons = getSharingButtons( state, 2916285 );
 
@@ -29,10 +30,10 @@ describe( 'getSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					items: {
-						2916284: [ { ID: 'facebook' } ]
-					}
-				}
-			}
+						2916284: [ { ID: 'facebook' } ],
+					},
+				},
+			},
 		};
 		const buttons = getSharingButtons( state, 2916284 );
 

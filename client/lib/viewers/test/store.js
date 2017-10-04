@@ -1,5 +1,4 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +38,7 @@ describe( 'Viewers Store', () => {
 	} );
 
 	describe( 'Get Viewers', () => {
-		it( 'Should return false when viewers haven\'t been fetched', () => {
+		it( "Should return false when viewers haven't been fetched", () => {
 			const viewers = ViewersStore.getViewers( siteId );
 
 			assert.isFalse( viewers, 'viewers is false' );

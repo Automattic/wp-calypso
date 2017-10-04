@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import {
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
-	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST
+	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -50,7 +51,12 @@ describe( 'actions', () => {
 			const reviewId = 5;
 			const replyId = 6;
 			const action = deleteReviewReply( siteId, reviewId, replyId );
-			expect( action ).to.eql( { type: WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST, siteId, reviewId, replyId } );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
+				siteId,
+				reviewId,
+				replyId,
+			} );
 		} );
 	} );
 	describe( '#updateReviewReply()', () => {
@@ -60,7 +66,13 @@ describe( 'actions', () => {
 			const replyId = 6;
 			const changes = { content: 'test' };
 			const action = updateReviewReply( siteId, reviewId, replyId, changes );
-			expect( action ).to.eql( { type: WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST, siteId, reviewId, replyId, changes } );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
+				siteId,
+				reviewId,
+				replyId,
+				changes,
+			} );
 		} );
 	} );
 } );

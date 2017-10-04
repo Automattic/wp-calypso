@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ import { expect } from 'chai';
 import {
 	getNormalizedTermsQuery,
 	getSerializedTermsQuery,
-	getSerializedTermsQueryWithoutPage
+	getSerializedTermsQueryWithoutPage,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -17,11 +18,11 @@ describe( 'utils', () => {
 		it( 'should exclude default values', () => {
 			const query = getNormalizedTermsQuery( {
 				page: 2,
-				number: 100
+				number: 100,
 			} );
 
 			expect( query ).to.eql( {
-				page: 2
+				page: 2,
 			} );
 		} );
 	} );
@@ -39,7 +40,7 @@ describe( 'utils', () => {
 		it( 'should lowercase the result', () => {
 			const serializedQuery = getSerializedTermsQuery( {
 				search: 'Chicken',
-				page: '2'
+				page: '2',
 			} );
 
 			expect( serializedQuery ).to.equal( '{"search":"chicken","page":"2"}' );
@@ -50,7 +51,7 @@ describe( 'utils', () => {
 		it( 'should return a JSON string of a normalized query without page', () => {
 			const serializedQuery = getSerializedTermsQueryWithoutPage( {
 				search: 'Chicken',
-				page: '2'
+				page: '2',
 			} );
 
 			expect( serializedQuery ).to.equal( '{"search":"chicken"}' );

@@ -1,7 +1,4 @@
-jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserDate: require( 'sinon' ).stub()
-} ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -11,14 +8,17 @@ import { stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import { getCurrentUserDate } from 'state/current-user/selectors';
 import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
+import { getCurrentUserDate } from 'state/current-user/selectors';
+jest.mock( 'state/current-user/selectors', () => ( {
+	getCurrentUserDate: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'isUserRegistrationDaysWithinRange()', () => {
 	const state = 'state';
 	const registrationDate = 'registrationDate';
 	const moment = {
-		diff: stub()
+		diff: stub(),
 	};
 
 	it( 'should return null when there is no current user date', () => {

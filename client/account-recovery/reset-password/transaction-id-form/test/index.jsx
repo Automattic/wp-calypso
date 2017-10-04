@@ -1,11 +1,10 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -17,7 +16,8 @@ describe( 'TransactionIdForm', () => {
 		const wrapper = shallow( <TransactionIdFormComponent /> );
 
 		expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.false;
-		expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to.not.be.ok;
+		expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to.not
+			.be.ok;
 		expect( wrapper.find( '.transaction-id-form__continue-button' ).prop( 'disabled' ) ).to.be.ok;
 		expect( wrapper.find( '.transaction-id-form__skip-button' ).prop( 'disabled' ) ).to.not.be.ok;
 	} );
@@ -28,7 +28,8 @@ describe( 'TransactionIdForm', () => {
 
 			wrapper.find( '.transaction-id-form__transaction-id-input' ).node.value = '';
 			wrapper.find( '.transaction-id-form__transaction-id-input' ).simulate( 'change' );
-			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to.not.be.ok;
+			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to
+				.not.be.ok;
 			expect( wrapper.find( '.transaction-id-form__continue-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
@@ -40,7 +41,8 @@ describe( 'TransactionIdForm', () => {
 			wrapper.find( '.transaction-id-form__continue-button' ).simulate( 'click' );
 
 			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
-			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to.be.ok;
+			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to
+				.be.ok;
 			expect( wrapper.find( '.transaction-id-form__continue-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 	} );

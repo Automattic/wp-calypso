@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,6 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	createReviewReply,
-	deleteReviewReply,
-	fetchReviewReplies,
-	updateReviewReply,
-} from 'woocommerce/state/sites/review-replies/actions';
 import {
 	handleDeleteReviewReply,
 	announceDeleteSuccess,
@@ -29,7 +24,8 @@ import {
 	announceCreateFailure,
 } from '../handlers.js';
 import reviewReplies from './fixtures/review-replies';
-import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
+import { NOTICE_CREATE } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLY_CREATED,
@@ -37,8 +33,13 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import {
+	createReviewReply,
+	deleteReviewReply,
+	fetchReviewReplies,
+	updateReviewReply,
+} from 'woocommerce/state/sites/review-replies/actions';
+import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewRepliesRequest', () => {
@@ -48,16 +49,18 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchReviewReplies( siteId, reviewId );
 			handleReviewRepliesRequest( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: `/wp/v2/comments&parent=${ reviewId }&order=asc&per_page=15&_method=GET`,
-					json: true,
-					apiVersion: '1.1',
-				}
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					method: 'GET',
+					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					query: {
+						path: `/wp/v2/comments&parent=${ reviewId }&order=asc&per_page=15&_method=GET`,
+						json: true,
+						apiVersion: '1.1',
+					},
+				} )
+			);
 		} );
 	} );
 	describe( '#handleReviewsRequestSuccess()', () => {
@@ -107,18 +110,20 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = deleteReviewReply( siteId, reviewId, replyId );
 			handleDeleteReviewReply( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					json: true,
-					apiVersion: '1.1',
-				},
-				body: {
-					path: `/wp/v2/comments/${ replyId }&force=true&_method=DELETE`,
-				}
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					method: 'POST',
+					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					query: {
+						json: true,
+						apiVersion: '1.1',
+					},
+					body: {
+						path: `/wp/v2/comments/${ replyId }&force=true&_method=DELETE`,
+					},
+				} )
+			);
 		} );
 	} );
 	describe( '#announceDeleteSuccess', () => {
@@ -127,12 +132,16 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = deleteReviewReply( siteId, 544, 105 );
 			announceDeleteSuccess( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_REPLY_DELETED,
-			} ) );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: NOTICE_CREATE,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_REVIEW_REPLY_DELETED,
+				} )
+			);
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
 		} );
 	} );
 	describe( '#announceDeleteFailure', () => {
@@ -141,9 +150,11 @@ describe( 'handlers', () => {
 		it( 'should dispatch an error', () => {
 			const action = deleteReviewReply( siteId, 544, 105 );
 			announceDeleteFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: NOTICE_CREATE,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
 		} );
 	} );
 	describe( '#handleReviewReplyUpdate', () => {
@@ -155,19 +166,21 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = updateReviewReply( siteId, reviewId, replyId, changes );
 			handleReviewReplyUpdate( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					json: true,
-					apiVersion: '1.1',
-				},
-				body: {
-					path: `/wp/v2/comments/${ replyId }&_method=POST`,
-					body: JSON.stringify( changes ),
-				}
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					method: 'POST',
+					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					query: {
+						json: true,
+						apiVersion: '1.1',
+					},
+					body: {
+						path: `/wp/v2/comments/${ replyId }&_method=POST`,
+						body: JSON.stringify( changes ),
+					},
+				} )
+			);
 		} );
 	} );
 	describe( '#handleReviewReplyUpdateSuccess', () => {
@@ -176,12 +189,16 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
 			handleReviewReplyUpdateSuccess( { dispatch }, action, { content: 'test' } );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_REPLY_UPDATED,
-			} ) );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: NOTICE_CREATE,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_REVIEW_REPLY_UPDATED,
+				} )
+			);
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
 		} );
 	} );
 	describe( '#announceReviewReplyUpdateFailure', () => {
@@ -190,9 +207,11 @@ describe( 'handlers', () => {
 		it( 'should dispatch an error', () => {
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
 			announceReviewReplyUpdateFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: NOTICE_CREATE,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
 		} );
 	} );
 	describe( '#handleReviewReplyCreate', () => {
@@ -203,19 +222,21 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
 			handleReviewReplyCreate( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					json: true,
-					apiVersion: '1.1',
-				},
-				body: {
-					path: '/wp/v2/comments&_method=POST',
-					body: JSON.stringify( { content: 'Hello world', parent: reviewId, post: productId } ),
-				}
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					method: 'POST',
+					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					query: {
+						json: true,
+						apiVersion: '1.1',
+					},
+					body: {
+						path: '/wp/v2/comments&_method=POST',
+						body: JSON.stringify( { content: 'Hello world', parent: reviewId, post: productId } ),
+					},
+				} )
+			);
 		} );
 	} );
 	describe( '#handleReviewReplyCreateSuccess', () => {
@@ -231,7 +252,7 @@ describe( 'handlers', () => {
 							123: {
 								reviews: {
 									items: keyBy( reviews, 'id' ),
-								}
+								},
 							},
 						},
 					},
@@ -246,12 +267,16 @@ describe( 'handlers', () => {
 			};
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
 			handleReviewReplyCreateSuccess( store, action, create );
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
-			} ) );
-			expect( store.dispatch ).to.not.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_REVIEW_REPLY_CREATED,
+				} )
+			);
+			expect( store.dispatch ).to.not.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+				} )
+			);
 		} );
 		it( 'should approve a review when requested', () => {
 			const store = {
@@ -260,9 +285,11 @@ describe( 'handlers', () => {
 			};
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', true );
 			handleReviewReplyCreateSuccess( store, action, create );
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
+				} )
+			);
 		} );
 	} );
 	describe( '#announceCreateFailure', () => {
@@ -271,9 +298,11 @@ describe( 'handlers', () => {
 		it( 'should dispatch an error', () => {
 			const action = createReviewReply( siteId, 544, 105, 'Hello world', false );
 			announceCreateFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: NOTICE_CREATE,
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
 		} );
 	} );
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,10 @@ describe( 'getJetpackModule()', () => {
 				jetpack: {
 					modules: {
 						items: {
-							123456: MODULE_DATA_FIXTURE
-						}
-					}
-				}
+							123456: MODULE_DATA_FIXTURE,
+						},
+					},
+				},
 			},
 			siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-a' );
@@ -30,10 +31,10 @@ describe( 'getJetpackModule()', () => {
 				jetpack: {
 					modules: {
 						items: {
-							654321: MODULE_DATA_FIXTURE
-						}
-					}
-				}
+							654321: MODULE_DATA_FIXTURE,
+						},
+					},
+				},
 			},
 			siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-a' );
@@ -45,10 +46,10 @@ describe( 'getJetpackModule()', () => {
 				jetpack: {
 					modules: {
 						items: {
-							123456: MODULE_DATA_FIXTURE
-						}
-					}
-				}
+							123456: MODULE_DATA_FIXTURE,
+						},
+					},
+				},
 			},
 			siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-z' );

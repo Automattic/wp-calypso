@@ -1,17 +1,16 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import photon from 'photon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import photon from 'photon';
 import ListItemVideo from 'my-sites/media-library/list-item-video';
 
 const WIDTH = 450;
@@ -27,8 +26,16 @@ describe( 'MediaLibraryListItem video', function() {
 		}
 	} );
 
-	const expectedBackground = () => styleUrl( photon( fixtures.media[ 1 ].thumbnails.fmt_hd, { width: WIDTH } ) );
-	const getItem = type => <ListItemVideo media={ fixtures.media[ 1 ] } scale={ 1 } maxImageWidth={ WIDTH } thumbnailType={ type } />;
+	const expectedBackground = () =>
+		styleUrl( photon( fixtures.media[ 1 ].thumbnails.fmt_hd, { width: WIDTH } ) );
+	const getItem = type => (
+		<ListItemVideo
+			media={ fixtures.media[ 1 ] }
+			scale={ 1 }
+			maxImageWidth={ WIDTH }
+			thumbnailType={ type }
+		/>
+	);
 
 	context( 'thumbnail display mode', function() {
 		it( 'defaults to photon', function() {
@@ -52,7 +59,9 @@ describe( 'MediaLibraryListItem video', function() {
 		it( 'returns existing fmt_hd thumbnail for type MEDIA_IMAGE_THUMBNAIL', function() {
 			wrapper = shallow( getItem( 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( wrapper.props().style.backgroundImage ).to.be.equal( styleUrl( fixtures.media[ 1 ].thumbnails.fmt_hd ) );
+			expect( wrapper.props().style.backgroundImage ).to.be.equal(
+				styleUrl( fixtures.media[ 1 ].thumbnails.fmt_hd )
+			);
 		} );
 	} );
 } );

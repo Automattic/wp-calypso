@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +15,10 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 			ui: {
 				editor: {
 					imageEditor: {
-						originalAspectRatio: null
-					}
-				}
-			}
+						originalAspectRatio: null,
+					},
+				},
+			},
 		} );
 
 		expect( originalAspectRatio ).to.equal( null );
@@ -28,10 +29,10 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 			ui: {
 				editor: {
 					imageEditor: {
-						originalAspectRatio: { width: 100, height: 200 }
-					}
-				}
-			}
+						originalAspectRatio: { width: 100, height: 200 },
+					},
+				},
+			},
 		} );
 
 		expect( originalAspectRatio ).to.eql( { width: 100, height: 200 } );

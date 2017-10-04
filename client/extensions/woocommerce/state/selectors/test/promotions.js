@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,21 +22,17 @@ describe( 'promotions', () => {
 					promotions: {
 						currentPage: 12,
 						perPage: 30,
-					}
+					},
 				},
 				sites: {
 					123: {
 						promotions: {
-							promotions: [
-								{ type: 'empty1' },
-								{ type: 'empty2' },
-								{ type: 'empty3' },
-							]
-						}
-					}
-				}
-			}
-		}
+							promotions: [ { type: 'empty1' }, { type: 'empty2' }, { type: 'empty3' } ],
+						},
+					},
+				},
+			},
+		},
 	};
 
 	describe( '#getPromotions', () => {
@@ -82,4 +79,3 @@ describe( 'promotions', () => {
 		} );
 	} );
 } );
-

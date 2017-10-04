@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCreatingPages, isFetchingSetupStatus, shouldGoToNextStep, shouldShowSetupWizard } from '../selectors';
+import {
+	isCreatingPages,
+	isFetchingSetupStatus,
+	shouldGoToNextStep,
+	shouldShowSetupWizard,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -18,8 +24,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: undefined,
-					}
-				}
+					},
+				},
 			};
 			const isCreating = isCreatingPages( state, primarySiteId );
 
@@ -33,10 +39,10 @@ describe( 'selectors', () => {
 						setup: {
 							creating: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isCreating = isCreatingPages( state, secondarySiteId );
 
@@ -50,10 +56,10 @@ describe( 'selectors', () => {
 						setup: {
 							creating: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isCreating = isCreatingPages( state, primarySiteId );
 
@@ -67,10 +73,10 @@ describe( 'selectors', () => {
 						setup: {
 							creating: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isCreating = isCreatingPages( state, primarySiteId );
 
@@ -84,8 +90,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: undefined,
-					}
-				}
+					},
+				},
 			};
 			const isFetching = isFetchingSetupStatus( state, primarySiteId );
 
@@ -99,10 +105,10 @@ describe( 'selectors', () => {
 						setup: {
 							fetching: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSetupStatus( state, secondarySiteId );
 
@@ -116,10 +122,10 @@ describe( 'selectors', () => {
 						setup: {
 							fetching: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSetupStatus( state, primarySiteId );
 
@@ -133,10 +139,10 @@ describe( 'selectors', () => {
 						setup: {
 							fetching: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSetupStatus( state, primarySiteId );
 
@@ -150,8 +156,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: undefined,
-					}
-				}
+					},
+				},
 			};
 			const goToNextStep = shouldGoToNextStep( state, primarySiteId );
 
@@ -165,10 +171,10 @@ describe( 'selectors', () => {
 						setup: {
 							nextStep: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const goToNextStep = shouldGoToNextStep( state, secondarySiteId );
 
@@ -182,10 +188,10 @@ describe( 'selectors', () => {
 						setup: {
 							nextStep: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const goToNextStep = shouldGoToNextStep( state, primarySiteId );
 
@@ -199,10 +205,10 @@ describe( 'selectors', () => {
 						setup: {
 							nextStep: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const goToNextStep = shouldGoToNextStep( state, primarySiteId );
 
@@ -216,8 +222,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						setup: undefined,
-					}
-				}
+					},
+				},
 			};
 			const showWizard = shouldShowSetupWizard( state, primarySiteId );
 
@@ -231,10 +237,10 @@ describe( 'selectors', () => {
 						setup: {
 							status: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const showWizard = shouldShowSetupWizard( state, secondarySiteId );
 
@@ -248,10 +254,10 @@ describe( 'selectors', () => {
 						setup: {
 							status: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const showWizard = shouldShowSetupWizard( state, primarySiteId );
 
@@ -265,10 +271,10 @@ describe( 'selectors', () => {
 						setup: {
 							status: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const showWizard = shouldShowSetupWizard( state, primarySiteId );
 

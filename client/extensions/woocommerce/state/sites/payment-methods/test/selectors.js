@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,15 +36,18 @@ const loadedState = {
 		woocommerce: {
 			sites: {
 				123: {
-					paymentMethods: [ {
-						id: 'bacs',
-						title: 'Direct bank transfer',
-						description: 'Make your payment directly into our bank account.',
-						enabled: false,
-						method_title: 'BACS',
-						methodType: 'offline',
-						method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
-					} ],
+					paymentMethods: [
+						{
+							id: 'bacs',
+							title: 'Direct bank transfer',
+							description: 'Make your payment directly into our bank account.',
+							enabled: false,
+							method_title: 'BACS',
+							methodType: 'offline',
+							method_description:
+								'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+						},
+					],
 				},
 			},
 		},
@@ -99,10 +103,9 @@ describe( 'selectors', () => {
 
 	describe( '#getPaymentMethods', () => {
 		it( 'should return paymentMethods when given populated state tree.', () => {
-			expect( getPaymentMethods( loadedState, 123 ) )
-				.to.deep.equal(
-					loadedState.extensions.woocommerce.sites[ 123 ].paymentMethods
-				);
+			expect( getPaymentMethods( loadedState, 123 ) ).to.deep.equal(
+				loadedState.extensions.woocommerce.sites[ 123 ].paymentMethods
+			);
 		} );
 
 		it( 'should return LOADING constant when given a loading state tree.', () => {
@@ -123,7 +126,8 @@ describe( 'selectors', () => {
 				enabled: false,
 				method_title: 'BACS',
 				methodType: 'offline',
-				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+				method_description:
+					'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
 			} );
 		} );
 

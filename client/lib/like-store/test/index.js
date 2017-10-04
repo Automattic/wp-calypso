@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
@@ -30,9 +31,9 @@ describe( 'index', function() {
 			data: {
 				post_ID: 123,
 				site_ID: 444,
-				likes: [ { ID: 555, login: 'bluefuton' } ]
+				likes: [ { ID: 555, login: 'bluefuton' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		// getLikesForPost( site_ID, post_ID )
@@ -51,9 +52,9 @@ describe( 'index', function() {
 				post_ID: 123,
 				site_ID: 444,
 				found: 9000,
-				likes: [ { ID: 555, login: 'bluefuton' }, { ID: 556, login: 'blowery' } ]
+				likes: [ { ID: 555, login: 'bluefuton' }, { ID: 556, login: 'blowery' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		const likeCount = LikeStore.getLikeCountForPost( 444, 123 );
@@ -71,9 +72,9 @@ describe( 'index', function() {
 				site_ID: 444,
 				i_like: true,
 				found: 100,
-				likes: [ { ID: 555, login: 'bluefuton' } ]
+				likes: [ { ID: 555, login: 'bluefuton' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 444, 123 ) ).to.be.true;
@@ -85,9 +86,9 @@ describe( 'index', function() {
 			data: {
 				post_ID: null,
 				site_ID: 444,
-				likes: [ { ID: 555 } ]
+				likes: [ { ID: 555 } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore._all() ).to.be.empty;
@@ -99,9 +100,9 @@ describe( 'index', function() {
 			data: {
 				post_ID: 1,
 				site_ID: 444,
-				likes: [ { ID: 123, login: 'bluefuton' } ]
+				likes: [ { ID: 123, login: 'bluefuton' } ],
 			},
-			error: new Error()
+			error: new Error(),
 		} );
 
 		expect( LikeStore._all() ).to.be.empty;
@@ -116,9 +117,9 @@ describe( 'index', function() {
 				site_ID: 555,
 				post_ID: 123,
 				likes: [],
-				found: 0
+				found: 0,
 			},
-			error: null
+			error: null,
 		} );
 
 		Dispatcher.handleServerAction( {
@@ -130,9 +131,9 @@ describe( 'index', function() {
 				i_like: true,
 				like_count: 1,
 				site_ID: 555,
-				post_ID: 123
+				post_ID: 123,
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 555, 123 ) ).to.be.true;
@@ -146,9 +147,9 @@ describe( 'index', function() {
 				i_like: false,
 				like_count: 0,
 				site_ID: 555,
-				post_ID: 123
+				post_ID: 123,
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 555, 123 ) ).to.be.false;
@@ -164,9 +165,8 @@ describe( 'index', function() {
 				is_external: false,
 				site_ID: 1234,
 				ID: 1,
-				like_count: 100
-			}
-
+				like_count: 100,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.eq( 100 );
@@ -182,9 +182,8 @@ describe( 'index', function() {
 				is_external: true,
 				site_ID: 1234,
 				ID: 1,
-				like_count: 100
-			}
-
+				like_count: 100,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
@@ -196,8 +195,7 @@ describe( 'index', function() {
 			type: 'RECEIVE_FEED_POST',
 			id: '1234',
 			error: null,
-			data: { errors: [] }
-
+			data: { errors: [] },
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
@@ -213,9 +211,8 @@ describe( 'index', function() {
 				likes_enabled: true,
 				is_external: false,
 				site_ID: 1234,
-				ID: 1
-			}
-
+				ID: 1,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;

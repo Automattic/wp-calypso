@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,22 +15,19 @@ import {
 	secondsSpentOnCurrentView,
 	bucketedTimeSpentOnCurrentView,
 } from '../selectors';
-import {
-	FIRST_VIEW_HIDE,
-	ROUTE_SET
-} from 'state/action-types';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 describe( 'isUserEligible()', () => {
 	it( 'makes all users eligible if no start date is defined in the config', () => {
 		const state = {
 			users: {
 				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
-				}
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' },
+				},
 			},
 			currentUser: {
-				id: 73705554
-			}
+				id: 73705554,
+			},
 		};
 		const eligible = isUserEligible( state, {} );
 
@@ -40,12 +38,12 @@ describe( 'isUserEligible()', () => {
 		const state = {
 			users: {
 				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014' }
-				}
+					73705554: { ID: 73705554, login: 'testonesite2014' },
+				},
 			},
 			currentUser: {
-				id: 73705554
-			}
+				id: 73705554,
+			},
 		};
 		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
 		const eligible = isUserEligible( state, config );
@@ -57,12 +55,12 @@ describe( 'isUserEligible()', () => {
 		const state = {
 			users: {
 				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-27T17:14:52+00:00' }
-				}
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-27T17:14:52+00:00' },
+				},
 			},
 			currentUser: {
-				id: 73705554
-			}
+				id: 73705554,
+			},
 		};
 		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
 		const eligible = isUserEligible( state, config );
@@ -74,12 +72,12 @@ describe( 'isUserEligible()', () => {
 		const state = {
 			users: {
 				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-25T17:14:52+00:00' }
-				}
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-25T17:14:52+00:00' },
+				},
 			},
 			currentUser: {
-				id: 73705554
-			}
+				id: 73705554,
+			},
 		};
 		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
 		const eligible = isUserEligible( state, config );
@@ -97,12 +95,12 @@ describe( 'selectors', () => {
 						{
 							type: ROUTE_SET,
 							path: '/devdocs',
-						}
+						},
 					],
 					queryArguments: {
 						initial: {},
 					},
-				}
+				},
 			} );
 
 			expect( firstViewConfig ).to.be.false;
@@ -115,15 +113,20 @@ describe( 'selectors', () => {
 						{
 							type: ROUTE_SET,
 							path: '/stats',
-						}
+						},
 					],
 					queryArguments: {
 						initial: {},
 					},
-				}
+				},
 			} );
 
-			expect( firstViewConfig ).to.deep.equal( { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' } );
+			expect( firstViewConfig ).to.deep.equal( {
+				name: 'stats',
+				paths: [ '/stats' ],
+				enabled: true,
+				startDate: '2016-07-26',
+			} );
 		} );
 	} );
 
@@ -132,21 +135,21 @@ describe( 'selectors', () => {
 			{
 				type: ROUTE_SET,
 				path: '/stats',
-			}
+			},
 		];
 
 		const currentUser = {
-			id: 73705554
+			id: 73705554,
 		};
 
 		const users = {
 			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
-			}
+				73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' },
+			},
 		};
 
 		const queryArguments = {
-			initial: {}
+			initial: {},
 		};
 
 		const config = {
@@ -155,115 +158,133 @@ describe( 'selectors', () => {
 			enabled: true,
 		};
 
-		it( 'should return true if the preferences have been fetched, the config has a first view for the current view,' +
-			' and it is not disabled', () => {
-			const viewEnabled = isViewEnabled( {
-				currentUser,
-				users,
-				preferences: {
-					remoteValues: {
-						firstViewHistory: [
-							{
-								view: 'stats',
-								timestamp: 123456,
-								disabled: false
-							}
-						]
+		it(
+			'should return true if the preferences have been fetched, the config has a first view for the current view,' +
+				' and it is not disabled',
+			() => {
+				const viewEnabled = isViewEnabled(
+					{
+						currentUser,
+						users,
+						preferences: {
+							remoteValues: {
+								firstViewHistory: [
+									{
+										view: 'stats',
+										timestamp: 123456,
+										disabled: false,
+									},
+								],
+							},
+							lastFetchedTimestamp: 123456,
+						},
+						ui: {
+							actionLog: actions,
+							queryArguments,
+						},
 					},
-					lastFetchedTimestamp: 123456,
-				},
-				ui: {
-					actionLog: actions,
-					queryArguments,
-				}
-			}, config );
+					config
+				);
 
-			expect( viewEnabled ).to.be.true;
-		} );
+				expect( viewEnabled ).to.be.true;
+			}
+		);
 
 		it( 'should return true if preferences have been fetched and the history is empty', () => {
-			const viewEnabled = isViewEnabled( {
-				currentUser,
-				users,
-				preferences: {
-					remoteValues: {
-						firstViewHistory: []
+			const viewEnabled = isViewEnabled(
+				{
+					currentUser,
+					users,
+					preferences: {
+						remoteValues: {
+							firstViewHistory: [],
+						},
+						lastFetchedTimestamp: 123456,
 					},
-					lastFetchedTimestamp: 123456,
+					ui: {
+						actionLog: actions,
+						queryArguments,
+					},
 				},
-				ui: {
-					actionLog: actions,
-					queryArguments,
-				}
-			}, config );
+				config
+			);
 
 			expect( viewEnabled ).to.be.true;
 		} );
 
 		it( 'should return false if the view is disabled', () => {
-			const viewEnabled = isViewEnabled( {
-				currentUser,
-				users,
-				preferences: {
-					remoteValues: {
-						firstViewHistory: [
-							{
-								view: 'stats',
-								timestamp: 123456,
-								disabled: true
-							}
-						]
+			const viewEnabled = isViewEnabled(
+				{
+					currentUser,
+					users,
+					preferences: {
+						remoteValues: {
+							firstViewHistory: [
+								{
+									view: 'stats',
+									timestamp: 123456,
+									disabled: true,
+								},
+							],
+						},
+						lastFetchedTimestamp: 123456,
 					},
-					lastFetchedTimestamp: 123456,
+					ui: {
+						actionLog: actions,
+						queryArguments,
+					},
 				},
-				ui: {
-					actionLog: actions,
-					queryArguments,
-				}
-			}, config );
+				config
+			);
 
 			expect( viewEnabled ).to.be.false;
 		} );
 
 		it( 'should return false if the view is disabled in the config', () => {
-			const viewEnabled = isViewEnabled( {
-				currentUser,
-				users,
-				preferences: {
-					remoteValues: {
-						firstViewHistory: []
+			const viewEnabled = isViewEnabled(
+				{
+					currentUser,
+					users,
+					preferences: {
+						remoteValues: {
+							firstViewHistory: [],
+						},
+						lastFetchedTimestamp: 123456,
 					},
-					lastFetchedTimestamp: 123456,
+					ui: {
+						actionLog: [
+							{
+								type: ROUTE_SET,
+								path: '/devdocs',
+							},
+						],
+						queryArguments,
+					},
 				},
-				ui: {
-					actionLog: [
-						{
-							type: ROUTE_SET,
-							path: '/devdocs',
-						}
-					],
-					queryArguments,
-				}
-			}, { name: 'devdocs', paths: [ '/devdocs' ], enabled: false } );
+				{ name: 'devdocs', paths: [ '/devdocs' ], enabled: false }
+			);
 
 			expect( viewEnabled ).to.be.false;
 		} );
 
-		it( 'should return false if the preferences haven\'t been fetched', () => {
-			const viewEnabled = isViewEnabled( {
-				currentUser,
-				users,
-				preferences: {
-					remoteValues: {
-						firstViewHistory: []
+		it( "should return false if the preferences haven't been fetched", () => {
+			const viewEnabled = isViewEnabled(
+				{
+					currentUser,
+					users,
+					preferences: {
+						remoteValues: {
+							firstViewHistory: [],
+						},
+						lastFetchedTimestamp: false,
 					},
-					lastFetchedTimestamp: false,
+					ui: {
+						actionLog: actions,
+						queryArguments,
+					},
 				},
-				ui: {
-					actionLog: actions,
-					queryArguments,
-				}
-			}, config );
+				config
+			);
 
 			expect( viewEnabled ).to.be.false;
 		} );
@@ -296,15 +317,18 @@ describe( 'selectors', () => {
 				},
 			];
 
-			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection( {
-				ui: {
-					section: {
-						name: 'stats',
-						paths: [ '/stats' ]
+			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection(
+				{
+					ui: {
+						section: {
+							name: 'stats',
+							paths: [ '/stats' ],
+						},
+						actionLog: actions,
 					},
-					actionLog: actions
-				}
-			}, config );
+				},
+				config
+			);
 
 			expect( wasFirstViewHidden ).to.be.true;
 		} );
@@ -329,15 +353,18 @@ describe( 'selectors', () => {
 				},
 			];
 
-			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection( {
-				ui: {
-					section: {
-						name: 'stats',
-						paths: [ '/stats' ]
+			const wasFirstViewHidden = wasFirstViewHiddenSinceEnteringCurrentSection(
+				{
+					ui: {
+						section: {
+							name: 'stats',
+							paths: [ '/stats' ],
+						},
+						actionLog: actions,
 					},
-					actionLog: actions
-				}
-			}, config );
+				},
+				config
+			);
 
 			expect( wasFirstViewHidden ).to.be.false;
 		} );
@@ -349,8 +376,8 @@ describe( 'selectors', () => {
 
 			const seconds = secondsSpentOnCurrentView( {
 				ui: {
-					actionLog: actions
-				}
+					actionLog: actions,
+				},
 			} );
 
 			expect( seconds ).to.equal( -1 );
@@ -362,14 +389,17 @@ describe( 'selectors', () => {
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const seconds = secondsSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962293000 );
+			const seconds = secondsSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962293000
+			);
 
 			expect( seconds ).to.equal( 3 );
 		} );
@@ -385,208 +415,241 @@ describe( 'selectors', () => {
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const seconds = secondsSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962295678 );
+			const seconds = secondsSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962295678
+			);
 
 			expect( seconds ).to.equal( 5.678 );
 		} );
 	} );
 
 	describe( '#bucketedTimeSpentOnCurrentView()', () => {
-		it( 'should return \'unknown\' when the action log is empty', () => {
+		it( "should return 'unknown' when the action log is empty", () => {
 			const actions = [];
 
 			const bucket = bucketedTimeSpentOnCurrentView( {
 				ui: {
-					actionLog: actions
-				}
+					actionLog: actions,
+				},
 			} );
 
 			expect( bucket ).to.equal( 'unknown' );
 		} );
 
-		it( 'should return \'under2\' when now is 1999 millis after the last action in the log', () => {
+		it( "should return 'under2' when now is 1999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962291999 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962291999
+			);
 
 			expect( bucket ).to.equal( 'under2' );
 		} );
 
-		it( 'should return \'2-5\' when now is 2000 millis after the last action in the log', () => {
+		it( "should return '2-5' when now is 2000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962292000 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962292000
+			);
 
 			expect( bucket ).to.equal( '2-5' );
 		} );
 
-		it( 'should return \'2-5\' when now is 4999 millis after the last action in the log', () => {
+		it( "should return '2-5' when now is 4999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962294999 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962294999
+			);
 
 			expect( bucket ).to.equal( '2-5' );
 		} );
 
-		it( 'should return \'5-10\' when now is 5000 millis after the last action in the log', () => {
+		it( "should return '5-10' when now is 5000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962295000 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962295000
+			);
 
 			expect( bucket ).to.equal( '5-10' );
 		} );
 
-		it( 'should return \'5-10\' when now is 9999 millis after the last action in the log', () => {
+		it( "should return '5-10' when now is 9999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962299999 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962299999
+			);
 
 			expect( bucket ).to.equal( '5-10' );
 		} );
 
-		it( 'should return \'10-20\' when now is 10000 millis after the last action in the log', () => {
+		it( "should return '10-20' when now is 10000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962300000 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962300000
+			);
 
 			expect( bucket ).to.equal( '10-20' );
 		} );
 
-		it( 'should return \'10-20\' when now is 19999 millis after the last action in the log', () => {
+		it( "should return '10-20' when now is 19999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962309999 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962309999
+			);
 
 			expect( bucket ).to.equal( '10-20' );
 		} );
 
-		it( 'should return \'20-60\' when now is 20000 millis after the last action in the log', () => {
+		it( "should return '20-60' when now is 20000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962310000 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962310000
+			);
 
 			expect( bucket ).to.equal( '20-60' );
 		} );
 
-		it( 'should return \'20-60\' when now is 59999 millis after the last action in the log', () => {
+		it( "should return '20-60' when now is 59999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962349999 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962349999
+			);
 
 			expect( bucket ).to.equal( '20-60' );
 		} );
 
-		it( 'should return \'60plus\' when now is 60000 millis after the last action in the log', () => {
+		it( "should return '60plus' when now is 60000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
 					path: '/stats',
 					timestamp: 1468962290000,
-				}
+				},
 			];
 
-			const bucket = bucketedTimeSpentOnCurrentView( {
-				ui: {
-					actionLog: actions
-				}
-			}, 1468962350000 );
+			const bucket = bucketedTimeSpentOnCurrentView(
+				{
+					ui: {
+						actionLog: actions,
+					},
+				},
+				1468962350000
+			);
 
 			expect( bucket ).to.equal( '60plus' );
 		} );

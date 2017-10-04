@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,24 +7,19 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCountryStates,
-	isCountryStatesFetching,
-} from '../selectors';
+import { getCountryStates, isCountryStatesFetching } from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {
 		countryStates: {
 			items: {
-				us: [
-					{ code: 'ca', name: 'California' }
-				]
+				us: [ { code: 'ca', name: 'California' } ],
 			},
 			isFetching: {
 				us: true,
-				ca: false
-			}
-		}
+				ca: false,
+			},
+		},
 	};
 
 	describe( 'getCountryStates()', () => {
@@ -36,9 +32,7 @@ describe( 'selectors', () => {
 		it( 'should return the states for the country', () => {
 			const states = getCountryStates( state, 'us' );
 
-			expect( states ).to.eql( [
-				{ code: 'ca', name: 'California' }
-			] );
+			expect( states ).to.eql( [ { code: 'ca', name: 'California' } ] );
 		} );
 	} );
 

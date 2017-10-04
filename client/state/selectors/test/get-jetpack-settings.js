@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,9 @@ describe( 'getJetpackSettings()', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
-						items: SETTINGS_FIXTURE
-					}
-				}
+						items: SETTINGS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = getJetpackSettings( stateIn, siteId );
@@ -28,10 +29,10 @@ describe( 'getJetpackSettings()', () => {
 				jetpack: {
 					settings: {
 						items: {
-							654321: SETTINGS_FIXTURE
-						}
-					}
-				}
+							654321: SETTINGS_FIXTURE,
+						},
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = getJetpackSettings( stateIn, siteId );

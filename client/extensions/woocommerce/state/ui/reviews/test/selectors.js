@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,13 +10,13 @@ import { expect } from 'chai';
 import {
 	getReviewsCurrentPage,
 	getReviewsCurrentSearch,
-	getReviewsCurrentProduct
+	getReviewsCurrentProduct,
 } from '../selectors';
 
 const preInitializedState = {
 	extensions: {
-		woocommerce: {}
-	}
+		woocommerce: {},
+	},
 };
 
 const state = {
@@ -29,13 +30,13 @@ const state = {
 							currentPage: 2,
 							currentSearch: 'example',
 							currentProduct: 50,
-						}
+						},
 					},
 					234: {
 						list: {
 							currentPage: 5,
 							currentSearch: 'test',
-						}
+						},
 					},
 				},
 			},

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,17 +21,17 @@ describe( 'getMediaUrl()', () => {
 						42: {
 							ID: 42,
 							title: 'flowers',
-							URL: url
+							URL: url,
 						},
 						43: {
 							ID: 43,
-							title: 'flowers'
-						}
+							title: 'flowers',
+						},
 					},
-					queries: {}
-				} )
-			}
-		}
+					queries: {},
+				} ),
+			},
+		},
 	};
 
 	it( 'should return null if the item is not in state', () => {

@@ -1,4 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import * as actions from '../actions';
+import { tracks } from 'lib/analytics';
+import { undocumented } from 'lib/wp';
+import { READER_POSTS_RECEIVE } from 'state/action-types';
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: require( 'sinon' ).spy(),
@@ -14,23 +27,9 @@ jest.mock( 'lib/wp', () => {
 		undocumented: () => ( {
 			readFeedPost,
 			readSitePost,
-		} )
+		} ),
 	};
 } );
-
-/**
- * External dependencies
- */
-import sinon from 'sinon';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import * as actions from '../actions';
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import { tracks } from 'lib/analytics';
-import { undocumented } from 'lib/wp';
 
 describe( 'actions', () => {
 	const dispatchSpy = sinon.spy();

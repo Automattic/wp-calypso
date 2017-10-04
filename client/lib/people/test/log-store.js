@@ -1,5 +1,4 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */
@@ -8,8 +7,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import site from './fixtures/site';
 import actions from './fixtures/actions';
+import site from './fixtures/site';
 import userActions from 'lib/users/test/fixtures/actions';
 
 describe( 'Viewers Store', () => {

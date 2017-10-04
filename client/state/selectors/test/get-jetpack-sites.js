@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,8 @@ describe( 'getJetpackSites()', () => {
 		const state = {
 			...userState,
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const sites = getJetpackSites( state );
 		expect( sites ).to.eql( [] );
@@ -27,9 +28,9 @@ describe( 'getJetpackSites()', () => {
 			sites: {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
-					2916286: { ID: 2916286, name: 'WordPress.com Example Blog' }
-				}
-			}
+					2916286: { ID: 2916286, name: 'WordPress.com Example Blog' },
+				},
+			},
 		};
 		const sites = getJetpackSites( state );
 		expect( sites ).to.eql( [] );
@@ -45,10 +46,10 @@ describe( 'getJetpackSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-						}
-					}
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 		const sites = getJetpackSites( state );
 		expect( sites ).to.have.length( 1 );
@@ -69,10 +70,9 @@ describe( 'getJetpackSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example2.wordpress.com',
-						}
+						},
 					},
-
-				}
+				},
 			},
 			siteSettings: {
 				items: {},
@@ -95,7 +95,7 @@ describe( 'getJetpackSites()', () => {
 					},
 					2916287: {
 						ID: 2916287,
-						name: 'WordPress.com Example Blog'
+						name: 'WordPress.com Example Blog',
 					},
 					2916289: {
 						ID: 2916289,
@@ -103,9 +103,9 @@ describe( 'getJetpackSites()', () => {
 					},
 					2916286: {
 						ID: 2916286,
-						name: 'WordPress.com Example Blog'
+						name: 'WordPress.com Example Blog',
 					},
-				}
+				},
 			},
 			siteSettings: {
 				items: {},

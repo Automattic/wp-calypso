@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,8 @@ import {
 	getReviews,
 	getTotalReviews,
 } from '../selectors';
-import reviews from './fixtures/reviews';
 import review from './fixtures/review';
+import reviews from './fixtures/reviews';
 const additionalReviews = [ review ];
 
 const preInitializedState = {
@@ -52,10 +53,10 @@ const loadedState = {
 						},
 						items: keyBy( reviews, 'id' ),
 						queries: {
-							'{}': [ 100, 105 ]
+							'{}': [ 100, 105 ],
 						},
 						total: { '{}': 29 },
-					}
+					},
 				},
 				321: {
 					reviews: {
@@ -63,7 +64,7 @@ const loadedState = {
 							'{}': false,
 						},
 						items: keyBy( [ ...reviews, ...additionalReviews ], 'id' ),
-					}
+					},
 				},
 			},
 		},

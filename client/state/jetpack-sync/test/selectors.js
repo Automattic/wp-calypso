@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +12,7 @@ import {
 	getFullSyncRequest,
 	isPendingSyncStart,
 	isFullSyncing,
-	getSyncProgressPercentage
+	getSyncProgressPercentage,
 } from '../selectors';
 
 const nonExistentId = '111111';
@@ -37,7 +38,7 @@ const syncStatusSuccessful = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	queue: {
 		constants: 1,
@@ -48,7 +49,7 @@ const syncStatusSuccessful = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	sent: {
 		constants: 1,
@@ -57,7 +58,7 @@ const syncStatusSuccessful = {
 		terms: 25,
 		themes: 1,
 		users: 1,
-		posts: 193
+		posts: 193,
 	},
 	config: {
 		constants: true,
@@ -68,14 +69,14 @@ const syncStatusSuccessful = {
 		users: true,
 		posts: true,
 		comments: true,
-		updates: true
+		updates: true,
 	},
 	queue_size: 0,
 	queue_lag: 0,
 	full_queue_size: 239,
 	full_queue_lag: 957.49082708359,
 	is_scheduled: false,
-	lastSuccessfulStatus: 1470087342000
+	lastSuccessfulStatus: 1470087342000,
 };
 
 const syncStatusScheduled = {
@@ -92,7 +93,7 @@ const syncStatusScheduled = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	queue: {
 		constants: 1,
@@ -103,7 +104,7 @@ const syncStatusScheduled = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	sent: {
 		constants: 1,
@@ -112,7 +113,7 @@ const syncStatusScheduled = {
 		terms: 25,
 		themes: 1,
 		users: 1,
-		posts: 193
+		posts: 193,
 	},
 	config: {
 		constants: true,
@@ -123,21 +124,21 @@ const syncStatusScheduled = {
 		users: true,
 		posts: true,
 		comments: true,
-		updates: true
+		updates: true,
 	},
 	queue_size: 0,
 	queue_lag: 0,
 	full_queue_size: 239,
 	full_queue_lag: 957.49082708359,
 	is_scheduled: true,
-	lastSuccessfulStatus: 1470087343000
+	lastSuccessfulStatus: 1470087343000,
 };
 
 const syncStatusErrored = {
 	isRequesting: false,
 	error: {
-		statusCode: 400
-	}
+		statusCode: 400,
+	},
 };
 
 const syncStatusStarted = {
@@ -152,7 +153,7 @@ const syncStatusStarted = {
 		users: 1,
 		posts: 404,
 		comments: 27,
-		updates: 1
+		updates: 1,
 	},
 	queue: {
 		constants: 1,
@@ -163,7 +164,7 @@ const syncStatusStarted = {
 		users: 1,
 		posts: 404,
 		comments: 27,
-		updates: 1
+		updates: 1,
 	},
 	sent: [],
 	config: {
@@ -175,14 +176,14 @@ const syncStatusStarted = {
 		users: true,
 		posts: true,
 		comments: true,
-		updates: true
+		updates: true,
 	},
 	queue_size: 0,
 	queue_lag: 0,
 	full_queue_size: 464,
 	full_queue_lag: 4.1990218162537,
 	is_scheduled: false,
-	lastSuccessfulStatus: 1470163983000
+	lastSuccessfulStatus: 1470163983000,
 };
 
 const syncStatusInProgress = {
@@ -198,7 +199,7 @@ const syncStatusInProgress = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	queue: {
 		constants: 1,
@@ -209,13 +210,13 @@ const syncStatusInProgress = {
 		users: 1,
 		posts: 402,
 		comments: 28,
-		updates: 1
+		updates: 1,
 	},
 	sent: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 2
+		terms: 2,
 	},
 	config: {
 		constants: true,
@@ -226,33 +227,33 @@ const syncStatusInProgress = {
 		users: true,
 		posts: true,
 		comments: true,
-		updates: true
+		updates: true,
 	},
 	queue_size: 0,
 	queue_lag: 0,
 	full_queue_size: 457,
 	full_queue_lag: 33.257718086243,
 	is_scheduled: false,
-	lastSuccessfulStatus: 1470069406000
+	lastSuccessfulStatus: 1470069406000,
 };
 
 const fullSyncRequested = {
 	isRequesting: true,
-	lastRequested: 1467944517955
+	lastRequested: 1467944517955,
 };
 
 const fullSyncRequestSuccessful = {
 	isRequesting: true,
 	scheduled: true,
 	error: false,
-	lastRequested: 1470087343001
+	lastRequested: 1470087343001,
 };
 
 const fullSyncRequestOld = {
 	isRequesting: true,
 	scheduled: true,
 	error: false,
-	lastRequested: 1467926563435
+	lastRequested: 1467926563435,
 };
 
 const fullSyncRequestErrored = {
@@ -260,8 +261,8 @@ const fullSyncRequestErrored = {
 	scheduled: false,
 	lastRequested: 1467944517955,
 	error: {
-		statusCode: 400
-	}
+		statusCode: 400,
+	},
 };
 
 const testState = {
@@ -272,15 +273,15 @@ const testState = {
 			[ syncScheduledSiteID ]: syncStatusScheduled,
 			[ oldSyncSiteId ]: syncStatusSuccessful,
 			[ syncStartedSiteId ]: syncStatusStarted,
-			[ syncInProgressSiteId ]: syncStatusInProgress
+			[ syncInProgressSiteId ]: syncStatusInProgress,
 		},
 		fullSyncRequest: {
 			[ requestedSiteId ]: fullSyncRequested,
 			[ successfulSiteId ]: fullSyncRequestSuccessful,
 			[ errorSiteId ]: fullSyncRequestErrored,
-			[ oldSyncSiteId ]: fullSyncRequestOld
-		}
-	}
+			[ oldSyncSiteId ]: fullSyncRequestOld,
+		},
+	},
 };
 
 describe( 'selectors', () => {
@@ -314,7 +315,9 @@ describe( 'selectors', () => {
 
 		it( 'should return full sync status for a site if in state', () => {
 			const fullSyncRequest = getFullSyncRequest( testState, successfulSiteId );
-			expect( fullSyncRequest ).to.be.eql( testState.jetpackSync.fullSyncRequest[ successfulSiteId ] );
+			expect( fullSyncRequest ).to.be.eql(
+				testState.jetpackSync.fullSyncRequest[ successfulSiteId ]
+			);
 		} );
 	} );
 
@@ -370,7 +373,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a non-zero integer if site has sent data to be synced', () => {
 			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
-			expect( test ).to.be.eql( 11 )
+			expect( test ).to.be.eql( 11 );
 		} );
 	} );
 } );

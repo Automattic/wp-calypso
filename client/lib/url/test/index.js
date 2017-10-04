@@ -1,5 +1,4 @@
-/** @jest-environment jsdom */
-
+/** @format */
 /**
  * External dependencies
  */

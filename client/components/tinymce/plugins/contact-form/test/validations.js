@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,84 +16,96 @@ describe( 'contact form validations', () => {
 		} );
 
 		it( 'should accept a single valid field', function() {
-			expect( validateFormFields( [
-				{
-					type: 'text',
-					label: 'something'
-				}
-			] ) ).to.be.true;
+			expect(
+				validateFormFields( [
+					{
+						type: 'text',
+						label: 'something',
+					},
+				] )
+			).to.be.true;
 		} );
 
 		it( 'should fail on a single invalid field', function() {
-			expect( validateFormFields( [
-				{
-					type: 'text',
-					label: ''
-				}
-			] ) ).to.be.false;
+			expect(
+				validateFormFields( [
+					{
+						type: 'text',
+						label: '',
+					},
+				] )
+			).to.be.false;
 		} );
 
 		it( 'should require a label in every field', function() {
-			expect( validateFormFields( [
-				{
-					type: 'text',
-					label: 'a'
-				},
-				{
-					type: 'text',
-					label: 'b'
-				},
-				{
-					type: 'text',
-					label: ''
-				}
-			] ) ).to.be.false;
+			expect(
+				validateFormFields( [
+					{
+						type: 'text',
+						label: 'a',
+					},
+					{
+						type: 'text',
+						label: 'b',
+					},
+					{
+						type: 'text',
+						label: '',
+					},
+				] )
+			).to.be.false;
 		} );
 
 		it( 'should fail if a radio does not have options', function() {
-			expect( validateFormFields( [
-				{
-					type: 'radio',
-					label: 'a'
-				}
-			] ) ).to.be.false;
+			expect(
+				validateFormFields( [
+					{
+						type: 'radio',
+						label: 'a',
+					},
+				] )
+			).to.be.false;
 		} );
 
 		it( 'should fail if a select does not have options', function() {
-			expect( validateFormFields( [
-				{
-					type: 'select',
-					label: 'a'
-				}
-			] ) ).to.be.false;
+			expect(
+				validateFormFields( [
+					{
+						type: 'select',
+						label: 'a',
+					},
+				] )
+			).to.be.false;
 		} );
 
 		it( 'should accept a complex form', function() {
-			expect( validateFormFields( [
-				{
-					type: 'text',
-					label: 'a',
-					required: true
-				},
-				{
-					type: 'textarea',
-					label: 'b'
-				},
-				{
-					type: 'url',
-					label: 'c'
-				},
-				{
-					type: 'radio',
-					label: 'd',
-					options: '1,2'
-				},
-				{
-					type: 'select',
-					label: 'e',
-					options: 'x,y,z'
-				}
-			] ) ).to.be.true;
+			expect(
+				validateFormFields( [
+					{
+						type: 'text',
+						label: 'a',
+						required: true,
+					},
+					{
+						type: 'textarea',
+						label: 'b',
+					},
+					{
+						type: 'url',
+						label: 'c',
+					},
+					{
+						type: 'radio',
+						label: 'd',
+						options: '1,2',
+					},
+					{
+						type: 'select',
+						label: 'e',
+						options: 'x,y,z',
+					},
+				] )
+			).to.be.true;
 		} );
 	} );
 
@@ -114,7 +127,8 @@ describe( 'contact form validations', () => {
 		} );
 
 		it( 'should ignore trailing and leading whitespace', function() {
-			expect( validateSettingsToEmail( '  something@example.com ,  another@example.com  ' ) ).to.be.true;
+			expect( validateSettingsToEmail( '  something@example.com ,  another@example.com  ' ) ).to.be
+				.true;
 		} );
 
 		it( 'should fail if one e-mail is invalid', function() {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,18 +13,15 @@ import {
 	WP_JOB_MANAGER_FETCH_SETTINGS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import reducer, { fetching, items } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'fetching',
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'fetching', 'items' ] );
 	} );
 
 	describe( 'fetching()', () => {

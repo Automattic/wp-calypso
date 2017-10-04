@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,9 @@ describe( 'isJetpackSiteConnected()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 87654321;
 		const output = isJetpackSiteConnected( stateIn, siteId );
@@ -27,9 +28,9 @@ describe( 'isJetpackSiteConnected()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = isJetpackSiteConnected( stateIn, siteId );
@@ -40,9 +41,9 @@ describe( 'isJetpackSiteConnected()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = isJetpackSiteConnected( stateIn, siteId );

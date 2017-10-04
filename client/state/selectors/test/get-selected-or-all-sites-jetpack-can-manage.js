@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		const state = {
 			...userState,
 			sites: {
-				items: {}
+				items: {},
 			},
 			ui: { selectedSiteId: 2916284 },
 		};
@@ -31,7 +32,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						ID: 2916288,
 						visible: true,
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -49,7 +50,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						edit_pages: true,
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -60,7 +61,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 							jetpack_version: '3.3',
 						},
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -83,7 +84,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						edit_pages: true,
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -92,8 +93,8 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						jetpack: true,
 						options: {
 							active_modules: [ 'manage' ],
-							jetpack_version: '5.0'
-						}
+							jetpack_version: '5.0',
+						},
 					},
 					2916287: {
 						ID: 2916287,
@@ -102,10 +103,10 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						ID: 2916289,
 						jetpack: true,
 						options: {
-							jetpack_version: '3.4'
-						}
+							jetpack_version: '3.4',
+						},
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -129,7 +130,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						edit_pages: true,
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -138,7 +139,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						jetpack: true,
 						options: {
 							active_modules: null,
-							jetpack_version: '3.5'
+							jetpack_version: '3.5',
 						},
 					},
 					2916289: {
@@ -146,10 +147,10 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						jetpack: true,
 						options: {
 							active_modules: [ 'manage' ],
-							jetpack_version: '3.4'
+							jetpack_version: '3.4',
 						},
 					},
-				}
+				},
 			},
 			ui: { selectedSiteId: 2916289 },
 		};
@@ -170,7 +171,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 					2916287: {
 						manage_options: false,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -178,17 +179,17 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 						ID: 2916286,
 						jetpack: true,
 						options: {
-							jetpack_version: '3.5'
+							jetpack_version: '3.5',
 						},
 					},
 					2916287: {
 						ID: 2916287,
 						jetpack: true,
 						options: {
-							jetpack_version: '3.5'
+							jetpack_version: '3.5',
 						},
-					}
-				}
+					},
+				},
 			},
 			ui: { selectedSiteId: 2916287 },
 		};

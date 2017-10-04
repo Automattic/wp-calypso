@@ -1,20 +1,17 @@
-jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
-
+/** @format */
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import {
-	PLAN_BUSINESS,
-	PLAN_FREE
-} from 'lib/plans/constants';
 import isSiteOnFreePlan from '../is-site-on-free-plan';
+import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
 
 describe( 'isSiteOnFreePlan', () => {
 	const state = deepFreeze( {} );

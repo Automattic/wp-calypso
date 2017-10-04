@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,6 @@ import {
 	isRequestingTicketSupportConfiguration,
 	getTicketSupportRequestError,
 } from '../selectors';
-
 import { dummyError } from './test-data';
 
 describe( 'ticket-support/configuration/selectors', () => {
@@ -60,13 +60,15 @@ describe( 'ticket-support/configuration/selectors', () => {
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
 		it( 'should return true', () => {
-			assert.isTrue( isRequestingTicketSupportConfiguration( {
-				help: {
-					ticket: {
-						isRequesting: true,
+			assert.isTrue(
+				isRequestingTicketSupportConfiguration( {
+					help: {
+						ticket: {
+							isRequesting: true,
+						},
 					},
-				},
-			} ) );
+				} )
+			);
 		} );
 	} );
 

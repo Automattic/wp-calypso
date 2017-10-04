@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 PassThrough = React.createClass( {
 	render: function() {
 		return passToChildren( this, DUMMY_PROPS );
-	}
+	},
 } );
 
 describe( 'index', function() {
@@ -33,7 +34,11 @@ describe( 'index', function() {
 	it( 'should accept a single child and pass along props', function() {
 		var result;
 
-		renderer.render( <PassThrough><div /></PassThrough> );
+		renderer.render(
+			<PassThrough>
+				<div />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
@@ -43,7 +48,12 @@ describe( 'index', function() {
 	it( 'should accept multiple children and wrap them in a div', function() {
 		var result;
 
-		renderer.render( <PassThrough><div /><div /></PassThrough> );
+		renderer.render(
+			<PassThrough>
+				<div />
+				<div />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		expect( React.Children.count( result ) ).to.equal( 1 );
@@ -54,7 +64,12 @@ describe( 'index', function() {
 	it( 'should accept multiple children and pass along props to each', function( done ) {
 		var result;
 
-		renderer.render( <PassThrough><div /><div /></PassThrough> );
+		renderer.render(
+			<PassThrough>
+				<div />
+				<div />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		React.Children.forEach( result.props.children, function( child, i ) {
@@ -70,7 +85,12 @@ describe( 'index', function() {
 	it( 'should accept multiple children, including nulls', function() {
 		var result;
 
-		renderer.render( <PassThrough>{ null }<div /></PassThrough> );
+		renderer.render(
+			<PassThrough>
+				{ null }
+				<div />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		expect( React.Children.count( result.props.children ) ).to.equal( 1 );
@@ -80,24 +100,36 @@ describe( 'index', function() {
 	it( 'should preserve props passed to the children', function() {
 		var result;
 
-		renderer.render( <PassThrough><div data-preserve /></PassThrough> );
+		renderer.render(
+			<PassThrough>
+				<div data-preserve />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			'data-preserve': true
-		} ) );
+		expect( result.props ).to.eql(
+			assign( {}, DUMMY_PROPS, {
+				'data-preserve': true,
+			} )
+		);
 	} );
 
 	it( 'should preserve props passed to the instance itself', function() {
 		var result;
 
-		renderer.render( <PassThrough data-preserve><div /></PassThrough> );
+		renderer.render(
+			<PassThrough data-preserve>
+				<div />
+			</PassThrough>
+		);
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			'data-preserve': true
-		} ) );
+		expect( result.props ).to.eql(
+			assign( {}, DUMMY_PROPS, {
+				'data-preserve': true,
+			} )
+		);
 	} );
 } );

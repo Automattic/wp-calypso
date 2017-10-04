@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +8,13 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import { receivePlans, receiveError, requestPlans } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	plansReceiveAction,
 	plansRequestFailureAction,
 	plansRequestSuccessAction,
 } from 'state/plans/actions';
-import {
-	receivePlans,
-	receiveError,
-	requestPlans,
-} from '../';
-
 import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {
@@ -31,13 +27,15 @@ describe( 'wpcom-api', () => {
 				requestPlans( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.4',
-					method: 'GET',
-					path: '/plans',
-					onSuccess: action,
-					onFailure: action,
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http( {
+						apiVersion: '1.4',
+						method: 'GET',
+						path: '/plans',
+						onSuccess: action,
+						onFailure: action,
+					} )
+				);
 			} );
 		} );
 

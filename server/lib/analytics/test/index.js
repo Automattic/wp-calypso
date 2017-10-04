@@ -1,8 +1,4 @@
-jest.mock( 'config', () => require( 'sinon' ).stub() );
-jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
-	statsdTimingUrl: require( 'sinon' ).stub()
-} ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -13,14 +9,16 @@ import superagent from 'superagent';
 /**
  * Internal dependencies
  */
+import { statsdTimingUrl } from '../../../../client/lib/analytics/statsd';
 import analytics from '../index';
 import config from 'config';
-import { statsdTimingUrl } from '../../../../client/lib/analytics/statsd';
+jest.mock( 'config', () => require( 'sinon' ).stub() );
+jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
+	statsdTimingUrl: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'Server-Side Analytics', function() {
-	describe( 'tracks.recordEvent', function() {
-
-	} );
+	describe( 'tracks.recordEvent', function() {} );
 
 	describe( 'statsd.recordTiming', function() {
 		beforeAll( function() {

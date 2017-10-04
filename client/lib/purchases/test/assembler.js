@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,16 +24,18 @@ describe( 'assembler', () => {
 	} );
 
 	it( 'should convert the payment credit card data to the right data structure', () => {
-		const purchase = createPurchasesArray( [ {
-			payment_card_id: 1234,
-			payment_card_type: 'visa',
-			payment_details: 7890,
-			payment_expiry: '11/16',
-			payment_type: 'credit_card',
-			payment_name: 'My VISA',
-			payment_country_code: 'US',
-			payment_country_name: 'United States'
-		} ] );
+		const purchase = createPurchasesArray( [
+			{
+				payment_card_id: 1234,
+				payment_card_type: 'visa',
+				payment_details: 7890,
+				payment_expiry: '11/16',
+				payment_type: 'credit_card',
+				payment_name: 'My VISA',
+				payment_country_code: 'US',
+				payment_country_name: 'United States',
+			},
+		] );
 		const payment = purchase[ 0 ].payment;
 		const creditCard = payment.creditCard;
 		expect( creditCard.expiryDate ).to.equal( '11/16' );

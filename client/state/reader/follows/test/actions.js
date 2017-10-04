@@ -1,23 +1,22 @@
 /** @format */
-jest.mock( 'state/reader/posts/actions', () => ( {
-	receivePosts: posts => Promise.resolve( posts )
-} ) );
-
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { recordFollowError } from '../actions';
 import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOW_ERROR,
 } from 'state/action-types';
-import { recordFollowError } from '../actions';
+jest.mock( 'state/reader/posts/actions', () => ( {
+	receivePosts: posts => Promise.resolve( posts ),
+} ) );
 
 describe( 'actions', () => {
 	let recordFollow, recordUnfollow;

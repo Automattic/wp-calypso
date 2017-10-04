@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getMediaStorage,
-	isRequestingMediaStorage,
-	isOverMediaLimit
-} from '../selectors';
+import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getMediaStorage()', () => {
@@ -21,21 +18,21 @@ describe( 'selectors', () => {
 						items: {
 							2916284: {
 								max_storage_bytes: 3221225472,
-								storage_used_bytes: 56000
+								storage_used_bytes: 56000,
 							},
 							77203074: {
 								max_storage_bytes: 3221225472,
-								storage_used_bytes: 323506
-							}
-						}
-					}
-				}
+								storage_used_bytes: 323506,
+							},
+						},
+					},
+				},
 			};
 			const mediaStorage = getMediaStorage( state, 2916284 );
 
 			expect( mediaStorage ).to.eql( {
 				max_storage_bytes: 3221225472,
-				storage_used_bytes: 56000
+				storage_used_bytes: 56000,
 			} );
 		} );
 	} );
@@ -46,10 +43,10 @@ describe( 'selectors', () => {
 					mediaStorage: {
 						fetchingItems: {
 							2916284: true,
-							77203074: false
-						}
-					}
-				}
+							77203074: false,
+						},
+					},
+				},
 			};
 
 			expect( isRequestingMediaStorage( state, 2916284 ) ).to.equal( true );
@@ -65,15 +62,15 @@ describe( 'selectors', () => {
 						items: {
 							2916284: {
 								max_storage_bytes: 3221225472,
-								storage_used_bytes: 3221225900
+								storage_used_bytes: 3221225900,
 							},
 							77203074: {
 								max_storage_bytes: 3221225472,
-								storage_used_bytes: 323506
-							}
-						}
-					}
-				}
+								storage_used_bytes: 323506,
+							},
+						},
+					},
+				},
 			};
 
 			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( true );
@@ -86,11 +83,11 @@ describe( 'selectors', () => {
 						items: {
 							2916284: {
 								max_storage_bytes: -1,
-								storage_used_bytes: -1
-							}
-						}
-					}
-				}
+								storage_used_bytes: -1,
+							},
+						},
+					},
+				},
 			};
 
 			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( false );
@@ -102,11 +99,11 @@ describe( 'selectors', () => {
 						items: {
 							2916284: {
 								max_storage_bytes: -1,
-								storage_used_bytes: -1
-							}
-						}
-					}
-				}
+								storage_used_bytes: -1,
+							},
+						},
+					},
+				},
 			};
 			expect( isOverMediaLimit( state, 77203074 ) ).to.equal( null );
 		} );

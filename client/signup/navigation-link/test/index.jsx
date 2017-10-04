@@ -1,30 +1,31 @@
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => {}
-	}
-} ) );
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: require( 'sinon' ).stub()
-} ) );
-jest.mock( 'signup/utils', () => ( {
-	getStepUrl: require( 'sinon' ).stub()
-} ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
-
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EMPTY_COMPONENT from 'components/empty-component';
 import { NavigationLink } from '../';
+import EMPTY_COMPONENT from 'components/empty-component';
 import signupUtils from 'signup/utils';
+
+jest.mock( 'lib/analytics', () => ( {
+	tracks: {
+		recordEvent: () => {},
+	},
+} ) );
+jest.mock( 'lib/signup/actions', () => ( {
+	submitSignupStep: require( 'sinon' ).stub(),
+} ) );
+jest.mock( 'signup/utils', () => ( {
+	getStepUrl: require( 'sinon' ).stub(),
+} ) );
+jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;
@@ -39,7 +40,7 @@ describe( 'NavigationLink', () => {
 			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
 		],
 		goToNextStep: stub(),
-		translate: ( str ) => `translated:${ str }`,
+		translate: str => `translated:${ str }`,
 	};
 	let props;
 
@@ -92,7 +93,12 @@ describe( 'NavigationLink', () => {
 
 		// It should call signupUtils.getStepUrl()
 		expect( signupUtils.getStepUrl ).to.has.been.called;
-		expect( signupUtils.getStepUrl ).to.has.been.calledWith( 'test:flow', 'test:step1', 'test:section1', 'en' );
+		expect( signupUtils.getStepUrl ).to.has.been.calledWith(
+			'test:flow',
+			'test:step1',
+			'test:section1',
+			'en'
+		);
 
 		// when it is the first step
 		signupUtils.getStepUrl = stub();

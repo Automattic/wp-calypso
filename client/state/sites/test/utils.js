@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,8 @@ describe( 'utils', () => {
 			const state = {
 				...userState,
 				sites: {
-					items: {}
-				}
+					items: {},
+				},
 			};
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).to.be.null;
@@ -30,10 +31,10 @@ describe( 'utils', () => {
 							ID: 2916288,
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
-							jetpack: false
-						}
-					}
-				}
+							jetpack: false,
+						},
+					},
+				},
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
@@ -45,8 +46,8 @@ describe( 'utils', () => {
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
 				options: {
-					default_post_format: 'standard'
-				}
+					default_post_format: 'standard',
+				},
 			} );
 		} );
 
@@ -55,7 +56,7 @@ describe( 'utils', () => {
 				default_post_format: 'test',
 				is_mapped_domain: true,
 				unmapped_url: 'https://unmapped-url.wordpress.com',
-				is_redirect: true
+				is_redirect: true,
 			};
 			const state = {
 				...userState,
@@ -66,16 +67,16 @@ describe( 'utils', () => {
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
 							jetpack: false,
-							options
+							options,
 						},
 						2916289: {
 							ID: 2916289,
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
 							jetpack: true,
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );

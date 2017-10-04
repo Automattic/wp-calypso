@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,9 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {
-					bar: 'baz'
+					bar: 'baz',
 				},
-				numeric: []
+				numeric: [],
 			} );
 		} );
 
@@ -26,7 +27,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {},
-				numeric: [ 'bar', 'baz' ]
+				numeric: [ 'bar', 'baz' ],
 			} );
 		} );
 
@@ -35,9 +36,9 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {
-					bar: 'baz'
+					bar: 'baz',
 				},
-				numeric: [ 'qux' ]
+				numeric: [ 'qux' ],
 			} );
 		} );
 	} );
@@ -48,9 +49,9 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {
-					bar: 'baz'
+					bar: 'baz',
 				},
-				numeric: []
+				numeric: [],
 			} );
 		} );
 
@@ -59,7 +60,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {},
-				numeric: [ 'bar' ]
+				numeric: [ 'bar' ],
 			} );
 		} );
 
@@ -68,9 +69,9 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {
-					bar: 'baz'
+					bar: 'baz',
 				},
-				numeric: [ 'qux' ]
+				numeric: [ 'qux' ],
 			} );
 		} );
 
@@ -79,15 +80,16 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: {},
-				numeric: [ 'bar' ]
+				numeric: [ 'bar' ],
 			} );
 		} );
 
 		it( 'should explicitly return an object of already split attributes', function() {
 			var attributes = {
 					named: { bar: 'baz' },
-					numeric: [ 'qux' ]
-				}, result = Shortcode.normalizeAttributes( attributes );
+					numeric: [ 'qux' ],
+				},
+				result = Shortcode.normalizeAttributes( attributes );
 
 			expect( result ).to.eql( attributes );
 		} );
@@ -98,7 +100,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				named: attributes,
-				numeric: []
+				numeric: [],
 			} );
 		} );
 	} );
@@ -106,7 +108,7 @@ describe( 'index', function() {
 	describe( '#stringify()', function() {
 		it( 'should generate a closed shortcode when only the tag is specified', function() {
 			var result = Shortcode.stringify( {
-				tag: 'foo'
+				tag: 'foo',
 			} );
 
 			expect( result ).to.equal( '[foo][/foo]' );
@@ -116,8 +118,8 @@ describe( 'index', function() {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				attrs: {
-					bar: 'baz'
-				}
+					bar: 'baz',
+				},
 			} );
 
 			expect( result ).to.equal( '[foo bar="baz"][/foo]' );
@@ -126,7 +128,7 @@ describe( 'index', function() {
 		it( 'should accept an array of numeric attributes', function() {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
-				attrs: [ 'bar' ]
+				attrs: [ 'bar' ],
 			} );
 
 			expect( result ).to.equal( '[foo bar][/foo]' );
@@ -137,8 +139,8 @@ describe( 'index', function() {
 				tag: 'foo',
 				attrs: {
 					named: { bar: 'baz' },
-					numeric: [ 'qux' ]
-				}
+					numeric: [ 'qux' ],
+				},
 			} );
 
 			expect( result ).to.equal( '[foo bar="baz" qux][/foo]' );
@@ -147,7 +149,7 @@ describe( 'index', function() {
 		it( 'should omit the closing tag for single type', function() {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
-				type: 'single'
+				type: 'single',
 			} );
 
 			expect( result ).to.equal( '[foo]' );
@@ -156,7 +158,7 @@ describe( 'index', function() {
 		it( 'should self-close for self-closing type', function() {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
-				type: 'self-closing'
+				type: 'self-closing',
 			} );
 
 			expect( result ).to.equal( '[foo /]' );
@@ -165,7 +167,7 @@ describe( 'index', function() {
 		it( 'should include content between the opening and closing tags', function() {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
-				content: 'Bar'
+				content: 'Bar',
 			} );
 
 			expect( result ).to.equal( '[foo]Bar[/foo]' );
@@ -178,7 +180,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				tag: 'foo',
-				type: 'closed'
+				type: 'closed',
 			} );
 		} );
 
@@ -190,10 +192,10 @@ describe( 'index', function() {
 				type: 'closed',
 				attrs: {
 					named: {
-						bar: 'baz'
+						bar: 'baz',
 					},
-					numeric: []
-				}
+					numeric: [],
+				},
 			} );
 		} );
 
@@ -205,8 +207,8 @@ describe( 'index', function() {
 				type: 'closed',
 				attrs: {
 					named: {},
-					numeric: [ 'bar' ]
-				}
+					numeric: [ 'bar' ],
+				},
 			} );
 		} );
 
@@ -218,10 +220,10 @@ describe( 'index', function() {
 				type: 'closed',
 				attrs: {
 					named: {
-						bar: 'baz'
+						bar: 'baz',
 					},
-					numeric: [ 'qux' ]
-				}
+					numeric: [ 'qux' ],
+				},
 			} );
 		} );
 
@@ -230,7 +232,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				tag: 'foo',
-				type: 'single'
+				type: 'single',
 			} );
 		} );
 
@@ -239,7 +241,7 @@ describe( 'index', function() {
 
 			expect( result ).to.eql( {
 				tag: 'foo',
-				type: 'self-closing'
+				type: 'self-closing',
 			} );
 		} );
 
@@ -249,7 +251,7 @@ describe( 'index', function() {
 			expect( result ).to.eql( {
 				tag: 'foo',
 				type: 'closed',
-				content: 'Bar'
+				content: 'Bar',
 			} );
 		} );
 	} );

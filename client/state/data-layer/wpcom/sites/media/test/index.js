@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,9 +8,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { handleMediaItemRequest, receiveMediaItem, receiveMediaItemError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestMediaSuccess, requestMediaError, requestMedia } from '../';
 import { MEDIA_ITEM_REQUEST } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	failMediaItemRequest,
 	failMediaRequest,
@@ -19,11 +20,7 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'state/media/actions';
-import {
-	requestMediaSuccess,
-	requestMediaError,
-	requestMedia
-} from '../';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'media request', () => {
 	let dispatch;
@@ -34,10 +31,10 @@ describe( 'media request', () => {
 		media: {
 			queryRequests: {
 				2916284: {
-					'[]': true
-				}
-			}
-		}
+					'[]': true,
+				},
+			},
+		},
 	} );
 
 	it( 'should dispatch REQUESTING action when request triggers', () => {
@@ -46,10 +43,15 @@ describe( 'media request', () => {
 	} );
 
 	it( 'should dispatch SUCCESS action when request completes', () => {
-		requestMediaSuccess( { dispatch }, { siteId: 2916284, query: 'a=b' },
-			{ media: { ID: 10, title: 'media title' }, found: true } );
+		requestMediaSuccess(
+			{ dispatch },
+			{ siteId: 2916284, query: 'a=b' },
+			{ media: { ID: 10, title: 'media title' }, found: true }
+		);
 		expect( dispatch ).to.have.been.calledWith( successMediaRequest( 2916284, 'a=b' ) );
-		expect( dispatch ).to.have.been.calledWith( receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' ) );
+		expect( dispatch ).to.have.been.calledWith(
+			receiveMedia( 2916284, { ID: 10, title: 'media title' }, true, 'a=b' )
+		);
 	} );
 
 	it( 'should dispatch FAILURE action when request fails', () => {
@@ -87,9 +89,7 @@ describe( 'handleMediaItemRequest', () => {
 		};
 		handleMediaItemRequest( { dispatch }, action );
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
-			requestingMediaItem( siteId )
-		);
+		expect( dispatch ).to.have.been.calledWith( requestingMediaItem( siteId ) );
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
@@ -119,12 +119,8 @@ describe( 'receiveMediaItem', () => {
 		const media = { ID: 91827364 };
 		receiveMediaItem( { dispatch }, action, media );
 		expect( dispatch ).to.have.been.calledTwice,
-		expect( dispatch ).to.have.been.calledWith(
-			receiveMedia( siteId, media )
-		);
-		expect( dispatch ).to.have.been.calledWith(
-			successMediaItemRequest( siteId, mediaId )
-		);
+			expect( dispatch ).to.have.been.calledWith( receiveMedia( siteId, media ) );
+		expect( dispatch ).to.have.been.calledWith( successMediaItemRequest( siteId, mediaId ) );
 	} );
 } );
 
@@ -142,8 +138,6 @@ describe( 'receiveMediaItemError', () => {
 			siteId,
 		};
 		receiveMediaItemError( { dispatch }, action );
-		expect( dispatch ).to.have.been.calledWith(
-			failMediaItemRequest( siteId, mediaId )
-		);
+		expect( dispatch ).to.have.been.calledWith( failMediaItemRequest( siteId, mediaId ) );
 	} );
 } );

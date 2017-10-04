@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,8 @@ describe( 'getNetworkSites()', () => {
 		const state = {
 			...userState,
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		expect( getNetworkSites( state, 1 ) ).to.be.null;
 	} );
@@ -31,11 +32,11 @@ describe( 'getNetworkSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		expect( getNetworkSites( state, 2 ) ).to.be.null;
 	} );
@@ -50,9 +51,9 @@ describe( 'getNetworkSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'https://example.com',
 						jetpack: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( getNetworkSites( state, 1 ) ).to.be.null;
 	} );
@@ -70,11 +71,11 @@ describe( 'getNetworkSites()', () => {
 						is_multisite: true,
 						options: {
 							unmapped_url: 'https://example.com',
-							main_network_site: 'https://example.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.com',
+						},
+					},
+				},
+			},
 		};
 		expect( getNetworkSites( state, 1 ) ).to.be.an( 'array' ).that.is.empty;
 	} );
@@ -90,8 +91,8 @@ describe( 'getNetworkSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -99,8 +100,8 @@ describe( 'getNetworkSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					3: {
 						ID: 3,
@@ -108,15 +109,14 @@ describe( 'getNetworkSites()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary3.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		const networkSites = getNetworkSites( state, 1 );
 		expect( networkSites[ 0 ].ID ).to.eql( 2 );
 		expect( networkSites[ 1 ].ID ).to.eql( 3 );
 	} );
 } );
-

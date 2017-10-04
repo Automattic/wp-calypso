@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +8,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	clearOrderEdits,
-	editOrder,
-	updateCurrentOrdersQuery,
-} from '../actions';
+import { clearOrderEdits, editOrder, updateCurrentOrdersQuery } from '../actions';
 import {
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
@@ -62,7 +59,7 @@ describe( 'actions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 				siteId,
-				query: { page: 2, search: 'test' }
+				query: { page: 2, search: 'test' },
 			} );
 		} );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import {
 } from '../selectors';
 import {
 	getProductCategory,
-	getProductCategories
+	getProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
 
 const siteId = 123;
@@ -39,12 +40,11 @@ describe( 'selectors', () => {
 					},
 					ui: {
 						productCategories: {
-							[ siteId ]: {
-							}
-						}
+							[ siteId ]: {},
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 	} );
 
@@ -124,7 +124,11 @@ describe( 'selectors', () => {
 			const categoryUpdate1 = { id: 1, name: 'Updated Category 1' };
 			const categoryUpdate2 = { id: 2, name: 'Updated Category 2' };
 			const uiProductCategories = state.extensions.woocommerce.ui.productCategories;
-			set( uiProductCategories, [ siteId, 'edits', 'updates' ], [ categoryUpdate1, categoryUpdate2 ] );
+			set(
+				uiProductCategories,
+				[ siteId, 'edits', 'updates' ],
+				[ categoryUpdate1, categoryUpdate2 ]
+			);
 
 			const combinedCategories = getProductCategoriesWithLocalEdits( state );
 			const combinedCategory1 = find( combinedCategories, c => categoryUpdate1.id === c.id );
@@ -149,4 +153,3 @@ describe( 'selectors', () => {
 		} );
 	} );
 } );
-

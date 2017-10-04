@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,24 +19,24 @@ describe( 'getPastBillingTransaction()', () => {
 						id: '12345678',
 						amount: '$1.23',
 						date: '2016-12-12T11:22:33+0000',
-					}
+					},
 				],
 				upcoming: [
 					{
 						id: '87654321',
 						amount: '$4.56',
 						date: '2016-13-12T11:22:33+0000',
-					}
-				]
-			}
-		}
+					},
+				],
+			},
+		},
 	};
 
 	it( 'should return the billing transaction data for a known transaction', () => {
 		const output = getPastBillingTransaction( state, '12345678' );
 		expect( output ).to.eql( {
 			...state.billingTransactions.items.past[ 0 ],
-			date: moment( '2016-12-12T11:22:33+0000' ).toDate()
+			date: moment( '2016-12-12T11:22:33+0000' ).toDate(),
 		} );
 	} );
 
@@ -45,11 +46,14 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	it( 'should return null if billing transactions have not been fetched yet', () => {
-		const output = getPastBillingTransaction( {
-			billingTransactions: {
-				items: {}
-			}
-		}, '12345678' );
+		const output = getPastBillingTransaction(
+			{
+				billingTransactions: {
+					items: {},
+				},
+			},
+			'12345678'
+		);
 		expect( output ).to.be.null;
 	} );
 } );

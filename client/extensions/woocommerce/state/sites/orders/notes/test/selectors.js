@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,7 @@ const loadingState = {
 							},
 							items: {},
 							orders: {},
-						}
+						},
 					},
 				},
 			},
@@ -59,8 +60,8 @@ const loadedState = {
 							orders: {
 								45: [ 1, 2 ],
 							},
-						}
-					}
+						},
+					},
 				},
 			},
 		},

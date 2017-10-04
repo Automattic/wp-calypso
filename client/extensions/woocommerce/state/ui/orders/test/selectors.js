@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,8 +19,8 @@ import { state, order } from './fixtures/detailed-state';
 
 const preInitializedState = {
 	extensions: {
-		woocommerce: {}
-	}
+		woocommerce: {},
+	},
 };
 
 describe( 'selectors', () => {
