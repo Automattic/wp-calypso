@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import helpLinks from './mock-help-links';
 import { action as ActionTypes } from 'lib/help-search/constants';
 

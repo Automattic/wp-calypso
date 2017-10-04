@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './mock-site';
 import earnings from './mock-earnings';
 import settings from './mock-settings';

@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import plugins from './plugins';
 import updatePluginsList from './plugins-updated';
 import site from './site';

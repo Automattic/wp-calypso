@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './mock-site';
 import followerData from './mock-wpcom-followers1';
 import moreFollowerData from './mock-wpcom-followers2';

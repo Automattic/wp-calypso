@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './mock-site';
 import followerData from './mock-email-followers';
 import moreFollowerData from './mock-more-email-followers';

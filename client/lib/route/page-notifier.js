@@ -1,10 +1,10 @@
-/*eslint no-multi-spaces: 0*/
-// node dependency
+/**
+ * Internal dependencies
+ */
 import { EventEmitter } from 'events';
-
-// internal dependency
 import page from 'page';
 
+/* eslint no-multi-spaces: 0 */
 var Route          = page.Route;
 
 // routing state and middleware

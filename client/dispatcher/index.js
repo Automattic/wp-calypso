@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { Dispatcher } from 'flux';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:dispatcher' );

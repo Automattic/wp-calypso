@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './site';
 import usersData from './users';
 import moreUsersData from './more-users';

@@ -3,7 +3,7 @@
  */
 
 /**
- * Internal dependency
+ * Internal dependencies
  */
 import config from 'config';
 

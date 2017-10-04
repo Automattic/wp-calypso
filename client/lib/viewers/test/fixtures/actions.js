@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import site from './site';
 import viewerData from './viewers-1';
 import moreViewerData from './viewers-2';
