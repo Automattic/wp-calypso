@@ -5,7 +5,7 @@
 import assert from 'assert';
 import { identity } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import { createRenderer } from 'react-test-renderer/shallow';
 import sinon from 'sinon';
 
 /**
@@ -34,7 +34,7 @@ describe( 'mapped-domain', () => {
 	} );
 
 	test( 'should render when props.domain.expirationMoment is null', () => {
-		const renderer = TestUtils.createRenderer();
+		const renderer = createRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		const out = renderer.getRenderOutput();
 
@@ -48,7 +48,7 @@ describe( 'mapped-domain', () => {
 			const dnsStub = this.stub( paths, 'domainManagementDns' );
 			const emailStub = this.stub( paths, 'domainManagementEmail' );
 
-			const renderer = TestUtils.createRenderer();
+			const renderer = createRenderer();
 			renderer.render( <MappedDomain { ...props } /> );
 			renderer.getRenderOutput();
 

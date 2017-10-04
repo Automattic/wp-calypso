@@ -9,7 +9,7 @@
 import assert from 'assert';
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 

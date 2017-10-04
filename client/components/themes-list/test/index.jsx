@@ -9,7 +9,7 @@
 import { assert } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import { createRenderer } from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
@@ -55,7 +55,7 @@ describe( 'ThemesList', () => {
 
 	describe( 'rendering', () => {
 		beforeEach( () => {
-			const shallowRenderer = TestUtils.createRenderer();
+			const shallowRenderer = createRenderer();
 
 			shallowRenderer.render( themesList );
 			themesListElement = shallowRenderer.getRenderOutput();
@@ -71,7 +71,7 @@ describe( 'ThemesList', () => {
 
 		describe( 'when no themes are found', () => {
 			beforeEach( () => {
-				const shallowRenderer = TestUtils.createRenderer();
+				const shallowRenderer = createRenderer();
 				props.themes = [];
 				themesList = React.createElement( ThemesList, props );
 

@@ -8,9 +8,10 @@
  */
 import { assert } from 'chai';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 import sinon from 'sinon';
+import { createRenderer } from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 function createComponent( component, props, children ) {
-	const shallowRenderer = TestUtils.createRenderer();
+	const shallowRenderer = createRenderer();
 
 	shallowRenderer.render( React.createElement( component, props, children ) );
 	return shallowRenderer.getRenderOutput();

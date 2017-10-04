@@ -123,7 +123,7 @@ this.props = {
 	]
 };
 
-var shallowRenderer = React.addons.TestUtils.createRenderer();
+const shallowRenderer = createRenderer();
 
 shallowRenderer.render(
 	React.createElement( ThemesList, this.props )
