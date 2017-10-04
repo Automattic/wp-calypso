@@ -13,7 +13,7 @@ import {
 } from 'woocommerce/state/action-types';
 import {
 	coupons1,
-} from 'woocommerce/state/sites/promotions/test/fixtures';
+} from 'woocommerce/state/sites/promotions/test/fixtures/promotions';
 
 describe( 'edits-reducer', () => {
 	const siteId = 123;

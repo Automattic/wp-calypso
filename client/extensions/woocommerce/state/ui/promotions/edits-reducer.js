@@ -23,7 +23,7 @@ function editPromotionAction( edits, action ) {
 	const prevEdits = edits || {};
 	const prevPromotion = promotion || { id: { placeholder: uniqueId( 'promotion_' ) } };
 	const bucket = getBucket( promotion );
-	const array = editPromotion( prevEdits[ bucket ], prevPromotion, data );
+	const promotionsArray = editPromotion( prevEdits[ bucket ], prevPromotion, data );
 
 	if ( isEqual( {}, data ) ) {
 		// If data is empty, only set the currentlyEditingId.
@@ -35,7 +35,7 @@ function editPromotionAction( edits, action ) {
 
 	return {
 		...prevEdits,
-		[ bucket ]: array,
+		[ bucket ]: promotionsArray,
 		currentlyEditingId: prevPromotion.id,
 	};
 }
@@ -44,8 +44,8 @@ function clearPromotionEditsAction() {
 	return null;
 }
 
-function editPromotion( array, promotion, data ) {
-	const prevArray = array || [];
+function editPromotion( promotionsArray, promotion, data ) {
+	const prevArray = promotionsArray || [];
 
 	let found = false;
 
