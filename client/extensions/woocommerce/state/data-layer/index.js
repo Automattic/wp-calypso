@@ -9,6 +9,7 @@ import paymentMethods from './payment-methods';
 import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
+import promotions from '../sites/promotions/handlers';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
@@ -29,6 +30,7 @@ const handlers = mergeHandlers(
 	productCategories,
 	products,
 	productVariations,
+	promotions,
 	request,
 	reviews,
 	reviewReplies,
