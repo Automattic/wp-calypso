@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,9 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { transferStates } from 'state/automated-transfer/constants';
-
 import { isFailed } from '../is-automated-transfer-failed';
+import { transferStates } from 'state/automated-transfer/constants';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isFailed()', () => {

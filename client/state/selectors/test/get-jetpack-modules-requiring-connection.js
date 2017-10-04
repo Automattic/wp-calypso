@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,9 +15,9 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
-					items: {}
-				}
-			}
+					items: {},
+				},
+			},
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
@@ -38,11 +40,11 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 							},
 							'module-c': {
 								module: 'module-c',
-							}
-						}
-					}
-				}
-			}
+							},
+						},
+					},
+				},
+			},
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );

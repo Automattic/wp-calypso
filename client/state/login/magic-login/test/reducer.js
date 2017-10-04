@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,6 +14,15 @@ import {
 	LINK_EXPIRED_PAGE,
 	REQUEST_FORM,
 } from '../constants';
+import reducer, {
+	isFetchingAuth,
+	isFetchingEmail,
+	currentView,
+	requestAuthError,
+	requestAuthSuccess,
+	requestEmailError,
+	requestEmailSuccess,
+} from '../reducer';
 
 import {
 	DESERIALIZE,
@@ -29,16 +40,6 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	SERIALIZE,
 } from 'state/action-types';
-
-import reducer, {
-	isFetchingAuth,
-	isFetchingEmail,
-	currentView,
-	requestAuthError,
-	requestAuthSuccess,
-	requestEmailError,
-	requestEmailSuccess,
-} from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

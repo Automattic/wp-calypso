@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,7 @@ import { fetchReviews, deleteReview, changeReviewStatus } from '../actions';
 import {
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEW_DELETE,
-	WOOCOMMERCE_REVIEW_STATUS_CHANGE
+	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {

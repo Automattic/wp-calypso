@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { CURRENT_USER_ID_SET } from 'state/action-types';
 import { setCurrentUserId } from '../actions';
+import { CURRENT_USER_ID_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setCurrentUserId()', () => {
@@ -16,7 +18,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: CURRENT_USER_ID_SET,
-				userId: 73705554
+				userId: 73705554,
 			} );
 		} );
 	} );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,11 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import {
-	ROUTE_SET,
-	SECTION_SET,
-	SITE_SETTINGS_SAVE,
-} from 'state/action-types.js';
+import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'state/action-types.js';
 
 describe( 'reducer', () => {
 	it( 'should initialize to the first index', () => {
@@ -28,4 +26,3 @@ describe( 'reducer', () => {
 		expect( reducer( 2, { type: 'BOGUS_ACTION' } ) ).to.equal( 2 );
 	} );
 } );
-

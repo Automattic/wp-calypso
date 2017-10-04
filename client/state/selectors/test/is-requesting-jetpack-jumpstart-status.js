@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,9 +16,9 @@ describe( 'isRequestingJetpackJumpstartStatus()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 11223344;
 		const output = isRequestingJetpackJumpstartStatus( stateIn, siteId );
@@ -27,9 +29,9 @@ describe( 'isRequestingJetpackJumpstartStatus()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = isRequestingJetpackJumpstartStatus( stateIn, siteId );
@@ -40,9 +42,9 @@ describe( 'isRequestingJetpackJumpstartStatus()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = isRequestingJetpackJumpstartStatus( stateIn, siteId );

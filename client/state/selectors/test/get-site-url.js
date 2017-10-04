@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,9 +15,9 @@ describe( 'getSiteUrl()', () => {
 		const state = {
 			sites: {
 				items: {
-					456: { URL: 'https://wordpress.com' }
-				}
-			}
+					456: { URL: 'https://wordpress.com' },
+				},
+			},
 		};
 
 		expect( getSiteUrl( state ) ).to.be.null;
@@ -27,24 +29,27 @@ describe( 'getSiteUrl()', () => {
 			sites: {
 				items: {
 					123: {},
-					456: { URL: 'https://wordpress.com' }
-				}
-			}
+					456: { URL: 'https://wordpress.com' },
+				},
+			},
 		};
 		expect( getSiteUrl( state, 123 ) ).to.be.null;
 	} );
 
 	it( 'should return the Url for a site', () => {
 		const URL = 'https://wordpress.com';
-		const result = getSiteUrl( {
-			sites: {
-				items: {
-					123: {
-						URL,
+		const result = getSiteUrl(
+			{
+				sites: {
+					items: {
+						123: {
+							URL,
+						},
 					},
 				},
 			},
-		}, 123 );
+			123
+		);
 
 		expect( result ).to.equal( URL );
 	} );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,18 +9,17 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-
 import {
 	handleValidateRequest,
 	handleValidateRequestSuccess,
-	handleValidateRequestFailure
+	handleValidateRequestFailure,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	validateRequestSuccess,
 	validateRequestError,
 	setValidationKey,
 } from 'state/account-recovery/reset/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {
@@ -44,8 +45,8 @@ describe( 'handleValidateRequest()', () => {
 						body: {
 							...userData,
 							method,
-							key
-						}
+							key,
+						},
 					},
 					action
 				)

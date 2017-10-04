@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
 import { unlikeComment, updateCommentLikes, handleUnlikeFailure } from '../';
+import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -35,8 +37,8 @@ describe( '#unlikeComment()', () => {
 					method: 'POST',
 					path: `/sites/${ SITE_ID }/comments/1/likes/mine/delete`,
 				},
-				action,
-			),
+				action
+			)
 		);
 	} );
 } );
@@ -45,9 +47,13 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, {
-			like_count: 4,
-		} );
+		updateCommentLikes(
+			{ dispatch },
+			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
+			{
+				like_count: 4,
+			}
+		);
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
@@ -57,7 +63,7 @@ describe( '#updateCommentLikes()', () => {
 				postId: POST_ID,
 				commentId: 1,
 				like_count: 4,
-			} ),
+			} )
 		);
 	} );
 } );
@@ -75,7 +81,7 @@ describe( '#handleUnlikeFailure()', () => {
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1,
-			} ),
+			} )
 		);
 	} );
 

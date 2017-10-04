@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 		const state = {
 			...userState,
 			sites: {
-				items: {}
+				items: {},
 			},
 			ui: { selectedSiteId: 2916284 },
 		};
@@ -31,7 +33,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 						ID: 2916288,
 						visible: true,
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -48,7 +50,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 					2916288: {
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -57,7 +59,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 						jetpack: true,
 						visible: true,
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -78,7 +80,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 					2916289: {
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -96,7 +98,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 						jetpack: true,
 						visible: true,
 					},
-				}
+				},
 			},
 			ui: {},
 		};
@@ -118,7 +120,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 					2916289: {
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -132,7 +134,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 						jetpack: true,
 						visible: true,
 					},
-				}
+				},
 			},
 			ui: { selectedSiteId: 2916289 },
 		};
@@ -153,7 +155,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 					2916287: {
 						manage_options: true,
 					},
-				}
+				},
 			},
 			sites: {
 				items: {
@@ -163,13 +165,13 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 						visible: true,
 						capabilities: {
 							manage_options: true,
-						}
+						},
 					},
 					2916287: {
 						ID: 2916287,
 						visible: true,
-					}
-				}
+					},
+				},
 			},
 			ui: { selectedSiteId: 2916287 },
 		};

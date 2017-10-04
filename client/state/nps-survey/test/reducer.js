@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,6 +8,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from '../constants';
+import reducer, {
+	isSessionEligible,
+	wasShownThisSession,
+	surveyState,
+	surveyName,
+	score,
+} from '../reducer';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
@@ -16,13 +26,6 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import {
-	NOT_SUBMITTED,
-	SUBMITTING,
-	SUBMIT_FAILURE,
-	SUBMITTED,
-} from '../constants';
-import reducer, { isSessionEligible, wasShownThisSession, surveyState, surveyName, score } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
@@ -88,7 +91,7 @@ describe( 'reducer', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
-				score: 7
+				score: 7,
 			} );
 
 			expect( state ).to.equal( SUBMITTING );
@@ -147,7 +150,7 @@ describe( 'reducer', () => {
 			const state = surveyName( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
-				score: 7
+				score: 7,
 			} );
 
 			expect( state ).to.equal( 'boo' );
@@ -174,7 +177,7 @@ describe( 'reducer', () => {
 			const state = score( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
-				score: 7
+				score: 7,
 			} );
 
 			expect( state ).to.equal( 7 );

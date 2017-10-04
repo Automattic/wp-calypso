@@ -1,19 +1,22 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-import sinon from 'sinon';
-
 import assert from 'assert';
 import { defer, find, last, omit } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'progress-store', function() {
 	let SignupProgressStore, SignupActions;
@@ -30,7 +33,7 @@ describe( 'progress-store', function() {
 	it( 'should store a new step', function() {
 		SignupActions.submitSignupStep( {
 			stepName: 'site-selection',
-			formData: { url: 'my-site.wordpress.com' }
+			formData: { url: 'my-site.wordpress.com' },
 		} );
 
 		assert.equal( SignupProgressStore.get().length, 1 );
@@ -52,8 +55,8 @@ describe( 'progress-store', function() {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
 				data: {
-					stepName: 'site-selection'
-				}
+					stepName: 'site-selection',
+				},
 			} );
 
 			assert.equal( SignupProgressStore.get()[ 0 ].lastUpdated, 12345 );
@@ -67,7 +70,7 @@ describe( 'progress-store', function() {
 		assert.deepEqual( omit( SignupProgressStore.get()[ 0 ], 'lastUpdated' ), {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
-			status: 'completed'
+			status: 'completed',
 		} );
 	} );
 
@@ -91,12 +94,15 @@ describe( 'progress-store', function() {
 	it( 'should mark submitted steps without an API request method as completed', function() {
 		SignupActions.submitSignupStep( { stepName: 'step-without-api' } );
 
-		assert.equal( find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status, 'completed' );
+		assert.equal(
+			find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status,
+			'completed'
+		);
 	} );
 
 	it( 'should mark submitted steps with an API request method as pending', function() {
 		SignupActions.submitSignupStep( {
-			stepName: 'asyncStep'
+			stepName: 'asyncStep',
 		} );
 
 		assert.equal( find( SignupProgressStore.get(), { stepName: 'asyncStep' } ).status, 'pending' );

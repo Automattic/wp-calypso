@@ -2,11 +2,11 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
+import sinon from 'sinon';
 
 /**
- * Internal deps
+ * Internal dependencies
  */
 import { requestSite } from '../actions';
 import {

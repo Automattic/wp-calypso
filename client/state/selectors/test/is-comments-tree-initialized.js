@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,9 +18,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
-					77203074: { spam: true }
-				}
-			}
+					77203074: { spam: true },
+				},
+			},
 		};
 		expect( isCommentsTreeInitialized( state, 77203074, 'spam' ) ).to.equal( true );
 	} );
@@ -26,9 +28,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
-					2916284: { spam: true }
-				}
-			}
+					2916284: { spam: true },
+				},
+			},
 		};
 		expect( isCommentsTreeInitialized( state, 77203074, 'spam' ) ).to.equal( false );
 	} );
@@ -36,9 +38,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
-					77203074: { spam: true }
-				}
-			}
+					77203074: { spam: true },
+				},
+			},
 		};
 		expect( isCommentsTreeInitialized( state, 77203074, 'unapproved' ) ).to.equal( false );
 	} );

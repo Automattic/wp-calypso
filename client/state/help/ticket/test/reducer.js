@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,6 @@ import { assert } from 'chai';
  */
 import reducer from '../reducer';
 import { dummyConfiguration, dummyError } from './test-data';
-
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
@@ -48,10 +49,13 @@ describe( 'ticket-support/configuration reducer', () => {
 	} );
 
 	it( 'should leave isReady as it is and requestError as the error on failed requests', () => {
-		const state = reducer( { isReady: false }, {
-			type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-			error: dummyError,
-		} );
+		const state = reducer(
+			{ isReady: false },
+			{
+				type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+				error: dummyError,
+			}
+		);
 
 		assert.isFalse( state.isReady );
 		assert.isFalse( state.isRequesting );

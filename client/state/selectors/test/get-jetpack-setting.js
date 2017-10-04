@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,9 +16,9 @@ describe( 'getJetpackSetting()', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
-						items: SETTINGS_FIXTURE
-					}
-				}
+						items: SETTINGS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'setting_1';
@@ -29,10 +31,10 @@ describe( 'getJetpackSetting()', () => {
 				jetpack: {
 					settings: {
 						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ]
-						}
-					}
-				}
+							654321: SETTINGS_FIXTURE[ 12345678 ],
+						},
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'setting_1';
@@ -45,10 +47,10 @@ describe( 'getJetpackSetting()', () => {
 				jetpack: {
 					settings: {
 						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ]
-						}
-					}
-				}
+							654321: SETTINGS_FIXTURE[ 12345678 ],
+						},
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'unexisting_setting';

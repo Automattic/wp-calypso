@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,16 +9,13 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { requestStatus, receiveStatus } from '../';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
-import {
-	requestStatus,
-	receiveStatus,
-} from '../';
 import {
 	getAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const siteId = 1916284;
 
@@ -46,7 +45,7 @@ describe( 'requestStatus', () => {
 
 describe( 'receiveStatus', () => {
 	let clock;
-	useFakeTimers( fakeClock => clock = fakeClock );
+	useFakeTimers( fakeClock => ( clock = fakeClock ) );
 
 	it( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
@@ -85,8 +84,6 @@ describe( 'receiveStatus', () => {
 		clock.tick( 4000 );
 
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
-			getAutomatedTransferStatus( siteId )
-		);
+		expect( dispatch ).to.have.been.calledWith( getAutomatedTransferStatus( siteId ) );
 	} );
 } );

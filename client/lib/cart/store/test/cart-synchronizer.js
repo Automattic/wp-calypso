@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +14,7 @@ import FakeWPCOM from './fake-wpcom';
 var TEST_CART_KEY = 91234567890;
 
 var poller = {
-	add: function() {}
+	add: function() {},
 };
 
 describe( 'cart-synchronizer', function() {

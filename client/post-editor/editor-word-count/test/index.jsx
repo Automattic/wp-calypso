@@ -1,26 +1,32 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/wp', () => ( {
-	me: () => ( {
-		get: () => {}
-	} )
-} ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { EditorWordCount } from '../';
 
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {},
+	} ),
+} ) );
+
 describe( 'EditorWordCount', () => {
 	it( 'should display word count if selected text is provided', () => {
-		const wrapper = mount( <EditorWordCount selectedText={ 'Selected text' } translate={ translate } /> );
+		const wrapper = mount(
+			<EditorWordCount selectedText={ 'Selected text' } translate={ translate } />
+		);
 		wrapper.setState( { rawContent: 'Selected text' } );
 		expect( wrapper.text() ).to.equal( '2 words selected / 2 words' );
 	} );

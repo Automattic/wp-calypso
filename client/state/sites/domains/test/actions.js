@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,14 +13,8 @@ import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
 	domainsRequestFailureAction,
-	fetchSiteDomains
+	fetchSiteDomains,
 } from '../actions';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-/**
- * Fixture data
- */
 import {
 	SITE_ID_FIRST as siteId,
 	REST_API_RESPONSE as wpcomResponse,
@@ -27,8 +23,10 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST,
 	ACTION_SITE_DOMAIN_REQUEST_SUCCESS,
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
-	ERROR_MESSAGE_RESPONSE as errorResponse
+	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -62,7 +60,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )
@@ -86,7 +84,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )

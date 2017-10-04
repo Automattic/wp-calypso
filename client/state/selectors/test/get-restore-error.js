@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,11 +14,14 @@ const SITE_ID = 1234;
 
 describe( 'getRestoreError()', () => {
 	it( 'should return null if no error exists for a site', () => {
-		const result = getRestoreError( {
-			activityLog: {
-				restoreError: {},
+		const result = getRestoreError(
+			{
+				activityLog: {
+					restoreError: {},
+				},
 			},
-		}, SITE_ID );
+			SITE_ID
+		);
 		expect( result ).to.be.null;
 	} );
 
@@ -26,13 +31,16 @@ describe( 'getRestoreError()', () => {
 			message: 'Error.',
 			status: 400,
 		};
-		const result = getRestoreError( {
-			activityLog: {
-				restoreError: {
-					[ SITE_ID ]: error,
+		const result = getRestoreError(
+			{
+				activityLog: {
+					restoreError: {
+						[ SITE_ID ]: error,
+					},
 				},
 			},
-		}, SITE_ID );
+			SITE_ID
+		);
 		expect( result ).to.deep.equal( error );
 	} );
 } );

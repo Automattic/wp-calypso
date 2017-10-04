@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,9 +19,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 				connection: {
 					requesting: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
 		expect( output ).to.be.true;
@@ -31,9 +33,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 				connection: {
 					requesting: {
 						[ siteId ]: false,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
 		expect( output ).to.be.false;
@@ -45,9 +47,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 				connection: {
 					requesting: {
 						77203074: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
 		expect( output ).to.be.false;

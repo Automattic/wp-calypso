@@ -1,12 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
@@ -15,15 +16,14 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../../action-types';
-import {
-	deleteFile,
-	generateStats,
-} from '../actions';
+import { deleteFile, generateStats } from '../actions';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -33,12 +33,14 @@ describe( 'actions', () => {
 			generated: 1493997829,
 			supercache: {
 				cached: 1,
-				cached_list: [ {
-					lower_age: 180347,
-					files: 2,
-					upper_age: 183839,
-					dir: 'wordpress.com/test'
-				} ],
+				cached_list: [
+					{
+						lower_age: 180347,
+						files: 2,
+						upper_age: 183839,
+						dir: 'wordpress.com/test',
+					},
+				],
 				expired: 0,
 				expired_list: [],
 				fsize: 59573,
@@ -47,15 +49,17 @@ describe( 'actions', () => {
 				cached: 0,
 				cached_list: [],
 				expired: 1,
-				expired_list: [ {
-					lower_age: 180347,
-					files: 2,
-					upper_age: 183839,
-					dir: 'wordpress.com/test'
-				} ],
+				expired_list: [
+					{
+						lower_age: 180347,
+						files: 2,
+						upper_age: 183839,
+						dir: 'wordpress.com/test',
+					},
+				],
 				fsize: 59573,
-			}
-		}
+			},
+		},
 	};
 
 	describe( '#generateStats()', () => {
@@ -69,7 +73,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/stats' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -113,7 +117,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/cache' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer from '../reducer';
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
@@ -25,8 +28,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
-import reducer from '../reducer';
-
 describe( '#account-recovery/reset reducer', () => {
 	const fetchedOptions = deepFreeze( [
 		{
@@ -41,7 +42,7 @@ describe( '#account-recovery/reset reducer', () => {
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should set isRequesting flag.', () => {
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 		} );
 
 		assert.isTrue( state.options.isRequesting );

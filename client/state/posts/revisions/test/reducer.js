@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,23 +9,17 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer, { requesting, revisions } from '../reducer';
 import {
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import reducer, {
-	requesting,
-	revisions,
-} from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'revisions',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'revisions' ] );
 	} );
 
 	describe( '#requesting', () => {
@@ -48,15 +44,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set to `false` if the request is successful', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: POST_REVISIONS_REQUEST_SUCCESS,
-				siteId: 12345678,
-				postId: 50,
-			} );
+			const state = requesting(
+				deepFreeze( {
+					12345678: {
+						50: true,
+					},
+				} ),
+				{
+					type: POST_REVISIONS_REQUEST_SUCCESS,
+					siteId: 12345678,
+					postId: 50,
+				}
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -66,15 +65,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set to `false` if the request fails', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: POST_REVISIONS_REQUEST_FAILURE,
-				siteId: 12345678,
-				postId: 50,
-			} );
+			const state = requesting(
+				deepFreeze( {
+					12345678: {
+						50: true,
+					},
+				} ),
+				{
+					type: POST_REVISIONS_REQUEST_FAILURE,
+					siteId: 12345678,
+					postId: 50,
+				}
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -84,15 +86,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should support multiple sites', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: POST_REVISIONS_REQUEST,
-				siteId: 87654321,
-				postId: 10,
-			} );
+			const state = requesting(
+				deepFreeze( {
+					12345678: {
+						50: true,
+					},
+				} ),
+				{
+					type: POST_REVISIONS_REQUEST,
+					siteId: 87654321,
+					postId: 10,
+				}
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -105,15 +110,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should support multiple posts', () => {
-			const state = requesting( deepFreeze( {
-				12345678: {
-					50: true,
-				},
-			} ), {
-				type: POST_REVISIONS_REQUEST,
-				siteId: 12345678,
-				postId: 10,
-			} );
+			const state = requesting(
+				deepFreeze( {
+					12345678: {
+						50: true,
+					},
+				} ),
+				{
+					type: POST_REVISIONS_REQUEST,
+					siteId: 12345678,
+					postId: 10,
+				}
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -132,24 +140,27 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should support multiple sites', () => {
-			const state = revisions( deepFreeze( {
-				12345678: {
-					50: {
-						51: {
-							id: 51,
+			const state = revisions(
+				deepFreeze( {
+					12345678: {
+						50: {
+							51: {
+								id: 51,
+							},
 						},
 					},
-				},
-			} ), {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: 87654321,
-				postId: 10,
-				revisions: [
-					{
-						id: 11,
-					},
-				],
-			} );
+				} ),
+				{
+					type: POST_REVISIONS_RECEIVE,
+					siteId: 87654321,
+					postId: 10,
+					revisions: [
+						{
+							id: 11,
+						},
+					],
+				}
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -170,24 +181,27 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should support multiple posts', () => {
-			const state = revisions( deepFreeze( {
-				12345678: {
-					50: {
-						51: {
-							id: 51,
+			const state = revisions(
+				deepFreeze( {
+					12345678: {
+						50: {
+							51: {
+								id: 51,
+							},
 						},
 					},
+				} ),
+				{
+					type: POST_REVISIONS_RECEIVE,
+					siteId: 12345678,
+					postId: 10,
+					revisions: [
+						{
+							id: 11,
+						},
+					],
 				}
-			} ), {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: 12345678,
-				postId: 10,
-				revisions: [
-					{
-						id: 11,
-					},
-				],
-			} );
+			);
 
 			expect( state ).to.eql( {
 				12345678: {
@@ -206,24 +220,27 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should discard previous revisions for the same post', () => {
-			const state = revisions( deepFreeze( {
-				12345678: {
-					10: {
-						51: {
-							id: 51,
+			const state = revisions(
+				deepFreeze( {
+					12345678: {
+						10: {
+							51: {
+								id: 51,
+							},
 						},
 					},
+				} ),
+				{
+					type: POST_REVISIONS_RECEIVE,
+					siteId: 12345678,
+					postId: 10,
+					revisions: [
+						{
+							id: 52,
+						},
+					],
 				}
-			} ), {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: 12345678,
-				postId: 10,
-				revisions: [
-					{
-						id: 52,
-					},
-				],
-			} );
+			);
 
 			expect( state ).to.eql( {
 				12345678: {

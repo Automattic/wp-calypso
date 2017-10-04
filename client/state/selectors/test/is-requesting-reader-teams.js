@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,8 +16,8 @@ describe( 'isRequestingReaderTeams()', () => {
 			reader: {
 				teams: {
 					isRequesting: false,
-				}
-			}
+				},
+			},
 		} );
 
 		expect( isRequesting ).to.be.false;
@@ -26,8 +28,8 @@ describe( 'isRequestingReaderTeams()', () => {
 			reader: {
 				teams: {
 					isRequesting: true,
-				}
-			}
+				},
+			},
 		} );
 
 		expect( isRequesting ).to.be.true;

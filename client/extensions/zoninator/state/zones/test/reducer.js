@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,18 +15,15 @@ import {
 	ZONINATOR_UPDATE_ZONE,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 234567;
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -249,7 +248,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
 					[ primaryZone.id ]: primaryZone,
-				}
+				},
 			} );
 		} );
 

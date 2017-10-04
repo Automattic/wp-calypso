@@ -1,6 +1,7 @@
-/** @jest-environment jsdom */
-jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
-jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -14,6 +15,9 @@ import TestUtils from 'react-addons-test-utils';
  * Internal dependencies
  */
 import { ThemesList } from '../';
+
+jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
+jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
 
 describe( 'ThemesList', function() {
 	let props, themesList, themesListElement;
@@ -30,14 +34,14 @@ describe( 'ThemesList', function() {
 					id: '2',
 					name: 'picard',
 					screenshot: '/theme/picard/screenshot.png',
-				}
+				},
 			],
 			lastPage: true,
 			loading: false,
 			fetchNextPage: noop,
 			getButtonOptions: noop,
 			onScreenshotClick: noop,
-			translate: x => x // Mock translate()
+			translate: x => x, // Mock translate()
 		};
 
 		themesList = React.createElement( ThemesList, props );
@@ -59,7 +63,10 @@ describe( 'ThemesList', function() {
 
 		it( 'should render a div with a className of "themes-list"', function() {
 			assert( themesListElement, 'element does not exist' );
-			assert( themesListElement.props.className === 'themes-list', 'className does not equal "themes-list"' );
+			assert(
+				themesListElement.props.className === 'themes-list',
+				'className does not equal "themes-list"'
+			);
 		} );
 
 		context( 'when no themes are found', function() {

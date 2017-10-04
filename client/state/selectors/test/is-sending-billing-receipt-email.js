@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,8 +16,8 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			billingTransactions: {
 				sendingReceiptEmail: {
 					12345678: true,
-				}
-			}
+				},
+			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
 		expect( output ).to.be.true;
@@ -26,8 +28,8 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			billingTransactions: {
 				sendingReceiptEmail: {
 					12345678: false,
-				}
-			}
+				},
+			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
 		expect( output ).to.be.false;
@@ -38,8 +40,8 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 			billingTransactions: {
 				sendingReceiptEmail: {
 					88888888: false,
-				}
-			}
+				},
+			},
 		};
 		const output = isSendingBillingReceiptEmail( stateIn, 12345678 );
 		expect( output ).to.be.null;

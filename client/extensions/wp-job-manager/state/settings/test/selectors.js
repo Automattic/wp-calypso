@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,10 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getSettings,
-	isFetchingSettings,
-} from '../selectors';
+import { getSettings, isFetchingSettings } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -21,8 +20,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: undefined,
-					}
-				}
+					},
+				},
 			};
 			const isFetching = isFetchingSettings( state, primarySiteId );
 
@@ -36,10 +35,10 @@ describe( 'selectors', () => {
 						settings: {
 							fetching: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSettings( state, secondarySiteId );
 
@@ -53,10 +52,10 @@ describe( 'selectors', () => {
 						settings: {
 							fetching: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSettings( state, primarySiteId );
 
@@ -70,10 +69,10 @@ describe( 'selectors', () => {
 						settings: {
 							fetching: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isFetching = isFetchingSettings( state, primarySiteId );
 
@@ -89,8 +88,8 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: undefined,
-					}
-				}
+					},
+				},
 			};
 			const settings = getSettings( state, primarySiteId );
 
@@ -104,10 +103,10 @@ describe( 'selectors', () => {
 						settings: {
 							items: {
 								[ primarySiteId ]: primarySettings,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const settings = getSettings( state, secondarySiteId );
 
@@ -121,10 +120,10 @@ describe( 'selectors', () => {
 						settings: {
 							items: {
 								[ primarySiteId ]: primarySettings,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const settings = getSettings( state, primarySiteId );
 

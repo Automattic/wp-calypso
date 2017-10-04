@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 var expect = require( 'chai' ).expect;
 
 /**

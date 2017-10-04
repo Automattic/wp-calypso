@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,12 +10,9 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	isLoading,
-	isSaving,
-	items,
-	orders,
-} from '../reducer';
+import { isLoading, isSaving, items, orders } from '../reducer';
+import note from './fixtures/note';
+import notes from './fixtures/notes';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
@@ -22,8 +21,6 @@ import {
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import notes from './fixtures/notes';
-import note from './fixtures/note';
 
 describe( 'reducer', () => {
 	describe( 'isLoading', () => {
@@ -178,7 +175,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: [ 1, 2 ] } );
 		} );
 
-		it( 'should add a second order\'s notes as a second list', () => {
+		it( "should add a second order's notes as a second list", () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -190,7 +187,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 50: [ 3 ] } );
 		} );
 
-		it( 'should add the created note to order\'s note list', () => {
+		it( "should add the created note to order's note list", () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,

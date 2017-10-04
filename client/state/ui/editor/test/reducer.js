@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 import reducer, { postId } from '../reducer';
+import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
@@ -31,7 +33,7 @@ describe( 'reducer', () => {
 			const state = postId( undefined, {
 				type: EDITOR_START,
 				siteId: 1,
-				postId: 184
+				postId: 184,
 			} );
 
 			expect( state ).to.equal( 184 );
@@ -43,9 +45,9 @@ describe( 'reducer', () => {
 				siteId: 1,
 				postId: null,
 				savedPost: {
-					ID: 184
+					ID: 184,
 				},
-				post: {}
+				post: {},
 			} );
 
 			expect( state ).to.equal( 184 );
@@ -57,9 +59,9 @@ describe( 'reducer', () => {
 				siteId: 1,
 				postId: null,
 				savedPost: {
-					ID: 184
+					ID: 184,
 				},
-				post: {}
+				post: {},
 			} );
 
 			expect( state ).to.equal( 10 );

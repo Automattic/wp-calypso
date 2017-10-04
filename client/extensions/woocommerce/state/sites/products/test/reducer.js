@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,9 @@ import {
 	productsSearchRequestSuccess,
 	productsSearchClear,
 } from '../reducer';
+import product from './fixtures/product';
 
+import products from './fixtures/products';
 import {
 	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
@@ -27,9 +31,6 @@ import {
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
-
-import products from './fixtures/products';
-import product from './fixtures/product';
 
 describe( 'reducer', () => {
 	describe( 'productsRequest', () => {
@@ -55,7 +56,10 @@ describe( 'reducer', () => {
 				totalPages: 3,
 				products,
 			};
-			const newState = productsRequestSuccess( { isLoading: { [ JSON.stringify( params ) ]: true } }, action );
+			const newState = productsRequestSuccess(
+				{ isLoading: { [ JSON.stringify( params ) ]: true } },
+				action
+			);
 			expect( newState.isLoading ).to.exist;
 			expect( newState.isLoading[ JSON.stringify( params ) ] ).to.be.false;
 		} );
@@ -119,10 +123,13 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 				siteId: 123,
 				params,
-				error: {}
+				error: {},
 			};
 
-			const newState = productsRequestFailure( { isLoading: { [ JSON.stringify( params ) ]: true } }, action );
+			const newState = productsRequestFailure(
+				{ isLoading: { [ JSON.stringify( params ) ]: true } },
+				action
+			);
 			expect( newState.isLoading[ JSON.stringify( params ) ] ).to.be.false;
 		} );
 	} );
@@ -160,9 +167,12 @@ describe( 'reducer', () => {
 				totalProducts: 28,
 				query: 'testing',
 			};
-			const newState = productsSearchRequestSuccess( {
-				search: { isLoading: { [ JSON.stringify( params ) ]: true } }
-			}, action );
+			const newState = productsSearchRequestSuccess(
+				{
+					search: { isLoading: { [ JSON.stringify( params ) ]: true } },
+				},
+				action
+			);
 			expect( newState.search.isLoading[ JSON.stringify( params ) ] ).to.be.false;
 		} );
 		it( 'should store the products in state', () => {
@@ -221,12 +231,15 @@ describe( 'reducer', () => {
 				siteId: 123,
 				params,
 				query: 'testing',
-				error: {}
+				error: {},
 			};
 
-			const newState = productsSearchRequestFailure( {
-				search: { isLoading: { [ JSON.stringify( params ) ]: true } }
-			}, action );
+			const newState = productsSearchRequestFailure(
+				{
+					search: { isLoading: { [ JSON.stringify( params ) ]: true } },
+				},
+				action
+			);
 			expect( newState.search.isLoading[ JSON.stringify( params ) ] ).to.be.false;
 		} );
 	} );
@@ -237,9 +250,12 @@ describe( 'reducer', () => {
 				siteId: 123,
 			};
 
-			const newState = productsSearchClear( {
-				search: { isLoading: { [ JSON.stringify( { page: 1, per_page: 10 } ) ]: true } }
-			}, action );
+			const newState = productsSearchClear(
+				{
+					search: { isLoading: { [ JSON.stringify( { page: 1, per_page: 10 } ) ]: true } },
+				},
+				action
+			);
 			expect( newState.search ).to.eql( {} );
 		} );
 	} );
@@ -252,7 +268,10 @@ describe( 'reducer', () => {
 			};
 
 			const additionalProducts = [ product ];
-			const newState = productsDeleteSuccess( { products: [ ...products, ...additionalProducts ] }, action );
+			const newState = productsDeleteSuccess(
+				{ products: [ ...products, ...additionalProducts ] },
+				action
+			);
 			expect( newState.products ).to.eql( products );
 		} );
 	} );

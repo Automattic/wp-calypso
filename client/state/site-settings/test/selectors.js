@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,9 +23,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: true
-					}
-				}
+						2916284: true,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916285 );
 
@@ -34,9 +36,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: false
-					}
-				}
+						2916284: false,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
@@ -47,9 +49,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: true
-					}
-				}
+						2916284: true,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
@@ -62,9 +64,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916285 );
 
@@ -75,9 +77,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
@@ -88,9 +90,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
@@ -103,9 +105,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916285 );
 
@@ -116,9 +118,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
@@ -129,9 +131,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error' }
-					}
-				}
+						2916284: { saving: false, status: 'error' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
@@ -142,9 +144,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
@@ -157,9 +159,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916285 );
 
@@ -170,9 +172,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
@@ -183,9 +185,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error' }
-					}
-				}
+						2916284: { saving: false, status: 'error' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
@@ -198,9 +200,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending', error: false }
-					}
-				}
+						2916284: { saving: true, status: 'pending', error: false },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916285 );
 
@@ -211,9 +213,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success', error: false }
-					}
-				}
+						2916284: { saving: false, status: 'success', error: false },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
@@ -224,9 +226,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error', error: 'my Error' }
-					}
-				}
+						2916284: { saving: false, status: 'error', error: 'my Error' },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
@@ -239,9 +241,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					items: {
-						2916284: { default_category: 'chicken' }
-					}
-				}
+						2916284: { default_category: 'chicken' },
+					},
+				},
 			};
 			const settings = getSiteSettings( state, 2916285 );
 
@@ -252,9 +254,9 @@ describe( 'selectors', () => {
 			const state = {
 				siteSettings: {
 					items: {
-						2916284: { default_category: 'chicken' }
-					}
-				}
+						2916284: { default_category: 'chicken' },
+					},
+				},
 			};
 			const settings = getSiteSettings( state, 2916284 );
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,17 +8,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	SITE_VOUCHERS_ASSIGN_RECEIVE,
-	SITE_VOUCHERS_ASSIGN_REQUEST,
-	SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
-	SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
-	SITE_VOUCHERS_RECEIVE,
-	SITE_VOUCHERS_REQUEST,
-	SITE_VOUCHERS_REQUEST_SUCCESS,
-	SITE_VOUCHERS_REQUEST_FAILURE
-} from 'state/action-types';
 import {
 	vouchersAssignReceiveAction,
 	vouchersAssignRequestAction,
@@ -27,17 +18,28 @@ import {
 	vouchersRequestSuccessAction,
 	vouchersRequestFailureAction,
 	assignSiteVoucher,
-	requestSiteVouchers
+	requestSiteVouchers,
 } from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	SITE_ID_0 as siteId,
 	REST_API_RESPONSE as wpcomResponse,
 	REST_API_ASSIGN_VOUCHER_RESPONSE as wpcomAssignResponse,
 	REST_API_ERROR_RESPONSE as wpcomErrorResponse,
 	ERROR_RESPONSE as errorResponse,
-	SERVICE_TYPE as oneOfOurServiceTypes
+	SERVICE_TYPE as oneOfOurServiceTypes,
 } from './fixture';
+import {
+	SITE_VOUCHERS_ASSIGN_RECEIVE,
+	SITE_VOUCHERS_ASSIGN_REQUEST,
+	SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+	SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
+	SITE_VOUCHERS_RECEIVE,
+	SITE_VOUCHERS_REQUEST,
+	SITE_VOUCHERS_REQUEST_SUCCESS,
+	SITE_VOUCHERS_REQUEST_FAILURE,
+} from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -54,7 +56,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_RECEIVE,
 				siteId,
-				vouchers
+				vouchers,
 			} );
 		} );
 
@@ -62,7 +64,7 @@ describe( 'actions', () => {
 			const action = vouchersRequestAction( siteId );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST,
-				siteId
+				siteId,
 			} );
 		} );
 
@@ -70,7 +72,7 @@ describe( 'actions', () => {
 			const action = vouchersRequestSuccessAction( siteId );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST_SUCCESS,
-				siteId
+				siteId,
 			} );
 		} );
 
@@ -79,7 +81,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST_FAILURE,
 				siteId,
-				error: errorResponse
+				error: errorResponse,
 			} );
 		} );
 
@@ -91,7 +93,7 @@ describe( 'actions', () => {
 				type: SITE_VOUCHERS_ASSIGN_RECEIVE,
 				siteId,
 				serviceType: oneOfOurServiceTypes,
-				voucher
+				voucher,
 			} );
 		} );
 
@@ -100,7 +102,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_ASSIGN_REQUEST,
 				siteId,
-				serviceType: oneOfOurServiceTypes
+				serviceType: oneOfOurServiceTypes,
 			} );
 		} );
 
@@ -109,23 +111,27 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
 				siteId,
-				serviceType: oneOfOurServiceTypes
+				serviceType: oneOfOurServiceTypes,
 			} );
 		} );
 
 		it( '#vouchersAssignRequestFailureAction()', () => {
-			const action = vouchersAssignRequestFailureAction( siteId, oneOfOurServiceTypes, errorResponse );
+			const action = vouchersAssignRequestFailureAction(
+				siteId,
+				oneOfOurServiceTypes,
+				errorResponse
+			);
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
 				siteId,
 				serviceType: oneOfOurServiceTypes,
-				error: errorResponse
+				error: errorResponse,
 			} );
 		} );
 	} );
 
 	describe( '#requestSiteVouchers() - success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
@@ -149,7 +155,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
@@ -173,7 +179,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteVouchers() - failure', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
@@ -195,7 +201,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - failure', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
@@ -205,7 +211,11 @@ describe( 'actions', () => {
 		it( 'should dispatch assign_FAILURE action when assign failed', () => {
 			const { message } = wpcomErrorResponse;
 			const assignAction = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
-			const failureAction = vouchersAssignRequestFailureAction( siteId, oneOfOurServiceTypes, message );
+			const failureAction = vouchersAssignRequestFailureAction(
+				siteId,
+				oneOfOurServiceTypes,
+				message
+			);
 
 			const promise = assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy );
 			expect( spy ).to.have.been.calledWith( assignAction );

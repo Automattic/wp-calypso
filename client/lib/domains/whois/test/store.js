@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,9 +8,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
-import Dispatcher from 'dispatcher';
 import WhoisStore from './../store';
+import Dispatcher from 'dispatcher';
+import { action as ActionTypes } from 'lib/upgrades/constants';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'domain.name';
@@ -26,74 +28,74 @@ describe( 'store', () => {
 			data: null,
 			hasLoadedFromServer: false,
 			isFetching: false,
-			needsUpdate: true
+			needsUpdate: true,
 		} );
 	} );
 
 	it( 'should return an object with disabled needsUpdate and enabled isFetching flag when fetching domain data triggered', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.WHOIS_FETCH,
-			domainName: DOMAIN_NAME
+			domainName: DOMAIN_NAME,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			data: null,
 			hasLoadedFromServer: false,
 			isFetching: true,
-			needsUpdate: false
+			needsUpdate: false,
 		} );
 	} );
 
 	it( 'should return an object with enabled needsUpdate and disabled isFetching flag when fetching domain data failed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.WHOIS_FETCH_FAILED,
-			domainName: DOMAIN_NAME
+			domainName: DOMAIN_NAME,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			data: null,
 			hasLoadedFromServer: false,
 			isFetching: false,
-			needsUpdate: true
+			needsUpdate: true,
 		} );
 	} );
 
 	it( 'should return contact data when fetching domain data completed', () => {
 		const data = {
-			org: 'My Company, LLC'
+			org: 'My Company, LLC',
 		};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
-			data
+			data,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			data,
 			hasLoadedFromServer: true,
 			isFetching: false,
-			needsUpdate: false
+			needsUpdate: false,
 		} );
 	} );
 
 	it( 'should return latest whois data when domain data received twice', () => {
 		const data = {
-				org: 'My First Company, LLC'
+				org: 'My First Company, LLC',
 			},
 			anotherData = {
-				org: 'My Second Company, LLC'
+				org: 'My Second Company, LLC',
 			};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
-			data
+			data,
 		} );
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
-			data: anotherData
+			data: anotherData,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( anotherData );
@@ -102,21 +104,21 @@ describe( 'store', () => {
 	it( 'should contain whois data for given domain equal to received from server action', () => {
 		const ANOTHER_DOMAIN_NAME = 'another-domain.name',
 			data = {
-				org: 'My First Company, LLC'
+				org: 'My First Company, LLC',
 			},
 			anotherData = {
-				org: 'My Second Company, LLC'
+				org: 'My Second Company, LLC',
 			};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
-			data
+			data,
 		} );
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
 			domainName: ANOTHER_DOMAIN_NAME,
-			data: anotherData
+			data: anotherData,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( data );
@@ -126,7 +128,7 @@ describe( 'store', () => {
 	it( 'should return enabled needsUpdate flag when domain WHOIS update completed', () => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-			domainName: DOMAIN_NAME
+			domainName: DOMAIN_NAME,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).needsUpdate ).to.be.true;

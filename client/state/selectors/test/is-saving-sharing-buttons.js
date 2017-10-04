@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,10 +16,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
-			}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
+			},
 		};
 		const isSaving = isSavingSharingButtons( state, 2916285 );
 
@@ -29,10 +31,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
-			}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
+			},
 		};
 		const isSaving = isSavingSharingButtons( state, 2916284 );
 
@@ -44,10 +46,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
-			}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
+			},
 		};
 		const isSaving = isSavingSharingButtons( state, 2916284 );
 

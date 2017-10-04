@@ -1,5 +1,5 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,10 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getReviewReplies,
-	getReviewReply,
-} from '../selectors';
+import { getReviewReplies, getReviewReply } from '../selectors';
 import reviewReplies from './fixtures/review-replies';
 
 const preInitializedState = {
@@ -29,12 +28,12 @@ const loadedState = {
 				123: {
 					reviewReplies: {
 						555: reviewReplies,
-					}
+					},
 				},
 				321: {
 					reviewReplies: {
 						556: [],
-					}
+					},
 				},
 			},
 		},

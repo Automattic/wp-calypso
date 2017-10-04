@@ -1,11 +1,14 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -17,7 +20,9 @@ describe( 'AutoDirection', function() {
 	describe( 'component rendering', () => {
 		it( 'adds a direction to RTL text', () => {
 			const wrapper = shallow(
-				<AutoDirection><div>השנה היא 2017.</div></AutoDirection>
+				<AutoDirection>
+					<div>השנה היא 2017.</div>
+				</AutoDirection>
 			);
 
 			expect( wrapper.node.props.direction ).to.equal( 'rtl' );
@@ -25,7 +30,9 @@ describe( 'AutoDirection', function() {
 
 		it( "doesn't add a direction to LTR text", () => {
 			const wrapper = shallow(
-				<AutoDirection><div>The year is 2017.</div></AutoDirection>
+				<AutoDirection>
+					<div>The year is 2017.</div>
+				</AutoDirection>
 			);
 
 			expect( wrapper.node.props ).to.not.have.property( 'direction' );
@@ -33,7 +40,11 @@ describe( 'AutoDirection', function() {
 
 		it( 'adds a direction to the parent of an inline component', () => {
 			const wrapper = shallow(
-				<AutoDirection><div><Emojify>השנה היא 2017.</Emojify></div></AutoDirection>
+				<AutoDirection>
+					<div>
+						<Emojify>השנה היא 2017.</Emojify>
+					</div>
+				</AutoDirection>
 			);
 
 			expect( wrapper.node.props.direction ).to.equal( 'rtl' );

@@ -1,5 +1,4 @@
-jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +8,11 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 import { httpHandler } from '../';
 import superagentMock from './mocks/superagent';
+import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'state/utils';
+jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };
@@ -42,12 +42,9 @@ describe( '#httpHandler', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 
-		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
-			extendAction(
-				succeeder,
-				successMeta( { body: data } )
-			)
-		) );
+		expect( dispatch ).to.have.been.calledWithMatch(
+			sinon.match( extendAction( succeeder, successMeta( { body: data } ) ) )
+		);
 	} );
 
 	it( 'should call `onFailure` when a response returns with error', () => {
@@ -58,50 +55,48 @@ describe( '#httpHandler', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 
-		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
-			extendAction(
-				failer,
-				failureMeta( { response: { body: { error: data.error } } } )
+		expect( dispatch ).to.have.been.calledWithMatch(
+			sinon.match(
+				extendAction( failer, failureMeta( { response: { body: { error: data.error } } } ) )
 			)
-		) );
+		);
 	} );
 
 	it( 'should reject invalid headers', () => {
 		const headers = [ { key: 'Accept', value: 'something' } ];
 		httpHandler(
 			{
-				dispatch
+				dispatch,
 			},
 			{
 				...getMe,
-				headers
+				headers,
 			},
 			null
 		);
 
-		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
-			extendAction(
-				failer,
-				failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
+		expect( dispatch ).to.have.been.calledWithMatch(
+			sinon.match(
+				extendAction(
+					failer,
+					failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
+				)
 			)
-		) );
+		);
 	} );
 
 	it( 'should set appropriate headers', () => {
-		const headers = [
-			[ 'Auth', 'something' ],
-			[ 'Bearer', 'secret' ],
-		];
+		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
 
 		superagentMock.setResponse( true, {} );
 
 		httpHandler(
 			{
-				dispatch
+				dispatch,
 			},
 			{
 				...getMe,
-				headers
+				headers,
 			},
 			null
 		);
@@ -112,10 +107,7 @@ describe( '#httpHandler', () => {
 	} );
 
 	it( 'should set appropriate query string', () => {
-		const queryParams = [
-			[ 'statement', 'hello world' ],
-			[ 'regex', '/.$/' ],
-		];
+		const queryParams = [ [ 'statement', 'hello world' ], [ 'regex', '/.$/' ] ];
 
 		const queryString = 'statement=hello%20world&regex=%2F.%24%2F';
 
@@ -123,11 +115,11 @@ describe( '#httpHandler', () => {
 
 		httpHandler(
 			{
-				dispatch
+				dispatch,
 			},
 			{
 				...getMe,
-				queryParams
+				queryParams,
 			},
 			null
 		);
@@ -136,18 +128,17 @@ describe( '#httpHandler', () => {
 	} );
 
 	it( 'should not set empty query string', () => {
-		const queryParams = [
-		];
+		const queryParams = [];
 
 		superagentMock.setResponse( true, {} );
 
 		httpHandler(
 			{
-				dispatch
+				dispatch,
 			},
 			{
 				...getMe,
-				queryParams
+				queryParams,
 			},
 			null
 		);

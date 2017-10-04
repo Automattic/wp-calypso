@@ -1,8 +1,4 @@
-jest.mock( 'config', () => ( {
-	isEnabled: () => true
-} ) );
-jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +11,11 @@ import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
 import Dispatcher from 'dispatcher';
 import PluginsListsStore from 'lib/plugins/wporg-data/list-store';
+
+jest.mock( 'config', () => ( {
+	isEnabled: () => true,
+} ) );
+jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
 
 describe( 'WPORG Plugins Lists Store', () => {
 	let pluginsList;

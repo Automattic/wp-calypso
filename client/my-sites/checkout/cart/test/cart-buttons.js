@@ -1,22 +1,15 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/mixins/analytics', () => {
-	const recordStub = require( 'sinon' ).stub();
-
-	const analytics = () => ( {
-		recordEvent: recordStub
-	} );
-	analytics.recordStub = recordStub;
-
-	return analytics;
-} );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { identity } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -25,10 +18,21 @@ import CartButtons from '../cart-buttons';
 import { recordStub } from 'lib/mixins/analytics';
 import { useSandbox } from 'test/helpers/use-sinon';
 
+jest.mock( 'lib/mixins/analytics', () => {
+	const recordStub = require( 'sinon' ).stub();
+
+	const analytics = () => ( {
+		recordEvent: recordStub,
+	} );
+	analytics.recordStub = recordStub;
+
+	return analytics;
+} );
+
 describe( 'cart-buttons', function() {
 	let cartButtonsComponent, onKeepSearchingClickStub;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		onKeepSearchingClickStub = sandbox.stub();
 	} );
 
@@ -36,11 +40,11 @@ describe( 'cart-buttons', function() {
 		beforeEach( function() {
 			cartButtonsComponent = mount(
 				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
+					selectedSite={ { slug: 'example.com' } }
 					showKeepSearching={ true }
 					onKeepSearchingClick={ onKeepSearchingClickStub }
 					translate={ identity }
-					/>
+				/>
 			);
 		} );
 
@@ -57,10 +61,7 @@ describe( 'cart-buttons', function() {
 	describe( 'Click on Checkout Button', function() {
 		beforeEach( function() {
 			cartButtonsComponent = mount(
-				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
-					translate={ identity }
-					/>
+				<CartButtons selectedSite={ { slug: 'example.com' } } translate={ identity } />
 			);
 		} );
 

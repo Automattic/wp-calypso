@@ -1,17 +1,21 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import React from 'react';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useFakeTimers } from 'test/helpers/use-sinon';
 import { PageViewTracker } from '../';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'PageViewTracker', () => {
 	let clock;

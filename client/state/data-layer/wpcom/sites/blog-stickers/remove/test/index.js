@@ -1,20 +1,22 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	requestBlogStickerRemove,
 	receiveBlogStickerRemove,
 	receiveBlogStickerRemoveError,
 } from '../';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {
@@ -30,7 +32,7 @@ describe( 'blog-sticker-remove', () => {
 					apiVersion: '1.1',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -41,7 +43,7 @@ describe( 'blog-sticker-remove', () => {
 			receiveBlogStickerRemove(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				{ success: true },
+				{ success: true }
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
@@ -57,7 +59,7 @@ describe( 'blog-sticker-remove', () => {
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
 				{
 					success: false,
-				},
+				}
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
@@ -72,7 +74,7 @@ describe( 'blog-sticker-remove', () => {
 			const dispatch = spy();
 			receiveBlogStickerRemoveError(
 				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } }
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
@@ -80,7 +82,7 @@ describe( 'blog-sticker-remove', () => {
 				},
 			} );
 			expect( dispatch ).to.have.been.calledWith(
-				bypassDataLayer( addBlogSticker( 123, 'broken-in-reader' ) ),
+				bypassDataLayer( addBlogSticker( 123, 'broken-in-reader' ) )
 			);
 		} );
 	} );

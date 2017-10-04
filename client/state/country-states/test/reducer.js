@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer, { items, isFetching } from '../reducer';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
@@ -15,10 +18,6 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	items,
-	isFetching,
-} from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalCountryStates = [
@@ -31,17 +30,14 @@ const originalCountryStates = [
 	{ code: 'AE', name: 'Armed Forces Other Areas' },
 	{ code: 'AP', name: 'Armed Forces Pacific' },
 	{ code: 'CA', name: 'California' },
-	{ code: 'CO', name: 'Colorado' }
+	{ code: 'CO', name: 'Colorado' },
 ];
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'isFetching'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
 	} );
 
 	describe( '#statesList()', () => {
@@ -52,11 +48,14 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store the states list received', () => {
-			const state = items( {}, {
-				type: COUNTRY_STATES_RECEIVE,
-				countryCode: 'us',
-				countryStates: originalCountryStates
-			} );
+			const state = items(
+				{},
+				{
+					type: COUNTRY_STATES_RECEIVE,
+					countryCode: 'us',
+					countryStates: originalCountryStates,
+				}
+			);
 
 			expect( state.us ).to.eql( originalCountryStates );
 		} );
@@ -79,7 +78,7 @@ describe( 'reducer', () => {
 				const original = deepFreeze( {
 					AL: 'Alabama',
 					AK: 'Alaska',
-					AS: 'American Samoa'
+					AS: 'American Samoa',
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );

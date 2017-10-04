@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,14 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	NOTIFICATION_SETTINGS_REQUEST,
-	NOTIFICATION_SETTINGS_UPDATE,
-} from 'state/action-types';
-import {
-	requestNotificationSettings,
-	updateNotificationSettings,
-} from '../actions';
+import { requestNotificationSettings, updateNotificationSettings } from '../actions';
+import { NOTIFICATION_SETTINGS_REQUEST, NOTIFICATION_SETTINGS_UPDATE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestNotificationSettings()', () => {

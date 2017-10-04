@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,6 +8,14 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
+import {
+	formClear,
+	formLoad,
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate,
+} from '../actions';
 import { CONTACT_FORM_DEFAULT } from '../constants';
 import {
 	EDITOR_CONTACT_FORM_CLEAR,
@@ -13,16 +23,8 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_ADD,
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
-	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
+	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 } from 'state/action-types';
-import {
-	formClear,
-	formLoad,
-	fieldAdd,
-	fieldRemove,
-	fieldUpdate,
-	settingsUpdate
-} from '../actions';
 
 describe( 'actions', () => {
 	it( 'should return an action object to signal the initialization of the store', () => {
@@ -30,7 +32,7 @@ describe( 'actions', () => {
 
 		assert.deepEqual( action, {
 			type: EDITOR_CONTACT_FORM_LOAD,
-			contactForm: CONTACT_FORM_DEFAULT
+			contactForm: CONTACT_FORM_DEFAULT,
 		} );
 	} );
 
@@ -45,7 +47,7 @@ describe( 'actions', () => {
 
 		assert.deepEqual( action, {
 			type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
-			index: 1
+			index: 1,
 		} );
 	} );
 
@@ -61,7 +63,7 @@ describe( 'actions', () => {
 		assert.deepEqual( action, {
 			type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
 			index: 1,
-			field: { label: 'Name', type: 'text', required: true }
+			field: { label: 'Name', type: 'text', required: true },
 		} );
 	} );
 
@@ -72,8 +74,8 @@ describe( 'actions', () => {
 			type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 			settings: {
 				to: 'user@example.com',
-				subject: 'this is the subject'
-			}
+				subject: 'this is the subject',
+			},
 		} );
 	} );
 } );

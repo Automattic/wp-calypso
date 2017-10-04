@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,8 +14,8 @@ describe( 'isMainSiteOf()', () => {
 	it( 'should return null if no sites exist in state', () => {
 		const state = {
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
@@ -28,11 +30,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
@@ -47,11 +49,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
@@ -66,8 +68,8 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -75,11 +77,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary2.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
@@ -94,8 +96,8 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -103,11 +105,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://secondary.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://secondary.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
@@ -122,8 +124,8 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -131,11 +133,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://primary.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://primary.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
@@ -150,8 +152,8 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -159,11 +161,11 @@ describe( 'isMainSiteOf()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isMainSiteOf( state, 1, 2 ) ).be.true;
 	} );

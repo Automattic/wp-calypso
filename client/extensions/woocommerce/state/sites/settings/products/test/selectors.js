@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -21,7 +23,7 @@ const preInitializedState = {
 				123: {
 					settings: {
 						products: null,
-					}
+					},
 				},
 			},
 		},
@@ -34,7 +36,7 @@ const loadingState = {
 				123: {
 					settings: {
 						products: LOADING,
-					}
+					},
 				},
 			},
 		},
@@ -44,14 +46,14 @@ const weightUnitSetting = {
 	id: 'woocommerce_weight_unit',
 	label: 'Weight unit',
 	type: 'select',
-	'default': 'kg',
+	default: 'kg',
 	value: 'lbs',
 };
 const dimensionsUnitSetting = {
 	id: 'woocommerce_dimension_unit',
 	label: 'Dimensions unit',
 	type: 'select',
-	'default': 'cm',
+	default: 'cm',
 	value: 'in',
 };
 const loadedState = {
@@ -61,7 +63,7 @@ const loadedState = {
 				123: {
 					settings: {
 						products: [ weightUnitSetting, dimensionsUnitSetting ],
-					}
+					},
 				},
 			},
 		},

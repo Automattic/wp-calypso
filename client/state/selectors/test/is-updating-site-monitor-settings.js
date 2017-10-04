@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,9 +19,9 @@ describe( 'isUpdatingSiteMonitorSettings()', () => {
 				monitor: {
 					updating: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isUpdatingSiteMonitorSettings( state, siteId );
 		expect( output ).to.be.true;
@@ -31,9 +33,9 @@ describe( 'isUpdatingSiteMonitorSettings()', () => {
 				monitor: {
 					updating: {
 						[ siteId ]: false,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isUpdatingSiteMonitorSettings( state, siteId );
 		expect( output ).to.be.false;
@@ -45,9 +47,9 @@ describe( 'isUpdatingSiteMonitorSettings()', () => {
 				monitor: {
 					updating: {
 						77203074: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isUpdatingSiteMonitorSettings( state, siteId );
 		expect( output ).to.be.false;

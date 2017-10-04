@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,12 +9,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../../reducer';
-import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'reducer', () => {
 	it( 'should mark the payment methods tree as "loading"', () => {
@@ -34,10 +36,7 @@ describe( 'reducer', () => {
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 			siteId,
-			data: [
-				{ id: 'foo', title: 'foo' },
-				{ id: 'bar', title: 'bar' },
-			],
+			data: [ { id: 'foo', title: 'foo' }, { id: 'bar', title: 'bar' } ],
 		};
 
 		const newState = reducer( state, action );
@@ -50,9 +49,11 @@ describe( 'reducer', () => {
 
 	it( 'should store data from the action', () => {
 		const siteId = 123;
-		const state = { [ siteId ]: {
-			paymentMethods: [ { id: 'bar', title: 'bar' } ]
-		} };
+		const state = {
+			[ siteId ]: {
+				paymentMethods: [ { id: 'bar', title: 'bar' } ],
+			},
+		};
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 			siteId,

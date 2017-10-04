@@ -1,12 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
@@ -18,17 +19,14 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
-import {
-	cancelPreloadCache,
-	deleteCache,
-	preloadCache,
-	testCache,
-} from '../actions';
+import { cancelPreloadCache, deleteCache, preloadCache, testCache } from '../actions';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -37,9 +35,9 @@ describe( 'actions', () => {
 			attempts: {
 				first: {
 					status: 'OK',
-				}
-			}
-		}
+				},
+			},
+		},
 	};
 
 	describe( '#testCache()', () => {
@@ -53,7 +51,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/cache/test' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -138,7 +136,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/preload' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -182,7 +180,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/preload' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 

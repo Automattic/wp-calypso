@@ -1,19 +1,23 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import { cloneDeep, forEach } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import SitesList from '../list';
 import { original, updated } from './fixtures/data';
 import Site from 'lib/site';
-import SitesList from '../list';
+
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'SitesList', () => {
 	let sitesList, originalData, initializedSites;
@@ -46,7 +50,7 @@ describe( 'SitesList', () => {
 		} );
 
 		it( 'should add change handlers', () => {
-			forEach( initializedSites, ( site ) => {
+			forEach( initializedSites, site => {
 				assert.isDefined( site.listeners( 'change' ) );
 			} );
 		} );
@@ -70,14 +74,14 @@ describe( 'SitesList', () => {
 		} );
 
 		it( 'updating should reflect removed properties on site', () => {
-			const updatedWithIconOmitted = cloneDeep( updatedData ).map( ( site ) => {
+			const updatedWithIconOmitted = cloneDeep( updatedData ).map( site => {
 				delete site.icon;
 				return site;
 			} );
 			sitesList.update( updatedWithIconOmitted );
 			const updatedList = sitesList.get();
 
-			forEach( updatedList, ( site ) => {
+			forEach( updatedList, site => {
 				assert.notProperty( site, 'icon' );
 			} );
 		} );

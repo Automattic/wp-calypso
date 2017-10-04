@@ -2,14 +2,14 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { requestSiteBlock, requestSiteUnblock } from '../actions';
 import {
 	READER_SITE_BLOCK_REQUEST,
 	READER_SITE_BLOCK_REQUEST_SUCCESS,
@@ -19,7 +19,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 	NOTICE_CREATE,
 } from 'state/action-types';
-import { requestSiteBlock, requestSiteUnblock } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 const sampleSuccessResponse = require( './sample-success-response.json' );
 const sampleFailureResponse = require( './sample-failure-response.json' );

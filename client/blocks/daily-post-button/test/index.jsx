@@ -2,6 +2,23 @@
  * @format
  * @jest-environment jsdom
  */
+
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
+import { noop } from 'lodash';
+import pageSpy from 'page';
+import qs from 'qs';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { DailyPostButton } from '../index';
+import { sites, dailyPromptPost } from './fixtures';
+
 jest.mock( 'reader/stats', () => ( {
 	pageViewForPost: () => {},
 	recordAction: () => {},
@@ -15,22 +32,6 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
-
-/**
- * External  dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-import { assert } from 'chai';
-import qs from 'qs';
-import { noop } from 'lodash';
-import pageSpy from 'page';
-
-/**
- * Internal dependencies
- */
-import { DailyPostButton } from '../index';
-import { sites, dailyPromptPost } from './fixtures';
 
 describe( 'DailyPostButton', () => {
 	const [ sampleUserSite, sampleReadingSite ] = sites;

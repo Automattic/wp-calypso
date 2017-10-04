@@ -1,14 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { userState } from './fixtures/user-state';
 
 /**
  * Internal dependencies
  */
 import { getReaderFollows } from '../';
+import { userState } from './fixtures/user-state';
 
 describe( 'getReaderFollows()', () => {
 	const siteOne = {

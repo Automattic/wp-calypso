@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,8 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import { middleware } from '../wpcom-api-middleware';
 import { bypassDataLayer } from '../utils';
+import { middleware } from '../wpcom-api-middleware';
 import { mergeHandlers } from 'state/action-watchers/utils';
 
 describe( 'WordPress.com API Middleware', () => {
@@ -122,11 +124,14 @@ describe( 'WordPress.com API Middleware', () => {
 	it( 'should call all given handlers (different lists)', () => {
 		const adder = spy();
 		const doubler = spy();
-		const handlers = mergeHandlers( {
-			[ 'MATHS' ]: [ adder ],
-		}, {
-			[ 'MATHS' ]: [ doubler ],
-		} );
+		const handlers = mergeHandlers(
+			{
+				[ 'MATHS' ]: [ adder ],
+			},
+			{
+				[ 'MATHS' ]: [ doubler ],
+			}
+		);
 		const action = { type: 'MATHS' };
 
 		middleware( handlers )( store )( next )( action );
@@ -144,7 +149,7 @@ describe( 'WordPress.com API Middleware', () => {
 		beforeEach( () => {
 			adder = spy();
 			handlers = mergeHandlers( {
-				[ 'ADD' ]: [ adder ]
+				[ 'ADD' ]: [ adder ],
 			} );
 		} );
 

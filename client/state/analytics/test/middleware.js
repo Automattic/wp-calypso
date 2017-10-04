@@ -1,3 +1,27 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+
+/**
+ * Internal dependencies
+ */
+import {
+	withAnalytics,
+	bumpStat,
+	recordCustomAdWordsRemarketingEvent,
+	recordCustomFacebookConversionEvent,
+	recordGoogleEvent,
+	recordGooglePageView,
+	recordTracksEvent,
+	recordPageView,
+	setTracksAnonymousUserId,
+} from '../actions';
+import { dispatcher as dispatch } from '../middleware.js';
+import { spy as mockAnalytics } from 'lib/analytics';
+import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+
 jest.mock( 'lib/analytics', () => {
 	const analyticsSpy = require( 'sinon' ).spy();
 	const { analyticsMock } = require( './helpers/analytics-mock' );
@@ -16,29 +40,6 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 
 	return mock;
 } );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { dispatcher as dispatch } from '../middleware.js';
-import {
-	withAnalytics,
-	bumpStat,
-	recordCustomAdWordsRemarketingEvent,
-	recordCustomFacebookConversionEvent,
-	recordGoogleEvent,
-	recordGooglePageView,
-	recordTracksEvent,
-	recordPageView,
-	setTracksAnonymousUserId
-} from '../actions';
-import { spy as mockAnalytics } from 'lib/analytics';
-import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {

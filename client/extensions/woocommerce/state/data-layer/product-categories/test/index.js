@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,11 +9,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import { handleProductCategoryCreate } from '../';
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCategoryCreate', () => {
@@ -34,8 +34,7 @@ describe( 'handlers', () => {
 					siteId: 123,
 					body: { name: 'Category 1', slug: 'category-1' },
 					onFailureAction: failureAction,
-				} )
-				.and( match.has( 'onSuccessAction' ) )
+				} ).and( match.has( 'onSuccessAction' ) )
 			);
 		} );
 

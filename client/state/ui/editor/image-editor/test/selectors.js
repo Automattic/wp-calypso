@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,6 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { AspectRatios } from '../constants';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
@@ -13,9 +16,8 @@ import {
 	getImageEditorCropBounds,
 	getImageEditorCrop,
 	getImageEditorAspectRatio,
-	isImageEditorImageLoaded
+	isImageEditorImageLoaded,
 } from '../selectors';
-import { AspectRatios } from '../constants';
 
 describe( 'selectors', () => {
 	describe( '#getImageEditorTransform()', () => {
@@ -27,17 +29,17 @@ describe( 'selectors', () => {
 							transform: {
 								degrees: 180,
 								scaleX: -1,
-								scaleY: 2
-							}
-						}
-					}
-				}
+								scaleY: 2,
+							},
+						},
+					},
+				},
 			} );
 
 			expect( transform ).to.eql( {
 				degrees: 180,
 				scaleX: -1,
-				scaleY: 2
+				scaleY: 2,
 			} );
 		} );
 	} );
@@ -50,16 +52,16 @@ describe( 'selectors', () => {
 						imageEditor: {
 							fileInfo: {
 								src: 'testSrc',
-								fileName: 'testFileName'
-							}
-						}
-					}
-				}
+								fileName: 'testFileName',
+							},
+						},
+					},
+				},
 			} );
 
 			expect( fileInfo ).to.eql( {
 				src: 'testSrc',
-				fileName: 'testFileName'
+				fileName: 'testFileName',
 			} );
 		} );
 	} );
@@ -70,10 +72,10 @@ describe( 'selectors', () => {
 				ui: {
 					editor: {
 						imageEditor: {
-							hasChanges: true
-						}
-					}
-				}
+							hasChanges: true,
+						},
+					},
+				},
 			} );
 
 			expect( hasChanges ).to.be.true;
@@ -90,18 +92,18 @@ describe( 'selectors', () => {
 								topBound: 100,
 								leftBound: 200,
 								bottomBound: 300,
-								rightBound: 400
-							}
-						}
-					}
-				}
+								rightBound: 400,
+							},
+						},
+					},
+				},
 			} );
 
 			expect( bounds ).to.eql( {
 				topBound: 100,
 				leftBound: 200,
 				bottomBound: 300,
-				rightBound: 400
+				rightBound: 400,
 			} );
 		} );
 	} );
@@ -116,18 +118,18 @@ describe( 'selectors', () => {
 								topRatio: 0.2,
 								leftRatio: 0.3,
 								widthRatio: 0.4,
-								heightRatio: 0.5
-							}
-						}
-					}
-				}
+								heightRatio: 0.5,
+							},
+						},
+					},
+				},
 			} );
 
 			expect( hasChanges ).to.eql( {
 				topRatio: 0.2,
 				leftRatio: 0.3,
 				widthRatio: 0.4,
-				heightRatio: 0.5
+				heightRatio: 0.5,
 			} );
 		} );
 	} );
@@ -138,10 +140,10 @@ describe( 'selectors', () => {
 				ui: {
 					editor: {
 						imageEditor: {
-							aspectRatio: AspectRatios.FREE
-						}
-					}
-				}
+							aspectRatio: AspectRatios.FREE,
+						},
+					},
+				},
 			} );
 
 			expect( hasChanges ).to.eql( AspectRatios.FREE );
@@ -156,10 +158,10 @@ describe( 'selectors', () => {
 				ui: {
 					editor: {
 						imageEditor: {
-							imageIsLoading: imageIsLoading
-						}
-					}
-				}
+							imageIsLoading: imageIsLoading,
+						},
+					},
+				},
 			} );
 
 			expect( isImageLoaded ).to.eql( ! imageIsLoading );

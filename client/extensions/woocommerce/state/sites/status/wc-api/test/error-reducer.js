@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from '../error-reducer';
 import { setError, clearError } from '../actions';
+import reducer from '../error-reducer';
 
 describe( 'reducer', () => {
 	it( 'should start with a null state', () => {

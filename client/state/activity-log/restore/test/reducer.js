@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { restoreProgress, restoreRequest } from '../reducer';
 import {
 	dismissRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -15,6 +16,7 @@ import {
 	rewindRestore,
 	rewindRestoreUpdateError,
 } from '../../actions';
+import { restoreProgress, restoreRequest } from '../reducer';
 
 /**
  * Constants
@@ -68,9 +70,7 @@ describe( 'restoreProgress', () => {
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
 			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
-		].forEach(
-			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
-		);
+		].forEach( state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] ) );
 	} );
 } );
 
