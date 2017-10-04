@@ -52,10 +52,11 @@ const setupContextMiddleware = reduxStore => {
 		context.query = parsed.query;
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
 
+		context.hashstring = parsed.hash && parsed.hash.substring( 1 ) || '';
 		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
+		if ( context.hashstring ) {
 			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
+				context.hash = qs.parse( context.hashstring );
 			} catch ( e ) {
 				debug( 'failed to query-string parse `location.hash`', e );
 				context.hash = {};

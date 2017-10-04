@@ -14,7 +14,6 @@ import controller from './controller';
 export default function() {
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
-		controller.saveRefParameter,
 		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
