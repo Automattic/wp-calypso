@@ -9,9 +9,20 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { fetchCoupons } from 'woocommerce/state/sites/coupons/actions';
+import {
+	fetchCoupons,
+	createCoupon,
+	updateCoupon,
+	deleteCoupon,
+} from 'woocommerce/state/sites/coupons/actions';
+import {
+	updateProduct,
+} from 'woocommerce/state/sites/products/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import {
+	WOOCOMMERCE_PROMOTION_CREATE,
+	WOOCOMMERCE_PROMOTION_UPDATE,
+	WOOCOMMERCE_PROMOTION_DELETE,
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_UPDATED,
@@ -24,6 +35,9 @@ const debug = debugFactory( 'woocommerce:promotions' );
 const itemsPerPage = 30;
 
 export default {
+	[ WOOCOMMERCE_PROMOTION_CREATE ]: [ promotionCreate ],
+	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
+	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
 	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: [ productsRequestSuccess ],
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: [ couponsUpdated ],
@@ -85,3 +99,47 @@ export function couponsUpdated( { dispatch }, action ) {
 		}
 	}
 }
+
+export function promotionCreate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	if ( 'coupon' === promotion.type && promotion.coupon ) {
+		dispatch( createCoupon( siteId, promotion.coupon, action.successAction, action.failureAction ) );
+	}
+	if ( 'product_sale' === promotion.type && promotion.product ) {
+		dispatch( updateProduct( siteId, promotion.product, action.successAction, action.failureAction ) );
+	}
+}
+
+export function promotionUpdate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	if ( 'coupon' === promotion.type && promotion.coupon ) {
+		dispatch( updateCoupon( siteId, promotion.coupon, action.successAction, action.failureAction ) );
+	}
+	if ( 'product_sale' === promotion.type && promotion.product ) {
+		dispatch( updateProduct( siteId, promotion.product, action.successAction, action.failureAction ) );
+	}
+}
+
+export function promotionDelete( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	if ( 'coupon' === promotion.type && promotion.coupon ) {
+		dispatch( deleteCoupon( siteId, promotion.coupon.id, action.successAction, action.failureAction ) );
+	}
+	if ( 'product_sale' === promotion.type && promotion.product ) {
+		// Remove all sale-related fields from the product.
+		const {
+			sale_price,
+			date_on_sale_from,
+			date_on_sale_from_gmt,
+			date_on_sale_to,
+			date_on_sale_to_gmt,
+			...productDeletedSale
+		} = promotion.product; // eslint-disable-line no-unused-vars
+
+		dispatch( updateProduct( siteId, productDeletedSale, action.successAction, action.failureAction ) );
+	}
+}
+
