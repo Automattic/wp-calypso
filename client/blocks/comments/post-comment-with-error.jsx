@@ -15,7 +15,7 @@ export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {
 		const { post, commentsTree, commentId, onUpdateCommentText, activeReplyCommentId } = this.props;
 		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
-		const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ] );
+		const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], null );
 		const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
 
 		if ( activeReplyCommentId !== commentParentId ) {

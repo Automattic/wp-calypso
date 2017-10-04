@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay } from 'lodash';
+import { get, size, takeRight, delay, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -279,9 +279,11 @@ class PostCommentList extends React.Component {
 		// Are we displaying the comment form at the top-level?
 		if (
 			this.props.activeReplyCommentId ||
-			find( this.props.commentsTree, comment => {
-				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-			} )
+			size(
+				filter( this.props.commentsTree, comment => {
+					return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+				} )
+			) > 0
 		) {
 			return null;
 		}
