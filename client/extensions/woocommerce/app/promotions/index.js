@@ -52,17 +52,13 @@ class Promotions extends Component {
 	renderSearchCard() {
 		const { site, promotions, translate } = this.props;
 
-		if ( ! promotions || promotions.length === 0 ) {
-			return null;
-		}
-
 		// TODO: Implement onSearch
 		return (
 			<SearchCard
 				onSearch={ noop }
 				delaySearch
 				delayTimeout={ 400 }
-				disabled={ ! site }
+				disabled={ ! site || ! promotions }
 				placeholder={ translate( 'Search promotions…' ) }
 			/>
 		);

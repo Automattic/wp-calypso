@@ -59,7 +59,7 @@ const PromotionsList = ( props ) => {
 			/>
 			<PromotionsListPagination
 				site={ site }
-				promotionsLoaded={ promotions && promotions.length > 0 }
+				promotionsLoaded={ promotions && promotions.length >= 0 }
 				totalPromotions={ promotions && promotions.length }
 				currentPage={ currentPage }
 				perPage={ perPage }
@@ -74,6 +74,7 @@ PromotionsList.propTypes = {
 	promotions: PropTypes.array,
 	currentPage: PropTypes.number,
 	perPage: PropTypes.number,
+	promotionsPage: PropTypes.array,
 };
 
 function mapStateToProps( state ) {

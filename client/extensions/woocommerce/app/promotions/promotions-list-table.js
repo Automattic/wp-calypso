@@ -21,7 +21,7 @@ const PromotionsListTable = ( {
 } ) => {
 	const headings = [
 		translate( 'Promotion' ),
-		translate( 'Type' ),
+		translate( 'Type', { context: 'noun' } ),
 		translate( 'Timeframe' ),
 	];
 

@@ -38,7 +38,7 @@ const PromotionsListPagination = ( {
 PromotionsListPagination.propTypes = {
 	site: PropTypes.object,
 	promotionsLoaded: PropTypes.bool,
-	totalPromotions: PropTypes.number,
+	totalPromotions: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	currentPage: PropTypes.number,
 	perPage: PropTypes.number,
 	onSwitchPage: PropTypes.func.isRequired,

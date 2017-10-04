@@ -21,20 +21,32 @@ function getPromotionTypeText( promotionType, translate ) {
 	}
 }
 
-function getTimeframeText( promotion, moment ) {
-	const startText = ( promotion.startDate ? moment( promotion.startDate ).format( 'L' ) : '' );
-	const endText = ( promotion.endDate ? moment( promotion.endDate ).format( 'L' ) : '' );
+function getTimeframeText( promotion, translate, moment ) {
+	// TODO: Use humanDate when it supports future dates.
 
 	if ( promotion.startDate && promotion.endDate ) {
-		return `${ startText } - ${ endText }`;
+		return translate( '%(startDate)s - %(endDate)s', {
+			args: {
+				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
+				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+			}
+		} );
 	}
 	if ( promotion.endDate ) {
-		return `ends on ${ endText }`;
+		return translate( 'Ends on %(endDate)s', {
+			args: {
+				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+			}
+		} );
 	}
 	if ( promotion.startDate ) {
-		return `${ startText } - ongoing`;
+		return translate( '%(startDate)s - No expiration date', {
+			args: {
+				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
+			}
+		} );
 	}
-	return 'ongoing';
+	return translate( 'No expiration date' );
 }
 
 const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
@@ -46,11 +58,11 @@ const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
 			</TableItem>
 
 			<TableItem>
-				<span>{ getPromotionTypeText( promotion.type, translate ) }</span>
+				{ getPromotionTypeText( promotion.type, translate ) }
 			</TableItem>
 
 			<TableItem>
-				<span>{ getTimeframeText( promotion, moment ) }</span>
+				{ getTimeframeText( promotion, translate, moment ) }
 			</TableItem>
 		</TableRow>
 	);
