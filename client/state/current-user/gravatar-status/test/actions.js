@@ -1,19 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	GRAVATAR_RECEIVE_IMAGE_FAILURE,
-	GRAVATAR_UPLOAD_REQUEST,
-} from 'state/action-types';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar
-} from '../actions';
+import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
+import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {
@@ -31,7 +28,7 @@ describe( 'actions', () => {
 			const statName = 'statName';
 			const result = receiveGravatarImageFailed( {
 				errorMessage,
-				statName
+				statName,
 			} );
 			expect( result ).to.have.property( 'type', GRAVATAR_RECEIVE_IMAGE_FAILURE );
 			expect( result ).to.have.property( 'errorMessage', errorMessage );

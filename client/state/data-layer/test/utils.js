@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -24,8 +27,8 @@ describe( 'Data Layer', () => {
 					oceanName: 'ARCTIC',
 					dataLayer: {
 						forceRefresh: true,
-					}
-				}
+					},
+				},
 			};
 			const localAction = bypassDataLayer( action );
 

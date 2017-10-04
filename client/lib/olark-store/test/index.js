@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import olarkStore from 'lib/olark-store';
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -17,9 +20,9 @@ describe( 'getSiteConnectionStatus()', () => {
 				connection: {
 					items: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = getSiteConnectionStatus( state, siteId );
 		expect( output ).to.be.true;
@@ -31,9 +34,9 @@ describe( 'getSiteConnectionStatus()', () => {
 				connection: {
 					items: {
 						77203074: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = getSiteConnectionStatus( state, siteId );
 		expect( output ).to.be.null;

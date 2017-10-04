@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 /**
@@ -60,13 +63,15 @@ describe( 'ticket-support/configuration/selectors', () => {
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
 		it( 'should return true', () => {
-			assert.isTrue( isRequestingTicketSupportConfiguration( {
-				help: {
-					ticket: {
-						isRequesting: true,
+			assert.isTrue(
+				isRequestingTicketSupportConfiguration( {
+					help: {
+						ticket: {
+							isRequesting: true,
+						},
 					},
-				},
-			} ) );
+				} )
+			);
 		} );
 	} );
 

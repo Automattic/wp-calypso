@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -13,10 +16,10 @@ describe( 'isRequestingMediaItem()', () => {
 		media: {
 			mediaItemRequests: {
 				2916284: {
-					10: true
-				}
-			}
-		}
+					10: true,
+				},
+			},
+		},
 	};
 
 	it( 'should return false if the site is not attached', () => {

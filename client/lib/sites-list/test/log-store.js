@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 describe( 'Sites Log Store', () => {

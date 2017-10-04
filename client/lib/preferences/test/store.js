@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -32,9 +35,9 @@ describe( 'PreferencesStore', function() {
 			action: {
 				type: 'RECEIVE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: preferences
-				}
-			}
+					[ USER_SETTING_KEY ]: preferences,
+				},
+			},
 		} );
 	}
 

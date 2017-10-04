@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
@@ -38,7 +41,9 @@ describe( 'Notice', function() {
 	} );
 
 	it( 'should have dismiss button when showDismiss is true and isCompact is true', function() {
-		const wrapper = shallow( <Notice isCompact={ true } showDismiss={ true } translate={ identity } /> );
+		const wrapper = shallow(
+			<Notice isCompact={ true } showDismiss={ true } translate={ identity } />
+		);
 		assert.isOk( wrapper.find( '.is-dismissable' ).length );
 	} );
 

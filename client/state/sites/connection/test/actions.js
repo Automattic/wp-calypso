@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { match } from 'sinon';
 
@@ -19,13 +22,13 @@ import {
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const siteId = 12345678;
 
 	describe( '#requestConnectionStatus()', () => {
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/test-connection' )
@@ -62,7 +65,7 @@ describe( 'actions', () => {
 
 		describe( 'failure', () => {
 			const errorMessage = 'This user is not authorized to test connection for this blog.';
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/test-connection' )

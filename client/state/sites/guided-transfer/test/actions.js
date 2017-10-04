@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -59,7 +62,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestGuidedTransferStatus()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
@@ -76,7 +79,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: GUIDED_TRANSFER_STATUS_REQUEST,
-				siteId: sampleSiteId
+				siteId: sampleSiteId,
 			} );
 		} );
 
@@ -104,14 +107,14 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 					siteId: sampleSiteIdFail,
-					error: sinon.match( { message: 'A server error occurred' } )
+					error: sinon.match( { message: 'A server error occurred' } ),
 				} );
 			} );
 		} );
 	} );
 
 	describe( '#saveHostDetails()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
@@ -130,7 +133,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-				siteId: sampleSiteId
+				siteId: sampleSiteId,
 			} );
 		} );
 
@@ -158,7 +161,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
 					siteId: sampleSiteIdFail,
-					error: sinon.match( { message: 'A server error occurred' } )
+					error: sinon.match( { message: 'A server error occurred' } ),
 				} );
 			} );
 		} );

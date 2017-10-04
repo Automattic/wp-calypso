@@ -1,8 +1,12 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'lib/wp', () => ( {
 	me: () => ( {
-		get: () => {}
-	} )
+		get: () => {},
+	} ),
 } ) );
 
 /**
@@ -20,7 +24,9 @@ import { EditorWordCount } from '../';
 
 describe( 'EditorWordCount', () => {
 	it( 'should display word count if selected text is provided', () => {
-		const wrapper = mount( <EditorWordCount selectedText={ 'Selected text' } translate={ translate } /> );
+		const wrapper = mount(
+			<EditorWordCount selectedText={ 'Selected text' } translate={ translate } />
+		);
 		wrapper.setState( { rawContent: 'Selected text' } );
 		expect( wrapper.text() ).to.equal( '2 words selected / 2 words' );
 	} );

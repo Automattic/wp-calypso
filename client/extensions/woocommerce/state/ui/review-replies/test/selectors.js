@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -30,7 +33,7 @@ const state = {
 				123: {
 					reviewReplies: {
 						555: reviewReplies,
-					}
+					},
 				},
 			},
 			ui: {
@@ -40,7 +43,7 @@ const state = {
 							currentlyEditingId: 556,
 							reviewId: 555,
 							changes: {
-								content: 'Hello world.'
+								content: 'Hello world.',
 							},
 						},
 					},
@@ -49,15 +52,15 @@ const state = {
 							currentlyEditingId: { placeholder: 'review_reply_1' },
 							reviewId: 402,
 							changes: {
-								content: 'Testing'
+								content: 'Testing',
 							},
 						},
 					},
 					111: {
 						edits: {},
 					},
-				}
-			}
+				},
+			},
 		},
 	},
 };
@@ -73,7 +76,9 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the correct ID when a new reply is being created', () => {
-			expect( getCurrentlyEditingReviewReplyId( state, 321 ) ).to.eql( { placeholder: 'review_reply_1' } );
+			expect( getCurrentlyEditingReviewReplyId( state, 321 ) ).to.eql( {
+				placeholder: 'review_reply_1',
+			} );
 		} );
 
 		it( 'should be null when no replies are being edited', () => {
@@ -144,7 +149,7 @@ describe( 'selectors', () => {
 			expect( getReviewReplyWithEdits( state, 321 ) ).to.eql( {
 				content: 'Testing',
 				id: { placeholder: 'review_reply_1' },
-				parent: 402
+				parent: 402,
 			} );
 		} );
 	} );

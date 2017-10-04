@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -12,8 +15,8 @@ describe( 'getSiteTimezoneValue()', () => {
 	it( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
@@ -24,9 +27,9 @@ describe( 'getSiteTimezoneValue()', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
-					2916284: {}
-				}
-			}
+					2916284: {},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
@@ -38,10 +41,10 @@ describe( 'getSiteTimezoneValue()', () => {
 			siteSettings: {
 				items: {
 					2916284: {
-						timezone_string: ''
-					}
-				}
-			}
+						timezone_string: '',
+					},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
@@ -53,10 +56,10 @@ describe( 'getSiteTimezoneValue()', () => {
 			siteSettings: {
 				items: {
 					2916284: {
-						timezone_string: 'Europe/Skopje'
-					}
-				}
-			}
+						timezone_string: 'Europe/Skopje',
+					},
+				},
+			},
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );

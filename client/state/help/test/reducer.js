@@ -1,14 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	HELP_CONTACT_FORM_SITE_SELECT,
-} from 'state/action-types';
+import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 import { selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
@@ -20,10 +21,13 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store the site id received', () => {
-			const state = selectedSiteId( {}, {
-				type: HELP_CONTACT_FORM_SITE_SELECT,
-				siteId: 1,
-			} );
+			const state = selectedSiteId(
+				{},
+				{
+					type: HELP_CONTACT_FORM_SITE_SELECT,
+					siteId: 1,
+				}
+			);
 
 			expect( state ).to.eql( 1 );
 		} );

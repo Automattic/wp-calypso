@@ -1,17 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	HELP_COURSES_RECEIVE,
-} from 'state/action-types';
-import {
-	receiveHelpCourses,
-} from '../actions';
+import { HELP_COURSES_RECEIVE } from 'state/action-types';
+import { receiveHelpCourses } from '../actions';
 
 describe( 'actions', () => {
 	const sampleCourseList = [
@@ -19,8 +18,8 @@ describe( 'actions', () => {
 			title: 'title',
 			description: 'description',
 			schedule: [],
-			videos: []
-		}
+			videos: [],
+		},
 	];
 
 	describe( '#receiveHelpCourses()', () => {

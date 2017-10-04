@@ -1,13 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/invites/constants';
+import { action as ActionTypes } from 'lib/invites/constants';
 
 describe( 'List Invites Store', function() {
 	let ListInvitesStore;
@@ -25,11 +28,11 @@ describe( 'List Invites Store', function() {
 						role: 'editor',
 						user: {
 							ID: 1234,
-							name: 'Test One'
-						}
-					}
-				]
-			}
+							name: 'Test One',
+						},
+					},
+				],
+			},
 		},
 		receiveMoreInvites: {
 			type: ActionTypes.RECEIVE_INVITES,
@@ -43,12 +46,12 @@ describe( 'List Invites Store', function() {
 						role: 'contributor',
 						user: {
 							ID: 1234,
-							name: 'Test Two'
-						}
-					}
-				]
-			}
-		}
+							name: 'Test Two',
+						},
+					},
+				],
+			},
+		},
 	};
 
 	beforeEach( function() {

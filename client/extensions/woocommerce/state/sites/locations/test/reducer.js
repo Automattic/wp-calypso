@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -18,7 +21,7 @@ describe( 'reducer', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_LOCATIONS_REQUEST,
-			siteId
+			siteId,
 		};
 
 		const newSiteData = reducer( {}, action );

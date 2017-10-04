@@ -1,3 +1,4 @@
+/** @format */
 import { expect } from 'chai';
 import Dispatcher from 'dispatcher';
 import { partial } from 'lodash';

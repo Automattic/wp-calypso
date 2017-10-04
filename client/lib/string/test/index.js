@@ -1,6 +1,9 @@
 /**
  * External Dependencies
-*/
+ *
+ * @format
+ */
+
 import { assert } from 'chai';
 
 /**
@@ -16,9 +19,9 @@ describe( 'lib/string/areEqualIgnoringWhitespaceAndCase', () => {
 			[ 'hi there', 'Hi There' ],
 			[ 'hithere', 'Hi There' ],
 			[ 'hi-there', 'Hi There.' ],
-			[ 'hi_there', 'Hi THERE' ]
+			[ 'hi_there', 'Hi THERE' ],
 		];
-		pairs.forEach( ( pair ) => {
+		pairs.forEach( pair => {
 			assert.isTrue(
 				areEqualIgnoringWhitespaceAndCase( pair[ 0 ], pair[ 1 ] ),
 				`'${ pair[ 0 ] }' v '${ pair[ 1 ] }'`

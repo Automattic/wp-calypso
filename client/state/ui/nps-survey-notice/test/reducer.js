@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -11,9 +14,7 @@ import reducer, { isNpsSurveyDialogShowing } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'isNpsSurveyDialogShowing'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'isNpsSurveyDialogShowing' ] );
 	} );
 
 	describe( '#isNpsSurveyDialogShowing()', () => {
@@ -26,7 +27,7 @@ describe( 'reducer', () => {
 		it( 'should track if the dialog is showing', () => {
 			const state = isNpsSurveyDialogShowing( undefined, {
 				type: NPS_SURVEY_DIALOG_IS_SHOWING,
-				isShowing: true
+				isShowing: true,
 			} );
 
 			expect( state ).to.be.true;
@@ -35,7 +36,7 @@ describe( 'reducer', () => {
 		it( 'should track if the dialog is not showing', () => {
 			const state = isNpsSurveyDialogShowing( undefined, {
 				type: NPS_SURVEY_DIALOG_IS_SHOWING,
-				isShowing: false
+				isShowing: false,
 			} );
 
 			expect( state ).to.be.false;

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
@@ -53,7 +56,9 @@ describe( 'Sparkline', function() {
 	} );
 
 	it( 'should have a defined margin if set', () => {
-		const sparkline = shallow( <Sparkline data={ [ 1, 2, 3, 4, 5 ] } margin={ { top: 1, right: 1, bottom: 1, left: 1 } } /> );
+		const sparkline = shallow(
+			<Sparkline data={ [ 1, 2, 3, 4, 5 ] } margin={ { top: 1, right: 1, bottom: 1, left: 1 } } />
+		);
 		assert.deepEqual( { top: 1, right: 1, bottom: 1, left: 1 }, sparkline.instance().props.margin );
 	} );
 

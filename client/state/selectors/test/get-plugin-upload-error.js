@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -19,9 +22,9 @@ describe( 'getPluginUploadError', () => {
 		const state = {
 			plugins: {
 				upload: {
-					uploadError: {}
-				}
-			}
+					uploadError: {},
+				},
+			},
 		};
 		expect( getPluginUploadError( state, siteId ) ).to.be.null;
 	} );

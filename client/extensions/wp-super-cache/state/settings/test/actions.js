@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import sinon from 'sinon';
 import { expect } from 'chai';
 /**
@@ -20,17 +23,12 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
-import {
-	receiveSettings,
-	requestSettings,
-	restoreSettings,
-	saveSettings,
-} from '../actions';
+import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -38,7 +36,7 @@ describe( 'actions', () => {
 		data: {
 			is_cache_enabled: true,
 			is_super_cache_enabled: true,
-		}
+		},
 	};
 
 	describe( '#receiveSettings()', () => {
@@ -64,7 +62,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/settings' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -79,9 +77,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', () => {
 			return requestSettings( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveSettings( siteId, settings.data )
-				);
+				expect( spy ).to.have.been.calledWith( receiveSettings( siteId, settings.data ) );
 			} );
 		} );
 
@@ -113,7 +109,7 @@ describe( 'actions', () => {
 		const apiResponse = {
 			data: {
 				updated: true,
-			}
+			},
 		};
 
 		useNock( nock => {
@@ -126,7 +122,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/settings' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -141,9 +137,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', () => {
 			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveSettings( siteId, apiResponse.data )
-				);
+				expect( spy ).to.have.been.calledWith( receiveSettings( siteId, apiResponse.data ) );
 			} );
 		} );
 
@@ -178,7 +172,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/settings' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -193,9 +187,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', () => {
 			return restoreSettings( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveSettings( siteId, settings.data )
-				);
+				expect( spy ).to.have.been.calledWith( receiveSettings( siteId, settings.data ) );
 			} );
 		} );
 

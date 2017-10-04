@@ -1,5 +1,6 @@
+/** @format */
 jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserDate: require( 'sinon' ).stub()
+	getCurrentUserDate: require( 'sinon' ).stub(),
 } ) );
 
 /**
@@ -18,7 +19,7 @@ describe( 'isUserRegistrationDaysWithinRange()', () => {
 	const state = 'state';
 	const registrationDate = 'registrationDate';
 	const moment = {
-		diff: stub()
+		diff: stub(),
 	};
 
 	it( 'should return null when there is no current user date', () => {

@@ -1,23 +1,22 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	createAccount,
-} from '../actions.js';
+import { createAccount } from '../actions.js';
 import {
 	handleAccountCreate,
 	handleAccountCreateSuccess,
 	handleAccountCreateFailure,
 } from '../handlers.js';
-import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE } from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
 describe( 'handlers', () => {
@@ -40,7 +39,7 @@ describe( 'handlers', () => {
 				query: {
 					json: true,
 					apiVersion: '1.1',
-				}
+				},
 			} );
 		} );
 	} );
@@ -57,7 +56,7 @@ describe( 'handlers', () => {
 				data: {
 					account_id: 'acct_14qyt6Alijdnw0EA',
 					success: true,
-				}
+				},
 			};
 
 			const action = createAccount( siteId, email, countryCode );
@@ -84,12 +83,12 @@ describe( 'handlers', () => {
 				data: {
 					body: {
 						data: {
-							message: 'An account using that email address already exists.'
+							message: 'An account using that email address already exists.',
 						},
 						success: false,
 					},
-					status: 400
-				}
+					status: 400,
+				},
 			};
 
 			const action = createAccount( siteId, email, countryCode );

@@ -1,12 +1,15 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
 import assert from 'assert';
 import React from 'react';
-import { noop, uniq } from 'lodash';
-import { mount, shallow } from 'enzyme';
+import { noop, uniq } from 'lodash';
+import { mount, shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -37,10 +40,7 @@ describe( 'FormToggle', function() {
 
 		it( 'should be checked when checked is true', function() {
 			[ true, false ].forEach( function( bool ) {
-				const toggle = shallow(
-					<FormToggle checked={ bool }
-						onChange={ noop } />
-				);
+				const toggle = shallow( <FormToggle checked={ bool } onChange={ noop } /> );
 				const toggleInput = toggle.find( '.form-toggle' );
 
 				assert( 0 < toggleInput.length, 'a form toggle was rendered' );
@@ -56,7 +56,7 @@ describe( 'FormToggle', function() {
 						assert( checked, 'onChange handler was called with a value param' );
 						done();
 					} }
-				/>,
+				/>
 			);
 
 			toggle.find( '.form-toggle__switch' ).simulate( 'click' );
@@ -95,7 +95,7 @@ describe( 'FormToggle', function() {
 				</div>
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
-			const ids = toggleInputs.map( ( input ) => input.props().id );
+			const ids = toggleInputs.map( input => input.props().id );
 
 			assert( ids.length === uniq( ids ).length );
 		} );

@@ -1,15 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	isSaving,
-} from '../reducer';
+import { isSaving } from '../reducer';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,

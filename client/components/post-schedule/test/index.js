@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -118,4 +121,3 @@ describe( 'parseAndValidateNumber', () => {
 		expect( parseAndValidateNumber( '99' ) ).to.equal( 99 );
 	} );
 } );
-

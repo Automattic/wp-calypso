@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -13,7 +16,7 @@ describe( 'hasUserAskedADirectlyQuestion()', () => {
 	const questionData = deepFreeze( {
 		questionText: 'ABC',
 		name: '123',
-		email: 'fake@wordpress.com'
+		email: 'fake@wordpress.com',
 	} );
 
 	it( 'should be false when null', () => {

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -12,7 +15,7 @@ import MediaQueryManager from 'lib/query-manager/media';
 describe( 'getMediaItem()', () => {
 	const item = {
 		ID: 42,
-		title: 'flowers'
+		title: 'flowers',
 	};
 
 	const state = {
@@ -20,11 +23,11 @@ describe( 'getMediaItem()', () => {
 			queries: {
 				2916284: new MediaQueryManager( {
 					items: {
-						42: item
-					}
-				} )
-			}
-		}
+						42: item,
+					},
+				} ),
+			},
+		},
 	};
 
 	it( 'should return null if the site is not in state', () => {

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -21,7 +24,7 @@ describe( 'reducer', () => {
 			reviewId: 12,
 			reply: {
 				id: 50,
-				content: 'testing...'
+				content: 'testing...',
 			},
 		};
 		const newState = reducer( undefined, action );
@@ -29,26 +32,26 @@ describe( 'reducer', () => {
 			currentlyEditingId: 50,
 			reviewId: 12,
 			changes: {
-				content: 'testing...'
+				content: 'testing...',
 			},
 		} );
 	} );
 
-	it( 'should update the reply when it\'s changed', () => {
+	it( "should update the reply when it's changed", () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
 			reviewId: 12,
 			reply: {
 				id: 50,
-				content: 'Update'
+				content: 'Update',
 			},
 		};
 		const originalState = deepFreeze( {
 			currentlyEditingId: 50,
 			reviewId: 12,
 			changes: {
-				content: 'Original'
+				content: 'Original',
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -56,7 +59,7 @@ describe( 'reducer', () => {
 			currentlyEditingId: 50,
 			reviewId: 12,
 			changes: {
-				content: 'Update'
+				content: 'Update',
 			},
 		} );
 	} );
@@ -68,14 +71,14 @@ describe( 'reducer', () => {
 			reviewId: 12,
 			reply: {
 				id: 50,
-				status: 'trash'
+				status: 'trash',
 			},
 		};
 		const originalState = deepFreeze( {
 			currentlyEditingId: 50,
 			reviewId: 12,
 			changes: {
-				content: 'Hello'
+				content: 'Hello',
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -84,7 +87,7 @@ describe( 'reducer', () => {
 			reviewId: 12,
 			changes: {
 				content: 'Hello',
-				status: 'trash'
+				status: 'trash',
 			},
 		} );
 	} );
@@ -95,13 +98,13 @@ describe( 'reducer', () => {
 			siteId: 123,
 			reviewId: 12,
 			reply: {
-				content: 'New reply'
+				content: 'New reply',
 			},
 		};
 		const newState = reducer( undefined, action );
 		expect( newState.currentlyEditingId.placeholder ).to.exist;
 		expect( newState.changes ).to.eql( {
-			content: 'New reply'
+			content: 'New reply',
 		} );
 	} );
 
@@ -119,7 +122,7 @@ describe( 'reducer', () => {
 			currentlyEditingId: { placeholder: 'review_reply_1' },
 			reviewId: 12,
 			changes: {
-				content: 'Hello'
+				content: 'Hello',
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -128,7 +131,7 @@ describe( 'reducer', () => {
 			reviewId: 12,
 			changes: {
 				content: 'Hello',
-				status: 'trash'
+				status: 'trash',
 			},
 		} );
 	} );
@@ -142,7 +145,7 @@ describe( 'reducer', () => {
 			currentlyEditingId: 50,
 			reviewId: 12,
 			changes: {
-				content: 'Hello'
+				content: 'Hello',
 			},
 		} );
 		const newState = reducer( originalState, action );

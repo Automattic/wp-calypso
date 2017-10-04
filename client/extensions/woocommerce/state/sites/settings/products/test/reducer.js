@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -28,10 +31,7 @@ describe( 'reducer', () => {
 
 	it( 'should store data from the action', () => {
 		const siteId = 123;
-		const settings = [
-			{},
-			{},
-		];
+		const settings = [ {}, {} ];
 		const action = {
 			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 			siteId,
@@ -48,9 +48,9 @@ describe( 'reducer', () => {
 		const emptyState = {
 			123: {
 				settings: {
-					products: []
-				}
-			}
+					products: [],
+				},
+			},
 		};
 		const dimensionsSetting = {
 			group_id: 'products',
@@ -77,10 +77,7 @@ describe( 'reducer', () => {
 			siteId,
 			data: { update: [ dimensionsSetting, weightSetting, citySetting ] },
 		};
-		const updatedSettings = [
-			updatedDimensionsSetting,
-			weightSetting,
-		];
+		const updatedSettings = [ updatedDimensionsSetting, weightSetting ];
 		const updateAction = {
 			type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 			siteId,

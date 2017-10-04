@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -14,7 +17,7 @@ import { withSchemaValidation } from 'state/utils';
 import plansReducer, {
 	items,
 	requesting as requestReducer,
-	error as errorReducer
+	error as errorReducer,
 } from '../reducer';
 
 /**
@@ -44,11 +47,7 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should export expected reducer keys', () => {
-		expect( plansReducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting',
-			'error'
-		] );
+		expect( plansReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'error' ] );
 	} );
 
 	describe( '#items()', () => {

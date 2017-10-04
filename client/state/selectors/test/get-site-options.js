@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,8 +17,8 @@ describe( 'getSiteOptions()', () => {
 		const state = {
 			...userState,
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const siteOptions = getSiteOptions( state, 2916288 );
 		expect( siteOptions ).to.be.null;
@@ -26,14 +29,14 @@ describe( 'getSiteOptions()', () => {
 			...userState,
 			sites: {
 				items: {
-					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' }
-				}
-			}
+					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' },
+				},
+			},
 		};
 
 		const siteOptions = getSiteOptions( state, 2916288 );
 		expect( siteOptions ).to.eql( {
-			default_post_format: 'standard'
+			default_post_format: 'standard',
 		} );
 	} );
 
@@ -46,16 +49,17 @@ describe( 'getSiteOptions()', () => {
 						ID: 2916288,
 						name: 'WordPress.com Example Blog',
 						options: {
-							option1: 'ok'
-						} },
-				}
-			}
+							option1: 'ok',
+						},
+					},
+				},
+			},
 		};
 
 		const siteOptions = getSiteOptions( state, 2916288 );
 		expect( siteOptions ).to.eql( {
 			default_post_format: 'standard',
-			option1: 'ok'
+			option1: 'ok',
 		} );
 	} );
 
@@ -69,16 +73,17 @@ describe( 'getSiteOptions()', () => {
 						name: 'WordPress.com Example Blog',
 						options: {
 							option1: 'ok',
-							default_post_format: '0'
-						} },
-				}
-			}
+							default_post_format: '0',
+						},
+					},
+				},
+			},
 		};
 
 		const siteOptions = getSiteOptions( state, 2916288 );
 		expect( siteOptions ).to.eql( {
 			default_post_format: 'standard',
-			option1: 'ok'
+			option1: 'ok',
 		} );
 	} );
 
@@ -93,9 +98,10 @@ describe( 'getSiteOptions()', () => {
 						options: {
 							option2: 'not-ok',
 							default_post_format: 'test',
-						} },
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 
 		const siteOptions = getSiteOptions( state, 2916288 );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -15,9 +18,9 @@ describe( 'isPluginUploadInProgress', () => {
 		const state = {
 			plugins: {
 				upload: {
-					inProgress: {}
-				}
-			}
+					inProgress: {},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
 	} );
@@ -28,9 +31,9 @@ describe( 'isPluginUploadInProgress', () => {
 				upload: {
 					inProgress: {
 						[ siteId ]: false,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( stateFalse, siteId ) ).to.be.false;
 
@@ -39,9 +42,9 @@ describe( 'isPluginUploadInProgress', () => {
 				upload: {
 					inProgress: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( stateTrue, siteId ) ).to.be.true;
 	} );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -24,7 +27,7 @@ describe( 'actions', () => {
 		const siteId = '123';
 		const orderId = 45;
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -39,7 +42,7 @@ describe( 'actions', () => {
 						message: 'Invalid order ID.',
 						error: 'woocommerce_rest_shop_order_invalid_id',
 						status: 404,
-					}
+					},
 				} );
 		} );
 
@@ -47,7 +50,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchNotes( siteId, orderId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_NOTES_REQUEST, siteId, orderId } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_NOTES_REQUEST,
+				siteId,
+				orderId,
+			} );
 		} );
 
 		it( 'should dispatch a success action with the notes list when request completes', () => {
@@ -89,12 +96,12 @@ describe( 'actions', () => {
 										isLoading: {
 											[ orderId ]: true,
 										},
-									}
-								}
-							}
-						}
-					}
-				}
+									},
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchNotes( siteId, orderId )( dispatch, getState );
@@ -110,7 +117,7 @@ describe( 'actions', () => {
 			customer_note: true,
 		};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -122,7 +129,7 @@ describe( 'actions', () => {
 					data: {
 						error: 'rest_missing_callback_param',
 						message: 'Missing parameter(s): note',
-					}
+					},
 				} );
 		} );
 
@@ -130,7 +137,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			createNote( siteId, orderId, note )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_NOTE_CREATE, siteId, orderId } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE,
+				siteId,
+				orderId,
+			} );
 		} );
 
 		it( 'should dispatch a success action with the notes list when request completes', () => {

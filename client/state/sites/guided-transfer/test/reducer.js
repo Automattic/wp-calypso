@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -19,16 +22,12 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	status,
-	isFetching,
-	isSaving,
-} from '../reducer';
+import reducer, { status, isFetching, isSaving } from '../reducer';
 
 describe( 'reducer', () => {
 	const testSiteId = 100658273;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -54,11 +53,14 @@ describe( 'reducer', () => {
 				host_details_entered: false,
 			} );
 
-			const state = status( {}, {
-				type: GUIDED_TRANSFER_STATUS_RECEIVE,
-				siteId: testSiteId,
-				guidedTransferStatus,
-			} );
+			const state = status(
+				{},
+				{
+					type: GUIDED_TRANSFER_STATUS_RECEIVE,
+					siteId: testSiteId,
+					guidedTransferStatus,
+				}
+			);
 
 			expect( state[ testSiteId ] ).to.eql( guidedTransferStatus );
 		} );
@@ -69,7 +71,7 @@ describe( 'reducer', () => {
 					[ testSiteId ]: {
 						upgrade_purchased: true,
 						host_details_entered: false,
-					}
+					},
 				} );
 				const state = status( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
@@ -80,7 +82,7 @@ describe( 'reducer', () => {
 					[ testSiteId ]: {
 						upgrade_purchased: true,
 						host_details_entered: false,
-					}
+					},
 				} );
 				const state = status( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( original );
@@ -91,7 +93,7 @@ describe( 'reducer', () => {
 					invalid_id: {
 						upgrade_purchased: true,
 						host_details_entered: false,
-					}
+					},
 				} );
 				const state = status( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
@@ -109,7 +111,7 @@ describe( 'reducer', () => {
 		it( 'should be true after a request begins', () => {
 			const state = isFetching( false, {
 				type: GUIDED_TRANSFER_STATUS_REQUEST,
-				siteId: testSiteId
+				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.be.true;
 		} );
@@ -125,23 +127,29 @@ describe( 'reducer', () => {
 		it( 'should be false when a request fails', () => {
 			const state = isFetching( true, {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-				siteId: testSiteId
+				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.be.false;
 		} );
 
 		it( 'should never persist state', () => {
-			const state = isFetching( {
-				[ testSiteId ]: true,
-			}, { type: SERIALIZE } );
+			const state = isFetching(
+				{
+					[ testSiteId ]: true,
+				},
+				{ type: SERIALIZE }
+			);
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should never load persisted state', () => {
-			const state = isFetching( {
-				[ testSiteId ]: true,
-			}, { type: DESERIALIZE } );
+			const state = isFetching(
+				{
+					[ testSiteId ]: true,
+				},
+				{ type: DESERIALIZE }
+			);
 
 			expect( state ).to.eql( {} );
 		} );
@@ -157,7 +165,7 @@ describe( 'reducer', () => {
 		it( 'should be true after a request begins', () => {
 			const state = isSaving( false, {
 				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-				siteId: testSiteId
+				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.be.true;
 		} );
@@ -173,7 +181,7 @@ describe( 'reducer', () => {
 		it( 'should be false when a request fails', () => {
 			const state = isSaving( true, {
 				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-				siteId: testSiteId
+				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.be.false;
 		} );

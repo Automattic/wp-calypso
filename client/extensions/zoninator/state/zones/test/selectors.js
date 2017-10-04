@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -18,8 +21,8 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -34,10 +37,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, secondarySiteId );
@@ -52,10 +55,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -70,10 +73,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -96,8 +99,8 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );
@@ -112,10 +115,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, secondarySiteId );
@@ -130,10 +133,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );
@@ -156,8 +159,8 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const zone = getZone( state, primarySiteId, 1 );
@@ -172,10 +175,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zone = getZone( state, secondarySiteId, 1 );
@@ -190,10 +193,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zone = getZone( state, primarySiteId, 1 );

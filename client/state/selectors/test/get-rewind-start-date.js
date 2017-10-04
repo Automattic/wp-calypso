@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -15,8 +18,8 @@ describe( 'getRewindStartDate()', () => {
 	it( 'should return empty string if no start date exists for a site', () => {
 		const stateNoSite = deepFreeze( {
 			activityLog: {
-				rewindStatus: {}
-			}
+				rewindStatus: {},
+			},
 		} );
 		expect( getRewindStartDate( stateNoSite, siteId ) ).to.be.equal( '' );
 
@@ -24,8 +27,8 @@ describe( 'getRewindStartDate()', () => {
 			activityLog: {
 				rewindStatus: {
 					[ siteId ]: null,
-				}
-			}
+				},
+			},
 		} );
 		expect( getRewindStartDate( stateNoStartDate, siteId ) ).to.be.equal( '' );
 	} );
@@ -36,9 +39,9 @@ describe( 'getRewindStartDate()', () => {
 				rewindStatus: {
 					[ siteId ]: {
 						firstBackupDate: '2017-05-04 05:00:00',
-					}
-				}
-			}
+					},
+				},
+			},
 		} );
 
 		expect( getRewindStartDate( state, siteId ) ).to.equal( '2017-05-04 05:00:00' );

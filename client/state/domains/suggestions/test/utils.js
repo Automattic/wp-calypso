@@ -1,14 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	getSerializedDomainsSuggestionsQuery
-} from '../utils';
+import { getSerializedDomainsSuggestionsQuery } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#getSerializedDomainsSuggestionsQuery()', () => {
@@ -17,7 +18,7 @@ describe( 'utils', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: true
+				includeSubdomain: true,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
@@ -28,7 +29,7 @@ describe( 'utils', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: true
+				include_wordpressdotcom: true,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
@@ -39,7 +40,7 @@ describe( 'utils', () => {
 				query: 'eXaMpLe',
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
@@ -49,7 +50,7 @@ describe( 'utils', () => {
 			const query = {
 				query: 'eXaMpLe',
 				quantity: 2,
-				vendor: 'domainsbot'
+				vendor: 'domainsbot',
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
@@ -59,31 +60,25 @@ describe( 'utils', () => {
 			const query = {
 				quantity: 2,
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				null
-			);
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
 		} );
 		it( 'returns null if quantity is missing', () => {
 			const query = {
 				query: 'example',
 				vendor: 'domainsbot',
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				null
-			);
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
 		} );
 		it( 'returns null if vendor is missing', () => {
 			const query = {
 				query: 'example',
 				quantity: 2,
-				includeSubdomain: false
+				includeSubdomain: false,
 			};
-			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				null
-			);
+			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql( null );
 		} );
 	} );
 } );

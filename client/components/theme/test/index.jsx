@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/user', () => () => {} );
@@ -29,7 +33,7 @@ describe( 'Theme', function() {
 				screenshot: '/theme/screenshot.png',
 			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
-			translate: identity
+			translate: identity,
 		};
 	} );
 
@@ -42,9 +46,13 @@ describe( 'Theme', function() {
 			} );
 
 			it( 'should render a <div> with a className of "theme"', function() {
-				assert( themeNode !== null, 'DOM node doesn\'t exist' );
+				assert( themeNode !== null, "DOM node doesn't exist" );
 				assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
-				assert.include( themeNode.className, 'theme is-actionable', 'className does not contain "theme is-actionable"' );
+				assert.include(
+					themeNode.className,
+					'theme is-actionable',
+					'className does not contain "theme is-actionable"'
+				);
 
 				assert( themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name' );
 			} );
@@ -61,7 +69,10 @@ describe( 'Theme', function() {
 			} );
 
 			it( 'should not show a price when there is none', function() {
-				assert( themeNode.getElementsByClassName( 'price' ).length === 0, 'price should not appear' );
+				assert(
+					themeNode.getElementsByClassName( 'price' ).length === 0,
+					'price should not appear'
+				);
 			} );
 
 			it( 'should render a More button', function() {
@@ -93,7 +104,7 @@ describe( 'Theme', function() {
 				React.createElement( Theme, {
 					theme: { id: 'placeholder-1', name: 'Loading' },
 					isPlaceholder: true,
-					translate: identity
+					translate: identity,
 				} )
 			);
 			themeNode = ReactDom.findDOMNode( themeElement );

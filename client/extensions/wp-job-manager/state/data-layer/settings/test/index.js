@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
@@ -19,17 +22,13 @@ import {
 	saveSettings,
 	updateExtensionSettings,
 } from '../';
-import {
-	fetchError,
-	fetchSettings,
-	updateSettings,
-} from 'wp-job-manager/state/settings/actions';
+import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';
 
 const apiResponse = {
 	data: {
 		job_manager_hide_filled_positions: true,
 		job_manager_per_page: 25,
-	}
+	},
 };
 const saveAction = {
 	type: 'DUMMY_ACTION',
@@ -74,8 +73,8 @@ const transformedData = {
 	},
 	types: {
 		enableTypes: undefined,
-		multiJobType: undefined
-	}
+		multiJobType: undefined,
+	},
 };
 
 describe( '#fetchExtensionSettings()', () => {
@@ -89,13 +88,18 @@ describe( '#fetchExtensionSettings()', () => {
 		fetchExtensionSettings( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/jetpack-blogs/101010/rest-api/',
-			query: {
-				path: '/wpjm/v1/settings',
-			}
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/jetpack-blogs/101010/rest-api/',
+					query: {
+						path: '/wpjm/v1/settings',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -137,15 +141,20 @@ describe( '#saveSettings()', () => {
 
 		saveSettings( { dispatch }, saveAction );
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/jetpack-blogs/101010/rest-api/',
-			query: {
-				body: JSON.stringify( apiResponse.data ),
-				json: true,
-				path: '/wpjm/v1/settings',
-			}
-		}, saveAction ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'POST',
+					path: '/jetpack-blogs/101010/rest-api/',
+					query: {
+						body: JSON.stringify( apiResponse.data ),
+						json: true,
+						path: '/wpjm/v1/settings',
+					},
+				},
+				saveAction
+			)
+		);
 	} );
 
 	it( 'should dispatch `removeNotice`', () => {
@@ -187,10 +196,9 @@ describe( '#announceSuccess()', () => {
 
 		announceSuccess( { dispatch }, saveAction, apiResponse );
 
-		expect( dispatch ).to.have.been.calledWith( successNotice( translate(
-			'Settings saved!' ),
-			{ id: 'wpjm-settings-save' }
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			successNotice( translate( 'Settings saved!' ), { id: 'wpjm-settings-save' } )
+		);
 	} );
 } );
 
@@ -208,10 +216,10 @@ describe( '#announceFailure()', () => {
 
 		announceFailure( { dispatch }, saveAction );
 
-		expect( dispatch ).to.have.been.calledWith( errorNotice(
-			translate( 'There was a problem saving your changes. Please try again.' ),
-			{ id: 'wpjm-settings-save' }
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			errorNotice( translate( 'There was a problem saving your changes. Please try again.' ), {
+				id: 'wpjm-settings-save',
+			} )
+		);
 	} );
 } );
-

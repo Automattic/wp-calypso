@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -11,7 +14,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 	SECTION_SET,
-	SELECTED_SITE_SET
+	SELECTED_SITE_SET,
 } from 'state/action-types';
 import {
 	setAllSitesSelected,
@@ -19,7 +22,7 @@ import {
 	setRoute,
 	setSection,
 	setSelectedSiteId,
-	toggleNotificationsPanel
+	toggleNotificationsPanel,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -29,7 +32,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
-				siteId: null
+				siteId: null,
 			} );
 		} );
 	} );
@@ -40,7 +43,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: PREVIEW_IS_SHOWING,
-				isShowing: true
+				isShowing: true,
 			} );
 		} );
 
@@ -49,7 +52,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: PREVIEW_IS_SHOWING,
-				isShowing: false
+				isShowing: false,
 			} );
 		} );
 	} );
@@ -63,7 +66,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: ROUTE_SET,
 				path: route,
-				query: {}
+				query: {},
 			} );
 		} );
 
@@ -119,7 +122,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
-				siteId
+				siteId,
 			} );
 		} );
 	} );

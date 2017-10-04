@@ -14,7 +14,7 @@ jest.mock( 'lib/wp', () => {
 		undocumented: () => ( {
 			readFeedPost,
 			readSitePost,
-		} )
+		} ),
 	};
 } );
 

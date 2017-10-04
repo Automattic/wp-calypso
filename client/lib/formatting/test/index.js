@@ -1,4 +1,7 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -23,19 +26,14 @@ describe( 'formatting', () => {
 
 	describe( '#capitalPDangit()', function() {
 		it( 'should error when input is not a string', function() {
-			const types = [
-				{},
-				undefined,
-				1,
-				true,
-				[],
-				function() {}
-			];
+			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
-				chai.expect( function() {
-					capitalPDangit( type );
-				} ).to.throw( Error );
+				chai
+					.expect( function() {
+						capitalPDangit( type );
+					} )
+					.to.throw( Error );
 			} );
 		} );
 
@@ -54,20 +52,16 @@ describe( 'formatting', () => {
 
 		it( 'should replace all instances of Wordpress', function() {
 			chai.assert.equal( capitalPDangit( 'Wordpress Wordpress' ), 'WordPress WordPress' );
-			chai.assert.equal( capitalPDangit( 'I love Wordpress and Wordpress loves me' ), 'I love WordPress and WordPress loves me' );
+			chai.assert.equal(
+				capitalPDangit( 'I love Wordpress and Wordpress loves me' ),
+				'I love WordPress and WordPress loves me'
+			);
 		} );
 	} );
 
 	describe( '#parseHtml()', function() {
 		it( 'should equal to null when input is not a string', function() {
-			const types = [
-				{},
-				undefined,
-				1,
-				true,
-				[],
-				function() {}
-			];
+			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
 				chai.assert.equal( parseHtml( type ), null );
@@ -93,7 +87,7 @@ describe( 'formatting', () => {
 		it( 'should parseHtml and return document fragment that can be queried', function() {
 			const strings = [
 				'<span><a href="stuff">hello world</a></span>',
-				'<div><span></span><a href="stuff">hello world</a></div>'
+				'<div><span></span><a href="stuff">hello world</a></div>',
 			];
 
 			strings.forEach( function( string ) {
@@ -104,12 +98,14 @@ describe( 'formatting', () => {
 	} );
 
 	describe( '#decodeEntities()', () => {
-		[ 'node', 'browser' ].forEach( ( env ) => {
+		[ 'node', 'browser' ].forEach( env => {
 			let decodeEntities;
 			before( () => {
 				switch ( env ) {
-					case 'node': decodeEntities = decodeEntitiesNode;
-					case 'browser': decodeEntities = decodeEntitiesBrowser;
+					case 'node':
+						decodeEntities = decodeEntitiesNode;
+					case 'browser':
+						decodeEntities = decodeEntitiesBrowser;
 				}
 			} );
 
@@ -129,28 +125,17 @@ describe( 'formatting', () => {
 
 	describe( '#preventWidows()', () => {
 		it( 'should not modify input if type is not string', () => {
-			const types = [
-				{},
-				undefined,
-				1,
-				true,
-				[],
-				function() {}
-			];
+			const types = [ {}, undefined, 1, true, [], function() {} ];
 
-			types.forEach( ( type ) => {
+			types.forEach( type => {
 				chai.assert.equal( preventWidows( type ), type );
 			} );
 		} );
 
 		it( 'should return empty string when input is all whitespace', () => {
-			const inputs = [
-				' ',
-				'\t',
-				'\n'
-			];
+			const inputs = [ ' ', '\t', '\n' ];
 
-			inputs.forEach( ( input ) => {
+			inputs.forEach( input => {
 				chai.assert.equal( preventWidows( input ), '' );
 			} );
 		} );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy, stub } from 'sinon';
 
@@ -46,7 +49,7 @@ describe( 'index', () => {
 			store = createReducerStore( reducerStub, state );
 
 		Dispatcher.handleViewAction( {
-			type: 'anything'
+			type: 'anything',
 		} );
 
 		expect( reducerStub ).to.have.been.calledOnce;
@@ -61,7 +64,7 @@ describe( 'index', () => {
 		store.on( 'change', callbackSpy );
 
 		Dispatcher.handleViewAction( {
-			type: 'anything'
+			type: 'anything',
 		} );
 
 		expect( store.get() ).to.be.equal( state );
@@ -76,7 +79,7 @@ describe( 'index', () => {
 		store.on( 'change', callbackSpy );
 
 		Dispatcher.handleViewAction( {
-			type: 'anything'
+			type: 'anything',
 		} );
 
 		expect( store.get() ).to.be.not.equal( state );
@@ -92,7 +95,7 @@ describe( 'index', () => {
 
 				if ( type === TEST ) {
 					return {
-						test: key
+						test: key,
 					};
 				}
 
@@ -104,20 +107,20 @@ describe( 'index', () => {
 
 		Dispatcher.handleViewAction( {
 			type: 'anything',
-			key: 'anything'
+			key: 'anything',
 		} );
 		Dispatcher.handleViewAction( {
 			type: TEST,
-			key: 'anything'
+			key: 'anything',
 		} );
 		Dispatcher.handleViewAction( {
 			type: TEST,
-			key: VALUE
+			key: VALUE,
 		} );
 
 		expect( store.get() ).to.be.not.equal( state );
 		expect( store.get() ).to.be.eql( {
-			test: VALUE
+			test: VALUE,
 		} );
 		expect( callbackSpy ).to.have.been.calledTwice;
 	} );

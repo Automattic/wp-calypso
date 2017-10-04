@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/wp', () => require( './mocks/wp' ) );
 jest.mock( 'lib/user/utils', () => require( './mocks/user-utils' ) );
@@ -92,5 +96,4 @@ describe( 'User Settings', () => {
 			done();
 		}
 	} );
-
 } );

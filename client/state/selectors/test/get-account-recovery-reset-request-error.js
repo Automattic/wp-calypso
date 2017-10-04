@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -32,7 +35,7 @@ describe( 'getAccountRecoveryResetRequestError()', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
-					requestReset: {}
+					requestReset: {},
 				},
 			},
 		} );

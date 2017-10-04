@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -9,13 +12,13 @@ import { expect } from 'chai';
 import { getRawOffsets } from '../';
 
 describe( 'getRawOffsets()', () => {
-	it( 'should return null if `timezones` aren\'t synced', () => {
+	it( "should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const manualUTCOffsets = getRawOffsets( state );
@@ -33,7 +36,7 @@ describe( 'getRawOffsets()', () => {
 				},
 				labels: {},
 				byContinent: {},
-			}
+			},
 		};
 
 		const offsets = getRawOffsets( state );

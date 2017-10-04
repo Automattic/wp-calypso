@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
 	const { spy } = require( 'sinon' );
@@ -78,8 +82,13 @@ describe( 'MapDomain component', () => {
 	} );
 
 	it( 'goes back to domain management for VIP sites', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSiteSlug="baba"
-											selectedSite={ { ...defaultProps.selectedSite, is_vip: true } } /> );
+		const wrapper = shallow(
+			<MapDomain
+				{ ...defaultProps }
+				selectedSiteSlug="baba"
+				selectedSite={ { ...defaultProps.selectedSite, is_vip: true } }
+			/>
+		);
 		wrapper.instance().goBack();
 		expect( pageSpy ).to.have.been.calledWith( paths.domainManagementList( 'baba' ) );
 	} );

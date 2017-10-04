@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -13,24 +16,21 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'state/action-types';
-import {
-	schedulingSharePostActionStatus,
-	updateDataForPost,
-} from '../reducer';
+import { schedulingSharePostActionStatus, updateDataForPost } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'updateDataForPost()', () => {
 		const nestedStateTree = deepFreeze( {
 			99: {
-				test: 'valueNotToChange'
+				test: 'valueNotToChange',
 			},
 			1: {
 				2: {
 					3: 'valueToChange',
-					4: 'valueNotToChange'
+					4: 'valueNotToChange',
 				},
-				5: 'valueNotToChange'
-			}
+				5: 'valueNotToChange',
+			},
 		} );
 
 		it( 'should only change deeply nested value with proper siteId, postId and actionId', () => {
@@ -86,9 +86,9 @@ describe( 'reducer', () => {
 			const previousState = {
 				2916284: {
 					5: {
-						status: 'success'
-					}
-				}
+						status: 'success',
+					},
+				},
 			};
 			const state = schedulingSharePostActionStatus( previousState, {
 				type: PUBLICIZE_SHARE_DISMISS,

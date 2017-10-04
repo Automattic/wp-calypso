@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { keyBy } from 'lodash';
 
@@ -35,7 +38,7 @@ const loadingState = {
 							},
 							items: {},
 							orders: {},
-						}
+						},
 					},
 				},
 			},
@@ -59,8 +62,8 @@ const loadedState = {
 							orders: {
 								45: [ 1, 2 ],
 							},
-						}
-					}
+						},
+					},
 				},
 			},
 		},

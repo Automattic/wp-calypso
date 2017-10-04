@@ -1,16 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	requestReset,
-	updatePasswordResetUserData,
-	setResetMethod,
-} from '../actions';
+import { requestReset, updatePasswordResetUserData, setResetMethod } from '../actions';
 
 import {
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,

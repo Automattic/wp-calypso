@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,9 +17,9 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 87654321;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
@@ -27,9 +30,9 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
@@ -40,9 +43,9 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						items: ITEMS_FIXTURE
-					}
-				}
+						items: ITEMS_FIXTURE,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );

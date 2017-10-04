@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 var assert = require( 'chai' ).assert;
 
 /**

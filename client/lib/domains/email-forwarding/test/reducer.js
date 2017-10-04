@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
@@ -15,38 +18,38 @@ describe( 'reducer', () => {
 	it( 'should return the same state when no matching record passed in the delete complete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					list: EMAIL_FORWARDS
-				}
+					list: EMAIL_FORWARDS,
+				},
 			} ),
 			payload = {
 				action: {
 					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
-					mailbox: 'unknown'
-				}
+					mailbox: 'unknown',
+				},
 			};
 
 		const result = reducer( state, payload );
 
 		expect( result ).to.be.eql( {
 			[ DOMAIN_NAME ]: {
-				list: EMAIL_FORWARDS
-			}
+				list: EMAIL_FORWARDS,
+			},
 		} );
 	} );
 
 	it( 'should return state without record passed in the delete completed action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
-					list: EMAIL_FORWARDS
-				}
+					list: EMAIL_FORWARDS,
+				},
 			} ),
 			payload = {
 				action: {
 					type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
 					domainName: DOMAIN_NAME,
-					mailbox: MAILBOX_NAME
-				}
+					mailbox: MAILBOX_NAME,
+				},
 			};
 
 		const result = reducer( state, payload );
@@ -54,8 +57,8 @@ describe( 'reducer', () => {
 		expect( result ).to.be.eql( {
 			[ DOMAIN_NAME ]: {
 				list: [],
-				needsUpdate: true
-			}
+				needsUpdate: true,
+			},
 		} );
 	} );
 } );

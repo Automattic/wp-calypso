@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,8 +17,8 @@ describe( 'selectors', () => {
 		it( 'should return an empty array if data is not available.', () => {
 			const state = {
 				extensions: {
-					woocommerce: {}
-				}
+					woocommerce: {},
+				},
 			};
 
 			expect( getProductCategories( state, 123 ) ).to.eql( [] );
@@ -28,10 +31,10 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								productCategories: LOADING,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			expect( getProductCategories( state, 123 ) ).to.eql( [] );
@@ -58,9 +61,9 @@ describe( 'selectors', () => {
 							345: {
 								productCategories: categories345,
 							},
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 
 			expect( getProductCategories( state, 123 ) ).to.equal( categories123 );
@@ -72,8 +75,8 @@ describe( 'selectors', () => {
 		it( 'should return undefined if data is not available.', () => {
 			const state = {
 				extensions: {
-					woocommerce: {}
-				}
+					woocommerce: {},
+				},
 			};
 
 			expect( getProductCategory( state, 1, 123 ) ).to.not.exist;
@@ -86,10 +89,10 @@ describe( 'selectors', () => {
 						sites: {
 							123: {
 								productCategories: LOADING,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			expect( getProductCategory( state, 1, 123 ) ).to.not.exist;
@@ -101,13 +104,11 @@ describe( 'selectors', () => {
 					woocommerce: {
 						sites: {
 							123: {
-								productCategories: [
-									{ id: 1, name: 'Cat 1', slug: 'cat-1' },
-								]
-							}
-						}
-					}
-				}
+								productCategories: [ { id: 1, name: 'Cat 1', slug: 'cat-1' } ],
+							},
+						},
+					},
+				},
 			};
 
 			expect( getProductCategory( state, 2, 123 ) ).to.equal( null );
@@ -135,9 +136,9 @@ describe( 'selectors', () => {
 							345: {
 								productCategories: categories345,
 							},
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 
 			expect( getProductCategory( state, 1, 123 ) ).to.equal( categories123[ 0 ] );

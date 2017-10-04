@@ -1,16 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	productsDeleteSuccess,
-	productsRequest,
-	productsRequestSuccess,
-} from '../list-reducer';
+import { productsDeleteSuccess, productsRequest, productsRequestSuccess } from '../list-reducer';
 
 import {
 	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,

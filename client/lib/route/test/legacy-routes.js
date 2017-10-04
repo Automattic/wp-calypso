@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import config from 'config';
 import sinon from 'sinon';
@@ -15,7 +18,7 @@ let features = [];
 describe( 'legacy-routes', function() {
 	describe( '#isLegacyRoute()', () => {
 		before( () => {
-			sinon.stub( config, 'isEnabled', ( flag ) => {
+			sinon.stub( config, 'isEnabled', flag => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );

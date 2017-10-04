@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -523,7 +526,8 @@ describe( 'selectors', () => {
 							state: [],
 							postcode: [],
 						},
-						3: { // wrong!
+						3: {
+							// wrong!
 							continent: [],
 							country: [ 'US' ],
 							state: [ 'US:CA' ],

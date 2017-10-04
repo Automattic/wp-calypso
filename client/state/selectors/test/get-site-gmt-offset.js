@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -12,8 +15,8 @@ describe( 'getSiteGmtOffset()', () => {
 	it( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );
@@ -24,9 +27,9 @@ describe( 'getSiteGmtOffset()', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
-					2916284: {}
-				}
-			}
+					2916284: {},
+				},
+			},
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );
@@ -38,10 +41,10 @@ describe( 'getSiteGmtOffset()', () => {
 			siteSettings: {
 				items: {
 					2916284: {
-						gmt_offset: '11'
-					}
-				}
-			}
+						gmt_offset: '11',
+					},
+				},
+			},
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );

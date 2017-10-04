@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -22,9 +25,10 @@ describe( '#generateEmbedFrameMarkup()', () => {
 	it( 'should generate markup with styles', () => {
 		const styles = {
 			'jetpack-carousel': {
-				src: 'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
-				media: 'all'
-			}
+				src:
+					'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
+				media: 'all',
+			},
 		};
 
 		expect( generateEmbedFrameMarkup( { styles } ) ).to.equal(
@@ -36,8 +40,8 @@ describe( '#generateEmbedFrameMarkup()', () => {
 		const scripts = {
 			'jetpack-facebook-embed': {
 				src: 'https://s2.wp.com/wp-content/mu-plugins/shortcodes/js/facebook.js?ver',
-				extra: 'var jpfbembed = {"appid":"249643311490"};'
-			}
+				extra: 'var jpfbembed = {"appid":"249643311490"};',
+			},
 		};
 
 		expect( generateEmbedFrameMarkup( { scripts } ) ).to.equal(

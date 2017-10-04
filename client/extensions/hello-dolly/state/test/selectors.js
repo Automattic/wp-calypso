@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -12,7 +15,7 @@ import { getCurrentLyric } from '../selectors';
 describe( 'selectors', () => {
 	describe( '#getCurrentLyric', () => {
 		const threeLines = [ 'one', 'two', 'three' ];
-		const dollyState = ( state ) => ( { extensions: { helloDolly: state } } );
+		const dollyState = state => ( { extensions: { helloDolly: state } } );
 
 		it( 'should return the first line if no state exists', () => {
 			expect( getCurrentLyric( threeLines )( dollyState( undefined ) ) ).to.equal( 'one' );
@@ -26,9 +29,8 @@ describe( 'selectors', () => {
 
 		it( 'should handle an empty lyrics array', () => {
 			expect( getCurrentLyric( [] )( dollyState( 8 ) ) ).to.equal(
-				translate( 'I can\'t think of a song to sing.' )
+				translate( "I can't think of a song to sing." )
 			);
 		} );
 	} );
 } );
-

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -17,7 +20,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: EDITOR_LAST_DRAFT_SET,
 				siteId: 2916284,
-				postId: 841
+				postId: 841,
 			} );
 		} );
 	} );
@@ -29,7 +32,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: EDITOR_LAST_DRAFT_SET,
 				siteId: null,
-				postId: null
+				postId: null,
 			} );
 		} );
 	} );

@@ -1,4 +1,7 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -130,7 +133,7 @@ describe( 'Users Store', () => {
 		it( 'getUpdatedParams returns correct params', () => {
 			const updatedParams = UsersStore.getUpdatedParams( options );
 			assert.equal( updatedParams.offset, 0 );
-			assert.equal( updatedParams.number, usersData.found )
+			assert.equal( updatedParams.number, usersData.found );
 		} );
 
 		it( 'Polling updates expected users', () => {

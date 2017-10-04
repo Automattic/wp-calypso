@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { expect } from 'chai';
 import { render } from 'enzyme';

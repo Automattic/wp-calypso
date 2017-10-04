@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 /**
@@ -31,7 +34,7 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
-					options: {}
+					options: {},
 				},
 			},
 		};

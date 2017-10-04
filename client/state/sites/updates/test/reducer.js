@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -19,12 +22,12 @@ import {
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -33,7 +36,7 @@ describe( 'reducer', () => {
 			'items',
 			'requesting',
 			'wordpressUpdateStatus',
-			'errors'
+			'errors',
 		] );
 	} );
 
@@ -71,7 +74,7 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate updates when receiving site updates', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITE_UPDATES_RECEIVE,
@@ -115,11 +118,11 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate site updates when receiving a site', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 77203074, updates: exampleUpdates }
+				site: { ID: 77203074, updates: exampleUpdates },
 			} );
 
 			expect( state ).to.eql( {
@@ -135,7 +138,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284, updates: someOtherUpdates }
+				site: { ID: 2916284, updates: someOtherUpdates },
 			} );
 
 			expect( state ).to.eql( {
@@ -147,7 +150,7 @@ describe( 'reducer', () => {
 		it( 'should not store updates if missing when receiving a site', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284 }
+				site: { ID: 2916284 },
 			} );
 
 			expect( state ).to.eql( {} );
@@ -158,8 +161,8 @@ describe( 'reducer', () => {
 				type: SITES_RECEIVE,
 				sites: [
 					{ ID: 2916284, updates: exampleUpdates },
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+					{ ID: 77203074, updates: exampleUpdates },
+				],
 			} );
 
 			expect( state ).to.eql( {
@@ -170,13 +173,11 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate updates when receiving sites', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+				sites: [ { ID: 77203074, updates: exampleUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -192,9 +193,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284, updates: someOtherUpdates }
-				]
+				sites: [ { ID: 2916284, updates: someOtherUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -206,9 +205,7 @@ describe( 'reducer', () => {
 		it( 'should not store updates if missing when receiving sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284 }
-				]
+				sites: [ { ID: 2916284 } ],
 			} );
 
 			expect( state ).to.eql( {} );
@@ -219,8 +216,8 @@ describe( 'reducer', () => {
 				type: SITES_UPDATE,
 				sites: [
 					{ ID: 2916284, updates: exampleUpdates },
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+					{ ID: 77203074, updates: exampleUpdates },
+				],
 			} );
 
 			expect( state ).to.eql( {
@@ -231,13 +228,11 @@ describe( 'reducer', () => {
 
 		it( 'should accumulate updates when updating sites', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+				sites: [ { ID: 77203074, updates: exampleUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -253,9 +248,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 2916284, updates: someOtherUpdates }
-				]
+				sites: [ { ID: 2916284, updates: someOtherUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -267,9 +260,7 @@ describe( 'reducer', () => {
 		it( 'should not store updates if missing when updating sites', () => {
 			const state = items( undefined, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 2916284 }
-				]
+				sites: [ { ID: 2916284 } ],
 			} );
 
 			expect( state ).to.eql( {} );
@@ -305,7 +296,7 @@ describe( 'reducer', () => {
 
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
@@ -314,7 +305,7 @@ describe( 'reducer', () => {
 
 		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
@@ -323,7 +314,7 @@ describe( 'reducer', () => {
 
 		it( 'should return initial state when state is invalid', () => {
 			const original = deepFreeze( {
-				2916284: { plugins: false }
+				2916284: { plugins: false },
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
@@ -341,58 +332,58 @@ describe( 'reducer', () => {
 		it( 'should track site updates request started', () => {
 			const state = requesting( undefined, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
 		it( 'should accumulate site updates requests started', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
 		it( 'should track site updates request succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
 		it( 'should track site updates request failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 	} );
@@ -406,16 +397,16 @@ describe( 'reducer', () => {
 
 		it( 'should track site wordpress core update status request succeeded', () => {
 			const original = deepFreeze( {
-				77203074: true
+				77203074: true,
 			} );
 			const state = wordpressUpdateStatus( original, {
 				type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
@@ -425,12 +416,12 @@ describe( 'reducer', () => {
 			} );
 			const state = wordpressUpdateStatus( original, {
 				type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 	} );
@@ -445,58 +436,58 @@ describe( 'reducer', () => {
 		it( 'should track site updates request started', () => {
 			const state = errors( undefined, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: false
+				2916284: false,
 			} );
 		} );
 
 		it( 'should accumulate site updates requests started', () => {
 			const original = deepFreeze( {
-				2916284: false
+				2916284: false,
 			} );
 			const state = errors( original, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 
 		it( 'should track site updates request succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 			const state = errors( original, {
 				type: SITE_UPDATES_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
 		it( 'should track site updates request failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 			const state = errors( original, {
 				type: SITE_UPDATES_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 	} );

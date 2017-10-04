@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
 
 /**
@@ -10,10 +11,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import {
-	PLAN_BUSINESS,
-	PLAN_FREE
-} from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
 import isSiteOnFreePlan from '../is-site-on-free-plan';
 
 describe( 'isSiteOnFreePlan', () => {

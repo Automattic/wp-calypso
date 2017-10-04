@@ -1,14 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isFetchingAccountRecoverySettings,
-} from '../selectors';
+import { isFetchingAccountRecoverySettings } from '../selectors';
 
 describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () => {
 	it( 'should return the field isFetchingSettings.', () => {

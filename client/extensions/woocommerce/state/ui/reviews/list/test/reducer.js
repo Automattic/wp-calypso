@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -41,7 +44,7 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,
 			siteId: 123,
 			query: {
-				search: 'testing'
+				search: 'testing',
 			},
 		};
 		const originalState = deepFreeze( { currentPage: 3, currentSearch: '' } );

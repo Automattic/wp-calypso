@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -15,9 +18,9 @@ describe( 'selectors', () => {
 			const view = getMediaModalView( {
 				ui: {
 					mediaModal: {
-						view: ModalViews.DETAIL
-					}
-				}
+						view: ModalViews.DETAIL,
+					},
+				},
 			} );
 
 			expect( view ).to.equal( ModalViews.DETAIL );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -17,8 +20,8 @@ describe( 'isPluginUploadComplete', () => {
 				upload: {
 					inProgress: {},
 					uploadedPluginId: {},
-				}
-			}
+				},
+			},
 		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
@@ -31,8 +34,8 @@ describe( 'isPluginUploadComplete', () => {
 						[ siteId ]: false,
 					},
 					uploadedPluginId: {},
-				}
-			}
+				},
+			},
 		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
@@ -47,8 +50,8 @@ describe( 'isPluginUploadComplete', () => {
 					uploadedPluginId: {
 						[ siteId ]: 'hello-dolly',
 					},
-				}
-			}
+				},
+			},
 		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
@@ -63,8 +66,8 @@ describe( 'isPluginUploadComplete', () => {
 					uploadedPluginId: {
 						[ siteId ]: 'hello-dolly',
 					},
-				}
-			}
+				},
+			},
 		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.true;
 	} );

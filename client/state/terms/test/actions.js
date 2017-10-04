@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -15,7 +18,7 @@ import {
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
-	TERMS_REQUEST_FAILURE
+	TERMS_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	addTerm,
@@ -24,7 +27,7 @@ import {
 	removeTerm,
 	requestSiteTerms,
 	updateTerm,
-	deleteTerm
+	deleteTerm,
 } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
 import TermQueryManager from 'lib/query-manager/term';
@@ -33,8 +36,22 @@ import TermQueryManager from 'lib/query-manager/term';
  * Module Variables
  */
 const testTerms = [
-	{ ID: 777, name: 'Chicken', slug: 'chicken', description: 'His Majesty Colonel Sanders', post_count: 1, number: 0 },
-	{ ID: 778, name: 'Ribs', slug: 'ribs', description: 'i want my baby back * 3 ribs', post_count: 100, number: 0 },
+	{
+		ID: 777,
+		name: 'Chicken',
+		slug: 'chicken',
+		description: 'His Majesty Colonel Sanders',
+		post_count: 1,
+		number: 0,
+	},
+	{
+		ID: 778,
+		name: 'Ribs',
+		slug: 'ribs',
+		description: 'i want my baby back * 3 ribs',
+		post_count: 100,
+		number: 0,
+	},
 ];
 const siteId = 2916284;
 const taxonomyName = 'jetpack-testimonials';
@@ -48,19 +65,19 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'addTerm()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
 				.reply( 200, {
 					ID: 123,
 					name: 'ribs',
-					description: ''
+					description: '',
 				} )
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/chicken-and-ribs/terms/new` )
 				.reply( 400, {
 					message: 'The taxonomy does not exist',
-					error: 'invalid_taxonomy'
+					error: 'invalid_taxonomy',
 				} );
 		} );
 
@@ -74,11 +91,11 @@ describe( 'actions', () => {
 				terms: [
 					sinon.match( {
 						ID: sinon.match( /^temporary/ ),
-						name: 'ribs'
-					} )
+						name: 'ribs',
+					} ),
 				],
 				query: undefined,
-				found: undefined
+				found: undefined,
 			} );
 		} );
 
@@ -88,13 +105,15 @@ describe( 'actions', () => {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					terms: [ {
-						ID: 123,
-						name: 'ribs',
-						description: ''
-					} ],
+					terms: [
+						{
+							ID: 123,
+							name: 'ribs',
+							description: '',
+						},
+					],
 					query: undefined,
-					found: undefined
+					found: undefined,
 				} );
 			} );
 		} );
@@ -105,7 +124,7 @@ describe( 'actions', () => {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					termId: sinon.match( /^temporary/ )
+					termId: sinon.match( /^temporary/ ),
 				} );
 			} );
 		} );
@@ -116,7 +135,7 @@ describe( 'actions', () => {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: 'chicken-and-ribs',
-					termId: sinon.match( /^temporary/ )
+					termId: sinon.match( /^temporary/ ),
 				} );
 			} );
 		} );
@@ -132,7 +151,7 @@ describe( 'actions', () => {
 				taxonomy: taxonomyName,
 				terms: [ testTerms[ 0 ] ],
 				query: undefined,
-				found: undefined
+				found: undefined,
 			} );
 		} );
 	} );
@@ -147,7 +166,7 @@ describe( 'actions', () => {
 				taxonomy: taxonomyName,
 				terms: testTerms,
 				query: {},
-				found: 2
+				found: 2,
 			} );
 		} );
 
@@ -160,7 +179,7 @@ describe( 'actions', () => {
 				taxonomy: taxonomyName,
 				terms: testTerms,
 				query: { search: 'foo' },
-				found: 2
+				found: 2,
 			} );
 		} );
 	} );
@@ -173,24 +192,24 @@ describe( 'actions', () => {
 				type: TERM_REMOVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
-				termId: 777
+				termId: 777,
 			} );
 		} );
 	} );
 
 	describe( '#requestSiteTerms()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms` )
 				.reply( 200, {
 					found: 2,
-					terms: testTerms
+					terms: testTerms,
 				} )
 				.get( '/rest/v1.1/sites/12345/taxonomies/chicken-and-ribs/terms' )
 				.reply( 400, {
 					message: 'The taxonomy does not exist',
-					error: 'invalid_taxonomy'
+					error: 'invalid_taxonomy',
 				} );
 		} );
 
@@ -201,7 +220,7 @@ describe( 'actions', () => {
 				type: TERMS_REQUEST,
 				siteId: siteId,
 				taxonomy: taxonomyName,
-				query: {}
+				query: {},
 			} );
 		} );
 
@@ -213,7 +232,7 @@ describe( 'actions', () => {
 					taxonomy: taxonomyName,
 					terms: testTerms,
 					query: {},
-					found: 2
+					found: 2,
 				} );
 			} );
 		} );
@@ -224,7 +243,7 @@ describe( 'actions', () => {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					query: {}
+					query: {},
 				} );
 			} );
 		} );
@@ -236,32 +255,32 @@ describe( 'actions', () => {
 					siteId: 12345,
 					taxonomy: 'chicken-and-ribs',
 					query: {},
-					error: sinon.match( { error: 'invalid_taxonomy' } )
+					error: sinon.match( { error: 'invalid_taxonomy' } ),
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'updateTerm()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:rib` )
 				.reply( 200, {
 					ID: 123,
 					name: 'ribs',
-					description: ''
+					description: '',
 				} )
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:rib` )
 				.reply( 200, {
 					ID: 123,
 					name: 'ribs',
-					description: ''
+					description: '',
 				} )
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:toto` )
 				.reply( 400, {
 					message: 'The taxonomy does not exist',
-					error: 'invalid_taxonomy'
+					error: 'invalid_taxonomy',
 				} );
 		} );
 
@@ -274,49 +293,50 @@ describe( 'actions', () => {
 						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
 						title: 'Steak &amp; Eggs',
 						terms: {
-							[ categoryTaxonomyName ]: [
-								{ ID: 10, name: 'old category name', slug: 'old' }
-							]
-						}
-					}
-				}
+							[ categoryTaxonomyName ]: [ { ID: 10, name: 'old category name', slug: 'old' } ],
+						},
+					},
+				},
 			};
 			const state = {
 				posts: {
 					queries: {
 						[ siteId ]: new PostQueryManager( {
-							items: postObjects[ siteId ]
-						} )
+							items: postObjects[ siteId ],
+						} ),
 					},
 				},
 				siteSettings: {
 					items: {
 						[ siteId ]: {
-							default_category: 10
-						}
-					}
+							default_category: 10,
+						},
+					},
 				},
 				terms: {
 					queries: {
 						[ siteId ]: {
 							[ categoryTaxonomyName ]: new TermQueryManager( {
 								items: {
-									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 }
+									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 },
 								},
-								queries: {}
-							} )
-						}
-					}
-				}
+								queries: {},
+							} ),
+						},
+					},
+				},
 			};
 			const getState = () => state;
 
-			return updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then( () => {
+			return updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )(
+				spy,
+				getState
+			).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
-					termId: 10
+					termId: 10,
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_RECEIVE,
@@ -324,10 +344,10 @@ describe( 'actions', () => {
 					taxonomy: categoryTaxonomyName,
 					terms: [
 						{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
-						{ ID: 123, name: 'ribs', description: '' }
+						{ ID: 123, name: 'ribs', description: '' },
 					],
 					query: undefined,
-					found: undefined
+					found: undefined,
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_EDIT,
@@ -335,16 +355,16 @@ describe( 'actions', () => {
 					postId: 120,
 					post: {
 						terms: {
-							[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ]
-						}
-					}
+							[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ],
+						},
+					},
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_UPDATE,
 					siteId: siteId,
 					settings: {
-						default_category: 123
-					}
+						default_category: 123,
+					},
 				} );
 			} );
 		} );
@@ -355,44 +375,49 @@ describe( 'actions', () => {
 				siteSettings: {
 					items: {
 						[ siteId ]: {
-							default_category: 10
-						}
-					}
+							default_category: 10,
+						},
+					},
 				},
 				terms: {
 					queries: {
 						[ siteId ]: {
 							[ taxonomyName ]: new TermQueryManager( {
 								items: {
-									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 }
+									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 },
 								},
-								queries: {}
-							} )
-						}
-					}
-				}
+								queries: {},
+							} ),
+						},
+					},
+				},
 			};
 			const getState = () => state;
 
-			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then( () => {
+			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )(
+				spy,
+				getState
+			).then( () => {
 				expect( spy ).to.not.have.been.calledWith( {
 					type: SITE_SETTINGS_UPDATE,
 					siteId: siteId,
 					settings: {
-						default_category: 123
-					}
+						default_category: 123,
+					},
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'deleteTerm()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:ribs/delete` )
 				.reply( 200, { status: 'ok' } )
-				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:ribs/delete` )
+				.post(
+					`/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:ribs/delete`
+				)
 				.reply( 200, { status: 'ok' } );
 		} );
 
@@ -405,19 +430,17 @@ describe( 'actions', () => {
 						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
 						title: 'Steak &amp; Eggs',
 						terms: {
-							[ taxonomyName ]: [
-								{ ID: 10, name: 'ribs', slug: 'ribs' }
-							]
-						}
-					}
-				}
+							[ taxonomyName ]: [ { ID: 10, name: 'ribs', slug: 'ribs' } ],
+						},
+					},
+				},
 			};
 			const state = {
 				posts: {
 					queries: {
 						[ siteId ]: new PostQueryManager( {
-							items: postObjects[ siteId ]
-						} )
+							items: postObjects[ siteId ],
+						} ),
 					},
 				},
 				terms: {
@@ -427,13 +450,13 @@ describe( 'actions', () => {
 								items: {
 									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0 },
 									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5 },
-									15: { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 10 }
+									15: { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 10 },
 								},
-								queries: {}
-							} )
-						}
-					}
-				}
+								queries: {},
+							} ),
+						},
+					},
+				},
 			};
 			const getState = () => state;
 
@@ -444,7 +467,7 @@ describe( 'actions', () => {
 					taxonomy: taxonomyName,
 					terms: [ { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 5 } ],
 					query: undefined,
-					found: undefined
+					found: undefined,
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_EDIT,
@@ -452,21 +475,21 @@ describe( 'actions', () => {
 					postId: 120,
 					post: {
 						terms: {
-							[ taxonomyName ]: []
-						}
-					}
+							[ taxonomyName ]: [],
+						},
+					},
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					termId: 10
+					termId: 10,
 				} );
 				expect( spy ).to.not.have.been.calledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					terms: []
+					terms: [],
 				} );
 			} );
 		} );
@@ -476,14 +499,14 @@ describe( 'actions', () => {
 				posts: {
 					queries: {
 						[ siteId ]: new PostQueryManager( {
-							items: {}
-						} )
+							items: {},
+						} ),
 					},
 				},
 				siteSettings: {
 					items: {
-						[ siteId ]: { default_category: 5 }
-					}
+						[ siteId ]: { default_category: 5 },
+					},
 				},
 				terms: {
 					queries: {
@@ -491,13 +514,13 @@ describe( 'actions', () => {
 							[ categoryTaxonomyName ]: new TermQueryManager( {
 								items: {
 									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 },
-									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5, post_count: 2 }
+									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5, post_count: 2 },
 								},
-								queries: {}
-							} )
-						}
-					}
-				}
+								queries: {},
+							} ),
+						},
+					},
+				},
 			};
 			const getState = () => state;
 
@@ -508,13 +531,13 @@ describe( 'actions', () => {
 					taxonomy: categoryTaxonomyName,
 					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 12 } ],
 					query: undefined,
-					found: undefined
+					found: undefined,
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
-					termId: 10
+					termId: 10,
 				} );
 			} );
 		} );
@@ -524,14 +547,14 @@ describe( 'actions', () => {
 				posts: {
 					queries: {
 						[ siteId ]: new PostQueryManager( {
-							items: {}
-						} )
+							items: {},
+						} ),
 					},
 				},
 				siteSettings: {
 					items: {
-						[ siteId ]: { default_category: 5 }
-					}
+						[ siteId ]: { default_category: 5 },
+					},
 				},
 				terms: {
 					queries: {
@@ -539,13 +562,13 @@ describe( 'actions', () => {
 							[ categoryTaxonomyName ]: new TermQueryManager( {
 								items: {
 									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 },
-									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5 }
+									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5 },
 								},
-								queries: {}
-							} )
-						}
-					}
-				}
+								queries: {},
+							} ),
+						},
+					},
+				},
 			};
 			const getState = () => state;
 
@@ -556,13 +579,13 @@ describe( 'actions', () => {
 					taxonomy: categoryTaxonomyName,
 					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 } ],
 					query: undefined,
-					found: undefined
+					found: undefined,
 				} );
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
-					termId: 10
+					termId: 10,
 				} );
 			} );
 		} );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -9,11 +12,7 @@ import { spy } from 'sinon';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
-import {
-	requestNotificationSettings,
-	updateSettings,
-	handleError,
-} from '../';
+import { requestNotificationSettings, updateSettings, handleError } from '../';
 
 describe( '#requestNotificationSettings()', () => {
 	it( 'should dispatch HTTP request to the user notification settings endpoint', () => {
@@ -22,11 +21,13 @@ describe( '#requestNotificationSettings()', () => {
 		requestNotificationSettings( { dispatch } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1.1',
-			method: 'GET',
-			path: '/me/notifications/settings'
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http( {
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/me/notifications/settings',
+			} )
+		);
 	} );
 } );
 
@@ -39,7 +40,7 @@ describe( '#updateSettings()', () => {
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( {
 			type: NOTIFICATION_SETTINGS_UPDATE,
-			settings: {}
+			settings: {},
 		} );
 	} );
 } );
@@ -54,8 +55,8 @@ describe( '#handleError()', () => {
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			type: NOTICE_CREATE,
 			notice: {
-				status: 'is-error'
-			}
+				status: 'is-error',
+			},
 		} );
 	} );
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -15,9 +18,9 @@ describe( 'getPluginUploadProgress', () => {
 		const state = {
 			plugins: {
 				upload: {
-					progressPercent: {}
-				}
-			}
+					progressPercent: {},
+				},
+			},
 		};
 		expect( getPluginUploadProgress( state, siteId ) ).to.equal( 0 );
 	} );

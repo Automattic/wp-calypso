@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -68,9 +71,7 @@ describe( 'restoreProgress', () => {
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
 			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
-		].forEach(
-			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
-		);
+		].forEach( state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] ) );
 	} );
 } );
 

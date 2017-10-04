@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -22,9 +25,9 @@ describe( 'getSiteMonitorSettings()', () => {
 				monitor: {
 					items: {
 						[ siteId ]: settings,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = getSiteMonitorSettings( state, siteId );
 		expect( output ).to.eql( settings );
@@ -36,9 +39,9 @@ describe( 'getSiteMonitorSettings()', () => {
 				monitor: {
 					items: {
 						77203074: settings,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = getSiteMonitorSettings( state, siteId );
 		expect( output ).to.be.null;

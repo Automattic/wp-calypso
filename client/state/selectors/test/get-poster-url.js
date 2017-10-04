@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -15,10 +18,10 @@ describe( 'getPosterUrl()', () => {
 			ui: {
 				editor: {
 					videoEditor: {
-						url
-					}
-				}
-			}
+						url,
+					},
+				},
+			},
 		} );
 
 		expect( poster ).to.eql( url );

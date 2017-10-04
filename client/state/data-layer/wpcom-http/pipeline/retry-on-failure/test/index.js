@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import { spy } from 'sinon';
@@ -19,15 +22,19 @@ const retryWithDelay = delay => rof( () => delay );
 
 const nextError = { fail: 'failed big time' };
 
-const getSites = deepFreeze( http( {
-	method: 'GET',
-	path: '/sites',
-	apiVersion: 'v1',
-} ) );
+const getSites = deepFreeze(
+	http( {
+		method: 'GET',
+		path: '/sites',
+		apiVersion: 'v1',
+	} )
+);
 
 const withRetries = retryCount => actionOrInbound =>
 	undefined !== actionOrInbound.originalRequest
-		? merge( actionOrInbound, { originalRequest: withRetries( retryCount )( actionOrInbound.originalRequest ) } )
+		? merge( actionOrInbound, {
+				originalRequest: withRetries( retryCount )( actionOrInbound.originalRequest ),
+			} )
 		: merge( actionOrInbound, { meta: { dataLayer: { retryCount } } } );
 
 describe( '#retryOnFailure', () => {
@@ -35,7 +42,7 @@ describe( '#retryOnFailure', () => {
 	let dispatch;
 	let store;
 
-	useFakeTimers( fakeClock => clock = fakeClock );
+	useFakeTimers( fakeClock => ( clock = fakeClock ) );
 
 	beforeEach( () => {
 		dispatch = spy();
@@ -94,7 +101,9 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.been.calledWith( withRetries( 1 )( originalRequest ) );
 
 		// retry 2
-		expect( retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } ) ).to.have.property( 'shouldAbort', true );
+		expect(
+			retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } )
+		).to.have.property( 'shouldAbort', true );
 		expect( dispatch.callCount ).to.equal( 1 );
 
 		clock.tick( 1337 );
@@ -102,7 +111,9 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.been.calledWith( withRetries( 2 )( originalRequest ) );
 
 		// retry 3
-		expect( retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } ) ).to.have.property( 'shouldAbort', true );
+		expect(
+			retryIt( { ...inbound, originalRequest: dispatch.lastCall.args[ 0 ] } )
+		).to.have.property( 'shouldAbort', true );
 		expect( dispatch.callCount ).to.equal( 2 );
 
 		clock.tick( 1337 );
@@ -119,7 +130,10 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	it( 'should handle `exponentialBackoff`', () => {
-		const originalRequest = { ...getSites, options: { retryPolicy: exponentialBackoff( { delay: 1000, maxAttempts: 5 } ) } };
+		const originalRequest = {
+			...getSites,
+			options: { retryPolicy: exponentialBackoff( { delay: 1000, maxAttempts: 5 } ) },
+		};
 		const inbound = { nextError, originalRequest, store };
 
 		// retry 1

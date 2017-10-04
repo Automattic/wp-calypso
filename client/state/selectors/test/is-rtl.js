@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -10,7 +13,7 @@ import { isRtl } from '../';
 
 describe( 'isRtl()', () => {
 	it( 'should return null if the value is not known', () => {
-		const result = isRtl( {	} );
+		const result = isRtl( {} );
 
 		expect( result ).to.be.null;
 	} );
@@ -19,9 +22,9 @@ describe( 'isRtl()', () => {
 		const result = isRtl( {
 			ui: {
 				language: {
-					localeSlug: 'he'
-				}
-			}
+					localeSlug: 'he',
+				},
+			},
 		} );
 
 		expect( result ).to.be.true;
@@ -31,9 +34,9 @@ describe( 'isRtl()', () => {
 		const result = isRtl( {
 			ui: {
 				language: {
-					localeSlug: 'fr'
-				}
-			}
+					localeSlug: 'fr',
+				},
+			},
 		} );
 
 		expect( result ).to.be.false;

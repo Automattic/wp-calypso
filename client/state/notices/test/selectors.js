@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -20,16 +23,12 @@ describe( 'selectors', () => {
 					items: {
 						1: { noticeId: 1 },
 						2: { noticeId: 2 },
-						3: { noticeId: 3 }
-					}
-				}
+						3: { noticeId: 3 },
+					},
+				},
 			} );
 
-			expect( notices ).to.eql( [
-				{ noticeId: 1 },
-				{ noticeId: 2 },
-				{ noticeId: 3 }
-			] );
+			expect( notices ).to.eql( [ { noticeId: 1 }, { noticeId: 2 }, { noticeId: 3 } ] );
 		} );
 	} );
 } );

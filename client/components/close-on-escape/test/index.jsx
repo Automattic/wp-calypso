@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 /**
  * External dependencies
  */
@@ -12,9 +16,8 @@ import { spy } from 'sinon';
  */
 import CloseOnEscape from '../';
 
-const simulateEscapeKeydown = () => (
-	document.dispatchEvent( new window.KeyboardEvent( 'keydown', { keyCode: 27 } ) )
-);
+const simulateEscapeKeydown = () =>
+	document.dispatchEvent( new window.KeyboardEvent( 'keydown', { keyCode: 27 } ) );
 
 describe( 'CloseOnEscape', () => {
 	describe( 'rendering', () => {

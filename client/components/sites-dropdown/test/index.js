@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'lib/user', () => () => {} );
 
 /**
@@ -51,7 +55,7 @@ describe( 'index', function() {
 				setState: setStateSpy,
 				props: {
 					onSiteSelect: siteSelectedSpy,
-				}
+				},
 			};
 
 			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
@@ -70,8 +74,8 @@ describe( 'index', function() {
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
-					onClose: noop
-				}
+					onClose: noop,
+				},
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
@@ -85,8 +89,8 @@ describe( 'index', function() {
 			const fakeContext = {
 				setState: noop,
 				props: {
-					onClose: onCloseSpy
-				}
+					onClose: onCloseSpy,
+				},
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
@@ -95,15 +99,18 @@ describe( 'index', function() {
 	} );
 
 	describe( 'getSelectedSite', function() {
-		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
-			const fakeState = {
-				selectedSiteId: 42
-			};
-			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-			expect( selectedSite ).to.be.eql( {
-				ID: 42,
-				slug: 'foo.wordpress.com'
-			} );
-		} );
+		xit(
+			'should return a site on the basis of the component `selectedSiteSlug` state property',
+			function() {
+				const fakeState = {
+					selectedSiteId: 42,
+				};
+				const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
+				expect( selectedSite ).to.be.eql( {
+					ID: 42,
+					slug: 'foo.wordpress.com',
+				} );
+			}
+		);
 	} );
 } );

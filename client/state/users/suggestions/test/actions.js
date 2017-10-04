@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
@@ -53,24 +56,26 @@ describe( 'actions', () => {
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: USER_SUGGESTIONS_REQUEST,
-				siteId
+				siteId,
 			} );
 
-			return request.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
-					data: sampleSuccessResponse,
-					siteId
-				} );
+			return request
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: USER_SUGGESTIONS_REQUEST_SUCCESS,
+						data: sampleSuccessResponse,
+						siteId,
+					} );
 
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: USER_SUGGESTIONS_RECEIVE,
-					suggestions: sampleSuccessResponse.suggestions,
-					siteId
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: USER_SUGGESTIONS_RECEIVE,
+						suggestions: sampleSuccessResponse.suggestions,
+						siteId,
+					} );
+				} )
+				.catch( err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
-			} ).catch( ( err ) => {
-				assert.fail( err, undefined, 'errback should not have been called' );
-			} );
 		} );
 	} );
 } );

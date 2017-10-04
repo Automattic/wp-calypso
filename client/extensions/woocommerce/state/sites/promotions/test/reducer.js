@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -148,4 +151,3 @@ describe( 'reducer', () => {
 		expect( state4.promotions[ 9 ].coupon ).to.equal( coupons2[ 1 ] );
 	} );
 } );
-

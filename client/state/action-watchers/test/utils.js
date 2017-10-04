@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -20,10 +23,7 @@ describe( '#mergeHandlers', () => {
 	} );
 
 	it( 'should combine lists of handlers for different action types', () => {
-		const merged = mergeHandlers(
-			{ INCREMENT: [ inc ] },
-			{ TRIPLE: [ triple ] },
-		);
+		const merged = mergeHandlers( { INCREMENT: [ inc ] }, { TRIPLE: [ triple ] } );
 
 		expect( merged ).to.eql( {
 			INCREMENT: [ inc ],

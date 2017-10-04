@@ -1,6 +1,10 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'devdocs/service', () => ( {
-	fetch: () => {}
+	fetch: () => {},
 } ) );
 
 /**

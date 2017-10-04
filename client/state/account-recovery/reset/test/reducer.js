@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -41,7 +44,7 @@ describe( '#account-recovery/reset reducer', () => {
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should set isRequesting flag.', () => {
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 		} );
 
 		assert.isTrue( state.options.isRequesting );

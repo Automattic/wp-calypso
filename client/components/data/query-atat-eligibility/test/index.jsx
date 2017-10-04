@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
@@ -11,10 +14,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { requestEligibility as requestEligibilityAction } from 'state/automated-transfer/actions';
-import {
-	QueryAutomatedTransferEligibility as QueryEligibility,
-	mapDispatchToProps,
-} from '../';
+import { QueryAutomatedTransferEligibility as QueryEligibility, mapDispatchToProps } from '../';
 
 describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;

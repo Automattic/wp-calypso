@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
 
@@ -10,16 +13,10 @@ import { spy, match } from 'sinon';
 import {
 	createProduct,
 	updateProduct,
-	fetchProduct
+	fetchProduct,
 } from 'woocommerce/state/sites/products/actions';
-import {
-	handleProductCreate,
-	handleProductUpdate,
-	handleProductRequest,
-} from '../';
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { handleProductCreate, handleProductUpdate, handleProductRequest } from '../';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCreate', () => {
@@ -301,4 +298,3 @@ describe( 'handlers', () => {
 		} );
 	} );
 } );
-

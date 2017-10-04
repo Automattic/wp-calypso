@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -26,7 +29,7 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
 			query: {
-				search: 'test'
+				search: 'test',
 			},
 		};
 		const originalState = deepFreeze( initialState );
@@ -38,7 +41,7 @@ describe( 'reducer', () => {
 			},
 			234: {
 				edits: { currentlyEditingId: null, changes: {} },
-				list: { currentPage: 1, currentSearch: 'test' }
+				list: { currentPage: 1, currentSearch: 'test' },
 			},
 		} );
 	} );
@@ -49,7 +52,7 @@ describe( 'reducer', () => {
 			siteId: 234,
 			order: {
 				id: 2,
-				first_name: 'Fiona'
+				first_name: 'Fiona',
 			},
 		};
 		const originalState = deepFreeze( initialState );
@@ -61,7 +64,7 @@ describe( 'reducer', () => {
 			},
 			234: {
 				edits: { currentlyEditingId: 2, changes: { first_name: 'Fiona' } },
-				list: { currentPage: 1, currentSearch: '' }
+				list: { currentPage: 1, currentSearch: '' },
 			},
 		} );
 	} );

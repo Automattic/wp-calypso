@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,9 +17,9 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 87654321;
 		const output = isDeactivatingJetpackJumpstart( stateIn, siteId );
@@ -27,9 +30,9 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = isDeactivatingJetpackJumpstart( stateIn, siteId );
@@ -40,9 +43,9 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = isDeactivatingJetpackJumpstart( stateIn, siteId );

@@ -1,4 +1,8 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'config', () => {
 	const { stub } = require( 'sinon' );
 
@@ -9,8 +13,8 @@ jest.mock( 'config', () => {
 } );
 jest.mock( 'lib/wp', () => ( {
 	me: () => ( {
-		get: () => {}
-	} )
+		get: () => {},
+	} ),
 } ) );
 
 /**
@@ -38,9 +42,7 @@ describe( 'UserUtils', () => {
 
 	context( 'without logout url', () => {
 		before( () => {
-			configMock.isEnabled
-				.withArgs( 'always_use_logout_url' )
-				.returns( false );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( false );
 		} );
 
 		it( 'uses userData.logout_URL when available', () => {
@@ -52,9 +54,7 @@ describe( 'UserUtils', () => {
 
 	context( 'with logout url', () => {
 		before( () => {
-			configMock.isEnabled
-				.withArgs( 'always_use_logout_url' )
-				.returns( true );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( true );
 		} );
 
 		it( 'works when |subdomain| is not present', () => {

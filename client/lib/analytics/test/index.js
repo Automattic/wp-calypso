@@ -1,7 +1,11 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
-	retarget: () => {}
+	retarget: () => {},
 } ) );
 jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
 
@@ -35,7 +39,7 @@ function logImageLoads() {
 			set: function( value ) {
 				this._src = value;
 				imagesLoaded.push( url.parse( value, true, true ) );
-			}
+			},
 		} );
 	} );
 
@@ -65,7 +69,7 @@ describe( 'Analytics', function() {
 		it( 'bumpStat with value object', function() {
 			analytics.mc.bumpStat( {
 				go: 'time',
-				another: 'one'
+				another: 'one',
 			} );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
@@ -83,7 +87,7 @@ describe( 'Analytics', function() {
 		it( 'bumpStatWithPageView with value object', function() {
 			analytics.mc.bumpStatWithPageView( {
 				go: 'time',
-				another: 'one'
+				another: 'one',
 			} );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );

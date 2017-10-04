@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -13,8 +16,8 @@ describe( 'getVisibleSites()', () => {
 	it( 'should return an empty array if no sites in state', () => {
 		const state = {
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const sites = getVisibleSites( state );
 		expect( sites ).to.eql( [] );
@@ -31,8 +34,8 @@ describe( 'getVisibleSites()', () => {
 						name: 'WordPress.com Example Blog',
 						URL: 'http://example.com',
 						options: {
-							unmapped_url: 'http://example.com'
-						}
+							unmapped_url: 'http://example.com',
+						},
 					},
 					2916285: {
 						ID: 2916285,
@@ -40,10 +43,10 @@ describe( 'getVisibleSites()', () => {
 						name: 'WordPress.com Non visible Blog',
 						URL: 'http://example2.com',
 						options: {
-							unmapped_url: 'http://example2.com'
-						}
-					}
-				}
+							unmapped_url: 'http://example2.com',
+						},
+					},
+				},
 			},
 			siteSettings: {
 				items: {},
@@ -64,9 +67,9 @@ describe( 'getVisibleSites()', () => {
 				is_previewable: false,
 				options: {
 					default_post_format: 'standard',
-					unmapped_url: 'http://example.com'
-				}
-			}
+					unmapped_url: 'http://example.com',
+				},
+			},
 		] );
 	} );
 } );

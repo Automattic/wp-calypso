@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -16,14 +19,16 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,
 			siteId: 234,
 			query: {
-				search: 'testing'
+				search: 'testing',
 			},
 		};
-		const originalState = deepFreeze( { 123: { list: { currentPage: 3, currentSearch: '', currentProduct: null } } } );
+		const originalState = deepFreeze( {
+			123: { list: { currentPage: 3, currentSearch: '', currentProduct: null } },
+		} );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			123: { list: { currentPage: 3, currentSearch: '', currentProduct: null } },
-			234: { list: { currentPage: 1, currentSearch: 'testing', currentProduct: null } }
+			234: { list: { currentPage: 1, currentSearch: 'testing', currentProduct: null } },
 		} );
 	} );
 } );

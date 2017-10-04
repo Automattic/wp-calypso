@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -25,7 +28,7 @@ describe( 'blog-sticker-list', () => {
 					apiVersion: '1.1',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );

@@ -1,13 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { getThemeFilterTermFromString } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeFilterTermFromString } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTermFromString()', () => {
 	it( 'should drop taxonomy prefix from unambiguous filter term', () => {

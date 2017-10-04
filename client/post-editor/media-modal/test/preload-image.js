@@ -1,4 +1,7 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -14,7 +17,7 @@ import preloadImage from '../preload-image';
 describe( '#preloadImage()', function() {
 	let sandbox, Image;
 
-	useSandbox( ( newSandbox ) => {
+	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		Image = sandbox.stub( global.window, 'Image' );
 	} );

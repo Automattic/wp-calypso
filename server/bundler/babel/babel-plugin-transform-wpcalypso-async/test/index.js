@@ -1,4 +1,8 @@
-/* eslint-disable max-len */
+/**
+ * /* eslint-disable max-len
+ *
+ * @format
+ */
 
 /**
  * External dependencies

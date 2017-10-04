@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -15,8 +18,8 @@ describe( 'getRewindStatusError()', () => {
 	it( 'should return null if no error exists for a site', () => {
 		const stateNoSite = deepFreeze( {
 			activityLog: {
-				rewindStatusError: {}
-			}
+				rewindStatusError: {},
+			},
 		} );
 		expect( getRewindStatusError( stateNoSite, siteId ) ).to.be.null;
 
@@ -24,8 +27,8 @@ describe( 'getRewindStatusError()', () => {
 			activityLog: {
 				rewindStatusError: {
 					[ siteId ]: null,
-				}
-			}
+				},
+			},
 		} );
 		expect( getRewindStatusError( stateNoError, siteId ) ).to.be.null;
 	} );
@@ -40,8 +43,8 @@ describe( 'getRewindStatusError()', () => {
 			activityLog: {
 				rewindStatusError: {
 					[ siteId ]: error,
-				}
-			}
+				},
+			},
 		} );
 
 		expect( getRewindStatusError( state, siteId ) ).to.equal( error );

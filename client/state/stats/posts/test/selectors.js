@@ -1,16 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostStats,
-	getPostStat,
-	getPostStats,
-} from '../selectors';
+import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPostStats()', () => {
@@ -20,11 +19,11 @@ describe( 'selectors', () => {
 					posts: {
 						requesting: {
 							2916284: {
-								2454: { views: true }
-							}
-						}
-					}
-				}
+								2454: { views: true },
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'countComments' ] );
 
@@ -37,11 +36,11 @@ describe( 'selectors', () => {
 					posts: {
 						requesting: {
 							2916284: {
-								2454: { 'views,years': false }
-							}
-						}
-					}
-				}
+								2454: { 'views,years': false },
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
@@ -54,11 +53,11 @@ describe( 'selectors', () => {
 					posts: {
 						requesting: {
 							2916284: {
-								2454: { 'views,years': true }
-							}
-						}
-					}
-				}
+								2454: { 'views,years': true },
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
@@ -73,11 +72,11 @@ describe( 'selectors', () => {
 					posts: {
 						items: {
 							2916284: {
-								2454: { views: 2 }
-							}
-						}
-					}
-				}
+								2454: { views: 2 },
+							},
+						},
+					},
+				},
 			};
 			const statValue = getPostStat( state, 2916284, 2454, 'countComments' );
 
@@ -90,11 +89,11 @@ describe( 'selectors', () => {
 					posts: {
 						items: {
 							2916284: {
-								2454: { views: 2 }
-							}
-						}
-					}
-				}
+								2454: { views: 2 },
+							},
+						},
+					},
+				},
 			};
 			const statValue = getPostStat( state, 2916284, 2454, 'views' );
 
@@ -109,11 +108,11 @@ describe( 'selectors', () => {
 					posts: {
 						items: {
 							2916284: {
-								2454: { views: 2 }
-							}
-						}
-					}
-				}
+								2454: { views: 2 },
+							},
+						},
+					},
+				},
 			};
 			const statValue = getPostStats( state, 2916285, 2454 );
 
@@ -126,11 +125,11 @@ describe( 'selectors', () => {
 					posts: {
 						items: {
 							2916284: {
-								2454: { views: 2 }
-							}
-						}
-					}
-				}
+								2454: { views: 2 },
+							},
+						},
+					},
+				},
 			};
 			const statValue = getPostStats( state, 2916284, 2454 );
 

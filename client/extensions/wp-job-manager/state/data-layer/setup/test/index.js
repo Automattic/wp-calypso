@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
@@ -60,23 +63,33 @@ describe( 'data layer', () => {
 			} );
 
 			it( 'should dispatch one HTTP request for each title', () => {
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/sites/${ siteId }/posts/new`,
-					body: {
-						title: titles[ 0 ],
-						type: 'page',
-					}
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/sites/${ siteId }/posts/new`,
+							body: {
+								title: titles[ 0 ],
+								type: 'page',
+							},
+						},
+						action
+					)
+				);
 
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/sites/${ siteId }/posts/new`,
-					body: {
-						title: titles[ 1 ],
-						type: 'page',
-					}
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/sites/${ siteId }/posts/new`,
+							body: {
+								title: titles[ 1 ],
+								type: 'page',
+							},
+						},
+						action
+					)
+				);
 			} );
 		} );
 
@@ -90,10 +103,11 @@ describe( 'data layer', () => {
 			it( 'should dispatch `errorNotice`', () => {
 				announceFailure( dispatch, siteId );
 
-				expect( dispatch ).to.have.been.calledWith( errorNotice(
-					translate( 'There was a problem creating the page(s). Please try again.' ),
-					{ id: createPagesNotice }
-				) );
+				expect( dispatch ).to.have.been.calledWith(
+					errorNotice( translate( 'There was a problem creating the page(s). Please try again.' ), {
+						id: createPagesNotice,
+					} )
+				);
 			} );
 		} );
 
@@ -147,13 +161,18 @@ describe( 'data layer', () => {
 				it( 'should dispatch an HTTP request to the status endpoint', () => {
 					fetchSetupStatus( { dispatch }, action );
 
-					expect( dispatch ).to.have.been.calledWith( http( {
-						method: 'GET',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
-						query: {
-							path: '/wpjm/v1/status/run_page_setup',
-						}
-					}, action ) );
+					expect( dispatch ).to.have.been.calledWith(
+						http(
+							{
+								method: 'GET',
+								path: `/jetpack-blogs/${ siteId }/rest-api/`,
+								query: {
+									path: '/wpjm/v1/status/run_page_setup',
+								},
+							},
+							action
+						)
+					);
 				} );
 			} );
 
@@ -184,15 +203,20 @@ describe( 'data layer', () => {
 
 				saveSetupStatus( { dispatch }, saveAction );
 
-				expect( dispatch ).to.have.been.calledWith( http( {
-					method: 'POST',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
-					query: {
-						body: JSON.stringify( false ),
-						json: true,
-						path: '/wpjm/v1/status/run_page_setup',
-					}
-				}, saveAction ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							method: 'POST',
+							path: `/jetpack-blogs/${ siteId }/rest-api/`,
+							query: {
+								body: JSON.stringify( false ),
+								json: true,
+								path: '/wpjm/v1/status/run_page_setup',
+							},
+						},
+						saveAction
+					)
+				);
 			} );
 		} );
 	} );

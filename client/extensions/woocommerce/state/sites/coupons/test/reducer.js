@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -8,9 +11,7 @@ import { expect } from 'chai';
  */
 import reducer from '../reducer';
 
-import {
-	WOOCOMMERCE_COUPONS_UPDATED,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_COUPONS_UPDATED } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	const siteId = 123;

@@ -1,15 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import {
-	getHelpCourses,
-} from '../selectors';
+import { getHelpCourses } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getHelpCourses()', () => {
@@ -18,8 +19,8 @@ describe( 'selectors', () => {
 				help: {
 					courses: {
 						items: null,
-					}
-				}
+					},
+				},
 			} );
 
 			expect( getHelpCourses( state ) ).to.be.null;
@@ -34,11 +35,11 @@ describe( 'selectors', () => {
 								title: 'title',
 								description: 'description',
 								schedule: [],
-								videos: []
-							}
+								videos: [],
+							},
 						],
-					}
-				}
+					},
+				},
 			} );
 
 			expect( getHelpCourses( state ) ).to.eql( state.help.courses.items );

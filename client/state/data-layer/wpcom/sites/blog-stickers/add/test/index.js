@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -26,7 +29,7 @@ describe( 'blog-sticker-add', () => {
 					apiVersion: '1.1',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -37,7 +40,7 @@ describe( 'blog-sticker-add', () => {
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				{ success: true },
+				{ success: true }
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
@@ -53,9 +56,11 @@ describe( 'blog-sticker-add', () => {
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
 				{
 					success: false,
-				},
+				}
 			);
-			expect( dispatch ).to.have.been.calledWith( bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
+			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					status: 'is-error',
@@ -69,14 +74,16 @@ describe( 'blog-sticker-add', () => {
 			const dispatch = spy();
 			receiveBlogStickerAddError(
 				{ dispatch },
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } }
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					status: 'is-error',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
+			);
 		} );
 	} );
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -25,7 +28,7 @@ import {
 	requests as requestsReducer,
 	dataItems as dataItemsReducer,
 	dataRequests as dataRequestsReducer,
-	disconnectRequests as disconnectRequestsReducer
+	disconnectRequests as disconnectRequestsReducer,
 } from '../reducer';
 import {
 	items as ITEMS_FIXTURE,
@@ -46,7 +49,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
-					status: ITEMS_FIXTURE[ 87654321 ]
+					status: ITEMS_FIXTURE[ 87654321 ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -61,12 +64,12 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
-					status: ITEMS_FIXTURE[ 87654321 ]
+					status: ITEMS_FIXTURE[ 87654321 ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...ITEMS_FIXTURE,
-				[ siteId ]: ITEMS_FIXTURE[ 87654321 ]
+				[ siteId ]: ITEMS_FIXTURE[ 87654321 ],
 			} );
 		} );
 	} );
@@ -82,12 +85,12 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_CONNECTION_STATUS_REQUEST,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: true
+				[ siteId ]: true,
 			} );
 		} );
 
@@ -96,12 +99,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 
@@ -110,12 +113,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 	} );
@@ -132,7 +135,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
-					data: DATA_ITEMS_FIXTURE[ 87654321 ]
+					data: DATA_ITEMS_FIXTURE[ 87654321 ],
 				};
 			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -147,12 +150,12 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
-					data: DATA_ITEMS_FIXTURE[ 87654321 ]
+					data: DATA_ITEMS_FIXTURE[ 87654321 ],
 				};
 			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...DATA_ITEMS_FIXTURE,
-				[ siteId ]: DATA_ITEMS_FIXTURE[ 87654321 ]
+				[ siteId ]: DATA_ITEMS_FIXTURE[ 87654321 ],
 			} );
 		} );
 	} );
@@ -168,12 +171,12 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST,
-					siteId
+					siteId,
 				};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: true
+				[ siteId ]: true,
 			} );
 		} );
 
@@ -182,12 +185,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 
@@ -196,12 +199,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 	} );
@@ -217,12 +220,12 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_DISCONNECT_REQUEST,
-					siteId
+					siteId,
 				};
 			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: true
+				[ siteId ]: true,
 			} );
 		} );
 
@@ -231,12 +234,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 
@@ -245,13 +248,13 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
 
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
-				[ siteId ]: false
+				[ siteId ]: false,
 			} );
 		} );
 	} );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -9,37 +12,30 @@ import { expect } from 'chai';
 import { getTimezonesByContinent } from '../';
 
 describe( 'getTimezonesByContinent()', () => {
-	it( 'should return null if `timezones` aren\'t synced', () => {
+	it( "should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const byContinent = getTimezonesByContinent( state, 'Atlantic' );
 		expect( byContinent ).to.eql( null );
 	} );
 
-	it( 'should return null if `continent` isn\'t defined', () => {
+	it( "should return null if `continent` isn't defined", () => {
 		const state = {
 			timezones: {
 				byContinents: {
-					Asia: [
-						'Asia/Aqtobe',
-					],
-					America: [
-						'America/Blanc-Sablon',
-						'America/Boa_Vista',
-					],
-					Indian: [
-						'Indian/Comoro',
-					],
+					Asia: [ 'Asia/Aqtobe' ],
+					America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
+					Indian: [ 'Indian/Comoro' ],
 				},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const byContinent = getTimezonesByContinent( state );
@@ -50,27 +46,17 @@ describe( 'getTimezonesByContinent()', () => {
 		const state = {
 			timezones: {
 				byContinents: {
-					Asia: [
-						'Asia/Aqtobe',
-					],
-					America: [
-						'America/Blanc-Sablon',
-						'America/Boa_Vista',
-					],
-					Indian: [
-						'Indian/Comoro',
-					],
+					Asia: [ 'Asia/Aqtobe' ],
+					America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
+					Indian: [ 'Indian/Comoro' ],
 				},
 				labels: {},
 				rawOffsets: {},
-			}
+			},
 		};
 
 		const byContinent = getTimezonesByContinent( state, 'America' );
 
-		expect( byContinent ).to.eql( [
-			'America/Blanc-Sablon',
-			'America/Boa_Vista',
-		] );
+		expect( byContinent ).to.eql( [ 'America/Blanc-Sablon', 'America/Boa_Vista' ] );
 	} );
 } );

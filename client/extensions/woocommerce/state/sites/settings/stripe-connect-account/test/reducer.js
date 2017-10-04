@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -36,28 +39,31 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 				siteId: 123,
 			};
-			const newState = sitesReducer( {
-				123: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: false,
-						}
-					}
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: false,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: false,
+							},
+						},
+					},
 				},
-				456: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: false,
-						}
-					}
-				},
-			}, action );
+				action
+			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
 			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
 		} );
@@ -88,30 +94,35 @@ describe( 'reducer', () => {
 				email: 'foo@bar.com',
 				siteId: 123,
 			};
-			const newState = sitesReducer( {
-				123: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: true,
-						}
-					}
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: true,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: true,
+							},
+						},
+					},
 				},
-				456: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: true,
-						}
-					}
-				},
-			}, action );
+				action
+			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
-			expect( newState[ 123 ].settings.stripeConnectAccount.connectedUserID ).to.eql( 'acct_14qyt6Alijdnw0EA' );
+			expect( newState[ 123 ].settings.stripeConnectAccount.connectedUserID ).to.eql(
+				'acct_14qyt6Alijdnw0EA'
+			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.email ).to.eql( 'foo@bar.com' );
 			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
 		} );
@@ -138,28 +149,31 @@ describe( 'reducer', () => {
 				email: 'foo@bar.com',
 				error: 'My error',
 			};
-			const newState = sitesReducer( {
-				123: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: true,
-						}
-					}
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: true,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isRequesting: true,
+							},
+						},
+					},
 				},
-				456: {
-					settings: {
-						stripeConnectAccount: {
-							connectedUserID: '',
-							email: '',
-							isActivated: false,
-							isRequesting: true,
-						}
-					}
-				},
-			}, action );
+				action
+			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
 			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
 		} );

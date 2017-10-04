@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import Gridicon from 'gridicons';
 import React from 'react';
 import { expect } from 'chai';

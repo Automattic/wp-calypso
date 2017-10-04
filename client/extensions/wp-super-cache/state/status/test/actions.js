@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 /**
  * Internal dependencies
@@ -12,15 +15,12 @@ import {
 	WP_SUPER_CACHE_REQUEST_STATUS,
 	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
-import {
-	receiveStatus,
-	requestStatus,
-} from '../actions';
+import { receiveStatus, requestStatus } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -29,8 +29,8 @@ describe( 'actions', () => {
 			cache_writable: {
 				message: '/home/public_html/ is writable.',
 				type: 'warning',
-			}
-		}
+			},
+		},
 	};
 
 	describe( '#receiveStatus()', () => {
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 				.query( { path: '/wp-super-cache/v1/status' } )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -71,9 +71,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', () => {
 			return requestStatus( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receiveStatus( siteId, status.data )
-				);
+				expect( spy ).to.have.been.calledWith( receiveStatus( siteId, status.data ) );
 			} );
 		} );
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,20 +17,22 @@ describe( 'actions', () => {
 		it( 'returns an appropriate action', () => {
 			expect( setLocale( 'he' ) ).to.eql( {
 				type: LOCALE_SET,
-				localeSlug: 'he'
+				localeSlug: 'he',
 			} );
 		} );
 	} );
 
 	describe( 'setLocaleRawData', () => {
 		it( 'returns an appropriate action', () => {
-			expect( setLocaleRawData( {
-				'': {
-					localeSlug: 'he'
-				}
-			} ) ).to.eql( {
+			expect(
+				setLocaleRawData( {
+					'': {
+						localeSlug: 'he',
+					},
+				} )
+			).to.eql( {
 				type: LOCALE_SET,
-				localeSlug: 'he'
+				localeSlug: 'he',
 			} );
 		} );
 	} );

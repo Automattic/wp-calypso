@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
@@ -21,17 +24,11 @@ import {
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
-import {
-	items as itemsReducer,
-	requests as requestsReducer
-} from '../reducer';
+import { items as itemsReducer, requests as requestsReducer } from '../reducer';
 
-import {
-	modules as MODULES_FIXTURE,
-	requests as REQUESTS_FIXTURE
-} from './fixture';
+import { modules as MODULES_FIXTURE, requests as REQUESTS_FIXTURE } from './fixture';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -46,7 +43,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug: 'module-a'
+					moduleSlug: 'module-a',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ][ 'module-a' ].active ).to.be.true;
@@ -58,7 +55,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug: 'module-b'
+					moduleSlug: 'module-b',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ][ 'module-b' ].active ).to.be.false;
@@ -67,7 +64,7 @@ describe( 'reducer', () => {
 		it( 'should not persist state', () => {
 			const stateIn = MODULES_FIXTURE,
 				action = {
-					type: SERIALIZE
+					type: SERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -76,7 +73,7 @@ describe( 'reducer', () => {
 		it( 'should not load persisted state', () => {
 			const stateIn = MODULES_FIXTURE,
 				action = {
-					type: DESERIALIZE
+					type: DESERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -88,7 +85,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_MODULES_RECEIVE,
 					siteId,
-					modules: MODULES_FIXTURE[ siteId ]
+					modules: MODULES_FIXTURE[ siteId ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ] ).to.eql( MODULES_FIXTURE[ siteId ] );
@@ -105,8 +102,8 @@ describe( 'reducer', () => {
 						'infinite-scroll': {
 							module: 'infinite-scroll',
 							active: true,
-						}
-					}
+						},
+					},
 				},
 				action = {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
@@ -114,7 +111,7 @@ describe( 'reducer', () => {
 					settings: {
 						'related-posts': true,
 						'infinite-scroll': false,
-					}
+					},
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ] ).to.eql( {
@@ -125,7 +122,7 @@ describe( 'reducer', () => {
 				'infinite-scroll': {
 					module: 'infinite-scroll',
 					active: false,
-				}
+				},
 			} );
 		} );
 
@@ -140,8 +137,8 @@ describe( 'reducer', () => {
 						'infinite-scroll': {
 							module: 'infinite-scroll',
 							active: true,
-						}
-					}
+						},
+					},
 				},
 				action = {
 					type: JETPACK_SETTINGS_RECEIVE,
@@ -149,7 +146,7 @@ describe( 'reducer', () => {
 					settings: {
 						'related-posts': true,
 						'infinite-scroll': false,
-					}
+					},
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ] ).to.eql( {
@@ -160,7 +157,7 @@ describe( 'reducer', () => {
 				'infinite-scroll': {
 					module: 'infinite-scroll',
 					active: false,
-				}
+				},
 			} );
 		} );
 	} );
@@ -178,7 +175,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_ACTIVATE,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.true;
@@ -190,7 +187,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
@@ -202,7 +199,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_ACTIVATE_FAILURE,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
@@ -216,7 +213,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_DEACTIVATE,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.true;
@@ -228,7 +225,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
@@ -240,7 +237,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 						siteId,
-						moduleSlug: 'moduleSlug'
+						moduleSlug: 'moduleSlug',
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
@@ -253,7 +250,7 @@ describe( 'reducer', () => {
 					siteId = 123456,
 					action = {
 						type: JETPACK_MODULES_REQUEST,
-						siteId
+						siteId,
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ].fetchingModules ).to.be.true;
@@ -265,7 +262,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULES_REQUEST_SUCCESS,
 						siteId,
-						modules: {}
+						modules: {},
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
@@ -277,7 +274,7 @@ describe( 'reducer', () => {
 					action = {
 						type: JETPACK_MODULES_REQUEST_FAILURE,
 						siteId,
-						modules: {}
+						modules: {},
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
@@ -288,7 +285,7 @@ describe( 'reducer', () => {
 			it( 'should not persist state', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					action = {
-						type: SERIALIZE
+						type: SERIALIZE,
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut ).to.eql( {} );
@@ -297,7 +294,7 @@ describe( 'reducer', () => {
 			it( 'should not load persisted state', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					action = {
-						type: DESERIALIZE
+						type: DESERIALIZE,
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut ).to.eql( {} );

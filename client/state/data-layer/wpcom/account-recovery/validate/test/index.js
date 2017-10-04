@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -11,7 +14,7 @@ import { spy } from 'sinon';
 import {
 	handleValidateRequest,
 	handleValidateRequestSuccess,
-	handleValidateRequestFailure
+	handleValidateRequestFailure,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -44,8 +47,8 @@ describe( 'handleValidateRequest()', () => {
 						body: {
 							...userData,
 							method,
-							key
-						}
+							key,
+						},
 					},
 					action
 				)

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -14,9 +17,9 @@ describe( 'getJetpackUserConnection()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						dataItems
-					}
-				}
+						dataItems,
+					},
+				},
 			},
 			siteId = 12345678;
 		const output = getJetpackUserConnection( stateIn, siteId );
@@ -27,9 +30,9 @@ describe( 'getJetpackUserConnection()', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
-						dataItems
-					}
-				}
+						dataItems,
+					},
+				},
 			},
 			siteId = 88888888;
 		const output = getJetpackUserConnection( stateIn, siteId );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -12,19 +15,11 @@ import {
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
-import reducer, {
-	showError,
-	uploadProgress,
-	url,
-} from '../reducer';
+import reducer, { showError, uploadProgress, url } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'showError',
-			'uploadProgress',
-			'url',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'showError', 'uploadProgress', 'url' ] );
 	} );
 
 	describe( '#url()', () => {

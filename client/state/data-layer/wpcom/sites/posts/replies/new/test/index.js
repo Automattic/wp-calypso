@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -15,7 +18,7 @@ describe( '#writePostComment()', () => {
 		type: 'DUMMY',
 		siteId: 2916284,
 		postId: 1010,
-		commentText: 'comment text'
+		commentText: 'comment text',
 	};
 
 	it( 'should dispatch a http request action to the new post replies endpoint', () => {

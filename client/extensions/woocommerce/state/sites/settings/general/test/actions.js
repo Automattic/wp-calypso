@@ -1,15 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import { fetchSettingsGeneral } from '../actions';
-import {
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SETTINGS_GENERAL_REQUEST } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchSettingsGeneral()', () => {

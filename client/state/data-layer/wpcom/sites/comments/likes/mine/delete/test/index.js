@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -35,8 +38,8 @@ describe( '#unlikeComment()', () => {
 					method: 'POST',
 					path: `/sites/${ SITE_ID }/comments/1/likes/mine/delete`,
 				},
-				action,
-			),
+				action
+			)
 		);
 	} );
 } );
@@ -45,9 +48,13 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, {
-			like_count: 4,
-		} );
+		updateCommentLikes(
+			{ dispatch },
+			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
+			{
+				like_count: 4,
+			}
+		);
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
@@ -57,7 +64,7 @@ describe( '#updateCommentLikes()', () => {
 				postId: POST_ID,
 				commentId: 1,
 				like_count: 4,
-			} ),
+			} )
 		);
 	} );
 } );
@@ -75,7 +82,7 @@ describe( '#handleUnlikeFailure()', () => {
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1,
-			} ),
+			} )
 		);
 	} );
 

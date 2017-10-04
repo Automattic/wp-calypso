@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { expect } from 'chai';
 
 /**
@@ -17,7 +20,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: USER_RECEIVE,
-				user
+				user,
 			} );
 		} );
 	} );

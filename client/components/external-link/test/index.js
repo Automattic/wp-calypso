@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assert } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
@@ -54,6 +57,11 @@ describe( 'External Link', function() {
 
 	it( 'should have icon first if specified', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
-		assert.isTrue( externalLink.children().first().is( Gridicon ) );
+		assert.isTrue(
+			externalLink
+				.children()
+				.first()
+				.is( Gridicon )
+		);
 	} );
 } );

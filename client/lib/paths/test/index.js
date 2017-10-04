@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 var expect = require( 'chai' ).expect;
 
 /**
@@ -13,7 +16,7 @@ var paths = require( '../' );
  */
 var DUMMY_SITE = {
 	ID: 73693298,
-	slug: 'settingstestsite.wordpress.com'
+	slug: 'settingstestsite.wordpress.com',
 };
 
 describe( 'index', function() {
