@@ -391,6 +391,7 @@ class ActivityLog extends Component {
 			gmtOffset,
 			isPressable,
 			isRewindActive,
+			requestedRestoreActivity,
 			siteId,
 			siteTitle,
 			slug,
@@ -410,8 +411,6 @@ class ActivityLog extends Component {
 				</Main>
 			);
 		}
-
-		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
 
 		return (
 			<Main wideLayout>
@@ -433,9 +432,9 @@ class ActivityLog extends Component {
 
 				<ActivityLogConfirmDialog
 					applySiteOffset={ this.applySiteOffset }
-					isVisible={ showRestoreConfirmDialog }
+					isVisible={ !! requestedRestoreActivity }
 					siteTitle={ siteTitle }
-					timestamp={ requestedRestoreTimestamp }
+					timestamp={ requestedRestoreActivity && requestedRestoreActivity.activityTs }
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
