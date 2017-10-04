@@ -1,1 +1,0 @@
-export const CHECKOUT_US_ADDRESS_FORMAT_COUNTRIES = [ 'AU', 'CA', 'US' ];
