@@ -10,12 +10,13 @@ import { get, identity, noop } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
@@ -262,7 +263,10 @@ export class EditorGroundControl extends PureComponent {
 		const { isSaving, translate } = this.props;
 		const isSaveEnabled = this.isSaveEnabled();
 		const shouldShowStatusLabel = this.shouldShowStatusLabel();
-		const hasRevisions = get( this.props.post, 'revisions.length' );
+		const hasRevisions = (
+			isEnabled( 'post-editor/revisions' ) &&
+			get( this.props.post, 'revisions.length' )
+		);
 
 		return (
 			<Card className="editor-ground-control">
