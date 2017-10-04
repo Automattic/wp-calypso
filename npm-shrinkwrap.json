@@ -5257,8 +5257,8 @@
     },
     "prettier": {
       "version": "1.6.1",
-      "from": "git://github.com/automattic/calypso-prettier.git#70f962b044204cc7dca95a58446fbe0a2fdba231",
-      "resolved": "git://github.com/automattic/calypso-prettier.git#70f962b044204cc7dca95a58446fbe0a2fdba231",
+      "from": "git://github.com/automattic/calypso-prettier.git#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
+      "resolved": "git://github.com/automattic/calypso-prettier.git#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
       "dev": true,
       "dependencies": {
         "babel-code-frame": {
@@ -5303,10 +5303,6 @@
         },
         "has-flag": {
           "version": "2.0.0",
-          "dev": true
-        },
-        "jest-docblock": {
-          "version": "20.0.3",
           "dev": true
         },
         "jest-matcher-utils": {
