@@ -20,6 +20,8 @@ class SocialSignupForm extends Component {
 	static propTypes = {
 		handleResponse: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -27,8 +29,7 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		if ( ! triggeredByUser ) {
-			// TODO: handle social signup for the redirect flow
+		if ( ! triggeredByUser && this.props.socialService !== 'google' ) {
 			return;
 		}
 
@@ -36,6 +37,12 @@ class SocialSignupForm extends Component {
 	};
 
 	render() {
+		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
+		// let's use the redirect flow instead in that case.
+		//const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+		const isPopup = typeof window !== 'undefined';
+		const redirectUri = isPopup ? `https://${ ( typeof window !== 'undefined' && window.location.host ) }/start` : null;
+
 		return (
 			<Card className="signup-form__social">
 				<p>
