@@ -130,8 +130,7 @@ export class ConversationCommentList extends React.Component {
 	getParentId = ( commentsTree, childId ) =>
 		get( commentsTree, [ childId, 'data', 'parent', 'ID' ] );
 	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
-	commentParentIsLoaded = ( commentsTree, childId ) =>
-		get( commentsTree, this.getParentId( commentsTree, childId ), false );
+	commentIsLoaded = ( commentsTree, commentId ) => !! get( commentsTree, commentId );
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case
@@ -140,14 +139,10 @@ export class ConversationCommentList extends React.Component {
 		}
 
 		const withParents = filter( commentIds, id => this.commentHasParent( commentsTree, id ) );
-		const [ accessibleChildrenIds, inacessibleChildrenIds ] = partition( withParents, id =>
-			this.commentParentIsLoaded( commentsTree, id )
-		);
+		const parentIds = map( withParents, id => this.getParentId( commentsTree, id ) );
 
-		const accessible = map( accessibleChildrenIds, id => this.getParentId( commentsTree, id ) );
-		const inaccessible = map(
-			inacessibleChildrenIds,
-			id => ! this.getParentId( commentsTree, id )
+		const [ accessible, inaccessible ] = partition( parentIds, id =>
+			this.commentIsLoaded( commentsTree, id )
 		);
 
 		return inaccessible.concat( this.getInaccessibleParentsIds( commentsTree, accessible ) );
