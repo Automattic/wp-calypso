@@ -11,6 +11,8 @@ import classNames from 'classnames';
 import PromotionFormTypeHeader from './promotion-form-type-header';
 import PromotionFormCouponCard from './promotion-form-coupon-card';
 import PromotionFormProductSaleCard from './promotion-form-product-sale-card';
+import PromotionFormConditionsHeader from './promotion-form-conditions-header';
+import PromotionFormConditionsCard from './promotion-form-conditions-card';
 
 function renderPlaceholder() {
 	const { className } = this.props;
@@ -23,34 +25,66 @@ function renderPlaceholder() {
 	);
 }
 
-function renderEditCard( siteId, currency, promotion, editPromotion, products, productCategories ) {
-	if ( ! promotion ) {
+const editRenderers = {
+	coupon: renderCouponEdit,
+	product_sale: renderProductSaleEdit,
+};
+
+function renderCouponEdit( siteId, currency, promotion, editPromotion, products, productCategories ) {
+	return (
+		<PromotionFormCouponCard
+			siteId={ siteId }
+			promotion={ promotion }
+			editPromotion={ editPromotion }
+			products={ products }
+			productCategories={ productCategories }
+		/>
+	);
+}
+
+function renderProductSaleEdit( siteId, currency, promotion, editPromotion, products ) {
+	return (
+		<PromotionFormProductSaleCard
+			siteId={ siteId }
+			promotion={ promotion }
+			editPromotion={ editPromotion }
+			products={ products }
+		/>
+	);
+}
+
+function renderEdit( siteId, currency, promotion, editPromotion, products, productCategories ) {
+	if ( ! promotion || ! promotion.type ) {
 		return null;
 	}
 
-	switch ( promotion.type ) {
-		case 'coupon':
-			return (
-				<PromotionFormCouponCard
-					siteId={ siteId }
-					promotion={ promotion }
-					editPromotion={ editPromotion }
-					products={ products }
-					productCategories={ productCategories }
-				/>
-			);
-		case 'product_sale':
-			return (
-				<PromotionFormProductSaleCard
-					siteId={ siteId }
-					promotion={ promotion }
-					editPromotion={ editPromotion }
-					products={ products }
-				/>
-			);
-		default:
-			return null;
+	const renderer = editRenderers[ promotion.type ];
+	return renderer && renderer( siteId, currency, promotion, editPromotion, products, productCategories );
+}
+
+function renderConditionsHeader( promotion ) {
+	if ( ! promotion || ! promotion.type ) {
+		return null;
 	}
+
+	return (
+		<PromotionFormConditionsHeader />
+	);
+}
+
+function renderConditionsCard( siteId, promotion, editPromotion, currency ) {
+	if ( ! promotion || ! promotion.type ) {
+		return null;
+	}
+
+	return (
+		<PromotionFormConditionsCard
+			siteId={ siteId }
+			promotion={ promotion }
+			editPromotion={ editPromotion }
+			currency={ currency }
+		/>
+	);
 }
 
 export default class PromotionForm extends React.PureComponent {
@@ -80,7 +114,9 @@ export default class PromotionForm extends React.PureComponent {
 					promotion={ promotion }
 					editPromotion={ editPromotion }
 				/>
-				{ renderEditCard( siteId, currency, promotion, editPromotion, products, productCategories ) }
+				{ renderEdit( siteId, currency, promotion, editPromotion, products, productCategories ) }
+				{ renderConditionsHeader( promotion ) }
+				{ renderConditionsCard( siteId, promotion, editPromotion, currency ) }
 			</div>
 		);
 	}

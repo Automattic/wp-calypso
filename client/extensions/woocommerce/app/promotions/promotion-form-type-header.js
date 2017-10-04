@@ -23,6 +23,11 @@ const PromotionFormTypeCard = ( {
 		const data = { type: e.target.value };
 		if ( 'coupon' === data.type ) {
 			data.coupon = { code: '', discount_type: 'percent', amount: '' };
+			data.product = undefined;
+		}
+		if ( 'product_sale' === data.type ) {
+			data.product = {};
+			data.coupon = undefined;
 		}
 		editPromotion( siteId, promotion, data );
 	};
