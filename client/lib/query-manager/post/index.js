@@ -27,7 +27,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @return {Boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
-		const queryWithDefaults = Object.assign( {}, this.constructor.DefaultQuery, query );
+		const queryWithDefaults = Object.assign( {}, this.DefaultQuery, query );
 		return every( queryWithDefaults, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
