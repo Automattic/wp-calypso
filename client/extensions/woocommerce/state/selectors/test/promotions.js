@@ -136,7 +136,7 @@ describe( 'promotions', () => {
 			expect( edits ).to.be.null;
 		} );
 
-		it( 'should return edits for a given id', () => {
+		it( 'should return edits for a given string id', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
