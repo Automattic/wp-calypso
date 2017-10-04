@@ -266,6 +266,7 @@
     "husky": "0.13.3",
     "ignore": "3.3.5",
     "jest": "21.2.0",
+    "jest-docblock": "21.3.0-beta.1",
     "jest-junit-reporter": "1.1.0",
     "jscodeshift": "0.3.30",
     "md5-file": "3.1.0",
