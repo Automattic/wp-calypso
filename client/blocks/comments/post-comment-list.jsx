@@ -236,6 +236,7 @@ class PostCommentList extends React.Component {
 	};
 
 	onReplyCancel = () => {
+		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
