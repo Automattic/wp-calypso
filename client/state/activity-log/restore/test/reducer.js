@@ -7,9 +7,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { restoreProgress } from '../reducer';
+import { restoreProgress, restoreRequest } from '../reducer';
 import {
 	dismissRewindRestoreProgress,
+	rewindRequestDismiss,
+	rewindRequestRestore,
 	rewindRestore,
 	rewindRestoreUpdateError,
 } from '../../actions';
@@ -17,6 +19,7 @@ import {
 /**
  * Constants
  */
+const ACTIVITY_ID = 'fooBarbAz';
 const SITE_ID = 987;
 const TIMESTAMP = 1496926224;
 const ERROR = deepFreeze( {
@@ -24,7 +27,7 @@ const ERROR = deepFreeze( {
 	message: 'Unable to find a valid site.',
 } );
 
-describe( '#restoreProgress()', () => {
+describe( 'restoreProgress', () => {
 	it( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.deep.equal( {
@@ -68,5 +71,21 @@ describe( '#restoreProgress()', () => {
 		].forEach(
 			state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
 		);
+	} );
+} );
+
+describe( 'rewindRequestRestore', () => {
+	it( 'should set activity ID on request', () => {
+		const state = restoreRequest( undefined, rewindRequestRestore( SITE_ID, ACTIVITY_ID ) );
+		expect( state[ SITE_ID ] ).to.equal( ACTIVITY_ID );
+	} );
+
+	it( 'should clear on dismissal', () => {
+		const prevState = deepFreeze( {
+			[ SITE_ID ]: ACTIVITY_ID,
+		} );
+
+		const state = restoreRequest( prevState, rewindRequestDismiss( SITE_ID ) );
+		expect( state ).to.not.have.property( SITE_ID );
 	} );
 } );
