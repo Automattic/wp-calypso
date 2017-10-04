@@ -21,7 +21,6 @@ import EmptyContent from 'components/empty-content';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
-		basePath: PropTypes.string,
 		comments: PropTypes.array,
 		showPermissionError: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -36,7 +35,6 @@ export class CommentsManagement extends Component {
 	render() {
 		const {
 			showPermissionError,
-			basePath,
 			siteId,
 			siteFragment,
 			status,
@@ -45,7 +43,7 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				<PageViewTracker path={ basePath } title="Comments" />
+				<PageViewTracker path="/comments/:status/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />
 				{ showPermissionError && <EmptyContent
