@@ -127,7 +127,7 @@ describe( 'promotions', () => {
 		} );
 	} );
 
-	describe( '#getPromotionWithLocalEdits', () => {
+	describe( '#getPromotionEdits', () => {
 		it( 'should return null if no edits are found for a given id', () => {
 			const edits = getPromotionEdits( rootState, 'notthere', 123 );
 
