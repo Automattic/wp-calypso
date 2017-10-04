@@ -6,7 +6,6 @@ const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const prettier = require( 'prettier' );
 const path = require( 'path' );
-const docblock = require( 'jest-docblock' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -29,7 +28,22 @@ const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
  *
  * @param {String} text text to scan for the format keyword within the first docblock
  */
-const shouldFormat = text => "format" in docblock.parse( docblock.extract( text ) );
+const shouldFormat = text => {
+	const firstDocBlockStartIndex = text.indexOf( '/**' );
+
+	if ( -1 === firstDocBlockStartIndex ) {
+		return false;
+	}
+
+	const firstDocBlockEndIndex = text.indexOf( '*/', firstDocBlockStartIndex + 1 );
+
+	if ( -1 === firstDocBlockEndIndex ) {
+		return false;
+	}
+
+	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 1 );
+	return firstDocBlockText.indexOf( '@format' ) >= 0;
+};
 
 // run prettier for any files in the commit that have @format within their first docblock
 files.map( file => path.join( __dirname, '../', file ) ).forEach( file => {
