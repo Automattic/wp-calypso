@@ -33,6 +33,7 @@
 		"jetpack/activity-log": true,
 		"jetpack/activity-log/rewind": true,
 		"jetpack/api-cache": true,
+		"jetpack/happychat": true,
 		"jetpack_core_inline_update": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
