@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-// import FormCheckbox from 'components/forms/form-checkbox';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -39,9 +39,9 @@ class CustomerAddressDialog extends Component {
 			last_name: PropTypes.string.isRequired,
 			phone: PropTypes.string,
 		} ),
-		isVisible: PropTypes.bool,
 		closeDialog: PropTypes.func,
-		showPhoneEmail: PropTypes.bool,
+		isBilling: PropTypes.bool,
+		isVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -58,8 +58,8 @@ class CustomerAddressDialog extends Component {
 			phone: '',
 		},
 		closeDialog: noop,
+		isBilling: false,
 		isVisible: false,
-		showPhoneEmail: false,
 	};
 
 	constructor( props ) {
@@ -102,10 +102,18 @@ class CustomerAddressDialog extends Component {
 		} );
 	};
 
-	renderPhoneEmail = () => {
-		const { showPhoneEmail, translate } = this.props;
+	toggleShipping = () => {
+		this.setState( prevState => {
+			const { address } = prevState;
+			const newState = { ...address, copyToShipping: ! prevState.address.copyToShipping };
+			return { address: newState };
+		} );
+	};
+
+	renderBillingFields = () => {
+		const { isBilling, translate } = this.props;
 		const { address } = this.state;
-		if ( ! showPhoneEmail ) {
+		if ( ! isBilling ) {
 			return null;
 		}
 		return (
@@ -127,6 +135,15 @@ class CustomerAddressDialog extends Component {
 						value={ get( address, 'email', '' ) }
 						onChange={ this.onChange }
 					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						<FormCheckbox
+							checked={ get( address, 'copyToShipping', false ) }
+							onChange={ this.toggleShipping }
+						/>
+						<span>{ translate( 'Copy changes to shipping' ) }</span>
+					</FormLabel>
 				</FormFieldset>
 			</div>
 		);
@@ -178,7 +195,7 @@ class CustomerAddressDialog extends Component {
 						onChange={ this.onChange }
 						address={ getAddressViewFormat( address ) }
 					/>
-					{ this.renderPhoneEmail() }
+					{ this.renderBillingFields() }
 				</FormFieldset>
 			</Dialog>
 		);

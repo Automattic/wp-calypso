@@ -38,8 +38,12 @@ class OrderCustomerInfo extends Component {
 	updateAddress = ( type = 'billing' ) => {
 		const { siteId, order } = this.props;
 		return address => {
+			const { copyToShipping = false, ...newAddress } = address;
 			if ( siteId ) {
-				this.props.editOrder( siteId, { id: order.id, [ type ]: address } );
+				this.props.editOrder( siteId, { id: order.id, [ type ]: newAddress } );
+				if ( copyToShipping && 'billing' === type ) {
+					this.props.editOrder( siteId, { id: order.id, shipping: newAddress } );
+				}
 			}
 		};
 	};
@@ -57,9 +61,9 @@ class OrderCustomerInfo extends Component {
 				key="dialog-billing"
 				address={ billing }
 				closeDialog={ this.toggleDialog( false ) }
+				isBilling
 				isVisible={ 'billing' === this.state.showDialog }
 				updateAddress={ this.updateAddress( 'billing' ) }
-				showPhoneEmail
 			/>,
 			<CustomerAddressDialog
 				key="dialog-shipping"
