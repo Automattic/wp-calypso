@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { openRefundDialog, openReprintDialog } from 'woocommerce/woocommerce-ser
 
 class LabelItem extends Component {
 	renderRefund = ( label ) => {
-		const { orderId, siteId } = this.props;
+		const { orderId, siteId, translate } = this.props;
 
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
@@ -33,7 +33,7 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<RefundDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ __( 'Request refund' ) }</a>
+				<a href="#" onClick={ openDialog } >{ translate( 'Request refund' ) }</a>
 			</span>
 		);
 	};
@@ -45,7 +45,7 @@ class LabelItem extends Component {
 			return null;
 		}
 
-		const { orderId, siteId } = this.props;
+		const { orderId, siteId, translate } = this.props;
 
 		const openDialog = ( e ) => {
 			e.preventDefault();
@@ -55,37 +55,39 @@ class LabelItem extends Component {
 		return (
 			<span>
 				<ReprintDialog siteId={ siteId } orderId={ orderId } { ...label } />
-				<a href="#" onClick={ openDialog } >{ __( 'Reprint' ) }</a>
+				<a href="#" onClick={ openDialog } >{ translate( 'Reprint' ) }</a>
 			</span>
 		);
 	};
 
 	renderLabelDetails = ( label ) => {
+		const { translate } = this.props;
+
 		if ( ! label.packageName || ! label.productNames ) {
 			return null;
 		}
 
 		return (
 			<span className="shipping-label__item-detail">
-				{ __( 'Label #%(labelIndex)s', { args: { labelIndex: label.labelIndex + 1 } } ) }
+				{ translate( 'Label #%(labelIndex)s', { args: { labelIndex: label.labelIndex + 1 } } ) }
 			</span>
 		);
 	};
 
 	render() {
-		const { label } = this.props;
+		const { label, translate } = this.props;
 
 		return (
 			<div key={ label.labelId } className="shipping-label__item" >
 				<p className="shipping-label__item-created">
-					{ __( '{{labelDetails/}} purchased', {
+					{ translate( '{{labelDetails/}} purchased', {
 						components: {
 							labelDetails: this.renderLabelDetails( label ),
 						}
 					} ) }
 				</p>
 				<p className="shipping-label__item-tracking">
-					{ __( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
+					{ translate( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
 				</p>
 				{ label.showDetails &&
 					<p className="shipping-label__item-actions">
@@ -110,4 +112,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog }, dispatch );
 };
 
-export default connect( null, mapDispatchToProps )( LabelItem );
+export default connect( null, mapDispatchToProps )( localize( LabelItem ) );
