@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,
 				siteId,
-				query: { page: 2, search: 'testing' }
+				query: { page: 2, search: 'testing' },
 			} );
 		} );
 	} );

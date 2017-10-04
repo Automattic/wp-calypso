@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -57,7 +58,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'ADD_PACKAGE clears previous \'edit\' data', () => {
+	it( "ADD_PACKAGE clears previous 'edit' data", () => {
 		const existingEditState = {
 			showModal: false,
 			mode: 'edit',
@@ -275,7 +276,10 @@ describe( 'Packages form reducer', () => {
 		const action = removePredefinedPackage( siteId, 'service', 'box' );
 
 		const state = reducer( initialState, action );
-		expect( state.packages.predefined ).to.eql( { service: [ 'box1' ], otherService: [ 'envelope' ] } );
+		expect( state.packages.predefined ).to.eql( {
+			service: [ 'box1' ],
+			otherService: [ 'envelope' ],
+		} );
 	} );
 
 	it( 'SAVE_PREDEF', () => {
@@ -289,7 +293,10 @@ describe( 'Packages form reducer', () => {
 		const action = savePredefinedPackages( siteId );
 
 		const result = reducer( state, action );
-		expect( result.packages.predefined ).to.eql( { service: [ 'box', 'box1', 'box2' ], otherService: [] } );
+		expect( result.packages.predefined ).to.eql( {
+			service: [ 'box', 'box1', 'box2' ],
+			otherService: [],
+		} );
 		expect( result.currentlyEditingPredefinedPackages ).to.eql( null );
 		expect( result.pristine ).to.eql( false );
 		expect( result.showModal ).to.eql( false );
@@ -304,7 +311,10 @@ describe( 'Packages form reducer', () => {
 		const action = toggleAll( siteId, 'service', 'priority', true );
 
 		const result = reducer( state, action );
-		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [ 'box', 'box1', 'box2' ], otherService: [] } );
+		expect( result.currentlyEditingPredefinedPackages ).to.eql( {
+			service: [ 'box', 'box1', 'box2' ],
+			otherService: [],
+		} );
 	} );
 
 	it( 'TOGGLE_ALL selects all when some were selected', () => {
@@ -316,7 +326,10 @@ describe( 'Packages form reducer', () => {
 		const action = toggleAll( siteId, 'service', 'priority', true );
 
 		const result = reducer( state, action );
-		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [ 'box1', 'box', 'box2' ], otherService: [] } );
+		expect( result.currentlyEditingPredefinedPackages ).to.eql( {
+			service: [ 'box1', 'box', 'box2' ],
+			otherService: [],
+		} );
 	} );
 
 	it( 'TOGGLE_ALL deselects all when all were selected', () => {
@@ -351,7 +364,10 @@ describe( 'Packages form reducer', () => {
 		const action = togglePackage( siteId, 'service', 'box2' );
 
 		const result = reducer( state, action );
-		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [ 'box2' ], otherService: [] } );
+		expect( result.currentlyEditingPredefinedPackages ).to.eql( {
+			service: [ 'box2' ],
+			otherService: [],
+		} );
 	} );
 
 	it( 'TOGGLE_PACKAGE deselects a package', () => {

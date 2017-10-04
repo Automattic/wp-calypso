@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -25,7 +26,7 @@ describe( 'blog-sticker-list', () => {
 					apiVersion: '1.1',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );

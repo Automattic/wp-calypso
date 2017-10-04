@@ -1,8 +1,11 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
+	require( 'components/empty-component' )
+);
 
 /**
  * External dependencies
@@ -46,7 +49,7 @@ describe( 'MediaLibraryList item selection', function() {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			siteId: DUMMY_SITE_ID,
-			data: fixtures
+			data: fixtures,
 		} );
 	} );
 
@@ -66,7 +69,8 @@ describe( 'MediaLibraryList item selection', function() {
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
-						mediaScale={ 0.24 } />
+						mediaScale={ 0.24 }
+					/>
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).get( 0 );
@@ -149,7 +153,8 @@ describe( 'MediaLibraryList item selection', function() {
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
 						mediaScale={ 0.24 }
-						single />
+						single
+					/>
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).get( 0 );
@@ -187,8 +192,11 @@ describe( 'MediaLibraryList item selection', function() {
 					media={ media }
 					mediaScale={ 0.24 }
 					source={ source }
-					single />
-				).find( MediaList ).get( 0 );
+					single
+				/>
+			)
+				.find( MediaList )
+				.get( 0 );
 		};
 
 		before( () => {

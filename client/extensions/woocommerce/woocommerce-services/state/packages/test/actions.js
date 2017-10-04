@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -59,7 +60,7 @@ describe( 'Packages state actions', () => {
 		};
 		expect( editPackage( siteId, packageToEdit ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
-			'package': packageToEdit,
+			package: packageToEdit,
 			siteId,
 		} );
 	} );

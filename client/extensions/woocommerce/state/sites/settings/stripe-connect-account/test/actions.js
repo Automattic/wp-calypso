@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,9 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { createAccount } from '../actions';
-import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#createAccount()', () => {
@@ -22,7 +21,7 @@ describe( 'actions', () => {
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 				siteId,
 				email,
-				countryCode
+				countryCode,
 			} );
 		} );
 	} );

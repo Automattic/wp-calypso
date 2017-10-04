@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,14 +14,10 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
-import reducer, {
-	items as unwrappedItems,
-	requesting,
-	errors
-} from '../reducer';
+import reducer, { items as unwrappedItems, requesting, errors } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
@@ -34,11 +31,7 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting',
-			'errors'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
 	} );
 
 	describe( '#items()', () => {
@@ -52,99 +45,149 @@ describe( 'reducer', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const suggestions = [
 				{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-				{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+				{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 			];
 			const state = items( undefined, {
 				type: DOMAINS_SUGGESTIONS_RECEIVE,
 				queryObject,
-				suggestions
+				suggestions,
 			} );
 
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-				]
+					{
+						domain_name: 'example.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+				],
 			} );
 		} );
 
 		it( 'should accumulate domain suggestions', () => {
 			const original = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-				]
+					{
+						domain_name: 'example.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+				],
 			} );
 			const queryObject = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const suggestions = [
 				{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-				{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+				{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 			];
 			const state = items( original, {
 				type: DOMAINS_SUGGESTIONS_RECEIVE,
 				queryObject,
-				suggestions
+				suggestions,
 			} );
 
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+					{
+						domain_name: 'example.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 				],
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-				]
+					{
+						domain_name: 'foobar.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+				],
 			} );
 		} );
 
 		it( 'should override previous domains suggestions', () => {
 			const original = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+					{
+						domain_name: 'example.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 				],
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-				]
+					{
+						domain_name: 'foobar.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+				],
 			} );
 			const suggestions = [
-				{ domain_name: 'foobarbaz.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-				{ domain_name: 'foobarbaz.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+				{
+					domain_name: 'foobarbaz.me',
+					cost: '$25.00',
+					product_id: 46,
+					product_slug: 'dotme_domain',
+				},
+				{ domain_name: 'foobarbaz.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 			];
 
 			const queryObject = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 
 			const state = items( original, {
 				type: DOMAINS_SUGGESTIONS_RECEIVE,
 				queryObject,
-				suggestions
+				suggestions,
 			} );
 
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+					{
+						domain_name: 'example.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 				],
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-					{ domain_name: 'foobarbaz.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-					{ domain_name: 'foobarbaz.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-				]
+					{
+						domain_name: 'foobarbaz.me',
+						cost: '$25.00',
+						product_id: 46,
+						product_slug: 'dotme_domain',
+					},
+					{
+						domain_name: 'foobarbaz.org',
+						cost: '$18.00',
+						product_id: 6,
+						product_slug: 'domain_reg',
+					},
+				],
 			} );
 		} );
 
@@ -152,9 +195,19 @@ describe( 'reducer', () => {
 			it( 'persists state', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-						{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-						{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-					]
+						{
+							domain_name: 'example.me',
+							cost: '$25.00',
+							product_id: 46,
+							product_slug: 'dotme_domain',
+						},
+						{
+							domain_name: 'example.org',
+							cost: '$18.00',
+							product_id: 6,
+							product_slug: 'domain_reg',
+						},
+					],
 				} );
 				const state = items( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
@@ -163,9 +216,19 @@ describe( 'reducer', () => {
 			it( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-						{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-						{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-					]
+						{
+							domain_name: 'example.me',
+							cost: '$25.00',
+							product_id: 46,
+							product_slug: 'dotme_domain',
+						},
+						{
+							domain_name: 'example.org',
+							cost: '$18.00',
+							product_id: 6,
+							product_slug: 'domain_reg',
+						},
+					],
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( original );
@@ -175,8 +238,8 @@ describe( 'reducer', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 						{ cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-						{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
-					]
+						{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+					],
 				} );
 				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
@@ -195,75 +258,75 @@ describe( 'reducer', () => {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = requesting( undefined, {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
-				queryObject
+				queryObject,
 			} );
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 		} );
 
 		it( 'should update requesting state on success', () => {
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = requesting( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-				queryObject
+				queryObject,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
 			} );
 		} );
 
 		it( 'should update requesting state on failure', () => {
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = requesting( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
-				queryObject
+				queryObject,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
 			} );
 		} );
 
 		it( 'should accumulate requesting state by query', () => {
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 			const queryObject = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = requesting( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
-				queryObject
+				queryObject,
 			} );
 
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
-				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 		} );
 	} );
@@ -276,111 +339,111 @@ describe( 'reducer', () => {
 
 		it( 'should update errors on failure', () => {
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const error = new Error( 'something bad happened' );
 			const state = errors( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 				queryObject,
-				error
+				error,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 			} );
 		} );
 
 		it( 'should update errors on success', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = errors( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-				queryObject
+				queryObject,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
 			} );
 		} );
 
 		it( 'should update errors on request', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const state = errors( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
-				queryObject
+				queryObject,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
 			} );
 		} );
 
 		it( 'should update errors on failure', () => {
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const error = new Error( 'something bad happened' );
 			const state = errors( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 				queryObject,
-				error
+				error,
 			} );
 
 			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 			} );
 		} );
 
 		it( 'should accumulate errors by queries', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
 			} );
 			const queryObject = {
 				query: 'foobar',
 				quantity: 2,
 				vendor: 'domainsbot',
-				include_wordpressdotcom: false
+				include_wordpressdotcom: false,
 			};
 			const error2 = new Error( 'something else bad happened' );
 			const state = errors( originalState, {
 				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 				queryObject,
-				error: error2
+				error: error2,
 			} );
 
 			expect( state ).to.eql( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
-				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error2
+				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error2,
 			} );
 		} );
 	} );

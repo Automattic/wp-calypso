@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,10 @@ describe( 'getPosterUrl()', () => {
 			ui: {
 				editor: {
 					videoEditor: {
-						url
-					}
-				}
-			}
+						url,
+					},
+				},
+			},
 		} );
 
 		expect( poster ).to.eql( url );

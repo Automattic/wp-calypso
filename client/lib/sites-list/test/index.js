@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 
@@ -46,7 +47,7 @@ describe( 'SitesList', () => {
 		} );
 
 		it( 'should add change handlers', () => {
-			forEach( initializedSites, ( site ) => {
+			forEach( initializedSites, site => {
 				assert.isDefined( site.listeners( 'change' ) );
 			} );
 		} );
@@ -70,14 +71,14 @@ describe( 'SitesList', () => {
 		} );
 
 		it( 'updating should reflect removed properties on site', () => {
-			const updatedWithIconOmitted = cloneDeep( updatedData ).map( ( site ) => {
+			const updatedWithIconOmitted = cloneDeep( updatedData ).map( site => {
 				delete site.icon;
 				return site;
 			} );
 			sitesList.update( updatedWithIconOmitted );
 			const updatedList = sitesList.get();
 
-			forEach( updatedList, ( site ) => {
+			forEach( updatedList, site => {
 				assert.notProperty( site, 'icon' );
 			} );
 		} );

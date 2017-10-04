@@ -1,5 +1,6 @@
+/** @format */
 jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserLocale: jest.fn()
+	getCurrentUserLocale: jest.fn(),
 } ) );
 
 /**
@@ -10,13 +11,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	addLocaleQueryParam,
-	bindState,
-	getLocale,
-	injectLocalization,
-	setLocale
-} from '../';
+import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
 import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'state/current-user/selectors';
 
 describe( 'index', () => {
@@ -43,7 +38,7 @@ describe( 'index', () => {
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
 			expect( params ).to.eql( {
-				query: 'search=foo&locale=fr'
+				query: 'search=foo&locale=fr',
 			} );
 		} );
 	} );
@@ -64,13 +59,13 @@ describe( 'index', () => {
 			expect( wpcom.request ).to.not.equal( request );
 		} );
 
-		it( 'should modify params by default', ( done ) => {
+		it( 'should modify params by default', done => {
 			setLocale( 'fr' );
 			const wpcom = {
 				request( params ) {
 					expect( params.query ).to.equal( 'search=foo&locale=fr' );
 					done();
-				}
+				},
 			};
 
 			injectLocalization( wpcom );
@@ -91,7 +86,7 @@ describe( 'index', () => {
 				subscribe( _listener ) {
 					listener = _listener;
 				},
-				getState() {}
+				getState() {},
 			} );
 			getCurrentUserLocaleMock.mockReturnValueOnce( 'de' );
 			listener();

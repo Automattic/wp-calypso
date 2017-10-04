@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
@@ -19,29 +20,39 @@ import postListStoreFactory from 'lib/posts/post-list-store-factory';
  */
 const TWO_POST_PAYLOAD = {
 	found: 2,
-	posts: [ {
-		global_ID: 778
-	}, {
-		global_ID: 779
-	} ]
+	posts: [
+		{
+			global_ID: 778,
+		},
+		{
+			global_ID: 779,
+		},
+	],
 };
 const THREE_POST_PAYLOAD = {
 	found: 2,
-	posts: [ {
-		global_ID: 778
-	}, {
-		global_ID: 779
-	}, {
-		global_ID: 780
-	} ]
+	posts: [
+		{
+			global_ID: 778,
+		},
+		{
+			global_ID: 779,
+		},
+		{
+			global_ID: 780,
+		},
+	],
 };
 const OMITTED_POST_PAYLOAD = {
 	found: 2,
-	posts: [ {
-		global_ID: 778
-	}, {
-		global_ID: 780
-	} ]
+	posts: [
+		{
+			global_ID: 778,
+		},
+		{
+			global_ID: 780,
+		},
+	],
 };
 const THREE_POST_PAYLOAD_LOCAL = {
 	__sync: {
@@ -49,13 +60,17 @@ const THREE_POST_PAYLOAD_LOCAL = {
 		responseSource: 'local',
 	},
 	found: 2,
-	posts: [ {
-		global_ID: 778
-	}, {
-		global_ID: 779
-	}, {
-		global_ID: 780
-	} ]
+	posts: [
+		{
+			global_ID: 778,
+		},
+		{
+			global_ID: 779,
+		},
+		{
+			global_ID: 780,
+		},
+	],
 };
 const OMIT_INITIAL_POST_PAYLOAD_SERVER = {
 	__sync: {
@@ -63,20 +78,25 @@ const OMIT_INITIAL_POST_PAYLOAD_SERVER = {
 		responseSource: 'server',
 	},
 	found: 2,
-	posts: [ {
-		global_ID: 779
-	}, {
-		global_ID: 780
-	} ]
+	posts: [
+		{
+			global_ID: 779,
+		},
+		{
+			global_ID: 780,
+		},
+	],
 };
 const DEFAULT_POST_LIST_ID = 'default';
 
 function dispatchReceivePostsPage( id, postListStoreId, data ) {
 	const mockData = {
 		found: 1,
-		posts: [ {
-			global_ID: 777
-		} ]
+		posts: [
+			{
+				global_ID: 777,
+			},
+		],
 	};
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_POSTS_PAGE',
@@ -96,7 +116,7 @@ function dispatchQueryPosts( postListStoreId, options ) {
 	// have to dispatch this to get it into cache
 	Dispatcher.handleViewAction( {
 		type: 'FETCH_NEXT_POSTS_PAGE',
-		postListStoreId: postListStoreId
+		postListStoreId: postListStoreId,
 	} );
 }
 
@@ -158,11 +178,11 @@ describe( 'post-list-store', () => {
 			const anotherPostListStore = postListStoreFactory( 'post-lists-nom' );
 			dispatchQueryPosts( defaultPostListStore.id, {
 				type: 'page',
-				order: 'ASC'
+				order: 'ASC',
 			} );
 			dispatchQueryPosts( anotherPostListStore.id, {
 				type: 'page',
-				order: 'ASC'
+				order: 'ASC',
 			} );
 			assert.equal( defaultPostListStore.getID(), anotherPostListStore.getID() );
 		} );
@@ -204,7 +224,10 @@ describe( 'post-list-store', () => {
 
 	describe( '#isFetchingNextPage', () => {
 		it( 'should return isFetchingNextPage boolean', () => {
-			assert.equal( defaultPostListStore.isFetchingNextPage(), defaultPostListStore.get().isFetchingNextPage );
+			assert.equal(
+				defaultPostListStore.isFetchingNextPage(),
+				defaultPostListStore.get().isFetchingNextPage
+			);
 		} );
 	} );
 
@@ -242,8 +265,8 @@ describe( 'post-list-store', () => {
 				postListStoreId: defaultPostListStore.id,
 				data: null,
 				error: {
-					omg: 'error!'
-				}
+					omg: 'error!',
+				},
 			} );
 			assert.isTrue( defaultPostListStore.hasRecentError() );
 		} );
@@ -258,21 +281,41 @@ describe( 'post-list-store', () => {
 		it( 'should add additional post ids for matching postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
 			assert.equal( defaultPostListStore.getAll().length, 1 );
-			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, TWO_POST_PAYLOAD );
+			dispatchReceivePostsPage(
+				defaultPostListStore.getID(),
+				defaultPostListStore.id,
+				TWO_POST_PAYLOAD
+			);
 			assert.equal( defaultPostListStore.getAll().length, 3 );
 		} );
 
 		it( 'should remove posts omitted in a follow-up post-list page', () => {
-			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, THREE_POST_PAYLOAD );
+			dispatchReceivePostsPage(
+				defaultPostListStore.getID(),
+				defaultPostListStore.id,
+				THREE_POST_PAYLOAD
+			);
 			assert.equal( defaultPostListStore.getAll().length, 3 );
-			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, OMITTED_POST_PAYLOAD );
+			dispatchReceivePostsPage(
+				defaultPostListStore.getID(),
+				defaultPostListStore.id,
+				OMITTED_POST_PAYLOAD
+			);
 			assert.equal( defaultPostListStore.getAll().length, 2 );
 		} );
 
 		it( 'should remove posts omitted in a follow-up server response', () => {
-			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, THREE_POST_PAYLOAD_LOCAL );
+			dispatchReceivePostsPage(
+				defaultPostListStore.getID(),
+				defaultPostListStore.id,
+				THREE_POST_PAYLOAD_LOCAL
+			);
 			assert.equal( defaultPostListStore.getAll().length, 3 );
-			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id, OMIT_INITIAL_POST_PAYLOAD_SERVER );
+			dispatchReceivePostsPage(
+				defaultPostListStore.getID(),
+				defaultPostListStore.id,
+				OMIT_INITIAL_POST_PAYLOAD_SERVER
+			);
 			assert.equal( defaultPostListStore.getAll().length, 2 );
 		} );
 
@@ -311,7 +354,7 @@ describe( 'post-list-store', () => {
 		} );
 
 		it( 'should change the active query and id when query options change', () => {
-			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { } );
+			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
 			const currentCacheId = defaultPostListStore.getID();
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
 			assert.notEqual( currentCacheId, defaultPostListStore.getID() );
@@ -325,7 +368,7 @@ describe( 'post-list-store', () => {
 		it( 'should set query options passed in', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {
 				type: 'page',
-				order: 'ASC'
+				order: 'ASC',
 			} );
 			const params = defaultPostListStore.getNextPageParams();
 			assert.equal( params.type, 'page' );
@@ -336,7 +379,7 @@ describe( 'post-list-store', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {
 				type: 'page',
 				order: 'ASC',
-				search: null
+				search: null,
 			} );
 			const params = defaultPostListStore.getNextPageParams();
 			assert.isUndefined( params.search );

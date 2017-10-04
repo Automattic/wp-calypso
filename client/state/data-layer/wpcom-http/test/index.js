@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +10,7 @@ import { spy } from 'sinon';
  */
 import useNock, { nock } from 'test/helpers/use-nock';
 import { extendAction } from 'state/utils';
-import {
-	failureMeta,
-	queueRequest,
-	successMeta,
-} from '../';
+import { failureMeta, queueRequest, successMeta } from '../';
 
 const processInbound = action => action;
 const processOutbound = ( action, store, data, error ) => ( {
@@ -47,7 +44,9 @@ describe( '#queueRequest', () => {
 
 	it( 'should call `onSuccess` when a response returns with data', done => {
 		const data = { value: 1 };
-		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).reply( 200, data );
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( '/rest/v1.1/me' )
+			.reply( 200, data );
 
 		http( { dispatch }, getMe );
 
@@ -60,7 +59,9 @@ describe( '#queueRequest', () => {
 
 	it( 'should call `onFailure` when a response returns with an error', done => {
 		const error = { error: 'bad' };
-		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( '/rest/v1.1/me' )
+			.replyWithError( error );
 
 		http( { dispatch }, getMe );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,20 +21,17 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 					2916284: {
 						URL: 'https://example.wordpress.com',
 					},
-				}
+				},
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 123456, blog_id: '2916284' },
-						{ id: 888888, blog_id: '1234567' },
-					]
-				}
-			}
+					upcoming: [ { id: 123456, blog_id: '2916284' }, { id: 888888, blog_id: '1234567' } ],
+				},
+			},
 		};
 		const output = getSiteSlugsForUpcomingTransactions( state );
 		expect( output ).to.eql( {
-			2916284: 'example.wordpress.com'
+			2916284: 'example.wordpress.com',
 		} );
 	} );
 
@@ -44,35 +42,30 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 					2916284: {
 						URL: 'https://example.wordpress.com',
 					},
-				}
+				},
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 123456, blog_id: '2916284' },
-						{ id: 234567, blog_id: '2916284' },
-					]
-				}
-			}
+					upcoming: [ { id: 123456, blog_id: '2916284' }, { id: 234567, blog_id: '2916284' } ],
+				},
+			},
 		};
 		const output = getSiteSlugsForUpcomingTransactions( state );
 		expect( output ).to.eql( {
-			2916284: 'example.wordpress.com'
+			2916284: 'example.wordpress.com',
 		} );
 	} );
 
 	it( 'should skip transactions with empty blog_id', () => {
 		const state = {
 			sites: {
-				items: {}
+				items: {},
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 234567, blog_id: null },
-					]
-				}
-			}
+					upcoming: [ { id: 234567, blog_id: null } ],
+				},
+			},
 		};
 		const output = getSiteSlugsForUpcomingTransactions( state );
 		expect( output ).to.eql( {} );
@@ -83,15 +76,13 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 			sites: {
 				items: {
 					2916284: null,
-				}
+				},
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [
-						{ id: 123456, blog_id: '2916284' },
-					]
-				}
-			}
+					upcoming: [ { id: 123456, blog_id: '2916284' } ],
+				},
+			},
 		};
 		const output = getSiteSlugsForUpcomingTransactions( state );
 		expect( output ).to.eql( {} );

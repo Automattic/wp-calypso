@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ describe( 'actions', function() {
 
 			expect( action ).to.eql( {
 				type: NOTICE_REMOVE,
-				noticeId: 123
+				noticeId: 123,
 			} );
 		} );
 	} );
@@ -29,7 +30,7 @@ describe( 'actions', function() {
 			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
-				status: 'is-success'
+				status: 'is-success',
 			} );
 		} );
 
@@ -37,7 +38,7 @@ describe( 'actions', function() {
 			const action = successNotice( '' );
 
 			expect( action.notice ).to.include( {
-				showDismiss: true
+				showDismiss: true,
 			} );
 		} );
 	} );
@@ -50,7 +51,7 @@ describe( 'actions', function() {
 			expect( action.type ).to.eql( NOTICE_CREATE );
 			expect( action.notice ).to.include( {
 				text,
-				status: 'is-error'
+				status: 'is-error',
 			} );
 		} );
 	} );

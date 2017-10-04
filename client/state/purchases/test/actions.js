@@ -1,5 +1,6 @@
+/** @format */
 jest.mock( 'lib/olark', () => ( {
-	updateOlarkGroupAndEligibility: () => {}
+	updateOlarkGroupAndEligibility: () => {},
 } ) );
 
 /**
@@ -16,7 +17,7 @@ import {
 	clearPurchases,
 	fetchSitePurchases,
 	fetchUserPurchases,
-	removePurchase
+	removePurchase,
 } from '../actions';
 import {
 	PRIVACY_PROTECTION_CANCEL,
@@ -46,13 +47,13 @@ describe( 'actions', () => {
 	describe( '#clearPurchases', () => {
 		it( 'should return a `PURCHASES_REMOVE` action', () => {
 			expect( clearPurchases() ).to.be.eql( {
-				type: PURCHASES_REMOVE
+				type: PURCHASES_REMOVE,
 			} );
 		} );
 	} );
 
 	describe( '#cancelPrivacyProtection', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/upgrades/${ purchaseId }/cancel-privacy-protection` )
 				.reply( 200, { upgrade: purchases[ 0 ] } );
@@ -63,20 +64,20 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PRIVACY_PROTECTION_CANCEL,
-				purchaseId
+				purchaseId,
 			} );
 
 			return promise.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRIVACY_PROTECTION_CANCEL_COMPLETED,
-					purchase: purchases[ 0 ]
+					purchase: purchases[ 0 ],
 				} );
 			} );
 		} );
 	} );
 
 	describe( '#fetchSitePurchases', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
 				.reply( 200, purchases );
@@ -87,21 +88,21 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PURCHASES_SITE_FETCH,
-				siteId
+				siteId,
 			} );
 
 			return promise.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_SITE_FETCH_COMPLETED,
 					siteId,
-					purchases
+					purchases,
 				} );
 			} );
 		} );
 	} );
 
 	describe( '#fetchUserPurchases', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/purchases' )
 				.reply( 200, purchases );
@@ -111,14 +112,14 @@ describe( 'actions', () => {
 			const promise = fetchUserPurchases( userId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: PURCHASES_USER_FETCH
+				type: PURCHASES_USER_FETCH,
 			} );
 
 			return promise.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASES_USER_FETCH_COMPLETED,
 					userId,
-					purchases
+					purchases,
 				} );
 			} );
 		} );
@@ -127,7 +128,7 @@ describe( 'actions', () => {
 	describe( '#removePurchase success', () => {
 		const response = { purchases };
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 200, response );
@@ -138,7 +139,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,
-					userId
+					userId,
 				} );
 			} );
 		} );
@@ -146,12 +147,12 @@ describe( 'actions', () => {
 
 	describe( '#removePurchase failure', () => {
 		const errorMessage = 'Unable to delete the purchase because of internal error';
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 400, {
 					error: 'server_error',
-					message: errorMessage
+					message: errorMessage,
 				} );
 		} );
 
@@ -159,10 +160,9 @@ describe( 'actions', () => {
 			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_FAILED,
-					error: errorMessage
+					error: errorMessage,
 				} );
 			} );
 		} );
 	} );
-
 } );

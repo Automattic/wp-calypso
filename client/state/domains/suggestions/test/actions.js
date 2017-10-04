@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +11,9 @@ import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
-	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS
+	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import {
-	receiveDomainsSuggestions,
-	requestDomainsSuggestions
-} from '../actions';
+import { receiveDomainsSuggestions, requestDomainsSuggestions } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -31,19 +29,19 @@ describe( 'actions', () => {
 		query: 'example',
 		quantity: 2,
 		vendor: 'domainsbot',
-		include_wordpressdotcom: false
+		include_wordpressdotcom: false,
 	};
 
 	const failingQuery = {
 		query: 'example',
 		quantity: 10,
 		vendor: 'domainsbot',
-		include_wordpressdotcom: true
+		include_wordpressdotcom: true,
 	};
 
 	const exampleSuggestions = [
 		{ domain_name: 'example.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-		{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' }
+		{ domain_name: 'example.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 	];
 
 	describe( '#receiveDomainsSuggestions()', () => {
@@ -54,13 +52,13 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: DOMAINS_SUGGESTIONS_RECEIVE,
 				suggestions,
-				queryObject
+				queryObject,
 			} );
 		} );
 	} );
 
 	describe( '#requestDomainsSuggestions()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/domains/suggestions' )
@@ -70,7 +68,7 @@ describe( 'actions', () => {
 				.query( failingQuery )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'An active access token must be used to access domains suggestions.'
+					message: 'An active access token must be used to access domains suggestions.',
 				} );
 		} );
 
@@ -78,7 +76,7 @@ describe( 'actions', () => {
 			requestDomainsSuggestions( exampleQuery )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
-				queryObject: exampleQuery
+				queryObject: exampleQuery,
 			} );
 		} );
 
@@ -87,7 +85,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_RECEIVE,
 					queryObject: exampleQuery,
-					suggestions: exampleSuggestions
+					suggestions: exampleSuggestions,
 				} );
 			} );
 		} );
@@ -96,7 +94,7 @@ describe( 'actions', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-					queryObject: exampleQuery
+					queryObject: exampleQuery,
 				} );
 			} );
 		} );
@@ -106,7 +104,9 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject: failingQuery,
-					error: sandbox.match( { message: 'An active access token must be used to access domains suggestions.' } )
+					error: sandbox.match( {
+						message: 'An active access token must be used to access domains suggestions.',
+					} ),
 				} );
 			} );
 		} );

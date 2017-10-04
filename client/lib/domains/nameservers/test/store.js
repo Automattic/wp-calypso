@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,11 +13,7 @@ import NameserversStore from './../store';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',
-		NAMSERVERS = [
-			'ns1.dummy.com',
-			'ns2.dummy.com',
-			'ns3.dummy.com'
-		];
+		NAMSERVERS = [ 'ns1.dummy.com', 'ns2.dummy.com', 'ns3.dummy.com' ];
 
 	it( 'should be an object', () => {
 		expect( NameserversStore ).to.be.an( 'object' );
@@ -30,33 +27,33 @@ describe( 'store', () => {
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: false,
-			list: null
+			list: null,
 		} );
 	} );
 
 	it( 'should return an object with enabled isFetching flag when fetching domain data triggered', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.NAMESERVERS_FETCH,
-			domainName: DOMAIN_NAME
+			domainName: DOMAIN_NAME,
 		} );
 
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: true,
 			hasLoadedFromServer: false,
-			list: null
+			list: null,
 		} );
 	} );
 
 	it( 'should return an object with disabled isFetching flag when fetching domain data failed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.NAMESERVERS_FETCH_FAILED,
-			domainName: DOMAIN_NAME
+			domainName: DOMAIN_NAME,
 		} );
 
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: false,
-			list: null
+			list: null,
 		} );
 	} );
 
@@ -64,32 +61,29 @@ describe( 'store', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
-			nameservers: NAMSERVERS
+			nameservers: NAMSERVERS,
 		} );
 
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: true,
-			list: NAMSERVERS
+			list: NAMSERVERS,
 		} );
 	} );
 
 	it( 'should return an updated list with name servers when name servers update completed', () => {
-		const UPDATED_NAMESERVERS = [
-			'ns1.foo.com',
-			'ns2.foo.com'
-		];
+		const UPDATED_NAMESERVERS = [ 'ns1.foo.com', 'ns2.foo.com' ];
 
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
 			domainName: DOMAIN_NAME,
-			nameservers: UPDATED_NAMESERVERS
+			nameservers: UPDATED_NAMESERVERS,
 		} );
 
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: true,
-			list: UPDATED_NAMESERVERS
+			list: UPDATED_NAMESERVERS,
 		} );
 	} );
 } );

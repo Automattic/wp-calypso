@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,7 @@ import {
 	JETPACK_SYNC_START_ERROR,
 } from 'state/action-types';
 
-import reducer, {
-	syncStatus,
-	fullSyncRequest
-} from '../reducer';
+import reducer, { syncStatus, fullSyncRequest } from '../reducer';
 
 import { getExpectedResponseKeys } from '../utils';
 
@@ -39,7 +37,7 @@ const successfulSyncStatusRequest = {
 			users: 1,
 			posts: 402,
 			comments: 28,
-			updates: 1
+			updates: 1,
 		},
 		queue: {
 			constants: 1,
@@ -50,7 +48,7 @@ const successfulSyncStatusRequest = {
 			users: 1,
 			posts: 402,
 			comments: 28,
-			updates: 1
+			updates: 1,
 		},
 		sent: {
 			constants: 1,
@@ -59,7 +57,7 @@ const successfulSyncStatusRequest = {
 			terms: 25,
 			themes: 1,
 			users: 1,
-			posts: 193
+			posts: 193,
 		},
 		config: {
 			constants: true,
@@ -70,14 +68,14 @@ const successfulSyncStatusRequest = {
 			users: true,
 			posts: true,
 			comments: true,
-			updates: true
+			updates: true,
 		},
 		queue_size: 0,
 		queue_lag: 0,
 		full_queue_size: 239,
 		full_queue_lag: 957.49082708359,
 		is_scheduled: false,
-	}
+	},
 };
 
 const inProgressSyncStatusRequest = {
@@ -96,7 +94,7 @@ const inProgressSyncStatusRequest = {
 			users: 1,
 			posts: 402,
 			comments: 28,
-			updates: 1
+			updates: 1,
 		},
 		queue: {
 			constants: 1,
@@ -107,13 +105,13 @@ const inProgressSyncStatusRequest = {
 			users: 1,
 			posts: 402,
 			comments: 28,
-			updates: 1
+			updates: 1,
 		},
 		sent: {
 			constants: 1,
 			functions: 1,
 			options: 1,
-			terms: 2
+			terms: 2,
 		},
 		config: {
 			constants: true,
@@ -124,46 +122,43 @@ const inProgressSyncStatusRequest = {
 			users: true,
 			posts: true,
 			comments: true,
-			updates: true
+			updates: true,
 		},
 		queue_size: 0,
 		queue_lag: 0,
 		full_queue_size: 457,
 		full_queue_lag: 33.257718086243,
 		is_scheduled: false,
-	}
+	},
 };
 
 const erroredSyncStatusRequest = {
 	type: JETPACK_SYNC_STATUS_ERROR,
 	siteId: 1234578,
 	error: {
-		statusCode: 400
-	}
+		statusCode: 400,
+	},
 };
 
 const successfulFullSyncRequest = {
 	type: JETPACK_SYNC_START_SUCCESS,
 	siteId: 1234567,
 	data: {
-		scheduled: true
-	}
+		scheduled: true,
+	},
 };
 
 const erroredFullSyncRequest = {
 	type: JETPACK_SYNC_START_ERROR,
 	siteId: 1234578,
 	error: {
-		statusCode: 400
-	}
+		statusCode: 400,
+	},
 };
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'syncStatus',
-			'fullSyncRequest'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'syncStatus', 'fullSyncRequest' ] );
 	} );
 
 	describe( '#syncStatus()', () => {
@@ -192,21 +187,23 @@ describe( 'reducer', () => {
 			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
 			expect( state ).to.eql( {
 				123456: {
-					isRequesting: true
-				}
+					isRequesting: true,
+				},
 			} );
 		} );
 
 		it( 'should set isRequesting to false when finished successfully fetching for a site', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
 				.to.have.property( 'isRequesting' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set error to false when finished fetching for a site', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
 				.to.have.property( 'error' )
 				.to.be.eql( false );
 		} );
@@ -214,46 +211,54 @@ describe( 'reducer', () => {
 		it( 'should set lastSuccessfulStatus to current time when finished fetching for a site', () => {
 			const startTime = Date.now();
 			const state = syncStatus( undefined, inProgressSyncStatusRequest );
-			expect( state ).to.have.property( String( inProgressSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( inProgressSyncStatusRequest.siteId ) )
 				.to.have.property( 'lastSuccessfulStatus' )
 				.to.be.at.least( startTime );
 		} );
 
 		it( 'should store expected response keys on success', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state ).to.have.property( successfulSyncStatusRequest.siteId )
-				.to.have.all.keys( getExpectedResponseKeys().concat( [
-					'error',
-					'isRequesting',
-					'lastSuccessfulStatus',
-					'errorCounter'
-				] ) );
+			expect( state )
+				.to.have.property( successfulSyncStatusRequest.siteId )
+				.to.have.all.keys(
+					getExpectedResponseKeys().concat( [
+						'error',
+						'isRequesting',
+						'lastSuccessfulStatus',
+						'errorCounter',
+					] )
+				);
 		} );
 
 		it( 'should set errorCounter to 0 after a successful request', () => {
 			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state ).to.have.property( String( successfulSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
 				.to.have.property( 'errorCounter' )
 				.to.be.eql( 0 );
 		} );
 
 		it( 'should set isRequesting to false when fetching for a site errors', () => {
 			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
 				.to.have.property( 'isRequesting' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set error when fetching for a site errors', () => {
 			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
 				.to.have.property( 'error' )
 				.to.be.eql( erroredSyncStatusRequest.error );
 		} );
 
 		it( 'should set errorCounter to 1 when errorCounter previously undefined', () => {
 			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
 				.to.have.property( 'errorCounter' )
 				.to.be.eql( 1 );
 		} );
@@ -264,7 +269,8 @@ describe( 'reducer', () => {
 				erroredSyncStatusRequest
 			);
 
-			expect( state ).to.have.property( String( erroredSyncStatusRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
 				.to.have.property( 'errorCounter' )
 				.to.be.eql( 2 );
 		} );
@@ -277,14 +283,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should add a property with key matching site ID', () => {
-			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId: 123456 } );
+			const state = fullSyncRequest( undefined, {
+				type: JETPACK_SYNC_START_REQUEST,
+				siteId: 123456,
+			} );
 			expect( state ).to.have.property( '123456' );
 		} );
 
 		it( 'should set isRequesting to true when fetching for a site', () => {
 			const siteId = 123456;
 			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
-			expect( state ).to.have.property( String( siteId ) )
+			expect( state )
+				.to.have.property( String( siteId ) )
 				.to.have.property( 'isRequesting' )
 				.to.be.eql( true );
 		} );
@@ -293,7 +303,8 @@ describe( 'reducer', () => {
 			const siteId = 123456;
 			const startTime = Date.now();
 			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
-			expect( state ).to.have.property( String( siteId ) )
+			expect( state )
+				.to.have.property( String( siteId ) )
 				.to.have.property( 'lastRequested' )
 				.to.be.at.least( startTime );
 		} );
@@ -311,42 +322,48 @@ describe( 'reducer', () => {
 
 		it( 'should set isRequesting to false after successfully scheduling sync', () => {
 			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulFullSyncRequest.siteId ) )
 				.to.have.property( 'isRequesting' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set error to false after successfully scheduling sync', () => {
 			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulFullSyncRequest.siteId ) )
 				.to.have.property( 'error' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set scheduled after successfully scheduling sync', () => {
 			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state ).to.have.property( String( successfulFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( successfulFullSyncRequest.siteId ) )
 				.to.have.property( 'scheduled' )
 				.to.be.eql( successfulFullSyncRequest.data.scheduled );
 		} );
 
 		it( 'should set isRequesting to false after scheduling sync errors', () => {
 			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredFullSyncRequest.siteId ) )
 				.to.have.property( 'isRequesting' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set scheduled to false after scheduling sync errors', () => {
 			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredFullSyncRequest.siteId ) )
 				.to.have.property( 'scheduled' )
 				.to.be.eql( false );
 		} );
 
 		it( 'should set error after scheduling sync errors', () => {
 			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state ).to.have.property( String( erroredFullSyncRequest.siteId ) )
+			expect( state )
+				.to.have.property( String( erroredFullSyncRequest.siteId ) )
 				.to.have.property( 'error' )
 				.to.be.eql( erroredFullSyncRequest.error );
 		} );

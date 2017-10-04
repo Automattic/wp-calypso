@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,21 +18,14 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import {
-	items,
-	requesting,
-	toggling,
-} from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { items, requesting, toggling } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -110,7 +104,7 @@ describe( 'reducer', () => {
 
 	describe( 'toggling()', () => {
 		const previousState = deepFreeze( {
-			[ primarySiteId ]: { no_adverts_for_friends: true }
+			[ primarySiteId ]: { no_adverts_for_friends: true },
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -127,7 +121,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: true }
+				[ primarySiteId ]: { no_adverts_for_friends: true },
 			} );
 		} );
 
@@ -140,7 +134,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				[ primarySiteId ]: { no_adverts_for_friends: true },
-				[ secondarySiteId ]: { awaitingmoderation: true }
+				[ secondarySiteId ]: { awaitingmoderation: true },
 			} );
 		} );
 
@@ -152,7 +146,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: false }
+				[ primarySiteId ]: { no_adverts_for_friends: false },
 			} );
 		} );
 
@@ -165,7 +159,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: false }
+				[ primarySiteId ]: { no_adverts_for_friends: false },
 			} );
 		} );
 
@@ -191,9 +185,10 @@ describe( 'reducer', () => {
 			awaitingmoderation: {
 				url: '',
 				title: 'Awaiting Moderation',
-				desc: 'Enables or disables plugin to Remove the text "Your comment is awaiting moderation." ...',
+				desc:
+					'Enables or disables plugin to Remove the text "Your comment is awaiting moderation." ...',
 				enabled: true,
-			}
+			},
 		};
 		const secondaryPlugins = {
 			no_adverts_for_friends: {
@@ -201,8 +196,8 @@ describe( 'reducer', () => {
 				url: 'https://odd.blog/no-adverts-for-friends/',
 				title: 'No Adverts for Friends',
 				desc: 'Provides support for No Adverts for Friends plugin.',
-				enabled: false
-			}
+				enabled: false,
+			},
 		};
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: primaryPlugins,
@@ -288,7 +283,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				items: {
 					[ primarySiteId ]: 2,
-				}
+				},
 			} );
 			const state = items( previousInvalidState, {
 				type: DESERIALIZE,

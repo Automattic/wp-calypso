@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,15 +9,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	requestEmailVerification,
-	handleSuccess,
-	handleError,
-} from '../';
-import {
-	EMAIL_VERIFY_REQUEST_SUCCESS,
-	EMAIL_VERIFY_REQUEST_FAILURE,
-} from 'state/action-types';
+import { requestEmailVerification, handleSuccess, handleError } from '../';
+import { EMAIL_VERIFY_REQUEST_SUCCESS, EMAIL_VERIFY_REQUEST_FAILURE } from 'state/action-types';
 
 describe( 'send-email-verification', () => {
 	describe( '#requestEmailVerification', () => {
@@ -27,11 +21,16 @@ describe( 'send-email-verification', () => {
 
 		it( 'should dispatch HTTP request to plans endpoint', () => {
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				apiVersion: '1.1',
-				method: 'POST',
-				path: '/me/send-verification-email',
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						apiVersion: '1.1',
+						method: 'POST',
+						path: '/me/send-verification-email',
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 

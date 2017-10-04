@@ -1,7 +1,10 @@
+/** @format */
 jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-user-registration-days-within-range', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-user-registration-days-within-range', () =>
+	require( 'sinon' ).stub()
+);
 jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
 
 /**

@@ -1,6 +1,6 @@
 /** @format */
 jest.mock( 'state/reader/posts/actions', () => ( {
-	receivePosts: posts => Promise.resolve( posts )
+	receivePosts: posts => Promise.resolve( posts ),
 } ) );
 
 /**

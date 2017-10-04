@@ -1,9 +1,11 @@
+/** @format */
 /** @jest-environment jsdom */
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () => require( './mocks/plugin-action' ) );
+jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+	require( './mocks/plugin-action' )
+);
 jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock(
-	'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button',
-	() => require( 'components/empty-component' )
+jest.mock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', () =>
+	require( 'components/empty-component' )
 );
 
 /**
@@ -25,7 +27,7 @@ describe( 'PluginActivateToggle', function() {
 	const analyticsMock = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
-		translate: spy()
+		translate: spy(),
 	};
 
 	afterEach( function() {

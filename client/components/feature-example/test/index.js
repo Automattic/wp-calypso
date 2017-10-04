@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,11 @@ describe( 'Feature Example', function() {
 	} );
 
 	it( 'should contains the passed children wrapped by a feature-example div', () => {
-		const featureExample = shallow( <FeatureExample><div>test</div></FeatureExample> );
+		const featureExample = shallow(
+			<FeatureExample>
+				<div>test</div>
+			</FeatureExample>
+		);
 		assert.isTrue( featureExample.contains( <div>test</div> ) );
 	} );
 } );

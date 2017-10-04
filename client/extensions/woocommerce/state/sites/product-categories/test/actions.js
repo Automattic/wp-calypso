@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,30 +21,34 @@ describe( 'actions', () => {
 		const siteId = '123';
 		const errorSiteId = '234';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( { path: '/wc/v3/products/categories' } )
 				.reply( 200, {
-					data: [ {
-						id: 10,
-						name: 'Tops',
-						slug: 'tops',
-						description: '',
-						display: 'default',
-					} ]
+					data: [
+						{
+							id: 10,
+							name: 'Tops',
+							slug: 'tops',
+							description: '',
+							display: 'default',
+						},
+					],
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
 				.query( { path: '/wc/v2/products/categories' } )
 				.reply( 200, {
-					data: [ {
-						id: '1',
-						name: 'Error',
-						slug: false,
-						description: '',
-						display: 'default',
-					} ]
+					data: [
+						{
+							id: '1',
+							name: 'Error',
+							slug: false,
+							description: '',
+							display: 'default',
+						},
+					],
 				} );
 		} );
 
@@ -51,7 +56,10 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProductCategories( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST, siteId } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+				siteId,
+			} );
 		} );
 
 		it( 'should dispatch a success action with product category information when request completes', () => {
@@ -63,13 +71,15 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 					siteId,
-					data: [ {
-						id: 10,
-						name: 'Tops',
-						slug: 'tops',
-						description: '',
-						display: 'default',
-					} ]
+					data: [
+						{
+							id: 10,
+							name: 'Tops',
+							slug: 'tops',
+							description: '',
+							display: 'default',
+						},
+					],
 				} );
 			} );
 		} );

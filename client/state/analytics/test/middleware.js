@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'lib/analytics', () => {
 	const analyticsSpy = require( 'sinon' ).spy();
 	const { analyticsMock } = require( './helpers/analytics-mock' );
@@ -35,7 +36,7 @@ import {
 	recordGooglePageView,
 	recordTracksEvent,
 	recordPageView,
-	setTracksAnonymousUserId
+	setTracksAnonymousUserId,
 } from '../actions';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ describe( 'index', function() {
 		describe( 'when rendering a section', function() {
 			let clock;
 
-			useFakeTimers( newClock => clock = newClock );
+			useFakeTimers( newClock => ( clock = newClock ) );
 
 			beforeEach( function() {
 				sinon.stub( analytics.statsd, 'recordTiming' );
@@ -53,7 +54,9 @@ describe( 'index', function() {
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
-					'reader', 'response-time', TWO_SECONDS
+					'reader',
+					'response-time',
+					TWO_SECONDS
 				);
 			} );
 

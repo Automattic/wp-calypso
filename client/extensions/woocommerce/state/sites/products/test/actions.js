@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,12 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchProducts, fetchProductSearchResults, clearProductSearch, deleteProduct } from '../actions';
+import {
+	fetchProducts,
+	fetchProductSearchResults,
+	clearProductSearch,
+	deleteProduct,
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
 	WOOCOMMERCE_ERROR_SET,
@@ -28,7 +34,7 @@ describe( 'actions', () => {
 	describe( '#fetchProducts()', () => {
 		const siteId = '123';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -38,16 +44,19 @@ describe( 'actions', () => {
 						body: products,
 						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 30 },
 						status: 200,
-					}
+					},
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/products&page=invalid&per_page=10&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/products&page=invalid&per_page=10&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						message: 'Invalid parameter(s): page',
 						error: 'rest_invalid_param',
 						status: 400,
-					}
+					},
 				} );
 		} );
 
@@ -55,9 +64,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith(
-				{ type: WOOCOMMERCE_PRODUCTS_REQUEST, siteId, params: { page: 1, per_page: 10 } }
-			);
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_PRODUCTS_REQUEST,
+				siteId,
+				params: { page: 1, per_page: 10 },
+			} );
 		} );
 
 		it( 'should dispatch a success action with products list when request completes', () => {
@@ -72,7 +83,7 @@ describe( 'actions', () => {
 					params: { page: 1, per_page: 10 },
 					totalPages: 3,
 					totalProducts: 30,
-					products
+					products,
 				} );
 			} );
 		} );
@@ -99,12 +110,12 @@ describe( 'actions', () => {
 								products: {
 									isLoading: {
 										[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
-									}
-								}
-							}
-						}
-					}
-				}
+									},
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
@@ -114,35 +125,44 @@ describe( 'actions', () => {
 	describe( '#fetchProductSearchResults()', () => {
 		const siteId = '123';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/products&page=1&per_page=10&search=testing&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/products&page=1&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						body: products,
 						headers: { 'X-WP-Total': 28 },
 						status: 200,
-					}
+					},
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/products&page=2&per_page=10&search=testing&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/products&page=2&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						body: [ product ],
 						headers: { 'X-WP-Total': 28 },
 						status: 200,
-					}
+					},
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/products&page=invalid&per_page=10&search=testing&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/products&page=invalid&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						message: 'Invalid parameter(s): page',
 						error: 'rest_invalid_param',
 						status: 400,
-					}
+					},
 				} );
 		} );
 
@@ -198,13 +218,13 @@ describe( 'actions', () => {
 									search: {
 										isLoading: {
 											1: true,
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
@@ -224,12 +244,12 @@ describe( 'actions', () => {
 										},
 										query: 'testing',
 										totalProducts: 28,
-									}
-								}
-							}
-						}
-					}
-				}
+									},
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			const response = fetchProductSearchResults( siteId, 2 )( dispatch, getState );
@@ -259,7 +279,7 @@ describe( 'actions', () => {
 	describe( '#deleteProduct()', () => {
 		const siteId = '123';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )

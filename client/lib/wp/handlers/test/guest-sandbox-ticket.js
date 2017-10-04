@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'store', () => require( './mocks/store' ) );
 
 /**
@@ -13,7 +14,7 @@ import store from 'store';
 import {
 	deleteOldTicket,
 	GUEST_TICKET_LOCALFORAGE_KEY,
-	injectGuestSandboxTicketHandler
+	injectGuestSandboxTicketHandler,
 } from '../guest-sandbox-ticket';
 
 describe( 'guest-sandbox-ticket', () => {
@@ -25,7 +26,7 @@ describe( 'guest-sandbox-ticket', () => {
 		it( 'should remove tickets older than two hours', () => {
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, {
 				value: 'foo',
-				createdDate: Date.now() - 1000 * 60 * 60 * 3 // three hours in the past
+				createdDate: Date.now() - 1000 * 60 * 60 * 3, // three hours in the past
 			} );
 
 			deleteOldTicket();
@@ -36,7 +37,7 @@ describe( 'guest-sandbox-ticket', () => {
 		it( 'should not remove tickets younger than two hours', () => {
 			const ticket = {
 				value: 'foo',
-				createdDate: Date.now() - 1000 * 60 * 60 * 1 // one hour in the past
+				createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
 			};
 
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, ticket );
@@ -48,10 +49,10 @@ describe( 'guest-sandbox-ticket', () => {
 	} );
 
 	describe( '#injectGuestSandboxTicketHandler', () => {
-		it( 'should update `wpcom` to add the ticket param if present', ( done ) => {
+		it( 'should update `wpcom` to add the ticket param if present', done => {
 			const ticket = {
 				value: 'foo',
-				createdDate: Date.now() - 1000 * 60 * 60 * 1 // one hour in the past
+				createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
 			};
 
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, ticket );
@@ -60,7 +61,7 @@ describe( 'guest-sandbox-ticket', () => {
 				request( params ) {
 					expect( params.query ).to.equal( 'search=whatever&store_sandbox_ticket=foo' );
 					done();
-				}
+				},
 			};
 
 			injectGuestSandboxTicketHandler( wpcom );
@@ -68,12 +69,12 @@ describe( 'guest-sandbox-ticket', () => {
 			expect( wpcom.request( { query: 'search=whatever' } ) );
 		} );
 
-		it( 'should not add ticket param if it is not present', ( done ) => {
+		it( 'should not add ticket param if it is not present', done => {
 			const wpcom = {
 				request( params ) {
 					expect( params.query ).to.equal( 'search=whatever' );
 					done();
-				}
+				},
 			};
 
 			injectGuestSandboxTicketHandler( wpcom );

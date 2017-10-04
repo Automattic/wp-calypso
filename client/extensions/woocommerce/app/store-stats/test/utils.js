@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import {
 	getDelta,
 	getEndPeriod,
 	getQueryDate,
-	getUnitPeriod
+	getUnitPeriod,
 } from '../utils';
 import { UNITS } from '../constants';
 
@@ -87,7 +88,9 @@ describe( 'getQueryDate', () => {
 
 	it( 'should return a value for today given a startDate of less than the quantity', () => {
 		const quantity = UNITS.day.quantity;
-		const startDate = moment().subtract( Math.floor( quantity / 2 ), 'days' ).format( 'YYYY-MM-DD' );
+		const startDate = moment()
+			.subtract( Math.floor( quantity / 2 ), 'days' )
+			.format( 'YYYY-MM-DD' );
 		const context = {
 			params: { unit: 'day' },
 			query: { startDate },
@@ -100,26 +103,34 @@ describe( 'getQueryDate', () => {
 	it( 'should return a value going back only in multiples of the specified quantity', () => {
 		const quantity = UNITS.day.quantity;
 		const daysBack = Math.floor( quantity * 2.5 ); // 75
-		const startDate = moment().subtract( daysBack, 'days' ).format( 'YYYY-MM-DD' );
+		const startDate = moment()
+			.subtract( daysBack, 'days' )
+			.format( 'YYYY-MM-DD' );
 		const context = {
 			params: { unit: 'day' },
 			query: { startDate },
 		};
 		const queryDate = getQueryDate( context );
-		const todayShouldBe = moment().subtract( quantity * 2, 'days' ).format( 'YYYY-MM-DD' );
+		const todayShouldBe = moment()
+			.subtract( quantity * 2, 'days' )
+			.format( 'YYYY-MM-DD' );
 		assert.strictEqual( queryDate, todayShouldBe );
 	} );
 
 	it( 'should work in weeks as well', () => {
 		const quantity = UNITS.week.quantity;
 		const weeksBack = Math.floor( quantity * 2.5 ); // 75
-		const startDate = moment().subtract( weeksBack, 'weeks' ).format( 'YYYY-MM-DD' );
+		const startDate = moment()
+			.subtract( weeksBack, 'weeks' )
+			.format( 'YYYY-MM-DD' );
 		const context = {
 			params: { unit: 'week' },
 			query: { startDate },
 		};
 		const queryDate = getQueryDate( context );
-		const todayShouldBe = moment().subtract( quantity * 2, 'weeks' ).format( 'YYYY-MM-DD' );
+		const todayShouldBe = moment()
+			.subtract( quantity * 2, 'weeks' )
+			.format( 'YYYY-MM-DD' );
 		assert.strictEqual( queryDate, todayShouldBe );
 	} );
 } );
@@ -213,24 +224,24 @@ const deltas = [
 		period: '2017-07-07',
 		right: {
 			right: true,
-			period: '2017-07-06'
+			period: '2017-07-06',
 		},
 		wrong: {
 			right: false,
-			period: '2017-07-06'
-		}
+			period: '2017-07-06',
+		},
 	},
 	{
 		period: '2017-07-06',
 		right: {
 			right: true,
-			period: '2017-07-06'
+			period: '2017-07-06',
 		},
 		wrong: {
 			right: false,
-			period: '2017-07-06'
-		}
-	}
+			period: '2017-07-06',
+		},
+	},
 ];
 describe( 'getDelta', () => {
 	it( 'should return an Object', () => {

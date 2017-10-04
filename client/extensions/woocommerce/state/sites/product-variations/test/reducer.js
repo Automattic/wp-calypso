@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,13 +7,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	variationUpdated,
-} from '../reducer';
+import { variationUpdated } from '../reducer';
 
-import {
-	productVariationUpdated,
-} from '../actions';
+import { productVariationUpdated } from '../actions';
 
 describe( 'reducer', () => {
 	describe( '#variationUpdated', () => {
@@ -23,8 +20,8 @@ describe( 'reducer', () => {
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 			const action = productVariationUpdated( 123, 66, variation1 );
 			const state = variationUpdated( undefined, action );
@@ -39,8 +36,8 @@ describe( 'reducer', () => {
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 
 			const variation1After = {
@@ -49,8 +46,8 @@ describe( 'reducer', () => {
 					{
 						id: 9,
 						option: 'Red',
-					}
-				]
+					},
+				],
 			};
 			const actionBefore = productVariationUpdated( 123, 66, variation1Before );
 			const actionAfter = productVariationUpdated( 123, 66, variation1After );
@@ -69,8 +66,8 @@ describe( 'reducer', () => {
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 
 			const actionBefore = productVariationUpdated( 123, 66, variation1Before );
@@ -84,4 +81,3 @@ describe( 'reducer', () => {
 		} );
 	} );
 } );
-

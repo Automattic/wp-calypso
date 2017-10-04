@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: USER_RECEIVE,
-				user
+				user,
 			} );
 		} );
 	} );

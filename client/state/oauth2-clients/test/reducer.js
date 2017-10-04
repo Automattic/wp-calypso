@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +35,7 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should return the current state for an unknown action type', () => {
-		const newState = reducer( initialState, { type: 'BUY_BURGER', } );
+		const newState = reducer( initialState, { type: 'BUY_BURGER' } );
 
 		expect( newState ).to.be.eql( initialState );
 	} );
@@ -42,7 +43,7 @@ describe( 'reducer', () => {
 	it( 'should return the current state when fetching client data starts', () => {
 		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST,
-			clientId: 930
+			clientId: 930,
 		} );
 
 		expect( newState ).to.deep.equal( initialState );
@@ -54,8 +55,8 @@ describe( 'reducer', () => {
 			data: {
 				id: 930,
 				title: 'Vaultpress Pro',
-				url: 'https://vaultpress.pro/'
-			}
+				url: 'https://vaultpress.pro/',
+			},
 		} );
 
 		expect( newState ).to.deep.equal( {
@@ -64,14 +65,14 @@ describe( 'reducer', () => {
 				name: 'vaultpress',
 				title: 'Vaultpress Pro',
 				icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
-				url: 'https://vaultpress.pro/'
+				url: 'https://vaultpress.pro/',
 			},
 			973: {
 				id: 973,
 				name: 'akismet',
 				title: 'Akismet',
 				icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
-			}
+			},
 		} );
 	} );
 
@@ -82,8 +83,9 @@ describe( 'reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100'
-			}
+				icon:
+					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+			},
 		} );
 
 		expect( newState ).to.deep.equal( {
@@ -103,14 +105,15 @@ describe( 'reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100'
-			}
+				icon:
+					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+			},
 		} );
 	} );
 
 	it( 'should not persist state', () => {
 		const newState = reducer( undefined, {
-			type: SERIALIZE
+			type: SERIALIZE,
 		} );
 
 		expect( newState ).to.deep.equal( initialClientsData );
@@ -118,7 +121,7 @@ describe( 'reducer', () => {
 
 	it( 'should not load persisted state', () => {
 		const newState = reducer( undefined, {
-			type: DESERIALIZE
+			type: DESERIALIZE,
 		} );
 
 		expect( newState ).to.deep.equal( initialClientsData );

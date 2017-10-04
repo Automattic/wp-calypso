@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,11 +9,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 
-import {
-	resetPassword,
-	handleError,
-	handleSuccess,
-} from '../';
+import { resetPassword, handleError, handleSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 import {
@@ -35,24 +32,24 @@ describe( 'account-recovery/reset', () => {
 
 			resetPassword( { dispatch: dispatchSpy }, dummyAction );
 
-			const {
-				userData,
-				method,
-				key,
-				password
-			} = dummyAction;
+			const { userData, method, key, password } = dummyAction;
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: '/account-recovery/reset',
-				body: {
-					...userData,
-					method,
-					key,
-					password,
-				},
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/reset',
+						body: {
+							...userData,
+							method,
+							key,
+							password,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 

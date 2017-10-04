@@ -1,16 +1,19 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {
 	ga: {
-		recordEvent: () => {}
-	}
+		recordEvent: () => {},
+	},
 } ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {
-		getProducts: () => {}
-	} )
+		getProducts: () => {},
+	} ),
 } ) );
-jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
+	require( 'components/empty-component' )
+);
 jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
@@ -22,7 +25,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import React from 'react';
 import {
 	renderIntoDocument as testRenderer,
-	scryRenderedComponentsWithType
+	scryRenderedComponentsWithType,
 } from 'react-addons-test-utils';
 
 /**
@@ -39,14 +42,15 @@ describe( 'PluginsList', () => {
 		before( () => {
 			plugins = [
 				{ sites, slug: 'hello', name: 'Hello Dolly' },
-				{ sites, slug: 'jetpack', name: 'Jetpack' } ];
+				{ sites, slug: 'jetpack', name: 'Jetpack' },
+			];
 
 			props = {
 				plugins,
 				header: 'Plugins',
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
-				pluginUpdateCount: plugins.length
+				pluginUpdateCount: plugins.length,
 			};
 		} );
 

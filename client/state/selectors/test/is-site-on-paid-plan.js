@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
 
 /**

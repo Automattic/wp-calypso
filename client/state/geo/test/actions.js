@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,18 +12,15 @@ import {
 	GEO_RECEIVE,
 	GEO_REQUEST,
 	GEO_REQUEST_SUCCESS,
-	GEO_REQUEST_FAILURE
+	GEO_REQUEST_FAILURE,
 } from 'state/action-types';
-import {
-	receiveGeo,
-	requestGeo
-} from '../actions';
+import { receiveGeo, requestGeo } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveGeo()', () => {
 		it( 'should return an action object', () => {
@@ -32,7 +30,7 @@ describe( 'actions', () => {
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 
 			expect( action ).to.eql( {
@@ -43,8 +41,8 @@ describe( 'actions', () => {
 					country_short: 'US',
 					country_long: 'United States',
 					region: 'Ohio',
-					city: 'Mason'
-				}
+					city: 'Mason',
+				},
 			} );
 		} );
 	} );
@@ -54,12 +52,12 @@ describe( 'actions', () => {
 			requestGeo()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: GEO_REQUEST
+				type: GEO_REQUEST,
 			} );
 		} );
 
 		context( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/geo/' )
@@ -69,7 +67,7 @@ describe( 'actions', () => {
 						country_short: 'US',
 						country_long: 'United States',
 						region: 'Ohio',
-						city: 'Mason'
+						city: 'Mason',
 					} );
 			} );
 
@@ -82,7 +80,7 @@ describe( 'actions', () => {
 							country_short: 'US',
 							country_long: 'United States',
 							region: 'Ohio',
-							city: 'Mason'
+							city: 'Mason',
 						} )
 					);
 				} );
@@ -98,7 +96,7 @@ describe( 'actions', () => {
 		} );
 
 		context( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/geo/' )
@@ -109,7 +107,7 @@ describe( 'actions', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: GEO_REQUEST_FAILURE,
-						error: match( { message: 'Internal Server Error' } )
+						error: match( { message: 'Internal Server Error' } ),
 					} );
 				} );
 			} );

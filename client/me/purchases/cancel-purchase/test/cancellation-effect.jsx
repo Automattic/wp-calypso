@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'lib/products-values', () => ( {} ) );
 jest.mock( 'lib/purchases', () => ( {} ) );
 
@@ -9,10 +10,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	cancellationEffectDetail,
-	cancellationEffectHeadline
-} from '../cancellation-effect';
+import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
 import productsValues from 'lib/products-values';
 import purchases from 'lib/purchases';
 

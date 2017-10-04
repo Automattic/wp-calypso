@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +8,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	coupons1,
-	coupons2,
-	products1,
-	products2,
-} from './fixtures/promotions';
+import { coupons1, coupons2, products1, products2 } from './fixtures/promotions';
 import { fetchPromotions } from '../actions';
-import {
-	promotionsRequest,
-	productsRequestSuccess,
-	couponsUpdated,
-} from '../handlers';
+import { promotionsRequest, productsRequestSuccess, couponsUpdated } from '../handlers';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_REQUEST,
@@ -37,11 +29,13 @@ describe( 'handlers', () => {
 			const action = fetchPromotions( siteId, 3 );
 			promotionsRequest( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_COUPONS_REQUEST,
-				siteId: 123,
-				params: { offset: 0, per_page: 3 },
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_COUPONS_REQUEST,
+					siteId: 123,
+					params: { offset: 0, per_page: 3 },
+				} )
+			);
 
 			// TODO: Test as above after products use data-layer
 			expect( store.dispatch.secondCall.returnValue ).to.be.a.function;
@@ -63,11 +57,13 @@ describe( 'handlers', () => {
 			};
 			couponsUpdated( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WOOCOMMERCE_COUPONS_REQUEST,
-				siteId: 123,
-				params: { offset: 5, per_page: 5 },
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_COUPONS_REQUEST,
+					siteId: 123,
+					params: { offset: 5, per_page: 5 },
+				} )
+			);
 		} );
 
 		it( 'should not dispatch after the last page', () => {
@@ -127,4 +123,3 @@ describe( 'handlers', () => {
 		} );
 	} );
 } );
-

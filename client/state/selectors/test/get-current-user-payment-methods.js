@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,73 +16,73 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	const enLangUsCountryState = {
 		geo: {
 			geo: {
-				country_short: 'US'
-			}
+				country_short: 'US',
+			},
 		},
 
 		users: {
 			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' }
-			}
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' },
+			},
 		},
 
 		currentUser: {
-			id: 73705554
-		}
+			id: 73705554,
+		},
 	};
 
 	const deLangDeCountryState = {
 		geo: {
 			geo: {
-				country_short: 'DE'
-			}
+				country_short: 'DE',
+			},
 		},
 
 		users: {
 			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' }
-			}
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
+			},
 		},
 
 		currentUser: {
-			id: 73705554
-		}
+			id: 73705554,
+		},
 	};
 
 	const deLangJpCountryState = {
 		geo: {
 			geo: {
-				country_short: 'JP'
-			}
+				country_short: 'JP',
+			},
 		},
 
 		users: {
 			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' }
-			}
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
+			},
 		},
 
 		currentUser: {
-			id: 73705554
-		}
+			id: 73705554,
+		},
 	};
 
 	const frLangDeCountryState = {
 		geo: {
 			geo: {
-				country_short: 'DE'
-			}
+				country_short: 'DE',
+			},
 		},
 
 		users: {
 			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'fr' }
-			}
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'fr' },
+			},
 		},
 
 		currentUser: {
-			id: 73705554
-		}
+			id: 73705554,
+		},
 	};
 
 	it( 'en-US should return credit card primary, PayPal secondary', () => {

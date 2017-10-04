@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 

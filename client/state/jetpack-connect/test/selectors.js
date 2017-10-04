@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,14 +22,14 @@ import {
 	hasXmlrpcError,
 	getAuthAttempts,
 	hasExpiredSecretError,
-	getSiteIdFromQueryObject
+	getSiteIdFromQueryObject,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getConnectingSite()', () => {
 		it( 'should return undefined if user has not started connecting a site', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getConnectingSite( state ) ).to.be.undefined;
@@ -52,13 +53,13 @@ describe( 'selectors', () => {
 					notActiveJetpack: false,
 					notConnectedJetpack: true,
 					alreadyOwned: true,
-					alreadyConnected: false
-				}
+					alreadyConnected: false,
+				},
 			};
 			const state = {
 				jetpackConnect: {
-					jetpackConnectSite
-				}
+					jetpackConnectSite,
+				},
 			};
 
 			expect( getConnectingSite( state ) ).to.eql( jetpackConnectSite );
@@ -68,7 +69,7 @@ describe( 'selectors', () => {
 	describe( '#getAuthorizationData()', () => {
 		it( 'should return undefined if user has not started the authorization flow', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getAuthorizationData( state ) ).to.be.undefined;
@@ -82,8 +83,8 @@ describe( 'selectors', () => {
 			};
 			const state = {
 				jetpackConnect: {
-					jetpackConnectAuthorize
-				}
+					jetpackConnectAuthorize,
+				},
 			};
 
 			expect( getAuthorizationData( state ) ).to.eql( jetpackConnectAuthorize );
@@ -93,7 +94,7 @@ describe( 'selectors', () => {
 	describe( '#getAuthorizationRemoteQueryData()', () => {
 		it( 'should return undefined if user has not started the authorization flow', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getAuthorizationRemoteQueryData( state ) ).to.be.undefined;
@@ -106,14 +107,14 @@ describe( 'selectors', () => {
 				redirect_uri: 'https://wordpress.com/',
 				scope: 'auth',
 				secret: '1234abcd',
-				state: 12345678
+				state: 12345678,
 			};
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
-						queryObject
-					}
-				}
+						queryObject,
+					},
+				},
 			};
 
 			expect( getAuthorizationRemoteQueryData( state ) ).to.eql( queryObject );
@@ -123,7 +124,7 @@ describe( 'selectors', () => {
 	describe( '#isRemoteSiteOnSitesList()', () => {
 		it( 'should return false if user has not started the authorization flow', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( isRemoteSiteOnSitesList( state ) ).to.be.false;
@@ -136,9 +137,9 @@ describe( 'selectors', () => {
 						12345678: {
 							ID: 12345678,
 							jetpack: true,
-							URL: 'https://wordpress.com/'
-						}
-					}
+							URL: 'https://wordpress.com/',
+						},
+					},
 				},
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
@@ -149,10 +150,10 @@ describe( 'selectors', () => {
 							scope: 'auth',
 							secret: '1234abcd',
 							state: 12345678,
-							site: 'https://wordpress.com/'
-						}
-					}
-				}
+							site: 'https://wordpress.com/',
+						},
+					},
+				},
 			};
 
 			expect( isRemoteSiteOnSitesList( state ) ).to.be.true;
@@ -165,18 +166,18 @@ describe( 'selectors', () => {
 						12345678: {
 							ID: 12345678,
 							jetpack: true,
-							URL: 'https://wordpress.com/'
-						}
-					}
+							URL: 'https://wordpress.com/',
+						},
+					},
 				},
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						queryObject: {
 							client_id: '12345678',
 						},
-						clientNotResponding: true
-					}
-				}
+						clientNotResponding: true,
+					},
+				},
 			};
 
 			expect( isRemoteSiteOnSitesList( state ) ).to.be.false;
@@ -186,7 +187,7 @@ describe( 'selectors', () => {
 	describe( '#getAuthorizationRemoteSite()', () => {
 		it( 'should return null if user has not started the authorization flow', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getAuthorizationRemoteSite( state ) ).to.be.undefined;
@@ -203,40 +204,42 @@ describe( 'selectors', () => {
 							scope: 'auth',
 							secret: '1234abcd',
 							state: 12345678,
-							site: 'https://wordpress.com/'
-						}
-					}
-				}
+							site: 'https://wordpress.com/',
+						},
+					},
+				},
 			};
 
-			expect( getAuthorizationRemoteSite( state ) ).to.eql( state.jetpackConnect.jetpackConnectAuthorize.queryObject.site );
+			expect( getAuthorizationRemoteSite( state ) ).to.eql(
+				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
+			);
 		} );
 	} );
 
 	describe( '#getSessions()', () => {
 		it( 'should return undefined if user has not started any jetpack connect sessions', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getSessions( state ) ).to.be.undefined;
 		} );
 
-		it( 'should return all of the user\'s single sign-on sessions', () => {
+		it( "should return all of the user's single sign-on sessions", () => {
 			const jetpackConnectSessions = {
 				'wordpress.com': {
 					timestamp: 1234567890,
-					flowType: 'premium'
+					flowType: 'premium',
 				},
 				'jetpack.me': {
 					timestamp: 2345678901,
-					flowType: 'pro'
-				}
+					flowType: 'pro',
+				},
 			};
 			const state = {
 				jetpackConnect: {
-					jetpackConnectSessions
-				}
+					jetpackConnectSessions,
+				},
 			};
 
 			expect( getSessions( state ) ).to.eql( jetpackConnectSessions );
@@ -246,7 +249,7 @@ describe( 'selectors', () => {
 	describe( '#getSSO()', () => {
 		it( 'should return undefined if user has not yet started the single sign-on flow', () => {
 			const state = {
-				jetpackConnect: {}
+				jetpackConnect: {},
 			};
 
 			expect( getSSO( state ) ).to.be.undefined;
@@ -280,13 +283,13 @@ describe( 'selectors', () => {
 					display_name: 'Example Test',
 					description: 'User bio here',
 					two_step_enabled: false,
-					external_user_id: 1
-				}
+					external_user_id: 1,
+				},
 			};
 			const state = {
 				jetpackConnect: {
-					jetpackSSO
-				}
+					jetpackSSO,
+				},
 			};
 
 			expect( getSSO( state ) ).to.eql( jetpackSSO );
@@ -300,10 +303,10 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						sitetest: {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: ''
-						}
-					}
-				}
+							flowType: '',
+						},
+					},
+				},
 			};
 
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.true;
@@ -315,22 +318,22 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						'example.com::example123': {
 							timestamp: Date.now(),
-							flow: ''
-						}
-					}
-				}
+							flow: '',
+						},
+					},
+				},
 			};
 
 			expect( isCalypsoStartedConnection( state, 'example.com/example123' ) ).to.be.true;
 		} );
 
-		it( 'should return false if the user haven\'t started a session in calypso  ', () => {
+		it( "should return false if the user haven't started a session in calypso  ", () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {
-						sitetest: {}
-					}
-				}
+						sitetest: {},
+					},
+				},
 			};
 
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
@@ -342,10 +345,10 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						sitetest: {
 							timestamp: new Date( Date.now() - 60 * 60 * 1000 ).getTime(),
-							flow: ''
-						}
-					}
-				}
+							flow: '',
+						},
+					},
+				},
 			};
 
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
@@ -356,8 +359,8 @@ describe( 'selectors', () => {
 		it( 'should return false if redirection flag is not set', () => {
 			const state = {
 				jetpackConnect: {
-					jetpackConnectAuthorize: {}
-				}
+					jetpackConnectAuthorize: {},
+				},
 			};
 
 			expect( isRedirectingToWpAdmin( state ) ).to.be.false;
@@ -367,9 +370,9 @@ describe( 'selectors', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
-						isRedirectingToWpAdmin: false
-					}
-				}
+						isRedirectingToWpAdmin: false,
+					},
+				},
 			};
 
 			expect( isRedirectingToWpAdmin( state ) ).to.be.false;
@@ -379,9 +382,9 @@ describe( 'selectors', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
-						isRedirectingToWpAdmin: true
-					}
-				}
+						isRedirectingToWpAdmin: true,
+					},
+				},
 			};
 
 			expect( isRedirectingToWpAdmin( state ) ).to.be.true;
@@ -395,10 +398,10 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						sitetest: {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro'
-						}
-					}
-				}
+							flowType: 'pro',
+						},
+					},
+				},
 			};
 
 			expect( getFlowType( state, 'sitetest' ) ).to.eql( 'pro' );
@@ -410,20 +413,20 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						'example.com::example123': {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro'
-						}
-					}
-				}
+							flowType: 'pro',
+						},
+					},
+				},
 			};
 
 			expect( getFlowType( state, 'example.com/example123' ) ).to.eql( 'pro' );
 		} );
 
-		it( 'should return false if there\'s no session for a site', () => {
+		it( "should return false if there's no session for a site", () => {
 			const state = {
 				jetpackConnect: {
-					jetpackConnectSessions: {}
-				}
+					jetpackConnectSessions: {},
+				},
 			};
 
 			expect( getFlowType( state, 'sitetest' ) ).to.be.false;
@@ -434,8 +437,8 @@ describe( 'selectors', () => {
 		it( 'should return null if site is not found', () => {
 			const state = {
 				sites: {
-					items: {}
-				}
+					items: {},
+				},
 			};
 
 			expect( getJetpackSiteByUrl( state, 'example.wordpress.com' ) ).to.be.null;
@@ -448,10 +451,10 @@ describe( 'selectors', () => {
 						12345678: {
 							ID: 12345678,
 							URL: 'https://example.wordpress.com/',
-							jetpack: false
-						}
-					}
-				}
+							jetpack: false,
+						},
+					},
+				},
 			};
 
 			expect( getJetpackSiteByUrl( state, 'https://example.wordpress.com/' ) ).to.be.null;
@@ -464,13 +467,15 @@ describe( 'selectors', () => {
 						12345678: {
 							ID: 12345678,
 							URL: 'https://example.wordpress.com/',
-							jetpack: true
-						}
-					}
-				}
+							jetpack: true,
+						},
+					},
+				},
 			};
 
-			expect( getJetpackSiteByUrl( state, 'https://example.wordpress.com/' ) ).to.eql( state.sites.items[ 12345678 ] );
+			expect( getJetpackSiteByUrl( state, 'https://example.wordpress.com/' ) ).to.eql(
+				state.sites.items[ 12345678 ]
+			);
 		} );
 	} );
 
@@ -479,40 +484,40 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'transport error - HTTP status code was not 200 (502)'
+						message: 'transport error - HTTP status code was not 200 (502)',
 					},
-					authorizationCode: 'xxxx'
-				}
-			}
+					authorizationCode: 'xxxx',
+				},
+			},
 		};
 
 		const stateHasNoError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
-					authorizeError: false
-				}
-			}
+					authorizeError: false,
+				},
+			},
 		};
 
 		const stateHasNoAuthorizationCode = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.'
-					}
-				}
-			}
+						message: 'Could not verify your request.',
+					},
+				},
+			},
 		};
 
 		const stateHasOtherError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Jetpack: [already_connected] User already connected.'
+						message: 'Jetpack: [already_connected] User already connected.',
 					},
-					authorizationCode: 'xxxx'
-				}
-			}
+					authorizationCode: 'xxxx',
+				},
+			},
 		};
 
 		it( 'should be undefined when there is an empty state', () => {
@@ -549,40 +554,40 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'verify_secrets_expired'
+						message: 'verify_secrets_expired',
 					},
-					authorizationCode: 'xxxx'
-				}
-			}
+					authorizationCode: 'xxxx',
+				},
+			},
 		};
 
 		const stateHasNoError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
-					authorizeError: false
-				}
-			}
+					authorizeError: false,
+				},
+			},
 		};
 
 		const stateHasNoAuthorizationCode = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.'
-					}
-				}
-			}
+						message: 'Could not verify your request.',
+					},
+				},
+			},
 		};
 
 		const stateHasOtherError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Jetpack: [already_connected] User already connected.'
+						message: 'Jetpack: [already_connected] User already connected.',
 					},
-					authorizationCode: 'xxxx'
-				}
-			}
+					authorizationCode: 'xxxx',
+				},
+			},
 		};
 
 		it( 'should be undefined when there is an empty state', () => {
@@ -615,42 +620,41 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getAuthAttempts()', () => {
-		it( 'should return 0 if there\'s no stored info for the site', () => {
+		it( "should return 0 if there's no stored info for the site", () => {
 			const state = {
 				jetpackConnect: {
-					jetpackAuthAttempts: {
-					}
-				}
+					jetpackAuthAttempts: {},
+				},
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 0 );
 		} );
 
-		it( 'should return 0 if there\'s stored info for the site, but it\'s stale', () => {
+		it( "should return 0 if there's stored info for the site, but it's stale", () => {
 			const state = {
 				jetpackConnect: {
 					jetpackAuthAttempts: {
 						'sitetest.com': {
 							timestamp: 1,
-							attempt: 2
-						}
-					}
-				}
+							attempt: 2,
+						},
+					},
+				},
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 0 );
 		} );
 
-		it( 'should return the attempt number if there\'s stored info for the site, and it\'s not stale', () => {
+		it( "should return the attempt number if there's stored info for the site, and it's not stale", () => {
 			const state = {
 				jetpackConnect: {
 					jetpackAuthAttempts: {
 						'sitetest.com': {
 							timestamp: Date.now(),
-							attempt: 2
-						}
-					}
-				}
+							attempt: 2,
+						},
+					},
+				},
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 2 );
@@ -663,10 +667,10 @@ describe( 'selectors', () => {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						queryObject: {
-							client_id: '123'
-						}
-					}
-				}
+							client_id: '123',
+						},
+					},
+				},
 			};
 			expect( getSiteIdFromQueryObject( state ) ).to.equals( 123 );
 		} );
@@ -674,8 +678,8 @@ describe( 'selectors', () => {
 		it( 'should return null if there is no query object', () => {
 			const state = {
 				jetpackConnect: {
-					jetpackConnectAuthorize: {}
-				}
+					jetpackConnectAuthorize: {},
+				},
 			};
 			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
 		} );
@@ -684,9 +688,9 @@ describe( 'selectors', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
-						queryObject: {}
-					}
-				}
+						queryObject: {},
+					},
+				},
 			};
 			expect( getSiteIdFromQueryObject( state ) ).to.be.null;
 		} );

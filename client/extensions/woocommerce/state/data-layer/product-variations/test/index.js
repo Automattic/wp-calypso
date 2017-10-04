@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +20,7 @@ import {
 	handleProductVariationUpdate,
 	handleProductVariationsRequest,
 } from '../';
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductVariationsRequest', () => {
@@ -121,9 +120,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: { index: 10 },
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 			const successAction = { type: '%%success%%' };
 			const failureAction = { type: '%%failure%%' };
@@ -149,9 +146,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: { index: 10 },
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 
 			const successAction = { type: '%%success%%' };
@@ -185,9 +180,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: { index: 10 },
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 
 			const successAction = ( dispatch, getState, { productId, sentData, receivedData } ) => {
@@ -225,9 +218,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: 202,
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 			const successAction = { type: '%%success%%' };
 			const failureAction = { type: '%%failure%%' };
@@ -253,9 +244,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: 202,
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 
 			const successAction = { type: '%%success%%' };
@@ -289,9 +278,7 @@ describe( 'handlers', () => {
 
 			const variation1 = {
 				id: 202,
-				attributes: [
-					{ id: 9, option: 'Black' }
-				],
+				attributes: [ { id: 9, option: 'Black' } ],
 			};
 
 			const successAction = ( dispatch, getState, { productId, sentData, receivedData } ) => {

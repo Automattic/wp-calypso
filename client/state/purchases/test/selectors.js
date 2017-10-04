@@ -1,3 +1,4 @@
+/** @format */
 // External dependencies
 import { expect } from 'chai';
 
@@ -19,7 +20,7 @@ describe( 'selectors', () => {
 		it( 'should return different purchases when the purchase data changes', () => {
 			const initialPurchases = Object.freeze( [
 				{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-				{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
+				{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
 			] );
 
 			const state = {
@@ -29,21 +30,27 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true
-				}
+					hasLoadedUserPurchasesFromServer: true,
+				},
 			};
 
-			expect( getPurchases( state ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( initialPurchases ) );
+			expect( getPurchases( state ) ).to.deep.equal(
+				purchasesAssembler.createPurchasesArray( initialPurchases )
+			);
 
 			const newPurchases = Object.freeze( [
-				{ ID: 3, product_name: 'business plan', blog_id: 3117 }
+				{ ID: 3, product_name: 'business plan', blog_id: 3117 },
 			] );
 
-			expect( getPurchases( Object.assign( state, {
-				purchases: {
-					data: newPurchases
-				}
-			} ) ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
+			expect(
+				getPurchases(
+					Object.assign( state, {
+						purchases: {
+							data: newPurchases,
+						},
+					} )
+				)
+			).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
 		} );
 	} );
 
@@ -53,14 +60,14 @@ describe( 'selectors', () => {
 				purchases: {
 					data: [
 						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
+						{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
 					],
 					error: null,
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true
-				}
+					hasLoadedUserPurchasesFromServer: true,
+				},
 			};
 
 			expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
@@ -92,7 +99,7 @@ describe( 'selectors', () => {
 					countryCode: undefined,
 					countryName: undefined,
 					name: undefined,
-					type: undefined
+					type: undefined,
 				},
 				priceText: 'undefinedundefined',
 				productId: NaN,
@@ -106,7 +113,7 @@ describe( 'selectors', () => {
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
-				userId: NaN
+				userId: NaN,
 			} );
 		} );
 	} );
@@ -120,8 +127,8 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: true,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			expect( isFetchingUserPurchases( state ) ).to.be.true;
@@ -137,8 +144,8 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			expect( isFetchingSitePurchases( state ) ).to.be.true;
@@ -152,23 +159,23 @@ describe( 'selectors', () => {
 					data: [
 						{
 							ID: '81414',
-							blog_id: '1234'
+							blog_id: '1234',
 						},
 						{
 							ID: '82867',
-							blog_id: '1234'
+							blog_id: '1234',
 						},
 						{
 							ID: '105103',
-							blog_id: '123'
-						}
+							blog_id: '123',
+						},
 					],
 					error: null,
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			const result = getSitePurchases( state, 1234 );
@@ -189,40 +196,44 @@ describe( 'selectors', () => {
 							meta: 'dev.live',
 							blog_id: '123',
 							is_domain_registration: 'true',
-							product_slug: 'dotlive_domain'
+							product_slug: 'dotlive_domain',
 						},
 						{
 							ID: '82867',
 							blog_id: '123',
 							product_slug: 'value_bundle',
-							included_domain: 'dev.live'
+							included_domain: 'dev.live',
 						},
 						{
 							ID: '105103',
 							blog_id: '123',
 							meta: 'wordpress.com',
-							product_slug: 'domain_map'
-						}
+							product_slug: 'domain_map',
+						},
 					],
 					error: null,
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
-			const subscriptionPurchase = getPurchases( state ).find( purchase => purchase.productSlug === 'value_bundle' );
+			const subscriptionPurchase = getPurchases( state ).find(
+				purchase => purchase.productSlug === 'value_bundle'
+			);
 
-			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal( 'dev.live' );
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal(
+				'dev.live'
+			);
 		} );
 	} );
 
 	describe( 'isUserPaid', () => {
 		const targetUserId = 123;
 		const examplePurchases = Object.freeze( [
-			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId, },
-			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId, },
+			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
+			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
 		] );
 
 		it( 'should return false because there is no purchases', () => {
@@ -234,7 +245,7 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.false;
@@ -249,7 +260,7 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.true;
@@ -264,7 +275,7 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, 65535 ) ).to.be.false;
@@ -279,7 +290,7 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: false,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.false;

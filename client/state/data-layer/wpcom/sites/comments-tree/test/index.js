@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,16 +8,9 @@ import sinon, { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchCommentsTreeForSite,
-	addCommentsTree,
-	announceFailure,
-} from '../';
+import { fetchCommentsTreeForSite, addCommentsTree, announceFailure } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	COMMENTS_TREE_SITE_ADD,
-	NOTICE_CREATE,
-} from 'state/action-types';
+import { COMMENTS_TREE_SITE_ADD, NOTICE_CREATE } from 'state/action-types';
 
 describe( 'comments-tree', () => {
 	const action = { type: 'DUMMY_ACTION', query: { status: 'approved', siteId: 77203074 } };
@@ -26,12 +20,17 @@ describe( 'comments-tree', () => {
 			const dispatch = spy();
 			fetchCommentsTreeForSite( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( http( {
-				method: 'GET',
-				path: '/sites/77203074/comments-tree',
-				query: { status: 'approved' },
-				apiVersion: '1',
-			}, action ) );
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'GET',
+						path: '/sites/77203074/comments-tree',
+						query: { status: 'approved' },
+						apiVersion: '1',
+					},
+					action
+				)
+			);
 		} );
 	} );
 
@@ -40,8 +39,8 @@ describe( 'comments-tree', () => {
 			const dispatch = spy();
 			addCommentsTree( { dispatch }, action, {
 				comments_tree: [ [ 2, 1, 0 ] ],
-				pingbacks_tree: [ [ 3, 1, 0 ] ],
-				trackbacks_tree: [ [ 4, 1, 0 ] ],
+				pingbacks_tree: [ [ 3, 1, 0 ] ],
+				trackbacks_tree: [ [ 4, 1, 0 ] ],
 			} );
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( {

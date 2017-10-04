@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );

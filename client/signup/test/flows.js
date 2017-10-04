@@ -1,7 +1,8 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => {},
-	getABTestVariation: () => null
+	getABTestVariation: () => null,
 } ) );
 jest.mock( 'lib/user', () => require( './mocks/lib/user' ) );
 
@@ -17,7 +18,6 @@ import sinon from 'sinon';
 import abtest from 'lib/abtest';
 import flows from 'signup/config/flows';
 import mockedFlows from './fixtures/flows';
-
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
@@ -87,7 +87,7 @@ describe( 'Signup Flows Configuration', () => {
 		it( 'should return flow unmodified if variation is not valid', () => {
 			const myFlow = {
 				name: 'test flow name',
-				steps: [ 1, 2, 3 ]
+				steps: [ 1, 2, 3 ],
 			};
 
 			assert.equal( flows.getABTestFilteredFlow( 'main', myFlow ), myFlow );
@@ -99,7 +99,7 @@ describe( 'Signup Flows Configuration', () => {
 	describe( 'insertStepIntoFlow', () => {
 		const myFlow = {
 			name: 'test flow name',
-			steps: [ 'step1', 'step2', 'step3', 'step4' ]
+			steps: [ 'step1', 'step2', 'step3', 'step4' ],
 		};
 
 		Object.freeze( myFlow );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,7 @@ import {
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
-import {
-	composeAnalytics,
-	withAnalytics,
-	bumpStat,
-	setTracksAnonymousUserId,
-} from '../actions.js';
+import { composeAnalytics, withAnalytics, bumpStat, setTracksAnonymousUserId } from '../actions.js';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {
@@ -48,12 +44,12 @@ describe( 'middleware', () => {
 			const expected = [
 				{
 					type: ANALYTICS_STAT_BUMP,
-					payload: { group: 'spline_types', name: 'ocean' }
+					payload: { group: 'spline_types', name: 'ocean' },
 				},
 				{
 					type: ANALYTICS_STAT_BUMP,
-					payload: { group: 'spline_types', name: 'river' }
-				}
+					payload: { group: 'spline_types', name: 'river' },
+				},
 			];
 
 			expect( composite.type ).to.equal( ANALYTICS_MULTI_TRACK );
@@ -88,8 +84,8 @@ describe( 'middleware', () => {
 			const expected = [
 				{
 					type: ANALYTICS_TRACKS_ANONID_SET,
-					payload: 'abcd1234'
-				}
+					payload: 'abcd1234',
+				},
 			];
 			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
 			expect( tracksAction.meta.analytics ).to.deep.equal( expected );

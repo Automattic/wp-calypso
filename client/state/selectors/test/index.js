@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,13 +32,13 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	it( 'should export every selector file', ( done ) => {
+	it( 'should export every selector file', done => {
 		fs.readdir( path.join( __dirname, '..' ), ( error, files ) => {
 			if ( error ) {
 				return done( error );
 			}
 
-			each( files, ( file ) => {
+			each( files, file => {
 				if ( ! RX_JS_EXTENSION.test( file ) || 'index.js' === file ) {
 					return;
 				}

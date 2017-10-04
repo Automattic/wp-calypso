@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { findThemeFilterTerm } from '../';
-import { state } from './fixtures/theme-filters';
+import { findThemeFilterTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'findThemeFilterTerm()', () => {
 	it( 'should return null for an inexistent term slug', () => {
@@ -19,7 +20,8 @@ describe( 'findThemeFilterTerm()', () => {
 		const term = findThemeFilterTerm( state, 'blog' );
 		expect( term ).to.deep.equal( {
 			name: 'Blog',
-			description: 'Whether you\'re authoring a personal blog, professional blog, or a business blog — ...'
+			description:
+				"Whether you're authoring a personal blog, professional blog, or a business blog — ...",
 		} );
 	} );
 
@@ -27,7 +29,7 @@ describe( 'findThemeFilterTerm()', () => {
 		const term = findThemeFilterTerm( state, 'style:bright' );
 		expect( term ).to.deep.equal( {
 			name: 'Bright',
-			description: ''
+			description: '',
 		} );
 	} );
 } );

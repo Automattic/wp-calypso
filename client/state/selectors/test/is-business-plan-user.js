@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,7 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						user_id: '123',
 						product_slug: PLAN_BUSINESS,
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
@@ -48,7 +49,7 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						user_id: '123',
 						product_slug: 'yet-another-plan',
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
@@ -59,7 +60,7 @@ describe( 'isBusinessPlanUser()', () => {
 
 	it( 'should return false if current user id is null.', () => {
 		const state = deepFreeze( {
-			currentUser: {}
+			currentUser: {},
 		} );
 
 		assert.isFalse( isBusinessPlanUser( state ) );
@@ -72,10 +73,11 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 			purchases: {
 				data: [
-					{  // intentionally put a purchase that doesn't belong to the user 123 here.
+					{
+						// intentionally put a purchase that doesn't belong to the user 123 here.
 						user_id: '789',
 						product_slug: PLAN_BUSINESS,
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},

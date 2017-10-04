@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,26 +29,32 @@ describe( 'actions', () => {
 	describe( '#fetchOrders()', () => {
 		const siteId = '123';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&per_page=50&status=any&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/orders&page=1&per_page=50&status=any&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						body: orders,
 						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 30 },
 						status: 200,
-					}
+					},
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=invalid&per_page=50&status=any&_envelope&_method=get', json: true } )
+				.query( {
+					path: '/wc/v3/orders&page=invalid&per_page=50&status=any&_envelope&_method=get',
+					json: true,
+				} )
 				.reply( 404, {
 					data: {
 						message: 'Invalid parameter(s): page',
 						error: 'rest_invalid_param',
 						status: 400,
-					}
+					},
 				} );
 		} );
 
@@ -55,7 +62,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchOrders( siteId, { page: 1, status: 'any' } )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDERS_REQUEST, siteId, query: {} } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDERS_REQUEST,
+				siteId,
+				query: {},
+			} );
 		} );
 
 		it( 'should dispatch a success action with orders list when request completes', () => {
@@ -101,11 +112,11 @@ describe( 'actions', () => {
 									items: {},
 									queries: {},
 									total: {},
-								}
-							}
-						}
-					}
-				}
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchOrders( 123, { page: 1 } )( dispatch, getState );
@@ -116,7 +127,7 @@ describe( 'actions', () => {
 	describe( '#fetchOrder()', () => {
 		const siteId = '123';
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -131,7 +142,7 @@ describe( 'actions', () => {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
 						status: 400,
-					}
+					},
 				} );
 		} );
 
@@ -139,7 +150,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchOrder( siteId, 40 )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_REQUEST, siteId, orderId: 40 } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_REQUEST,
+				siteId,
+				orderId: 40,
+			} );
 		} );
 
 		it( 'should dispatch a success action with the order when request completes', () => {
@@ -184,11 +199,11 @@ describe( 'actions', () => {
 									items: {},
 									queries: {},
 									total: {},
-								}
-							}
-						}
-					}
-				}
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchOrder( 123, 40 )( dispatch, getState );
@@ -203,21 +218,29 @@ describe( 'actions', () => {
 			status: 'completed',
 		};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders/40&_method=post', json: true, body: omit( updatedOrder, 'id' ) } )
+				.query( {
+					path: '/wc/v3/orders/40&_method=post',
+					json: true,
+					body: omit( updatedOrder, 'id' ),
+				} )
 				.reply( 200, {
 					data: order,
 				} )
 				.post( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders/invalid&_method=post', json: true, body: omit( updatedOrder, 'id' ) } )
+				.query( {
+					path: '/wc/v3/orders/invalid&_method=post',
+					json: true,
+					body: omit( updatedOrder, 'id' ),
+				} )
 				.reply( 404, {
 					data: {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
-					}
+					},
 				} );
 		} );
 
@@ -225,7 +248,11 @@ describe( 'actions', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			updateOrder( siteId, updatedOrder )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_UPDATE, siteId, orderId: 40 } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_UPDATE,
+				siteId,
+				orderId: 40,
+			} );
 		} );
 
 		it( 'should dispatch a success action with the order when request completes', () => {

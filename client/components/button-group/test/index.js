@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,12 @@ describe( 'ButtonGroup', function() {
 	} );
 
 	it( 'should contains the same number of .button nodes than <Button>s it receives', function() {
-		const buttonGroup = shallow( <ButtonGroup><Button>test</Button><Button>test2</Button></ButtonGroup> );
+		const buttonGroup = shallow(
+			<ButtonGroup>
+				<Button>test</Button>
+				<Button>test2</Button>
+			</ButtonGroup>
+		);
 		assert.equal( 2, buttonGroup.find( Button ).length );
 	} );
 
@@ -38,7 +44,11 @@ describe( 'ButtonGroup', function() {
 	} );
 
 	it( 'should throw an error if any of the children is not a <Button>', function() {
-		shallow( <ButtonGroup><div id="test">test</div></ButtonGroup> );
+		shallow(
+			<ButtonGroup>
+				<div id="test">test</div>
+			</ButtonGroup>
+		);
 
 		/* eslint-disable no-console */
 		sinon.assert.calledWithMatch( console.error, 'All children elements should be a Button.' );

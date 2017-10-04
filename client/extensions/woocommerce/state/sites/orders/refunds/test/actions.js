@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ describe( 'actions', () => {
 			reason: 'Testing reason.',
 		};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -38,7 +39,7 @@ describe( 'actions', () => {
 					data: {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
-					}
+					},
 				} );
 		} );
 

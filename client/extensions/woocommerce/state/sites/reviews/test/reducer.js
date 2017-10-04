@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,13 +9,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	isQueryLoading,
-	isQueryError,
-	items,
-	queries,
-	total,
-} from '../reducer';
+import { isQueryLoading, isQueryError, items, queries, total } from '../reducer';
 import reducer from 'woocommerce/state/sites/reducer';
 import {
 	WOOCOMMERCE_REVIEWS_REQUEST,
@@ -81,22 +76,25 @@ describe( 'reducer', () => {
 				reviews,
 			};
 
-			const newState = reducer( {
-				546: {
-					reviews: {
-						isQueryLoading: {
-							'{}': true,
-						}
-					}
+			const newState = reducer(
+				{
+					546: {
+						reviews: {
+							isQueryLoading: {
+								'{}': true,
+							},
+						},
+					},
+					123: {
+						reviews: {
+							isQueryLoading: {
+								'{}': true,
+							},
+						},
+					},
 				},
-				123: {
-					reviews: {
-						isQueryLoading: {
-							'{}': true,
-						}
-					}
-				}
-			}, action );
+				action
+			);
 			expect( newState[ 546 ].reviews.isQueryLoading ).to.eql( { '{}': false } );
 			expect( newState[ 123 ].reviews.isQueryLoading ).to.eql( { '{}': true } );
 		} );

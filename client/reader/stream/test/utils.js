@@ -7,9 +7,7 @@ jest.mock( 'lib/user/utils', () => ( {} ) );
 import { expect, assert } from 'chai';
 import moment from 'moment';
 
-import {
-	sameDay, sameSite, combine, combineCards, injectRecommendations
-} from '../utils';
+import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
 
 describe( 'reader stream', () => {
 	const today = moment().toDate();

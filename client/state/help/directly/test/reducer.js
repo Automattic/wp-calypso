@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,17 +19,11 @@ import {
 	STATUS_READY,
 	STATUS_ERROR,
 } from '../constants';
-import reducer, {
-	questionAsked,
-	status,
-} from '../reducer';
+import reducer, { questionAsked, status } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'questionAsked',
-			'status',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'questionAsked', 'status' ] );
 	} );
 
 	describe( '#questionAsked()', () => {
@@ -38,7 +33,8 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set once a question is asked', () => {
-			const questionText = 'What is the answer to the ultimate question of life, the universe, and everything?';
+			const questionText =
+				'What is the answer to the ultimate question of life, the universe, and everything?';
 			const name = 'Douglas Adams';
 			const email = 'doug@hhguide.com';
 			const action = { type: DIRECTLY_ASK_QUESTION, questionText, name, email };

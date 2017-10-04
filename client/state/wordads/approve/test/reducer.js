@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,18 +15,14 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 } from 'state/action-types';
-import reducer, {
-	requesting,
-	requestErrors,
-	requestSuccess
-} from '../reducer';
+import reducer, { requesting, requestErrors, requestSuccess } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
 			'requestErrors',
-			'requestSuccess'
+			'requestSuccess',
 		] );
 	} );
 
@@ -39,40 +36,40 @@ describe( 'reducer', () => {
 			const siteId = 2916284;
 			const state = requesting( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST,
-				siteId
+				siteId,
 			} );
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
 		it( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
-				2916284: false
+				2916284: false,
 			} );
 			const state = requesting( original, {
 				type: WORDADS_SITE_APPROVE_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
 		it( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: false
+				77203074: false,
 			} );
 			const state = requesting( original, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 	} );
@@ -87,69 +84,69 @@ describe( 'reducer', () => {
 			const state = requestErrors( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 2916284,
-				error: 'something went wrong'
+				error: 'something went wrong',
 			} );
 
 			expect( state ).to.eql( {
-				2916284: 'something went wrong'
+				2916284: 'something went wrong',
 			} );
 		} );
 
 		it( 'should update error state on success', () => {
 			const originalState = deepFreeze( {
-				2916284: 'something went wrong'
+				2916284: 'something went wrong',
 			} );
 			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: null
+				2916284: null,
 			} );
 		} );
 
 		it( 'should update error state on dismiss error', () => {
 			const originalState = deepFreeze( {
-				2916284: 'something went wrong'
+				2916284: 'something went wrong',
 			} );
 			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: null
+				2916284: null,
 			} );
 		} );
 
 		it( 'should update error state by site id', () => {
 			const originalState = deepFreeze( {
-				2916284: 'something went wrong'
+				2916284: 'something went wrong',
 			} );
 			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 2916284,
-				error: 'whoops'
+				error: 'whoops',
 			} );
 			expect( state ).to.eql( {
-				2916284: 'whoops'
+				2916284: 'whoops',
 			} );
 		} );
 
 		it( 'should accumulate error state by site ID on failure', () => {
 			const originalState = deepFreeze( {
-				2916284: 'something went wrong'
+				2916284: 'something went wrong',
 			} );
 			const state = requestErrors( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 77203074,
-				error: 'something else went wrong'
+				error: 'something else went wrong',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: 'something went wrong',
-				77203074: 'something else went wrong'
+				77203074: 'something else went wrong',
 			} );
 		} );
 	} );
@@ -163,67 +160,67 @@ describe( 'reducer', () => {
 		it( 'should index success state by site ID', () => {
 			const state = requestSuccess( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
 		it( 'should update success state on error', () => {
 			const originalState = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requestSuccess( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: null
+				2916284: null,
 			} );
 		} );
 
 		it( 'should update success state on dismiss error', () => {
 			const originalState = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requestSuccess( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: null
+				2916284: null,
 			} );
 		} );
 
 		it( 'should update success state by site id', () => {
 			const originalState = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requestSuccess( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
 		it( 'should accumulate success state by site ID on success', () => {
 			const originalState = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requestSuccess( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 	} );

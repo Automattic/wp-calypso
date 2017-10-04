@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,12 +24,7 @@ import {
 	saveZone,
 	updateZonesList,
 } from '../';
-import {
-	requestError,
-	requestZones,
-	updateZone,
-	updateZones,
-} from 'zoninator/state/zones/actions';
+import { requestError, requestZones, updateZone, updateZones } from 'zoninator/state/zones/actions';
 import { fromApi } from '../utils';
 
 const apiResponse = {
@@ -38,7 +34,7 @@ const apiResponse = {
 			name: 'Test zone',
 			slug: 'test-zone',
 			description: 'A test zone.',
-		}
+		},
 	],
 };
 
@@ -60,13 +56,18 @@ describe( '#requestZonesList()', () => {
 		requestZonesList( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/jetpack-blogs/123456/rest-api/',
-			query: {
-				path: '/zoninator/v1/zones',
-			}
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/jetpack-blogs/123456/rest-api/',
+					query: {
+						path: '/zoninator/v1/zones',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -78,9 +79,15 @@ describe( '#updateZonesList()', () => {
 		updateZonesList( { dispatch }, action, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, {
-			23: fromApi( apiResponse.data[ 0 ] ),
-		}, fromApi ) );
+		expect( dispatch ).to.have.been.calledWith(
+			updateZones(
+				123456,
+				{
+					23: fromApi( apiResponse.data[ 0 ] ),
+				},
+				fromApi
+			)
+		);
 	} );
 } );
 
@@ -108,15 +115,20 @@ describe( '#createZone()', () => {
 
 		createZone( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/jetpack-blogs/123456/rest-api/',
-			query: {
-				body: JSON.stringify( zone ),
-				json: true,
-				path: '/zoninator/v1/zones',
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'POST',
+					path: '/jetpack-blogs/123456/rest-api/',
+					query: {
+						body: JSON.stringify( zone ),
+						json: true,
+						path: '/zoninator/v1/zones',
+					},
+				},
+				action
+			)
+		);
 	} );
 
 	it( 'should dispatch `startSave`', () => {
@@ -191,15 +203,20 @@ describe( '#saveZone()', () => {
 
 		saveZone( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/jetpack-blogs/123/rest-api/',
-			query: {
-				body: JSON.stringify( zone ),
-				json: true,
-				path: '/zoninator/v1/zones/456&_method=PUT',
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'POST',
+					path: '/jetpack-blogs/123/rest-api/',
+					query: {
+						body: JSON.stringify( zone ),
+						json: true,
+						path: '/zoninator/v1/zones/456&_method=PUT',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -228,11 +245,9 @@ describe( '#announceZoneSaved()', () => {
 
 		announceZoneSaved( dispatch, action, fromApi( zone ) );
 
-		expect( dispatch ).to.have.been.calledWith(	updateZone(
-			123456,
-			zone.term_id,
-			fromApi( zone ),
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			updateZone( 123456, zone.term_id, fromApi( zone ) )
+		);
 	} );
 
 	it( 'should dispatch `successNotice`', () => {
@@ -245,22 +260,29 @@ describe( '#announceZoneSaved()', () => {
 
 		announceZoneSaved( dispatch, action, zone );
 
-		expect( dispatch ).to.have.been.calledWith( successNotice(
-			translate( 'Zone saved!' ),
-			{ id: 'zoninator-zone-create' },
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			successNotice( translate( 'Zone saved!' ), { id: 'zoninator-zone-create' } )
+		);
 	} );
 } );
 
 describe( '#handleZoneSaved()', () => {
-	const getState = () => ( { extensions: { zoninator: { zones: { items: {
-		123: {
-			456: {
-				name: 'Before',
-				description: 'Zone before update',
-			}
-		}
-	} } } } } );
+	const getState = () => ( {
+		extensions: {
+			zoninator: {
+				zones: {
+					items: {
+						123: {
+							456: {
+								name: 'Before',
+								description: 'Zone before update',
+							},
+						},
+					},
+				},
+			},
+		},
+	} );
 
 	it( 'should dispatch `initialize`', () => {
 		const dispatch = sinon.spy();
@@ -274,13 +296,12 @@ describe( '#handleZoneSaved()', () => {
 
 		handleZoneSaved( { dispatch, getState }, action );
 
-		expect( dispatch ).to.have.been.calledWith( initialize(
-			'form',
-			{
+		expect( dispatch ).to.have.been.calledWith(
+			initialize( 'form', {
 				name: 'After',
 				description: 'Zone before update',
-			},
-		) );
+			} )
+		);
 	} );
 } );
 
@@ -309,10 +330,11 @@ describe( '#announceSaveFailure()', () => {
 
 		announceSaveFailure( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledWith( errorNotice(
-			translate( 'There was a problem saving the zone. Please try again.' ),
-			{ id: 'zoninator-zone-create' },
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
+				id: 'zoninator-zone-create',
+			} )
+		);
 	} );
 } );
 
@@ -340,13 +362,18 @@ describe( '#deleteZone()', () => {
 
 		deleteZone( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'POST',
-			path: '/jetpack-blogs/123/rest-api/',
-			query: {
-				path: '/zoninator/v1/zones/456&_method=DELETE',
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'POST',
+					path: '/jetpack-blogs/123/rest-api/',
+					query: {
+						path: '/zoninator/v1/zones/456&_method=DELETE',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -356,15 +383,16 @@ describe( '#announceDeleteFailure()', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
-			zoneId: 456
+			zoneId: 456,
 		};
 
 		announceDeleteFailure( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( errorNotice(
-			translate( 'The zone could not be deleted. Please try again.' ),
-			{ id: 'zoninator-zone-delete' },
-		) );
+		expect( dispatch ).to.have.been.calledWith(
+			errorNotice( translate( 'The zone could not be deleted. Please try again.' ), {
+				id: 'zoninator-zone-delete',
+			} )
+		);
 	} );
 } );

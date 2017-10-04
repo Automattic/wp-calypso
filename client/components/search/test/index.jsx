@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
@@ -29,7 +30,7 @@ describe( 'Search', function() {
 			beforeEach( function() {
 				const searchElement = React.createElement( searchClass, {
 					initialValue,
-					onSearch
+					onSearch,
 				} );
 				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
@@ -42,7 +43,7 @@ describe( 'Search', function() {
 		describe( 'without initialValue', function() {
 			beforeEach( function() {
 				const searchElement = React.createElement( searchClass, {
-					onSearch
+					onSearch,
 				} );
 				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );

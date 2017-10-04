@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: MEDIA_MODAL_VIEW_SET,
-				view: ModalViews.DETAIL
+				view: ModalViews.DETAIL,
 			} );
 		} );
 	} );
@@ -28,7 +29,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: MEDIA_MODAL_VIEW_SET,
-				view: null
+				view: null,
 			} );
 		} );
 	} );

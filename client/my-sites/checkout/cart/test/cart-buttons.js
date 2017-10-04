@@ -1,9 +1,10 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/mixins/analytics', () => {
 	const recordStub = require( 'sinon' ).stub();
 
 	const analytics = () => ( {
-		recordEvent: recordStub
+		recordEvent: recordStub,
 	} );
 	analytics.recordStub = recordStub;
 
@@ -28,7 +29,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'cart-buttons', function() {
 	let cartButtonsComponent, onKeepSearchingClickStub;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		onKeepSearchingClickStub = sandbox.stub();
 	} );
 
@@ -36,11 +37,11 @@ describe( 'cart-buttons', function() {
 		beforeEach( function() {
 			cartButtonsComponent = mount(
 				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
+					selectedSite={ { slug: 'example.com' } }
 					showKeepSearching={ true }
 					onKeepSearchingClick={ onKeepSearchingClickStub }
 					translate={ identity }
-					/>
+				/>
 			);
 		} );
 
@@ -57,10 +58,7 @@ describe( 'cart-buttons', function() {
 	describe( 'Click on Checkout Button', function() {
 		beforeEach( function() {
 			cartButtonsComponent = mount(
-				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
-					translate={ identity }
-					/>
+				<CartButtons selectedSite={ { slug: 'example.com' } } translate={ identity } />
 			);
 		} );
 

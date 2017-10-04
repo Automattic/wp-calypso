@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,8 +25,8 @@ describe( 'Data Layer', () => {
 					oceanName: 'ARCTIC',
 					dataLayer: {
 						forceRefresh: true,
-					}
-				}
+					},
+				},
 			};
 			const localAction = bypassDataLayer( action );
 

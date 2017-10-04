@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,11 +26,16 @@ describe( 'EditorNotice', () => {
 				translate={ translate }
 				status="is-error"
 				message="publishFailure"
-				error={ new Error( 'NO_CONTENT' ) } />
+				error={ new Error( 'NO_CONTENT' ) }
+			/>
 		);
 
-		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).equal( 'You haven\'t written anything yet!' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'text' )
+			.equal( "You haven't written anything yet!" );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-error' );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
@@ -40,12 +46,17 @@ describe( 'EditorNotice', () => {
 				type="post"
 				status="is-error"
 				message="publishFailure"
-				error={ new Error() } />
+				error={ new Error() }
+			/>
 		);
 
 		expect( wrapper ).to.have.descendants( Notice );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).equal( 'Publishing of post failed.' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'text' )
+			.equal( 'Publishing of post failed.' );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-error' );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
@@ -60,18 +71,27 @@ describe( 'EditorNotice', () => {
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} } />
+				} }
+			/>
 		);
 
-		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
-			translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
-				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>,
-					a: <a href="/page/example.wordpress.com" />,
-				}
-			} )
-		);
-		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'text' )
+			.eql(
+				translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
+					components: {
+						siteLink: (
+							<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
+								Example Site
+							</a>
+						),
+						a: <a href="/page/example.wordpress.com" />,
+					},
+				} )
+			);
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-success' );
 	} );
 
 	it( 'should display custom post type view label', () => {
@@ -81,24 +101,33 @@ describe( 'EditorNotice', () => {
 				type="jetpack-portfolio"
 				typeObject={ {
 					labels: {
-						view_item: 'View Project'
-					}
+						view_item: 'View Project',
+					},
 				} }
 				message="published"
 				status="is-success"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					title: 'Example Site'
-				} } />
+					title: 'Example Site',
+				} }
+			/>
 		);
 
-		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
-			translate( 'Post published on {{siteLink/}}!', {
-				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
-				}
-			} )
-		);
-		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'text' )
+			.eql(
+				translate( 'Post published on {{siteLink/}}!', {
+					components: {
+						siteLink: (
+							<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
+								Example Site
+							</a>
+						),
+					},
+				} )
+			);
+		expect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-success' );
 	} );
 } );

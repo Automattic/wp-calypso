@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,8 +36,8 @@ describe( '#likeComment()', () => {
 					method: 'POST',
 					path: `/sites/${ SITE_ID }/comments/1/likes/new`,
 				},
-				action,
-			),
+				action
+			)
 		);
 	} );
 } );
@@ -45,9 +46,13 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, {
-			like_count: 4,
-		} );
+		updateCommentLikes(
+			{ dispatch },
+			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
+			{
+				like_count: 4,
+			}
+		);
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
@@ -57,7 +62,7 @@ describe( '#updateCommentLikes()', () => {
 				postId: POST_ID,
 				commentId: 1,
 				like_count: 4,
-			} ),
+			} )
 		);
 	} );
 } );
@@ -75,7 +80,7 @@ describe( '#handleLikeFailure()', () => {
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1,
-			} ),
+			} )
 		);
 	} );
 

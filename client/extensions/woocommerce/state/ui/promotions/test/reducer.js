@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,9 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import {
-	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PROMOTIONS_PAGE_SET } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should initialize to default values', () => {
@@ -56,4 +55,3 @@ describe( 'reducer', () => {
 		expect( state.perPage ).to.equal( 10 );
 	} );
 } );
-

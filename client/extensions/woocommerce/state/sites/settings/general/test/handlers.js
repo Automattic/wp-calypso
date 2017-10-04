@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,21 +15,22 @@ import {
 	handleSettingsGeneralError,
 } from '../handlers';
 import { fetchSettingsGeneral } from '../actions';
-import {
-	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE } from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
-const settingsData = [ {
-	id: 'woocommerce_default_country',
-	label: 'Base location',
-	description: 'This is the base location for your business. Tax rates will be based on this country.',
-	type: 'select',
-	'default': 'GB',
-	tip: 'This is the base location for your business. Tax rates will be based on this country.',
-	value: 'US:MA',
-	options: {},
-} ];
+const settingsData = [
+	{
+		id: 'woocommerce_default_country',
+		label: 'Base location',
+		description:
+			'This is the base location for your business. Tax rates will be based on this country.',
+		type: 'select',
+		default: 'GB',
+		tip: 'This is the base location for your business. Tax rates will be based on this country.',
+		value: 'US:MA',
+		options: {},
+	},
+];
 
 describe( 'handlers', () => {
 	describe( '#handleSettingsGeneral()', () => {
@@ -41,26 +43,28 @@ describe( 'handlers', () => {
 							[ siteId ]: {
 								settings: {
 									general: null,
-								}
-							}
-						}
-					}
-				}
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
 			handleSettingsGeneral( { dispatch, getState }, action, noop );
-			expect( dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: '/wc/v3/settings/general&_method=GET',
-					json: true,
-					apiVersion: '1.1',
-				}
-			} ) );
+			expect( dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					method: 'GET',
+					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					query: {
+						path: '/wc/v3/settings/general&_method=GET',
+						json: true,
+						apiVersion: '1.1',
+					},
+				} )
+			);
 		} );
 		it( 'should not dispatch if settings are already loaded for this site', () => {
 			const siteId = '123';
@@ -71,11 +75,11 @@ describe( 'handlers', () => {
 							[ siteId ]: {
 								settings: {
 									general: settingsData,
-								}
-							}
-						}
-					}
-				}
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );

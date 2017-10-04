@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,38 +13,32 @@ import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
-	HAPPINESS_ENGINEERS_FETCH_SUCCESS
+	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 } from 'state/action-types';
-import {
-	receiveHappinessEngineers,
-	fetchHappinessEngineers
-} from '../actions';
+import { receiveHappinessEngineers, fetchHappinessEngineers } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveHappinessEngineers()', () => {
 		it( 'should return an action object', () => {
 			const action = receiveHappinessEngineers( [
 				{ avatar_URL: 'test 1' },
-				{ avatar_URL: 'test 2' }
+				{ avatar_URL: 'test 2' },
 			] );
 
 			expect( action ).to.eql( {
 				type: HAPPINESS_ENGINEERS_RECEIVE,
-				happinessEngineers: [
-					{ avatar_URL: 'test 1' },
-					{ avatar_URL: 'test 2' }
-				]
+				happinessEngineers: [ { avatar_URL: 'test 1' }, { avatar_URL: 'test 2' } ],
 			} );
 		} );
 	} );
 
 	describe( 'fetchHappinessEngineers()', () => {
 		context( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/meta/happiness-engineers/' )
@@ -54,16 +49,14 @@ describe( 'actions', () => {
 				fetchHappinessEngineers()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
-					type: HAPPINESS_ENGINEERS_FETCH
+					type: HAPPINESS_ENGINEERS_FETCH,
 				} );
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith(
-						receiveHappinessEngineers( [
-							{ avatar_URL: 'test 1' }
-						] )
+						receiveHappinessEngineers( [ { avatar_URL: 'test 1' } ] )
 					);
 				} );
 			} );
@@ -78,7 +71,7 @@ describe( 'actions', () => {
 		} );
 
 		context( 'failed', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/meta/happiness-engineers/' )
@@ -89,7 +82,7 @@ describe( 'actions', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
-						error: match( { error: 'Server Error' } )
+						error: match( { error: 'Server Error' } ),
 					} );
 				} );
 			} );

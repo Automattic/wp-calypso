@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import reducer, { localValues, remoteValues, fetching } from '../reducer';
 
@@ -25,7 +26,7 @@ describe( 'reducer', () => {
 			'localValues',
 			'remoteValues',
 			'fetching',
-			'lastFetchedTimestamp'
+			'lastFetchedTimestamp',
 		] );
 	} );
 
@@ -40,38 +41,38 @@ describe( 'reducer', () => {
 			const state = localValues( undefined, {
 				type: PREFERENCES_SET,
 				key: 'foo',
-				value: 'bar'
+				value: 'bar',
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 
 		it( 'should accumulate preference values by key', () => {
 			const original = deepFreeze( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 			const state = localValues( original, {
 				type: PREFERENCES_SET,
 				key: 'baz',
-				value: 'qux'
+				value: 'qux',
 			} );
 
 			expect( state ).to.eql( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 		} );
 
 		it( 'should return same state reference if no change in value', () => {
 			const original = deepFreeze( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 			const state = localValues( original, {
 				type: PREFERENCES_SET,
 				key: 'foo',
-				value: 'bar'
+				value: 'bar',
 			} );
 
 			expect( state ).to.equal( original );
@@ -80,16 +81,16 @@ describe( 'reducer', () => {
 		it( 'should remove a preference key on a successful preference save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 			const state = localValues( original, {
 				type: PREFERENCES_SAVE_SUCCESS,
 				key: 'foo',
-				value: 'bar'
+				value: 'bar',
 			} );
 
 			expect( state ).to.eql( {
-				baz: 'qux'
+				baz: 'qux',
 			} );
 		} );
 	} );
@@ -105,28 +106,28 @@ describe( 'reducer', () => {
 			const state = remoteValues( undefined, {
 				type: PREFERENCES_RECEIVE,
 				values: {
-					foo: 'bar'
-				}
+					foo: 'bar',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 
 		it( 'should replace its state with the next received values', () => {
 			const original = deepFreeze( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 			const state = remoteValues( original, {
 				type: PREFERENCES_RECEIVE,
 				values: {
-					baz: 'qux'
-				}
+					baz: 'qux',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				baz: 'qux'
+				baz: 'qux',
 			} );
 		} );
 	} );
@@ -138,32 +139,32 @@ describe( 'reducer', () => {
 		} );
 		it( 'should update fetching state on fetch', () => {
 			const state = fetching( undefined, {
-				type: PREFERENCES_FETCH
+				type: PREFERENCES_FETCH,
 			} );
 			expect( state ).to.eql( true );
 		} );
 		it( 'should update fetching state on success', () => {
 			const state = fetching( true, {
-				type: PREFERENCES_FETCH_SUCCESS
+				type: PREFERENCES_FETCH_SUCCESS,
 			} );
 			expect( state ).to.eql( false );
 		} );
 		it( 'should update fetching state on failure', () => {
 			const original = { all: true };
 			const state = fetching( original, {
-				type: PREFERENCES_FETCH_FAILURE
+				type: PREFERENCES_FETCH_FAILURE,
 			} );
 			expect( state ).to.eql( false );
 		} );
 		it( 'should never persist state', () => {
 			const state = fetching( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 			expect( state ).to.eql( false );
 		} );
 		it( 'should never load persisted state', () => {
 			const state = fetching( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 			expect( state ).to.eql( false );
 		} );

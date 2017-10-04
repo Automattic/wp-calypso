@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +12,7 @@ import { pick } from 'lodash';
 import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import {
-	INSTALL_PLUGIN,
-	DEACTIVATE_PLUGIN,
-	ENABLE_AUTOUPDATE_PLUGIN,
-} from '../constants';
+import { INSTALL_PLUGIN, DEACTIVATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from '../constants';
 
 const createError = function( error, message, name = false ) {
 	const errorObj = new Error( message );
@@ -45,17 +42,17 @@ const state = deepFreeze( {
 					'jetpack/jetpack': {
 						status: 'completed',
 						action: DEACTIVATE_PLUGIN,
-					}
+					},
 				},
 				'site.two': {
 					'akismet/akismet': {
 						status: 'error',
 						action: INSTALL_PLUGIN,
 						error: createError( 'no_package', 'Download failed.' ),
-					}
-				}
-			}
-		}
+					},
+				},
+			},
+		},
 	},
 	sites: {
 		items: {
@@ -63,17 +60,17 @@ const state = deepFreeze( {
 				ID: 'site.one',
 				jetpack: true,
 				visible: true,
-				isSecondaryNetworkSite: ( () => false ),
+				isSecondaryNetworkSite: () => false,
 				name: 'One Site',
 			},
 			'site.two': {
 				ID: 'site.two',
 				jetpack: true,
 				visible: true,
-				isSecondaryNetworkSite: ( () => false ),
-				name: 'Two Site'
-			}
-		}
+				isSecondaryNetworkSite: () => false,
+				name: 'Two Site',
+			},
+		},
 	},
 	...userState,
 } );
@@ -162,7 +159,9 @@ describe( 'Installed plugin selectors', function() {
 			const siteOneId = 'site.one';
 			const siteTwoId = 'site.two';
 			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ] );
-			const siteWithPlugin = { [ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ) };
+			const siteWithPlugin = {
+				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ),
+			};
 			expect( plugins ).to.deep.include( { ...jetpack, sites: siteWithPlugin } );
 		} );
 
@@ -206,18 +205,24 @@ describe( 'Installed plugin selectors', function() {
 		it( 'Should get the plugin if the it exists on the requested site', function() {
 			const siteOneId = 'site.one';
 			const plugin = selectors.getPluginOnSite( state, siteOneId, 'akismet' );
-			const siteWithPlugin = { [ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ) };
+			const siteWithPlugin = {
+				[ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ),
+			};
 			expect( plugin ).to.eql( { ...akismet, sites: siteWithPlugin } );
 		} );
 	} );
 
 	describe( 'getSitesWithPlugin', function() {
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf( 0 );
+			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf(
+				0
+			);
 		} );
 
-		it( 'Should get an empty array if the requested plugin doesn\'t exist on any sites\' state', function() {
-			expect( selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' ) ).to.have.lengthOf( 0 );
+		it( "Should get an empty array if the requested plugin doesn't exist on any sites' state", function() {
+			expect(
+				selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' )
+			).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get an array of sites with the requested plugin', function() {
@@ -228,16 +233,26 @@ describe( 'Installed plugin selectors', function() {
 
 	describe( 'getSitesWithoutPlugin', function() {
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			expect( selectors.getSitesWithoutPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf( 0 );
+			expect( selectors.getSitesWithoutPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf(
+				0
+			);
 		} );
 
-		it( 'Should get an array of sites that don\'t have the plugin in their state', function() {
-			const siteIds = selectors.getSitesWithoutPlugin( state, [ 'site.one', 'site.two' ], 'akismet' );
+		it( "Should get an array of sites that don't have the plugin in their state", function() {
+			const siteIds = selectors.getSitesWithoutPlugin(
+				state,
+				[ 'site.one', 'site.two' ],
+				'akismet'
+			);
 			expect( siteIds ).to.eql( [ 'site.two' ] );
 		} );
 
 		it( 'Should get an empty array if the requested plugin exists on all requested sites', function() {
-			const siteIds = selectors.getSitesWithoutPlugin( state, [ 'site.one', 'site.two' ], 'hello-dolly' );
+			const siteIds = selectors.getSitesWithoutPlugin(
+				state,
+				[ 'site.one', 'site.two' ],
+				'hello-dolly'
+			);
 			expect( siteIds ).to.have.lengthOf( 0 );
 		} );
 	} );

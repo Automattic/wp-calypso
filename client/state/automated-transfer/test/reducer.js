@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,9 +10,7 @@ import { expect } from 'chai';
 import { status } from '../reducer';
 import { transferStates } from '../constants';
 
-import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE } from 'state/action-types';
 
 describe( 'state', () => {
 	describe( 'automated-transfer', () => {

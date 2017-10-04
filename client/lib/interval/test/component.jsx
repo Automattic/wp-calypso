@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 
 /**
@@ -30,13 +31,17 @@ describe( 'Interval', function() {
 
 	describe( 'Rendering and children', function() {
 		it( 'Should render an empty span with no children', function() {
-			const wrapper = shallow( <Interval onTick={ noop } period={ EVERY_SECOND }/> );
+			const wrapper = shallow( <Interval onTick={ noop } period={ EVERY_SECOND } /> );
 
 			assert( '' === wrapper.text() );
 		} );
 
 		it( 'Should render children', function() {
-			const wrapper = shallow( <Interval onTick={ noop } period={ EVERY_SECOND }><div>test</div></Interval> );
+			const wrapper = shallow(
+				<Interval onTick={ noop } period={ EVERY_SECOND }>
+					<div>test</div>
+				</Interval>
+			);
 
 			assert( wrapper.contains( <div>test</div> ) );
 		} );
@@ -45,9 +50,13 @@ describe( 'Interval', function() {
 			const PropConsumer = React.createClass( {
 				render() {
 					return <div>{ this.props.prop }</div>;
-				}
+				},
 			} );
-			const wrapper = shallow( <Interval prop={ 42 } onTick={ noop } period={ EVERY_SECOND }><PropConsumer /></Interval> );
+			const wrapper = shallow(
+				<Interval prop={ 42 } onTick={ noop } period={ EVERY_SECOND }>
+					<PropConsumer />
+				</Interval>
+			);
 
 			assert( 42 === wrapper.find( PropConsumer ).prop( 'prop' ) );
 		} );
@@ -60,7 +69,11 @@ describe( 'Interval', function() {
 
 		it( 'Should add the given action', function() {
 			const id = add( EVERY_MINUTE, noop );
-			mount( <Interval onTick={ noop } period={ EVERY_SECOND }><div /></Interval> );
+			mount(
+				<Interval onTick={ noop } period={ EVERY_SECOND }>
+					<div />
+				</Interval>
+			);
 
 			// verifies that the nextId incremented, signalling that the action was added
 			assert( id + 2 === add( EVERY_MINUTE, noop ) );
@@ -68,14 +81,22 @@ describe( 'Interval', function() {
 
 		it( 'Runs onTick() immediately', function() {
 			const o = { counter: 0 };
-			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
+			mount(
+				<Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }>
+					<div />
+				</Interval>
+			);
 
 			assert( 1 === o.counter );
 		} );
 
 		it( 'Runs onTick() on the intervals', function() {
 			const o = { counter: 0 };
-			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
+			mount(
+				<Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }>
+					<div />
+				</Interval>
+			);
 
 			assert( 1 === o.counter );
 
@@ -86,7 +107,11 @@ describe( 'Interval', function() {
 
 		it( 'Changes the callback on prop changes', function() {
 			const o = { counter: 0 };
-			const wrapper = mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
+			const wrapper = mount(
+				<Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }>
+					<div />
+				</Interval>
+			);
 
 			clock.tick( 1000 );
 			wrapper.setProps( { period: EVERY_MINUTE } );
@@ -104,12 +129,16 @@ describe( 'Interval', function() {
 
 		it( 'Adds the action when mounted', function() {
 			const o = { counter: 0 };
-			mount( <div></div> );
+			mount( <div /> );
 
 			clock.tick( 1000 );
 			assert( 0 === o.counter );
 
-			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
+			mount(
+				<Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }>
+					<div />
+				</Interval>
+			);
 
 			clock.tick( 1000 );
 			assert( 2 === o.counter );
@@ -117,7 +146,13 @@ describe( 'Interval', function() {
 
 		it( 'Removes the action when unMounted', function() {
 			const o = { counter: 0 };
-			const wrapper = mount( <div><Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval></div> );
+			const wrapper = mount(
+				<div>
+					<Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }>
+						<div />
+					</Interval>
+				</div>
+			);
 
 			clock.tick( 1000 );
 			assert( 2 === o.counter );

@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 
 /**
@@ -18,7 +19,7 @@ describe( 'PopupMonitor', function() {
 			screenTop: 0,
 			screenLeft: 0,
 			innerWidth: 1280,
-			innerHeight: 720
+			innerHeight: 720,
 		} );
 	} );
 

@@ -1,6 +1,7 @@
+/** @format */
 jest.mock( 'config', () => require( 'sinon' ).stub() );
 jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
-	statsdTimingUrl: require( 'sinon' ).stub()
+	statsdTimingUrl: require( 'sinon' ).stub(),
 } ) );
 
 /**
@@ -18,9 +19,7 @@ import config from 'config';
 import { statsdTimingUrl } from '../../../../client/lib/analytics/statsd';
 
 describe( 'Server-Side Analytics', function() {
-	describe( 'tracks.recordEvent', function() {
-
-	} );
+	describe( 'tracks.recordEvent', function() {} );
 
 	describe( 'statsd.recordTiming', function() {
 		beforeAll( function() {

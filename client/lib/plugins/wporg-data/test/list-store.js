@@ -1,5 +1,6 @@
+/** @format */
 jest.mock( 'config', () => ( {
-	isEnabled: () => true
+	isEnabled: () => true,
 } ) );
 jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
 

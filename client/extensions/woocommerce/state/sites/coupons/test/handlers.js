@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +10,7 @@ import { spy, match } from 'sinon';
  */
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { fetchCoupons, couponsUpdated } from '../actions';
-import {
-	requestCoupons,
-	requestCouponsSuccess
-} from '../handlers';
+import { requestCoupons, requestCouponsSuccess } from '../handlers';
 
 describe( 'handlers', () => {
 	const siteId = 123;
@@ -26,12 +24,14 @@ describe( 'handlers', () => {
 			const action = fetchCoupons( siteId, { page: 1, per_page: 30 } );
 			requestCoupons( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				query: {
-					path: '/wc/v3/coupons&page=1&per_page=30&_envelope&_method=GET'
-				}
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					query: {
+						path: '/wc/v3/coupons&page=1&per_page=30&_envelope&_method=GET',
+					},
+				} )
+			);
 		} );
 	} );
 
@@ -42,10 +42,7 @@ describe( 'handlers', () => {
 			};
 			const response = {
 				data: {
-					body: [
-						{ id: 1, code: '1' },
-						{ id: 2, code: '2' },
-					],
+					body: [ { id: 1, code: '1' }, { id: 2, code: '2' } ],
 					headers: {
 						[ 'X-WP-TotalPages' ]: '1',
 						[ 'X-WP-Total' ]: '2',

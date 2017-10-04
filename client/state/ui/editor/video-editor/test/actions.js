@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,12 +13,7 @@ import {
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
-import {
-	setPosterUrl,
-	showError,
-	showUploadProgress,
-	updatePoster,
-} from '../actions';
+import { setPosterUrl, showError, showUploadProgress, updatePoster } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#updatePoster()', () => {
@@ -29,7 +25,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_UPDATE_POSTER,
 				videoId,
-				params
+				params,
 			} );
 		} );
 	} );

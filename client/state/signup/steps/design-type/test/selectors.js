@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,12 +15,14 @@ describe( 'selectors', () => {
 	} );
 
 	it( 'should return design type from the state', () => {
-		expect( getDesignType( {
-			signup: {
-				steps: {
-					designType: 'design type'
-				}
-			}
-		} ) ).to.be.eql( 'design type' );
+		expect(
+			getDesignType( {
+				signup: {
+					steps: {
+						designType: 'design type',
+					},
+				},
+			} )
+		).to.be.eql( 'design type' );
 	} );
 } );

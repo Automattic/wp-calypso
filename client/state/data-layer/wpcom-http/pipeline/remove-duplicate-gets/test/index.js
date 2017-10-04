@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -52,40 +53,27 @@ const cp = o => ( { ...o } );
 
 describe( '#buildKey', () => {
 	it( 'should collapse "duplicate" requests', () => {
-		const duplicates = [ [
-			{ path: '/', apiNamespace: 'wpcom/v2', query: { id: 1, limit: 5 } },
-			{ path: '/', apiNamespace: 'wpcom/v2', query: { limit: 5, id: 1 } },
-		], [
-			{ path: '/' },
-			{ path: '/', query: undefined },
-		], [
-			{ path: '/' },
-			{ path: '/', query: {} },
-		], [
-			{ path: '/' },
-			{ path: '/', apiNamespace: undefined }
-		], [
-			{ path: '/', onSuccess: succeeder },
-			{ path: '/', onSuccess: filler },
-		] ];
+		const duplicates = [
+			[
+				{ path: '/', apiNamespace: 'wpcom/v2', query: { id: 1, limit: 5 } },
+				{ path: '/', apiNamespace: 'wpcom/v2', query: { limit: 5, id: 1 } },
+			],
+			[ { path: '/' }, { path: '/', query: undefined } ],
+			[ { path: '/' }, { path: '/', query: {} } ],
+			[ { path: '/' }, { path: '/', apiNamespace: undefined } ],
+			[ { path: '/', onSuccess: succeeder }, { path: '/', onSuccess: filler } ],
+		];
 
 		duplicates.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.equal( buildKey( b ) ) );
 	} );
 
 	it( 'should differentiate "unique" requests', () => {
-		const uniques = [ [
-			{ path: '/', apiNamespace: 'wp/v1' },
-			{ path: '/', apiNamespace: 'wpcom/v1' },
-		], [
-			{ path: '/', apiNamespace: 'wp/v1' },
-			{ path: '/', apiVersion: 'wp/v1' },
-		], [
-			{ path: '/' },
-			{ path: '/a' },
-		], [
-			{ path: '/', query: { id: 1 } },
-			{ path: '/', query: { id: 2 } },
-		] ];
+		const uniques = [
+			[ { path: '/', apiNamespace: 'wp/v1' }, { path: '/', apiNamespace: 'wpcom/v1' } ],
+			[ { path: '/', apiNamespace: 'wp/v1' }, { path: '/', apiVersion: 'wp/v1' } ],
+			[ { path: '/' }, { path: '/a' } ],
+			[ { path: '/', query: { id: 1 } }, { path: '/', query: { id: 2 } } ],
+		];
 
 		uniques.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.not.equal( buildKey( b ) ) );
 	} );
@@ -113,19 +101,25 @@ describe( '#addResponder', () => {
 	} );
 
 	it( 'should merge "duplicate" actions to an existing list', () => {
-		const union = addResponder( { successes: [ cp( succeeder ) ] }, { onSuccess: cp( succeeder ) } );
+		const union = addResponder(
+			{ successes: [ cp( succeeder ) ] },
+			{ onSuccess: cp( succeeder ) }
+		);
 
 		expect( union.successes ).to.eql( [ succeeder ] );
 	} );
 
 	it( 'should add both `onSuccess` and `onFailure`', () => {
-		const union = addResponder( {
-			failures: [ cp( failer ) ],
-			successes: [ cp( succeeder ) ],
-		}, {
-			onFailure: cp( filler ),
-			onSuccess: cp( filler ),
-		} );
+		const union = addResponder(
+			{
+				failures: [ cp( failer ) ],
+				successes: [ cp( succeeder ) ],
+			},
+			{
+				onFailure: cp( filler ),
+				onSuccess: cp( filler ),
+			}
+		);
 
 		expect( union.failures ).to.eql( [ failer, filler ] );
 		expect( union.successes ).to.eql( [ succeeder, filler ] );

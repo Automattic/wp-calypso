@@ -1,6 +1,12 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
-jest.mock( 'lib/media/list-store', () => ( { getAll: () => {}, hasNextPage: () => {}, isFetchingNextPage: () => {}, on: () => {} } ) );
+jest.mock( 'lib/media/list-store', () => ( {
+	getAll: () => {},
+	hasNextPage: () => {},
+	isFetchingNextPage: () => {},
+	on: () => {},
+} ) );
 
 /**
  * External dependencies
@@ -26,7 +32,11 @@ const EMPTY_COMPONENT = () => {
 
 describe( 'EditorMediaModal', function() {
 	it( 'should pass search parameter to media query', () => {
-		const tree = shallow( <MediaListData siteId={ DUMMY_SITE_ID }><EMPTY_COMPONENT /></MediaListData> ).instance();
+		const tree = shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		).instance();
 		const query = { search: true };
 		const result = tree.getQuery( query );
 
@@ -34,7 +44,11 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should pass and process filter parameter to media query', () => {
-		const tree = shallow( <MediaListData siteId={ DUMMY_SITE_ID }><EMPTY_COMPONENT /></MediaListData> ).instance();
+		const tree = shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		).instance();
 		const query = { filter: 'images' };
 		const result = tree.getQuery( query );
 
@@ -42,7 +56,11 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should pass source parameter and set recent path to media query', () => {
-		const tree = shallow( <MediaListData siteId={ DUMMY_SITE_ID }><EMPTY_COMPONENT /></MediaListData> ).instance();
+		const tree = shallow(
+			<MediaListData siteId={ DUMMY_SITE_ID }>
+				<EMPTY_COMPONENT />
+			</MediaListData>
+		).instance();
 		const query = { source: 'anything' };
 		const result = tree.getQuery( query );
 

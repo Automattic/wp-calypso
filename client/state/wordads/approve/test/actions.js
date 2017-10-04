@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,13 +14,9 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS
+	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'state/action-types';
-import {
-	dismissWordAdsError,
-	dismissWordAdsSuccess,
-	requestWordAdsApproval,
-} from '../actions';
+import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -33,7 +30,7 @@ describe( 'actions', () => {
 		it( 'should return a dismiss error action', () => {
 			expect( dismissWordAdsError( 2916284 ) ).to.eql( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 	} );
@@ -42,23 +39,23 @@ describe( 'actions', () => {
 		it( 'should return a dismiss Success action', () => {
 			expect( dismissWordAdsSuccess( 2916284 ) ).to.eql( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 	} );
 
 	describe( '#requestWordAdsApproval()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/wordads/approve' )
 				.reply( 200, {
-					approved: true
+					approved: true,
 				} )
 				.post( '/rest/v1.1/sites/77203074/wordads/approve' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'An active access token must be used to approve wordads.'
+					message: 'An active access token must be used to approve wordads.',
 				} );
 		} );
 
@@ -66,7 +63,7 @@ describe( 'actions', () => {
 			requestWordAdsApproval( 2916284 )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: WORDADS_SITE_APPROVE_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 
@@ -75,7 +72,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 					approved: true,
-					siteId: 2916284
+					siteId: 2916284,
 				} );
 			} );
 		} );
@@ -85,7 +82,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 					siteId: 77203074,
-					error: sandbox.match( 'An active access token must be used to approve wordads.' )
+					error: sandbox.match( 'An active access token must be used to approve wordads.' ),
 				} );
 			} );
 		} );

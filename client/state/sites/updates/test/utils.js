@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +12,9 @@ import {
 	siteUpdatesRequestAction,
 	siteUpdatesRequestSuccessAction,
 	siteUpdatesReceiveAction,
-	siteUpdatesRequestFailureAction
+	siteUpdatesRequestFailureAction,
 } from '../actions';
-import {
-	requestSiteUpdates
-} from '../utils';
+import { requestSiteUpdates } from '../utils';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -37,7 +36,7 @@ describe( 'utils', () => {
 			message: 'There was an error while getting the update data for this site.',
 		};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/updates' )
@@ -55,13 +54,17 @@ describe( 'utils', () => {
 		it( 'should dispatch request success action when request completes', () => {
 			return requestSiteUpdates( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( siteUpdatesRequestSuccessAction( 2916284 ) );
-				expect( spy ).to.have.been.calledWith( siteUpdatesReceiveAction( 2916284, exampleUpdates ) );
+				expect( spy ).to.have.been.calledWith(
+					siteUpdatesReceiveAction( 2916284, exampleUpdates )
+				);
 			} );
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
 			return requestSiteUpdates( 77203074 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( siteUpdatesRequestFailureAction( 77203074, requestError.message ) );
+				expect( spy ).to.have.been.calledWith(
+					siteUpdatesRequestFailureAction( 77203074, requestError.message )
+				);
 			} );
 		} );
 	} );

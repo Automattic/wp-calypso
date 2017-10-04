@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'fs' );
 
 describe( 'parser', () => {

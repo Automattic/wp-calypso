@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -41,7 +42,7 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
 			query: {
-				search: 'example'
+				search: 'example',
 			},
 		};
 		const originalState = deepFreeze( { currentPage: 3, currentSearch: '' } );

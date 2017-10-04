@@ -1,3 +1,4 @@
+/** @format */
 jest.mock( 'lib/analytics', () => {} );
 
 /**
@@ -26,7 +27,7 @@ describe( 'index', () => {
 			};
 
 			expect(
-				ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) ),
+				ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) )
 			).not.toThrow();
 		} );
 	} );

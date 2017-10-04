@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'ticket-support/configuration actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
 		it( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
@@ -56,7 +57,7 @@ describe( 'ticket-support/configuration actions', () => {
 	const endpoint = '/rest/v1.1/help/tickets/kayako/mine';
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( apiUrl )
 				.get( endpoint )
 				.reply( 200, dummyConfiguration );
@@ -68,16 +69,18 @@ describe( 'ticket-support/configuration actions', () => {
 			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
 
 			action.then( () => {
-				assert( spy.calledWith( {
-					type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-					configuration: dummyConfiguration,
-				} ) );
+				assert(
+					spy.calledWith( {
+						type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
+						configuration: dummyConfiguration,
+					} )
+				);
 			} );
 		} );
 	} );
 
 	describe( '#ticketSupportConfigurationRequest failed', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( apiUrl )
 				.get( endpoint )
 				.reply( dummyError.status, dummyError );
@@ -89,10 +92,14 @@ describe( 'ticket-support/configuration actions', () => {
 			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
 
 			action.then( () => {
-				assert( spy.calledWith( sinon.match( {
-					type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-					error: dummyError,
-				} ) ) );
+				assert(
+					spy.calledWith(
+						sinon.match( {
+							type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+							error: dummyError,
+						} )
+					)
+				);
 			} );
 		} );
 	} );

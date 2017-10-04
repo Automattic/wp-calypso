@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,12 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	repliesUpdated,
-	replyCreated,
-	replyDeleted,
-	replyUpdated,
-} from '../reducer';
+import { repliesUpdated, replyCreated, replyDeleted, replyUpdated } from '../reducer';
 import reducer from 'woocommerce/state/sites/reducer';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
@@ -58,14 +54,17 @@ describe( 'reducer', () => {
 				replies: reviewReplies,
 			};
 
-			const newState = reducer( {
-				546: {
-					reviewReplies: {}
+			const newState = reducer(
+				{
+					546: {
+						reviewReplies: {},
+					},
+					123: {
+						reviewReplies: {},
+					},
 				},
-				123: {
-					reviewReplies: {}
-				}
-			}, action );
+				action
+			);
 
 			expect( newState[ 546 ].reviewReplies ).to.eql( {} );
 			expect( newState[ 123 ].reviewReplies ).to.eql( { 555: reviewReplies } );

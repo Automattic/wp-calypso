@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
@@ -27,12 +28,12 @@ const keyCodes = {
 	upArrow: 38,
 	rightArrow: 39,
 	downArrow: 40,
-	'delete': 46,
-	comma: 188
+	delete: 46,
+	comma: 188,
 };
 
 const charCodes = {
-	comma: 44
+	comma: 44,
 };
 
 describe( 'TokenField', function() {
@@ -45,13 +46,13 @@ describe( 'TokenField', function() {
 	function sendKeyDown( keyCode, shiftKey ) {
 		tokenFieldNode.simulate( 'keyDown', {
 			keyCode: keyCode,
-			shiftKey: ! ! shiftKey
+			shiftKey: !! shiftKey,
 		} );
 	}
 
 	function sendKeyPress( charCode ) {
 		tokenFieldNode.simulate( 'keyPress', {
-			charCode: charCode
+			charCode: charCode,
 		} );
 	}
 
@@ -113,7 +114,7 @@ describe( 'TokenField', function() {
 
 		it( 'should display tokens with escaped special characters properly', function() {
 			wrapper.setState( {
-				tokens: fixtures.specialTokens.textEscaped
+				tokens: fixtures.specialTokens.textEscaped,
 			} );
 			expect( getTokensHTML() ).to.deep.equal( fixtures.specialTokens.htmlEscaped );
 		} );
@@ -126,7 +127,7 @@ describe( 'TokenField', function() {
 			// dangerous characters in them don't have these characters carried
 			// through unescaped to the HTML.
 			wrapper.setState( {
-				tokens: fixtures.specialTokens.textUnescaped
+				tokens: fixtures.specialTokens.textUnescaped,
 			} );
 			expect( getTokensHTML() ).to.deep.equal( fixtures.specialTokens.htmlUnescaped );
 		} );
@@ -140,7 +141,7 @@ describe( 'TokenField', function() {
 
 		it( 'should remove already added tags from suggestions', function() {
 			wrapper.setState( {
-				tokens: Object.freeze( [ 'of', 'and' ] )
+				tokens: Object.freeze( [ 'of', 'and' ] ),
 			} );
 			expect( getSuggestionsText() ).to.not.include.members( getTokensHTML() );
 		} );
@@ -157,14 +158,14 @@ describe( 'TokenField', function() {
 
 		it( 'should display suggestions with escaped special characters properly', function() {
 			wrapper.setState( {
-				tokenSuggestions: fixtures.specialSuggestions.textEscaped
+				tokenSuggestions: fixtures.specialSuggestions.textEscaped,
 			} );
 			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.htmlEscaped );
 		} );
 
 		it( 'should display suggestions with special characters properly', function() {
 			wrapper.setState( {
-				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
+				tokenSuggestions: fixtures.specialSuggestions.textUnescaped,
 			} );
 			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.htmlUnescaped );
 		} );
@@ -172,25 +173,31 @@ describe( 'TokenField', function() {
 		it( 'should match against the unescaped values of suggestions with special characters', function() {
 			setText( '&' );
 			wrapper.setState( {
-				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
+				tokenSuggestions: fixtures.specialSuggestions.textUnescaped,
 			} );
-			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandUnescaped );
+			expect( getSuggestionsText() ).to.deep.equal(
+				fixtures.specialSuggestions.matchAmpersandUnescaped
+			);
 		} );
 
 		it( 'should match against the unescaped values of suggestions with special characters (including spaces)', function() {
 			setText( 's &' );
 			wrapper.setState( {
-				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
+				tokenSuggestions: fixtures.specialSuggestions.textUnescaped,
 			} );
-			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandSequence );
+			expect( getSuggestionsText() ).to.deep.equal(
+				fixtures.specialSuggestions.matchAmpersandSequence
+			);
 		} );
 
 		it( 'should not match against the escaped values of suggestions with special characters', function() {
 			setText( 'amp' );
 			wrapper.setState( {
-				tokenSuggestions: fixtures.specialSuggestions.textUnescaped
+				tokenSuggestions: fixtures.specialSuggestions.textUnescaped,
 			} );
-			expect( getSuggestionsText() ).to.deep.equal( fixtures.specialSuggestions.matchAmpersandEscaped );
+			expect( getSuggestionsText() ).to.deep.equal(
+				fixtures.specialSuggestions.matchAmpersandEscaped
+			);
 		} );
 
 		it( 'should match suggestions even with trailing spaces', function() {
@@ -198,32 +205,35 @@ describe( 'TokenField', function() {
 			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.at );
 		} );
 
-		it( 'should manage the selected suggestion based on both keyboard and mouse events', test( function() {
-			setText( 't' );
-			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
-			expect( getSelectedSuggestion() ).to.equal( null );
-			sendKeyDown( keyCodes.downArrow ); // 'the'
-			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'he' ] );
-			sendKeyDown( keyCodes.downArrow ); // 'to'
-			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
+		it(
+			'should manage the selected suggestion based on both keyboard and mouse events',
+			test( function() {
+				setText( 't' );
+				expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
+				expect( getSelectedSuggestion() ).to.equal( null );
+				sendKeyDown( keyCodes.downArrow ); // 'the'
+				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'he' ] );
+				sendKeyDown( keyCodes.downArrow ); // 'to'
+				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
 
-			const hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
-			expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
+				const hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
+				expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
 
-			// before sending a hover event, we need to wait for
-			// SuggestionList#_scrollingIntoView to become false
-			this.clock.tick( 100 );
+				// before sending a hover event, we need to wait for
+				// SuggestionList#_scrollingIntoView to become false
+				this.clock.tick( 100 );
 
-			hoverSuggestion.simulate( 'mouseEnter' );
-			expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't' ] );
-			sendKeyDown( keyCodes.upArrow );
-			expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
-			sendKeyDown( keyCodes.upArrow );
-			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'his' ] );
-			hoverSuggestion.simulate( 'click' );
-			expect( getSelectedSuggestion() ).to.equal( null );
-			expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
-		} ) );
+				hoverSuggestion.simulate( 'mouseEnter' );
+				expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't' ] );
+				sendKeyDown( keyCodes.upArrow );
+				expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
+				sendKeyDown( keyCodes.upArrow );
+				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'his' ] );
+				hoverSuggestion.simulate( 'click' );
+				expect( getSelectedSuggestion() ).to.equal( null );
+				expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
+			} )
+		);
 	} );
 
 	describe( 'adding tokens', function() {
@@ -301,7 +311,12 @@ describe( 'TokenField', function() {
 				expect( wrapper.state( 'tokens' ) ).to.deep.equal( expectedTokens );
 				expect( textInputNode.prop( 'value' ) ).to.equal( '' );
 				expect( getSelectedSuggestion() ).to.equal( null );
-				expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( isActive );
+				expect(
+					tokenFieldNode
+						.find( 'div' )
+						.first()
+						.hasClass( 'is-active' )
+				).to.equal( isActive );
 			}
 
 			document.activeElement.blur();
@@ -311,45 +326,62 @@ describe( 'TokenField', function() {
 			testSavedState( true );
 		}
 
-		it( 'should add the current text when the input field loses focus', test( function() {
-			testOnBlur(
-				't',                   // initialText
-				false,                 // selectSuggestion
-				null,                  // expectedSuggestion
-				[ 'foo', 'bar', 't' ] // expectedTokens
-			);
-		} ) );
+		it(
+			'should add the current text when the input field loses focus',
+			test( function() {
+				testOnBlur(
+					't', // initialText
+					false, // selectSuggestion
+					null, // expectedSuggestion
+					[ 'foo', 'bar', 't' ] // expectedTokens
+				);
+			} )
+		);
 
-		it( 'should add the suggested token when the (non-blank) input field loses focus', test( function() {
-			testOnBlur(
-				't',                    // initialText
-				true,                   // selectSuggestion
-				[ 't', 'o' ],       // expectedSuggestion
-				[ 'foo', 'bar', 'to' ] // expectedTokens
-			);
-		} ) );
+		it(
+			'should add the suggested token when the (non-blank) input field loses focus',
+			test( function() {
+				testOnBlur(
+					't', // initialText
+					true, // selectSuggestion
+					[ 't', 'o' ], // expectedSuggestion
+					[ 'foo', 'bar', 'to' ] // expectedTokens
+				);
+			} )
+		);
 
-		it( 'should not add the suggested token when the (blank) input field loses focus', test( function() {
-			testOnBlur(
-				'',               // initialText
-				true,             // selectSuggestion
-				'of',             // expectedSuggestion
-				[ 'foo', 'bar' ], // expectedTokens
-				this.clock
-			);
-		} ) );
+		it(
+			'should not add the suggested token when the (blank) input field loses focus',
+			test( function() {
+				testOnBlur(
+					'', // initialText
+					true, // selectSuggestion
+					'of', // expectedSuggestion
+					[ 'foo', 'bar' ], // expectedTokens
+					this.clock
+				);
+			} )
+		);
 
-		it( 'should not lose focus when a suggestion is clicked', test( function() {
-			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
+		it(
+			'should not lose focus when a suggestion is clicked',
+			test( function() {
+				// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
 
-			const firstSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 0 );
-			firstSuggestion.simulate( 'click' );
+				const firstSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 0 );
+				firstSuggestion.simulate( 'click' );
 
-			// wait for setState call
-			this.clock.tick( 10 );
+				// wait for setState call
+				this.clock.tick( 10 );
 
-			expect( tokenFieldNode.find( 'div' ).first().hasClass( 'is-active' ) ).to.equal( true );
-		} ) );
+				expect(
+					tokenFieldNode
+						.find( 'div' )
+						.first()
+						.hasClass( 'is-active' )
+				).to.equal( true );
+			} )
+		);
 
 		it( 'should add tokens in the middle of the current tokens', function() {
 			sendKeyDown( keyCodes.leftArrow );
@@ -456,7 +488,10 @@ describe( 'TokenField', function() {
 
 	describe( 'removing tokens', function() {
 		it( 'should remove tokens when X icon clicked', function() {
-			tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
+			tokenFieldNode
+				.find( '.token-field__remove-token' )
+				.first()
+				.simulate( 'click' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'bar' ] );
 		} );
 

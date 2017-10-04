@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 jest.mock( 'config', () => {
 	const config = () => 'development';
@@ -9,11 +10,11 @@ jest.mock( 'config', () => {
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/user', () => () => ( {
 	get: () => ( {
-		ID: 123456789
-	} )
+		ID: 123456789,
+	} ),
 } ) );
 jest.mock( 'lib/user/support-user-interop', () => ( {
-	isSupportUserSession: jest.fn( false )
+	isSupportUserSession: jest.fn( false ),
 } ) );
 
 /**
@@ -56,9 +57,9 @@ describe( 'initial-state', () => {
 				let state, sandbox;
 				const serverState = { currentUser: { id: 123456789 } };
 
-				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+				useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
-				before( ( done ) => {
+				before( done => {
 					window.initialReduxState = serverState;
 					sandbox.spy( console, 'error' );
 					const reduxReady = function( reduxStore ) {
@@ -85,29 +86,28 @@ describe( 'initial-state', () => {
 			describe( 'switched user', () => {
 				describe( 'with recently persisted data and initial server data', () => {
 					let state, sandbox;
-					useSandbox( ( _sandbox ) => sandbox = _sandbox );
+					useSandbox( _sandbox => ( sandbox = _sandbox ) );
 					const savedState = {
 						postTypes: {
 							items: {
 								2916284: {
 									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
-								}
-							}
+									page: { name: 'page', label: 'Pages' },
+								},
+							},
 						},
-						_timestamp: Date.now()
+						_timestamp: Date.now(),
 					};
-					before( ( done ) => {
+					before( done => {
 						isEnabled.mockReturnValue( true );
 						isSupportUserSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { id: 123456789 } };
 						sandbox.spy( console, 'error' );
-						sandbox.stub( localforage, 'getItem' )
-							.returns(
-								new Promise( function( resolve ) {
-									resolve( savedState );
-								} )
-							);
+						sandbox.stub( localforage, 'getItem' ).returns(
+							new Promise( function( resolve ) {
+								resolve( savedState );
+							} )
+						);
 						const reduxReady = function( reduxStore ) {
 							state = reduxStore.getState();
 							done();
@@ -135,7 +135,7 @@ describe( 'initial-state', () => {
 			} );
 			describe( 'with recently persisted data and initial server data', () => {
 				let state, sandbox;
-				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+				useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
 				const savedState = {
 						currentUser: { id: 123456789 },
@@ -143,27 +143,26 @@ describe( 'initial-state', () => {
 							items: {
 								2916284: {
 									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
-								}
-							}
+									page: { name: 'page', label: 'Pages' },
+								},
+							},
 						},
-						_timestamp: Date.now()
+						_timestamp: Date.now(),
 					},
 					serverState = {
 						postTypes: {
 							items: {
 								77203074: {
-									post: { name: 'post', label: 'Posts' }
-								}
-							}
-						}
+									post: { name: 'post', label: 'Posts' },
+								},
+							},
+						},
 					};
-				before( ( done ) => {
+				before( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
-					sandbox.stub( localforage, 'getItem' )
-						.returns(
+					sandbox.stub( localforage, 'getItem' ).returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
 						} )
@@ -193,23 +192,22 @@ describe( 'initial-state', () => {
 			} );
 			describe( 'with stale persisted data and initial server data', () => {
 				let state, sandbox;
-				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+				useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
 				const serverState = {
 					postTypes: {
 						items: {
 							77203074: {
-								post: { name: 'post', label: 'Posts' }
-							}
-						}
-					}
+								post: { name: 'post', label: 'Posts' },
+							},
+						},
+					},
 				};
-				before( ( done ) => {
+				before( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
-					sandbox.stub( localforage, 'getItem' )
-						.returns(
+					sandbox.stub( localforage, 'getItem' ).returns(
 						new Promise( function( resolve ) {
 							resolve( {
 								currentUser: { id: 123456789 },
@@ -217,11 +215,11 @@ describe( 'initial-state', () => {
 									items: {
 										2916284: {
 											post: { name: 'post', label: 'Posts' },
-											page: { name: 'page', label: 'Pages' }
-										}
-									}
+											page: { name: 'page', label: 'Pages' },
+										},
+									},
 								},
-								_timestamp: Date.now() - MAX_AGE - 1
+								_timestamp: Date.now() - MAX_AGE - 1,
 							} );
 						} )
 					);
@@ -250,7 +248,7 @@ describe( 'initial-state', () => {
 			} );
 			describe( 'with recently persisted data and no initial server data', () => {
 				let state, sandbox;
-				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+				useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
 				const savedState = {
 						currentUser: { id: 123456789 },
@@ -258,19 +256,18 @@ describe( 'initial-state', () => {
 							items: {
 								2916284: {
 									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
-								}
-							}
+									page: { name: 'page', label: 'Pages' },
+								},
+							},
 						},
-						_timestamp: Date.now()
+						_timestamp: Date.now(),
 					},
 					serverState = {};
-				before( ( done ) => {
+				before( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
-					sandbox.stub( localforage, 'getItem' )
-						.returns(
+					sandbox.stub( localforage, 'getItem' ).returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
 						} )
@@ -302,7 +299,7 @@ describe( 'initial-state', () => {
 	describe( '#persistOnChange()', () => {
 		let sandbox, store;
 
-		useSandbox( ( _sandbox ) => sandbox = _sandbox );
+		useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
 		before( () => {
 			sandbox.stub( localforage, 'setItem' ).returns( Promise.resolve() );
@@ -313,14 +310,14 @@ describe( 'initial-state', () => {
 
 			store = persistOnChange(
 				createStore( ( state, { data: nextState } ) => nextState ),
-				( state ) => state
+				state => state
 			);
 		} );
 
 		it( 'should persist state for first dispatch', () => {
 			store.dispatch( {
 				type: 'foo',
-				data: 1
+				data: 1,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
@@ -331,14 +328,14 @@ describe( 'initial-state', () => {
 		it( 'should persist state for changed state', () => {
 			store.dispatch( {
 				type: 'foo',
-				data: 1
+				data: 1,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 2
+				data: 2,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
@@ -349,14 +346,14 @@ describe( 'initial-state', () => {
 		it( 'should not persist state for unchanged state', () => {
 			store.dispatch( {
 				type: 'foo',
-				data: 1
+				data: 1,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 1
+				data: 1,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
@@ -367,29 +364,29 @@ describe( 'initial-state', () => {
 		it( 'should throttle', () => {
 			store.dispatch( {
 				type: 'foo',
-				data: 1
+				data: 1,
 			} );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 2
+				data: 2,
 			} );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 3
+				data: 3,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 4
+				data: 4,
 			} );
 
 			store.dispatch( {
 				type: 'foo',
-				data: 5
+				data: 5,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );

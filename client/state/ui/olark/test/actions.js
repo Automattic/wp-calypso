@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,11 +18,7 @@ import {
 import { OLARK_TIMEOUT_MS } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-import {
-	setChatAvailability,
-	operatorsAvailable,
-	operatorsAway
-} from '../actions';
+import { setChatAvailability, operatorsAvailable, operatorsAway } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy, clock;
@@ -41,7 +38,7 @@ describe( 'actions', () => {
 			const action = setChatAvailability( sampleAvailablityObject );
 			expect( action ).to.eql( {
 				type: OLARK_SET_AVAILABILITY,
-				availability: sampleAvailablityObject
+				availability: sampleAvailablityObject,
 			} );
 		} );
 	} );
@@ -50,7 +47,7 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			const action = olarkTimeout();
 			expect( action ).to.eql( {
-				type: OLARK_TIMEOUT
+				type: OLARK_TIMEOUT,
 			} );
 		} );
 	} );
@@ -59,7 +56,7 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			const action = operatorsAway();
 			expect( action ).to.eql( {
-				type: OLARK_OPERATORS_AWAY
+				type: OLARK_OPERATORS_AWAY,
 			} );
 		} );
 	} );
@@ -68,7 +65,7 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			const action = operatorsAvailable();
 			expect( action ).to.eql( {
-				type: OLARK_OPERATORS_AVAILABLE
+				type: OLARK_OPERATORS_AVAILABLE,
 			} );
 		} );
 	} );
@@ -78,7 +75,7 @@ describe( 'actions', () => {
 			requestOlark()( spy );
 			clock.tick( OLARK_TIMEOUT_MS );
 			expect( spy ).to.have.been.calledWith( {
-				type: OLARK_REQUEST
+				type: OLARK_REQUEST,
 			} );
 		} );
 
@@ -86,7 +83,7 @@ describe( 'actions', () => {
 			requestOlark()( spy );
 			clock.tick( OLARK_TIMEOUT_MS );
 			expect( spy ).to.have.been.calledWith( {
-				type: OLARK_TIMEOUT
+				type: OLARK_TIMEOUT,
 			} );
 		} );
 	} );

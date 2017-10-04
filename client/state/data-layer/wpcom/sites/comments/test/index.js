@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,10 +25,7 @@ import {
 	editComment as editCommentAction,
 } from 'state/comments/actions';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import {
-	COMMENTS_EDIT,
-	COMMENTS_RECEIVE,
-} from 'state/action-types';
+import { COMMENTS_EDIT, COMMENTS_RECEIVE } from 'state/action-types';
 
 const query = {
 	siteId: 1337,
@@ -130,7 +128,7 @@ describe( '#fetchCommentList', () => {
 
 describe( '#requestComment', () => {
 	let dispatch;
-	beforeEach( () => dispatch = spy() );
+	beforeEach( () => ( dispatch = spy() ) );
 
 	it( 'should dispatch http action', () => {
 		const siteId = '124';
@@ -139,19 +137,21 @@ describe( '#requestComment', () => {
 
 		requestComment( { dispatch }, action );
 
-		expect( dispatch ).calledWith( http( {
-			method: 'GET',
-			path: `/sites/${ siteId }/comments/${ commentId }`,
-			apiVersion: '1.1',
-			onSuccess: action,
-			onFailure: action,
-		} ) );
+		expect( dispatch ).calledWith(
+			http( {
+				method: 'GET',
+				path: `/sites/${ siteId }/comments/${ commentId }`,
+				apiVersion: '1.1',
+				onSuccess: action,
+				onFailure: action,
+			} )
+		);
 	} );
 } );
 
 describe( '#receiveCommentSuccess', () => {
 	let dispatch;
-	beforeEach( () => dispatch = spy() );
+	beforeEach( () => ( dispatch = spy() ) );
 
 	it( 'should dispatch receive comments with a single comment', () => {
 		const siteId = '124';
@@ -173,7 +173,7 @@ describe( '#receiveCommentSuccess', () => {
 
 describe( '#receiveCommentError', () => {
 	let dispatch;
-	beforeEach( () => dispatch = spy() );
+	beforeEach( () => ( dispatch = spy() ) );
 
 	it( 'should dispatch receive comments with a single comment', () => {
 		const siteId = '124';
@@ -184,7 +184,7 @@ describe( '#receiveCommentError', () => {
 			reader: {
 				sites: {
 					items: {
-						124: { title: 'sqeeeeee!' }
+						124: { title: 'sqeeeeee!' },
 					},
 				},
 			},
@@ -211,25 +211,27 @@ describe( '#editComment', () => {
 		const getState = () => ( {
 			comments: {
 				items: {
-					'1-1': [ originalComment ]
-				}
-			}
+					'1-1': [ originalComment ],
+				},
+			},
 		} );
 
 		editComment( { dispatch, getState }, action );
 
-		expect( dispatch ).calledWith( http(
-			{
-				method: 'POST',
-				path: '/sites/1/comments/123',
-				apiVersion: '1.1',
-				body: newComment
-			},
-			{
-				...action,
-				originalComment
-			}
-		) );
+		expect( dispatch ).calledWith(
+			http(
+				{
+					method: 'POST',
+					path: '/sites/1/comments/123',
+					apiVersion: '1.1',
+					body: newComment,
+				},
+				{
+					...action,
+					originalComment,
+				}
+			)
+		);
 	} );
 } );
 
@@ -256,13 +258,15 @@ describe( '#announceEditFailure', () => {
 	it( 'should dispatch a local comment edit action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith( bypassDataLayer( {
-			type: COMMENTS_EDIT,
-			siteId: 1,
-			postId: 1,
-			commentId: 123,
-			comment: originalComment
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			bypassDataLayer( {
+				type: COMMENTS_EDIT,
+				siteId: 1,
+				postId: 1,
+				commentId: 123,
+				comment: originalComment,
+			} )
+		);
 	} );
 
 	it( 'should dispatch a remove notice action', () => {
@@ -274,8 +278,10 @@ describe( '#announceEditFailure', () => {
 	it( 'should dispatch an error notice', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith(	errorNotice( "We couldn't update this comment.", {
-			id: `comment-notice-error-${ action.commentId }`,
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			errorNotice( "We couldn't update this comment.", {
+				id: `comment-notice-error-${ action.commentId }`,
+			} )
+		);
 	} );
 } );

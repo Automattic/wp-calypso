@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,12 +13,9 @@ import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS
+	POST_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import {
-	receivePostStats,
-	requestPostStats
-} from '../actions';
+import { receivePostStats, requestPostStats } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -34,13 +32,13 @@ describe( 'actions', () => {
 				type: POST_STATS_RECEIVE,
 				siteId: 2916284,
 				postId: 2454,
-				stats: { views: 2 }
+				stats: { views: 2 },
 			} );
 		} );
 	} );
 
 	describe( '#requestPostStat()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views%2Cyears' )
@@ -48,7 +46,7 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/sites/2916285/stats/post/2455?fields=views' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -89,7 +87,7 @@ describe( 'actions', () => {
 					siteId: 2916285,
 					postId: 2455,
 					fields: [ 'views' ],
-					error: sinon.match( { message: 'User cannot access this private blog.' } )
+					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );

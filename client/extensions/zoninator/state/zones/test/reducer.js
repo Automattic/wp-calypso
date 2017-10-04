@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,10 +22,7 @@ describe( 'reducer', () => {
 	const secondarySiteId = 234567;
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -249,7 +247,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
 					[ primaryZone.id ]: primaryZone,
-				}
+				},
 			} );
 		} );
 

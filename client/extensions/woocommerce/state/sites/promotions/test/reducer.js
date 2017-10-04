@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -148,4 +149,3 @@ describe( 'reducer', () => {
 		expect( state4.promotions[ 9 ].coupon ).to.equal( coupons2[ 1 ] );
 	} );
 } );
-

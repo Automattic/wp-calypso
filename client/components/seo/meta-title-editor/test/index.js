@@ -1,19 +1,13 @@
+/** @format */
 import { expect } from 'chai';
 
-import {
-	nativeToRaw,
-	rawToNative,
-	fromApi,
-	toApi,
-} from '../mappings';
+import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 
 describe( 'SEO', () => {
 	describe( 'Title Format Editor', () => {
 		describe( '#nativeToRaw', () => {
 			it( 'should produce empty formats', () => {
-				expect(
-					nativeToRaw( [] )
-				).to.eql( [] );
+				expect( nativeToRaw( [] ) ).to.eql( [] );
 			} );
 
 			it( 'should produce plain-text strings', () => {
@@ -31,7 +25,7 @@ describe( 'SEO', () => {
 					nativeToRaw( [
 						{ type: 'siteName' },
 						{ type: 'string', value: ' | ' },
-						{ type: 'postTitle' }
+						{ type: 'postTitle' },
 					] )
 				).to.eql( [
 					{ type: 'token', value: 'site_name' },
@@ -43,15 +37,13 @@ describe( 'SEO', () => {
 
 		describe( '#rawToNative', () => {
 			it( 'should handle empty strings', () => {
-				expect(
-					rawToNative( [] )
-				).to.eql( [] );
+				expect( rawToNative( [] ) ).to.eql( [] );
 			} );
 
 			it( 'should handle plain strings', () => {
-				expect(
-					rawToNative( [ { type: 'string', value: 'just a string' } ] )
-				).to.eql( [ { type: 'string', value: 'just a string' } ] );
+				expect( rawToNative( [ { type: 'string', value: 'just a string' } ] ) ).to.eql( [
+					{ type: 'string', value: 'just a string' },
+				] );
 			} );
 
 			it( 'should convert token formats', () => {
@@ -71,9 +63,7 @@ describe( 'SEO', () => {
 
 		describe( '#fromApi', () => {
 			it( 'should produce empty formats', () => {
-				expect(
-					fromApi( {} )
-				).to.eql( {} );
+				expect( fromApi( {} ) ).to.eql( {} );
 			} );
 
 			it( 'should remap keys and values', () => {
@@ -90,33 +80,21 @@ describe( 'SEO', () => {
 						],
 					} )
 				).to.eql( {
-					frontPage: [
-						{ type: 'siteName' },
-						{ type: 'string', value: ' is awesome!' },
-					],
-					posts: [
-						{ type: 'postTitle' },
-						{ type: 'string', value: ' | ' },
-						{ type: 'siteName' },
-					],
+					frontPage: [ { type: 'siteName' }, { type: 'string', value: ' is awesome!' } ],
+					posts: [ { type: 'postTitle' }, { type: 'string', value: ' | ' }, { type: 'siteName' } ],
 				} );
 			} );
 		} );
 
 		describe( '#toApi', () => {
 			it( 'should produce empty formats', () => {
-				expect(
-					toApi( {} )
-				).to.eql( {} );
+				expect( toApi( {} ) ).to.eql( {} );
 			} );
 
 			it( 'should remap keys and values', () => {
 				expect(
 					toApi( {
-						frontPage: [
-							{ type: 'siteName' },
-							{ type: 'string', value: ' is awesome!' },
-						],
+						frontPage: [ { type: 'siteName' }, { type: 'string', value: ' is awesome!' } ],
 						posts: [
 							{ type: 'postTitle' },
 							{ type: 'string', value: ' | ' },

@@ -1,3 +1,4 @@
+/** @format */
 /** @jest-environment jsdom */
 
 /**
@@ -14,7 +15,7 @@ import preloadImage from '../preload-image';
 describe( '#preloadImage()', function() {
 	let sandbox, Image;
 
-	useSandbox( ( newSandbox ) => {
+	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		Image = sandbox.stub( global.window, 'Image' );
 	} );

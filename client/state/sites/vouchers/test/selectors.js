@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ import {
 	getVouchersBySite,
 	getVouchersBySiteId,
 	getVouchersBySiteIdAndServiceType,
-	isRequestingSiteVouchers
+	isRequestingSiteVouchers,
 } from '../selectors';
 
 /**
@@ -22,7 +23,7 @@ import {
 	AD_CREDITS_0 as firstAdCredits,
 	VOUCHER_0 as firstVoucher,
 	SERVICE_TYPE as serviceType,
-	getStateInstance
+	getStateInstance,
 } from './fixture';
 
 describe( 'selectors', () => {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -204,7 +205,10 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			expect( initiator ).to.not.have.been.called;
 			expect( onSuccess ).to.have.been.called;
-			expect( onSuccess ).to.have.been.calledWithExactly( store, action, { tribbleCount: 30, haveTrouble: true } );
+			expect( onSuccess ).to.have.been.calledWithExactly( store, action, {
+				tribbleCount: 30,
+				haveTrouble: true,
+			} );
 			expect( onFailure ).to.not.have.been.called;
 		} );
 	} );

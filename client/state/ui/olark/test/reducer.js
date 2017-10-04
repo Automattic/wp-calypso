@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ import {
 	STATUS_READY,
 	STATUS_TIMEOUT,
 	OPERATOR_STATUS_AVAILABLE,
-	OPERATOR_STATUS_AWAY
+	OPERATOR_STATUS_AWAY,
 } from '../constants';
 import reducer, { status, requesting, availability, operatorStatus } from '../reducer';
 
@@ -28,7 +29,7 @@ describe( 'reducer', () => {
 			'status',
 			'requesting',
 			'availability',
-			'operatorStatus'
+			'operatorStatus',
 		] );
 	} );
 
@@ -41,7 +42,7 @@ describe( 'reducer', () => {
 			const sampleAvailabilityObject = { test: true };
 			const state = availability( undefined, {
 				type: OLARK_SET_AVAILABILITY,
-				availability: sampleAvailabilityObject
+				availability: sampleAvailabilityObject,
 			} );
 			expect( state ).to.eql( sampleAvailabilityObject );
 		} );
@@ -54,13 +55,13 @@ describe( 'reducer', () => {
 		} );
 		it( 'should update on available', () => {
 			const state = operatorStatus( undefined, {
-				type: OLARK_OPERATORS_AVAILABLE
+				type: OLARK_OPERATORS_AVAILABLE,
 			} );
 			expect( state ).to.equal( OPERATOR_STATUS_AVAILABLE );
 		} );
 		it( 'should update on away', () => {
 			const state = operatorStatus( undefined, {
-				type: OLARK_OPERATORS_AWAY
+				type: OLARK_OPERATORS_AWAY,
 			} );
 			expect( state ).to.equal( OPERATOR_STATUS_AWAY );
 		} );
@@ -73,25 +74,25 @@ describe( 'reducer', () => {
 		} );
 		it( 'should update status on ready', () => {
 			const state = status( undefined, {
-				type: OLARK_READY
+				type: OLARK_READY,
 			} );
 			expect( state ).to.equal( STATUS_READY );
 		} );
 		it( 'should update status on timeout', () => {
 			const state = status( undefined, {
-				type: OLARK_TIMEOUT
+				type: OLARK_TIMEOUT,
 			} );
 			expect( state ).to.equal( STATUS_TIMEOUT );
 		} );
 		it( 'should be ready if ready is fired after timeout', () => {
 			const state = status( STATUS_TIMEOUT, {
-				type: OLARK_READY
+				type: OLARK_READY,
 			} );
 			expect( state ).to.equal( STATUS_READY );
 		} );
 		it( 'should not timeout if already ready', () => {
 			const state = status( STATUS_READY, {
-				type: OLARK_TIMEOUT
+				type: OLARK_TIMEOUT,
 			} );
 			expect( state ).to.equal( STATUS_READY );
 		} );
@@ -104,19 +105,19 @@ describe( 'reducer', () => {
 		} );
 		it( 'should track when we request olark state', () => {
 			const state = requesting( undefined, {
-				type: OLARK_REQUEST
+				type: OLARK_REQUEST,
 			} );
 			expect( state ).to.equal( true );
 		} );
 		it( 'should track request state when olark times out', () => {
 			const state = requesting( undefined, {
-				type: OLARK_TIMEOUT
+				type: OLARK_TIMEOUT,
 			} );
 			expect( state ).to.equal( false );
 		} );
 		it( 'should track request state when olark is ready', () => {
 			const state = requesting( undefined, {
-				type: OLARK_READY
+				type: OLARK_READY,
 			} );
 			expect( state ).to.equal( false );
 		} );

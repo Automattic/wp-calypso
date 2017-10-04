@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +8,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	requestReset,
-	handleError,
-	handleSuccess,
- } from '../';
+import { requestReset, handleError, handleSuccess } from '../';
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
@@ -32,20 +29,22 @@ describe( 'account-recovery/request-reset', () => {
 
 			requestReset( { dispatch: dispatchSpy }, dummyAction );
 
-			const {
-				userData,
-				method,
-			} = dummyAction;
+			const { userData, method } = dummyAction;
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: '/account-recovery/request-reset',
-				body: {
-					...userData,
-					method,
-				},
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/request-reset',
+						body: {
+							...userData,
+							method,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 
