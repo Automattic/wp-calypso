@@ -19,24 +19,22 @@
 .sites-dropdown__wrapper {
 	background: $white;
 	border: 1px solid $gray-lighten-20;
-	border-width: 1px 1px 2px;
+	border-width: 1px;
 	border-radius: 4px;
 	margin: 0;
+	overflow: hidden;
 	position: relative;
 	width: 300px;
 	transition: all .15s ease-in-out;
+	z-index: 1;
 
 	@include breakpoint( "<660px" ) {
 		width: 100%;
 	}
 
-<<<<<<< HEAD
-	&:hover {
-		border-color: $gray-lighten-10;
-=======
 	.has-multiple-sites &:hover {
-		border-color: lighten( $gray, 10% );
->>>>>>> Site picker: Disable the icon and dropdown when only 1 site available
+		border-color: $gray-lighten-10;
+		border-bottom-width: 2px;
 	}
 }
 
