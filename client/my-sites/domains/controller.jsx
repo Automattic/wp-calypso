@@ -24,14 +24,10 @@ import {
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-
 import CartData from 'components/data/cart';
 import DomainSearch from './domain-search';
-import CartData from 'components/data/cart';
 import SiteRedirect from './domain-search/site-redirect';
-import CartData from 'components/data/cart';
 import MapDomain from 'my-sites/domains/map-domain';
-import CartData from 'components/data/cart';
 import GoogleApps from 'components/upgrades/google-apps';
 
 /**

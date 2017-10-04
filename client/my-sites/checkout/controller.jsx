@@ -22,10 +22,6 @@ import Checkout from './checkout';
 import CheckoutData from 'components/data/checkout';
 import CartData from 'components/data/cart';
 import SecondaryCart from './cart/secondary-cart';
-import Checkout from './checkout';
-import CheckoutData from 'components/data/checkout';
-import CartData from 'components/data/cart';
-import SecondaryCart from './cart/secondary-cart';
 import CheckoutThankYouComponent from './checkout-thank-you';
 
 /**

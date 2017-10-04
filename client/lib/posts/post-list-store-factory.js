@@ -1,3 +1,5 @@
+import { has } from 'lodash';
+
 /**
  * Internal Dependencies
  **/
@@ -8,10 +10,10 @@ import PostListStore from './post-list-store';
  **/
 let _postListStores = {};
 
-export default function getStore( storeId ) {
+function getStore( storeId ) {
 	const postStoreId = storeId || 'default';
 
-	if ( ! _postListStores[ postStoreId ] ) {
+	if ( ! has( _postListStores, postStoreId ) ) {
 		_postListStores[ postStoreId ] = new PostListStore( postStoreId );
 	}
 
@@ -20,4 +22,6 @@ export default function getStore( storeId ) {
 
 getStore._reset = function() {
 	_postListStores = {};
-}
+};
+
+module.exports = getStore;

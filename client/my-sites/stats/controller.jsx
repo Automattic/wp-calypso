@@ -22,7 +22,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import FollowList from 'lib/follow-list';
-import FollowList from 'lib/follow-list';
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {
