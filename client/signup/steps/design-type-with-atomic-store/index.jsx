@@ -30,15 +30,8 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 
 class DesignTypeWithAtomicStoreStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			showStore: false,
-		};
-
-		this.setPressableStore = this.setPressableStore.bind( this );
-	}
+	state = { showStore: false };
+	setPressableStore = ref => ( this.pressableStore = ref );
 
 	getChoices() {
 		const { translate } = this.props;
@@ -175,10 +168,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 				</div>
 			</div>
 		);
-	}
-
-	setPressableStore( ref ) {
-		this.pressableStore = ref;
 	}
 
 	getHeaderText() {
