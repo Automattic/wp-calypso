@@ -12,10 +12,6 @@
 // Required to access variables or @extend styles
 @import '../main';
 @import '../shared/forms';
-@import 'components/accordion/style';
-@import 'components/global-notices/style';
-@import 'components/select-dropdown/style';
-@import 'layout/sidebar/style';
 
 @import 'post-editor/style';
 @import 'post-editor/edit-post-status/style';
