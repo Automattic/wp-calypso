@@ -106,14 +106,15 @@ class Signup extends React.Component {
 	};
 
 	submitQueryDependencies = () => {
-		if ( ! this.props.queryObject ) {
+		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
 		}
 
+		const queryObject = this.props.initialContext.query;
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 
 		// `vertical` query parameter
-		const vertical = this.props.queryObject.vertical;
+		const vertical = queryObject.vertical;
 		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
 			this.props.setSurvey( {
@@ -142,11 +143,12 @@ class Signup extends React.Component {
 		this.submitQueryDependencies();
 
 		const flow = flows.getFlow( this.props.flowName );
+		const queryObject = this.props.initialContext && this.props.initialContext.query || {};
 
 		let providedDependencies;
 
 		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( this.props.queryObject, flow.providesDependenciesInQuery );
+			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
 		this.signupFlowController = new SignupFlowController( {
@@ -476,6 +478,7 @@ class Signup extends React.Component {
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
+						initialContext={ this.props.initialContext }
 						steps={ flow.steps }
 						stepName={ this.props.stepName }
 						meta={ flow.meta || {} }
