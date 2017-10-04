@@ -588,13 +588,13 @@
 				}
 			}
 
-			&.only-google-apps-details {
+			.g-apps-fields {
 				.country {
 					width: 66%;
 				}
 			}
 
-			&.is-international-address {
+			.eu-address-fields {
 				.postal-code {
 					 float: left;
 					 width: calc( 33% - 7px );
@@ -606,6 +606,15 @@
 				}
 			}
 
+			.uk-address-fields {
+				.postal-code {
+					width: calc( 33% - 7px );
+				}
+
+				.city {
+					width: calc( 66% );
+				}
+			}
 		}
 
 		.form__hidden-input a {
