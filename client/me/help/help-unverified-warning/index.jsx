@@ -52,18 +52,18 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			user.sendVerificationEmail()
+			user.sendVerificationEmail( this.props.userId, this.props.nonce )
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;
 
 					this.setState( { resendState: nextResendState } );
 					notices.success( resendStateToMessage( nextResendState ) );
 				} )
-				.catch( () => {
+				.catch( ( error ) => {
 					const nextResendState = RESEND_ERROR;
 
 					this.setState( { resendState: nextResendState } );
-					notices.error( resendStateToMessage( nextResendState ) );
+					notices.error( error.message );
 				} );
 		};
 

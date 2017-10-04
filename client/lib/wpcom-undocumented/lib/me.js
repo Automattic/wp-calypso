@@ -252,10 +252,14 @@ UndocumentedMe.prototype.devices = function( callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.sendVerificationEmail = function( callback ) {
+UndocumentedMe.prototype.sendVerificationEmail = function( userId, nonce, callback ) {
 	debug( '/me/send-verification-email' );
 
-	return this.wpcom.req.post( { path: '/me/send-verification-email' }, callback );
+	if ( typeof userId === 'function' ) {
+		return this.wpcom.req.post( { path: '/me/send-verification-email' }, userId );
+	}
+
+	return this.wpcom.req.post( { path: '/me/send-verification-email', body: { user_id: userId, nonce } }, callback );
 };
 
 UndocumentedMe.prototype.getNotificationSettings = function( callback ) {
