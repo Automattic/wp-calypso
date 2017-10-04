@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 import events from 'events';
 import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import analytics from '../../lib/analytics';
 import { logSectionResponseTime } from 'pages/analytics';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 

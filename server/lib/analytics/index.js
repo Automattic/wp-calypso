@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
+import { isUndefined, omit, assign } from 'lodash';
 import superagent from 'superagent';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { statsdTimingUrl } from '../../../client/lib/analytics/statsd';
-import { isUndefined, omit, assign } from 'lodash';
+import config from 'config';
 const URL = require( 'url' );
 
 const analytics = {

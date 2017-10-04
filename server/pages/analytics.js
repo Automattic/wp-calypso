@@ -6,8 +6,8 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import analytics from '../lib/analytics';
+import config from 'config';
 
 // Compute the number of milliseconds between each call to recordTiming
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );

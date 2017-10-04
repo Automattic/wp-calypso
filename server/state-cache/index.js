@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import Lru from 'lru';
 

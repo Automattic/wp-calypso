@@ -3,11 +3,11 @@
  */
 import request from 'superagent';
 import supertest from 'supertest';
-import unmodifiedConfig from 'config';
 
 /**
  * Internal dependencies
  */
+import unmodifiedConfig from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'api', function() {
