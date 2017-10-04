@@ -113,6 +113,10 @@ export function serverRender( req, res ) {
 			reduxSubtrees = cacheableReduxSubtrees;
 		}
 
+		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+			reduxSubtrees = reduxSubtrees.concat( [ 'users', 'currentUser' ] );
+		}
+
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 

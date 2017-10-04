@@ -36,6 +36,7 @@ import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/
 
 import { getSiteId } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
+import { requestUser } from 'state/users/actions';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -199,14 +200,17 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) );
 }
 
+function fetchUser( { dispatch }, callback ) {
+	requestUser()( dispatch ).then( callback );
+}
+
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel( [
 		callback => {
 			fetchSitesUntilSiteAppears( siteSlug, callback );
 		},
 		callback => {
-			user.once( 'change', callback );
-			user.fetch();
+			fetchUser( reduxStore, callback );
 		},
 		callback => {
 			reduxStore

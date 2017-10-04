@@ -23,33 +23,48 @@ import {
 } from './common';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
-import userFactory from 'lib/user';
+import { subscribeToUserChanges, syncUserWithLegacyStore } from './user';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { requestUser } from 'state/users/actions';
 
 const debug = debugFactory( 'calypso' );
 
-const boot = currentUser => {
+const bootProject = reduxStore => {
 	debug( "Starting Calypso. Let's do this." );
 
 	const project = require( `./project/${ PROJECT_NAME }` );
+
+	configureReduxStore( reduxStore );
+	invoke( project, 'configureReduxStore', reduxStore );
+
+	locales( reduxStore );
+	invoke( project, 'locales', reduxStore );
+
 	utils();
 	invoke( project, 'utils' );
-	createReduxStoreFromPersistedInitialState( reduxStore => {
-		locales( currentUser, reduxStore );
-		invoke( project, 'locales', currentUser, reduxStore );
-		configureReduxStore( currentUser, reduxStore );
-		invoke( project, 'configureReduxStore', currentUser, reduxStore );
-		setupMiddlewares( currentUser, reduxStore );
-		invoke( project, 'setupMiddlewares', currentUser, reduxStore );
-		detectHistoryNavigation.start();
-		page.start( { decodeURLComponents: false } );
-	} );
+
+	setupMiddlewares( reduxStore );
+	invoke( project, 'setupMiddlewares', reduxStore );
+
+	detectHistoryNavigation.start();
+	page.start( { decodeURLComponents: false } );
 };
 
 window.AppBoot = () => {
-	const user = userFactory();
-	if ( user.initialized ) {
-		boot( user );
-	} else {
-		user.once( 'change', () => boot( user ) );
-	}
+	createReduxStoreFromPersistedInitialState( reduxStore => {
+		syncUserWithLegacyStore( reduxStore );
+		const userData = getCurrentUser( reduxStore.getState() );
+		if ( userData ) {
+			bootProject( reduxStore );
+		} else {
+			reduxStore.dispatch( requestUser() ).catch( () => {
+				// boot the project anyway if the user request fails so we display an offline page or redirect to log-in
+				bootProject( reduxStore );
+			} );
+			// reboot if user changes
+			subscribeToUserChanges( reduxStore, () => {
+				bootProject( reduxStore );
+			} );
+		}
+	} );
 };

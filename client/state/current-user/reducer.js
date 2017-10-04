@@ -13,7 +13,8 @@ import {
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	SITES_UPDATE,
-	PLANS_RECEIVE
+	PLANS_RECEIVE,
+	USER_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
@@ -28,11 +29,13 @@ import emailVerification from './email-verification/reducer';
  * @return {Object}        Updated state
  */
 export const id = createReducer( null, {
-	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId
+	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId,
+	[ USER_REQUEST_SUCCESS ]: ( state, action ) => action.user.ID,
 }, idSchema );
 
 export const flags = createReducer( [], {
-	[ CURRENT_USER_FLAGS_RECEIVE ]: ( state, action ) => action.flags
+	[ CURRENT_USER_FLAGS_RECEIVE ]: ( state, action ) => action.flags,
+	[ USER_REQUEST_SUCCESS ]: ( state, action ) => action.user.meta.data.flags.active_flags,
 }, flagsSchema );
 
 /**

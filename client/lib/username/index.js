@@ -63,8 +63,6 @@ Username.prototype.change = function( username, action, callback ) {
 		if ( error ) {
 			this.validation = error;
 			this.emit( 'change' );
-		} else {
-			user.fetch();
 		}
 
 		if ( callback ) {

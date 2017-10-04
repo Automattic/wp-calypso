@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	USER_RECEIVE,
+	USER_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { items } from '../reducer';
 
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 
 		it( 'should index users by ID', () => {
 			const state = items( null, {
-				type: USER_RECEIVE,
+				type: USER_REQUEST_SUCCESS,
 				user: { ID: 73705554, login: 'testonesite2014' }
 			} );
 
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 				73705554: { ID: 73705554, login: 'testonesite2014' }
 			} );
 			const state = items( original, {
-				type: USER_RECEIVE,
+				type: USER_REQUEST_SUCCESS,
 				user: { ID: 73705672, login: 'testtwosites2014' }
 			} );
 
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 				73705554: { ID: 73705554, login: 'testonesite2014' }
 			} );
 			const state = items( original, {
-				type: USER_RECEIVE,
+				type: USER_REQUEST_SUCCESS,
 				user: { ID: 73705554, login: 'testtwosites2014' }
 			} );
 
