@@ -7,7 +7,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import qs from 'qs';
 import { isEmpty } from 'lodash';
 
 /**
@@ -32,30 +31,30 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 /**
  * Module variables
  */
-let refParameter, queryObject;
+let queryObject, hashstring;
 
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		if ( user.get() && utils.getLocale( context.params ) ) {
 			const flowName = utils.getFlowName( context.params ),
 				stepName = utils.getStepName( context.params ),
-				stepSectionName = utils.getStepSectionName( context.params ),
-				urlWithoutLocale = utils.getStepUrl( flowName, stepName, stepSectionName );
+				stepSectionName = utils.getStepSectionName( context.params );
+			let urlWithoutLocale = utils.getStepUrl( flowName, stepName, stepSectionName );
+
+			if ( ! isEmpty( context.query ) ) {
+				urlWithoutLocale += '?' + context.querystring;
+			}
+
+			if ( ! isEmpty( context.hash ) ) {
+				urlWithoutLocale += '#' + context.hashstring;
+			}
 
 			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 				return page.redirect( urlWithoutLocale );
 			}
 
-			window.location = urlWithoutLocale + '?' + qs.stringify( context.query );
+			window.location = urlWithoutLocale;
 			return;
-		}
-
-		next();
-	},
-
-	saveRefParameter( context, next ) {
-		if ( context.query.ref ) {
-			refParameter = context.query.ref;
 		}
 
 		next();
@@ -64,6 +63,10 @@ export default {
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) ) {
 			queryObject = context.query;
+		}
+
+		if ( context.hashstring ) {
+			hashstring = context.hashstring;
 		}
 
 		next();
@@ -97,8 +100,9 @@ export default {
 		renderWithReduxStore(
 			React.createElement( SignupComponent, {
 				path: context.path,
-				refParameter,
+				refParameter: queryObject && queryObject.ref,
 				queryObject,
+				hashstring,
 				locale: utils.getLocale( context.params ),
 				flowName: flowName,
 				stepName: stepName,
