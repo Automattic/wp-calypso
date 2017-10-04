@@ -1,13 +1,11 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
-import React from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
 import assert from 'assert';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies

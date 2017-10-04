@@ -1,4 +1,9 @@
 /** @format */
+/**
+ * Internal dependencies
+ */
+import { actions } from '../constants';
+
 /** @jest-environment jsdom */
 
 /**
@@ -7,11 +12,6 @@
 var Dispatcher = require( 'dispatcher' ),
 	expect = require( 'chai' ).expect,
 	sinon = require( 'sinon' );
-
-/**
- * Internal dependencies
- */
-import { actions } from '../constants';
 
 describe( 'oAuthStore', function() {
 	let oAuthStore, oAuthToken;

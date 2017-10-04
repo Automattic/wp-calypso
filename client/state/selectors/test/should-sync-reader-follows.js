@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { shouldSyncReaderFollows } from 'state/selectors';
 import { MS_BETWEEN_SYNCS } from 'state/selectors/should-sync-reader-follows';

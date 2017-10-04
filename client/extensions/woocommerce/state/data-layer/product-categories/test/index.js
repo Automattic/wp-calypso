@@ -8,9 +8,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import { handleProductCategoryCreate } from '../';
 import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCategoryCreate', () => {

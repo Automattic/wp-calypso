@@ -7,13 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	addResponder,
-	applyDuplicatesHandlers,
-	buildKey,
-	clearQueue,
-	removeDuplicateGets,
-} from '../';
+import { addResponder, applyDuplicatesHandlers, buildKey, clearQueue, removeDuplicateGets } from '../';
 
 const failer = { type: 'FAIL' };
 const filler = { type: 'FILL' };

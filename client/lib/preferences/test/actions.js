@@ -1,4 +1,19 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import store from 'store';
+
+/**
+ * Internal dependencies
+ */
+import * as PreferencesActions from '../actions';
+import { USER_SETTING_KEY, LOCALSTORAGE_KEY } from '../constants';
+import Dispatcher from 'dispatcher';
+import { getSettings, postSettings } from 'lib/wp';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 jest.mock( 'lib/user/utils', () => ( {
 	isLoggedIn: () => true,
 } ) );
@@ -28,22 +43,6 @@ jest.mock( 'lib/wp', () => {
 		} ),
 	};
 } );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import store from 'store';
-
-/**
- * Internal dependencies
- */
-import Dispatcher from 'dispatcher';
-import { getSettings, postSettings } from 'lib/wp';
-import * as PreferencesActions from '../actions';
-import { USER_SETTING_KEY, LOCALSTORAGE_KEY } from '../constants';
-import { useSandbox } from 'test/helpers/use-sinon';
-import useNock from 'test/helpers/use-nock';
 
 /**
  * Constants

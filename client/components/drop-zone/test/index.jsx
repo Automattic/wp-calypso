@@ -1,13 +1,11 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 import sinon from 'sinon';
 
 /**

@@ -3,11 +3,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'i18n-calypso';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 describe( 'KeyBindings', function() {

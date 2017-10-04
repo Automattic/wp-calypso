@@ -1,6 +1,4 @@
 /** @format */
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 /**
  * External dependencies
  */
@@ -9,8 +7,10 @@ import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
-*/
+ */
 import enrichedSurveyData from '../enrichedSurveyData';
+
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'enrichedSurveyData', function() {
 	it( 'should duplicate survey data if no site or purchase are provided', function() {

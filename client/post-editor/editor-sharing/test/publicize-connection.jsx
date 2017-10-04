@@ -1,4 +1,16 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import PublicizeConnection from '../publicize-connection';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/posts/actions', () => ( {
 	recordEvent: () => {},
@@ -9,18 +21,6 @@ jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 	recordState: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import PublicizeConnection from '../publicize-connection';
 
 /**
  * Module variables

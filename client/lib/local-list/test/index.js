@@ -1,4 +1,14 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+
+/**
+ * Internal dependencies
+ */
+import LocalList from '../';
+
 /** @jest-environment jsdom */
 jest.mock( 'store', () => {
 	const data = {};
@@ -13,16 +23,6 @@ jest.mock( 'store', () => {
 		},
 	};
 } );
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-
-/**
- * Internal dependecies
- */
-import LocalList from '../';
 
 const anExampleKey = 'day:2014-08-01';
 

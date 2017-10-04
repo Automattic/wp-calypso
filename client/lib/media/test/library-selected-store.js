@@ -1,13 +1,13 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { assign } from 'lodash';
 import sinon from 'sinon';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {

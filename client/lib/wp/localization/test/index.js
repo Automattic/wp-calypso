@@ -1,8 +1,4 @@
 /** @format */
-jest.mock( 'state/current-user/selectors', () => ( {
-	getCurrentUserLocale: jest.fn(),
-} ) );
-
 /**
  * External dependencies
  */
@@ -13,6 +9,10 @@ import { expect } from 'chai';
  */
 import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
 import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'state/current-user/selectors';
+
+jest.mock( 'state/current-user/selectors', () => ( {
+	getCurrentUserLocale: jest.fn(),
+} ) );
 
 describe( 'index', () => {
 	beforeEach( () => {

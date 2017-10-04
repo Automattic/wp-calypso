@@ -1,8 +1,4 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/sites-list', () => require( './mocks/sites-list' ) );
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 /**
  * External dependencies
  */
@@ -11,14 +7,18 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import actions from './fixtures/actions';
+import multiSite from './fixtures/multi-site';
 import plugins from './fixtures/plugins';
 import site from './fixtures/site';
-import multiSite from './fixtures/multi-site';
-import actions from './fixtures/actions';
 import updatePluginData from './fixtures/updated-plugin';
 import Dispatcher from 'dispatcher';
 import PluginsStore from 'lib/plugins/store';
+import { useFakeTimers } from 'test/helpers/use-sinon';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/sites-list', () => require( './mocks/sites-list' ) );
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'Plugins Store', () => {
 	it( 'Store should be an object', () => {

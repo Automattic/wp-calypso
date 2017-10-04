@@ -1,13 +1,11 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import chai from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import decodeEntitiesNode from '../decode-entities/node';
 

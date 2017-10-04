@@ -1,11 +1,10 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import { assert } from 'chai';
 import { findIndex, isUndefined, some } from 'lodash';
+
 /**
  * Internal dependencies
  */

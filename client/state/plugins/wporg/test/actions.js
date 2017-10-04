@@ -1,9 +1,4 @@
 /** @format */
-jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
-jest.mock( 'lib/impure-lodash', () => ( {
-	debounce: cb => cb,
-} ) );
-
 /**
  * External dependencies
  */
@@ -12,8 +7,12 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import wporg from 'lib/wporg';
 import WPorgActions from '../actions';
+import wporg from 'lib/wporg';
+jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
+jest.mock( 'lib/impure-lodash', () => ( {
+	debounce: cb => cb,
+} ) );
 
 const testDispatch = ( test, testCallNumber ) => {
 	let calls = 0;

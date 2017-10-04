@@ -3,14 +3,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Navbar from '../navbar';
 import Item from '../item';
+import Navbar from '../navbar';
 
 describe( 'Navbar', () => {
 	const options = [

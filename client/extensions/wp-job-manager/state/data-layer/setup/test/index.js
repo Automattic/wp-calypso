@@ -3,35 +3,17 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { announceFailure, createPages, fetchSetupStatus, fetchSetupStatusError, handleSuccess, handleFailure, saveSetupStatus, updateSetupStatus } from '../';
+import { WP_JOB_MANAGER_CREATE_PAGES, WP_JOB_MANAGER_FETCH_SETUP_STATUS, WP_JOB_MANAGER_SAVE_SETUP_STATUS } from '../../../action-types';
+import { createPagesError, fetchSetupStatusError as fetchStatusError, nextStep, updateSetupStatus as updateStatus } from '../../../setup/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice } from 'state/notices/actions';
-import {
-	announceFailure,
-	createPages,
-	fetchSetupStatus,
-	fetchSetupStatusError,
-	handleSuccess,
-	handleFailure,
-	saveSetupStatus,
-	updateSetupStatus,
-} from '../';
-import {
-	createPagesError,
-	fetchSetupStatusError as fetchStatusError,
-	nextStep,
-	updateSetupStatus as updateStatus,
-} from '../../../setup/actions';
-import {
-	WP_JOB_MANAGER_CREATE_PAGES,
-	WP_JOB_MANAGER_FETCH_SETUP_STATUS,
-	WP_JOB_MANAGER_SAVE_SETUP_STATUS,
-} from '../../../action-types';
 
 const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;

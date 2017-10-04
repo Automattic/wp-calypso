@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { HELP_COURSES_RECEIVE } from 'state/action-types';
 import reducer, { items } from '../reducer';
+import { HELP_COURSES_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {

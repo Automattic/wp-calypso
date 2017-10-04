@@ -1,4 +1,9 @@
 /** @format */
+/**
+ * Internal dependencies
+ */
+import highlight from '../';
+
 /** @jest-environment jsdom */
 
 /**
@@ -6,11 +11,6 @@
  */
 var chai = require( 'chai' ),
 	expect = chai.expect;
-
-/**
- * Internal dependencies
- */
-import highlight from '../';
 
 describe( 'highlight', function() {
 	context( 'unit test', function() {

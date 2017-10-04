@@ -1,4 +1,18 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDOM from 'react-dom';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import { UserStep as User } from '../';
+
 /** @jest-environment jsdom */
 jest.mock( 'components/signup-form', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => () => {} );
@@ -20,20 +34,6 @@ jest.mock( 'signup/utils', () => ( {
 	getStepUrl: x => x,
 	getPreviousStepName: x => x,
 } ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils';
-
-/**
- * Internal dependencies
- */
-import { UserStep as User } from '../';
 
 describe( '#signupStep User', () => {
 	let testElement, rendered;

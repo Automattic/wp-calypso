@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +9,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
-
-/**
- * Fixture data
- */
 import { PLANS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {

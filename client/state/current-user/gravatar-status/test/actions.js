@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
 import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
+import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {

@@ -9,12 +9,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchShippingZones } from '../actions';
-import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
-import {
-	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
-	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SHIPPING_ZONES_REQUEST, WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'actions', () => {
 	describe( '#fetchShippingZones()', () => {

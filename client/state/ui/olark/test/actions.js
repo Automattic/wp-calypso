@@ -8,17 +8,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { olarkTimeout, requestOlark } from '../actions';
-import {
-	OLARK_REQUEST,
-	OLARK_TIMEOUT,
-	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY,
-	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
+import { setChatAvailability, operatorsAvailable, operatorsAway } from '../actions';
 import { OLARK_TIMEOUT_MS } from '../constants';
+import { OLARK_REQUEST, OLARK_TIMEOUT, OLARK_OPERATORS_AVAILABLE, OLARK_OPERATORS_AWAY, OLARK_SET_AVAILABILITY } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-import { setChatAvailability, operatorsAvailable, operatorsAway } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox, spy, clock;

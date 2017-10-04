@@ -2,20 +2,16 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import {
-	USER_SUGGESTIONS_RECEIVE,
-	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
 import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
+import { USER_SUGGESTIONS_RECEIVE, USER_SUGGESTIONS_REQUEST, USER_SUGGESTIONS_REQUEST_SUCCESS } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 const sampleSuccessResponse = require( './sample-response.json' );
 const siteId = 123;

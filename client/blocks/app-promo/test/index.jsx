@@ -1,12 +1,10 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 describe( 'AppPromo', () => {
 	const appPromoDetails = {

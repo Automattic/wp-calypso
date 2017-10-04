@@ -1,13 +1,11 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import * as sinon from 'sinon';
-import React from 'react';
 import { mount, shallow } from 'enzyme';
+import React from 'react';
+import * as sinon from 'sinon';
 
 /**
  * Internal dependencies

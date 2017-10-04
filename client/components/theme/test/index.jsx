@@ -1,23 +1,23 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import { identity } from 'lodash';
 import React from 'react';
-import ReactDom from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { Theme } from '../';
+
+/** @jest-environment jsdom */
+jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
+jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Theme', function() {
 	let props, themeNode;

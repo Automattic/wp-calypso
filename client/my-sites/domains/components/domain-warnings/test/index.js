@@ -1,17 +1,14 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import assert from 'assert';
+import { expect } from 'chai';
 import { identity } from 'lodash';
 import moment from 'moment';
-import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -20,6 +17,9 @@ import { DomainWarnings } from '../';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import support from 'lib/url/support';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'index', () => {
 	beforeEach( () => {

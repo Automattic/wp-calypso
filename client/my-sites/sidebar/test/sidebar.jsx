@@ -1,11 +1,4 @@
 /** @format */
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'my-sites/current-site', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/sidebar/manage-menu', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
@@ -15,6 +8,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { MySitesSidebar } from '../sidebar';
+
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'my-sites/current-site', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/sidebar/manage-menu', () => require( 'components/empty-component' ) );
 
 describe( 'MySitesSidebar', () => {
 	describe( '#isItemLinkSelected()', () => {

@@ -1,6 +1,4 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import preloadImage from '../preload-image';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( '#preloadImage()', function() {
 	let sandbox, Image;

@@ -1,4 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { assign } from 'lodash';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import { DUMMY_API_RESPONSE, DUMMY_BLOB_UPLOAD, DUMMY_ITEM, DUMMY_QUERY, DUMMY_SITE_ID, DUMMY_UPLOAD, DUMMY_URL } from './fixtures';
+import { stubs } from './mocks/lib/wp';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/media/library-selected-store', () => ( {
 	getAll: () => [ require( './fixtures' ).DUMMY_ITEM ],
@@ -21,27 +34,6 @@ jest.mock( 'lib/impure-lodash', () => ( {
 	},
 	uniqueId: () => 'media-1',
 } ) );
-
-/**
- * External dependencies
- */
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { assign } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import {
-	DUMMY_API_RESPONSE,
-	DUMMY_BLOB_UPLOAD,
-	DUMMY_ITEM,
-	DUMMY_QUERY,
-	DUMMY_SITE_ID,
-	DUMMY_UPLOAD,
-	DUMMY_URL,
-} from './fixtures';
-import { stubs } from './mocks/lib/wp';
 
 describe( 'MediaActions', function() {
 	let MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;

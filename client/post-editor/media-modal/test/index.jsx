@@ -1,4 +1,20 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { translate } from 'i18n-calypso';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { EditorMediaModal } from '../';
+import accept from 'lib/accept';
+import mediaActions from 'lib/media/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { useSandbox } from 'test/helpers/use-sinon';
 /** @jest-environment jsdom */
 jest.mock( 'component-closest', () => {} );
 jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
@@ -36,23 +52,6 @@ jest.mock( 'lib/posts/stats', () => ( {
 	recordState: () => {},
 } ) );
 jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-import { expect } from 'chai';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import accept from 'lib/accept';
-import { EditorMediaModal } from '../';
-import mediaActions from 'lib/media/actions';
-import { useSandbox } from 'test/helpers/use-sinon';
-import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Module variables

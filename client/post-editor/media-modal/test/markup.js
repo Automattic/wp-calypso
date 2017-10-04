@@ -1,17 +1,17 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
-import ReactDomServer from 'react-dom/server';
 import { expect } from 'chai';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'markup', function() {
 	let sandbox, markup, site;

@@ -1,4 +1,16 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import UserUtils from '../utils';
+import configMock from 'config';
+
 /** @jest-environment jsdom */
 jest.mock( 'config', () => {
 	const { stub } = require( 'sinon' );
@@ -13,18 +25,6 @@ jest.mock( 'lib/wp', () => ( {
 		get: () => {},
 	} ),
 } ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import configMock from 'config';
-import UserUtils from '../utils';
 
 describe( 'UserUtils', () => {
 	let user;

@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import assert from 'assert';
 import { isFunction, fromPairs, partial } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 

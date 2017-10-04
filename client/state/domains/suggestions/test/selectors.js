@@ -7,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getDomainsSuggestions,
-	getDomainsSuggestionsError,
-	isRequestingDomainsSuggestions,
-} from '../selectors';
+import { getDomainsSuggestions, getDomainsSuggestionsError, isRequestingDomainsSuggestions } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getDomainsSuggestions()', () => {

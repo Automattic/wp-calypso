@@ -1,4 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { mount } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import MediaLibrary from '..';
+import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
+
 /** @jest-environment jsdom */
 jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
 jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );
@@ -14,19 +27,6 @@ jest.mock( 'state/sharing/keyring/selectors', () => ( {
 	getKeyringConnections: () => null,
 	isKeyringConnectionsFetching: () => null,
 } ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import React from 'react';
-import { mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import MediaLibrary from '..';
-import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
 
 describe( 'MediaLibrary', () => {
 	const store = {

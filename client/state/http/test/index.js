@@ -1,6 +1,4 @@
 /** @format */
-jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
-
 /**
  * External dependencies
  */
@@ -10,10 +8,11 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 import { httpHandler } from '../';
 import superagentMock from './mocks/superagent';
+import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'state/utils';
+jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };

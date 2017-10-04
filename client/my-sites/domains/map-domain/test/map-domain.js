@@ -1,4 +1,20 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import pageSpy from 'page';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { MapDomain } from '..';
+import MapDomainStep from 'components/domains/map-domain-step';
+import HeaderCake from 'components/header-cake';
+import paths from 'my-sites/domains/paths';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
@@ -9,22 +25,6 @@ jest.mock( 'page', () => {
 
 	return pageSpy;
 } );
-
-/**
- * External Dependencies
- */
-import { expect } from 'chai';
-import pageSpy from 'page';
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'components/header-cake';
-import { MapDomain } from '..';
-import MapDomainStep from 'components/domains/map-domain-step';
-import paths from 'my-sites/domains/paths';
 
 describe( 'MapDomain component', () => {
 	beforeEach( () => {

@@ -1,11 +1,4 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => {},
-	getABTestVariation: () => null,
-} ) );
-jest.mock( 'lib/user', () => require( './mocks/lib/user' ) );
-
 /**
  * External dependencies
  */
@@ -15,9 +8,16 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import mockedFlows from './fixtures/flows';
 import abtest from 'lib/abtest';
 import flows from 'signup/config/flows';
-import mockedFlows from './fixtures/flows';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => {},
+	getABTestVariation: () => null,
+} ) );
+jest.mock( 'lib/user', () => require( './mocks/lib/user' ) );
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {

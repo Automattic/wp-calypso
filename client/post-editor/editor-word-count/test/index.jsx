@@ -1,23 +1,23 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { mount } from 'enzyme';
+import { translate } from 'i18n-calypso';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { EditorWordCount } from '../';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/wp', () => ( {
 	me: () => ( {
 		get: () => {},
 	} ),
 } ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { mount } from 'enzyme';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { EditorWordCount } from '../';
 
 describe( 'EditorWordCount', () => {
 	it( 'should display word count if selected text is provided', () => {

@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { LOCALE_SET } from 'state/action-types';
 import { setLocale, setLocaleRawData } from '../actions';
+import { LOCALE_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setLocale', () => {

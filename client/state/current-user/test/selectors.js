@@ -7,15 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCurrentUserId,
-	getCurrentUser,
-	getCurrentUserLocale,
-	getCurrentUserDate,
-	isValidCapability,
-	getCurrentUserCurrencyCode,
-	getCurrentUserEmail,
-} from '../selectors';
+import { getCurrentUserId, getCurrentUser, getCurrentUserLocale, getCurrentUserDate, isValidCapability, getCurrentUserCurrencyCode, getCurrentUserEmail } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getCurrentUserId()', () => {

@@ -1,19 +1,19 @@
 /** @format */
-jest.mock( 'lib/analytics', () => {} );
-
 /**
  * External dependencies
  */
+import assert from 'assert';
+import { identity } from 'lodash';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import assert from 'assert';
 import sinon from 'sinon';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { MappedDomain } from '../mapped-domain.jsx';
+
+jest.mock( 'lib/analytics', () => {} );
 
 describe( 'mapped-domain', () => {
 	let props;

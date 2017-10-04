@@ -1,4 +1,18 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import { noop } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import siteData from './fixtures/site';
+import mockedWpcom from './mocks/wpcom';
+import actions from 'lib/plugins/actions';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
@@ -6,20 +20,6 @@ jest.mock( 'lib/analytics', () => ( {
 	mc: { bumpStat: () => {} },
 	tracks: { recordEvent: () => {} },
 } ) );
-
-/**
- * External dependencies
- */
-
-import { assert } from 'chai';
-import { noop } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import actions from 'lib/plugins/actions';
-import siteData from './fixtures/site';
-import mockedWpcom from './mocks/wpcom';
 
 describe( 'WPcom Data Actions', () => {
 	beforeEach( () => {

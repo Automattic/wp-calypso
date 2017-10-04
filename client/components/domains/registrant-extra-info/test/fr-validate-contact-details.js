@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { omit } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import validateContactDetails from '../fr-validate-contact-details';
 

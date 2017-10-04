@@ -7,9 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
-
 import dropZone from '../reducer';
+import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should show DropZone', () => {

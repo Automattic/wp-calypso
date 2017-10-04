@@ -1,4 +1,19 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { identity, merge } from 'lodash';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
+import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
+import { useSandbox } from 'test/helpers/use-sinon';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => {} );
 jest.mock( 'i18n-calypso', () => ( {
@@ -16,21 +31,6 @@ jest.mock( 'lib/wp', () => {
 
 	return wpcomMock;
 } );
-
-/**
- * External Dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import { identity, merge } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
-import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'Domain Details Form', () => {
 	const defaultProps = {

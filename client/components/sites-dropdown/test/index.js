@@ -1,20 +1,20 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 import { noop } from 'lodash';
+import React from 'react';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { SitesDropdown } from '..';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'index', function() {
 	describe( 'component rendering', function() {

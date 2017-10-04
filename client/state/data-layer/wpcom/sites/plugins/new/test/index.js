@@ -2,20 +2,16 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
-import {
-	completePluginUpload,
-	pluginUploadError,
-	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
 import Dispatcher from 'dispatcher';
+import { completePluginUpload, pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';

@@ -1,21 +1,21 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
 /**
  * External dependencies
  */
-import { defer } from 'lodash';
 import { expect } from 'chai';
+import { defer } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import PostEditStore from '../post-edit-store';
 import PostActions from '../actions';
+import PostEditStore from '../post-edit-store';
+import Dispatcher from 'dispatcher';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 describe( 'actions', function() {
 	let sandbox;

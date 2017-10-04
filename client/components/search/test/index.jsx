@@ -1,20 +1,20 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import React from 'react';
-import sinon from 'sinon';
 import TestUtils from 'react-addons-test-utils';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import searchClass from '../';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 describe( 'Search', function() {
 	describe( 'initialValue', function() {

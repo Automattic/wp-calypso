@@ -1,6 +1,4 @@
 /** @format */
-jest.mock( 'tinymce/tinymce', () => ( {} ) );
-
 /**
  * External dependencies
  */
@@ -10,6 +8,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { wrapPre, unwrapPre } from '../plugin';
+
+jest.mock( 'tinymce/tinymce', () => ( {} ) );
 
 describe( 'wpcom-sourcecode', () => {
 	describe( '#wrapPre()', () => {

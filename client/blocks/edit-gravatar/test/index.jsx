@@ -1,24 +1,24 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
-jest.mock( 'lib/oauth-token', () => ( {
-	getToken: () => 'bearerToken',
-} ) );
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
-import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
+
+/** @jest-environment jsdom */
+jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
+jest.mock( 'lib/oauth-token', () => ( {
+	getToken: () => 'bearerToken',
+} ) );
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'EditGravatar', function() {
 	let EditGravatar, FilePicker, Gravatar, ImageEditor, VerifyEmailDialog, DropZone, sandbox;

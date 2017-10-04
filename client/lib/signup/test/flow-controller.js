@@ -1,20 +1,20 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-
 /**
  * External dependencies
  */
 import assert from 'assert';
 import { ary, defer } from 'lodash';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { createStore } from 'redux';
 import { reducer } from 'state';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'flow-controller', function() {
 	let SignupProgressStore,

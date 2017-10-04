@@ -1,13 +1,11 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import assert from 'assert';
-import React from 'react';
-import { noop, uniq } from 'lodash';
 import { mount, shallow } from 'enzyme';
+import { noop, uniq } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies

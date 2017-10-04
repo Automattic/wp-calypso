@@ -7,9 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { variationUpdated } from '../reducer';
-
 import { productVariationUpdated } from '../actions';
+import { variationUpdated } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#variationUpdated', () => {

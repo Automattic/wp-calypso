@@ -1,20 +1,19 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 import { cloneDeep, forEach } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import SitesList from '../list';
 import { original, updated } from './fixtures/data';
 import Site from 'lib/site';
-import SitesList from '../list';
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'SitesList', () => {
 	let sitesList, originalData, initializedSites;

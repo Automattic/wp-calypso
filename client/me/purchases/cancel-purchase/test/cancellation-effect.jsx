@@ -1,7 +1,4 @@
 /** @format */
-jest.mock( 'lib/products-values', () => ( {} ) );
-jest.mock( 'lib/purchases', () => ( {} ) );
-
 /**
  * External dependencies
  */
@@ -13,6 +10,9 @@ import { expect } from 'chai';
 import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
 import productsValues from 'lib/products-values';
 import purchases from 'lib/purchases';
+
+jest.mock( 'lib/products-values', () => ( {} ) );
+jest.mock( 'lib/purchases', () => ( {} ) );
 
 describe( 'cancellation-effect', function() {
 	const purchase = { domain: 'example.com' };

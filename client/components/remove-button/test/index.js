@@ -2,18 +2,18 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
+import Gridicon from 'gridicons';
 import { identity, noop } from 'lodash';
+import React from 'react';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import { RemoveButton } from '../index';
+import Button from 'components/button';
 
 describe( 'Remove Button', function() {
 	it( 'should render the button', () => {

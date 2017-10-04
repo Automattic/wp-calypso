@@ -1,12 +1,10 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
-import React from 'react';
-import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
+import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies

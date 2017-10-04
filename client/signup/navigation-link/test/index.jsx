@@ -1,4 +1,19 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { stub } from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import { NavigationLink } from '../';
+import EMPTY_COMPONENT from 'components/empty-component';
+import signupUtils from 'signup/utils';
+
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: () => {},
@@ -11,21 +26,6 @@ jest.mock( 'signup/utils', () => ( {
 	getStepUrl: require( 'sinon' ).stub(),
 } ) );
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import { stub } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import EMPTY_COMPONENT from 'components/empty-component';
-import { NavigationLink } from '../';
-import signupUtils from 'signup/utils';
 
 describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;

@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { LOCALE_SET } from 'state/action-types';
 import { localeSlug } from '../reducer';
+import { LOCALE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'localeSlug', () => {

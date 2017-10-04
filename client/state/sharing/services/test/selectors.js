@@ -7,13 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getKeyringServices,
-	getKeyringServicesByType,
-	getKeyringServiceByName,
-	getEligibleKeyringServices,
-	isKeyringServicesFetching,
-} from '../selectors';
+import { getKeyringServices, getKeyringServicesByType, getKeyringServiceByName, getEligibleKeyringServices, isKeyringServicesFetching } from '../selectors';
 
 describe( 'selectors', () => {
 	const defaultState = {

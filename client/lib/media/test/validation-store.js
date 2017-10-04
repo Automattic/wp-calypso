@@ -1,4 +1,11 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { assign } from 'lodash';
+import sinon from 'sinon';
+
 jest.mock( 'lib/sites-list', () => () => ( {
 	getSite: () => ( {
 		options: {
@@ -7,13 +14,6 @@ jest.mock( 'lib/sites-list', () => () => ( {
 		},
 	} ),
 } ) );
-
-/**
- * External dependencies
- */
-import { assign } from 'lodash';
-import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Module variables

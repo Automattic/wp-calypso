@@ -1,4 +1,22 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import assert from 'assert';
+import deepFreeze from 'deep-freeze';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { List as DomainList } from '../';
+import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
+import { createReduxStore } from 'state';
+import { useSandbox } from 'test/helpers/use-sinon';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => ( {
@@ -6,25 +24,6 @@ jest.mock( 'lib/wp', () => ( {
 		getProducts: () => {},
 	} ),
 } ) );
-
-/**
- * External dependencies
- */
-import React from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
-import deepFreeze from 'deep-freeze';
-import assert from 'assert';
-import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { createReduxStore } from 'state';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
-import { List as DomainList } from '../';
 
 describe( 'index', function() {
 	let component, sandbox;

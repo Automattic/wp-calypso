@@ -1,4 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import assert from 'assert';
+import debugModule from 'debug';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import utils from '../utils';
+import mockedFlows from './fixtures/flows';
+import flows from 'signup/config/flows';
 /** @jest-environment jsdom */
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -6,20 +19,6 @@ jest.mock( 'lib/abtest', () => ( {
 jest.mock( 'lib/user', () => () => ( {
 	get: () => {},
 } ) );
-
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-import sinon from 'sinon';
-import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import mockedFlows from './fixtures/flows';
-import flows from 'signup/config/flows';
-import utils from '../utils';
 
 /**
  * Module variables

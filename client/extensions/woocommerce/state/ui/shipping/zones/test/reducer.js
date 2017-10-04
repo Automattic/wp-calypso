@@ -7,15 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { addNewShippingZone, openShippingZoneForEdit, closeEditingShippingZone, cancelEditingShippingZone, changeShippingZoneName, deleteShippingZone } from '../actions';
 import reducer, { initialState } from '../reducer';
-import {
-	addNewShippingZone,
-	openShippingZoneForEdit,
-	closeEditingShippingZone,
-	cancelEditingShippingZone,
-	changeShippingZoneName,
-	deleteShippingZone,
-} from '../actions';
 
 const siteId = 123;
 

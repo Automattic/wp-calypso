@@ -1,10 +1,4 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/ui/guided-tours/test/fixtures/config' );
-} );
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
@@ -17,6 +11,12 @@ import { constant, times } from 'lodash';
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
+
+/** @jest-environment jsdom */
+jest.mock( 'layout/guided-tours/config', () => {
+	return require( 'state/ui/guided-tours/test/fixtures/config' );
+} );
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'selectors', () => {
 	let clock;

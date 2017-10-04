@@ -7,15 +7,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SHORTCODE_RECEIVE,
-	SHORTCODE_REQUEST,
-	SHORTCODE_REQUEST_FAILURE,
-	SHORTCODE_REQUEST_SUCCESS,
-} from 'state/action-types';
 import { fetchShortcode } from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SHORTCODE_RECEIVE, SHORTCODE_REQUEST, SHORTCODE_REQUEST_FAILURE, SHORTCODE_REQUEST_SUCCESS } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

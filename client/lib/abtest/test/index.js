@@ -1,4 +1,16 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+import { get as getStoreStub, set as setSpy } from 'store';
+
+/**
+ * Internal dependencies
+ */
+import { abtest } from 'lib/abtest';
+import { getUserStub } from 'lib/user';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/abtest/active-tests', () => ( {
 	mockedTest: {
@@ -71,18 +83,6 @@ jest.mock( 'store', () => ( {
 	get: jest.fn(),
 	set: require( 'sinon' ).spy(),
 } ) );
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { get as getStoreStub, set as setSpy } from 'store';
-
-/**
- * Internal dependencies
- */
-import { abtest } from 'lib/abtest';
-import { getUserStub } from 'lib/user';
 
 const DATE_BEFORE = '2015-06-30T01:32:21.196Z';
 const DATE_AFTER = '2016-06-30T01:32:21.196Z';

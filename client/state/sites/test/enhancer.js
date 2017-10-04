@@ -1,8 +1,4 @@
 /** @format */
-/** @jest-environment jsdom */
-/* eslint-disable no-restricted-modules */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
@@ -12,10 +8,14 @@ import { match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { SITES_UPDATE, SITE_RECEIVE } from 'state/action-types';
 import sitesSync from '../enhancer';
+import { SITES_UPDATE, SITE_RECEIVE } from 'state/action-types';
 import { userState } from 'state/selectors/test/fixtures/user-state';
+import { useSandbox } from 'test/helpers/use-sinon';
+
+/** @jest-environment jsdom */
+/* eslint-disable no-restricted-modules */
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * Example site used for testing mocked behavior.

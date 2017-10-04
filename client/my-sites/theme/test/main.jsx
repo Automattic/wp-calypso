@@ -1,4 +1,19 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { Provider as ReduxProvider } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import ThemeSheetComponent from '../main';
+import { createReduxStore } from 'state';
+import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
+
 jest.mock( 'components/data/query-user-purchases', () => require( 'components/empty-component' ) );
 jest.mock( 'components/data/query-site-purchases', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/analytics', () => ( {} ) );
@@ -12,21 +27,6 @@ jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-com
 jest.mock( 'my-sites/themes/themes-site-selector-modal', () =>
 	require( 'components/empty-component' )
 );
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import { renderToString } from 'react-dom/server';
-import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
-
-/**
- * Internal dependencies
- */
-import { createReduxStore } from 'state';
-import ThemeSheetComponent from '../main';
 
 describe( 'main', function() {
 	describe( 'Calling renderToString() on Theme Info sheet', function() {

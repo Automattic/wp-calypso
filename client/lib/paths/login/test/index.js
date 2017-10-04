@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { login } from '../';
+import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {

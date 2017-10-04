@@ -1,17 +1,10 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
-jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import React from 'react';
 import { spy } from 'sinon';
 
 /**
@@ -20,6 +13,13 @@ import { spy } from 'sinon';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import { PluginAutoUpdateToggle } from 'my-sites/plugins/plugin-autoupdate-toggle';
+
+/** @jest-environment jsdom */
+jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+	require( './mocks/plugin-action' )
+);
+jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
+jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginAutoupdateToggle', function() {
 	const mockedProps = {

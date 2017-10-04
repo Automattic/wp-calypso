@@ -8,10 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { clearReviewReplyEdits, editReviewReply } from '../actions';
-import {
-	WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT,
-	WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT, WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#clearReviewReplyEdits()', () => {

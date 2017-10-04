@@ -1,13 +1,13 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
+
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
-/**
- * External Dependencies
- */
-import { expect } from 'chai';
 
 var Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 

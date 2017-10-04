@@ -2,16 +2,6 @@
  * @format
  * @jest-environment jsdom
  */
-jest.mock( 'lib/feed-stream-store/actions', () => ( {
-	selectItem: jest.fn(),
-} ) );
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'page', () => ( {
-	show: require( 'sinon' ).spy(),
-} ) );
-jest.mock( 'reader/controller-helper', () => ( {
-	setLastStoreId: jest.fn(),
-} ) );
 
 /**
  * External dependencies
@@ -23,6 +13,17 @@ import page from 'page';
  * Internal dependencies
  */
 import { showSelectedPost } from '../utils';
+
+jest.mock( 'lib/feed-stream-store/actions', () => ( {
+	selectItem: jest.fn(),
+} ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'page', () => ( {
+	show: require( 'sinon' ).spy(),
+} ) );
+jest.mock( 'reader/controller-helper', () => ( {
+	setLastStoreId: jest.fn(),
+} ) );
 
 describe( 'reader utils', () => {
 	beforeEach( () => {

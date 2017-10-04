@@ -1,14 +1,10 @@
 /** @format */
-jest.mock( 'lib/signup/actions', () => ( {
-	submitSignupStep: require( 'sinon' ).stub(),
-} ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 import { stub } from 'sinon';
 
 /**
@@ -16,6 +12,10 @@ import { stub } from 'sinon';
  */
 import SubmitStepButton from '..';
 import { submitSignupStep } from 'lib/signup/actions';
+
+jest.mock( 'lib/signup/actions', () => ( {
+	submitSignupStep: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'SubmitStepButton', () => {
 	it( 'should render buttonText prop within a child button', () => {

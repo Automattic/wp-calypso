@@ -1,19 +1,19 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { shallow } from 'enzyme';
+import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { EditPostStatus } from '../';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 describe( 'EditPostStatus', function() {
 	it( 'should hide sticky option for password protected posts', function() {

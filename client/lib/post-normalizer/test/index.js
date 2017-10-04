@@ -1,18 +1,18 @@
 /** @format */
-/** @jest-environment jsdom */
-jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
-
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import { spy } from 'sinon';
 import { trim } from 'lodash';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
+
+/** @jest-environment jsdom */
+jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 function identifyTransform( post, callback ) {
 	callback();

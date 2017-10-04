@@ -1,18 +1,17 @@
 /** @format */
-jest.mock( 'config', () => jest.fn().mockReturnValueOnce( 'wordpress.com' ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import WpcomLoginForm from '..';
+import config from 'config';
+jest.mock( 'config', () => jest.fn().mockReturnValueOnce( 'wordpress.com' ) );
 
 describe( 'WpcomLoginForm', () => {
 	const props = {

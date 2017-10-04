@@ -1,17 +1,17 @@
 /** @format */
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { render } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import LanguagePicker from '../';
+
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 const languages = [
 	{

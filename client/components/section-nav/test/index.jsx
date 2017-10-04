@@ -1,4 +1,18 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { assert } from 'chai';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import ReactDom from 'react-dom';
+import sinon from 'sinon';
+
+/**
+ * Internal dependencies
+ */
+import SectionNav from '../';
+
 /** @jest-environment jsdom */
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/analytics', () => ( {
@@ -6,20 +20,6 @@ jest.mock( 'lib/analytics', () => ( {
 		recordEvent: () => {},
 	},
 } ) );
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-import ReactDom from 'react-dom';
-import React from 'react';
-import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils';
-
-/**
- * Internal dependencies
- */
-import SectionNav from '../';
 
 function createComponent( component, props, children ) {
 	const shallowRenderer = TestUtils.createRenderer();

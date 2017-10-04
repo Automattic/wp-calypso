@@ -1,14 +1,12 @@
 /** @format */
-/** @jest-environment jsdom */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
-import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
+import React from 'react';
+import sinon from 'sinon';
 
 describe( 'AccordionStatus', function() {
 	let AccordionStatus, Tooltip;
