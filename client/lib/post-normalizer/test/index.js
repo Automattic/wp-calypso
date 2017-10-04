@@ -475,8 +475,8 @@ describe( 'index', function() {
 						'<blockquote class="instagram-media" style="background:#FFF;">' +
 							'<div style="padding:8px;">' +
 							'<p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p>' +
-							'</div >' +
-							'</blockquote >'
+							'</div>' +
+							'</blockquote>'
 					);
 					done( err );
 				}
