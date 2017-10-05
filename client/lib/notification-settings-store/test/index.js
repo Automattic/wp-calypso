@@ -12,7 +12,7 @@ import NotificationSettingsStore from '../';
 import * as NotificationSettingsStoreActions from '../actions';
 import wp from 'lib/wp';
 
-const undocumented = wp.undocumented();
+const undocumented = wp.undocumented;
 
 jest.mock( 'lib/wp', () => {
 	const getNotificationSettingsStub = require( 'sinon' ).stub();
