@@ -13,7 +13,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import loadScript from 'lib/load-script';
+import { loadjQueryDependentScript } from 'lib/load-script';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
@@ -225,7 +225,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadScript.loadjQueryDependentScript( injectUrl, function( error ) {
+			loadjQueryDependentScript( injectUrl, function( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;
