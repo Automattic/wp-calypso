@@ -1,13 +1,14 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	SiteIcon = require( 'blocks/site-icon' );
+import CompactCard from 'components/card/compact';
+
+import SiteIcon from 'blocks/site-icon';
 
 module.exports = {
 	Page: React.createClass( {

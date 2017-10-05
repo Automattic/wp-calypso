@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:users:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:users:actions');
 
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	UsersStore = require( 'lib/users/store' );
+import Dispatcher from 'dispatcher';
+
+import wpcom from 'lib/wp';
+import UsersStore from 'lib/users/store';
 
 const UsersActions = {
 	fetchUsers: fetchOptions => {

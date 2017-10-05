@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	createFragment = require( 'react-addons-create-fragment' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' );
+import MediaUtils from 'lib/media/utils';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailFileInfo',

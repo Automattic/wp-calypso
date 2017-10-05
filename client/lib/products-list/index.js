@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:ProductsList' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:ProductsList');
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import wpcom from 'lib/wp';
+
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.

@@ -6,7 +6,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-var FollowListSite = require( './site.js' );
+import FollowListSite from './site.js';
 
 /**
  * FollowList component

@@ -3,15 +3,16 @@
  */
 import { last, map, range, uniq } from 'lodash';
 import Gridicon from 'gridicons';
-var React = require( 'react' ),
-	closest = require( 'component-closest' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import closest from 'component-closest';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var tableRows = require( './table-rows' ),
-	eventRecorder = require( 'me/event-recorder' );
+import tableRows from './table-rows';
+
+import eventRecorder from 'me/event-recorder';
 
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',

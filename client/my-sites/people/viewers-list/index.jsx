@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var PeopleListItem = require( 'my-sites/people/people-list-item' ),
-	Card = require( 'components/card' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
-	ViewersActions = require( 'lib/viewers/actions' ),
-	ViewersStore = require( 'lib/viewers/store' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	ViewersData = require( 'components/data/viewers-data' ),
-	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'lib/analytics' ),
-	accept = require( 'lib/accept' );
+import PeopleListItem from 'my-sites/people/people-list-item';
+
+import Card from 'components/card';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
+import ViewersActions from 'lib/viewers/actions';
+import ViewersStore from 'lib/viewers/store';
+import InfiniteList from 'components/infinite-list';
+import ViewersData from 'components/data/viewers-data';
+import EmptyContent from 'components/empty-content';
+import analytics from 'lib/analytics';
+import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
 let Viewers = React.createClass( {

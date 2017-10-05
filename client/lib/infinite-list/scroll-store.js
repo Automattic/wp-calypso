@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Module Variables

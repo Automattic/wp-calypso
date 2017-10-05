@@ -1,7 +1,9 @@
 /**
  * External dependencies.
  */
-var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:wpcom-undocumented:site');
 
 /**
  * Resources array

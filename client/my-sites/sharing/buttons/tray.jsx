@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { assign, filter, find } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
-const classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var SortableList = require( 'components/forms/sortable-list' ),
-	ButtonsPreviewButtons = require( './preview-buttons' ),
-	ButtonsPreviewButton = require( './preview-button' );
+import SortableList from 'components/forms/sortable-list';
+
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsPreviewButton from './preview-button';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsTray',

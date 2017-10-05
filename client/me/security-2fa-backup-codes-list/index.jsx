@@ -1,28 +1,32 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' ),
-	ReactDom = require( 'react-dom' ),
-	Clipboard = require( 'clipboard' ),
-	userFactory = require( 'lib/user' ),
-	Gridicon = require( 'gridicons' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import ReactDom from 'react-dom';
+import Clipboard from 'clipboard';
+import userFactory from 'lib/user';
+import Gridicon from 'gridicons';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-backup-codes-list');
 
 import { saveAs } from 'browser-filesaver';
+
 /**
  * Internal dependencies
  */
-const FormButton = require( 'components/forms/form-button' ),
-	analytics = require( 'lib/analytics' ),
-	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	config = require( 'config' ),
-	Notice = require( 'components/notice' ),
-	ButtonGroup = require( 'components/button-group' ),
-	Button = require( 'components/button' ),
-	Tooltip = require( 'components/tooltip' );
+import FormButton from 'components/forms/form-button';
+
+import analytics from 'lib/analytics';
+import FormButtonBar from 'components/forms/form-buttons-bar';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import config from 'config';
+import Notice from 'components/notice';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import Tooltip from 'components/tooltip';
 
 module.exports = React.createClass( {
 

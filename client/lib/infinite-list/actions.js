@@ -6,9 +6,10 @@ import { isEqual, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	scrollStore = require( 'lib/infinite-list/scroll-store' ),
-	positionsStore = require( 'lib/infinite-list/positions-store' );
+import Dispatcher from 'dispatcher';
+
+import scrollStore from 'lib/infinite-list/scroll-store';
+import positionsStore from 'lib/infinite-list/positions-store';
 
 /**
  * Module variables

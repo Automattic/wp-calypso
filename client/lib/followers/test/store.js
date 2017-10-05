@@ -6,14 +6,19 @@
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' ),
-	site = require( './lib/mock-site' ),
-	options = { siteId: site.ID };
+import actions from './lib/mock-actions';
+
+import site from './lib/mock-site';
+
+/**
+ * Internal dependencies
+ */
+var options = { siteId: site.ID };
 
 describe( 'WPCOM Followers Store', function() {
 	var Dispatcher, FollowersStore;

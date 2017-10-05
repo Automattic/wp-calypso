@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial,
-	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
-	SubscriptionText = require( './subscription-text' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import cartValues from 'lib/cart-values';
+
+import SubscriptionText from './subscription-text';
+import transactionStepTypes from 'lib/store-transactions/step-types';
+
+/**
+ * Internal dependencies
+ */
+var cartItems = cartValues.cartItems, hasFreeTrial = cartItems.hasFreeTrial, isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits;
 
 var PayButton = React.createClass( {
 	buttonState: function() {

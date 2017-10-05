@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
-const path = require( 'path' );
+import fs from 'fs';
+
+import path from 'path';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
+import config from 'config';
+
 const sections = require( config( 'project' ) );
-const extensions = require( 'extensions' );
+import extensions from 'extensions';
 
 const extensionSections = extensions.map( extension => {
 	try {

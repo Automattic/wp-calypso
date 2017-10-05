@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-var ControlItem = require( 'components/segmented-control/item' );
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Internal variables

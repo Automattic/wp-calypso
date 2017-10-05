@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { find } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var isPlan = require( 'lib/products-values' ).isPlan,
-	PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+import { isPlan } from 'lib/products-values';
+
+import PayButton from './pay-button';
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {

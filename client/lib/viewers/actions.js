@@ -1,13 +1,16 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:viewers:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:viewers:actions');
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
+
+import wpcom from 'lib/wp';
 
 var ViewersActions = {
 	fetch: function( siteId, page = 1 ) {

@@ -2,18 +2,19 @@
  * External dependencies
  */
 import { filter, isEqual } from 'lodash';
-const PropTypes = require( 'prop-types' );
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ButtonsPreviewButton = require( 'my-sites/sharing/buttons/preview-button' ),
-	ResizableIframe = require( 'components/resizable-iframe' ),
-	previewWidget = require( './preview-widget' ),
-	touchDetect = require( 'lib/touch-detect' );
+import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
+
+import ResizableIframe from 'components/resizable-iframe';
+import previewWidget from './preview-widget';
+import touchDetect from 'lib/touch-detect';
 
 var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',

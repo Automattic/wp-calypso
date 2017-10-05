@@ -2,17 +2,23 @@
  * External dependencies
  */
 import { isEmpty, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:store-transactions' ),
-	Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:store-transactions');
+import { Readable } from 'stream';
+import inherits from 'inherits';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	paygateLoader = require( 'lib/paygate-loader' ),
-	validateCardDetails = require( 'lib/credit-card-details' ).validateCardDetails,
-	transactionStepTypes = require( './step-types' );
+import paygateLoader from 'lib/paygate-loader';
+
+import { validateCardDetails } from 'lib/credit-card-details';
+import transactionStepTypes from './step-types';
+
+/**
+ * Internal dependencies
+ */
+var wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Make a purchase on WordPress.com.

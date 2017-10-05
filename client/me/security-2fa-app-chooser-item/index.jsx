@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-app-chooser-item' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-app-chooser-item');
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 

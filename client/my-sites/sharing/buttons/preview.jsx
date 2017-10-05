@@ -2,18 +2,19 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var ButtonsLabelEditor = require( './label-editor' ),
-	ButtonsPreviewButtons = require( './preview-buttons' ),
-	ButtonsPreviewAction = require( './preview-action' ),
-	ButtonsTray = require( './tray'),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	analytics = require( 'lib/analytics' );
+import ButtonsLabelEditor from './label-editor';
+
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsPreviewAction from './preview-action';
+import ButtonsTray from './tray';
+import { decodeEntities } from 'lib/formatting';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',

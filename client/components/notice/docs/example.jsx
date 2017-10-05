@@ -1,13 +1,15 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
-var NoticeAction = require( 'components/notice/notice-action' );
+import NoticeAction from 'components/notice/notice-action';
+
 import Notice from 'components/notice';
 
 var Notices = React.createClass( {

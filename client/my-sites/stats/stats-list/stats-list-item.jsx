@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:list-item' ),
-	page = require( 'page' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:stats:list-item');
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var Follow = require( './action-follow' ),
-	Page = require( './action-page' ),
-	OpenLink = require( './action-link' ),
-	Spam = require( './action-spam' ),
-	Emojify = require( 'components/emojify' ),
-	titlecase = require( 'to-title-case' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import Follow from './action-follow';
+
+import Page from './action-page';
+import OpenLink from './action-link';
+import Spam from './action-spam';
+import Emojify from 'components/emojify';
+import titlecase from 'to-title-case';
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'StatsListItem',

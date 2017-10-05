@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:siftscience' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:siftscience');
 
 /**
  * Internal dependencies
  */
-var loadScript = require( 'lib/load-script' ),
-	user = require( 'lib/user' ),
-	config = require( 'config' );
+import loadScript from 'lib/load-script';
+
+import user from 'lib/user';
+import config from 'config';
 
 var SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js',
 	hasLoaded = false;

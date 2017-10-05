@@ -9,13 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	CreditCardSelector = require( './credit-card-selector' ),
-	TermsOfService = require( './terms-of-service' ),
-	PaymentBox = require( './payment-box' ),
-	analytics = require( 'lib/analytics' ),
-	cartValues = require( 'lib/cart-values' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import PayButton from './pay-button';
+
+import CreditCardSelector from './credit-card-selector';
+import TermsOfService from './terms-of-service';
+import PaymentBox from './payment-box';
+import analytics from 'lib/analytics';
+import cartValues from 'lib/cart-values';
+import transactionStepTypes from 'lib/store-transactions/step-types';
 
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';

@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
-const Site = require( 'lib/site' ),
-	inherits = require( 'inherits' ),
-	versionCompare = require( 'lib/version-compare' ),
-	SiteUtils = require( 'lib/site/utils' ),
-	config = require( 'config' );
+import Site from 'lib/site';
+
+import inherits from 'inherits';
+import versionCompare from 'lib/version-compare';
+import SiteUtils from 'lib/site/utils';
+import config from 'config';
 
 inherits( JetpackSite, Site );
 

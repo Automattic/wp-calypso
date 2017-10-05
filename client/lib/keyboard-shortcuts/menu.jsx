@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
-	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
-	KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
+import Dialog from 'components/dialog';
+
+import config from 'config';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 module.exports = React.createClass({
 	displayName: 'KeyboardShortcutsMenu',

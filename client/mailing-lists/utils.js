@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:mailing-lists' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:mailing-lists');
 
 /**
  * Internal dependencies

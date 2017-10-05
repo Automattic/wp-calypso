@@ -2,13 +2,15 @@
  * External dependencies
  */
 import { clone, find, reject } from 'lodash';
-const debug = require( 'debug' )( 'calypso:my-sites:people:log-store' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:my-sites:people:log-store');
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
 
 var _errors = [],
 	_inProgress = [],

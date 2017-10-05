@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	LocaleSuggestionActions = require( './actions' );
+import Emitter from 'lib/mixins/emitter';
+
+import LocaleSuggestionActions from './actions';
 
 var localeSuggestions = null;
 

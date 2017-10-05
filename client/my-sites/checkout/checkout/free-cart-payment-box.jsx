@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
+import PayButton from './pay-button';
+
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 
 import CartToggle from './cart-toggle';
 

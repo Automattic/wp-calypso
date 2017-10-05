@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:wporg-data:actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:wporg-data:actions');
 
 /**
  * Internal dependencies

@@ -30,7 +30,7 @@ import {
 	PLAN_MONTHLY_PERIOD,
 } from 'lib/plans/constants';
 
-const schema = require( './schema.json' );
+import schema from './schema.json';
 
 const productDependencies = {
 	domain: {

@@ -3,16 +3,17 @@
  */
 import debug from 'debug';
 import { assign } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import url from 'url';
+import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'lib/analytics';
+
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables

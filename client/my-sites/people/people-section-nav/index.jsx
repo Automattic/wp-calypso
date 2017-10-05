@@ -9,11 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	UrlSearch = require( 'lib/mixins/url-search' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import Search from 'components/search';
+
+import UrlSearch from 'lib/mixins/url-search';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 let PeopleSearch = React.createClass( {
 	displayName: 'PeopleSearch',

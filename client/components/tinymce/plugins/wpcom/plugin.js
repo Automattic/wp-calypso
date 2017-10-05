@@ -8,13 +8,15 @@
 /**
  * External dependencies
  */
-var tinymce = require( 'tinymce/tinymce' );
-var translate = require( 'i18n-calypso' ).translate;
+import tinymce from 'tinymce/tinymce';
+
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var formatting = require( 'lib/formatting' );
+import formatting from 'lib/formatting';
+
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */

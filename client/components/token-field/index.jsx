@@ -2,18 +2,20 @@
  * External dependencies
  */
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:token-field' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:token-field');
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var SuggestionsList = require( './suggestions-list' ),
-	Token = require( './token' ),
-	TokenInput = require( './token-input' );
+import SuggestionsList from './suggestions-list';
+
+import Token from './token';
+import TokenInput from './token-input';
 
 var TokenField = React.createClass( {
 	propTypes: {

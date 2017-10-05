@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
-const PropTypes = require( 'prop-types' );
+import React from 'react';
+
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' );
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+
+import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {
 	return {

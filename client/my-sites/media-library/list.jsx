@@ -5,18 +5,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import ReactDom from 'react-dom';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	ListItem = require( './list-item' ),
-	ListNoResults = require( './list-no-results' ),
-	ListNoContent = require( './list-no-content' ),
-	user = require( 'lib/user' )();
+import MediaActions from 'lib/media/actions';
+
+import MediaUtils from 'lib/media/utils';
+import ListItem from './list-item';
+import ListNoResults from './list-no-results';
+import ListNoContent from './list-no-content';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';

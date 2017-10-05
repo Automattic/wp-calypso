@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classnames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classnames from 'classnames';
 
 /**
  * Main

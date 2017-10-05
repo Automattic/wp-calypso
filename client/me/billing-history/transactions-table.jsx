@@ -2,15 +2,16 @@
  * External dependencies
  */
 import { defer, isEmpty, pick } from 'lodash';
-var React = require( 'react' ),
-	titleCase = require( 'to-title-case' ),
-	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;
+import React from 'react';
+import titleCase from 'to-title-case';
+import { capitalPDangit } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
-var TransactionsHeader = require( './transactions-header' ),
-	tableRows = require( './table-rows' );
+import TransactionsHeader from './transactions-header';
+
+import tableRows from './table-rows';
 
 import SearchCard from 'components/search-card';
 

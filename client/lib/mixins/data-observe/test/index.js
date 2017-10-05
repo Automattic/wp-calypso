@@ -4,12 +4,12 @@
  * @format
  */
 
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' );
+import observe from 'lib/mixins/data-observe';
 
 describe( 'observe()', function() {
 	it( 'should return proper mixin with no arguments', function() {

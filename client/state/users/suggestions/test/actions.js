@@ -17,7 +17,7 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
-const sampleSuccessResponse = require( './sample-response.json' );
+import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 
 describe( 'actions', () => {

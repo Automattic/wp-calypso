@@ -1,25 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:reauth-required' );
+import React from 'react';
+
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:reauth-required');
 
 /**
  * Internal Dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	userUtilities = require( 'lib/user/utils' ),
-	constants = require( 'me/constants' );
+import Dialog from 'components/dialog';
+
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormInputValidation from 'components/forms/form-input-validation';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
+import userUtilities from 'lib/user/utils';
+import constants from 'me/constants';
 
 import Notice from 'components/notice';
 

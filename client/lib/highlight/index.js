@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { compact, toArray } from 'lodash';
-var debug = require( 'debug' )( 'calypso:highlight' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:highlight');
 
 /**
  * @private

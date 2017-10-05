@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var support = require( 'lib/url/support' ),
-	analyticsMixin = require( 'lib/mixins/analytics' );
+import support from 'lib/url/support';
+
+import analyticsMixin from 'lib/mixins/analytics';
 
 var EmailForwardingDetails = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],

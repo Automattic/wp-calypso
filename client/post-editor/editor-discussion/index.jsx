@@ -2,17 +2,18 @@
  * External dependencies
  */
 import { get, pick } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	PostActions = require( 'lib/posts/actions' ),
-	InfoPopover = require( 'components/info-popover' ),
-	stats = require( 'lib/posts/stats' );
+import EditorFieldset from 'post-editor/editor-fieldset';
+
+import FormCheckbox from 'components/forms/form-checkbox';
+import PostActions from 'lib/posts/actions';
+import InfoPopover from 'components/info-popover';
+import stats from 'lib/posts/stats';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';

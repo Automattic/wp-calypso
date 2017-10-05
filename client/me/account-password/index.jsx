@@ -9,26 +9,27 @@ import {
 	isEmpty
 } from 'lodash';
 import { bindActionCreators } from 'redux';
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	classNames = require( 'classnames' ),
-	connect = require( 'react-redux' ).connect;
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:account-password');
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { ProtectFormGuard } from 'lib/protect-form';
-var FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormPasswordInput = require( 'components/forms/form-password-input' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	errorNotice = require( 'state/notices/actions' ).errorNotice;
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormInputValidation from 'components/forms/form-input-validation';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
+import { errorNotice } from 'state/notices/actions';
 
 const AccountPassword = React.createClass( {
 

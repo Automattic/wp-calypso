@@ -4,7 +4,7 @@
  */
 import actions from './lib/mock-actions';
 
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 describe( 'Help search Store', function() {
 	var Dispatcher, HelpSearchStore;

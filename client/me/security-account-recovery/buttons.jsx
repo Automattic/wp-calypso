@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormButton = require( 'components/forms/form-button' ),
-	Gridicon = require( 'gridicons' );
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+
+import FormButton from 'components/forms/form-button';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',

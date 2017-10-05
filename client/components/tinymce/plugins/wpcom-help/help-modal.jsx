@@ -4,14 +4,15 @@
  * External dependencies
  */
 import { forEach } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const Dialog = require( 'components/dialog' ),
-	FormButton = require( 'components/forms/form-button' );
+import Dialog from 'components/dialog';
+
+import FormButton from 'components/forms/form-button';
 
 const HelpModal = React.createClass( {
 

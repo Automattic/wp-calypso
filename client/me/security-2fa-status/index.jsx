@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-status' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-status');
 
 module.exports = React.createClass( {
 

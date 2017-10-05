@@ -6,10 +6,11 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	Dispatcher = require( 'dispatcher' ),
-	utils = require( './utils' ),
-	PostsStore = require( './posts-store' );
+import Emitter from 'lib/mixins/emitter';
+
+import Dispatcher from 'dispatcher';
+import utils from './utils';
+import PostsStore from './posts-store';
 
 
 var _contentImages = {},

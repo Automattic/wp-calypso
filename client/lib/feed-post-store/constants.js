@@ -1,4 +1,4 @@
-var keyMirror = require( 'key-mirror' );
+import keyMirror from 'key-mirror';
 
 module.exports = {
 	action: keyMirror( {

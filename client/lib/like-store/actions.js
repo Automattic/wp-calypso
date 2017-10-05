@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:like-store:actions' ); //eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:like-store:actions'); //eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	key = require( './utils' ).key,
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
+
+import { key } from './utils';
+import wpcom from 'lib/wp';
 
 var inflight = {};
 

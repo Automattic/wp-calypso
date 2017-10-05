@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { map } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 module.exports = React.createClass( {
 	displayName: 'ValidationErrorList',

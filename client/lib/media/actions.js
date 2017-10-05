@@ -2,18 +2,20 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-const debug = require( 'debug' )( 'calypso:media' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:media');
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	MediaUtils = require( './utils' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	MediaStore = require( './store' ),
-	MediaListStore = require( './list-store' ),
-	MediaValidationStore = require( './validation-store' );
+import Dispatcher from 'dispatcher';
+
+import wpcom from 'lib/wp';
+import MediaUtils from './utils';
+import PostEditStore from 'lib/posts/post-edit-store';
+import MediaStore from './store';
+import MediaListStore from './list-store';
+import MediaValidationStore from './validation-store';
 
 /**
  * Module variables

@@ -3,20 +3,25 @@
  */
 import classnames from 'classnames';
 import { assign, some } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	cartValues = require( 'lib/cart-values' ),
-	CountrySelect = require( 'my-sites/domains/components/form/country-select' ),
-	Input = require( 'my-sites/domains/components/form/input' ),
-	notices = require( 'notices' ),
-	PaymentBox = require( './payment-box' ),
-	SubscriptionText = require( './subscription-text' ),
-	TermsOfService = require( './terms-of-service' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import analytics from 'lib/analytics';
+
+import cartValues from 'lib/cart-values';
+import CountrySelect from 'my-sites/domains/components/form/country-select';
+import Input from 'my-sites/domains/components/form/input';
+import notices from 'notices';
+import PaymentBox from './payment-box';
+import SubscriptionText from './subscription-text';
+import TermsOfService from './terms-of-service';
+
+/**
+ * Internal dependencies
+ */
+var wpcom = require( 'lib/wp' ).undocumented();
 
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';

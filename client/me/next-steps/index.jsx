@@ -2,18 +2,20 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var NextStepsBox = require( './next-steps-box' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	steps = require( './steps' ),
-	analytics = require( 'lib/analytics' ),
-	productsValues = require( 'lib/products-values' ),
-	sites = require( 'lib/sites-list' )();
+import NextStepsBox from './next-steps-box';
+
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import observe from 'lib/mixins/data-observe';
+import steps from './steps';
+import analytics from 'lib/analytics';
+import productsValues from 'lib/products-values';
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
 
 module.exports = React.createClass( {
 	displayName: 'NextSteps',

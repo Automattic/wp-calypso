@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
-const PropTypes = require( 'prop-types' );
+import React from 'react';
+
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
-	PostContentImagesStore = require( 'lib/posts/post-content-images-store' ),
-	Dispatcher = require( 'dispatcher' ),
-	actions = require( 'lib/posts/actions' ),
-	pollers = require( 'lib/data-poller' );
+import postListStoreFactory from 'lib/posts/post-list-store-factory';
+
+import PostContentImagesStore from 'lib/posts/post-content-images-store';
+import Dispatcher from 'dispatcher';
+import actions from 'lib/posts/actions';
+import pollers from 'lib/data-poller';
 
 var PostListFetcher;
 

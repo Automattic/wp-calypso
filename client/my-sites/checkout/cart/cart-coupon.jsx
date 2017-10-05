@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
+
+import upgradesActions from 'lib/upgrades/actions';
 
 module.exports = React.createClass( {
 	displayName: 'CartCoupon',

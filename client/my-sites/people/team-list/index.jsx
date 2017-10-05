@@ -3,20 +3,22 @@
  */
 import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' );
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:my-sites:people:team-list');
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	PeopleListItem = require( 'my-sites/people/people-list-item' ),
-	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
-	UsersActions = require( 'lib/users/actions' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	NoResults = require( 'my-sites/no-results' ),
-	analytics = require( 'lib/analytics' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
+import Card from 'components/card';
+
+import PeopleListItem from 'my-sites/people/people-list-item';
+import SiteUsersFetcher from 'components/site-users-fetcher';
+import UsersActions from 'lib/users/actions';
+import InfiniteList from 'components/infinite-list';
+import NoResults from 'my-sites/no-results';
+import analytics from 'lib/analytics';
+import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ListEnd from 'components/list-end';
 
 /**

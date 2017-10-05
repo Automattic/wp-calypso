@@ -9,10 +9,11 @@ import { noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-var DetailItem = require( './detail-item' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	HeaderCake = require( 'components/header-cake' ),
-	preloadImage = require( '../preload-image' );
+import DetailItem from './detail-item';
+
+import MediaUtils from 'lib/media/utils';
+import HeaderCake from 'components/header-cake';
+import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 

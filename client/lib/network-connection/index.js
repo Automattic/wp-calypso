@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:network-connection' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	request = require( 'superagent' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:network-connection');
+import Emitter from 'lib/mixins/emitter';
+import request from 'superagent';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	PollerPool = require( 'lib/data-poller' );
+import config from 'config';
+
+import PollerPool from 'lib/data-poller';
 
 import { connectionLost, connectionRestored } from 'state/application/actions';
 

@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:connected-application-item' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:connected-application-item');
+import classNames from 'classnames';
 
 /**
  * Internal dependencies

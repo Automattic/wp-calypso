@@ -2,15 +2,17 @@
  * External dependencies
  */
 import { assign, filter, isEqual, pickBy, without } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
-	emitter = require( 'lib/mixins/emitter' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:posts:post-edit-store');
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	utils = require( './utils' );
+import Dispatcher from 'dispatcher';
+
+import { decodeEntities } from 'lib/formatting';
+import utils from './utils';
 
 /**
  * Module variables

@@ -2,24 +2,24 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	PropTypes = require( 'prop-types' ),
-	classnames = require( 'classnames' ),
-	autosize = require( 'autosize' ),
-	tinymce = require( 'tinymce/tinymce' );
-
-require( 'tinymce/themes/modern/theme.js' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import autosize from 'autosize';
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
-require( 'tinymce/plugins/colorpicker/plugin.js' );
-require( 'tinymce/plugins/directionality/plugin.js' );
-require( 'tinymce/plugins/hr/plugin.js' );
-require( 'tinymce/plugins/lists/plugin.js' );
-require( 'tinymce/plugins/media/plugin.js' );
-require( 'tinymce/plugins/paste/plugin.js' );
-require( 'tinymce/plugins/tabfocus/plugin.js' );
-require( 'tinymce/plugins/textcolor/plugin.js' );
+import 'tinymce/plugins/colorpicker/plugin.js';
+
+import 'tinymce/plugins/directionality/plugin.js';
+import 'tinymce/plugins/hr/plugin.js';
+import 'tinymce/plugins/lists/plugin.js';
+import 'tinymce/plugins/media/plugin.js';
+import 'tinymce/plugins/paste/plugin.js';
+import 'tinymce/plugins/tabfocus/plugin.js';
+import 'tinymce/plugins/textcolor/plugin.js';
 
 // TinyMCE plugins that we've forked or written ourselves
 import wpcomPlugin from './plugins/wpcom/plugin.js';
@@ -79,10 +79,12 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 /**
  * Internal Dependencies
  */
-const user = require( 'lib/user' )(),
-	i18n = require( './i18n' ),
-	viewport = require( 'lib/viewport' ),
-	config = require( 'config' );
+import userFactory from 'lib/user';
+
+const user = userFactory();
+import i18n from './i18n';
+import viewport from 'lib/viewport';
+import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
 /**

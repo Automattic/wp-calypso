@@ -1,19 +1,22 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
-	i18n = require( 'i18n-calypso' );
+import page from 'page';
+
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:my-sites:posts');
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-const route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' ),
-	titlecase = require( 'to-title-case' ),
-	trackScrollPage = require( 'lib/track-scroll-page' ),
-	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
+import route from 'lib/route';
+
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
+import trackScrollPage from 'lib/track-scroll-page';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { areAllSitesSingleUser } from 'state/selectors';

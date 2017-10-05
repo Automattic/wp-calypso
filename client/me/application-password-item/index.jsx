@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:application-password-item' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect,
-	Gridicon = require( 'gridicons' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:application-password-item');
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var eventRecorder = require( 'me/event-recorder' ),
-	errorNotice = require( 'state/notices/actions' ).errorNotice,
-	Button = require( 'components/button' );
+import eventRecorder from 'me/event-recorder';
+
+import { errorNotice } from 'state/notices/actions';
+import Button from 'components/button';
 
 const ApplicationPasswordsItem = React.createClass( {
 

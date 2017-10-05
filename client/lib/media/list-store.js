@@ -6,10 +6,11 @@ import { assign, isEqual, map, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaStore = require( './store' ),
-	MediaUtils = require( './utils' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+
+import MediaStore from './store';
+import MediaUtils from './utils';
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables

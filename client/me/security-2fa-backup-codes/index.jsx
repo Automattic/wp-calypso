@@ -1,19 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes' );
+import React from 'react';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-backup-codes');
 
 /**
  * Internal dependencies
  */
-var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' );
+import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
+
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+import Card from 'components/card';
+import eventRecorder from 'me/event-recorder';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 
 import Notice from 'components/notice';
 

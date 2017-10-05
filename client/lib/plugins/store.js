@@ -1,20 +1,24 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:sites-plugins:sites-plugins-store');
 import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	sitesList = require( 'lib/sites-list' )(),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	versionCompare = require( 'lib/version-compare' ),
-	PluginUtils = require( 'lib/plugins/utils' ),
-	JetpackSite = require( 'lib/site/jetpack' ),
-	Site = require( 'lib/site' );
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
+import sitesListFactory from 'lib/sites-list';
+const sitesList = sitesListFactory();
+import PluginsActions from 'lib/plugins/actions';
+import versionCompare from 'lib/version-compare';
+import PluginUtils from 'lib/plugins/utils';
+import JetpackSite from 'lib/site/jetpack';
+import Site from 'lib/site';
 
 /*
  * Constants

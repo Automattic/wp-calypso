@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:local-storage' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:local-storage');
 
 var _data = {},
 	storage = {
