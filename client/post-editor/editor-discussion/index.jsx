@@ -4,7 +4,7 @@
  * @format
  */
 
-import { get, pick } from 'lodash';
+import { get, identity, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -26,18 +26,19 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-export default localize(React.createClass({
-	displayName: 'EditorDiscussion',
+export const EditorDiscussion = React.createClass( {
 
 	propTypes: {
 		isNew: PropTypes.bool,
 		post: PropTypes.object,
 		site: PropTypes.object,
+		translate: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps: function() {
 		return {
 			isNew: false,
+			translate: identity,
 		};
 	},
 
@@ -130,4 +131,6 @@ export default localize(React.createClass({
 			</EditorFieldset>
         );
 	},
-}));
+} );
+
+export default localize( EditorDiscussion );
