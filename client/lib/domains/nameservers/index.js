@@ -1,9 +1,10 @@
 /**
- * External dependencies
- *
  * @format
  */
 
+/**
+ * External dependencies
+ */
 import update from 'immutability-helper';
 import { every, reject } from 'lodash';
 
